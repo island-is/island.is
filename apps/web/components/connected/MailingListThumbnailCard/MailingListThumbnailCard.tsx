@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Inline,
+  Hidden,
   LinkV2,
   Stack,
   Text,
@@ -26,27 +26,73 @@ export const MailingListThumbnailCard = ({
       borderRadius="large"
       paddingX={[3, 3, 5, 5, 15]}
       paddingY={[2, 2, 4]}
+      width="full"
     >
-      <Inline alignY="center" justifyContent="spaceBetween" space={3}>
-        <Stack space={1}>
-          <Text variant="h3" color="blue400">
-            {headingText}
-          </Text>
-          <Text>{descriptionText}</Text>
-        </Stack>
-        {Boolean(linkHref) && Boolean(linkLabel) && (
-          <LinkV2 href={linkHref}>
-            <Button
-              unfocusable={true}
-              variant="text"
-              as="span"
-              icon="arrowForward"
+      <Hidden below="xl">
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          rowGap={3}
+        >
+          <Stack space={1}>
+            <Text variant="h3" color="blue400">
+              {headingText}
+            </Text>
+            <Text>{descriptionText}</Text>
+          </Stack>
+          {Boolean(linkHref) && Boolean(linkLabel) && (
+            <LinkV2 href={linkHref}>
+              <Button
+                unfocusable={true}
+                variant="text"
+                as="span"
+                icon="arrowForward"
+              >
+                {linkLabel}
+              </Button>
+            </LinkV2>
+          )}
+        </Box>
+      </Hidden>
+      <Hidden above="lg">
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          rowGap={3}
+        >
+          <Stack space={1}>
+            <Text variant="h3" color="blue400">
+              {headingText}
+            </Text>
+            <Text>{descriptionText}</Text>
+          </Stack>
+          {Boolean(linkHref) && Boolean(linkLabel) && (
+            <Box
+              display="flex"
+              justifyContent="flexEnd"
+              alignItems="center"
+              width="full"
             >
-              {linkLabel}
-            </Button>
-          </LinkV2>
-        )}
-      </Inline>
+              <LinkV2 href={linkHref}>
+                <Button
+                  unfocusable={true}
+                  variant="text"
+                  as="span"
+                  icon="arrowForward"
+                >
+                  {linkLabel}
+                </Button>
+              </LinkV2>
+            </Box>
+          )}
+        </Box>
+      </Hidden>
     </Box>
   )
 }
