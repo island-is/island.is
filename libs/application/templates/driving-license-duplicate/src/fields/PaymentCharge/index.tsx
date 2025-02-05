@@ -66,7 +66,8 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (item) => item.chargeItemCode === chargeCode,
   )
 
-  const withDeliveryFee = getValueViaPath(application.answers, 'delivery.deliveryMethod') === "1"
+  const withDeliveryFee =
+    getValueViaPath(application.answers, 'delivery.deliveryMethod') === '1'
   const deliveryFee = chargeItems.find(
     (item) => item.chargeItemCode === 'AY145',
   )
@@ -93,7 +94,10 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Box marginTop={5} display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{formatMessage(m.paymentSum)}</Text>
         <Text variant="h4" color="blue400">
-          {getCurrencyString((chargeItem?.priceAmount || 0) + (deliveryFee?.priceAmount ? deliveryFee.priceAmount : 0))}
+          {getCurrencyString(
+            (chargeItem?.priceAmount || 0) +
+              (deliveryFee?.priceAmount ? deliveryFee.priceAmount : 0),
+          )}
         </Text>
       </Box>
     </Box>

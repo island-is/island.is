@@ -15,7 +15,7 @@ export const sectionPayment = buildSection({
       id: 'payment',
       title: m.paymentSectionTitle,
       children: [
-       buildCustomField({
+        buildCustomField({
           id: 'paymentCharge',
           title: '',
           component: 'PaymentCharge',
