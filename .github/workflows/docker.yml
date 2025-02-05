@@ -176,6 +176,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Debug AWS user/login
         run: |
+          echo "DEBUG AWS user/login"
+          echo ${{ toJson(steps.aws-creds.outputs) }}
           aws sts get-caller-identity
           aws ecr describe-repositories
       - name: Log in to Amazon ECR
