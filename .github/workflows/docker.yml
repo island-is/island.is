@@ -201,6 +201,7 @@ jobs:
           registry=${{ steps.ecr-login.outputs.registry }}
           username=${{ steps.ecr-login.outputs[ format('docker_username_{0}',env.IMAGE_REGISTRY) ] }}
           password=${{ steps.ecr-login.outputs[ format('docker_password_{0}',env.IMAGE_REGISTRY) ] }}
+          success=${{ steps.ecr-login.conclusion == 'success' }}
           EOF
       - name: Log in Docker
         if: ${{ steps.ecr-login.conclusion == 'success' }}
@@ -262,7 +263,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
       - name: Log in Docker
-        if: ${{ steps.ecr-login.conclusion == 'success' }}
+        if: ${{ fromJson(needs.deps.outputs.creds).success }}
         id: docker-login
         uses: docker/login-action@v3
         with:
