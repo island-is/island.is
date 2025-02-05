@@ -6,10 +6,9 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   DispensationDto,
   Locale,
-  MeDispensationsApi,
-  MePrescriptionsApi,
-  MeReferralsApi,
-  MeWaitingListsApi,
+  PrescriptionsApi,
+  ReferralsApi,
+  WaitingListsApi,
   PrescribedItemDto,
   ReferralDto,
   WaitingListEntryDto,
@@ -21,10 +20,9 @@ const LOG_CATEGORY = 'health-directorate-health-api'
 export class HealthDirectorateHealthService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly referralsApi: MeReferralsApi,
-    private readonly waitingListsApi: MeWaitingListsApi,
-    private readonly dispensationsApi: MeDispensationsApi,
-    private readonly prescriptionsApi: MePrescriptionsApi,
+    private readonly referralsApi: ReferralsApi,
+    private readonly waitingListsApi: WaitingListsApi,
+    private readonly prescriptionsApi: PrescriptionsApi,
   ) {}
 
   private referralsApiWithAuth(auth: Auth) {
@@ -33,10 +31,6 @@ export class HealthDirectorateHealthService {
 
   private waitingListsApiWithAuth(auth: Auth) {
     return this.waitingListsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private dispensationsApiWithAuth(auth: Auth) {
-    return this.dispensationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private prescriptionsApiWithAuth(auth: Auth) {
@@ -52,12 +46,32 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     atcCode: string,
   ): Promise<Array<DispensationDto> | null> {
-    const dispensations = await this.dispensationsApiWithAuth(auth)
+    const dispensations = await this.prescriptionsApiWithAuth(auth)
       .meDispensationControllerGetDispensationsForAtcCodeV1({ atcCode })
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(`No dispensations returned for atc code: ${atcCode}`, {
+      this.logger.debug(
+        `No prescription dispensations returned for atc code: ${atcCode}`,
+        {
+          category: LOG_CATEGORY,
+        },
+      )
+      return null
+    }
+
+    return dispensations
+  }
+
+  private async getGroupedDispensations(
+    auth: Auth,
+  ): Promise<Array<DispensationDto> | null> {
+    const dispensations = await this.prescriptionsApiWithAuth(auth)
+      .meDispensationControllerGetGroupedDispensationsV1()
+      .catch(handle404)
+
+    if (!dispensations) {
+      this.logger.debug(`No prescription dispensations grouped returned`, {
         category: LOG_CATEGORY,
       })
       return null
@@ -66,6 +80,7 @@ export class HealthDirectorateHealthService {
     return dispensations
   }
 
+  /* Lyfseðlar */
   public async getPrescriptions(
     auth: Auth,
     locale: string,
