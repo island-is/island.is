@@ -50,9 +50,9 @@ mkdir -p "${CACHE_MOUNT}"
 
 # Define cache contents based on cache type
 if [ "$CACHE_TYPE" = "full" ]; then
-  CACHE_CONTENTS="node_modules .yarn/cache .yarn/install-state.gz"
+  CACHE_CONTENTS=("node_modules" ".yarn/cache" ".yarn/install-state.gz")
 else
-  CACHE_CONTENTS=".yarn/cache .yarn/install-state.gz"
+  CACHE_CONTENTS=(".yarn/cache" ".yarn/install-state.gz")
 fi
 
 # Check if the cache archive exists
@@ -74,7 +74,17 @@ else
 
   echo "Creating cache archive..."
   acquire_lock
-  if tar -cf - "$CACHE_CONTENTS" | zstd -T0 -3 >"${ARCHIVE_PATH}"; then
+
+  # Check if all cache contents exist before creating the archive
+  for item in "${CACHE_CONTENTS[@]}"; do
+    if [ ! -e "$item" ]; then
+      echo "Warning: $item does not exist, skipping cache creation"
+      release_lock
+      exit 0
+    fi
+  done
+
+  if tar -cf - "${CACHE_CONTENTS[@]}" | zstd -T0 -3 >"${ARCHIVE_PATH}"; then
     echo "Cache archive created successfully. Size: $(du -h "${ARCHIVE_PATH}" | cut -f1)"
   else
     echo "Failed to create cache archive" >&2
