@@ -14,6 +14,7 @@ import { ApplicationAttachmentProvider } from './attachments/providers/applicati
 import { applicationToCaseRequest } from './complaints-to-althingi-ombudsman.utils'
 import { generateComplaintPdf } from './pdfGenerators'
 import { SharedTemplateApiService } from '../../shared'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateApiService {
@@ -24,6 +25,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     private readonly tokenMiddleware: TokenMiddleware,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {
     super(ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN)
   }
@@ -64,6 +66,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
       as false, we need to handle that case explicitly
     */
     if (response.succeeded !== true) {
+      this.logger.error('External endpoint returned non-success');
       throw new HttpException(
         response.message ?? 'Request returned an Error',
         response.returnCode ?? 500,
