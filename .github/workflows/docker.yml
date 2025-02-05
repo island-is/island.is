@@ -68,7 +68,6 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
       playwright-image-tag: ${{ steps.args-prep.outputs.playwright-image-tag }}
-      container-registry: ${{ steps.args-prep.outputs.container-registry }}
     steps:
       - uses: actions/checkout@v4
 
