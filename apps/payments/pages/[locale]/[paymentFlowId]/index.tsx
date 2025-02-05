@@ -193,7 +193,7 @@ export default function PaymentPage({
     !paymentFlow.availablePaymentMethods
 
   const waitForCardVerification = async () => {
-    const maximumWaitTimeSeconds = 60
+    const maximumWaitTimeSeconds = 2 * 60
     let remainingWaitTimeInMilliSeconds = maximumWaitTimeSeconds * 1000
 
     const interval = 5000
