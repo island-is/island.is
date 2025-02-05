@@ -155,15 +155,10 @@ jobs:
         run: |
           echo file="scripts/ci/Dockerfile" | tee -a "$GITHUB_OUTPUT"
           echo push="$localrun" | tee -a "$GITHUB_OUTPUT"
-
-          echo 'build-args<<EOF' | tee -a "$GITHUB_OUTPUT"
-          echo "$build_args" | tee -a "$GITHUB_OUTPUT"
-          echo 'EOF' | tee -a "$GITHUB_OUTPUT"
-
+          echo -e "build-args<<EOF\n$build_args\nEOF" | tee -a "$GITHUB_OUTPUT"
           echo -e "image-repository<<EOF\n$image_repository\nEOF" | tee -a "$GITHUB_OUTPUT"
-
-          echo cache-from="$cache_from" | tee -a "$GITHUB_OUTPUT"
-          echo cache-to="$cache_to" | tee -a "$GITHUB_OUTPUT"
+          echo -e "cache-from<<EOF\n$cache_from\nEOF" | tee -a "$GITHUB_OUTPUT"
+          echo -e "cache-to<<EOF$cache_to\nEOF" | tee -a "$GITHUB_OUTPUT"
 
       - name: Configure AWS Credentials
         if: ${{ !github.event.localrun }}
