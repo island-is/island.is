@@ -21,6 +21,7 @@ import {
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
+import { SpeedingOffenseFields } from './SpeedingOffenseFields'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
 
@@ -33,6 +34,9 @@ const getUpdatedOffenses = (
 ]
 const getDrunkDriving = (offenses: Offense[]) =>
   offenses.find((o) => o.offense === IndictmentCountOffense.DRUNK_DRIVING)
+
+const getSpeeding = (offenses: Offense[]) =>
+  offenses.find((o) => o.offense === IndictmentCountOffense.SPEEDING)
 
 export const Offenses = ({
   workingCase,
@@ -66,6 +70,7 @@ export const Offenses = ({
     [indictmentCount.offenses],
   )
   const drunkDrivingOffense = getDrunkDriving(offenses)
+  const speedingOffense = getSpeeding(offenses)
 
   const offensesOptions = useMemo(
     () =>
@@ -82,7 +87,7 @@ export const Offenses = ({
     selectedOffense: IndictmentCountOffense,
   ) => {
     const hasOffense = offenses?.some((o) => o.offense === selectedOffense)
-    console.log({hasOffense, offenses})
+    console.log({ hasOffense, offenses })
     if (!hasOffense) {
       const newOffense = await createOffense(
         workingCase.id,
@@ -158,6 +163,7 @@ export const Offenses = ({
 
   return (
     <>
+      {/* OFFENSE */}
       <Box marginBottom={2}>
         <SectionHeading
           heading="h4"
@@ -204,6 +210,7 @@ export const Offenses = ({
           })}
         </Box>
       )}
+      {/* ALCOHOL OFFENSE FIELDS */}
       {drunkDrivingOffense && (
         <Box marginBottom={2}>
           <SectionHeading
@@ -276,6 +283,15 @@ export const Offenses = ({
             />
           </InputMask>
         </Box>
+      )}
+      {/* SPEEDING OFFENSE FIELDS */}
+      {speedingOffense && (
+        <SpeedingOffenseFields
+          setWorkingCase={setWorkingCase}
+          indictmentCount={indictmentCount}
+          handleIndictmentCountChanges={handleIndictmentCountChanges}
+          updateIndictmentCountState={updateIndictmentCountState}
+        />
       )}
     </>
   )

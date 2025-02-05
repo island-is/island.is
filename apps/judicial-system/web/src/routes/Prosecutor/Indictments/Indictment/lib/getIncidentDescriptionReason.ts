@@ -60,9 +60,9 @@ export const getIncidentDescriptionReason = (
       return acc
     }, '')
 
-  const substances = offenses.filter((o) => o.substances).flatMap(({ substances }) =>
-    Object.entries(substances as SubstanceMap),
-  )
+  const substances = offenses
+    .filter((o) => o.substances)
+    .flatMap(({ substances }) => Object.entries(substances as SubstanceMap))
   reason += substances.reduce((acc, substance, index) => {
     if (index === 0) {
       acc += ` (${formatMessage(
