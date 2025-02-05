@@ -24,8 +24,6 @@ import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
-import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
-import { UserContext } from '../UserProvider/UserProvider'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
@@ -180,8 +178,6 @@ const Table: FC<TableProps> = (props) => {
         return courtAbbreviation
           ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
           : entry.courtCaseNumber ?? ''
-      case 'state':
-        return mapCaseStateToTagVariant(formatMessage, entry).text
       default:
         return entry[column]?.toString() ?? ''
     }
