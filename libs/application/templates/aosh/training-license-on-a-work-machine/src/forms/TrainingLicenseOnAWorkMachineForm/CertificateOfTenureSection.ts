@@ -54,8 +54,7 @@ export const certificateOfTenureSection = buildSection({
           id: 'certificateOfTenure.tenureInHours',
           title: certificateOfTenure.labels.tenureInHours,
           width: 'half',
-          format: '####',
-          // variant: 'number',
+          variant: 'number',
         }),
         buildCheckboxField({
           id: 'certificateOfTenure.approveMachines',

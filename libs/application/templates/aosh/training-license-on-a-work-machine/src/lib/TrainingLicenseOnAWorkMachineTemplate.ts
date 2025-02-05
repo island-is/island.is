@@ -25,6 +25,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { isContractor } from '../utils'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -34,25 +35,13 @@ const pruneInDaysAtMidnight = (application: Application, days: number) => {
   return pruneDate
 }
 
-const determineMessageFromApplicationAnswers = (application: Application) => {
-  const regNumber = getValueViaPath(
-    application.answers,
-    'machine.regNumber',
-    undefined,
-  ) as string | undefined
-  return {
-    name: applicationMessage.name,
-    value: regNumber ? `- ${regNumber}` : '',
-  }
-}
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE,
-  name: determineMessageFromApplicationAnswers,
+  name: applicationMessage.name,
   institution: applicationMessage.institutionName,
   translationNamespaces:
     ApplicationConfigurations[
@@ -61,9 +50,6 @@ const template: ApplicationTemplate<
   dataSchema: TrainingLicenseOnAWorkMachineAnswersSchema,
   featureFlag: Features.TrainingLicenseOnAWorkMachineEnabled,
   allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
     {
       type: AuthDelegationType.Custom,
     },
@@ -152,7 +138,13 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.COMPLETED,
+              cond: (context) => isContractor(context.application.answers),
+            },
+            { target: States.REVIEW },
+          ],
         },
       },
       [States.REVIEW]: {
@@ -194,8 +186,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ReviewForm').then((module) =>
-                  Promise.resolve(module.ReviewForm),
+                import('../forms/ApplicantReview').then((module) =>
+                  Promise.resolve(module.ApplicantReview),
                 ),
               write: {
                 answers: [],
@@ -217,8 +209,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          // [DefaultEvents.REJECT]: { target: States.REJECTED },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
       [States.COMPLETED]: {
@@ -239,16 +231,43 @@ const template: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
-          // roles: [
-          //   {
-          //     id: Roles.APPLICANT,
-          //     formLoader: () =>
-          //       import('../forms/Conclusion').then((module) =>
-          //         Promise.resolve(module.Conclusion),
-          //       ),
-          //     read: 'all',
-          //   },
-          // ],
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Conclusion').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
+              read: 'all',
+            }, // Should assignee see anything here?
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: 'Rejected',
+          status: 'rejected',
+          lifecycle: pruneAfterDays(30),
+          // onEntry: defineTemplateApi({
+          //   action: ApiActions.submitApplication,
+          // }), // Will there be a rejectApplication ?
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardRejected,
+              variant: 'blueberry',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                // Change to rejected
+                import('../forms/Conclusion').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
+              read: 'all',
+            }, // Should assignee see anything here?
+          ],
         },
       },
     },
@@ -260,7 +279,7 @@ const template: ApplicationTemplate<
 
         const assigneeNationalId = getValueViaPath<string>(
           application.answers,
-          'assignee.nationalId',
+          'assigneeInformation.assignee.nationalId',
           '',
         )
         if (assigneeNationalId !== null && assigneeNationalId !== '') {
@@ -276,7 +295,7 @@ const template: ApplicationTemplate<
   ): ApplicationRole | undefined {
     const assigneeNationalId = getValueViaPath<string>(
       application.answers,
-      'assignee.nationalId',
+      'assigneeInformation.assignee.nationalId',
       '',
     )
     if (id === application.applicant) {

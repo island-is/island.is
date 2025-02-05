@@ -13,7 +13,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly workMachineClientService: WorkMachinesClientService,
   ) {
-    super(ApplicationTypes.STREET_REGISTRATION)
+    super(ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE)
   }
 
   async submitApplication({
@@ -21,5 +21,6 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // Submit
+    console.log('SUBMITTING APPLICATION')
   }
 }

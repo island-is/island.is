@@ -15,11 +15,16 @@ export const reviewOverviewSection = buildSection({
       id: 'reviewOverviewSection.multiField',
       title: overview.general.pageTitle,
       children: [
-        buildCustomField({
-          id: 'reviewOverview',
-          title: '',
-          component: 'Overview',
-        }),
+        buildCustomField(
+          {
+            id: 'reviewOverview',
+            title: '',
+            component: 'Overview',
+          },
+          {
+            hideActionButtons: true,
+          },
+        ),
         buildSubmitField({
           id: 'submitReview',
           placement: 'footer',

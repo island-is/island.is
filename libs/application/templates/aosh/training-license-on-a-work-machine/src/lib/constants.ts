@@ -1,7 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
+  type: DefaultEvents.SUBMIT | DefaultEvents.REJECT
 }
 
 export enum States {
@@ -9,6 +9,7 @@ export enum States {
   DRAFT = 'draft',
   REVIEW = 'review',
   COMPLETED = 'completed',
+  REJECTED = 'rejected',
 }
 
 export enum Roles {

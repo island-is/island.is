@@ -16,10 +16,19 @@ import {
 } from '../../utils'
 import { getMachineTenureInformation } from '../../utils/getMachineTenureInformation'
 
-export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  ...props
-}) => {
-  const { application, goToScreen } = props
+type HideActionButtons = {
+  field: {
+    props: {
+      hideActionButtons?: boolean
+    }
+  }
+}
+
+export const Overview: FC<
+  React.PropsWithChildren<FieldBaseProps & HideActionButtons>
+> = ({ ...props }) => {
+  const { application, goToScreen, field } = props
+  const { hideActionButtons } = field.props
   const { formatMessage } = useLocale()
 
   const onClick = (page: string) => {
@@ -30,7 +39,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <Box>
       <ReviewGroup
         handleClick={() => onClick('informationMultiField')}
-        editMessage={formatMessage(overview.labels.editMessage)}
+        editMessage={
+          hideActionButtons
+            ? undefined
+            : formatMessage(overview.labels.editMessage)
+        }
         title={formatMessage(overview.labels.applicant)}
         isFirst
       >
@@ -49,7 +62,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
       <ReviewGroup
         handleClick={() => onClick('certificateOfTenureMultiField')}
-        editMessage={formatMessage(overview.labels.editMessage)}
+        editMessage={
+          hideActionButtons
+            ? undefined
+            : formatMessage(overview.labels.editMessage)
+        }
         title={formatMessage(overview.labels.machineTenure)}
         isLast={isContractor(application.answers)}
       >
@@ -72,7 +89,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       {!isContractor(application.answers) && (
         <ReviewGroup
           handleClick={() => onClick('assigneeInformationMultiField')}
-          editMessage={formatMessage(overview.labels.editMessage)}
+          editMessage={
+            hideActionButtons
+              ? undefined
+              : formatMessage(overview.labels.editMessage)
+          }
           title={formatMessage(overview.labels.assignee)}
         >
           <KeyValueFormField

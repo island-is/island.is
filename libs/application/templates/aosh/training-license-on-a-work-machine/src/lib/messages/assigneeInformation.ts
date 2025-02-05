@@ -51,8 +51,20 @@ export const assigneeInformation = {
     },
     isContractor: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.isContractor',
-      defaultMessage: 'Ég er verktaki',
+      defaultMessage: 'Ég er verktaki/sjálfstætt starfandi',
       description: `Assignee information contractor label`,
+    },
+    isContractorAlert: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.isContractorAlert',
+      defaultMessage:
+        'Verktakar sem gera grein fyrir sínum eigin vinnutíma þurfa ekki að skrá staðfestingaraðila.',
+      description: `Assignee information contractor alert`,
+    },
+    isSameAsApplicantAlert: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.isSameAsApplicantAlert',
+      defaultMessage:
+        'Staðfestingaraðili má ekki vera sá sami og umsækjandi. Ef að þú ert verktaki/sjálfstætt starfandi þá biðjum við þig um að haka í reitin hér fyrir ofan.',
+      description: `Assignee information same as applicant alert`,
     },
   }),
 }

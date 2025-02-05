@@ -23,6 +23,12 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is done',
   },
+  actionCardRejected: {
+    id: 'aosh.tlwm.application:actionCardRejected',
+    defaultMessage: 'Hafnað',
+    description:
+      'Description of application state/status when application is rejected',
+  },
   actionCardPrerequisites: {
     id: 'aosh.tlwm.application:actionCardPrerequisites',
     defaultMessage: 'Gagnaöflun',

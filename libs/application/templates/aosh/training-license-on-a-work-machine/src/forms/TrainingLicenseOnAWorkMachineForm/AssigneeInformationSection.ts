@@ -1,14 +1,15 @@
 import {
   buildMultiField,
-  buildTextField,
   buildSection,
-  buildPhoneField,
   buildCheckboxField,
   YES,
   buildNationalIdWithNameField,
+  buildAlertMessageField,
+  getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { assigneeInformation } from '../../lib/messages'
-import { isContractor } from '../../utils'
+import { isContractor, isSameAsApplicant } from '../../utils'
 
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
@@ -54,6 +55,28 @@ export const assigneeInformationSection = buildSection({
           searchPersons: true,
           required: true,
           condition: (answers) => !isContractor(answers),
+        }),
+        buildAlertMessageField({
+          id: 'assigneeInformation.isSameAsApplicantAlert',
+          title: '',
+          message: assigneeInformation.labels.isSameAsApplicantAlert,
+          doesNotRequireAnswer: true,
+          alertType: 'warning',
+          condition: (answers) =>
+            isSameAsApplicant(answers) && !isContractor(answers),
+        }),
+        buildAlertMessageField({
+          id: 'assigneeInformation.isContractorAlert',
+          title: '',
+          message: assigneeInformation.labels.isContractorAlert,
+          doesNotRequireAnswer: true,
+          alertType: 'info',
+          condition: isContractor,
+        }),
+        buildCustomField({
+          id: 'assigneeInformation.isSameAsApplicant',
+          title: '',
+          component: 'SameAsApplicantCheck',
         }),
       ],
     }),
