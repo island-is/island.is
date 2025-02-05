@@ -153,7 +153,7 @@ jobs:
             ${{ steps.args.outputs.build-cache }},mode=max
           localrun: ${{ !!github.event.localrun }}
         run: |
-          echo | jq -s -c \
+          echo | jq -rsc \
             --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
           '{
             file: "scripts/ci/Dockerfile",
@@ -162,7 +162,7 @@ jobs:
             "image-repository": $image_repository,
             "cache-from": $cache_from,
             "cache-to": $cache_to,
-          } | to_entries | .[] | "\(.key)=\(.value)"' | tee -a "$GITHUB_OUTPUT"
+          } | to_entries | .[] | "\(.key)<<EOF\n\(.value)\nEOF"' | tee -a "$GITHUB_OUTPUT"
 
       - name: Configure AWS Credentials
         if: ${{ !github.event.localrun }}
