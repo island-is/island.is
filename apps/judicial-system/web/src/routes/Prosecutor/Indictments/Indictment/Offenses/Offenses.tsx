@@ -86,7 +86,7 @@ export const Offenses = ({
       Object.values(IndictmentCountOffense).map((offense) => ({
         value: offense,
         label: formatMessage(enumStrings[offense]),
-        disabled: offenses?.some((o) => o.offense === offense),
+        disabled: offenses.some((o) => o.offense === offense),
       })),
     [formatMessage, offenses],
   )
@@ -95,7 +95,7 @@ export const Offenses = ({
   const handleCreateOffense = async (
     selectedOffense: IndictmentCountOffense,
   ) => {
-    const hasOffense = offenses?.some((o) => o.offense === selectedOffense)
+    const hasOffense = offenses.some((o) => o.offense === selectedOffense)
     if (!hasOffense) {
       const newOffense = await createOffense(
         workingCase.id,
@@ -103,14 +103,10 @@ export const Offenses = ({
         selectedOffense,
       )
       if (newOffense) {
-        const updatedOffenses = [...(offenses || []), newOffense]
-        // add the new offense to the offenses on the indictment count state
-        updateIndictmentCountState(
-          indictmentCount.id,
-          {},
-          setWorkingCase,
-          updatedOffenses,
-        )
+        const updatedOffenses = [...offenses, newOffense]
+
+        // handle changes on indictment count impacted by creating an offense
+        handleIndictmentCountChanges({}, updatedOffenses)
       }
     }
   }
@@ -120,23 +116,18 @@ export const Offenses = ({
     offense: IndictmentCountOffense,
   ) => {
     await deleteOffense(workingCase.id, indictmentCount.id, offenseId)
-    const updatedOffenses = offenses?.filter((o) => o.id !== offenseId)
-
-    // handle the offenses state on the indictment count
-    updateIndictmentCountState(
-      indictmentCount.id,
-      {},
-      setWorkingCase,
-      updatedOffenses,
-    )
+    const updatedOffenses = offenses.filter((o) => o.id !== offenseId)
 
     // handle changes on indictment count impacted by deleting an offense
-    handleIndictmentCountChanges({
-      ...(offense === IndictmentCountOffense.SPEEDING && {
-        recordedSpeed: null,
-        speedLimit: null,
-      }),
-    })
+    handleIndictmentCountChanges(
+      {
+        ...(offense === IndictmentCountOffense.SPEEDING && {
+          recordedSpeed: null,
+          speedLimit: null,
+        }),
+      },
+      updatedOffenses,
+    )
   }
 
   const handleOffenseSubstanceUpdate = async (
@@ -158,13 +149,6 @@ export const Offenses = ({
 
     if (updatedOffense) {
       const updatedOffenses = getUpdatedOffenses(offenses, updatedOffense)
-      updateIndictmentCountState(
-        indictmentCount.id,
-        {},
-        setWorkingCase,
-        updatedOffenses,
-      )
-
       handleIndictmentCountChanges({}, updatedOffenses)
     }
   }

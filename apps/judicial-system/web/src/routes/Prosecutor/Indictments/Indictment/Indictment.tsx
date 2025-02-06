@@ -7,9 +7,11 @@ import router from 'next/router'
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,6 +28,7 @@ import {
   IndictmentCountOffense,
   Institution,
   Maybe,
+  Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
@@ -78,6 +81,9 @@ export const getIndictmentIntroductionAutofill = (
 }
 
 const Indictment = () => {
+  const { features } = useContext(FeatureContext)
+  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
+
   const {
     workingCase,
     setWorkingCase,
@@ -85,6 +91,7 @@ const Indictment = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const {
@@ -129,16 +136,26 @@ const Indictment = () => {
       // If the case has:
       // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
-      const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.deprecatedOffenses?.some((offense) =>
-          [
-            IndictmentCountOffense.DRUNK_DRIVING,
-            IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-            IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-          ].includes(offense),
-        ),
-      )
-
+      const requestDriversLicenseSuspension = isOffenseEndpointEnabled
+        ? indictmentCounts?.some((count) => {
+            console.log({ test: count.offenses })
+            return count.offenses?.some((o) =>
+              [
+                IndictmentCountOffense.DRUNK_DRIVING,
+                IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+                IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+              ].includes(o.offense),
+            )
+          })
+        : indictmentCounts?.some((count) =>
+            count.deprecatedOffenses?.some((offense) =>
+              [
+                IndictmentCountOffense.DRUNK_DRIVING,
+                IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+                IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+              ].includes(offense),
+            ),
+          )
       if (
         requestDriversLicenseSuspension !==
         workingCase.requestDriversLicenseSuspension
@@ -158,7 +175,13 @@ const Indictment = () => {
         )
       }
     },
-    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+    [
+      isOffenseEndpointEnabled,
+      formatMessage,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -191,6 +214,7 @@ const Indictment = () => {
     async (
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
+      updatedOffenses?: Offense[],
     ) => {
       if (
         updatedIndictmentCount.policeCaseNumber &&
@@ -218,7 +242,9 @@ const Indictment = () => {
 
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId ? returnedIndictmentCount : count,
+          count.id === indictmentCountId
+            ? { ...returnedIndictmentCount, offenses: updatedOffenses }
+            : count,
         ),
       )
 
@@ -226,6 +252,7 @@ const Indictment = () => {
         indictmentCountId,
         returnedIndictmentCount,
         setWorkingCase,
+        updatedOffenses,
       )
     },
     [

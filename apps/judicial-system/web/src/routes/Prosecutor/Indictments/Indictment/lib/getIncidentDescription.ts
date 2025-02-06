@@ -4,14 +4,64 @@ import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CrimeScene,
+  IndictmentSubtype,
+  SubstanceMap,
+} from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  Maybe,
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getDeprecatedIncidentDescriptionReason } from './getDeprecatedIncidentDescriptionReason'
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
+
+const getDeprecatedIncidentDescriptionProps = ({
+  deprecatedOffenses,
+  formatMessage,
+  substances,
+}: {
+  deprecatedOffenses?: Maybe<IndictmentCountOffense[]>
+  formatMessage: IntlShape['formatMessage']
+  substances?: SubstanceMap | null
+}) => {
+  if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
+    return undefined
+  }
+
+  const reason = getDeprecatedIncidentDescriptionReason(
+    deprecatedOffenses,
+    substances || {},
+    formatMessage,
+  )
+  const isSpeeding = deprecatedOffenses?.includes(
+    IndictmentCountOffense.SPEEDING,
+  )
+
+  return { reason, isSpeeding }
+}
+
+const getIncidentDescriptionProps = ({
+  offenses,
+  formatMessage,
+}: {
+  offenses?: Maybe<Offense[]>
+  formatMessage: IntlShape['formatMessage']
+}) => {
+  if (!offenses || offenses.length === 0) {
+    return undefined
+  }
+  const reason = getIncidentDescriptionReason(offenses || [], formatMessage)
+  const isSpeeding = offenses?.some(
+    (o) => o.offense === IndictmentCountOffense.SPEEDING,
+  )
+  return { reason, isSpeeding }
+}
 
 export const getIncidentDescription = (
   indictmentCount: TempIndictmentCount,
@@ -54,28 +104,18 @@ export const getIncidentDescription = (
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
-    if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
+    const incidentDecriptionProps = isOffenseEndpointEnabled
+      ? getIncidentDescriptionProps({ offenses, formatMessage })
+      : getDeprecatedIncidentDescriptionProps({
+          deprecatedOffenses,
+          formatMessage,
+          substances,
+        })
+    if (!incidentDecriptionProps) {
       return ''
     }
 
-    const { reason, isSpeeding } = isOffenseEndpointEnabled
-      ? {
-          reason: getIncidentDescriptionReason(offenses || [], formatMessage),
-          isSpeeding: indictmentCount.offenses?.some(
-            (o) => o.offense === IndictmentCountOffense.SPEEDING,
-          ),
-        }
-      : {
-          reason: getDeprecatedIncidentDescriptionReason(
-            deprecatedOffenses,
-            substances || {},
-            formatMessage,
-          ),
-          isSpeeding: indictmentCount.deprecatedOffenses?.includes(
-            IndictmentCountOffense.SPEEDING,
-          ),
-        }
-
+    const { reason, isSpeeding } = incidentDecriptionProps
     const recordedSpeed = indictmentCount.recordedSpeed ?? '[Mældur hraði]'
     const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
 

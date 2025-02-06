@@ -68,6 +68,7 @@ interface Props {
   onChange: (
     indictmentCountId: string,
     updatedIndictmentCount: UpdateIndictmentCount,
+    updatedOffenses?: Offense[],
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
   updateIndictmentCountState: (
@@ -297,27 +298,28 @@ export const IndictmentCount: FC<Props> = ({
     [lawTag, indictmentCount.lawsBroken],
   )
 
-  // we don't pass in the new offenses as part of the update
   const handleIndictmentCountChanges = (
     update: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
   ) => {
     let lawsBroken
 
-    const hasUpdatedOffenses = updatedOffenses || update.deprecatedOffenses
-    if (hasUpdatedOffenses) {
-      const offenses =
-        updatedOffenses?.map((o) => o.offense).filter((offense) => !!offense) ||
-        update.deprecatedOffenses ||
-        indictmentCount.deprecatedOffenses
-      // TODO: remove both latter conditions when we clean up deprecated offenses
-      const substances =
-        updatedOffenses?.reduce(
-          (res, offense) => ({ ...res, ...offense.substances }),
-          {} as SubstanceMap,
-        ) ||
-        update.substances ||
-        indictmentCount.substances
+    const hasUpdatedOffenses = isOffenseEndpointEnabled
+      ? updatedOffenses
+      : update.deprecatedOffenses
+    const hasUpdatedDeprecatedSubstances = isOffenseEndpointEnabled
+      ? false
+      : update.substances
+    if (hasUpdatedOffenses || hasUpdatedDeprecatedSubstances) {
+      const offenses = isOffenseEndpointEnabled
+        ? updatedOffenses?.map((o) => o.offense).filter((offense) => !!offense)
+        : update.deprecatedOffenses || indictmentCount.deprecatedOffenses
+      const substances = isOffenseEndpointEnabled
+        ? updatedOffenses?.reduce(
+            (res, offense) => ({ ...res, ...offense.substances }),
+            {} as SubstanceMap,
+          )
+        : update.substances || indictmentCount.substances
 
       lawsBroken = getLawsBroken(offenses, substances)
     }
@@ -346,10 +348,15 @@ export const IndictmentCount: FC<Props> = ({
       isOffenseEndpointEnabled,
     )
 
-    onChange(indictmentCount.id, {
-      incidentDescription,
-      ...update,
-    })
+    console.log({ incidentDescription })
+    onChange(
+      indictmentCount.id,
+      {
+        incidentDescription,
+        ...update,
+      },
+      updatedOffenses,
+    )
   }
 
   const handleSubtypeChange = (
