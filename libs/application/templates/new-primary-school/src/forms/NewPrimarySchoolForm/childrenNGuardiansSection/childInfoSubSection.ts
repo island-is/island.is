@@ -82,7 +82,6 @@ export const childInfoSubSection = buildSubSection({
         ),
         buildCheckboxField({
           id: 'childInfo.usePronounAndPreferredName',
-          title: '',
           spacing: 0,
           options: [
             {
