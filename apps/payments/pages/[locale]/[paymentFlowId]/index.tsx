@@ -169,6 +169,11 @@ export default function PaymentPage({
   const methods = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
+    defaultValues: {
+      card: '',
+      cardExpiry: '',
+      cardCVC: '',
+    },
   })
   const { formatMessage } = useLocale()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -389,7 +394,7 @@ export default function PaymentPage({
               <PaymentReceipt
                 productTitle={productInformation.title}
                 amount={productInformation.amount}
-                paidAt={new Date()}
+                paidAt={new Date()} // TODO: Get paidAt from paymentFlow
               />
               <Box marginTop={4} width="full">
                 <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
