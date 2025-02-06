@@ -82,14 +82,6 @@ jobs:
 
   docker-build:
     uses: ./.github/workflows/docker.yml
-    needs:
-      - prepare
-    with:
-      projects: ${{ needs.prepare.outputs.affected }}
-      build-args: |
-        NX_PARALLEL=${{ fromJson(needs.prepare.outputs.nx).parallel }}
-        NX_MAX_PARALLEL=${{ fromJson(needs.prepare.outputs.nx).max-parallel }}
-        NX_TASKS_RUNNER=ci
 
   success:
     runs-on: arc-runners
