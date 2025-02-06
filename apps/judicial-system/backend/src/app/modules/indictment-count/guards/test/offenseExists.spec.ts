@@ -1,7 +1,6 @@
 import { uuid } from 'uuidv4'
 
 import {
-  BadRequestException,
   ExecutionContext,
   NotFoundException,
 } from '@nestjs/common'
