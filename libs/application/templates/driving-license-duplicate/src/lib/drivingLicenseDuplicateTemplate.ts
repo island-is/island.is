@@ -28,6 +28,7 @@ import {
 } from './getApplicationFeatureFlags'
 import {
   DuplicateEligibilityApi,
+  MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import {
@@ -137,6 +138,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                   },
                 }),
                 SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 QualitySignatureApi,
                 QualityPhotoApi,
                 UserProfileApi,

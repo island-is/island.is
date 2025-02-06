@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/types'
 import {
   DuplicateEligibilityApi,
+  MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 
@@ -66,6 +67,10 @@ export const sectionDataProviders = buildSection({
         }),
         buildDataProviderItem({
           provider: SyslumadurPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MockableSyslumadurPaymentCatalogApi,
           title: '',
         }),
       ],
