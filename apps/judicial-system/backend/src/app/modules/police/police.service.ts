@@ -617,6 +617,7 @@ export class PoliceService {
     subpoena: string,
     indictment: string,
     user: User,
+    civilClaim?: string,
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
       workingCase
@@ -630,6 +631,7 @@ export class PoliceService {
     const arraignmentInfo = dateLogs?.find(
       (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
     )
+
     try {
       const res = await this.fetchPoliceCaseApi(
         `${this.xRoadPath}/CreateSubpoena`,
@@ -644,7 +646,11 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentsBase64: [subpoena, indictment],
+            documentsBase64: [
+              subpoena,
+              indictment,
+              ...(civilClaim ? [civilClaim] : []),
+            ],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
