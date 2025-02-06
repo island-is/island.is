@@ -233,10 +233,8 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
-          cache-from: |
-            type=gha
-          cache-to: |
-              type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Docker build/cache dependencies (deps)
         uses: docker/build-push-action@v6
         with:
