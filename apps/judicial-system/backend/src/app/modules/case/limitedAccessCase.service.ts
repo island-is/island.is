@@ -523,52 +523,91 @@ export class LimitedAccessCaseService {
     })
   }
 
+  private async tryAddFileToFilesToZip(
+    bufferPromise: Promise<Buffer>,
+    name: string,
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    const data = await bufferPromise
+
+    filesToZip.push({ data, name: name })
+  }
+
+  private async tryAddGeneratedPdfToFilesToZip(
+    pdfPromise: Promise<Buffer>,
+    name: string,
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    try {
+      await this.tryAddFileToFilesToZip(pdfPromise, name, filesToZip)
+    } catch (error) {
+      // Tolerate failure, but log what happened
+      this.logger.warn(`Could not generate PDF ${name}`, { error })
+    }
+  }
+
+  private async tryAddCaseFileFromS3ToFilesToZip(
+    theCase: Case,
+    file: CaseFile,
+    filesToZip: { data: Buffer; name: string }[] = [],
+  ) {
+    try {
+      await this.tryAddFileToFilesToZip(
+        this.fileService.getCaseFileFromS3(theCase, file),
+        file.name,
+        filesToZip,
+      )
+    } catch (error) {
+      // Tolerate failure, but log what happened
+      this.logger.warn(
+        `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+        { error },
+      )
+    }
+  }
+
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const filesToZip: { data: Buffer; name: string }[] = []
-    const awailableCseFileCategories = getDefenceUserCaseFileCategories(
+    const allowedCseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
       theCase.defendants,
       theCase.civilClaimants,
     )
 
-    const awailableCaseFiles =
+    const allowedCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
           file.key &&
           file.category &&
-          awailableCseFileCategories.includes(file.category),
+          allowedCseFileCategories.includes(file.category),
       ) ?? []
 
-    const caseFilesByCategoryPromises = awailableCaseFiles.map(async (file) => {
-      return this.fileService
-        .getCaseFileFromS3(theCase, file)
-        .then((data) => filesToZip.push({ data, name: file.name }))
-        .catch((reason) =>
-          // Tolerate failure, but log what happened
-          this.logger.warn(
-            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
-            { reason },
-          ),
-        )
+    const promises: Promise<void>[] = []
+    const filesToZip: { data: Buffer; name: string }[] = []
+
+    allowedCaseFiles.forEach((file) => {
+      promises.push(
+        this.tryAddCaseFileFromS3ToFilesToZip(theCase, file, filesToZip),
+      )
     })
 
-    await Promise.all(caseFilesByCategoryPromises)
-
     if (isRequestCase(theCase.type)) {
-      filesToZip.push(
-        {
-          data: await this.pdfService.getRequestPdf(theCase),
-          name: 'Krafa.pdf',
-        },
-        {
-          data: await this.pdfService.getCourtRecordPdf(theCase, user),
-          name: 'Þingbók.pdf',
-        },
-        {
-          data: await this.pdfService.getRulingPdf(theCase),
-          name: 'Úrskurður.pdf',
-        },
+      promises.push(
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getRequestPdf(theCase),
+          'Krafa.pdf',
+          filesToZip,
+        ),
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getCourtRecordPdf(theCase, user),
+          'Þingbók.pdf',
+          filesToZip,
+        ),
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getRulingPdf(theCase),
+          'Úrskurður.pdf',
+          filesToZip,
+        ),
       )
     }
 
@@ -583,45 +622,38 @@ export class LimitedAccessCaseService {
           theCase.civilClaimants,
         ))
     ) {
-      filesToZip.push({
-        data: await this.pdfService.getIndictmentPdf(theCase),
-        name: 'Ákæra.pdf',
-      })
-
-      const caseFilesRecordPromises = theCase.policeCaseNumbers.map(
-        async (policeCaseNumber) => {
-          return this.pdfService
-            .getCaseFilesRecordPdf(theCase, policeCaseNumber)
-            .then((data) =>
-              filesToZip.push({
-                data,
-                name: `Skjalaskrá-${policeCaseNumber}.pdf`,
-              }),
-            )
-        },
-      )
-
-      await Promise.all(caseFilesRecordPromises)
-
-      const subpoenaPromises: Promise<number>[] = []
-
-      theCase.defendants?.map((defendant) =>
-        defendant.subpoenas?.map((subpoena) =>
-          subpoenaPromises.push(
-            this.pdfService
-              .getSubpoenaPdf(theCase, defendant, subpoena)
-              .then((data) =>
-                filesToZip.push({
-                  data,
-                  name: `Fyrirkall-${defendant.name}.pdf`,
-                }),
-              ),
-          ),
+      promises.push(
+        this.tryAddGeneratedPdfToFilesToZip(
+          this.pdfService.getIndictmentPdf(theCase),
+          'Ákæra.pdf',
+          filesToZip,
         ),
       )
 
-      await Promise.all(subpoenaPromises)
+      theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCaseFilesRecordPdf(theCase, policeCaseNumber),
+            `Skjalaskrá-${policeCaseNumber}.pdf`,
+            filesToZip,
+          ),
+        )
+      })
+
+      theCase.defendants?.forEach((defendant) =>
+        defendant.subpoenas?.forEach((subpoena) =>
+          promises.push(
+            this.tryAddGeneratedPdfToFilesToZip(
+              this.pdfService.getSubpoenaPdf(theCase, defendant, subpoena),
+              `Fyrirkall-${defendant.name}.pdf`,
+              filesToZip,
+            ),
+          ),
+        ),
+      )
     }
+
+    await Promise.all(promises)
 
     return this.zipFiles(filesToZip)
   }
