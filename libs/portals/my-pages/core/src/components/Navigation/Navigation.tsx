@@ -233,7 +233,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
         href={asSpan ? undefined : titleLink?.href}
         borderRadius="large"
         className={styles.link}
-        paddingX={2}
+        paddingX={[2, 2, 2, 4]}
         paddingY={basePadding.paddingY}
       >
         {({ isFocused, isHovered }) => {
@@ -259,7 +259,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       titleProps,
     )
   ) : (
-    <Box paddingX={2} paddingBottom={1} style={{ paddingTop: 6 }}>
+    <Box paddingX={[2, 2, 2, 4]} paddingBottom={1} style={{ paddingTop: 6 }}>
       <Box display="flex" flexDirection="row" alignItems="center">
         {titleIcon && (
           <Box
@@ -384,7 +384,7 @@ const MobileNavigationDialog = ({
           <Box
             position="absolute"
             right={0}
-            marginRight={2}
+            marginRight={[2, 2, 2, 4]}
             style={{ top: '50%', transform: 'translateY(-50%)' }}
           >
             <FocusableBox
