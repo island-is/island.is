@@ -164,7 +164,7 @@ jobs:
             --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
           '{
             file: "scripts/ci/Dockerfile",
-            push: false,
+            push: true,
             "build-args": $build_args,
             "image-repository": $image_repository,
             "cache-from": $cache_from,
