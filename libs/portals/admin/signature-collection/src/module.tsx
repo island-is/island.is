@@ -28,6 +28,57 @@ export const signatureCollectionModule: PortalModule = {
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
   routes: (props) => [
+    /* ------ Municipal ------ */
+    {
+      name: 'Sveitarstjórnarkosningar',
+      path: SignatureCollectionPaths.MunicipalRoot,
+      element: (
+        <ParliamentaryRoot
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
+      loader: listsLoader(props),
+    },
+    {
+      name: 'Sveitó',
+      path: SignatureCollectionPaths.MunicipalArea1,
+      element: (
+        <ParliamentaryConstituency
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
+      loader: listsLoader(props),
+    },
+    {
+      name: 'Sveitó',
+      path: SignatureCollectionPaths.MunicipalArea2,
+      element: (
+        <ParliamentaryConstituency
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
+      loader: listsLoader(props),
+      
+    },
+    {
+      name: 'Sveitó',
+      path: SignatureCollectionPaths.MunicipalAreaList,
+      element: (
+        <ParliamentaryList
+          allowedToProcess={props.userInfo.scopes.some(
+            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
+          )}
+        />
+      ),
+      loader: listLoader(props),
+    },
+
     /* ------ Parliamentary ------ */
     {
       name: m.signatureListsTitle,

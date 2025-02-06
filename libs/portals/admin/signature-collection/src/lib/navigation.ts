@@ -8,8 +8,25 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     icon: 'receipt',
   },
   description: m.signatureListsDescription,
-  path: SignatureCollectionPaths.ParliamentaryRoot,
+  path: SignatureCollectionPaths.MunicipalRoot,
   children: [
+    {
+      name: 'Sveitarstjórnarkosningar',
+      path: SignatureCollectionPaths.MunicipalRoot,
+      activeIfExact: true,
+      children: [
+        {
+          name: 'test submenu 1',
+          path: SignatureCollectionPaths.MunicipalArea1,
+          activeIfExact: true,
+        },
+        {
+          name: 'test submenu 2',
+          path: SignatureCollectionPaths.MunicipalArea2,
+          activeIfExact: true,
+        },
+      ]
+    },
     {
       name: m.parliamentaryCollectionTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
