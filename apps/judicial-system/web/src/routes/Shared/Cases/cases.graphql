@@ -23,6 +23,7 @@ query Cases {
       caseId
       nationalId
       name
+      gender
       noNationalId
       defenderChoice
       verdictViewDate
