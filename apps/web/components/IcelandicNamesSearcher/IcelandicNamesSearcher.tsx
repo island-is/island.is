@@ -1,38 +1,38 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
+
 import {
   Box,
   Button,
-  Text,
-  Table as T,
   Icon,
   Link,
-  Tooltip,
   LoadingDots,
+  Table as T,
+  Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-
 import {
-  FilterMenu,
-  CategoriesProps,
-  FilterOptions,
-  FilterLabels,
-  initialFilter,
-} from './FilterMenu'
-import {
-  GetIcelandicNameBySearchQuery,
-  GetIcelandicNameBySearchQueryVariables,
   GetIcelandicNameByInitialLetterQuery,
   GetIcelandicNameByInitialLetterQueryVariables,
+  GetIcelandicNameBySearchQuery,
+  GetIcelandicNameBySearchQueryVariables,
   IcelandicName,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_ICELANDIC_NAME_BY_SEARCH,
   GET_ICELANDIC_NAME_BY_INITIAL_LETTER,
+  GET_ICELANDIC_NAME_BY_SEARCH,
 } from '@island.is/web/screens/queries/IcelandicNamesRegistry'
 
 import { alphabet } from './data'
+import {
+  CategoriesProps,
+  FilterLabels,
+  FilterMenu,
+  FilterOptions,
+  initialFilter,
+} from './FilterMenu'
 import * as styles from './IcelandicNamesSearcher.css'
 
 type NameType = Pick<

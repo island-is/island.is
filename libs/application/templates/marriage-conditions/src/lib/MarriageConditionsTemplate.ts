@@ -17,21 +17,27 @@ import {
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { assign } from 'xstate'
-import { getSpouseNationalId } from './utils'
+import { assign, StateNodeConfig } from 'xstate'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
-  MarriageCondtionsFeatureFlags,
+  MarriageConditionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import {
+  BirthCertificateApi,
   DistrictCommissionersPaymentCatalogApi,
   MockableDistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
 } from '../dataProviders'
-import { coreHistoryMessages } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
+import { number } from 'zod'
+import { PaymentForm } from '@island.is/application/ui-forms'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -51,6 +57,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {
@@ -73,14 +80,14 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(
                     val.getApplication({
                       allowFakeData:
-                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
+                        featureFlags[MarriageConditionsFeatureFlags.ALLOW_FAKE],
                     }),
                   ),
                 )
               },
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: '',
                   type: 'primary',
                 },
@@ -93,6 +100,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                BirthCertificateApi,
                 MockableDistrictCommissionersPaymentCatalogApi,
               ],
               delete: true,
@@ -102,20 +110,15 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.PAYMENT,
+                onEvent: DefaultEvents.SUBMIT,
               },
             ],
           },
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRM },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItems: [{ code: 'AY129' }],
-        submitTarget: States.SPOUSE_CONFIRM,
-      }),
       [States.SPOUSE_CONFIRM]: {
         entry: 'assignToSpouse',
         meta: {
@@ -145,13 +148,13 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(
                     val.spouseConfirmation({
                       allowFakeData:
-                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
+                        featureFlags[MarriageConditionsFeatureFlags.ALLOW_FAKE],
                     }),
                   ),
                 )
               },
               actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+                { event: DefaultEvents.PAYMENT, name: '', type: 'primary' },
               ],
               write: 'all',
               api: [
@@ -161,6 +164,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                BirthCertificateApi,
                 MockableDistrictCommissionersPaymentCatalogApi,
               ],
             },
@@ -169,7 +173,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: m.confirmedBySpouse2,
-                onEvent: DefaultEvents.SUBMIT,
+                onEvent: DefaultEvents.PAYMENT,
               },
             ],
             pendingAction: {
@@ -180,20 +184,56 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           },
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        roles: [
+          {
+            id: Roles.ASSIGNED_SPOUSE,
+            formLoader: async () => {
+              return PaymentForm
+            },
+          },
+        ],
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+        chargeItems: (application) => {
+          const paymentCodes = []
+          paymentCodes.push(
+            getValueViaPath<boolean>(
+              application.answers,
+              'applicant.hasBirthCertificate',
+            )
+              ? { code: 'AY171', quantity: 1 }
+              : [],
+          )
+          paymentCodes.push(
+            getValueViaPath<boolean>(
+              application.externalData,
+              'birthCertificate.data.hasBirthCertificate',
+            )
+              ? { code: 'AY171', quantity: 1 }
+              : [],
+          )
+          paymentCodes.push({ code: 'AY128', quantity: 1 }) // Survey
+          paymentCodes.push({ code: 'AY172', quantity: 2 }) // Marital status
+
+          return paymentCodes.flat()
+        },
+        submitTarget: States.DONE,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -228,7 +268,10 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
-        const spouse: string = getSpouseNationalId(context.application.answers)
+        const spouse = getValueViaPath(
+          context.application.answers,
+          'spouse.person.nationalId',
+        ) as string
 
         return {
           ...context,

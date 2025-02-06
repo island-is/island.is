@@ -1,13 +1,13 @@
 import {
   buildCheckboxField,
   buildCustomField,
-  buildDividerField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  buildTitleField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FILE_SIZE_LIMIT, YES } from '../../utils/constants'
@@ -56,15 +56,7 @@ export const confirmSection = buildSection({
           uploadHeader: m.fileUploadHeader,
           uploadDescription: m.fileUploadDescription,
           uploadButtonLabel: m.fileUploadButton,
-          condition: {
-            questionId: 'hasAdditionalInfo',
-            comparator: Comparators.EQUALS,
-            value: YES,
-          },
-        }),
-        buildDividerField({
-          title: ' ',
-          color: 'transparent',
+          marginBottom: 5,
           condition: {
             questionId: 'hasAdditionalInfo',
             comparator: Comparators.EQUALS,

@@ -20,6 +20,7 @@ type SelectOption<T> = {
 }
 
 type Props<T> = {
+  controller?: boolean
   name: string
   label: string | MessageDescriptor
   placeholder: string | MessageDescriptor
@@ -34,6 +35,7 @@ type Props<T> = {
 }
 
 export const OJOISelectController = <T,>({
+  controller = true,
   name,
   label,
   placeholder,
@@ -101,7 +103,10 @@ export const OJOISelectController = <T,>({
           defaultValue={defaultOpt}
           onChange={(opt) => {
             if (!opt?.value) return
-            return handleChange(opt.value)
+            if (controller) {
+              handleChange(opt.value)
+            }
+            onChange && onChange(opt.value)
           }}
         />
       )}

@@ -1,36 +1,37 @@
 import React, {
   FC,
-  useState,
-  useContext,
   useCallback,
+  useContext,
   useEffect,
   useRef,
+  useState,
 } from 'react'
-import uniq from 'lodash/uniq'
 import intersection from 'lodash/intersection'
+import uniq from 'lodash/uniq'
+
 import {
   Box,
-  Tiles,
+  Icon,
+  Inline,
+  LoadingDots,
   Stack,
   Text,
-  Inline,
-  Icon,
-  LoadingDots,
+  Tiles,
 } from '@island.is/island-ui/core'
-import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
-import { useNamespace } from '@island.is/web/hooks'
-import { Card } from '../UI/Card/Card'
-import { Button } from '../UI/Button/Button'
-import { Tag } from '../UI/Tag/Tag'
-import { ColorSchemeContext } from '../UI/ColorSchemeContext/ColorSchemeContext'
 import {
-  ADGERDIR_INDIVIDUALS_TAG_ID,
   ADGERDIR_COMPANIES_TAG_ID,
+  ADGERDIR_INDIVIDUALS_TAG_ID,
 } from '@island.is/web/constants'
-
-import * as styles from './AdgerdirArticles.css'
-import * as covidStyles from '../UI/styles/styles.css'
+import { AdgerdirPage, AdgerdirTag } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
+import { Button } from '../UI/Button/Button'
+import { Card } from '../UI/Card/Card'
+import { ColorSchemeContext } from '../UI/ColorSchemeContext/ColorSchemeContext'
+import { Tag } from '../UI/Tag/Tag'
+import * as covidStyles from '../UI/styles/styles.css'
+import * as styles from './AdgerdirArticles.css'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 9

@@ -24,7 +24,7 @@ export const tableRepeaterSubsection = buildSubSection({
           id: 'tableRepeaterDescription2',
           title: '',
           description:
-            'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone.',
+            'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone. The nationalIdWithName field can, just like the regular one, be set to enable company search.',
         }),
         buildTableRepeaterField({
           id: 'tableRepeater',
@@ -104,6 +104,8 @@ export const tableRepeaterSubsection = buildSubSection({
             nationalIdWithName: {
               component: 'nationalIdWithName',
               label: 'National ID with name',
+              searchCompanies: true,
+              searchPersons: true,
             },
             phone: {
               component: 'phone',

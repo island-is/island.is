@@ -1,4 +1,5 @@
 import { FormatMessage } from '@island.is/localization'
+import { LinkButton } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import {
   OCCUPATIONAL_THERAPY,
@@ -7,7 +8,6 @@ import {
   PHYSIO_THERAPY,
   SPEECH_THERAPY,
 } from '../../utils/constants'
-import { LinkButton } from '@island.is/portals/my-pages/core'
 
 export const getFootNoteByType = (
   type: string,

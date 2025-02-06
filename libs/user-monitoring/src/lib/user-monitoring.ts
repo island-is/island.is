@@ -18,10 +18,12 @@ const initDdRum = (params: DdRumInitParams) => {
     service: params.service,
     env: params.env,
     version: params.version,
-    sampleRate: 100,
+    sessionSampleRate: 10,
     sessionReplaySampleRate: 0,
-    trackInteractions: false,
-    allowedTracingOrigins: [
+    trackUserInteractions: true,
+    enablePrivacyForActionName: true,
+    defaultPrivacyLevel: 'mask',
+    allowedTracingUrls: [
       'https://island.is',
       /https:\/\/.*\.island\.is/,
       /https:\/\/.*\.devland\.is/,
@@ -29,6 +31,7 @@ const initDdRum = (params: DdRumInitParams) => {
     ],
     beforeSend: (event) => {
       event.view.url = maskNationalId(event.view.url)
+      return true
     },
   })
 }

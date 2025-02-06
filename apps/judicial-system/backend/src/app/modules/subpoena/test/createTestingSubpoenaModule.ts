@@ -30,10 +30,10 @@ jest.mock('../../user/user.service')
 jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
-jest.mock('../../file/file.service')
 jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../court/court.service')
+jest.mock('../../file/file.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -49,8 +49,8 @@ export const createTestingSubpoenaModule = async () => {
       UserService,
       CaseService,
       PdfService,
-      PoliceService,
       FileService,
+      PoliceService,
       EventService,
       DefendantService,
       CourtService,
@@ -93,9 +93,9 @@ export const createTestingSubpoenaModule = async () => {
 
   const pdfService = subpoenaModule.get<PdfService>(PdfService)
 
-  const policeService = subpoenaModule.get<PoliceService>(PoliceService)
-
   const fileService = subpoenaModule.get<FileService>(FileService)
+
+  const policeService = subpoenaModule.get<PoliceService>(PoliceService)
 
   const courtService = subpoenaModule.get<CourtService>(CourtService)
 
@@ -121,8 +121,8 @@ export const createTestingSubpoenaModule = async () => {
   return {
     userService,
     pdfService,
-    policeService,
     fileService,
+    policeService,
     courtService,
     subpoenaModel,
     subpoenaService,

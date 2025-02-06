@@ -7,18 +7,15 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Inline,
-  Link,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
-import { SearchInput } from '@island.is/web/components'
+import { FeaturedLinks, SearchInput } from '@island.is/web/components'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './SearchSection.css'
 
@@ -107,50 +104,7 @@ export const SearchSection = ({
                   dataTestId="search-box"
                   colored
                 />
-                <Inline space={2}>
-                  {featured.map(
-                    ({
-                      title,
-                      attention,
-                      thing,
-                    }: {
-                      title: string
-                      attention: boolean
-                      thing: any
-                    }) => {
-                      const cardUrl = linkResolver(thing?.type as LinkType, [
-                        thing?.slug,
-                      ])
-                      return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                        <Tag
-                          key={title}
-                          {...(cardUrl.href.startsWith('/')
-                            ? {
-                                CustomLink: ({ children, ...props }) => (
-                                  <Link
-                                    key={title}
-                                    {...props}
-                                    {...cardUrl}
-                                    dataTestId="featured-link"
-                                  >
-                                    {children}
-                                  </Link>
-                                ),
-                              }
-                            : { href: cardUrl.href })}
-                          variant="blue"
-                          attention={attention}
-                        >
-                          {title}
-                        </Tag>
-                      ) : (
-                        <Tag key={title} variant="blue" attention={attention}>
-                          {title}
-                        </Tag>
-                      )
-                    },
-                  )}
-                </Inline>
+                <FeaturedLinks links={featured} />
               </Stack>
             </Box>
           </GridColumn>

@@ -99,33 +99,5 @@ export const rcReportForm = {
           'Notaður sem skýritexti í textaboxi fyrir "lagarök" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
-    comments: defineMessages({
-      heading: {
-        id: 'judicial.system.restriction_cases:report_form.comments.heading',
-        defaultMessage: 'Athugasemdir vegna málsmeðferðar',
-        description:
-          'Notaður sem titill fyrir "athugasemdir vegna málsmeðferðar" hlutann á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      tooltip: {
-        id: 'judicial.system.restriction_cases:report_form.comments.tooltip',
-        defaultMessage:
-          'Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni, og eru ekki hluti af sjálfri kröfunni.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "athugasemdir vegna málsmeðferðar" titlinn á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      label: {
-        id: 'judicial.system.restriction_cases:report_form.comments.label',
-        defaultMessage: 'Athugasemdir',
-        description:
-          'Notaður sem titill í textaboxi fyrir "athugasemdir vegna málsmeðferðar" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      placeholder: {
-        id: 'judicial.system.restriction_cases:report_form.comments.placeholder',
-        defaultMessage:
-          'Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?',
-        description:
-          'Notaður sem skýritexti í textaboxi fyrir "athugasemdir vegna málsmeðferðar" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
   },
 }

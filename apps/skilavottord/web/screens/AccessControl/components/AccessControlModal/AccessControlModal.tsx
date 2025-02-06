@@ -1,12 +1,29 @@
-import React, { BaseSyntheticEvent, FC } from 'react'
+import * as kennitala from 'kennitala'
+import React, {
+  BaseSyntheticEvent,
+  FC,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { FieldError, FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
-import * as kennitala from 'kennitala'
 
-import { Box, Button, Select, Option, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Option, Select, Stack } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
+import {
+  hasDeveloperRole,
+  hasMunicipalityRole,
+  hasRecyclingFundRole,
+} from '@island.is/skilavottord-web/auth/utils'
 import { Modal, ModalProps } from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import {
+  AccessControl,
+  AccessControlRole,
+  Role,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 interface AccessControlModalProps
@@ -23,6 +40,8 @@ interface AccessControlModalProps
   control: Control<FieldValues>
   nationalIdDisabled?: boolean
   partnerIdRequired?: boolean
+  municipalities?: Option[]
+  currentPartner?: AccessControl
 }
 
 export const AccessControlModal: FC<
@@ -34,15 +53,57 @@ export const AccessControlModal: FC<
   onCancel,
   onSubmit,
   recyclingPartners,
+  municipalities,
   roles,
   nationalIdDisabled = false,
   partnerIdRequired = false,
   errors,
   control,
+  currentPartner,
 }) => {
   const {
     t: { accessControl: t },
   } = useI18n()
+
+  const { user } = useContext(UserContext)
+  const [showCompanies, setShowCompaniesSelection] = useState(true)
+  const [showMunicipalities, setShowMunicipalitiesSelection] = useState(false)
+
+  useEffect(() => {
+    if (
+      currentPartner &&
+      currentPartner.role === AccessControlRole.municipality
+    ) {
+      setShowCompaniesSelection(false)
+      setShowMunicipalitiesSelection(true)
+    } else {
+      setShowCompaniesSelection(true)
+      setShowMunicipalitiesSelection(false)
+    }
+  }, [currentPartner])
+
+  const handleRoleOnChange = (e: Option) => {
+    // If the user selects municipality we don't need to select a recycling partner since muncipality can't be a recycling partner worker
+    if (hasMunicipalityRole(user?.role)) {
+      if (e && e.value === Role.municipality) {
+        setShowCompaniesSelection(false)
+      } else {
+        setShowCompaniesSelection(true)
+      }
+      setShowMunicipalitiesSelection(false)
+    } else if (
+      hasRecyclingFundRole(user?.role) ||
+      hasDeveloperRole(user?.role)
+    ) {
+      if (e && e.value === Role.municipality) {
+        setShowCompaniesSelection(false)
+        setShowMunicipalitiesSelection(true)
+      } else {
+        setShowMunicipalitiesSelection(false)
+        setShowCompaniesSelection(true)
+      }
+    }
+  }
 
   return (
     <Modal
@@ -159,43 +220,78 @@ export const AccessControlModal: FC<
                   errorMessage={errors?.role?.message}
                   backgroundColor="blue"
                   options={roles}
-                  onChange={onChange}
+                  onChange={(e) => {
+                    onChange(e)
+                    handleRoleOnChange(e)
+                  }}
                 />
               )
             }}
           />
-          <Controller
-            name="partnerId"
-            control={control}
-            rules={
-              partnerIdRequired
-                ? {
-                    required: {
-                      value: true,
-                      message: t.modal.inputs.partner.rules?.required,
-                    },
-                  }
-                : {}
-            }
-            render={({ field: { onChange, value, name } }) => {
-              return (
-                <Select
-                  name={name}
-                  label={t.modal.inputs.partner.label}
-                  placeholder={t.modal.inputs.partner.placeholder}
-                  size="md"
-                  value={value}
-                  hasError={!!errors?.partnerId?.message}
-                  errorMessage={errors?.partnerId?.message}
-                  backgroundColor="blue"
-                  options={recyclingPartners}
-                  onChange={onChange}
-                  required={partnerIdRequired}
-                  isCreatable
-                />
-              )
-            }}
-          />
+          {showCompanies && (
+            <Controller
+              name="partnerId"
+              control={control}
+              rules={
+                partnerIdRequired
+                  ? {
+                      required: {
+                        value: true,
+                        message: t.modal.inputs.partner.rules?.required,
+                      },
+                    }
+                  : {}
+              }
+              render={({ field: { onChange, value, name } }) => {
+                return (
+                  <Select
+                    name={name}
+                    label={t.modal.inputs.partner.label}
+                    placeholder={t.modal.inputs.partner.placeholder}
+                    size="md"
+                    value={value}
+                    hasError={!!errors?.partnerId?.message}
+                    errorMessage={errors?.partnerId?.message}
+                    backgroundColor="blue"
+                    options={recyclingPartners}
+                    onChange={onChange}
+                    required={partnerIdRequired}
+                    isCreatable
+                  />
+                )
+              }}
+            />
+          )}
+          {showMunicipalities && (
+            <Controller
+              name="municipalityId"
+              control={control}
+              rules={{
+                required: {
+                  value: true,
+                  message: t.modal.inputs.municipality.rules?.required,
+                },
+              }}
+              render={({ field: { onChange, value, name } }) => {
+                return (
+                  <Select
+                    name={name}
+                    label={t.modal.inputs.municipality.label}
+                    placeholder={t.modal.inputs.municipality.placeholder}
+                    size="md"
+                    value={value}
+                    hasError={!!errors?.municipality?.message}
+                    errorMessage={errors?.municipality?.message}
+                    backgroundColor="blue"
+                    options={municipalities}
+                    onChange={onChange}
+                    required={true}
+                    isCreatable
+                  />
+                )
+              }}
+            />
+          )}
         </Stack>
         <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
           <Button variant="ghost" onClick={onCancel} fluid>

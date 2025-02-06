@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import cn from 'classnames'
 
 import {
@@ -66,11 +66,7 @@ export const DefaultHeader: React.FC<
   const logoProvided = !!logo
   const LinkWrapper = logoHref ? Link : Box
 
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(width < theme.breakpoints.lg)
-  }, [width])
+  const isMobile = width < theme.breakpoints.lg
 
   return (
     <>
@@ -106,7 +102,8 @@ export const DefaultHeader: React.FC<
       <div
         className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
-          background: isMobile ? mobileBackground || background : background,
+          background:
+            isMobile || isSubpage ? mobileBackground || background : background,
         }}
       >
         <div

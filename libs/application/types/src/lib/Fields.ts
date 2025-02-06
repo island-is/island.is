@@ -50,6 +50,12 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
+export type AsyncSelectContext = {
+  application: Application
+  apolloClient: ApolloClient<object>
+  selectedValue?: string | string[]
+}
+
 export type TagVariant =
   | 'blue'
   | 'darkerBlue'
@@ -103,6 +109,8 @@ export type RepeaterItem = {
   phoneRequired?: boolean
   showEmailField?: boolean
   emailRequired?: boolean
+  searchCompanies?: boolean
+  searchPersons?: boolean
   readonly?:
     | boolean
     | ((
@@ -210,7 +218,7 @@ export interface SelectOption<T = string | number> {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly title: FormTextWithLocale
+  readonly title?: FormTextWithLocale
   readonly description?: FormTextWithLocale
   readonly children: undefined
   disabled?: boolean
@@ -222,6 +230,7 @@ export interface BaseField extends FormItem {
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
+  clearOnChange?: string[]
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -269,6 +278,7 @@ export enum FieldTypes {
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
+  TITLE = 'TITLE',
 }
 
 export enum FieldComponents {
@@ -306,6 +316,7 @@ export enum FieldComponents {
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
+  TITLE = 'TitleFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -363,6 +374,7 @@ export interface SelectField extends InputField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
+  isClearable?: boolean
 }
 
 export interface CompanySearchField extends InputField {
@@ -378,12 +390,13 @@ export interface AsyncSelectField extends InputField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
-  loadOptions(c: Context): Promise<Option[]>
+  loadOptions(c: AsyncSelectContext): Promise<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
+  updateOnSelect?: string
 }
 
 export interface TextField extends InputField {
@@ -403,6 +416,7 @@ export interface TextField extends InputField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  tooltip?: FormText
   onChange?: (...event: any[]) => void
 }
 
@@ -448,13 +462,22 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
-  readonly refetchApplicationAfterSubmit?: boolean
+  readonly refetchApplicationAfterSubmit?:
+    | boolean
+    | ((event?: string) => boolean)
 }
 
 export interface DividerField extends BaseField {
   readonly type: FieldTypes.DIVIDER
-  readonly color?: Colors
+  useDividerLine?: boolean
   component: FieldComponents.DIVIDER
+}
+
+export interface TitleField extends BaseField {
+  readonly type: FieldTypes.TITLE
+  readonly color?: Colors
+  titleVariant?: TitleVariants
+  component: FieldComponents.TITLE
 }
 
 export interface KeyValueField extends BaseField {
@@ -498,7 +521,7 @@ export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: FormText
-  description: FormText
+  description: FormTextWithLocale
   startExpanded?: boolean
 }
 
@@ -506,7 +529,7 @@ export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
-  message?: FormText
+  message?: FormTextWithLocale
   links?: AlertMessageLink[]
 }
 
@@ -574,6 +597,12 @@ export interface NationalIdWithNameField extends InputField {
   minAgePerson?: number
   searchPersons?: boolean
   searchCompanies?: boolean
+  showPhoneField?: boolean
+  showEmailField?: boolean
+  phoneRequired?: boolean
+  emailRequired?: boolean
+  phoneLabel?: StaticText
+  emailLabel?: StaticText
   titleVariant?: TitleVariants
 }
 
@@ -745,23 +774,23 @@ export interface SliderField extends BaseField {
   step?: number
   snap?: boolean
   trackStyle?: CSSProperties
-  calculateCellStyle: (index: number) => CSSProperties
+  calculateCellStyle?: (index: number) => CSSProperties
   showLabel?: boolean
   showMinMaxLabels?: boolean
   showRemainderOverlay?: boolean
   showProgressOverlay?: boolean
   showToolTip?: boolean
-  label: {
+  label?: {
     singular: FormText
     plural: FormText
   }
   rangeDates?: {
     start: {
-      date: string
+      date: string | Date
       message: string
     }
     end: {
-      date: string
+      date: string | Date
       message: string
     }
   }
@@ -771,6 +800,8 @@ export interface SliderField extends BaseField {
   labelMultiplier?: number
   id: string
   saveAsString?: boolean
+  textColor?: Colors
+  progressOverlayColor?: Colors
 }
 
 export interface DisplayField extends BaseField {
@@ -822,3 +853,4 @@ export type Field =
   | DisplayField
   | AccordionField
   | BankAccountField
+  | TitleField

@@ -1,10 +1,12 @@
 import React from 'react'
-import { Button, Text, Stack, Link, Box } from '@island.is/island-ui/core'
-import IconBullet from '../IconBullet/IconBullet'
+
+import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { ContentLink } from '@island.is/web/components'
 import { PROJECT_STORIES_TAG_ID } from '@island.is/web/constants'
-import * as styles from './StoryList.css'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
+import IconBullet from '../IconBullet/IconBullet'
+import * as styles from './StoryList.css'
 
 export interface StoryProps {
   logoUrl: string

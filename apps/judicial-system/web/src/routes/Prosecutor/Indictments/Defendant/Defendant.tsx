@@ -30,7 +30,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  UpdateIndictmentCount,
   useCase,
   useDefendants,
   useIndictmentCounts,
@@ -115,7 +114,7 @@ const Defendant = () => {
   } = useDefendants()
   const router = useRouter()
 
-  const { updateIndictmentCount } = useIndictmentCounts()
+  const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
 
@@ -249,6 +248,12 @@ const Defendant = () => {
       workingCase,
       setWorkingCase,
     )
+
+    const indictmentCountId = workingCase.indictmentCounts?.[index]?.id
+
+    if (indictmentCountId) {
+      deleteIndictmentCount(workingCase.id, indictmentCountId)
+    }
   }
 
   const handleUpdatePoliceCase = (
@@ -279,20 +284,32 @@ const Defendant = () => {
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => {
     if (workingCase.indictmentCounts) {
       workingCase.indictmentCounts
-        .filter((ic) => ic.policeCaseNumber === policeCaseNumber)
-        .forEach((ic) => {
+        .filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === policeCaseNumber,
+        )
+        .forEach((indictmentCount) => {
+          const updatedIndictmentCount = {
+            ...indictmentCount,
+            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+          }
           const incidentDescription = getIncidentDescription(
-            ic,
+            updatedIndictmentCount,
             formatMessage,
             crimeScene,
+            subtypes,
           )
 
-          updateIndictmentCount(workingCase.id, ic.id, {
+          updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-          } as UpdateIndictmentCount)
+            ...(subtypes && {
+              indictmentCountSubtypes: subtypes[policeCaseNumber],
+            }),
+          })
         })
     }
   }
@@ -506,6 +523,11 @@ const Defendant = () => {
                         workingCase.origin === CaseOrigin.LOKE && index === 0
                       }
                       updateIndictmentCount={handleUpdateIndictmentCount}
+                      indictmentCount={workingCase.indictmentCounts?.find(
+                        (indictmentCount) =>
+                          indictmentCount.policeCaseNumber ===
+                          workingCase.policeCaseNumbers?.[index],
+                      )}
                     />
                   )}
                 </Box>

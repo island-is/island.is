@@ -26,6 +26,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
 
     for (const teamListEntry of entries) {
       const teamList = mapTeamList(teamListEntry)
+      let counter = teamList.teamMembers?.length ?? 9999
       for (const member of teamList.teamMembers ?? []) {
         try {
           const memberEntry = teamListEntry.fields.teamMembers?.find(
@@ -62,6 +63,8 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
             ],
             dateCreated: member.createdAt ?? '',
             dateUpdated: new Date().getTime().toString(),
+            // Use the release date field as a way to order search results inthe  same order as the team members list in the CMS
+            releaseDate: String(counter--),
           })
         } catch (error) {
           logger.warn('Failed to import Team Member', {
