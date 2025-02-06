@@ -161,7 +161,7 @@ dependencies:
   - name: api-template
     repository: file://libs/api-template
     version: 0.0.1
-    alias: services-form-system
+    alias: services-form-system-api
   - name: api-template
     repository: file://libs/api-template
     version: 0.0.1
