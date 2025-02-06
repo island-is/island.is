@@ -42,7 +42,7 @@ on:
         required: false
 
 concurrency:
-  group: container-build-${{ github.head_ref || github.run_id }}-${{ github.event_name }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}-${{ github.event_name }}
   cancel-in-progress: true
 
 defaults:
