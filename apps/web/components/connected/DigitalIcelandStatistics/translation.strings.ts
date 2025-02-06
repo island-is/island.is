@@ -66,4 +66,14 @@ export const m = defineMessages({
     defaultMessage: 'percentage',
     description: 'number eða percentage - tölfræðikassi 4',
   },
+  seeMoreLinkLabel: {
+    id: 'web.digitalIceland.statisticsConnectedComponent:seeMoreLinkLabel',
+    defaultMessage: 'Nánar um stafræna vegferð í tölum',
+    description: 'Sjá meira hlekkstextinn',
+  },
+  seeMoreLinkHref: {
+    id: 'web.digitalIceland.statisticsConnectedComponent:seeMoreLinkHref',
+    defaultMessage: '/s/stafraent-island/stafraena-vegferdin-i-tolum',
+    description: 'Sjá meira hlekkurinn',
+  },
 })
