@@ -27,6 +27,7 @@ env:
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   prepare:
