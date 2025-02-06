@@ -372,7 +372,6 @@ jobs:
         with:
           driver-opts: |
             image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            network=cni
 
       - name: Get node hash
         uses: actions/github-script@v7
@@ -584,7 +583,6 @@ jobs:
         with:
           driver-opts: |
             image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            network=cni
 
       - name: Prepare Docker build arguments
         id: dockerargs
