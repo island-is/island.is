@@ -66,7 +66,6 @@ export class CaseListInterceptor implements NestInterceptor {
 
           const {
             indictmentRulingDecision,
-            courtEndTime,
             rulingDate,
             defendants,
             eventLogs,
@@ -74,7 +73,6 @@ export class CaseListInterceptor implements NestInterceptor {
 
           const indictmentInfo = getIndictmentInfo({
             indictmentRulingDecision,
-            courtEndTime,
             rulingDate,
             defendants,
             eventLogs,

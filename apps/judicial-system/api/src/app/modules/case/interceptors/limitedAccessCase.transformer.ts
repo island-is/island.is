@@ -54,18 +54,12 @@ const transformRequestCase = (theCase: Case): Case => {
 }
 
 const transformIndictmentCase = (theCase: Case): Case => {
-  const {
-    indictmentRulingDecision,
-    courtEndTime,
-    rulingDate,
-    defendants,
-    eventLogs,
-  } = theCase
+  const { indictmentRulingDecision, rulingDate, defendants, eventLogs } =
+    theCase
   return {
     ...theCase,
     ...getIndictmentInfo({
       indictmentRulingDecision,
-      courtEndTime,
       rulingDate,
       defendants,
       eventLogs,

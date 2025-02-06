@@ -40,7 +40,6 @@ interface IndictmentInfo {
 
 interface IndictmentInfoParams {
   indictmentRulingDecision?: CaseIndictmentRulingDecision
-  courtEndTime?: string
   rulingDate?: string
   defendants?: Defendant[]
   eventLogs?: EventLog[]
@@ -156,7 +155,6 @@ const transformRequestCase = (theCase: Case): Case => {
 
 export const getIndictmentInfo = ({
   indictmentRulingDecision,
-  courtEndTime,
   rulingDate,
   defendants,
   eventLogs,
@@ -165,14 +163,14 @@ export const getIndictmentInfo = ({
   const isRuling =
     indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
-  if (!courtEndTime) {
+  if (!rulingDate) {
     return {}
   }
 
-  const theCourtEndTime = new Date(courtEndTime)
+  const theRulingDate = new Date(rulingDate)
 
   const indictmentAppealDeadline = getIndictmentAppealDeadlineDate(
-    theCourtEndTime,
+    theRulingDate,
     isFine,
   ).toISOString()
 
@@ -180,7 +178,7 @@ export const getIndictmentInfo = ({
     (defendant) => [
       isRuling || isFine,
       isFine || defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-        ? theCourtEndTime
+        ? theRulingDate
         : defendant.verdictViewDate
         ? new Date(defendant.verdictViewDate)
         : undefined,
@@ -213,7 +211,7 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 
     const { verdictViewDate } = defendant
 
-    const baseDate = serviceRequired ? verdictViewDate : theCase.courtEndTime
+    const baseDate = serviceRequired ? verdictViewDate : theCase.rulingDate
     const verdictAppealDeadline = baseDate
       ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFine)
       : undefined
@@ -229,19 +227,13 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 }
 
 const transformIndictmentCase = (theCase: Case): Case => {
-  const {
-    courtEndTime,
-    rulingDate,
-    defendants,
-    eventLogs,
-    indictmentRulingDecision,
-  } = theCase
+  const { rulingDate, defendants, eventLogs, indictmentRulingDecision } =
+    theCase
 
   return {
     ...theCase,
     ...getIndictmentInfo({
       indictmentRulingDecision,
-      courtEndTime,
       rulingDate,
       defendants,
       eventLogs,

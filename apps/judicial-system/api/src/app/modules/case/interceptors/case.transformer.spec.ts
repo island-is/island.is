@@ -667,11 +667,11 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when ruling date is provided', () => {
-    const courtEndTime = '2022-06-15T19:50:08.033Z'
+    const rulingDate = '2022-06-15T19:50:08.033Z'
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-      courtEndTime,
+      rulingDate,
     })
 
     expect(indictmentInfo).toEqual({
@@ -682,7 +682,6 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when some defendants have yet to view the verdict', () => {
-    const courtEndTime = '2022-06-14T19:50:08.033Z'
     const rulingDate = '2022-06-14T19:50:08.033Z'
 
     const defendants = [
@@ -692,7 +691,6 @@ describe('getIndictmentInfo', () => {
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-      courtEndTime,
       rulingDate,
       defendants,
     })
@@ -705,7 +703,6 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when no defendants have yet to view the verdict', () => {
-    const courtEndTime = '2022-06-14T19:50:08.033Z'
     const rulingDate = '2022-06-14T19:50:08.033Z'
     const defendants = [
       { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
@@ -717,7 +714,6 @@ describe('getIndictmentInfo', () => {
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-      courtEndTime,
       rulingDate,
       defendants,
     })
@@ -741,7 +737,6 @@ describe('getIndictmentInfo', () => {
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
-      courtEndTime: courtEndTime.toISOString(),
       rulingDate: rulingDate.toISOString(),
       defendants,
     })
@@ -756,7 +751,6 @@ describe('getIndictmentInfo', () => {
   })
 
   it('should return correct indictment info when the indictment ruling decision is FINE and the appeal deadline is expired', () => {
-    const courtEndTime = '2024-05-26T21:51:19.156Z'
     const rulingDate = '2024-05-26T21:51:19.156Z'
     const defendants = [
       {
@@ -767,7 +761,6 @@ describe('getIndictmentInfo', () => {
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
-      courtEndTime,
       rulingDate,
       defendants,
     })

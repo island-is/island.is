@@ -327,9 +327,7 @@ const Completed: FC = () => {
           <SectionHeading title="Dagsetning lykta" />
           <DateTime
             name="courtEndDate"
-            selectedDate={
-              workingCase.courtEndTime || workingCase.indictmentCompletedDate
-            }
+            selectedDate={workingCase.courtEndTime || workingCase.rulingDate}
             onChange={handleCourtEndTimeChange}
             blueBox={true}
             datepickerLabel="Dagsetning lykta"
