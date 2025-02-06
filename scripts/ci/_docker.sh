@@ -16,29 +16,32 @@ ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
+CACHE_MOUNT="${CACHE_MOUNT:-$PROJECT_ROOT}"
+CACHE_MOUNT="${CACHE_MOUNT}/tmp"
+CACHE_DIR="${CACHE_DIR:-docker-cache}"
+CACHE_PATH="${CACHE_MOUNT}/${CACHE_DIR}"
 
 BUILD_ARGS=()
 
 mkargs() {
-  local local_cache="${1:-local-cache=yes}"
   BUILD_ARGS=(
     --platform=linux/amd64
     --file="${DIR}/$DOCKERFILE"
     --target="$TARGET"
     "${PUBLISH_TO_REGISTRY[@]}"
+    --secret "id=nx_cloud_access_token,src=nx_cloud_access_token.txt"
     --build-arg="APP=${APP}"
     --build-arg="APP_HOME=${APP_HOME}"
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
     -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
+    --cache-from="type=local,src=${CACHE_PATH}"
+    --cache-from="type=local,src=${CACHE_PATH},mode=max"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
   done
-  if [[ "${local_cache}" =~ local-cache=(yes|y|true) ]] && [[ "${DOCKER_LOCAL_CACHE}" == true ]]; then
-    BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache")
-    BUILD_ARGS+=(--cache-from="type=local,src=$PROJECT_ROOT/cache_output")
-  fi
+  echo "${BUILD_ARGS[@]}"
 }
 
 container_build() {

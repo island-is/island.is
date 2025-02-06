@@ -26,6 +26,7 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
+  CACHE_MOUNT: '/mnt/cache'
 
 jobs:
   prepare:
