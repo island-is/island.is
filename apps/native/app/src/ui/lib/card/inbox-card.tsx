@@ -13,6 +13,8 @@ interface InboxCardProps {
   senderName?: string | null
   isUrgent?: boolean | null
   testID?: string
+  selectable?: boolean
+  selected?: boolean
   onPress(id: string): void
 }
 
@@ -25,6 +27,8 @@ export function InboxCard({
   unread,
   senderName,
   isUrgent = false,
+  selectable = false,
+  selected = false,
 }: InboxCardProps) {
   const theme = useTheme()
   return (
@@ -39,6 +43,8 @@ export function InboxCard({
         unread={unread}
         urgent={!!isUrgent}
         icon={icon}
+        selectable={selectable}
+        selected={selected}
       />
     </PressableHighlight>
   )

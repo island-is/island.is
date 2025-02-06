@@ -236,6 +236,10 @@ export const en: TranslatedMessages = {
   'inbox.filterDatePlaceholder': 'Choose a date',
   'inbox.filterDateConfirm': 'Confirm',
   'inbox.filterDateCancel': 'Cancel',
+  'inbox.bulkSelectButton': 'Select documents',
+  'inbox.bulkSelectAllButton': 'Select all',
+  'inbox.bulkDeselectAllButton': 'Deselect all',
+  'inbox.bulkSelectCancelButton': 'Cancel',
 
   // document detail
   'documentDetail.screenTitle': 'Document',

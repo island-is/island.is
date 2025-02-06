@@ -236,6 +236,10 @@ export const is = {
   'inbox.filterDatePlaceholder': 'Veldu dagsetningu',
   'inbox.filterDateConfirm': 'Staðfesta',
   'inbox.filterDateCancel': 'Hætta við',
+  'inbox.bulkSelectButton': 'Velja skjöl',
+  'inbox.bulkSelectAllButton': 'Velja allt',
+  'inbox.bulkDeselectAllButton': 'Afvelja allt',
+  'inbox.bulkSelectCancelButton': 'Hætta við',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',

@@ -15,6 +15,7 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 
 import {
@@ -42,7 +43,10 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
-import { ComponentRegistry } from '../../utils/component-registry'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
 import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
 import { useApolloClient } from '@apollo/client'
@@ -114,8 +118,21 @@ const { useNavigationOptions, getNavigationOptions } =
   )
 
 const PressableListItem = React.memo(
-  ({ item, listParams }: { item: DocumentV2; listParams: any }) => {
+  ({
+    item,
+    listParams,
+    selectable,
+    selectedItems,
+    setSelectedItems,
+  }: {
+    item: DocumentV2
+    listParams: any
+    selectable: boolean
+    selectedItems: string[]
+    setSelectedItems: (items: string[]) => void
+  }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
+    const isSelected = selectable && selectedItems.includes(item.id)
     return (
       <InboxCard
         key={item.id}
@@ -126,12 +143,18 @@ const PressableListItem = React.memo(
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         isUrgent={item.isUrgent}
+        selectable={selectable}
+        selected={isSelected}
         onPress={() =>
-          navigateTo(`/inbox/${item.id}`, {
-            title: item.sender.name,
-            isUrgent: item.isUrgent,
-            listParams,
-          })
+          selectable
+            ? isSelected
+              ? setSelectedItems(selectedItems.filter((id) => id !== item.id))
+              : setSelectedItems([...selectedItems, item.id])
+            : navigateTo(`/inbox/${item.id}`, {
+                title: item.sender.name,
+                isUrgent: item.isUrgent,
+                listParams,
+              })
         }
       />
     )
@@ -238,6 +261,26 @@ export const InboxScreen: NavigationFunctionComponent<{
   ])
 
   const [filters, setFilters] = useState(applyFilters(incomingFilters))
+  const [selectState, setSelectedState] = useState(false)
+  const [selectedItems, setSelectedItems] = useState<string[]>([])
+
+  const rightButtons = selectState
+    ? [
+        {
+          id: ButtonRegistry.InboxBulkSelectCancelButton,
+          text: intl.formatMessage({
+            id: 'inbox.bulkSelectCancelButton',
+          }),
+        },
+      ]
+    : [
+        {
+          id: ButtonRegistry.InboxBulkSelectButton,
+          text: intl.formatMessage({
+            id: 'inbox.bulkSelectButton',
+          }),
+        },
+      ]
 
   const res = useListDocumentsQuery({
     variables: {
@@ -255,6 +298,8 @@ export const InboxScreen: NavigationFunctionComponent<{
   const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
   const availableCategories =
     sendersAndCategories.data?.getDocumentCategories ?? []
+  const allDocumentsSelected =
+    selectedItems.length === res.data?.documentsV2?.data?.length
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
@@ -290,8 +335,25 @@ export const InboxScreen: NavigationFunctionComponent<{
   useConnectivityIndicator({
     componentId,
     queryResult: res,
+    rightButtons: rightButtons,
     refetching: refetching || markAllAsReadLoading,
   })
+
+  useNavigationButtonPress(({ buttonId }) => {
+    if (buttonId === ButtonRegistry.InboxBulkSelectButton) {
+      setSelectedState(true)
+    }
+    if (buttonId === ButtonRegistry.InboxBulkSelectCancelButton) {
+      setSelectedItems([])
+      setSelectedState(false)
+    }
+    if (buttonId === ButtonRegistry.InboxBulkSelectAllButton) {
+      setSelectedItems(res.data?.documentsV2?.data.map((doc) => doc.id) ?? [])
+    }
+    if (buttonId === ButtonRegistry.InboxBulkDeselectAllButton) {
+      setSelectedItems([])
+    }
+  }, componentId)
 
   useEffect(() => {
     const appliedFilters = applyFilters(incomingFilters)
@@ -305,6 +367,32 @@ export const InboxScreen: NavigationFunctionComponent<{
     // Reset page on filter changes
     setFilters(appliedFilters)
   }, [incomingFilters, filters])
+
+  useEffect(() => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        leftButtons: selectState
+          ? allDocumentsSelected
+            ? [
+                {
+                  id: ButtonRegistry.InboxBulkDeselectAllButton,
+                  text: intl.formatMessage({
+                    id: 'inbox.bulkDeselectAllButton',
+                  }),
+                },
+              ]
+            : [
+                {
+                  id: ButtonRegistry.InboxBulkSelectAllButton,
+                  text: intl.formatMessage({
+                    id: 'inbox.bulkSelectAllButton',
+                  }),
+                },
+              ]
+          : [],
+      },
+    })
+  }, [componentId, intl, selectState, allDocumentsSelected])
 
   const items = useMemo(() => res.data?.documentsV2?.data ?? [], [res.data])
   const isSearch = ui.inboxQuery.length > 2
@@ -371,8 +459,27 @@ export const InboxScreen: NavigationFunctionComponent<{
         badge: unreadCount > 0 ? unreadCount.toString() : (null as any),
         badgeColor: theme.color.red400,
       },
+      topBar: {
+        rightButtons: selectState
+          ? [
+              {
+                id: ButtonRegistry.InboxBulkSelectCancelButton,
+                text: intl.formatMessage({
+                  id: 'inbox.bulkSelectCancelButton',
+                }),
+              },
+            ]
+          : [
+              {
+                id: ButtonRegistry.InboxBulkSelectButton,
+                text: intl.formatMessage({
+                  id: 'inbox.bulkSelectButton',
+                }),
+              },
+            ],
+      },
     })
-  }, [intl, theme, unreadCount])
+  }, [intl, theme, unreadCount, selectState])
 
   const keyExtractor = useCallback((item: ListItem) => {
     return item.id.toString()
@@ -422,13 +529,16 @@ export const InboxScreen: NavigationFunctionComponent<{
       return (
         <PressableListItem
           item={item as DocumentV2}
+          selectable={selectState}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
           listParams={{
             ...filters,
           }}
         />
       )
     },
-    [intl, filters],
+    [intl, filters, selectState, selectedItems, setSelectedItems],
   )
 
   const data = useMemo(() => {
