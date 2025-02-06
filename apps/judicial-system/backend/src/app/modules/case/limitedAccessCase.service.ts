@@ -525,7 +525,7 @@ export class LimitedAccessCaseService {
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
     const filesToZip: { data: Buffer; name: string }[] = []
-    const awailableCseFileCategories = getDefenceUserCaseFileCategories(
+    const availableCaseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
       theCase.defendants,
@@ -537,7 +537,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          awailableCseFileCategories.includes(file.category),
+          availableCaseFileCategories.includes(file.category),
       ) ?? []
 
     const caseFilesByCategoryPromises = awailableCaseFiles.map(async (file) => {
