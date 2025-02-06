@@ -197,7 +197,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE != 'true'
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE != 'true' }}
     runs-on: arc-runners
     timeout-minutes: 45
     env:
@@ -388,7 +388,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS && env.DEPLOY_FEATURE != 'true'
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && env.DEPLOY_FEATURE != 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
