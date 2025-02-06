@@ -18,7 +18,7 @@ import { BackendService } from '../backend'
 import { CreateIndictmentCountInput } from './dto/createIndictmentCount.input'
 import { DeleteIndictmentCountInput } from './dto/deleteIndictmentCount.input'
 import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
-import { DeleteIndictmentCountResponse } from './models/deleteIndictmentCount.response'
+import { DeleteResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -70,14 +70,14 @@ export class IndictmentCountResolver {
     )
   }
 
-  @Mutation(() => DeleteIndictmentCountResponse, { nullable: true })
+  @Mutation(() => DeleteResponse, { nullable: true })
   deleteIndictmentCount(
     @Args('input', { type: () => DeleteIndictmentCountInput })
     input: DeleteIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     this.logger.debug(
       `Deleting indictment count ${input.indictmentCountId} for case ${input.caseId}`,
     )
