@@ -134,8 +134,8 @@ jobs:
           localrun: ${{ !!github.event.localrun }}
         run: |
           echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
-          echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
-          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache" | tee -a "$GITHUB_OUTPUT"
 
           # From https://aws.amazon.com/blogs/containers/announcing-remote-cache-support-in-amazon-ecr-for-buildkit-clients/
           # docker build -t <account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:image \
