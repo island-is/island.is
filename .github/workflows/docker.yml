@@ -213,7 +213,7 @@ jobs:
           password: ${{ steps.creds.outputs.password }}
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (deps)
+      - name: Docker build/cache dependencies (deps/GHA)
         uses: docker/build-push-action@v6
         with:
           target: deps
