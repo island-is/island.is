@@ -8,7 +8,7 @@ import {
 import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { indictmentCount as strings } from '../IndictmentCount.strings'
-import { substanceEnum } from '../Substances/SubstancesEnum.strings'
+import { indictmentCountSubstanceEnum as substanceStrings } from '../IndictmentCountSubstanceEnum.strings'
 
 export const getIncidentDescriptionReason = (
   offenses: Offense[],
@@ -73,7 +73,7 @@ export const getIncidentDescriptionReason = (
     } else {
       acc += ', '
     }
-    acc += formatMessage(substanceEnum[substance[0] as Substance], {
+    acc += formatMessage(substanceStrings[substance[0] as Substance], {
       amount: substance[1],
     })
     if (index === substances.length - 1) {
