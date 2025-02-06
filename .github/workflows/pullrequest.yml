@@ -145,36 +145,6 @@ jobs:
         uses: ./.github/actions/format-and-linter
         with:
           push-changes: 'true'
-
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare e2e targets
-        id: e2e_projects
-        env:
-          CHUNK_SIZE: 1
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare build targets
-        id: build_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
       - name: Check release-manager approval
         id: check-release-manager-approval
         if: ${{ contains(github.event.pull_request.head.ref, '/pre-release/') }}
@@ -183,84 +153,14 @@ jobs:
         run: |
           set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
-
-  tests:
+      - name: Prepare nx
+        id: prepare-nx
+        run: |
+          node scripts/ci/_create_agents.mjs
+  nxtasks:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: arc-runners
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
-
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-
-  e2e:
-    needs:
-      - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: arc-runners
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECT: ${{ matrix.projects }}
-      CYPRESS_PROJECT_ID: 4q7jz8
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      API_MOCKS: 'true'
-      NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
-
-      - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
-
+    uses: '.github/workflows/nx.yml'
   linting-workspace:
     needs:
       - prepare
@@ -300,56 +200,20 @@ jobs:
           fail-level: info
           exclude: >-
             */node_modules/*
-  build:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 35
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
-
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
-
   success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
+      - nxtasks
       - prepare
       - linting-workspace
-      - tests
       - run-shellcheck
-      - e2e
-      - build
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      - name: Check nx success
+        run: '[[ ${{ needs.nxtasks.result }} != "failure" ]] || exit 1'
       - name: Check run-shellcheck success
         run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"

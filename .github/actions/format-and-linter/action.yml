@@ -24,4 +24,3 @@ runs:
         BRANCH: ${{ github.head_ref}}
       run: |
         node scripts/ci/_get_affected_projects.mjs
-    

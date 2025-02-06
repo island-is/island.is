@@ -169,3 +169,7 @@ service-account.json
 
 # testing
 /coverage
+
+# Dynamic NX
+.github/workflows/nx.yml
+.github/assignment-rules.yml
