@@ -351,7 +351,7 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
               : 0
           }
         >
-          {subpage?.bottomSlices.map((slice) => {
+          {subpage?.bottomSlices?.map((slice) => {
             if (
               (organizationPage.slug === 'stafraent-island' ||
                 organizationPage.slug === 'digital-iceland') &&
