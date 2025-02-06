@@ -17,6 +17,7 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
@@ -196,7 +197,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
+    if: needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE != 'true'
     runs-on: arc-runners
     timeout-minutes: 45
     env:
@@ -387,7 +388,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: needs.prepare.outputs.BUILD_CHUNKS && env.DEPLOY_FEATURE != 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
