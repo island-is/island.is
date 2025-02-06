@@ -73,25 +73,15 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    const applications = await this.applicationApiWithAuth(
-      user,
-    ).applicationControllerFindAll({
-      nationalId: user.nationalId,
-      locale,
-      typeId: input?.typeId?.join(','),
-      status: input?.status?.join(','),
-      scopeCheck: input?.scopeCheck,
-    })
-
-    const apps = applications.map((app) => {
-      if (app.typeId === 'IncomePlan') {
-        const status = ApplicationResponseDtoStatusEnum.approved
-        return { ...app, status }
-      }
-      return app
-    })
-
-    return apps
+    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
+      {
+        nationalId: user.nationalId,
+        locale,
+        typeId: input?.typeId?.join(','),
+        status: input?.status?.join(','),
+        scopeCheck: input?.scopeCheck,
+      },
+    )
   }
 
   async findAllAdmin(
