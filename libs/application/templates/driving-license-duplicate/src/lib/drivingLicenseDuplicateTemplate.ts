@@ -35,6 +35,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -68,6 +69,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {

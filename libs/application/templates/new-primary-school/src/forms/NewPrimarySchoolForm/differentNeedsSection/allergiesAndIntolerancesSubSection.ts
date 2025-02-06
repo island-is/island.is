@@ -33,7 +33,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
       children: [
         buildCheckboxField({
           id: 'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
-          title: '',
           spacing: 0,
           options: [
             {
@@ -60,7 +59,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.INTOLERANCE, // TODO: Update when Júní has updated key-options
+            optionsType: OptionsType.FOOD_ALLERGY_AND_INTOLERANCE,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
@@ -69,7 +68,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
         ),
         buildCheckboxField({
           id: 'allergiesAndIntolerances.hasOtherAllergies',
-          title: '',
           spacing: 0,
           options: [
             {
@@ -90,7 +88,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.ALLERGY, // TODO: Update when Júní has updated key-options
+            optionsType: OptionsType.ALLERGY,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .typeOfOtherAllergiesPlaceholder,

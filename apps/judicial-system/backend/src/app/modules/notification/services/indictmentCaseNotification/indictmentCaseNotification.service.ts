@@ -60,14 +60,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            body,
-            recipient.name,
-            recipient.email,
-            undefined,
-            true,
-          ),
+            html: body,
+            recipientName: recipient.name,
+            recipientEmail: recipient.email,
+            attachments: undefined,
+            skipTail: true,
+          }),
         )
       }
     }
