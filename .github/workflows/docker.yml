@@ -155,7 +155,7 @@ jobs:
             DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
           image_repository: ${{ steps.args.outputs.image-repository }}
           cache_from: |
-            ${{ steps.args.outputs.build-cache }}
+            ${{ steps.args.outputs.build-cache-from }}
           cache_to: |
             ${{ steps.args.outputs.build-cache-to }}
           localrun: ${{ !!github.event.localrun }}
