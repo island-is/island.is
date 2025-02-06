@@ -82,6 +82,7 @@ jobs:
 
   docker-build:
     uses: ./.github/workflows/docker.yml
+    secrets: inherit
 
   success:
     runs-on: arc-runners
