@@ -83,7 +83,7 @@ import {
   getRightsCode,
   transformApplicationToParentalLeaveDTO,
   getFromDate,
-  isPreBirthRight,
+  isFixedRight,
 } from './parental-leave.utils'
 import {
   generateAssignEmployerApplicationSms,
@@ -848,9 +848,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   ): Period[] {
     return periods.map((period, index) => {
       const isFirstPeriod = index === 0
-      const preBirthRight = isPreBirthRight(period.rightCodePeriod)
+      const fixedRight = isFixedRight(period.rightCodePeriod)
       return {
-        rightsCodePeriod: preBirthRight ? period.rightCodePeriod : rights,
+        rightsCodePeriod: fixedRight ? period.rightCodePeriod : rights,
         from: getFromDate(
           isFirstPeriod,
           isActualDateOfBirth,
@@ -880,7 +880,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const rightsDTO = await this.createRightsDTO(application)
     const rightUnits = rightsDTO.map(({ rightsUnit }) => rightsUnit)
     const rights = rightUnits
-      .filter((rightUnit) => !isPreBirthRight(rightUnit))
+      .filter((rightUnit) => !isFixedRight(rightUnit))
       .join(',')
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH

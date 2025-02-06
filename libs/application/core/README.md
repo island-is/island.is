@@ -43,6 +43,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
+  codeOwner: CodeOwners.NordaApplications,
 + translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
 ```
@@ -84,6 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
+  codeOwner: CodeOwners.NordaApplications,
 + institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
@@ -110,6 +112,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  > = {
  type: ApplicationTypes.EXAMPLE,
  name: m.name,
+ codeOwner: CodeOwners.NordaApplications,
  institution: m.institutionName,
 + featureFlag: Feature.exampleApplication
  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
