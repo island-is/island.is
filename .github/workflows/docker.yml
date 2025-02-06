@@ -192,15 +192,6 @@ jobs:
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver: docker-container
-          # We get rate-limited if using docker.io's image for buildkit.
-          driver-opts: |
-            image=${{ env.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
-          install: true
-          use: true
       - name: Prepare creds
         id: creds
         run: |
@@ -218,6 +209,16 @@ jobs:
           registry: ${{ steps.creds.outputs.registry }}
           username: ${{ steps.creds.outputs.username }}
           password: ${{ steps.creds.outputs.password }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          # We get rate-limited if using docker.io's image for buildkit.
+          driver-opts: |
+            image=${{ env.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
+          install: true
+          use: true
 
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (deps/GHA)
