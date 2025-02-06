@@ -138,7 +138,6 @@ const Indictment = () => {
       // then by default the prosecutor requests a suspension of the driver's licence.
       const requestDriversLicenseSuspension = isOffenseEndpointEnabled
         ? indictmentCounts?.some((count) => {
-            console.log({ test: count.offenses })
             return count.offenses?.some((o) =>
               [
                 IndictmentCountOffense.DRUNK_DRIVING,

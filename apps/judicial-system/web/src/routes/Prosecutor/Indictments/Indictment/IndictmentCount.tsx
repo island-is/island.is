@@ -348,7 +348,6 @@ export const IndictmentCount: FC<Props> = ({
       isOffenseEndpointEnabled,
     )
 
-    console.log({ incidentDescription })
     onChange(
       indictmentCount.id,
       {
