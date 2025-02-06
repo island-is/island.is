@@ -41,7 +41,7 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
     email: z.string().optional(),
     phoneNumber: z.string().optional(),
     connection: z.string().refine((v) => v, { params: error.required }),
-    gender: z.nativeEnum(GenderAnswerOptions),
+    //gender: z.nativeEnum(GenderAnswerOptions),
     powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
