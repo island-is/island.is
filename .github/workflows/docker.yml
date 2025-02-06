@@ -220,6 +220,10 @@ jobs:
           install: true
           use: true
 
+      - name: Create and use a new builder instance
+        run: |
+          docker buildx create --name mybuilder --use
+
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (deps/GHA)
         uses: docker/build-push-action@v6
