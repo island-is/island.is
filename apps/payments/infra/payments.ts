@@ -14,7 +14,17 @@ export const serviceSetup = (services: {
     .namespace(namespace)
     .env({
       BASEPATH: basepath,
-      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      API_INTERNAL_BASEPATH: ref((h) => `http://${h.svc(services.api)}`),
+      API_EXTERNAL_BASEPATH: {
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is`,
+        ),
+        staging: 'https://beta.staging01.devland.is',
+        prod: 'https://island.is',
+      },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',

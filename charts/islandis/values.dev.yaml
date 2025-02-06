@@ -1822,7 +1822,8 @@ namespaces:
 payments:
   enabled: true
   env:
-    API_URL: 'http://web-api.islandis.svc.cluster.local'
+    API_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
+    API_INTERNAL_BASEPATH: 'http://web-api.islandis.svc.cluster.local'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'

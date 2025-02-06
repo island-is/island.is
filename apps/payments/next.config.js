@@ -8,13 +8,15 @@ const withVanillaExtract = createVanillaExtractPlugin()
 
 const {
   PAYMENTS_API_URL,
-  API_URL = 'http://localhost:4444',
+  API_INTERNAL_BASEPATH = 'http://localhost:4444',
+  API_EXTERNAL_BASEPATH = 'http://localhost:4444',
   CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET = '',
 } = process.env
 
-const graphqlPath = '/api/graphql'
+const apiPath = '/api'
+const graphqlPath = `${apiPath}/graphql`
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -27,15 +29,14 @@ const nextConfig = {
     return config
   },
   serverRuntimeConfig: {
-    // Will only be available on the server side
-    graphqlEndpoint: `${API_URL}${graphqlPath}`,
+    apiUrl: `${API_INTERNAL_BASEPATH}${apiPath}`,
+    graphqlEndpoint: `${API_INTERNAL_BASEPATH}${graphqlPath}`,
     paymentApiEndpoint: PAYMENTS_API_URL,
     verificationCallbackSigningSecret:
       PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
   },
   publicRuntimeConfig: {
-    // Will be available on both server and client
-    graphqlEndpoint: graphqlPath,
+    graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
   },
   basePath: `${BASEPATH}`,
