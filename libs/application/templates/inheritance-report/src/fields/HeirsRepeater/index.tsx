@@ -169,7 +169,11 @@ export const HeirsRepeater: FC<
 
       return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
     }, 0)
-    total = parseFloat(total.toFixed(6))
+    if (isEqualWithTolerance(total, 100)) {
+      total = 100
+    } else {
+      total = parseFloat(total.toFixed(6))
+    }
 
     const addTotal = id.replace('data', 'total')
 
