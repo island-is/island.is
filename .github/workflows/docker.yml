@@ -230,6 +230,7 @@ jobs:
         with:
           target: deps
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -241,6 +242,7 @@ jobs:
         with:
           target: deps
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -252,6 +254,7 @@ jobs:
         with:
           target: output-base
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -263,6 +266,7 @@ jobs:
         with:
           target: base-node-with-pg
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
