@@ -31,6 +31,7 @@ import {
 } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
@@ -44,6 +45,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
   name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,

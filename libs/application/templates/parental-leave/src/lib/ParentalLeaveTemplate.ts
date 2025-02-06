@@ -69,6 +69,7 @@ import {
   needsOtherParentApproval,
   restructureVMSTPeriods,
 } from './parentalLeaveTemplateUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const birthDayLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -85,6 +86,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: parentalLeaveFormMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.ParentalLeave.translation,
   dataSchema,

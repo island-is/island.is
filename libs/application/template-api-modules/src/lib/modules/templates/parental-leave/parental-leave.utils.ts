@@ -549,9 +549,9 @@ export const getFromDate = (
     : period.startDate
 }
 
-export const isPreBirthRight = (right: string | undefined) => {
+export const isFixedRight = (right: string | undefined) => {
   if (!right) {
     return false
   }
-  return ['VEIKMEÐG', 'ÖRYGGI-L'].includes(right)
+  return ['VEIKMEÐG', 'ÖRYGGI-L', 'DVALSTYRK', 'DVAL.FJÖL'].includes(right)
 }

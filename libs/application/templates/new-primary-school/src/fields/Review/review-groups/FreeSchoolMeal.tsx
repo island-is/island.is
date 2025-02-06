@@ -33,7 +33,7 @@ export const FreeSchoolMeal = ({
     options: specialNeedsTypeOptions,
     loading,
     error,
-  } = useFriggOptions(OptionsType.ALLERGY) // TODO: Update when Júní has updated key-options
+  } = useFriggOptions(OptionsType.SCHOOL_MEAL)
 
   return (
     <ReviewGroup

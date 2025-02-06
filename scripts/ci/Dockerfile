@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.2
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 # `base-*` layers are intended for maximum cacheability, only doing system-level actions
 
@@ -52,13 +53,33 @@ FROM src AS builder
 
 # Stage-specific ARGs
 ARG APP
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
+ARG NX_PARALLEL=2
+ARG NX_MAX_PARALLEL=4
+ARG NX_TASKS_RUNNER=ci
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
+ENV NX_PARALLEL=${NX_PARALLEL}
+ENV NX_MAX_PARALLEL=${NX_MAX_PARALLEL}
+ENV NX_TASKS_RUNNER=${NX_TASKS_RUNNER}
 
-RUN yarn nx run-many --target=build --projects="${APP}" --prod --parallel=8
+# Use the secret during build
+RUN --mount=type=secret,id=nx_cloud_access_token \
+  NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
-RUN project_root="$(yarn nx show project ${APP} --json | jq -r '.root')" && \
-  mv "dist/$project_root" /dist/
+RUN yarn nx show project ${APP} --json --verbose \
+  # Find _anything_ to prevent emptyness
+  | grep . \
+  # Print the output to stderr for debugging
+  | tee /dev/stderr \
+  # Find root
+  | jq -r '.root' \
+  # Move outputs to /dist
+  | xargs -I{} mv "dist/{}" /dist \
+  || \
+  # Fallback to APP_DIST_HOME usage if dynamic version fails
+  mv "${APP_DIST_HOME}" /dist
 
 
 # This is base image for containers that are to be deployed
@@ -183,17 +204,21 @@ LABEL commit=${GIT_COMMIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS base-playwright
+FROM mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG} AS deps-playwright
 
 # TODO: remove awscli dependency (157 MB extra)
 # hadolint ignore=DL3008
 RUN apt-get update -y && \
-  apt-get install -y --no-install-recommends zip awscli && \
+  apt-get install -y --no-install-recommends zip unzip && \
   apt-get purge && \
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* && \
+  curl -q "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+  unzip awscliv2.zip && \
+  ./aws/install && \
+  rm -rf ./aws ./awscli*.zip
 
 
-FROM base-playwright AS output-playwright
+FROM deps-playwright AS base-playwright
 WORKDIR /testing
 
 # Stage-specific ARGs
@@ -205,10 +230,15 @@ ARG GIT_REPOSITORY_URL
 
 COPY .yarnrc.yml ${APP_HOME}/package.json ./
 COPY .yarn/releases ./.yarn/releases
+RUN corepack enable
 
-RUN yarn install && \
-  yarn playwright install ${PLAYWRIGHT_BROWSER} && \
-  yarn cache clean
+# hadolint ignore=DL3060
+RUN --mount=type=cache,target=.yarn/cache \
+  yarn install && \
+  yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+
+FROM base-playwright AS output-playwright
 
 COPY --from=builder /dist ./
 COPY --chmod=0755 ${APP_HOME}/entrypoint.sh ./

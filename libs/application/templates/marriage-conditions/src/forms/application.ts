@@ -62,7 +62,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.introSectionDescription,
             children: [
               buildDescriptionField({
-                id: 'space',
+                id: 'introSpace',
                 title: '',
               }),
             ],
@@ -254,7 +254,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                   }),
                   buildDescriptionField({
-                    id: 'space',
+                    id: 'statusSpace',
                     space: 'containerGutter',
                     title: '',
                   }),
@@ -332,8 +332,13 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildDescriptionField({
-                    id: 'space',
-                    space: 'containerGutter',
+                    id: 'dateSpace',
+                    space: 'gutter',
+                    title: '',
+                  }),
+                  buildDescriptionField({
+                    id: 'dateSpace1',
+                    space: 'gutter',
                     title: '',
                   }),
                   buildRadioField({
@@ -526,7 +531,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 imagePosition: 'center',
               }),
               buildDescriptionField({
-                id: 'space',
+                id: 'imageSpace',
                 title: '',
                 space: 'gutter',
               }),
