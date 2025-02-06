@@ -137,6 +137,15 @@ jobs:
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
           echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" | tee -a "$GITHUB_OUTPUT"
 
+          # From https://aws.amazon.com/blogs/containers/announcing-remote-cache-support-in-amazon-ecr-for-buildkit-clients/
+          # docker build -t <account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:image \
+          #   --cache-to mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=<account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:cache \
+          #   --cache-from type=registry,ref=<account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:cache .
+          # docker push <account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:image
+          # Adapted to outputs:
+          echo build-cache-to="mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=$image_repository:cache" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-from="type=registry,ref=$image_repository:cache" | tee -a "$GITHUB_OUTPUT"
+
       - name: Common config
         id: common
         env:
@@ -146,11 +155,9 @@ jobs:
             DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
           image_repository: ${{ steps.args.outputs.image-repository }}
           cache_from: |
-            ${{ steps.args.outputs.build-cache-local }}
             ${{ steps.args.outputs.build-cache }}
           cache_to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=max
-            ${{ steps.args.outputs.build-cache }},mode=max
+            ${{ steps.args.outputs.build-cache-to }}
           localrun: ${{ !!github.event.localrun }}
         run: |
           echo | jq -rsc \
