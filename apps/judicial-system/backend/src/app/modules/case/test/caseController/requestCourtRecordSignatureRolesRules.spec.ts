@@ -16,8 +16,8 @@ describe('CaseController - Request court record signature rules', () => {
     )
   })
 
-  it('should give permission to two roles', () => {
-    expect(rules).toHaveLength(2)
+  it('should give permission to three roles', () => {
+    expect(rules).toHaveLength(3)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
     expect(rules).toContain(districtCourtAssistantRule)
