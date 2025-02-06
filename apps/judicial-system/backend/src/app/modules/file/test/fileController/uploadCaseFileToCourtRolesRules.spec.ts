@@ -1,4 +1,5 @@
 import {
+  districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../../../guards'
@@ -16,8 +17,9 @@ describe('FileController - Update case file to court rules', () => {
   })
 
   it('should give permission to two roles', () => {
-    expect(rules).toHaveLength(2)
+    expect(rules).toHaveLength(3)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
+    expect(rules).toContain(districtCourtAssistantRule)
   })
 })

@@ -1,4 +1,5 @@
 import {
+  districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../../../guards'
@@ -19,5 +20,6 @@ describe('CaseController - Request court record signature rules', () => {
     expect(rules).toHaveLength(2)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
+    expect(rules).toContain(districtCourtAssistantRule)
   })
 })

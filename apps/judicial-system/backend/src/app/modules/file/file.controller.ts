@@ -263,7 +263,11 @@ export class FileController {
     CaseReceivedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,

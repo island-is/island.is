@@ -564,6 +564,7 @@ export class CaseController {
     prosecutorRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
@@ -638,7 +639,11 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('case/:caseId/courtRecord/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -679,7 +684,11 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Get('case/:caseId/courtRecord/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
