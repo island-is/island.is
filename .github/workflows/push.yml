@@ -319,6 +319,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules'
+          keys: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Set Test Everything true
         run: |
