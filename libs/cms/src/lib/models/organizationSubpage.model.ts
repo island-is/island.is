@@ -60,8 +60,8 @@ export class OrganizationSubpage {
   @CacheField(() => EmbeddedVideo, { nullable: true })
   signLanguageVideo?: EmbeddedVideo | null
 
-  @CacheField(() => [SliceUnion])
-  bottomSlices!: Array<typeof SliceUnion | null>
+  @CacheField(() => [SliceUnion], { nullable: true })
+  bottomSlices?: Array<typeof SliceUnion | null>
 }
 
 export const mapOrganizationSubpage = ({
