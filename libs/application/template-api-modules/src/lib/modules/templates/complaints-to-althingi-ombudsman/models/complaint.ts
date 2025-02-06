@@ -9,7 +9,7 @@ export interface ComplainerContactInfo {
   phone: string
   postalCode: string
   city: string
-  gender?: GenderAnswerOptions
+  //gender?: GenderAnswerOptions
 }
 
 export interface ComplaineeContactInfo {
