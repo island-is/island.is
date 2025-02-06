@@ -47,7 +47,7 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  CACHE_MOUNT: '/mnt/cache'
+  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
 jobs:
   pre-checks:

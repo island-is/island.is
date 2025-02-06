@@ -16,11 +16,6 @@ ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
-CACHE_MOUNT="${CACHE_MOUNT:-$PROJECT_ROOT}"
-CACHE_MOUNT="${CACHE_MOUNT}/tmp"
-CACHE_DIR="${CACHE_DIR:-docker-cache}"
-CACHE_PATH="${CACHE_MOUNT}/${APP}/${CACHE_DIR}"
-mkdir -p "$CACHE_PATH"
 
 BUILD_ARGS=()
 
@@ -36,8 +31,8 @@ mkargs() {
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
     -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
-    --cache-from="type=local,src=${CACHE_PATH}"
-    --cache-from="type=local,src=${CACHE_PATH},mode=max"
+    --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=${APP}-cache"
+    --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=${APP}-cache"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
