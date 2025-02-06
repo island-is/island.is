@@ -26,14 +26,12 @@ import {
   defendantEventTypes,
   eventTypes,
   isIndictmentCase,
-  isProsecutionUser,
   isRequestCase,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
-import { AwsS3Service } from '../aws-s3'
 import {
   CivilClaimant,
   CivilClaimantService,
@@ -44,9 +42,8 @@ import {
 import { EventLog } from '../event-log'
 import {
   CaseFile,
-  defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRequestCases,
-  defenderDefaultCaseFileCategoriesForIndictmentCases,
+  FileService,
+  getDefenceUserCaseFileCategories,
 } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
@@ -313,7 +310,7 @@ export class LimitedAccessCaseService {
     private readonly defendantService: DefendantService,
     private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
-    private readonly awsS3Service: AwsS3Service,
+    private readonly fileService: FileService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -528,29 +525,33 @@ export class LimitedAccessCaseService {
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
     const filesToZip: { data: Buffer; name: string }[] = []
-    const caseFileCategories = this.getFileCategories(theCase)
-    const caseFilesByCategory =
+    const awailableCseFileCategories = getDefenceUserCaseFileCategories(
+      user.nationalId,
+      theCase.type,
+      theCase.defendants,
+      theCase.civilClaimants,
+    )
+
+    const awailableCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
           file.key &&
           file.category &&
-          caseFileCategories.includes(file.category),
+          awailableCseFileCategories.includes(file.category),
       ) ?? []
 
-    const caseFilesByCategoryPromises = caseFilesByCategory.map(
-      async (file) => {
-        return this.awsS3Service
-          .getObject(theCase.type, file.key)
-          .then((data) => filesToZip.push({ data, name: file.name }))
-          .catch((reason) =>
-            // Tolerate failure, but log what happened
-            this.logger.warn(
-              `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
-              { reason },
-            ),
-          )
-      },
-    )
+    const caseFilesByCategoryPromises = awailableCaseFiles.map(async (file) => {
+      return this.fileService
+        .getCaseFileFromS3(theCase, file)
+        .then((data) => filesToZip.push({ data, name: file.name }))
+        .catch((reason) =>
+          // Tolerate failure, but log what happened
+          this.logger.warn(
+            `Could not get file ${file.id} of case ${file.caseId} from AWS S3`,
+            { reason },
+          ),
+        )
+    })
 
     await Promise.all(caseFilesByCategoryPromises)
 
@@ -573,7 +574,14 @@ export class LimitedAccessCaseService {
 
     if (
       isIndictmentCase(theCase.type) &&
-      this.shouldDisplayGeneratedPdfFiles(theCase, user)
+      (Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+          user.nationalId,
+          theCase.civilClaimants,
+        ))
     ) {
       filesToZip.push({
         data: await this.pdfService.getIndictmentPdf(theCase),
@@ -617,40 +625,4 @@ export class LimitedAccessCaseService {
 
     return this.zipFiles(filesToZip)
   }
-
-  private getFileCategories = (theCase: Case) => {
-    if (isRequestCase(theCase.type)) {
-      return defenderCaseFileCategoriesForRequestCases
-    }
-
-    if (theCase.defendants?.[0].caseFilesSharedWithDefender) {
-      return defenderCaseFileCategoriesForIndictmentCases
-    }
-
-    return defenderDefaultCaseFileCategoriesForIndictmentCases
-  }
-
-  private shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: TUser) =>
-    Boolean(
-      isProsecutionUser(user) ||
-        theCase.defendants?.some(
-          (defendant) =>
-            defendant.isDefenderChoiceConfirmed &&
-            defendant.caseFilesSharedWithDefender &&
-            defendant.defenderNationalId &&
-            normalizeAndFormatNationalId(user?.nationalId).includes(
-              defendant.defenderNationalId,
-            ),
-        ) ||
-        theCase.civilClaimants?.some(
-          (civilClaimant) =>
-            civilClaimant.hasSpokesperson &&
-            civilClaimant.isSpokespersonConfirmed &&
-            civilClaimant.caseFilesSharedWithSpokesperson &&
-            civilClaimant.spokespersonNationalId &&
-            normalizeAndFormatNationalId(user?.nationalId).includes(
-              civilClaimant.spokespersonNationalId,
-            ),
-        ),
-    )
 }
