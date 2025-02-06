@@ -3,11 +3,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-import {
-  ApplicationResponseDtoStatusEnum,
-  ApplicationsApi,
-  PaymentsApi,
-} from '../../gen/fetch'
+import { ApplicationsApi, PaymentsApi } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
