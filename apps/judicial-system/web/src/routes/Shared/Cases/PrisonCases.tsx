@@ -190,7 +190,7 @@ export const PrisonCases: FC = () => {
             {
               title: capitalize(formatMessage(tables.sentencingDate)),
             },
-            { title: formatMessage(tables.state) },
+            { title: formatMessage(tables.state), sortBy: 'state' },
           ]}
           data={cases}
           columns={[

@@ -29,6 +29,7 @@ import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
+import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 
 interface TableProps {
   thead: {
@@ -178,6 +179,8 @@ const Table: FC<TableProps> = (props) => {
         return courtAbbreviation
           ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
           : entry.courtCaseNumber ?? ''
+      case 'state':
+        return mapCaseStateToTagVariant(formatMessage, entry).text
       default:
         return entry[column]?.toString() ?? ''
     }
