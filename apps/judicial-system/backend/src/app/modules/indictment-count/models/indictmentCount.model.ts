@@ -55,7 +55,7 @@ export class IndictmentCount extends Model {
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  offenses?: IndictmentCountOffense[]
+  deprecatedOffenses?: IndictmentCountOffense[]
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: Object })
