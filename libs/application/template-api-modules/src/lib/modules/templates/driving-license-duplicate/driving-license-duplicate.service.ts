@@ -71,7 +71,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
 
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
-        districtId: parseInt(answers.district.toString(), 10),
+        districtId: parseInt(answers.district?.toString() || '37'),
         token: auth.authorization,
         // Always true since submission doesn't happen before
         // user checks the required field which states
