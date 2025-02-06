@@ -60,9 +60,8 @@ const canDefenceUserViewCaseFileOfRequestCase = (
   )
 }
 
-const canDefenceUserViewCaseFileOfIndictmentCase = (
+const getDefenceUserIndictmentCaseFileCategories = (
   nationalId: string,
-  caseFileCategory: CaseFileCategory,
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
@@ -72,9 +71,7 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
       defendants,
     )
   ) {
-    return defenderCaseFileCategoriesForIndictmentCases.includes(
-      caseFileCategory,
-    )
+    return defenderCaseFileCategoriesForIndictmentCases
   }
 
   if (
@@ -83,14 +80,25 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
       civilClaimants,
     )
   ) {
-    return defenderCaseFileCategoriesForIndictmentCases.includes(
-      caseFileCategory,
-    )
+    return defenderCaseFileCategoriesForIndictmentCases
   }
 
-  return defenderDefaultCaseFileCategoriesForIndictmentCases.includes(
-    caseFileCategory,
+  return defenderDefaultCaseFileCategoriesForIndictmentCases
+}
+
+const canDefenceUserViewCaseFileOfIndictmentCase = (
+  nationalId: string,
+  caseFileCategory: CaseFileCategory,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+) => {
+  const allowedCaseFileCategories = getDefenceUserIndictmentCaseFileCategories(
+    nationalId,
+    defendants,
+    civilClaimants,
   )
+
+  return allowedCaseFileCategories.includes(caseFileCategory)
 }
 
 const canDefenceUserViewCaseFile = (
@@ -181,23 +189,9 @@ export const getDefenceUserCaseFileCategories = (
     return defenderCaseFileCategoriesForRequestCases
   }
 
-  if (
-    Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
-      nationalId,
-      defendants,
-    )
-  ) {
-    return defenderCaseFileCategoriesForIndictmentCases
-  }
-
-  if (
-    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-      nationalId,
-      civilClaimants,
-    )
-  ) {
-    return defenderCaseFileCategoriesForIndictmentCases
-  }
-
-  return defenderDefaultCaseFileCategoriesForIndictmentCases
+  return getDefenceUserIndictmentCaseFileCategories(
+    nationalId,
+    defendants,
+    civilClaimants,
+  )
 }
