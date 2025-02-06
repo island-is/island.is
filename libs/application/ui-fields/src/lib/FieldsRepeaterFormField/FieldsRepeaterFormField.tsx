@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -61,15 +61,18 @@ export const FieldsRepeaterFormField = ({
     Math.max(numberOfItemsInAnswers ?? 0, minRows),
   )
   const [updatedApplication, setUpdatedApplication] = useState(application)
+  const stableApplication = useMemo(() => application, [application])
+  const stableAnswers = useMemo(() => answers, [answers])
 
   useEffect(() => {
-    if (!isEqual(application, updatedApplication)) {
-      setUpdatedApplication({
-        ...application,
-        answers: { ...answers },
-      })
-    }
-  }, [answers])
+    setUpdatedApplication((prev) => {
+      if (isEqual(prev, { ...stableApplication, answers: stableAnswers })) {
+        return prev
+      }
+
+      return { ...stableApplication, answers: stableAnswers }
+    })
+  }, [stableApplication, stableAnswers])
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
