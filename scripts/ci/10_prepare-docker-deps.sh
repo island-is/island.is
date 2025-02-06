@@ -8,14 +8,14 @@ source "$DIR"/_common.sh
 
 mkdir -p "$PROJECT_ROOT"/cache
 
-NODE_IMAGE_TAG=${NODE_IMAGE_TAG:-$(./scripts/ci/get-node-version.mjs)}
+NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-20}
 
 docker buildx create --driver docker-container --use || true
 
 docker buildx build \
   --platform=linux/amd64 \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache \
-  --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
+  --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION" \
   -f "${DIR}"/Dockerfile \
   --target=deps \
   "$PROJECT_ROOT"
@@ -24,7 +24,7 @@ docker buildx build \
   --platform=linux/amd64 \
   --cache-from=type=local,src="$PROJECT_ROOT"/cache \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache_output \
-  --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
+  --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION" \
   -f "${DIR}"/Dockerfile \
   --target=output-base \
   "$PROJECT_ROOT"

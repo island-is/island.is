@@ -21,6 +21,7 @@ import {
   coreHistoryMessages,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type HealthInsuranceDeclarationEvent =
   | { type: DefaultEvents.APPROVE }
@@ -41,6 +42,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE_DECLARATION,
   name: application.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   translationNamespaces: configuration.translation,
   dataSchema: HealthInsuranceDeclarationSchema,
   institution: application.general.institutionName,

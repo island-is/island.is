@@ -19,6 +19,7 @@ import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { application as applicationMessage } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -41,6 +42,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN,
   name: applicationMessage.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   translationNamespaces:
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
   dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
