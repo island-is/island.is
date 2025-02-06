@@ -72,7 +72,7 @@ export const freeSchoolMealSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.ALLERGY, // TODO: Update when Júní has updated key-options
+            optionsType: OptionsType.SCHOOL_MEAL,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .specialNeedsTypePlaceholder,
