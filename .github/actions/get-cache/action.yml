@@ -41,10 +41,12 @@ runs:
         NODE_OPTIONS: --max-old-space-size=8192
       run: |
         # This is because of a weird bug where Github would write as root to .cache
+        export COREPACK_HOME="$HOME/.corepack-cache"
         export CYPRESS_CACHE_FOLDER="$HOME/.cypress-cache"
+        echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
         cd scripts/ci/cache
-        yarn install --immutable
+        npx yarn install --immutable
         node cache-action.mjs
 
     # NOTE: Will restore NX cloud cache or generate new cache

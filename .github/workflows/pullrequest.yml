@@ -122,7 +122,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress'
-          keys: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
