@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.2
-# Global ARGs (used across multiple stages)
 ARG PLAYWRIGHT_VERSION
 ARG NODE_IMAGE_VERSION=20
 ARG APP_HOME
