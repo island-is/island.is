@@ -21,7 +21,7 @@ const initDdRum = (params: DdRumInitParams) => {
     sessionSampleRate: 10,
     sessionReplaySampleRate: 0,
     trackUserInteractions: true,
-    enablePrivacyForActionName: true,
+    //enablePrivacyForActionName: true,
     defaultPrivacyLevel: 'mask',
     allowedTracingUrls: [
       'https://island.is',

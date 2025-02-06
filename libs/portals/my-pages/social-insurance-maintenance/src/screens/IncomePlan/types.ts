@@ -1,14 +1,13 @@
 export type Status =
-  | 'no_data' //tested
-  | 'in_progress' //tested
-  | 'in_review' //tested
-  | 'accepted' //tested
-  | 'accepted_no_changes' //tested
-  | 'rejected' //iffy
-  | 'rejected_no_changes' //iffy
-  | 'unknown' //iffy
-  | 'error' //tested
-  | 'loading' //tested
+  | 'no_data' // done
+  | 'in_progress' //done
+  | 'in_review' //done
+  | 'accepted' // done
+  | 'accepted_no_changes' // done
+  | 'rejected' // done
+  | 'rejected_no_changes' // done
+  | 'error'
+  | 'loading'
 
 export type ApplicationStatus =
   | 'draft'

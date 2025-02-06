@@ -1,7 +1,4 @@
-import {
-  SocialInsuranceIncomePlan,
-  SocialInsuranceIncomePlanStatus,
-} from '@island.is/api/schema'
+import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
 import { FormatMessage, useLocale } from '@island.is/localization'
 import {
   ActionCard,
@@ -21,16 +18,16 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
   const { formatMessage } = useLocale()
 
   const parseSubtext = (
-    tag: SocialInsuranceIncomePlanStatus,
+    status: Status,
     date: Date,
     formatMessage: FormatMessage,
   ) => {
-    switch (tag) {
-      case SocialInsuranceIncomePlanStatus.ACCEPTED:
+    switch (status) {
+      case 'accepted':
+      case 'accepted_no_changes':
         return `${formatMessage(coreMessages.approved)}: ${formatDate(date)}`
-      case SocialInsuranceIncomePlanStatus.IN_PROGRESS:
-        return `${formatMessage(m.receivedInProgress)}: ${formatDate(date)}`
-      case SocialInsuranceIncomePlanStatus.CANCELLED:
+      case 'rejected':
+      case 'rejected_no_changes':
         return `${formatMessage(coreMessages.rejected)}: ${formatDate(date)}`
       default:
         return
@@ -63,6 +60,8 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
         />
       )
     }
+    case 'rejected_no_changes':
+    case 'rejected':
     case 'accepted_no_changes':
     case 'accepted': {
       return (
@@ -73,11 +72,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
           }}
           text={
             registrationDate
-              ? parseSubtext(
-                  SocialInsuranceIncomePlanStatus.ACCEPTED,
-                  new Date(registrationDate),
-                  formatMessage,
-                )
+              ? parseSubtext(status, new Date(registrationDate), formatMessage)
               : undefined
           }
           headingColor="currentColor"
@@ -116,7 +111,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
         />
       )
     }
-    default:
+    case 'no_data':
       return (
         <ActionCard
           image={{

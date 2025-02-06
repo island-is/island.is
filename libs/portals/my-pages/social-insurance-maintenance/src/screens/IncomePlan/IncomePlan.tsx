@@ -1,9 +1,5 @@
 import { AlertMessage, Box, Inline, Stack } from '@island.is/island-ui/core'
-import {
-  FormatMessage,
-  useLocale,
-  useNamespaces,
-} from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   IntroWrapper,
@@ -19,7 +15,9 @@ import {
 import { mapStatus } from './mapper'
 import { ApplicationStatus, Status } from './types'
 import { IncomePlanCard } from './IncomePlanCard'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
+import { DebugSelectors } from './DebugSelectors'
 
 const RENDER_ALERT_BOX_CONDITIONALS: Status[] = [
   'in_review',
@@ -30,12 +28,20 @@ const RENDER_ALERT_BOX_CONDITIONALS: Status[] = [
 const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
   'accepted',
   'accepted_no_changes',
+  'rejected',
+  'rejected_no_changes',
 ]
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage, locale } = useLocale()
 
+  //REMOVE AFTER DEBUG
+  const [applicationState, setApplicationState] = useState<ApplicationStatus>()
+  const [trStatus, setTrStatus] = useState<SocialInsuranceIncomePlanStatus>()
+  const [isEligibleForChange, setIsEligibleForChange] = useState<boolean>(false)
+
+  /* RE-ENABLE AFTER DEBUG
   const { data, loading, error } = useGetIncomePlanQuery()
   const {
     data: applications,
@@ -50,7 +56,14 @@ const IncomePlan = () => {
       locale,
     },
   })
+   */
 
+  //REMOVE AFTER DEBUG
+  const status: Status = useMemo(() => {
+    return mapStatus(trStatus, applicationState, isEligibleForChange)
+  }, [applicationState, isEligibleForChange, trStatus])
+
+  /*RE-ENABLE AFTER DEBUG
   const status: Status = useMemo(() => {
     if (loading || applicationsLoading) {
       return 'loading'
@@ -77,9 +90,7 @@ const IncomePlan = () => {
     data?.socialInsuranceIncomePlan?.status,
     error,
     loading,
-  ])
-
-  console.log(applications)
+    ]) */
 
   const renderAlertBox = () => {
     if (RENDER_ALERT_BOX_CONDITIONALS.includes(status)) {
@@ -101,7 +112,11 @@ const IncomePlan = () => {
             m.incomePlanModifyLink,
           )}`}
           text={formatMessage(m.modifyIncomePlan)}
-          disabled={status === 'accepted_no_changes' || status === 'in_review'}
+          disabled={
+            status === 'accepted_no_changes' ||
+            status === 'rejected_no_changes' ||
+            status === 'in_review'
+          }
           icon="open"
           variant="primary"
           size="small"
@@ -113,18 +128,18 @@ const IncomePlan = () => {
   const renderContent = () => {
     switch (status) {
       case 'error':
-        return <Problem error={error || applicationsError} noBorder={false} />
+        //TODO - RE-ENABLE AFTER DEBUG
+        //return <Problem error={error || applicationsError} noBorder={false} />
+
+        //TODO - REMOVE AFTER DEBUG
+        return <Problem noBorder={false} />
       case 'loading':
         return (
           <Box marginBottom={2}>
             <CardLoader />
           </Box>
         )
-      case 'accepted':
-      case 'accepted_no_changes':
-      case 'in_review':
-      case 'no_data':
-      case 'in_progress': {
+      default: {
         return (
           <Stack space={2}>
             {renderAlertBox()}
@@ -144,11 +159,6 @@ const IncomePlan = () => {
           </Stack>
         )
       }
-      case 'unknown':
-      case 'rejected_no_changes':
-      case 'rejected': {
-        return <Problem type="no_data" noBorder={false} />
-      }
     }
   }
 
@@ -161,6 +171,18 @@ const IncomePlan = () => {
         coreMessages.socialInsuranceTooltip,
       )}
     >
+      <Box marginBottom={2}>
+        <DebugSelectors
+          onTrStatusButtonChange={(value) => setTrStatus(value)}
+          onApplicationStatusButtonChange={(value) =>
+            setApplicationState(value)
+          }
+          onIsEligibleForChangeToggle={() =>
+            setIsEligibleForChange(!isEligibleForChange)
+          }
+          currentEligibleForChangeStatus={isEligibleForChange ? 'Já' : 'Nei'}
+        />
+      </Box>
       {renderContent()}
     </IntroWrapper>
   )

@@ -3,7 +3,11 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-import { ApplicationsApi, PaymentsApi } from '../../gen/fetch'
+import {
+  ApplicationResponseDtoStatusEnum,
+  ApplicationsApi,
+  PaymentsApi,
+} from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
@@ -69,15 +73,25 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
-      {
-        nationalId: user.nationalId,
-        locale,
-        typeId: input?.typeId?.join(','),
-        status: input?.status?.join(','),
-        scopeCheck: input?.scopeCheck,
-      },
-    )
+    const applications = await this.applicationApiWithAuth(
+      user,
+    ).applicationControllerFindAll({
+      nationalId: user.nationalId,
+      locale,
+      typeId: input?.typeId?.join(','),
+      status: input?.status?.join(','),
+      scopeCheck: input?.scopeCheck,
+    })
+
+    const apps = applications.map((app) => {
+      if (app.typeId === 'IncomePlan') {
+        const status = ApplicationResponseDtoStatusEnum.approved
+        return { ...app, status }
+      }
+      return app
+    })
+
+    return apps
   }
 
   async findAllAdmin(
