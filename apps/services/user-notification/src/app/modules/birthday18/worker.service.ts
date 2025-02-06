@@ -21,7 +21,7 @@ export class UserNotificationBirthday18WorkerService {
   }
 
   async dispatchBirthdayNotifications() {
-    const birthdays = await this.nationalRegistryService.get18YearOlds(true)
+    const birthdays = await this.nationalRegistryService.get18YearOlds()
     await Promise.all(
       birthdays.map((birthdaySsn) => {
         const dto: CreateHnippNotificationDto = {
