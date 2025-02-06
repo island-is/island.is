@@ -532,7 +532,7 @@ export class LimitedAccessCaseService {
       theCase.civilClaimants,
     )
 
-    const awailableCaseFiles =
+    const availableCaseFiles =
       theCase.caseFiles?.filter(
         (file) =>
           file.key &&
@@ -540,7 +540,7 @@ export class LimitedAccessCaseService {
           availableCaseFileCategories.includes(file.category),
       ) ?? []
 
-    const caseFilesByCategoryPromises = awailableCaseFiles.map(async (file) => {
+    const caseFilesByCategoryPromises = availableCaseFiles.map(async (file) => {
       return this.fileService
         .getCaseFileFromS3(theCase, file)
         .then((data) => filesToZip.push({ data, name: file.name }))
