@@ -13,7 +13,7 @@ const schema = z.object({
 export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: ' NationalRegistryV3ApplicationsClient',
+  name: 'NationalRegistryV3ApplicationsClient',
   schema,
   load: (env) => ({
     fetchTimeout: 10000,
