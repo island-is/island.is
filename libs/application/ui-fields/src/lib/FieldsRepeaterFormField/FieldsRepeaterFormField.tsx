@@ -93,17 +93,19 @@ export const FieldsRepeaterFormField = ({
   }
 
   const handleRemoveItem = () => {
+    const items = getValueViaPath<Array<unknown>>(answers, id)
+
     if (numberOfItems > (numberOfItemsInAnswers || 0)) {
       setNumberOfItems(numberOfItems - 1)
     } else if (numberOfItems === numberOfItemsInAnswers) {
-      setValue(id, answers[id].slice(0, -1))
+      setValue(id, items?.slice(0, -1))
       setNumberOfItems(numberOfItems - 1)
     } else if (
       numberOfItemsInAnswers &&
       numberOfItems < numberOfItemsInAnswers
     ) {
       const difference = numberOfItems - numberOfItemsInAnswers
-      setValue(id, answers[id].slice(0, difference))
+      setValue(id, items?.slice(0, difference))
       setNumberOfItems(numberOfItems)
     }
 
