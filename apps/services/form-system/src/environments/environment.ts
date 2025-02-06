@@ -4,7 +4,7 @@ export default {
     defaultNamespace: '@island.is/form-system',
     groupName: process.env.AUDIT_GROUP_NAME,
     // Same service name as in Nx project.json
-    serviceName: 'services-form-system',
+    serviceName: 'services-form-system-api',
   },
   auth: {
     issuer:

@@ -16,14 +16,14 @@ global:
     env:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
-name: 'services-form-system'
+name: 'services-form-system-api'
 enabled: true
 env:
   CODE_OWNER: 'Advania'
   DB_HOST: 'postgres-applications.internal'
-  DB_NAME: 'services_form_system'
+  DB_NAME: 'services_form_system_api'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
-  DB_USER: 'services_form_system'
+  DB_USER: 'services_form_system_api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
@@ -49,7 +49,7 @@ hpa:
       max: 3
       min: 1
 image:
-  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system'
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
 initContainer:
   containers:
     - args:
@@ -80,13 +80,13 @@ initContainer:
           memory: '128Mi'
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_form_system'
+    DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
-    DB_USER: 'services_form_system'
+    DB_USER: 'services_form_system_api'
     SERVERSIDE_FEATURES_ON: ''
   secrets:
-    DB_PASS: '/k8s/services-form-system/DB_PASSWORD'
-namespace: 'services-form-system'
+    DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
+namespace: 'services-form-system-api'
 podDisruptionBudget:
   maxUnavailable: 1
 pvcs: []
@@ -103,7 +103,7 @@ resources:
     memory: '128Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  DB_PASS: '/k8s/services-form-system/DB_PASSWORD'
+  DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
