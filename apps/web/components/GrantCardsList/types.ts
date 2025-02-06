@@ -12,8 +12,7 @@ export type TranslationKeys = Partial<
     | 'applicationOpensToWithDay'
     | 'applicationWasOpenTo'
     | 'applicationWasOpenToAndWith'
-    | 'applicationAlwaysOpen'
-    | 'applicationUnknown',
+    | 'applicationAlwaysOpen',
     string
   >
 >
