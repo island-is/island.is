@@ -7,6 +7,8 @@ const job = processJob()
 
 if (job === 'cleanup') {
   import('./cleanup').then((app) => app.cleanup())
+} else if (job === 'birthday') {
+  import('./birthday').then((app) => app.birthday())
 } else {
   bootstrap({
     appModule: AppModule,
