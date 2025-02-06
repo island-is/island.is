@@ -169,6 +169,7 @@ jobs:
             "image-repository": $image_repository,
             "cache-from": $cache_from,
             "cache-to": $cache_to,
+            "dep-tags": "\($image_repository)/docker-cache:tag"
           } | to_entries | .[] | "\(.key)<<EOF\n\(.value)\nEOF"' | tee -a "$GITHUB_OUTPUT"
 
       - name: Configure AWS Credentials
@@ -233,6 +234,7 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
+          tags: ${{ steps.common.outputs.dep-tags }}
           cache-from: |
             type=gha
           cache-to: |
