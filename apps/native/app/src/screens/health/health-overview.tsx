@@ -471,7 +471,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             })}
             onPress={() =>
               openBrowser(
-                `${origin}/minarsidur/heilsa/lyf/lyfjakaup`,
+                `${origin}/minarsidur/heilsa/lyf/greidsluthatttaka`,
                 componentId,
               )
             }

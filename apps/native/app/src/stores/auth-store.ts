@@ -104,6 +104,7 @@ const clearPasskey = async (userNationalId?: string) => {
 const isLogoutError = (e: Error & { code?: string }) => {
   return (
     e.code === INVALID_REFRESH_TOKEN_ERROR ||
+    e.message === INVALID_REFRESH_TOKEN_ERROR ||
     e.message === UNAUTHORIZED_USER_INFO
   )
 }
@@ -244,7 +245,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
 
     const client = await getApolloClientAsync()
-    await client.cache.reset()
+    await client.clearStore()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
     set(
       (state) => ({
