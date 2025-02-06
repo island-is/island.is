@@ -36,8 +36,7 @@ export const getCache = async (
   const cacheManager = await createRedisCacheManager({
     name: 'clients-national-registry-v2',
     nodes: config.redis.nodes,
-    // ssl: config.redis.ssl,
-    ssl: false,
+    ssl: config.redis.ssl,
     noPrefix: true,
     ttl: 0,
   })

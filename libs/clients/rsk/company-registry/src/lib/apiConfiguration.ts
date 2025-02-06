@@ -22,8 +22,7 @@ export const ApiConfiguration = {
             cacheManager: await createRedisCacheManager({
               name: 'clients-company-registry',
               nodes: config.redis.nodes,
-              // ssl: config.redis.ssl,
-              ssl: false,
+              ssl: config.redis.ssl,
               noPrefix: true,
               ttl: 0,
             }),
