@@ -86,6 +86,7 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
+import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
@@ -214,6 +215,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Brennuleyfi/BurningPermitList':
       connectedComponent = <BurningPermitList slice={slice} />
+      break
+    case 'DigitalIcelandStatistics':
+      connectedComponent = <DigitalIcelandStatistics />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
