@@ -39465,7 +39465,7 @@ __metadata:
     lodash: 4.17.21
     lottie-web: 5.7.13
     mailparser: 3.5.0
-    markdown-to-jsx: 7.1.7
+    markdown-to-jsx: 7.7.1
     memoizee: 0.4.15
     mobx: 6.3.7
     msw: 0.21.3
@@ -43108,12 +43108,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"markdown-to-jsx@npm:7.1.7":
-  version: 7.1.7
-  resolution: "markdown-to-jsx@npm:7.1.7"
+"markdown-to-jsx@npm:7.7.1":
+  version: 7.7.1
+  resolution: "markdown-to-jsx@npm:7.7.1"
   peerDependencies:
     react: ">= 0.14.0"
-  checksum: b2c0ea7d0988fad0c709989b3b1b3a5600d1e80b60266f9618386f7afead4a6b5eba9ee1a3943df6a3dcb1599ea89e58467d1b17b6dd3af3c60984c60a85d06d
+  checksum: 04e9f456597725db8c86548c316bb955920ed2fc957cdc96fc6c7ed35f7a559b23034108356c2bdd1e32f2b7ba175aec6eb7bd4eee58aae591a444e40c6540da
   languageName: node
   linkType: hard
 
