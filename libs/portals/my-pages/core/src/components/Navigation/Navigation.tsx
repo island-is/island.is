@@ -432,37 +432,6 @@ const MobileButton = ({
   titleIcon,
   mobileNavigationButtonOpenLabel,
 }: MobileButtonProps) => {
-  const [isShaking, setIsShaking] = useState(false)
-  const time = 15000 // 15 seconds
-  const idleTimerRef = useRef<NodeJS.Timeout | null>(null)
-
-  useEffect(() => {
-    const handleIdle = () => {
-      setIsShaking(true)
-      setTimeout(() => setIsShaking(false), 1000) // Stop shaking after 1 second
-    }
-
-    const resetTimer = () => {
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current)
-      }
-      idleTimerRef.current = setTimeout(handleIdle, time)
-    }
-
-    resetTimer() // Initialize the timer
-
-    window.addEventListener('mousemove', resetTimer)
-    window.addEventListener('keydown', resetTimer)
-
-    return () => {
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current)
-      }
-      window.removeEventListener('mousemove', resetTimer)
-      window.removeEventListener('keydown', resetTimer)
-    }
-  }, [])
-
   return (
     <Box
       component="span"
@@ -511,12 +480,7 @@ const MobileButton = ({
           className={styles.dropdownIcon}
         >
           <VisuallyHidden>{mobileNavigationButtonOpenLabel}</VisuallyHidden>
-          <Icon
-            icon="menu"
-            size="medium"
-            color={'blue400'}
-            // className={isShaking ? styles.shake : ''}
-          />
+          <Icon icon="menu" size="medium" color={'blue400'} />
         </FocusableBox>
       </Box>
     </Box>
