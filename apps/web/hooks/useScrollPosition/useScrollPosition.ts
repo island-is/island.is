@@ -19,21 +19,17 @@ interface GetScrollPositionProps {
   useWindow?: boolean
 }
 
-const isBrowser = typeof window !== 'undefined'
+const isBrowser = typeof window !== `undefined`
 
 const getScrollPosition = ({ element, useWindow }: GetScrollPositionProps) => {
   if (!isBrowser) return { x: 0, y: 0 }
 
   const target = element?.current || document.body
-  try {
-    const position = target.getBoundingClientRect()
-    return useWindow
-      ? { x: window.scrollX, y: window.scrollY }
-      : { x: position.left, y: position.top }
-  } catch (error) {
-    console.warn('Failed to get scroll position:', error)
-    return { x: 0, y: 0 }
-  }
+  const position = target.getBoundingClientRect()
+
+  return useWindow
+    ? { x: window.scrollX, y: window.scrollY }
+    : { x: position.left, y: position.top }
 }
 
 export const useScrollPosition = (
