@@ -82,7 +82,8 @@ export class InheritanceReportService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProviderSubmit,
-          summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+          summary:
+            coreErrorMessages.errorDataProviderEstateValidationNothingFoundSummary,
         },
         400,
       )
