@@ -334,7 +334,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -347,7 +347,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Set Test Everything true
@@ -470,7 +470,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -483,7 +483,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Run unit tests
@@ -547,7 +547,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -560,7 +560,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Docker login to ECR repo
