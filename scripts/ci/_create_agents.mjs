@@ -95,7 +95,9 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
                     NX_AGENT_NAME: isDefaultRunner
                       ? item.split('default-runner-')[1]
                       : '1',
-                    NX_AGENT_LAUNCH_TEMPLATE: isDefaultRunner ? 'default-runner' : item,
+                    NX_AGENT_LAUNCH_TEMPLATE: isDefaultRunner
+                      ? 'default-runner'
+                      : item,
                   },
                 },
               ],
