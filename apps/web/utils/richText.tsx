@@ -17,6 +17,7 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
+import { GridContainer } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
@@ -28,6 +29,7 @@ import {
   ChartNumberBox,
   ChartsCard,
   ChartsCardsProps,
+  DigitalIcelandMailingListThumbnailCard,
   DrivingInstructorList,
   EmailSignup,
   Form,
@@ -84,6 +86,7 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
+import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
@@ -203,8 +206,18 @@ export const webRenderConnectedComponent = (
     case 'WHODAS/Calculator':
       connectedComponent = <WHODASCalculator slice={slice} />
       break
+    case 'DigitalIcelandMailingListThumbnailCard':
+      connectedComponent = (
+        <GridContainer>
+          <DigitalIcelandMailingListThumbnailCard slice={slice} />
+        </GridContainer>
+      )
+      break
     case 'Brennuleyfi/BurningPermitList':
       connectedComponent = <BurningPermitList slice={slice} />
+      break
+    case 'DigitalIcelandStatistics':
+      connectedComponent = <DigitalIcelandStatistics />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
