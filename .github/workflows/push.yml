@@ -275,6 +275,7 @@ jobs:
           echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_OUTPUT"
           echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_ENV"
           echo "**NODE_IMAGE_VERSION** '${NODE_IMAGE_VERSION}'" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -314,10 +315,6 @@ jobs:
           echo HEAD="$GITHUB_SHA" >> "$GITHUB_ENV"
         id: git_nx_head
         name: Preparing HEAD tag
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path

@@ -130,6 +130,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      - name: Yarn install
+        if: steps.get-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
