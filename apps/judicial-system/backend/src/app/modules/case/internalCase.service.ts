@@ -923,7 +923,7 @@ export class InternalCaseService {
       })
   }
 
-  private async deliverCaseToPoliceWithFiles(
+  async deliverCaseToPoliceWithFiles(
     theCase: Case,
     user: TUser,
     courtDocuments: PoliceDocument[],

@@ -1107,11 +1107,14 @@ export class CaseService {
       })
     }
 
+    // TODO: Use subpoenas already included in theCase.defendants
+    // - no need to call the subpoena service
+    // - then add to transition tests
     const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
       theCase.id,
     )
 
-    if (subpoenasToRevoke?.length > 0) {
+    if (theCase.origin === CaseOrigin.LOKE && subpoenasToRevoke?.length > 0) {
       messages.push(
         ...subpoenasToRevoke.map((subpoena) => ({
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
@@ -1358,15 +1361,19 @@ export class CaseService {
           )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
       )
       .map((updatedDefendant) => [
-        {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        },
+        ...(updatedCase.origin === CaseOrigin.LOKE
+          ? [
+              {
+                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+                user,
+                caseId: theCase.id,
+                elementId: [
+                  updatedDefendant.id,
+                  updatedDefendant.subpoenas?.[0].id ?? '',
+                ],
+              },
+            ]
+          : []),
         {
           type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,
