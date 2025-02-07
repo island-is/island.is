@@ -320,6 +320,16 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
+      - name: Debug inputs
+        env:
+          common: ${{ needs.deps.outputs.common }}
+          build-args: ${{ inputs.build-args }}
+          meta: ${{ steps.meta.outputs }}
+        run: |
+          echo "common=$common"
+          echo "build-args=$build-args"
+          echo "meta=$meta"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
