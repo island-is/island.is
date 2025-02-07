@@ -2,7 +2,7 @@ import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { ApplicationType, hasDuplicates } from '../utils'
 import { YES } from '@island.is/application/types'
-import { error, school } from './messages'
+import { error } from './messages'
 
 const FileDocumentSchema = z.object({
   name: z.string(),

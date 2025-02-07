@@ -236,6 +236,30 @@ export const Item = ({
     return `${dataId}[${activeIndex}].${key}`
   }
 
+  const ClearOnChange = props.clearOnChangeByIndex?.map((key) =>
+    mapKeyWithIndex(key),
+  )
+
+  const SetOnChange =
+    props.setOnChangeByIndex &&
+    ((option: any) => {
+      if (typeof props.setOnChangeByIndex === 'function') {
+        return props
+          .setOnChangeByIndex(option, application)
+          .map(({ key, value }) => ({
+            key: mapKeyWithIndex(key),
+            value,
+          }))
+      } else {
+        return (
+          props.setOnChangeByIndex?.map(({ key, value }) => ({
+            key: mapKeyWithIndex(key),
+            value,
+          })) || []
+        )
+      }
+    })
+
   return (
     <GridColumn span={['1/1', '1/1', '1/1', span]}>
       {component === 'radio' && label && (
@@ -265,29 +289,8 @@ export const Item = ({
         application={application}
         defaultValue={DefaultValue}
         large={true}
-        clearOnChange={props.clearOnChangeByIndex?.map((key) =>
-          mapKeyWithIndex(key),
-        )}
-        setOnChange={
-          props.setOnChangeByIndex &&
-          ((option) => {
-            if (typeof props.setOnChangeByIndex === 'function') {
-              return props
-                .setOnChangeByIndex(option, application)
-                .map(({ key, value }) => ({
-                  key: mapKeyWithIndex(key),
-                  value,
-                }))
-            } else {
-              return (
-                props.setOnChangeByIndex?.map(({ key, value }) => ({
-                  key: mapKeyWithIndex(key),
-                  value,
-                })) || []
-              )
-            }
-          })
-        }
+        clearOnChange={ClearOnChange}
+        setOnChange={SetOnChange}
         {...props}
       />
     </GridColumn>

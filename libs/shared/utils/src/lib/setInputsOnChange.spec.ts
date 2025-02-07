@@ -1,7 +1,7 @@
 import { setInputsOnChange } from './setInputsOnChange'
 
 describe('setInputsOnChange', () => {
-  it('should clear all specified inputs by setting them to empty string', () => {
+  it('should set all specified inputs', () => {
     // Arrange
     const setOnChange = [
       { key: 'field1', value: 'value1' },
