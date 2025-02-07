@@ -17,6 +17,9 @@ export class OffenseExistsGuard implements CanActivate {
     const indictmentCount = theCase.indictmentCounts?.find(
       (indictmentCount) => indictmentCount.id === indictmentCountId,
     )
+    if (!indictmentCount) {
+      throw new BadRequestException('Missing indictment count')
+    }
 
     const offenseId = request.params.offenseId
     if (!offenseId) {
