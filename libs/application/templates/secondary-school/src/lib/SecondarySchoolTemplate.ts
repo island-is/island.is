@@ -45,6 +45,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
@@ -71,6 +72,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.SECONDARY_SCHOOL,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.SecondarySchool.translation,

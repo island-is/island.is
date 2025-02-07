@@ -43,6 +43,14 @@ const formatDate = (
 
 const containsTimePart = (date: string) => date.includes('T')
 
+const isGrantOpen = (grant: Grant): 'open' | 'closed' | 'unknown' => {
+  if (!grant.status) {
+    return 'unknown'
+  }
+
+  return OPEN_GRANT_STATUSES.includes(grant.status) ? 'open' : 'closed'
+}
+
 const GrantCardsList = ({ slice }: SliceProps) => {
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -119,17 +127,20 @@ const GrantCardsList = ({ slice }: SliceProps) => {
   if (grantItems.length === 1) {
     const grant = grantItems[0]
 
-    const cardText = `${getTranslationString(
-      grant?.status && OPEN_GRANT_STATUSES.includes(grant.status)
-        ? 'applicationOpen'
-        : 'applicationClosed',
-    )} / ${parseStatus(grant)}`
+    const grantStatus = isGrantOpen(grant)
+
+    const cardText =
+      grantStatus !== 'unknown'
+        ? `${getTranslationString(
+            grantStatus === 'open' ? 'applicationOpen' : 'applicationClosed',
+          )} / ${parseStatus(grant)}`
+        : undefined
 
     return (
       <>
         {slice.displayTitle && (
           <Box marginBottom={2}>
-            <Text variant="h3" as="span" color="dark400">
+            <Text variant="h3" as="h3" color="dark400">
               {slice.title}
             </Text>
           </Box>
@@ -139,11 +150,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
           text={cardText}
           backgroundColor="blue"
           cta={{
-            disabled:
-              !grant?.status ||
-              grant.status === GrantStatus.Invalid ||
-              grant.status === GrantStatus.Closed ||
-              grant.status === GrantStatus.Unknown,
+            disabled: isGrantOpen(grant) !== 'open',
             size: 'small',
             label:
               grant.applicationButtonLabel ?? getTranslationString('apply'),
@@ -158,10 +165,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
 
   const cards = grantItems
     ?.map((grant) => {
-      const grantIsOpen =
-        !!grant?.status &&
-        grant.status !== GrantStatus.Invalid &&
-        OPEN_GRANT_STATUSES.includes(grant.status)
+      const grantIsOpen = isGrantOpen(grant)
       if (grant.id) {
         return {
           id: grant.id,
@@ -186,12 +190,14 @@ const GrantCardsList = ({ slice }: SliceProps) => {
             ).href,
           },
           tags: [
-            !!grant.status && grant.status !== GrantStatus.Invalid
+            grantIsOpen !== 'unknown'
               ? {
                   label: getTranslationString(
-                    grantIsOpen ? 'applicationOpen' : 'applicationClosed',
+                    grantIsOpen === 'open'
+                      ? 'applicationOpen'
+                      : 'applicationClosed',
                   ),
-                  variant: grantIsOpen ? 'mint' : 'rose',
+                  variant: grantIsOpen === 'open' ? 'mint' : 'rose',
                 }
               : undefined,
           ].filter(isDefined),
@@ -231,7 +237,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     <>
       {slice.displayTitle && (
         <Box marginBottom={2}>
-          <Text variant="h3" as="span" color="dark400">
+          <Text variant="h3" as="h3" color="dark400">
             {slice.title}
           </Text>
         </Box>
