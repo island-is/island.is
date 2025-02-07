@@ -1,20 +1,18 @@
 # ------------------------------------------------
 # Shared arguments (for images that need them early)
 # ------------------------------------------------
-ARG NODE_IMAGE_VERSION=20
 ARG PLAYWRIGHT_VERSION
 
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS deps
+FROM public.ecr.aws/docker/library/node:20.9.0-bookworm-slim AS deps
 
 RUN apt-get update && \
   apt-get install -y \
   git \
   python3 \
   build-essential \
-  jq \
   gcc && \
   ln -sf /usr/bin/python3 /usr/bin/python && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -60,7 +58,7 @@ RUN --mount=type=secret,id=nx_cloud_access_token \
 # ------------------------------------------------
 # Minimal node base for outputs
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:${NODE_IMAGE_VERSION}-bookworm-slim AS output-base
+FROM public.ecr.aws/docker/library/node:20.9.0-bookworm-slim AS output-base
 ENV NODE_ENV=production
 WORKDIR /webapp
 RUN groupadd runners && useradd -m -g runners runner
