@@ -220,7 +220,7 @@ jobs:
           docker buildx create --name mybuilder --use
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (deps)
+      - name: Docker build/cache dependencies (base-deps)
         uses: docker/build-push-action@v6
         with:
           target: base-deps
