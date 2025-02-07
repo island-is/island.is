@@ -51,7 +51,7 @@ describe('IndictmentCountController - Delete offense guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseWriteGuard as guard 3', () => {
+    it('should have IndictmentCountExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(IndictmentCountExistsGuard)
     })
   })
@@ -63,7 +63,7 @@ describe('IndictmentCountController - Delete offense guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have CaseWriteGuard as guard 4', () => {
+    it('should have OffenseExistsGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(OffenseExistsGuard)
     })
   })
