@@ -113,7 +113,7 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'identity-server',
+          dev: 'innskra',
           staging: 'identity-server',
           prod: 'innskra.island.is',
         },

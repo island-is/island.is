@@ -160,7 +160,7 @@ identity-server:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'identity-server.dev01.devland.is'
+        - host: 'innskra.dev01.devland.is'
           paths:
             - '/'
   namespace: 'identity-server'
