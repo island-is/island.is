@@ -352,6 +352,17 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Run codegen
+        run: node scripts/generated-files.mjs
+
+      - name: Cache generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: Set Test Everything true
         run: |
           echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
@@ -495,6 +506,15 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
@@ -571,6 +591,15 @@ jobs:
             node_modules
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'

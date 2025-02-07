@@ -97,6 +97,17 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Run codegen
+        run: node scripts/generated-files.mjs
+
+      - name: Cache generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: Check node version
         run: |
           set -euo pipefail
@@ -265,6 +276,15 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
@@ -328,6 +348,15 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
@@ -371,6 +400,15 @@ jobs:
             node_modules
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -439,6 +477,15 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -497,6 +544,15 @@ jobs:
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
+
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -547,6 +603,15 @@ jobs:
             node_modules
             .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Restore Codegen Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-codegen-cache
+        with:
+          path: |
+            generated_files.tar.gz
+            generated_files_list.txt
+          key: ${{ runner.os }}-codegen-${{ github.sha }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

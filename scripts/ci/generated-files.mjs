@@ -1,9 +1,6 @@
-import fs from 'fs/promises'
-import { glob } from 'glob'
 import { execSync } from 'child_process'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
+import fs from 'fs/promises'
+import { globSync } from 'glob'
 
 const patterns = [
   'scripts/codegen.js',
@@ -32,73 +29,41 @@ const patterns = [
   'libs/judicial-system/**',
 ]
 
-const ignorePatterns = ['**/node_modules/**', '**/dist/**', '**/build/**']
+const ignorePatterns = ['node_modules/**', '**/node_modules/**']
 
-// Function to get all matching files
-async function getMatchingFiles() {
-  const allFiles = await Promise.all(
-    patterns.map((pattern) =>
-      glob(pattern, {
-        ignore: ignorePatterns,
-        nodir: true,
-        cwd: process.cwd(),
-      }),
-    ),
+function isNotIgnored(file) {
+  return !ignorePatterns.some((pattern) =>
+    file.includes(pattern.replace('**/', '').replace('/**', '')),
   )
-  return allFiles.flat()
 }
 
-// Main function
 async function main() {
   console.log('Starting codegen process...')
 
-  // Get initial state
-  console.log('Getting initial file list...')
-  const initialFiles = await getMatchingFiles()
-  console.log(`Initial files count: ${initialFiles.length}`)
+  const skipCodegen = process.argv.includes('--skip-codegen')
 
-  // Run codegen
-  console.log('Running codegen...')
-  execSync('yarn codegen', { stdio: 'inherit' })
-
-  // Get final state
-  console.log('Getting final file list...')
-  const finalFiles = await getMatchingFiles()
-  console.log(`Final files count: ${finalFiles.length}`)
-
-  // Find new or modified files
-  console.log('Identifying new or modified files...')
-  const scriptStats = await fs.stat(__filename)
-  const generatedFiles = await Promise.all(
-    finalFiles.map(async (file) => {
-      if (!initialFiles.includes(file)) {
-        console.log(`New file: ${file}`)
-        return file
-      }
-      const stats = await fs.stat(file)
-      if (stats.mtime > scriptStats.mtime) {
-        console.log(`Modified file: ${file}`)
-        return file
-      }
-      return null
-    }),
-  )
-
-  const filteredGeneratedFiles = generatedFiles.filter(Boolean)
-  console.log(
-    `Generated/modified files count: ${filteredGeneratedFiles.length}`,
-  )
-
-  if (filteredGeneratedFiles.length === 0) {
-    console.log('No new or modified files detected. This might be an issue.')
-    // You might want to throw an error here or handle this case as needed
+  if (skipCodegen) {
+    console.log('Skipping codegen command...')
+  } else {
+    // Run codegen
+    console.log('Running codegen...')
+    execSync('yarn codegen', { stdio: 'inherit' })
   }
 
+  // Find files matching patterns
+  console.log('Identifying generated files...')
+  const generatedFiles = globSync(patterns, {
+    ignore: ignorePatterns,
+    nodir: true,
+  }).filter(isNotIgnored)
+
+  console.log(`Generated files count: ${generatedFiles.length}`)
+
+  if (generatedFiles.length === 0) {
+    throw new Error('No generated files detected. This might be an issue.')
+  }
   // Write list of generated files
-  await fs.writeFile(
-    'generated_files_list.txt',
-    filteredGeneratedFiles.join('\n'),
-  )
+  await fs.writeFile('generated_files_list.txt', generatedFiles.join('\n'))
 
   // Create archive
   console.log('Creating archive...')
@@ -112,7 +77,6 @@ async function main() {
   )
     .toString()
     .trim()}`
-  console.log(`::set-output name=cache-key::${cacheKey}`)
 }
 
 main().catch(console.error)
