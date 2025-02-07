@@ -27,15 +27,18 @@ export enum Roles {
 
 export enum ReasonForApplicationOptions {
   MOVING_MUNICIPALITY = 'movingMuniciplaity',
-  SIBLINGS_IN_SAME_SCHOOL = 'SiblingsInSameSchool',
+  SIBLINGS_IN_SAME_SCHOOL = 'siblingsInSameSchool',
 }
 
 export enum OptionsType {
   PRONOUN = 'pronoun',
   GENDER = 'gender',
-  INTOLERANCE = 'intolerence',
+  FOOD_ALLERGY_AND_INTOLERANCE = 'foodAllergyAndIntolerance',
   REASON = 'registrationReason',
+  REASON_INTERNATIONAL_SCHOOL = 'registrationReasonInternationalSchool',
+  REASON_PRIVATE_SCHOOL = 'registrationReasonPrivateSchool',
   RELATION = 'relation',
+  SCHOOL_MEAL = 'schoolMeal',
   ALLERGY = 'allergy',
 }
 
