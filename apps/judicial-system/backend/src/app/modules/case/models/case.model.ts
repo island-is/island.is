@@ -39,7 +39,7 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
-import { CaseFile } from '../../file'
+import { CaseFile } from '../../file/models/file.model'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
