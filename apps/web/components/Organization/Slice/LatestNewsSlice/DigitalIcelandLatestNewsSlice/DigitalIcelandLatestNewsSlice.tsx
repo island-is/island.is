@@ -12,12 +12,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstitutionVacancies/IcelandicGovernmentInstitutionVacanciesList'
 
 import * as styles from './DigitalIcelandLatestNewsSlice.css'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface ItemProps {
   imageSrc: string
