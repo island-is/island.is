@@ -1,9 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import {
-  ExecutionContext,
-  NotFoundException,
-} from '@nestjs/common'
+import { ExecutionContext, NotFoundException } from '@nestjs/common'
 
 import { OffenseExistsGuard } from '../offenseExists.guard'
 
