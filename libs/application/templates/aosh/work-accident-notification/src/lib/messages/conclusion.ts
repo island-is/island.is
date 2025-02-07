@@ -27,12 +27,12 @@ export const conclusion = {
   }),
   pdfOverview: defineMessages({
     download: {
-      id: 'aosh.wan.application:conclusion.pdfOverview.alertTitle',
+      id: 'aosh.wan.application:conclusion.pdfOverview.download',
       defaultMessage: 'Hlaða niður',
       description: 'Conclusion pdf download button text',
     },
     pdfName: {
-      id: 'aosh.wan.application:conclusion.pdfOverview.accordionTitle',
+      id: 'aosh.wan.application:conclusion.pdfOverview.pdfName',
       defaultMessage: 'Tilkynning um vinnuslys',
       description: 'Conclusion pdf name',
     },
