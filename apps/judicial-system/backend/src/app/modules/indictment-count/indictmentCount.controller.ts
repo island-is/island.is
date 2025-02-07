@@ -26,7 +26,7 @@ import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
 import { IndictmentCountExistsGuard } from './guards/indictmentCountExists.guard'
 import { OffenseExistsGuard } from './guards/offenseExists.guard'
-import { DeleteIndictmentCountResponse } from './models/deleteIndictmentCount.response'
+import { DeleteResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 import { Offense } from './models/offense.model'
 import { IndictmentCountService } from './indictmentCount.service'
@@ -83,7 +83,7 @@ export class IndictmentCountController {
   async delete(
     @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     this.logger.debug(
       `Deleting indictment count ${indictmentCountId} of case ${caseId}`,
     )
@@ -118,7 +118,12 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, OffenseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    IndictmentCountExistsGuard,
+    OffenseExistsGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({
@@ -142,7 +147,12 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, OffenseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    IndictmentCountExistsGuard,
+    OffenseExistsGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({ description: 'Deletes an offense' })
@@ -150,7 +160,7 @@ export class IndictmentCountController {
     @Param('caseId') caseId: string,
     @Param('indictmentCountId') indictmentCountId: string,
     @Param('offenseId') offenseId: string,
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     this.logger.debug(
       `Deleting an offense ${offenseId} for indictment count ${indictmentCountId} of case ${caseId}`,
     )

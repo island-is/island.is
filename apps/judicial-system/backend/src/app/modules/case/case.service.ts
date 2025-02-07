@@ -30,6 +30,7 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
+  CaseDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -955,7 +956,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages = [
+    const messages: Message[] = [
       {
         type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
         user,
@@ -992,6 +993,16 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
         caseId: theCase.id,
+      })
+    }
+
+    // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
+    if (theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING) {
+      messages.push({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.RULING },
       })
     }
 

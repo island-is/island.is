@@ -18,7 +18,7 @@ import { BackendService } from '../backend'
 import { CreateOffenseInput } from './dto/createOffense.input'
 import { DeleteOffenseInput } from './dto/deleteOffense.input'
 import { UpdateOffenseInput } from './dto/updateOffense.input'
-import { DeleteOffenseResponse } from './models/deleteOffense.response'
+import { DeleteResponse } from './models/delete.response'
 import { Offense } from './models/offense.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -70,14 +70,14 @@ export class OffenseResolver {
     )
   }
 
-  @Mutation(() => DeleteOffenseResponse, { nullable: true })
+  @Mutation(() => DeleteResponse, { nullable: true })
   deleteOffense(
     @Args('input', { type: () => DeleteOffenseInput })
     input: DeleteOffenseInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<DeleteOffenseResponse> {
+  ): Promise<DeleteResponse> {
     this.logger.debug(
       `Deleting an offense ${input.offenseId} for indictment count ${input.indictmentCountId}`,
     )

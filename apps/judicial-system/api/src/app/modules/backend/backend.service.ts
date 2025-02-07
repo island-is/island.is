@@ -32,16 +32,15 @@ import {
 } from '../file'
 import {
   CreateIndictmentCountInput,
+  CreateOffenseInput,
   DeleteIndictmentCountInput,
-  DeleteIndictmentCountResponse,
+  DeleteOffenseInput,
+  DeleteResponse,
   IndictmentCount,
+  Offense,
   UpdateIndictmentCountInput,
+  UpdateOffenseInput,
 } from '../indictment-count'
-import { CreateOffenseInput } from '../indictment-count/dto/createOffense.input'
-import { DeleteOffenseInput } from '../indictment-count/dto/deleteOffense.input'
-import { UpdateOffenseInput } from '../indictment-count/dto/updateOffense.input'
-import { DeleteOffenseResponse } from '../indictment-count/models/deleteOffense.response'
-import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import {
   PoliceCaseFile,
@@ -434,7 +433,7 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   deleteIndictmentCount(
     input: DeleteIndictmentCountInput,
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     const { caseId, indictmentCountId } = input
 
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
@@ -458,7 +457,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  deleteOffense(input: DeleteOffenseInput): Promise<DeleteOffenseResponse> {
+  deleteOffense(input: DeleteOffenseInput): Promise<DeleteResponse> {
     const { caseId, offenseId, indictmentCountId } = input
 
     return this.delete(
