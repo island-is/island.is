@@ -570,6 +570,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Codegen
+        run: yarn codegen
+
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
@@ -613,17 +616,6 @@ jobs:
             docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
-
-      - name: Build docker deps
-        continue-on-error: true
-        id: docker-deps
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          docker buildx rm actions_builder || true
-          docker buildx create --name actions_builder --driver docker-container --use --driver-opt image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-          ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: Building Docker images
         continue-on-error: true
