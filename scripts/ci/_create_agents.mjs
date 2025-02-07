@@ -1,5 +1,5 @@
 // @ts-check
-import { writeFileSync } from 'fs'
+import { mkdirSync, writeFileSync } from 'fs'
 import { getAffectedProjectsMultipleTargetArray } from './_get_affected_projects.mjs'
 import json2yaml from 'js-yaml'
 const _TARGETS = ['test', 'build']
@@ -110,7 +110,8 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     console.error(`Workflow file env not defined`);
     process.exit(1);
   }
-  writeFileSync(process.env.WORKFLOW_FILE, workflow)
+  mkdirSync(process.env.WORKFLOW_FILE, { recursive: true });
+  writeFileSync(`${process.env.WORKFLOW_FILE}/action.yaml`, workflow)
   if (shouldRun) {
     writeFileSync('.github/assignment-rules.yml', assignmentRules)
   }

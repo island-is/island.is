@@ -156,11 +156,11 @@ jobs:
       - name: Prepare nx
         id: prepare-nx
         env:
-          WORKFLOW_FILE: .github/actions/workflow.yml
+          WORKFLOW_FILE: .github/actions/nx
         run: |
           node scripts/ci/_create_agents.mjs
       - name: Start nx
-        uses: ./.github/actions/workflow.yml
+        uses: ./.github/actions/nx
     
   linting-workspace:
     needs:
