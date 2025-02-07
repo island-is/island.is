@@ -160,7 +160,7 @@ jobs:
         run: |
           node scripts/ci/_create_agents.mjs
       - name: Start nx
-        uses: .github/actions/workflow.yml
+        uses: ./.github/actions/workflow.yml
     
   linting-workspace:
     needs:
