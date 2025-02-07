@@ -1,9 +1,11 @@
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { Case, PdfService } from '../../../case'
+import { Case, InternalCaseService, PdfService } from '../../../case'
 import { Defendant } from '../../../defendant'
+import { PoliceDocumentType } from '../../../police'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Subpoena } from '../../models/subpoena.model'
@@ -27,21 +29,27 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
   const dto = { user } as DeliverDto
 
   let mockPdfService: PdfService
+  let mockInternalCaseService: InternalCaseService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { pdfService, internalSubpoenaController } =
+    const { pdfService, internalCaseService, internalSubpoenaController } =
       await createTestingSubpoenaModule()
 
     mockPdfService = pdfService
     const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
     mockGetSubpoenaPdf.mockRejectedValue(new Error('Some error'))
 
+    mockInternalCaseService = internalCaseService
+    const mockDeliverCsaeToPoliceWithFiles =
+      mockInternalCaseService.deliverCaseToPoliceWithFiles as jest.Mock
+    mockDeliverCsaeToPoliceWithFiles.mockRejectedValue(new Error('Some error'))
+
     givenWhenThen = async () => {
       const then = {} as Then
 
       await internalSubpoenaController
-        .deliverSubpoenaToPolice(
+        .deliverSubpoenaFileToPolice(
           caseId,
           defendantId,
           subpoenaId,
@@ -57,14 +65,18 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
     }
   })
 
-  describe('subpoena delivered to police central file system', () => {
-    const subpoenaPdf = uuid()
+  describe('subpoena delivered to police', () => {
+    const subpoenaPdf = Buffer.from(uuid())
+    let then: Then
 
     beforeEach(async () => {
       const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
       mockGetSubpoenaPdf.mockResolvedValue(subpoenaPdf)
+      const mockDeliverCsaeToPoliceWithFiles =
+        mockInternalCaseService.deliverCaseToPoliceWithFiles as jest.Mock
+      mockDeliverCsaeToPoliceWithFiles.mockResolvedValue(true)
 
-      await givenWhenThen()
+      then = await givenWhenThen()
     })
 
     it('should call deliverSubpoenaToPolice', () => {
@@ -73,7 +85,31 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
         defendant,
         subpoena,
       )
-      // TODO: complete tests when all indictments are generated
+      expect(
+        mockInternalCaseService.deliverCaseToPoliceWithFiles,
+      ).toBeCalledWith(theCase, user, [
+        {
+          type: PoliceDocumentType.RVFK,
+          courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),
+        },
+      ])
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('subpoena delivery to police fails', () => {
+    const subpoenaPdf = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
+      mockGetSubpoenaPdf.mockResolvedValue(subpoenaPdf)
+
+      then = await givenWhenThen()
+    })
+
+    it('should call deliverSubpoenaToPolice', () => {
+      expect(then.result).toEqual({ delivered: false })
     })
   })
 })

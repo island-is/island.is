@@ -28,6 +28,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -35,7 +36,7 @@ import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceService, SubpoenaInfo } from '../police'
+import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -94,6 +95,7 @@ export class SubpoenaService {
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -346,10 +348,46 @@ export class SubpoenaService {
       }
 
       this.logger.info(
-        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to the police centralized file service`,
       )
 
       return { delivered: true }
+    } catch (error) {
+      this.logger.error(
+        'Error delivering subpoena to the police centralized file service',
+        error,
+      )
+
+      return { delivered: false }
+    }
+  }
+
+  async deliverSubpoenaFileToPolice(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: PoliceDocumentType.RVFK,
+              courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
     } catch (error) {
       this.logger.error('Error delivering subpoena to police', error)
 
@@ -391,7 +429,8 @@ export class SubpoenaService {
         return { delivered: false }
       })
   }
-  async deliverSubpoenaRevokedToPolice(
+
+  async deliverSubpoenaRevocationToPolice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
@@ -418,6 +457,7 @@ export class SubpoenaService {
       return { delivered: false }
     }
   }
+
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
     if (!subpoena.subpoenaId) {
       // The subpoena has not been delivered to the police
