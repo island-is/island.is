@@ -15,9 +15,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
+import { CaseListEntry } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import TagCaseState from '../Tags/TagCaseState/TagCaseState'
-import { CaseListEntry } from '../../graphql/schema'
 
 interface Props {
   marginBottom?: ResponsiveProp<Space>

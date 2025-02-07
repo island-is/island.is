@@ -24,12 +24,12 @@ import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
+import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
-import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 
 interface TableProps {
   thead: {
