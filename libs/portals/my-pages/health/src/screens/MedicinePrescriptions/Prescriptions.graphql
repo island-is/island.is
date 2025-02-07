@@ -1,0 +1,29 @@
+query GetMedicinePrescriptions($locale: String) {
+  healthDirectoratePrescriptions(locale: $locale) {
+    prescriptions {
+      prescriberName
+      issueDate
+      expiryDate
+      productName
+      productType
+      productForm
+      productUrl
+      productStrength
+      productQuantity
+      dosageInstructions
+      indication
+      totalPrescribedAmountDisplay
+      isRegiment
+      isRenewable
+      renewalBlockedReason
+      renewalStatus
+      isFullyDispensed
+      dispensations {
+        id
+        dispensingAgentName
+        dispensationDate
+        dispensedItemsCount
+      }
+    }
+  }
+}
