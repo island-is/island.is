@@ -164,7 +164,12 @@ jobs:
             "image-repository": $image_repository,
             "cache-from": $cache_from,
             "cache-to": $cache_to,
-          } | to_entries | .[] | "\(.key)<<EOF\n\(.value)\nEOF"' | tee -a "$GITHUB_OUTPUT"
+          }
+            | to_entries
+            | .[]
+            # Use GitHub multi-line outputs, but cheekily done inline here 🤭
+            | "\(.key)<<EOF\n\(.value)\nEOF"
+          ' | tee -a "$GITHUB_OUTPUT"
 
       - name: Debug AWS user/login
         env:
