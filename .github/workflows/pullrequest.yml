@@ -205,15 +205,14 @@ jobs:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
-      - nxtasks
       - prepare
       - linting-workspace
       - run-shellcheck
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check nx success
-        run: '[[ ${{ needs.nxtasks.result }} != "failure" ]] || exit 1'
+      - name: Check linting-workspace success
+        run: '[[ ${{ needs.linting-workspace.result }} != "failure" ]] || exit 1'
       - name: Check run-shellcheck success
         run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
       - name: Announce success
