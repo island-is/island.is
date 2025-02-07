@@ -240,6 +240,9 @@ export const is = {
   'inbox.bulkSelectAllButton': 'Velja allt',
   'inbox.bulkDeselectAllButton': 'Afvelja allt',
   'inbox.bulkSelectCancelButton': 'Hætta við',
+  'inbox.bulkSelectActionStar': 'Stjörnumerkja',
+  'inbox.bulkSelectActionArchive': 'Geymsla',
+  'inbox.bulkSelectActionRead': 'Merkja lesið',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',

@@ -37,6 +37,7 @@ import {
   DocumentV2,
   useListDocumentsQuery,
   useGetDocumentsCategoriesAndSendersQuery,
+  usePostMailActionMutationMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -51,6 +52,7 @@ import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
 import { useApolloClient } from '@apollo/client'
 import { isIos } from '../../utils/devices'
+import { ActionBar } from './components/action-bar'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -293,6 +295,8 @@ export const InboxScreen: NavigationFunctionComponent<{
     },
   })
 
+  const [bulkSelectActionMutation] = usePostMailActionMutationMutation()
+
   const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
 
   const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
@@ -344,8 +348,7 @@ export const InboxScreen: NavigationFunctionComponent<{
       setSelectedState(true)
     }
     if (buttonId === ButtonRegistry.InboxBulkSelectCancelButton) {
-      setSelectedItems([])
-      setSelectedState(false)
+      resetSelectState()
     }
     if (buttonId === ButtonRegistry.InboxBulkSelectAllButton) {
       setSelectedItems(res.data?.documentsV2?.data.map((doc) => doc.id) ?? [])
@@ -485,6 +488,11 @@ export const InboxScreen: NavigationFunctionComponent<{
     return item.id.toString()
   }, [])
 
+  const resetSelectState = () => {
+    setSelectedItems([])
+    setSelectedState(false)
+  }
+
   const onRefresh = useCallback(async () => {
     try {
       if (loadingTimeout.current) {
@@ -620,6 +628,11 @@ export const InboxScreen: NavigationFunctionComponent<{
                 })}
                 value={query}
                 onChangeText={(text) => setQuery(text)}
+                onFocus={() => {
+                  if (selectState) {
+                    resetSelectState()
+                  }
+                }}
               />
               <Button
                 title={intl.formatMessage({
@@ -635,6 +648,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 icon={filterIcon}
                 iconStyle={{ tintColor: theme.color.blue400 }}
                 onPress={() => {
+                  resetSelectState()
                   navigateTo('/inbox-filter', {
                     opened,
                     archived,
@@ -785,6 +799,41 @@ export const InboxScreen: NavigationFunctionComponent<{
           ) : null
         }
       />
+      {selectState && selectedItems.length ? (
+        <ActionBar
+          onClickStar={async () => {
+            await bulkSelectActionMutation({
+              variables: {
+                input: { action: 'bookmark', documentIds: selectedItems },
+              },
+            })
+            resetSelectState()
+          }}
+          onClickArchive={async () => {
+            const result = await bulkSelectActionMutation({
+              variables: {
+                input: { action: 'archive', documentIds: selectedItems },
+              },
+            })
+            if (result.data?.postMailActionV2?.success) {
+              resetSelectState()
+              // TODO: update cache instead of refetching?
+              res.refetch()
+            }
+          }}
+          onClickMarkAsRead={async () => {
+            await bulkSelectActionMutation({
+              variables: {
+                input: { action: 'read', documentIds: selectedItems },
+              },
+            })
+            // TODO add loading indicator somewhere? Skip await? Add onPress look?
+            // Add toast when successful
+            // Two lines below to a function? + success
+            resetSelectState()
+          }}
+        />
+      ) : null}
       <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>

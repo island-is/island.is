@@ -240,6 +240,9 @@ export const en: TranslatedMessages = {
   'inbox.bulkSelectAllButton': 'Select all',
   'inbox.bulkDeselectAllButton': 'Deselect all',
   'inbox.bulkSelectCancelButton': 'Cancel',
+  'inbox.bulkSelectActionStar': 'Star',
+  'inbox.bulkSelectActionArchive': 'Archive',
+  'inbox.bulkSelectActionRead': 'Mark as read',
 
   // document detail
   'documentDetail.screenTitle': 'Document',
