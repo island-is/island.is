@@ -117,11 +117,18 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -217,11 +224,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -259,11 +273,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -282,11 +303,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -327,11 +355,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -363,11 +398,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -392,11 +434,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

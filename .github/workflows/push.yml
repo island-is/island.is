@@ -315,11 +315,22 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Set Test Everything true
         run: |
@@ -430,11 +441,18 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -483,11 +501,18 @@ jobs:
         run: corepack enable
         if: steps.gather.outcome == 'success'
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - name: Get cache
-        id: get-cache
         uses: runs-on/cache@v4
+        id: get-cache
         with:
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
