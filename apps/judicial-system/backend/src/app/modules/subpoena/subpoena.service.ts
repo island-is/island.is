@@ -95,6 +95,7 @@ export class SubpoenaService {
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
