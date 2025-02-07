@@ -160,7 +160,7 @@ jobs:
   nxtasks:
     needs:
       - prepare
-    uses: './.github/actions/nx.yml'
+    uses: ./.github/actions/nx.yml
   linting-workspace:
     needs:
       - prepare
