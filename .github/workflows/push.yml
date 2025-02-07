@@ -50,6 +50,7 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   YARN_ENABLE_HARDENED_MODE: '0'
+  AWS_REGION: eu-west-1
 
 jobs:
   pre-checks:
@@ -324,11 +325,14 @@ jobs:
         uses: runs-on/cache@v4
         id: get-cache
         with:
-          aws-region: eu-west-1
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
+      - name: Yarn install
+        if: steps.get-cache.outputs.cache-hit != 'true'
+        run: yarn install --immutable
 
       - name: Set Test Everything true
         run: |
@@ -447,7 +451,6 @@ jobs:
         uses: runs-on/cache@v4
         id: get-cache
         with:
-          aws-region: eu-west-1
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
@@ -508,7 +511,6 @@ jobs:
         uses: runs-on/cache@v4
         id: get-cache
         with:
-          aws-region: eu-west-1
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
