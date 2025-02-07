@@ -353,7 +353,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Run codegen
-        run: node scripts/generated-files.mjs
+        run: node scripts/ci/generated-files.mjs
 
       - name: Cache generated files
         uses: runs-on/cache/save@v4
