@@ -438,7 +438,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     runs-on: arc-runners
     timeout-minutes: 45
     env:
