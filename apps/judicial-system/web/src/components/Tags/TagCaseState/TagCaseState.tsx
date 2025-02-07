@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { Tag as CaseStateTag, TagVariant } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isIndictmentCase,
@@ -19,7 +19,7 @@ import {
 import { UserContext } from '../../UserProvider/UserProvider'
 import { strings } from './TagCaseState.strings'
 
-interface Tag {
+interface CaseStateTag {
   color: TagVariant
   text: string
 }
@@ -29,7 +29,7 @@ interface Props {
   customMapCaseStateToTag?: (
     formatMessage: IntlShape['formatMessage'],
     theCase: CaseListEntry,
-  ) => Tag
+  ) => CaseStateTag
 }
 
 const haveAllSubpoenasBeenServiced = (defendants: Defendant[]): boolean => {
@@ -44,7 +44,7 @@ const haveAllSubpoenasBeenServiced = (defendants: Defendant[]): boolean => {
 export const mapIndictmentCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   theCase: CaseListEntry,
-): Tag => {
+): CaseStateTag => {
   switch (theCase.state) {
     case CaseState.COMPLETED:
       return {
@@ -62,7 +62,7 @@ export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   theCase: CaseListEntry,
   user?: User,
-): Tag => {
+): CaseStateTag => {
   switch (theCase.state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
@@ -79,7 +79,7 @@ export const mapCaseStateToTagVariant = (
       if (
         isIndictmentCase(theCase.type) &&
         theCase.defendants &&
-        theCase.court &&
+        theCase.courtDate &&
         !haveAllSubpoenasBeenServiced(theCase.defendants)
       ) {
         return {
@@ -150,9 +150,9 @@ const TagCaseState: FC<Props> = (props) => {
   if (!tagVariant) return null
 
   return (
-    <Tag variant={tagVariant?.color} outlined disabled truncate>
+    <CaseStateTag variant={tagVariant?.color} outlined disabled truncate>
       {tagVariant.text}
-    </Tag>
+    </CaseStateTag>
   )
 }
 
