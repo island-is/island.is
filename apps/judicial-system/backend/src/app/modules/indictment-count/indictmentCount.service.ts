@@ -67,12 +67,13 @@ export class IndictmentCountService {
 
   async delete(caseId: string, indictmentCountId: string): Promise<boolean> {
     this.sequelize.transaction(async (transaction) => {
-      const numberOfAffectedRows = await this.indictmentCountModel.destroy({
-        where: { id: indictmentCountId, caseId },
-        transaction,
-      })
       await this.offenseModel.destroy({
         where: { id: indictmentCountId },
+        transaction,
+      })
+
+      const numberOfAffectedRows = await this.indictmentCountModel.destroy({
+        where: { id: indictmentCountId, caseId },
         transaction,
       })
 
