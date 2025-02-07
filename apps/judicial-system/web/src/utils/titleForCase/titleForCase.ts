@@ -14,6 +14,10 @@ export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
   theCase: Case,
 ) => {
+  if (isInvestigationCase(theCase.type) && theCase.isCompletedWithoutRuling) {
+    return formatMessage(strings.investigationCaseCompletedWithoutRuling)
+  }
+
   if (theCase.state === CaseState.REJECTED) {
     return isInvestigationCase(theCase.type)
       ? formatMessage(strings.investigationCaseRejectedTitle)
@@ -26,9 +30,7 @@ export const titleForCase = (
 
   if (theCase.state === CaseState.ACCEPTED) {
     if (isInvestigationCase(theCase.type)) {
-      return theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
-        ? formatMessage(strings.investigationCaseCompletedWithoutRuling)
-        : formatMessage(strings.investigationCaseAcceptedTitle)
+      formatMessage(strings.investigationCaseAcceptedTitle)
     }
 
     const caseType =

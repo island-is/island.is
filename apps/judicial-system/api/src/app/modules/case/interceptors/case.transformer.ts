@@ -5,7 +5,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
-  CaseDecision,
   CaseIndictmentRulingDecision,
   EventType,
   getIndictmentVerdictAppealDeadlineStatus,
@@ -58,7 +57,7 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
     appealReceivedByCourtDate,
-    decision,
+    isCompletedWithoutRuling,
   } = theCase
 
   const appealInfo: AppealInfo = {}
@@ -77,9 +76,6 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
   const hasBeenAppealed = Boolean(appealState) && !didAllAcceptInCourt
   appealInfo.hasBeenAppealed = hasBeenAppealed
 
-  const wasCompletedWithoutRuling =
-    decision === CaseDecision.COMPLETED_WITHOUT_RULING
-
   if (hasBeenAppealed) {
     appealInfo.appealedByRole =
       prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
@@ -96,7 +92,7 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
 
   appealInfo.canBeAppealed = Boolean(
     !hasBeenAppealed &&
-      !wasCompletedWithoutRuling &&
+      !isCompletedWithoutRuling &&
       (isAppealableDecision(accusedAppealDecision) ||
         isAppealableDecision(prosecutorAppealDecision)),
   )
