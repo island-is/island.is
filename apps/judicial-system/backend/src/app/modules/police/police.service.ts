@@ -34,7 +34,6 @@ import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Subpoena, SubpoenaService } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -51,6 +50,8 @@ export enum PoliceDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
+  RVMV = 'RVMV', // Viðbótargögn verjanda
+  RVVS = 'RVVS', // Viðbótargögn sækjanda
 }
 
 export interface PoliceDocument {
@@ -155,8 +156,6 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
-    @Inject(forwardRef(() => SubpoenaService))
-    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -693,12 +692,10 @@ export class PoliceService {
 
   async revokeSubpoena(
     workingCase: Case,
-    subpoena: Subpoena,
+    subpoenaId: string,
     user: User,
   ): Promise<boolean> {
     const { name: actor } = user
-
-    const subpoenaId = subpoena.subpoenaId
 
     try {
       const res = await this.fetchPoliceCaseApi(

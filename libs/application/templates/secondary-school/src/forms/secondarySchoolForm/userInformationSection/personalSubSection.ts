@@ -11,6 +11,7 @@ import { error, userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import {
   ApplicationType,
+  checkIsFreshman,
   Routes,
   SecondarySchool,
   Student,
@@ -96,11 +97,7 @@ export const personalSubSection = buildSubSection({
               externalData,
               'studentInfo.data',
             )?.isFreshman
-            const isFreshmanAnswers =
-              getValueViaPath<ApplicationType>(
-                answers,
-                'applicationType.value',
-              ) === ApplicationType.FRESHMAN
+            const isFreshmanAnswers = checkIsFreshman(answers)
             return !isFreshmanExternalData && isFreshmanAnswers
           },
         }),
@@ -141,14 +138,12 @@ export const personalSubSection = buildSubSection({
             if (!applicationType) return false
 
             let isOpenForAdmission: boolean | undefined
-            if (applicationType === ApplicationType.FRESHMAN) {
+            if (checkIsFreshman(answers)) {
               isOpenForAdmission = getValueViaPath<boolean>(
                 answers,
                 'applicationType.isOpenForAdmissionFreshman',
               )
-            } else if (
-              applicationType === ApplicationType.GENERAL_APPLICATION
-            ) {
+            } else {
               isOpenForAdmission = getValueViaPath<boolean>(
                 answers,
                 'applicationType.isOpenForAdmissionGeneral',

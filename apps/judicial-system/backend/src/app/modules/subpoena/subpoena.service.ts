@@ -86,6 +86,7 @@ export class SubpoenaService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly pdfService: PdfService,
+    @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
     private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
@@ -404,7 +405,7 @@ export class SubpoenaService {
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena,
+      subpoena.id,
       user,
     )
 

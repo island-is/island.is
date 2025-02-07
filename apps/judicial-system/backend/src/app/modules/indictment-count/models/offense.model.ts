@@ -10,7 +10,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { SubstanceMap } from '@island.is/judicial-system/types'
+import type { SubstanceMap } from '@island.is/judicial-system/types'
 
 import { IndictmentCount } from './indictmentCount.model'
 
