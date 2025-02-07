@@ -14,7 +14,7 @@ DOCKER_REGISTRY=${DOCKER_REGISTRY:-821090935708.dkr.ecr.eu-west-1.amazonaws.com}
 docker buildx rm actions_builder || true
 docker buildx create --name actions_builder --driver docker-container --use --driver-opt image="${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1"
 
-LAYERS=("deps" "yarn")
+LAYERS=("base" "deps")
 
 # Build and push deps layer to S3
 for LAYER in "${LAYERS[@]}"; do

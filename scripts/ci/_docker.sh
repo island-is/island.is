@@ -31,8 +31,8 @@ mkargs() {
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
     -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
+    --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache-base"
     --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache-deps"
-    --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache-yarn"
     --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache,mode=max"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do

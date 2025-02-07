@@ -6,7 +6,7 @@ ARG PLAYWRIGHT_VERSION
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS deps
+FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS base
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   ln -sf /usr/bin/python3 /usr/bin/python
 
 
-FROM deps AS yarn
+FROM base AS deps
 
 WORKDIR /build
 COPY .yarn/ .yarn/
