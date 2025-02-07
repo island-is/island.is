@@ -106,7 +106,7 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
   const workflow = json2yaml
     .dump(workflowJson)
     .replaceAll(/agents:\s*'\[.*?\]'/g, (match) => match.replace(/'/g, ''))
-  writeFileSync('.github/workflows/nx.yml', workflow)
+  writeFileSync('.github/actions/nx.yml', workflow)
   if (shouldRun) {
     writeFileSync('.github/assignment-rules.yml', assignmentRules)
   }
