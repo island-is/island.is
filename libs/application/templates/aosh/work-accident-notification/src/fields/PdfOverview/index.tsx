@@ -21,20 +21,27 @@ export const PdfOverview: FC<React.PropsWithChildren<FieldBaseProps>> = (
   })
 
   const blobToBase64 = (blob: Blob) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsDataURL(blob)
       reader.onloadend = () => {
         resolve(reader.result)
+      }
+      reader.onerror = () => {
+        reject(new Error('Failed to convert blob to base64'))
       }
     })
   }
 
   useEffect(() => {
     document.blob &&
-      blobToBase64(document.blob).then((base64) => {
-        if (typeof base64 === 'string') setBase64Document(base64)
-      })
+      blobToBase64(document.blob)
+        .then((base64) => {
+          if (typeof base64 === 'string') setBase64Document(base64)
+        })
+        .catch((error) => {
+          console.error('Failed to convert PDF to base64:', error)
+        })
   }, [document])
 
   const isNotValid = () => {
