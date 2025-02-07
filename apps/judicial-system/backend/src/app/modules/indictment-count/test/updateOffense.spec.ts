@@ -88,7 +88,7 @@ describe('IndictmentCountController - Update offense', () => {
     })
   })
 
-  describe('indictment count update fails', () => {
+  describe('offense update fails', () => {
     let then: Then
 
     beforeEach(async () => {
