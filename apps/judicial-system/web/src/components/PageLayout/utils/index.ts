@@ -22,9 +22,7 @@ export const formatCaseResult = (
     })
   } else if (caseResult === CaseState.ACCEPTED) {
     if (isInvestigationCase(caseType)) {
-      return workingCase.isCompletedWithoutRuling
-        ? formatMessage(m.caseResults.completedWithoutRuling)
-        : formatMessage(m.caseResults.investigationAccepted)
+      return formatMessage(m.caseResults.investigationAccepted)
     } else {
       const isAlternativeTravelBan =
         workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN

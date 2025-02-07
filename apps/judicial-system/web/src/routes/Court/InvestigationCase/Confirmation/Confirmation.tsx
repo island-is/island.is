@@ -198,12 +198,14 @@ const Confirmation: FC = () => {
               : strings.continueButtonTextAcceptingPartially,
           )}
           nextButtonIcon={
-            isAcceptingCaseDecision(workingCase.decision)
+            isAcceptingCaseDecision(workingCase.decision) ||
+            workingCase.isCompletedWithoutRuling
               ? 'checkmark'
               : 'close'
           }
           nextButtonColorScheme={
-            isAcceptingCaseDecision(workingCase.decision)
+            isAcceptingCaseDecision(workingCase.decision) ||
+            workingCase.isCompletedWithoutRuling
               ? 'default'
               : 'destructive'
           }
