@@ -11,7 +11,7 @@ import {
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
-import { Webreader } from '@island.is/web/components'
+import { EmailSignup, Webreader } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -61,6 +61,8 @@ export const NewsArticle: React.FC<
   const displayImageAboveContent =
     !newsItem?.fullWidthImageInContent ||
     (!displaySignLanguageVideo && newsItem?.fullWidthImageInContent)
+
+  const bottomSlices = newsItem?.organization?.newsBottomSlices ?? []
 
   return (
     <Box paddingBottom={[0, 0, 4]}>
@@ -150,6 +152,16 @@ export const NewsArticle: React.FC<
         newsItem?.fullWidthImageInContent && (
           <NewsItemImage newsItem={newsItem} />
         )}
+
+      {bottomSlices.length > 0 && (
+        <Box paddingTop={3}>
+          <Stack space={3}>
+            {bottomSlices.map((slice) => (
+              <EmailSignup slice={slice} />
+            ))}
+          </Stack>
+        </Box>
+      )}
     </Box>
   )
 }
