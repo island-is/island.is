@@ -155,12 +155,13 @@ jobs:
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
       - name: Prepare nx
         id: prepare-nx
+        env:
+          WORKFLOW_FILE: .github/actions/workflow.yml
         run: |
           node scripts/ci/_create_agents.mjs
-  nxtasks:
-    needs:
-      - prepare
-    uses: ./.github/actions/nx.yml
+      - name: Start nx
+        uses: .github/actions/workflow.yml
+    
   linting-workspace:
     needs:
       - prepare

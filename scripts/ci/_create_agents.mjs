@@ -106,7 +106,11 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
   const workflow = json2yaml
     .dump(workflowJson)
     .replaceAll(/agents:\s*'\[.*?\]'/g, (match) => match.replace(/'/g, ''))
-  writeFileSync('.github/actions/nx.yml', workflow)
+  if (!process.env.WORKFLOW_FILE) {
+    console.error(`Workflow file env not defined`);
+    process.exit(1);
+  }
+  writeFileSync(process.env.WORKFLOW_FILE, workflow)
   if (shouldRun) {
     writeFileSync('.github/assignment-rules.yml', assignmentRules)
   }
