@@ -3462,6 +3462,9 @@ export interface IOrganizationSubpageFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
 }
 
 export interface IOrganizationSubpage
