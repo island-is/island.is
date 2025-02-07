@@ -138,6 +138,6 @@ service:
   targetPort: 5000
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/identity-server'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/identity-server'
   create: true
   name: 'identity-server'

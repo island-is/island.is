@@ -64,6 +64,7 @@ const staging01: EnvironmentConfig = {
 export let Envs: EnvironmentConfigs = {
   dev01: dev01,
   devIds: merge({}, dev01, {
+    awsAccountId: '324037283794',
     global: {
       global: { env: { AUDIT_GROUP_NAME: '/identity-server/audit-log' } },
     },
