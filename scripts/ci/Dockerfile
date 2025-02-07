@@ -8,18 +8,19 @@ ARG PLAYWRIGHT_VERSION
 # ------------------------------------------------
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS deps
 
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  apt-get update && \
   apt-get install -y \
   git \
   python3 \
   build-essential \
+  jq \
   gcc && \
-  ln -sf /usr/bin/python3 /usr/bin/python && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
+  ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
-COPY .yarn/ .yarn/
 COPY .yarnrc.yml yarn.lock package.json ./
 COPY apps/native/app/package.json ./apps/native/app/
 
@@ -28,7 +29,7 @@ RUN --mount=type=cache,target=/root/.yarn/cache,sharing=locked \
   --mount=type=cache,target=/root/.yarn/releases,sharing=locked \
   --mount=type=cache,target=/root/.yarn/patches,sharing=locked \
   --mount=type=cache,target=/root/.yarn/install-state.gz,sharing=locked \
-  yarn install --immutable
+  yarn install --immutable --frozen-lockfile
 
 # ------------------------------------------------
 # Source stage (still no app-specific args)
