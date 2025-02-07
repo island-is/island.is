@@ -318,6 +318,8 @@ jobs:
       - name: Get cache
         id: get-cache
         uses: runs-on/cache@v4
+        with:
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Set Test Everything true
         run: |
@@ -430,11 +432,9 @@ jobs:
 
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -485,11 +485,9 @@ jobs:
 
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'

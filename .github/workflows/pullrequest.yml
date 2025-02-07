@@ -27,6 +27,7 @@ env:
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -118,10 +119,9 @@ jobs:
 
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -219,11 +219,9 @@ jobs:
 
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -263,11 +261,9 @@ jobs:
 
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -288,11 +284,9 @@ jobs:
 
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -332,13 +326,13 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
+
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -368,13 +362,13 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
+
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
+
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -397,13 +391,12 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
+
       - name: Get cache
         id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-1
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
