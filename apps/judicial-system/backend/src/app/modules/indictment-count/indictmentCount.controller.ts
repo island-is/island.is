@@ -118,7 +118,12 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, IndictmentCountExistsGuard, OffenseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    IndictmentCountExistsGuard,
+    OffenseExistsGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Patch(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({
@@ -142,7 +147,12 @@ export class IndictmentCountController {
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, IndictmentCountExistsGuard, OffenseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    IndictmentCountExistsGuard,
+    OffenseExistsGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':indictmentCountId/offense/:offenseId')
   @ApiOkResponse({ description: 'Deletes an offense' })

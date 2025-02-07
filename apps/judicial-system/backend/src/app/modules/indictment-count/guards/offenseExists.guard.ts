@@ -33,5 +33,5 @@ export class OffenseExistsGuard implements CanActivate {
     }
     request.offense = offense
     return true
-  } 
-} 
+  }
+}
