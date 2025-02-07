@@ -221,6 +221,8 @@ jobs:
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
+      - run: |
+          exit 1
       - name: Docker build/cache dependencies (deps)
         uses: docker/build-push-action@v6
         with:
