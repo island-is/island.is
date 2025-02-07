@@ -7,8 +7,8 @@ import {
 
 @ObjectType('HealthDirectoratePrescription')
 export class Prescription {
-  @Field()
-  prescribedItemId!: string
+  @Field(() => Int)
+  prescribedItemId!: number
 
   @Field(() => Int)
   prescriptionId!: number
@@ -43,8 +43,8 @@ export class Prescription {
   @Field({ nullable: true })
   productStrength?: string
 
-  @Field({ nullable: true })
-  productQuantity?: string
+  @Field(() => Int, { nullable: true })
+  productQuantity?: number
 
   @Field({ nullable: true })
   dosageInstructions?: string
@@ -52,8 +52,8 @@ export class Prescription {
   @Field({ nullable: true })
   indication?: string
 
-  @Field({ nullable: true })
-  totalPrescribedAmount?: string
+  @Field(() => Int, { nullable: true })
+  totalPrescribedAmount?: number
 
   @Field({ nullable: true })
   totalPrescribedAmountDisplay?: string

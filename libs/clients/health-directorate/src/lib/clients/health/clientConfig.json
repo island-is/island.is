@@ -61,7 +61,7 @@
             }
           }
         },
-        "tags": ["me/waiting-lists"]
+        "tags": ["Waiting lists"]
       }
     },
     "/v1/me/referrals": {
@@ -122,7 +122,7 @@
             }
           }
         },
-        "tags": ["me/referrals"]
+        "tags": ["Referrals"]
       }
     },
     "/v1/me/prescriptions": {
@@ -183,7 +183,7 @@
             }
           }
         },
-        "tags": ["me/prescriptions"]
+        "tags": ["Prescriptions"]
       }
     },
     "/v1/me/dispensations/grouped": {
@@ -191,15 +191,7 @@
         "operationId": "MeDispensationController_getGroupedDispensations_v1",
         "parameters": [],
         "responses": { "200": { "description": "" } },
-        "tags": ["me/dispensations"]
-      }
-    },
-    "/v1/me/dispensations/bla": {
-      "get": {
-        "operationId": "MeDispensationController_bla_v1",
-        "parameters": [],
-        "responses": { "200": { "description": "" } },
-        "tags": ["me/dispensations"]
+        "tags": ["Prescriptions"]
       }
     },
     "/v1/me/dispensations/{atcCode}": {
@@ -214,12 +206,232 @@
           }
         ],
         "responses": { "200": { "description": "" } },
-        "tags": ["me/dispensations"]
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/system/alive": {
+      "get": {
+        "operationId": "SystemController_alive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System"]
+      }
+    },
+    "/system/ready": {
+      "get": {
+        "operationId": "SystemController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System"]
       }
     }
   },
   "info": {
-    "title": "Prescription API",
+    "title": "Health service",
     "description": "",
     "version": "1.0",
     "contact": {}
@@ -317,11 +529,11 @@
         "type": "object",
         "properties": {
           "productId": { "type": "string" },
-          "productName": { "type": "object" },
-          "productStrength": { "type": "object" },
-          "dispensedAmount": { "type": "object" },
-          "dispensedAmountDisplay": { "type": "object" },
-          "numberOfPackages": { "type": "object" }
+          "productName": { "type": "string" },
+          "productStrength": { "type": "string" },
+          "dispensedAmount": { "type": "number" },
+          "dispensedAmountDisplay": { "type": "string" },
+          "numberOfPackages": { "type": "number" }
         },
         "required": ["productId"]
       },
@@ -352,24 +564,28 @@
           "prescribedItemId": { "type": "number" },
           "prescriptionId": { "type": "number" },
           "prescriberId": { "type": "string" },
-          "prescriberName": { "type": "object" },
+          "prescriberName": { "type": "string" },
           "issueDate": { "format": "date-time", "type": "string" },
           "expiryDate": { "format": "date-time", "type": "string" },
           "productId": { "type": "string" },
-          "productName": { "type": "object" },
+          "productName": { "type": "string" },
           "productType": {
-            "type": "object",
+            "type": "string",
             "description": "Based on the ATC classification"
           },
-          "productForm": { "type": "object" },
-          "productUrl": { "type": "object" },
-          "productStrength": { "type": "object" },
-          "productQuantity": { "type": "object" },
-          "dosageInstructions": { "type": "object" },
-          "indication": { "type": "object" },
-          "totalPrescribedAmount": { "type": "object" },
-          "totalPrescribedAmountDisplay": { "type": "object" },
-          "isRegiment": { "type": "object" },
+          "productForm": { "type": "string" },
+          "productUrl": { "type": "string" },
+          "productStrength": { "type": "string" },
+          "productQuantity": { "type": "number" },
+          "dosageInstructions": { "type": "string" },
+          "indication": { "type": "string" },
+          "totalPrescribedAmount": { "type": "number" },
+          "totalPrescribedAmountDisplay": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["regular", "pn", "regimen", "owner"]
+          },
+          "isRegiment": { "type": "boolean" },
           "isRenewable": { "type": "boolean" },
           "renewalBlockedReason": {
             "type": "string",

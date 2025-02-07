@@ -305,6 +305,28 @@ export const notifications = {
         'Notaður sem texti í pósti til Fangelsismálastofnun vegna undirritunar úrskurðar',
     },
   }),
+  acceptedWithoutRuling: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.subject',
+      defaultMessage: 'Niðurstaða í máli {courtCaseNumber}',
+      description:
+        'Notaður sem titill í pósti til hagaðila þegar máli er lokið án úrskurðar',
+    },
+    prosecutorBody: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.prosecutor_body',
+      defaultMessage:
+        'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til sækjanda þegar máli er lokið án úrskurðar',
+    },
+    defenderBody: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.defender_body',
+      defaultMessage:
+        'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description:
+        'Notaður sem texti í pósti til verjanda/talsmanns þegar máli er lokið án úrskurðar',
+    },
+  }),
   caseCompleted: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_completed.subject_v1',

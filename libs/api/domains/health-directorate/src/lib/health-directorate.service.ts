@@ -206,24 +206,23 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          prescribedItemId: item.prescribedItemId.toString(),
+          prescribedItemId: item.prescribedItemId,
           prescriptionId: item.prescriptionId,
           prescriberId: item.prescriberId,
-          prescriberName: item.prescriberName.toString(),
+          prescriberName: item.prescriberName,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           productId: item.productId,
-          productName: item.productName?.toString(),
-          productType: item.productType?.toString(),
-          productForm: item.productForm?.toString(),
-          productUrl: item.productUrl?.toString(),
-          productStrength: item.productStrength?.toString(),
-          productQuantity: item.productQuantity?.toString(),
-          dosageInstructions: item.dosageInstructions?.toString(),
-          indication: item.indication?.toString(),
-          totalPrescribedAmount: item.totalPrescribedAmount?.toString(),
-          totalPrescribedAmountDisplay:
-            item.totalPrescribedAmountDisplay?.toString(),
+          productName: item.productName,
+          productType: item.productType,
+          productForm: item.productForm,
+          productUrl: item.productUrl,
+          productStrength: item.productStrength,
+          productQuantity: item.productQuantity,
+          dosageInstructions: item.dosageInstructions,
+          indication: item.indication,
+          totalPrescribedAmount: item.totalPrescribedAmount,
+          totalPrescribedAmountDisplay: item.totalPrescribedAmountDisplay,
           isRegiment: item.isRegiment ? true : false,
           isRenewable: item.isRenewable,
           renewalBlockedReason: item.renewalBlockedReason
@@ -239,20 +238,19 @@ export class HealthDirectorateService {
           isFullyDispensed: item.isFullyDispensed,
           dispensations: item.dispensations.map((item) => {
             return {
-              id: item.id.toString(),
-              dispensingAgentId: item.dispensingAgentId.toString(),
+              id: item.id,
+              dispensingAgentId: item.dispensingAgentId,
               dispensingAgentName: item.dispensingAgentName,
               dispensationDate: item.dispensationDate,
               dispensedItemsCount: item.dispensedItemsCount,
               dispensedItems: item.dispensedItems.map((item) => {
                 return {
                   productId: item.productId,
-                  productName: item.productName?.toString(),
-                  productStrength: item.productStrength?.toString(),
-                  dispensedAmount: item.dispensedAmount?.toString(),
-                  dispensedAmountDisplay:
-                    item.dispensedAmountDisplay?.toString(),
-                  numberOfPackages: item.numberOfPackages?.toString(),
+                  productName: item.productName,
+                  productStrength: item.productStrength,
+                  dispensedAmount: item.dispensedAmount,
+                  dispensedAmountDisplay: item.dispensedAmountDisplay,
+                  numberOfPackages: item.numberOfPackages,
                 }
               }),
             }

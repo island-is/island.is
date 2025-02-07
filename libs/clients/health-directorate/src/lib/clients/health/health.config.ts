@@ -18,7 +18,7 @@ export const HealthDirectorateHealthClientConfig = defineConfig<
         'XROAD_HEALTH_DIRECTORATE_HEALTH_PATH',
         'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
       ),
-      scope: [],
+      scope: ['@landlaeknir.is/health'],
     }
   },
 })
