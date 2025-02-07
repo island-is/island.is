@@ -140,7 +140,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                     {selection?.[2]?.nordicLanguage?.name}
                   </Text>
                 )}
-                {!!selection?.[3]?.requestDormitory?.includes(YES) && (
+                {!!selection?.[2]?.requestDormitory?.includes(YES) && (
                   <Text>
                     {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
                     {formatMessage(overview.selection.yesValue)}
