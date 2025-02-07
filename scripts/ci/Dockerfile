@@ -25,23 +25,29 @@ COPY .yarn/ .yarn/
 COPY .yarnrc.yml yarn.lock package.json ./
 COPY apps/native/app/package.json ./apps/native/app/
 
-RUN --mount=type=cache,target=/root/.yarn/cache,sharing=locked \
-  --mount=type=cache,target=/root/.yarn/unplugged,sharing=locked \
-  --mount=type=cache,target=/root/.yarn/releases,sharing=locked \
-  --mount=type=cache,target=/root/.yarn/patches,sharing=locked \
-  --mount=type=cache,target=/root/.yarn/install-state.gz,sharing=locked \
+ENV YARN_CACHE_FOLDER=/root/.yarn-cache
+
+RUN --mount=type=cache,target=/root/.yarn-cache,sharing=locked \
   yarn install --immutable
 
-# ------------------------------------------------
-# Source stage (still no app-specific args)
-# ------------------------------------------------
-FROM deps AS src
-COPY . .
+
+# --------------------------------------------------
+# Build stage where NX artifacts are copied to image
+# --------------------------------------------------
+FROM deps AS builder
+
+ARG APP
+ARG APP_HOME
+ARG APP_DIST_HOME
+
+ENV NODE_ENV=production
+
+COPY ${APP_DIST_HOME} /build/${APP_DIST_HOME}
 
 # ------------------------------------------------
 # Build stage (app-specific args start here)
 # ------------------------------------------------
-FROM src AS builder
+FROM deps AS builder-all
 
 ARG APP
 ARG APP_HOME
@@ -58,8 +64,11 @@ ENV NODE_ENV=production \
   APP=${APP}
 
 RUN --mount=type=secret,id=nx_cloud_access_token \
+  --mount=type=secret,id=nx_cloud_access_token \
+  bash -c ' \
   export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
-  yarn run build ${APP} --prod
+  yarn run build ${APP} --prod \
+  '
 
 # ------------------------------------------------
 # Minimal node base for outputs

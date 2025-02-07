@@ -26,7 +26,6 @@
 **/.next/
 
 # Outputs
-**/dist/
 **/out/
 
 # Docker-stuff
