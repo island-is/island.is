@@ -58,6 +58,7 @@ env:
   NX_TASKS_RUNNER: ci
   # Registry without trailing `/docker`
   ECR_PULLTHROUGH_CACHE: ${{ vars.ECR_PULLTHROUGH_CACHE || 'public.ecr.aws' }}
+  AWS_REGION: eu-west-1
 
 jobs:
   prepare:
@@ -132,19 +133,13 @@ jobs:
         env:
           image_repository: ${{ env.IMAGE_REGISTRY }}/docker-cache
           localrun: ${{ !!github.event.localrun }}
+          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
         run: |
           echo image-repository="$image_repository" | tee -a "$GITHUB_OUTPUT"
           echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max" | tee -a "$GITHUB_OUTPUT"
           echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache" | tee -a "$GITHUB_OUTPUT"
-
-          # From https://aws.amazon.com/blogs/containers/announcing-remote-cache-support-in-amazon-ecr-for-buildkit-clients/
-          # docker build -t <account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:image \
-          #   --cache-to mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=<account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:cache \
-          #   --cache-from type=registry,ref=<account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:cache .
-          # docker push <account-id>.dkr.ecr.<my-region>.amazonaws.com/buildkit-test:image
-          # Adapted to outputs:
-          echo build-cache-to="mode=max,image-manifest=true,oci-mediatypes=true,type=registry,ref=$image_repository:cache" | tee -a "$GITHUB_OUTPUT"
-          echo build-cache-from="type=registry,ref=$image_repository:cache" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-to="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-from="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache" | tee -a "$GITHUB_OUTPUT"
 
       - name: Common config
         id: common
