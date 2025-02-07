@@ -166,6 +166,17 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  municipalCollectionTitle: {
+    id: 'admin-portal.signature-collection:municipalCollectionTitle',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+    description: '',
+  },
+  municipalCollectionIntro: {
+    id: 'admin-portal.signature-collection:municipalCollectionIntro',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum varius, nisi id consequat ornare, ante sem semper sapien.',
+    description: '',
+  },
   parliamentaryCollectionTitle: {
     id: 'admin-portal.signature-collection:parliamentaryCollectionTitle',
     defaultMessage: 'Alþingiskosningar',

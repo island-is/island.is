@@ -1,8 +1,25 @@
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { UploadFile, fileToObject } from '@island.is/island-ui/core'
 import { uuid } from 'uuidv4'
 import XLSX from 'xlsx'
 
 export const pageSize = 10
+
+export const allowedScopes: string[] = [
+  AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionProcess,
+]
+
+export enum LandAreas {
+  Hofudborgarsvaedi = 'Höfuðborgarsvæði',
+  Sudurnes = 'Suðurnes',
+  Vesturland = 'Vesturland',
+  Vestfirdir = 'Vestfirðir',
+  NordurlandVestra = 'Norðurland vestra',
+  NordurlandEystra = 'Norðurland eystra',
+  Austurland = 'Austurland',
+  Sudurland = 'Suðurland',
+}
 
 export const countryAreas = [
   { value: 'Sunnlendingafjórðungur', label: 'Sunnlendingafjórðungur' },

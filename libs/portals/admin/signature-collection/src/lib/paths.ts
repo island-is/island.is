@@ -8,10 +8,13 @@ export enum SignatureCollectionPaths {
   ParliamentaryConstituency = '/althingiskosningar/:constituencyName',
   ParliamentaryConstituencyList = '/althingiskosningar/:constituencyName/:listId',
 
-  // Municipal 
-  MunicipalRoot = '/sveitastjornarkosningar',
-  MunicipalArea1 = '/sveitastjornarkosningar/areaName1',
-  MunicipalArea2 = '/sveitastjornarkosningar/areaName2',
-  MunicipalAreaList = '/sveitastjornarkosningar/areaName1/:listId',
-  MunicipalAreaList2 = '/sveitastjornarkosningar/areaName2/:listId',
+  // Municipal
+  MunicipalAreaHofudborgarsvaedi = '/sveitastjornarkosningar/hofudborgarsvaedi',
+  MunicipalAreaSudurnes = '/sveitastjornarkosningar/sudurnes',
+  MunicipalAreaVesturland = '/sveitastjornarkosningar/vesturland',
+  MunicipalAreaVestfirdir = '/sveitastjornarkosningar/vestfirdir',
+  MunicipalAreaNordurlandVestra = '/sveitastjornarkosningar/nordurlandVestra',
+  MunicipalAreaNordurlandEystra = '/sveitastjornarkosningar/nordurlandEystra',
+  MunicipalAreaAusturland = '/sveitastjornarkosningar/austurland',
+  MunicipalAreaSudurland = '/sveitastjornarkosningar/sudurland',
 }
