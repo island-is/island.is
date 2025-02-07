@@ -2,6 +2,9 @@
   "name": "infra",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "18.12.1"
+  },
   "scripts": {
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
@@ -15,6 +18,7 @@
     "@babel/core": "7.23.9",
     "@babel/plugin-transform-modules-commonjs": "7.23.3",
     "@nx/js": "16",
+    "@octokit/rest": "21.1.0",
     "@types/jest": "26.0.15",
     "@types/js-yaml": "3.12.5",
     "@types/node": "14.14.14",
