@@ -19,8 +19,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   gcc && \
   ln -sf /usr/bin/python3 /usr/bin/python
 
-WORKDIR /build
 
+FROM deps AS yarn
+
+WORKDIR /build
 COPY .yarn/ .yarn/
 COPY .yarnrc.yml yarn.lock package.json ./
 COPY apps/native/app/package.json ./apps/native/app/
@@ -31,7 +33,7 @@ RUN yarn install --immutable
 # --------------------------------------------------
 # Build stage where NX artifacts are copied to image
 # --------------------------------------------------
-FROM deps AS builder
+FROM yarn AS builder
 
 ARG APP
 ARG APP_HOME

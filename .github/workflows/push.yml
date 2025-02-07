@@ -28,7 +28,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
@@ -384,6 +384,7 @@ jobs:
           git checkout "$GITHUB_SHA"
           echo BASE="$BASE" >> "$GITHUB_ENV"
           echo LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
+
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
         env:
@@ -437,6 +438,12 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Prepare docker deps
+        id: docker-deps
+        run: |
+          ./scripts/ci/10_prepare-docker-deps.sh
+
   tests:
     needs:
       - prepare
