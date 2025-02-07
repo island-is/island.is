@@ -229,7 +229,6 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
-          tags: ${{ steps.common.outputs.image-repository }}:cache-tag
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Docker build/cache dependencies (deps)
@@ -241,7 +240,6 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
-          tags: ${{ steps.common.outputs.image-repository }}:cache-tag
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
       - name: Docker build/cache dependencies (output-base)
@@ -253,7 +251,6 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
-          tags: ${{ steps.common.outputs.image-repository }}:cache-tag
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
       - name: Docker build/cache dependencies (base-node-with-pg)
@@ -265,7 +262,6 @@ jobs:
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
-          tags: ${{ steps.common.outputs.image-repository }}:cache-tag
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
 
