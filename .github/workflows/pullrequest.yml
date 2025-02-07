@@ -29,7 +29,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 35
 
     env:
@@ -48,12 +48,13 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
+      # TODO: set arc if condition, home dir should not be writable
+      # - name: Debug home etc.
+      #   run: |
+      #     echo "docker version: $(docker --version)"
+      #     echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
+      #     mkdir -p "$HOME"
+      #     ls -lah "$HOME"
 
       - uses: actions/checkout@v4
         with:
@@ -113,12 +114,9 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -196,7 +194,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -214,13 +212,9 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -235,7 +229,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -258,13 +252,9 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules,cypress'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -272,7 +262,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -283,13 +273,9 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -312,7 +298,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 5
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -329,13 +315,9 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
@@ -348,7 +330,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -365,20 +347,16 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -394,19 +372,15 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+      - name: yarn s3
+        run: |
+          ./scripts/yarn-s3.sh ${{ hashFiles('**/yarn.lock') }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-runners-s3
     if: ${{ !cancelled() }}
     needs:
       - prepare
