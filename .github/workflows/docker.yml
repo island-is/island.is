@@ -210,12 +210,17 @@ jobs:
           install: true
           use: true
 
+      - name: Create and use a new builder instance
+        run: |
+          docker buildx create --name mybuilder --use
+
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (base-deps)
         uses: docker/build-push-action@v6
         with:
           target: base-deps
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -228,6 +233,7 @@ jobs:
         with:
           target: deps
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -238,6 +244,7 @@ jobs:
         with:
           target: output-base
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -248,6 +255,7 @@ jobs:
         with:
           target: base-node-with-pg
           context: .
+          builder: mybuilder
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
