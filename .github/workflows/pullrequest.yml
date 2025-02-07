@@ -80,7 +80,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -92,7 +92,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Run codegen
@@ -257,7 +257,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -269,7 +269,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore Codegen Cache
@@ -331,7 +331,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -343,7 +343,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore Codegen Cache
@@ -386,7 +386,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -398,7 +398,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore Codegen Cache
@@ -476,7 +476,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore Codegen Cache
@@ -533,7 +533,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -545,7 +545,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore Codegen Cache
@@ -595,7 +595,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -607,7 +607,7 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore Codegen Cache
