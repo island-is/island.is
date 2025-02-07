@@ -31,20 +31,21 @@ export const Footer = () => {
             </Button>
           </Box>
           {/* <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none"> */}
-          <Box display="inlineFlex" padding={2} paddingLeft="none">
-            {/* Implement logic on whether go back button should be rendered */}
-            <Button
-              variant="ghost"
-              onClick={() => dispatch({
-                type: 'DECREMENT'
-              })}
-            // data-testid="step-back"
-            // onClick={goBack}
-            // disabled={!canProceed || loading}
-            >
-              Til baka
-            </Button>
-          </Box>
+          {
+            state.currentSection.index > 0 && (
+              <Box display="inlineFlex" padding={2} paddingLeft="none">
+                <Button
+                  icon="arrowBack"
+                  variant="ghost"
+                  onClick={() => dispatch({
+                    type: 'DECREMENT'
+                  })}
+                >
+                  Til baka
+                </Button>
+              </Box>
+            )
+          }
         </Box>
       </GridColumn>
     </Box>

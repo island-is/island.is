@@ -3,6 +3,8 @@ import { Section } from './section.model'
 import { LanguageType } from './languageType.model'
 import { Dependency } from './form.model'
 import { ValueDto } from './value.model'
+import { FormCertificationTypeDto } from './certification.model'
+import { FormApplicantTypeDto } from './applicant.model'
 
 @ObjectType('FormSystemApplicationEventDto')
 export class ApplicationEventDto {
@@ -63,6 +65,12 @@ export class Application {
 
   @Field(() => [ValueDto], { nullable: 'itemsAndList' })
   files?: ValueDto[]
+
+  @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeDto[]
+
+  @Field(() => [FormApplicantTypeDto], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicantTypeDto[]
 }
 
 @ObjectType('FormSystemApplicationListDto')

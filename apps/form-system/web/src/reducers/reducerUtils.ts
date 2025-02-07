@@ -6,7 +6,7 @@ export const hasScreens = (section: FormSystemSection): boolean => {
 }
 
 
-export const getVariables = (state: ApplicationState) => {
+export const getIncrementVariables = (state: ApplicationState) => {
   const { sections, currentSection, currentScreen } = state
   const currentSectionIndex = currentSection.index
   const currentSectionData = sections[currentSectionIndex]

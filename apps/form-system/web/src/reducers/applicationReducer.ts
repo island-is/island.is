@@ -1,14 +1,13 @@
 import { FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
 import { Action, ApplicationState } from "./reducerTypes"
-import { SectionTypes } from "@island.is/form-system/ui"
-import { decrementWithoutScreens, decrementWithScreens, getDecrementVariables, getVariables, hasScreens, incrementWithoutScreens, incrementWithScreens } from "./reducerUtils"
+import { decrementWithoutScreens, decrementWithScreens, getDecrementVariables, getIncrementVariables, hasScreens, incrementWithoutScreens, incrementWithScreens } from "./reducerUtils"
 
 export const initialReducer = (
   state: ApplicationState
 ): ApplicationState => {
   const { application } = state
   const { completed } = application
-  // need to implement logic on getting current section and screen when loading the application
+  //TODO: need to implement logic on getting current section and screen when loading the application
   const sectionId = application.sections && application.sections[0] ? application.sections[0].id : null
   const sections = (application.sections ?? []).filter(Boolean) as FormSystemSection[]
   const screens = sections.flatMap(section => section.screens ?? []).filter(Boolean) as FormSystemScreen[]
@@ -31,7 +30,7 @@ export const applicationReducer = (
   switch (action.type) {
     case 'INCREMENT': {
       const { currentSectionData, maxSectionIndex, nextSectionIndex, currentScreenIndex } =
-        getVariables(state)
+        getIncrementVariables(state)
 
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(state, currentSectionData, maxSectionIndex, currentScreenIndex)
