@@ -1,5 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
+import isBefore from 'date-fns/isBefore'
+import subYears from 'date-fns/subYears'
 
 import {
   EmbeddedVideo,
@@ -8,7 +10,7 @@ import {
   ImageProps,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 import { Webreader } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -62,11 +64,24 @@ export const NewsArticle: React.FC<
 
   return (
     <Box paddingBottom={[0, 0, 4]}>
-      <Box className="rs_read">
-        <Text variant="h1" as="h1" paddingBottom={2}>
-          {newsItem?.title}
-        </Text>
-      </Box>
+      <Stack space={3}>
+        {newsItem?.date &&
+          isBefore(new Date(newsItem.date), subYears(new Date(), 1)) && (
+            <AlertMessage
+              type="info"
+              title={
+                activeLocale === 'is'
+                  ? 'Þessi frétt er meira en árs gömul'
+                  : 'This news article is more than a year old'
+              }
+            />
+          )}
+        <Box className="rs_read">
+          <Text variant="h1" as="h1" paddingBottom={2}>
+            {newsItem?.title}
+          </Text>
+        </Box>
+      </Stack>
 
       <Webreader
         marginTop={0}
