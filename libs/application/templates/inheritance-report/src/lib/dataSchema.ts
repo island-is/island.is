@@ -253,8 +253,8 @@ export const inheritanceReportSchema = z.object({
             ...deceasedShare,
           })
           .refine(
-            ({ assetNumber }) => {
-              return assetNumber && assetNumber !== ''
+            ({ assetNumber, enabled }) => {
+              return assetNumber && assetNumber !== '' && enabled
                 ? kennitala.isValid(assetNumber)
                 : true
             },
@@ -301,8 +301,8 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ assetNumber }) => {
-              return assetNumber === ''
+            ({ assetNumber, enabled }) => {
+              return assetNumber === '' || !enabled
                 ? true
                 : assetNumber && kennitala.isValid(assetNumber)
             },
