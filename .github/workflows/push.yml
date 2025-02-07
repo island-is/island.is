@@ -548,7 +548,7 @@ jobs:
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
-          docker buildx create --driver docker-container --use
+          docker buildx create --driver docker-container --use --driver-opt image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: Building Docker images
@@ -565,7 +565,7 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
 
-          docker buildx create --driver docker-container --use
+          docker buildx create --driver docker-container --use --driver-opt image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
       - name: Building Docker images Retry
@@ -579,6 +579,8 @@ jobs:
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
+
+          docker buildx create --driver docker-container --use --driver-opt image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
   helm-docker-build:
