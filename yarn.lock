@@ -39515,7 +39515,7 @@ __metadata:
     react-native-svg-transformer: 1.3.0
     react-native-web: ^0.19.11
     react-number-format: 4.9.1
-    react-pdf: 9.1.0
+    react-pdf: 9.1.1
     react-popper: 2.3.0
     react-remove-scroll: 2.5.6
     react-router-dom: 6.11.2
@@ -50509,9 +50509,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-pdf@npm:9.1.0":
-  version: 9.1.0
-  resolution: "react-pdf@npm:9.1.0"
+"react-pdf@npm:9.1.1":
+  version: 9.1.1
+  resolution: "react-pdf@npm:9.1.1"
   dependencies:
     clsx: ^2.0.0
     dequal: ^2.0.3
@@ -50528,7 +50528,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 7859cb65e1786f3c5f72f2f322eb12273e69f74702e745d7bb378e3bf9e345f225591b4fd34fcd82854e29a5f88cf2fc5dcf474c1ca364c9c0a17aa95bcf1874
+  checksum: 610e4adfcd61aa9557cb7261072f84d98998d2961844809ca3933a014ce51c13db821878959f09c5120eb1c51f1cc7b92a10cb5630552fe2beab22572a9d02f6
   languageName: node
   linkType: hard
 
