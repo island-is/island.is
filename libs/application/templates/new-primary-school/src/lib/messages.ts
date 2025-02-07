@@ -599,6 +599,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Bæta við tungumáli',
       description: 'Add language',
     },
+    removeLanguageButton: {
+      id: 'nps.application:different.needs.language.remove.button',
+      defaultMessage: 'Fjarlægja tungumál',
+      description: 'Remove language',
+    },
     languageSelectionPlaceholder: {
       id: 'nps.application:different.needs.language.selection.placeholder',
       defaultMessage: 'Veldu tungumál',

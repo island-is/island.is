@@ -1,7 +1,6 @@
 import {
   buildDescriptionField,
   buildFieldsRepeaterField,
-  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -51,22 +50,21 @@ export const languageSubSection = buildSubSection({
           description:
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
+          marginTop: 'gutter',
           condition: (answers) => {
             return hasForeignLanguages(answers)
           },
-          marginBottom: 'gutter',
         }),
         buildFieldsRepeaterField({
-          id: 'selectedLanguages',
+          id: 'languages.selectedLanguages',
           title: '',
           formTitleNumbering: 'none',
           addItemButtonText:
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
-          removeItemButtonText: 'remove button',
+          removeItemButtonText:
+            newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
           minRows: 1,
           maxRows: 4,
-          marginTop: 'auto',
-          marginBottom: 'auto',
           condition: (answers) => {
             return hasForeignLanguages(answers)
           },
@@ -80,8 +78,9 @@ export const languageSubSection = buildSubSection({
                   .languageSelectionPlaceholder,
               width: 'full',
               options: (application: Application) => {
-                const { languageEnvironment, selectedLanguages } =
-                  getApplicationAnswers(application.answers)
+                const { languageEnvironment } = getApplicationAnswers(
+                  application.answers,
+                )
 
                 const languages = getAllLanguageCodes()
                 return languages
@@ -107,6 +106,7 @@ export const languageSubSection = buildSubSection({
           id: 'languages.child.language.title',
           title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
           titleVariant: 'h4',
+          marginTop: 'gutter',
           condition: (answers) => {
             return showChildLangagueFields(answers)
           },
@@ -120,14 +120,9 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds
               .languageSelectionPlaceholder,
           options: (application) => {
-            const { selectedLanguages, languagesHiddenInput } =
-              getApplicationAnswers(application.answers)
-
-            console.log('options', { selectedLanguages, languagesHiddenInput })
-
-            if (!selectedLanguages) {
-              return []
-            }
+            const { selectedLanguages } = getApplicationAnswers(
+              application.answers,
+            )
 
             return getAllLanguageCodes()
               .filter((language) => {
@@ -146,12 +141,6 @@ export const languageSubSection = buildSubSection({
             return showChildLangagueFields(answers)
           },
         }),
-        /*  buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on options in the select above
-          id: 'languages.languagesHiddenInput',
-          watchValue: 'selectedLanguages',
-        }),*/
-
         buildRadioField({
           id: 'languages.signLanguage',
           title: newPrimarySchoolMessages.differentNeeds.signLanguage,

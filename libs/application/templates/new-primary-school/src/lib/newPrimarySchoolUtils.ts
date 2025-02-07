@@ -63,32 +63,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.languageEnvironment',
   ) as string
 
-  const language1 = getValueViaPath(answers, 'languages.language1') as string
+  const selectedLanguages = getValueViaPath(
+    answers,
+    'languages.selectedLanguages',
+  ) as Array<{
+    code: string
+  }>
 
-  const language2 = getValueViaPath(answers, 'languages.language1') as string
+  let language1 = ''
+  let language2 = ''
+  let language3 = ''
+  let language4 = ''
 
-  const language3 = getValueViaPath(answers, 'languages.language1') as string
-
-  const language4 = getValueViaPath(answers, 'languages.language1') as string
+  if (selectedLanguages) {
+    language1 = selectedLanguages[0]?.code
+    language2 = selectedLanguages[1]?.code
+    language3 = selectedLanguages[2]?.code
+    language4 = selectedLanguages[3]?.code
+  }
 
   const signLanguage = getValueViaPath(
     answers,
     'languages.signLanguage',
   ) as YesOrNo
-
-  const selectedLanguages = getValueViaPath(
-    answers,
-    'selectedLanguages',
-  ) as Array<{
-    code: string
-  }>
-
-  const languagesHiddenInput = getValueViaPath(
-    answers,
-    'languages.languagesHiddenInput',
-  ) as Array<{
-    code: string
-  }>
 
   const childLanguage = getValueViaPath(
     answers,
@@ -222,7 +219,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     siblings,
     languageEnvironment,
     selectedLanguages,
-    languagesHiddenInput,
     language1,
     language2,
     language3,
@@ -435,6 +431,8 @@ export const hasForeignLanguages = (answers: FormValue) => {
 export const showChildLangagueFields = (answers: FormValue) => {
   const { languageEnvironment, selectedLanguages } =
     getApplicationAnswers(answers)
+
+  console.log('showChildLangagueFields', selectedLanguages)
 
   if (!selectedLanguages) {
     return false

@@ -133,33 +133,50 @@ export const dataSchema = z.object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
       interpreter: z.string().optional(),
-      language1: z.string().optional().nullable(),
-      language2: z.string().optional().nullable(),
+      selectedLanguages: z.array(z.object({ code: z.string() })).optional(),
       childLanguage: z.string().optional().nullable(),
     })
-    /* .refine(
-      ({ languageEnvironment, language1 }) => {
-        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-          ? !!language1
-          : true
-      },
-      {
-        path: ['language1'],
-        params: errorMessages.languagesRequired,
-      },
-    )*/
     .refine(
-      ({ languageEnvironment, language1, language2, childLanguage }) => {
-        return languageEnvironment !==
-          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
-          !!language1 &&
-          !!language2
+      ({ languageEnvironment, selectedLanguages, childLanguage }) => {
+        console.log(' selectedLanguages', {
+          languageEnvironment,
+          selectedLanguages,
+          childLanguage,
+        })
+
+        const onlyfore =
+          languageEnvironment === LanguageEnvironmentOptions.ONLY_FOREIGN &&
+          !!selectedLanguages &&
+          selectedLanguages?.length > 1
+
+        const iceAndFor =
+          languageEnvironment ===
+            LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN &&
+          !!selectedLanguages &&
+          selectedLanguages?.length > 2
+
+        console.log('COMMon', { iceAndFor, onlyfore })
+
+        if (onlyfore || iceAndFor) {
+          console.log('INNNI')
+          return !!childLanguage
+        }
+
+        return false
+        /*
+        return (languageEnvironment ===
+          LanguageEnvironmentOptions.ONLY_FOREIGN &&
+          !!selectedLanguages &&
+          selectedLanguages?.length > 1) ||
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN &&
+            !!selectedLanguages &&
+            selectedLanguages?.length > 2)
           ? !!childLanguage
-          : true
+          : true */
       },
       {
         path: ['childLanguage'],
-        params: errorMessages.languageRequired,
       },
     )
     .refine(
