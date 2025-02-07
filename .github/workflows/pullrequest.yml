@@ -48,7 +48,6 @@ jobs:
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
     steps:
@@ -64,12 +63,39 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Check node version
         run: |
@@ -117,23 +143,6 @@ jobs:
           retention-days: 90
           include-hidden-files: true
           if-no-files-found: error
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Yarn install
-        if: steps.get-cache.outputs.cache-hit != 'true'
-        run: yarn install --immutable
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -222,25 +231,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -271,25 +294,39 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -301,25 +338,39 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -354,24 +405,39 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/checkout@v4
         if: ${{ github.ref == 'ref/heads/main' }}
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
 
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -397,24 +463,39 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
 
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -433,24 +514,39 @@ jobs:
     if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: Setup yarn
-        run: corepack enable
 
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

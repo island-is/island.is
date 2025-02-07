@@ -168,7 +168,6 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
-      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
@@ -317,22 +316,39 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Get yarn cache directory path
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
 
-      - name: Yarn install
-        if: steps.get-cache.outputs.cache-hit != 'true'
-        run: yarn install --immutable
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Set Test Everything true
         run: |
@@ -436,25 +452,39 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
-
-      - name: Get yarn cache directory path
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -499,22 +529,39 @@ jobs:
           node-version-file: 'package.json'
         if: steps.gather.outcome == 'success'
 
-      - name: Setup yarn
-        run: corepack enable
-        if: steps.gather.outcome == 'success'
+      - run: |
+          corepack enable
 
-      - name: Get yarn cache directory path
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        uses: runs-on/cache@v4
-        id: get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
