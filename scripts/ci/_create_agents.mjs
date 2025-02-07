@@ -89,13 +89,13 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
                 },
                 // TODO: Add steps needed hehe
                 {
-                  name: `${agent} \${{ matrix.agent }}`,
+                  name: `${agent}`,
                   run: `yarn nx-cloud start-agent`,
                   env: {
                     NX_AGENT_NAME: isDefaultRunner
                       ? item.split('default-runner-')[1]
                       : '1',
-                    NX_AGENT_LAUNCH_TEMPLATE: item,
+                    NX_AGENT_LAUNCH_TEMPLATE: isDefaultRunner ? 'default-runner' : item,
                   },
                 },
               ],
