@@ -506,6 +506,7 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
       PUBLISH: true
+      CHUNK_SIZE: '2'
     strategy:
       fail-fast: false
       matrix:
