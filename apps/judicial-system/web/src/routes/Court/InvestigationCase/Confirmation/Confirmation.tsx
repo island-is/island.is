@@ -92,32 +92,42 @@ const Confirmation: FC = () => {
     router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
   }
 
-  const handleCompleteModification = async () => {
+  const completeCaseWith = async (
+    action: 'signature' | 'noSignature' | 'modification',
+  ) => {
     const caseCompleted = await completeCase()
 
-    if (caseCompleted) {
-      setModalVisible(
-        isAssignedJudge
-          ? 'judgeRequestRulingSignatureModal'
-          : 'registrarRequestRulingSignatureModal',
-      )
-    }
-  }
+    if (!caseCompleted) return
 
-  const completeCaseWithSignature = async () => {
-    const caseCompleted = await completeCase()
-
-    if (caseCompleted) {
-      requestRulingSignature()
+    switch (action) {
+      case 'signature':
+        requestRulingSignature()
+        break
+      case 'noSignature':
+        continueToSignedVerdictOverview()
+        break
+      case 'modification':
+        setModalVisible(
+          isAssignedJudge
+            ? 'judgeRequestRulingSignatureModal'
+            : 'registrarRequestRulingSignatureModal',
+        )
+        break
     }
   }
 
   const handleNextButtonClick = async () => {
     if (isCorrectingRuling) {
       setModalVisible('rulingModifiedModal')
-    } else {
-      completeCaseWithSignature()
+      return
     }
+
+    const action =
+      workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
+        ? 'noSignature'
+        : 'signature'
+
+    await completeCaseWith(action)
   }
 
   return (
@@ -161,6 +171,9 @@ const Confirmation: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            disabled={
+              workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
+            }
           />
         </Box>
         <Box marginBottom={15}>
@@ -179,6 +192,8 @@ const Confirmation: FC = () => {
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
               ? strings.continueButtonTextAccepting
+              : workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
+              ? strings.continueButtonTextCompletedWithoutRuling
               : workingCase.decision === CaseDecision.REJECTING
               ? strings.continueButtonTextRejecting
               : workingCase.decision === CaseDecision.DISMISSING
@@ -207,7 +222,7 @@ const Confirmation: FC = () => {
       {modalVisible === 'rulingModifiedModal' && (
         <RulingModifiedModal
           onCancel={() => setModalVisible('none')}
-          onContinue={handleCompleteModification}
+          onContinue={() => completeCaseWith('modification')}
         />
       )}
       {modalVisible === 'judgeRequestRulingSignatureModal' && (

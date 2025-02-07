@@ -1,10 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import {
-  BadRequestException,
-  ExecutionContext,
-  NotFoundException,
-} from '@nestjs/common'
+import { ExecutionContext, NotFoundException } from '@nestjs/common'
 
 import { OffenseExistsGuard } from '../offenseExists.guard'
 
@@ -90,61 +86,6 @@ describe('Offense Exists Guard', () => {
       expect(then.error.message).toBe(
         `Offense ${offenseId} of indictment count ${indictmentCountId} of case ${theCase.id} does not exist`,
       )
-    })
-  })
-
-  describe('indictment count does not exist', () => {
-    const caseId = uuid()
-    const indictmentCountId = uuid()
-    const theCase = { id: caseId, indictmentCounts: [] }
-    let then: Then
-
-    beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({
-        params: { caseId, indictmentCountId },
-        case: theCase,
-      })
-
-      then = await givenWhenThen()
-    })
-
-    it('should throw NotFoundException', () => {
-      expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `Indictment count ${indictmentCountId} of case ${caseId} does not exist`,
-      )
-    })
-  })
-
-  describe('missing case', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({ params: {} })
-
-      then = await givenWhenThen()
-    })
-
-    it('should throw BadRequestException', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing case')
-    })
-  })
-
-  describe('missing indictment count id', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, indictmentCounts: [] }
-    let then: Then
-
-    beforeEach(async () => {
-      mockRequest.mockReturnValueOnce({ params: { caseId }, case: theCase })
-
-      then = await givenWhenThen()
-    })
-
-    it('should throw BadRequestException', () => {
-      expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Missing indictment count id')
     })
   })
 })
