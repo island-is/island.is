@@ -201,6 +201,7 @@ export class MessageService {
     if (messages.length === 0) {
       return // No messages to send
     }
+
     if (messages.length <= MAX_BATCH_SIZE) {
       const queueUrl = await this.getQueueUrl()
 
