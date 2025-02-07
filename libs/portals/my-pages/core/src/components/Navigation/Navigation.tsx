@@ -597,7 +597,11 @@ export const NavigationTree: FC<
               </FocusableBox>
             )
             return (
-              <li key={index} className={styles.listItem} role="menuitem">
+              <li
+                key={index}
+                className={cn(styles.listItem, styles.itemLevel[level])}
+                role="menuitem"
+              >
                 {/*Note: Need to review usage (e.g. PortalNavigation) if we change the rendered element to something other than FocusableBox.*/}
                 {isAccordion ? parentItem : renderLink(parentItem, item)}
                 {isAccordion && (

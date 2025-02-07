@@ -81,6 +81,14 @@ export const listItem = style({
   position: 'relative',
 })
 
+export const itemLevel = styleVariants({
+  1: {},
+  2: {
+    paddingBottom: theme.spacing['smallGutter'],
+    paddingTop: theme.spacing['smallGutter'],
+  },
+})
+
 const translate = 'translateX(-50%) translateY(-50%)'
 
 export const icon = style({
