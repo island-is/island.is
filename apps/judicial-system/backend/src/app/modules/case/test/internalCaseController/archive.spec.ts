@@ -15,6 +15,7 @@ import {
   IndictmentCount,
   IndictmentCountService,
 } from '../../../indictment-count'
+import { Offense } from '../../../indictment-count/models/offense.model'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
