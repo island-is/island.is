@@ -324,6 +324,7 @@ jobs:
         uses: runs-on/cache@v4
         id: get-cache
         with:
+          region: eu-west-1
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
@@ -446,6 +447,7 @@ jobs:
         uses: runs-on/cache@v4
         id: get-cache
         with:
+          region: eu-west-1
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
@@ -506,6 +508,7 @@ jobs:
         uses: runs-on/cache@v4
         id: get-cache
         with:
+          region: eu-west-1
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
