@@ -182,6 +182,38 @@ export class ZendeskService {
     }
   }
 
+  async updateTicket(
+    ticketId: string,
+    values: {
+      [key: string]: string | Array<{ id: number | string; value: string }>
+    },
+  ): Promise<boolean> {
+    const updatedTicket = JSON.stringify({
+      ticket: {
+        values,
+      },
+    })
+
+    try {
+      await axios.put(
+        `${this.api}/tickets/${ticketId}.json`,
+        updatedTicket,
+        this.params,
+      )
+    } catch (e) {
+      const errMsg = 'Failed to update Zendesk ticket'
+      const description = e.response.data.description
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      throw new Error(`${errMsg}: ${description}`)
+    }
+
+    return true
+  }
+
   // WIP
   async sendToLiveChat(chatId: string, message: string) {
     const endpoint = `${this.api}/chat/chats/${chatId}`

@@ -15,6 +15,8 @@ const ZENDESK_CUSTOM_FIELDS = {
   Email: 1,
   Phone: 2,
   Chat: 3,
+  NationalId: 24433675203218,
+  IdentityConfirmed: 24434086186130,
 }
 
 @Injectable()
@@ -160,5 +162,32 @@ export class IdentityConfirmationService {
       email: email?.value ?? '',
       chat: chat?.value ?? '',
     }
+  }
+
+  async confirmIdentity(id: string, nationalId: string) {
+    const identityConfirmation = await this.identityConfirmationModel.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!identityConfirmation) {
+      throw new Error('Identity confirmation not found')
+    }
+
+    const updated = this.zendeskService.updateTicket(id, {
+      custom_fields: [
+        { id: ZENDESK_CUSTOM_FIELDS.NationalId, value: nationalId },
+        { id: ZENDESK_CUSTOM_FIELDS.IdentityConfirmed, value: 'True' },
+      ],
+    })
+
+    if (!updated) {
+      throw new Error('Failed to update ticket')
+    }
+
+    await identityConfirmation.destroy()
+
+    return 'Identity confirmed'
   }
 }
