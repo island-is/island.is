@@ -12,19 +12,14 @@ NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-20}
 
 docker buildx create --driver docker-container --use || true
 
+# Build and push deps layer to S3
+echo "Building and pushing deps layer to S3..."
 docker buildx build \
   --platform=linux/amd64 \
-  --cache-to=type=local,dest="$PROJECT_ROOT"/cache \
+  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache,mode=max" \
   --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION" \
   -f "${DIR}"/Dockerfile \
   --target=deps \
   "$PROJECT_ROOT"
 
-docker buildx build \
-  --platform=linux/amd64 \
-  --cache-from=type=local,src="$PROJECT_ROOT"/cache \
-  --cache-to=type=local,dest="$PROJECT_ROOT"/cache_output \
-  --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION" \
-  -f "${DIR}"/Dockerfile \
-  --target=output-base \
-  "$PROJECT_ROOT"
+echo "Build complete!"

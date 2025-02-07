@@ -21,6 +21,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 WORKDIR /build
 
+COPY .yarn/ .yarn/
 COPY .yarnrc.yml yarn.lock package.json ./
 COPY apps/native/app/package.json ./apps/native/app/
 
@@ -29,7 +30,7 @@ RUN --mount=type=cache,target=/root/.yarn/cache,sharing=locked \
   --mount=type=cache,target=/root/.yarn/releases,sharing=locked \
   --mount=type=cache,target=/root/.yarn/patches,sharing=locked \
   --mount=type=cache,target=/root/.yarn/install-state.gz,sharing=locked \
-  yarn install --immutable --frozen-lockfile
+  yarn install --immutable
 
 # ------------------------------------------------
 # Source stage (still no app-specific args)
