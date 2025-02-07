@@ -323,12 +323,16 @@ jobs:
       - name: Debug inputs
         env:
           common: ${{ needs.deps.outputs.common }}
-          build-args: ${{ inputs.build-args }}
+          creds: ${{ needs.deps.outputs.creds }}
+          build_args: ${{ inputs.build-args }}
           meta: ${{ steps.meta.outputs }}
+          dependencies: ${{ needs.deps.outputs }}
         run: |
           echo "common=$common"
-          echo "build-args=$build-args"
+          echo "creds=$creds"
+          echo "build-args=$build_args"
           echo "meta=$meta"
+          echo "dependencies=$(echo "$dependencies" | jq -n || echo "|$dependencies|")"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
