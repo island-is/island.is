@@ -45,8 +45,17 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
       },
     ],
   }
+  const defaultRunners = Array(normalAgentCount)
+    .fill(0)
+    .map((_e, i) => `default-runner-${i + 1}`)
   const runners = Array.from(
-    new Set(rules['assignment-rules'].map((rule) => rule['runs-on']).flat()),
+    new Set([
+      ...rules['assignment-rules']
+        .map((rule) => rule['runs-on'])
+        .flat()
+        .filter((e) => e !== 'default-runner'),
+      ...defaultRunners,
+    ]),
   )
   const assignmentRules = json2yaml.dump(rules)
   const workflowJson = !shouldRun
@@ -67,20 +76,10 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
             steps: ['echo hehe'],
           },
           ...runners.reduce((acc, item) => {
+            const isDefaultRunner = item.startsWith('default-runner')
             acc[`runner-${item}`] = {
               name: item,
               'runs-on': agent,
-              strategy: {
-                matrix: {
-                  agents: JSON.stringify(
-                    item === 'default-runner'
-                      ? Array(normalAgentCount)
-                          .fill(0)
-                          .map((_e, i) => i + 1)
-                      : [1],
-                  ),
-                },
-              },
               steps: [
                 {
                   uses: 'actions/checkout@v4',
@@ -93,8 +92,10 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
                   name: `${agent} \${{ matrix.agent }}`,
                   run: `yarn nx-cloud start-agent`,
                   env: {
-                    NX_AGENT_NAME: '${{ matrix.agent }}',
-                    NX_AGENT_LAUNCH_TEMPLATE: agent,
+                    NX_AGENT_NAME: isDefaultRunner
+                      ? item.split('default-runner-')[1]
+                      : '1',
+                    NX_AGENT_LAUNCH_TEMPLATE: item,
                   },
                 },
               ],
@@ -107,10 +108,10 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     .dump(workflowJson)
     .replaceAll(/agents:\s*'\[.*?\]'/g, (match) => match.replace(/'/g, ''))
   if (!process.env.WORKFLOW_FILE) {
-    console.error(`Workflow file env not defined`);
-    process.exit(1);
+    console.error(`Workflow file env not defined`)
+    process.exit(1)
   }
-  mkdirSync(process.env.WORKFLOW_FILE, { recursive: true });
+  mkdirSync(process.env.WORKFLOW_FILE, { recursive: true })
   writeFileSync(`${process.env.WORKFLOW_FILE}/action.yaml`, workflow)
   if (shouldRun) {
     writeFileSync('.github/assignment-rules.yml', assignmentRules)

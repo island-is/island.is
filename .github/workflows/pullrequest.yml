@@ -161,7 +161,7 @@ jobs:
           node scripts/ci/_create_agents.mjs
       - name: Start nx
         uses: ./.github/actions/nx
-    
+
   linting-workspace:
     needs:
       - prepare
