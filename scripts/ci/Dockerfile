@@ -23,7 +23,11 @@ COPY .yarn/ .yarn/
 COPY .yarnrc.yml yarn.lock package.json ./
 COPY apps/native/app/package.json ./apps/native/app/
 
-RUN --mount=type=cache,target=/root/.yarn \
+RUN --mount=type=cache,target=/root/.yarn/cache,sharing=locked \
+  --mount=type=cache,target=/root/.yarn/unplugged,sharing=locked \
+  --mount=type=cache,target=/root/.yarn/releases,sharing=locked \
+  --mount=type=cache,target=/root/.yarn/patches,sharing=locked \
+  --mount=type=cache,target=/root/.yarn/install-state.gz,sharing=locked \
   yarn install --immutable
 
 # ------------------------------------------------
