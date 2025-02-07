@@ -220,17 +220,6 @@ jobs:
           docker buildx create --name mybuilder --use
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (deps/GHA)
-        uses: docker/build-push-action@v6
-        with:
-          target: deps
-          context: .
-          builder: mybuilder
-          file: ${{ steps.common.outputs.file }}
-          push: ${{ steps.common.outputs.push }}
-          build-args: ${{ steps.common.outputs.build-args }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       - name: Docker build/cache dependencies (deps)
         uses: docker/build-push-action@v6
         with:
