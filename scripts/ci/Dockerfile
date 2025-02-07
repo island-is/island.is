@@ -33,7 +33,7 @@ RUN yarn install --immutable
 # --------------------------------------------------
 # Build stage where NX artifacts are copied to image
 # --------------------------------------------------
-FROM yarn AS builder
+FROM deps AS builder
 
 ARG APP
 ARG APP_HOME
