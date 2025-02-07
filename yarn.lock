@@ -22770,12 +22770,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sanitize-html@npm:2.9.0":
-  version: 2.9.0
-  resolution: "@types/sanitize-html@npm:2.9.0"
+"@types/sanitize-html@npm:2.13.0":
+  version: 2.13.0
+  resolution: "@types/sanitize-html@npm:2.13.0"
   dependencies:
     htmlparser2: ^8.0.0
-  checksum: b60f42b740bbfb1b1434ce8b43925a38ecc608b60aa654fd009d2e22e33f324b61d370768c55bd2fd98e03de08518ffa8911d61606c483526fb931bb8b59d1b0
+  checksum: a32c67bdf86048efa8ee5cdc1a68351758bae888956010eea58e694c1f9fc580632d1ce0478d31984559e0b03282d130ffe3e87479838c8da92cf1ac06626edc
   languageName: node
   linkType: hard
 
@@ -39329,7 +39329,7 @@ __metadata:
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
     "@types/resolve": ^1.20.2
-    "@types/sanitize-html": 2.9.0
+    "@types/sanitize-html": 2.13.0
     "@types/smoothscroll-polyfill": 0.3.1
     "@types/supertest": 2.0.11
     "@types/triple-beam": 1.3.2
@@ -39533,7 +39533,7 @@ __metadata:
     remark-parse: 9.0.0
     rosetta: 1.0.0
     rxjs: 7.8.1
-    sanitize-html: 2.10.0
+    sanitize-html: 2.13.1
     sequelize: 6.37.3
     sequelize-cli: 6.4.1
     sequelize-replace-enum-postgres: 1.6.0
@@ -52478,9 +52478,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sanitize-html@npm:2.10.0":
-  version: 2.10.0
-  resolution: "sanitize-html@npm:2.10.0"
+"sanitize-html@npm:2.13.1":
+  version: 2.13.1
+  resolution: "sanitize-html@npm:2.13.1"
   dependencies:
     deepmerge: ^4.2.2
     escape-string-regexp: ^4.0.0
@@ -52488,7 +52488,7 @@ __metadata:
     is-plain-object: ^5.0.0
     parse-srcset: ^1.0.2
     postcss: ^8.3.11
-  checksum: 0cb2bb330ed966a4d667b1890322dd868a67f527f87c04d7e3be1688fcfda20f7452a9a7744870751f51e255742e7264a287d9bcfcd64d4cd74a3c99f99c73d2
+  checksum: 645381375fcb9c70070644b02538f1d43d35db6c9761eba32ec5f0ea919fdc70aa19e186ae949e6e21de767cbf11ced3e6a31b322a6c705593dc9a902a257d7a
   languageName: node
   linkType: hard
 
