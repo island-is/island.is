@@ -1,8 +1,8 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import {
-  FormSystemStep,
-  FormSystemGroup,
-  FormSystemInput,
+  FormSystemSection,
+  FormSystemScreen,
+  FormSystemField,
   FormSystemLanguageType,
   FormSystemLanguageTypeInput,
   FormSystemListItem,
@@ -15,11 +15,11 @@ export enum NavbarSelectStatus {
   ON_WITHOUT_SELECT = 'OnWithoutSelect',
 }
 
-export type ItemType = 'Step' | 'Group' | 'Input'
+export type ItemType = 'Section' | 'Screen' | 'Field'
 
 export interface ActiveItem {
   type: ItemType
-  data?: FormSystemStep | FormSystemGroup | FormSystemInput | null
+  data?: FormSystemSection | FormSystemScreen | FormSystemField | null
 }
 
 export interface IListItem {
@@ -39,7 +39,7 @@ export enum EFormApplicantTypes {
   logadili = 'Lögaðili',
 }
 
-export interface InputSettings {
+export interface FieldSettings {
   hasInput?: boolean
   isList?: boolean
   isLarge?: boolean
@@ -114,4 +114,107 @@ export enum ApplicationTemplateStatus {
   Óútgefið = 0,
   Útgefið = 2,
   tekiðÚrNotkun = 4,
+}
+
+export type ButtonTypes =
+  | 'CHANGE_NAME'
+  | 'CHANGE_FORM_NAME'
+  | 'CHANGE_DESCRIPTION'
+  | 'SET_MESSAGE_WITH_LINK_SETTINGS'
+
+type Icon =
+  | 'archive'
+  | 'accessibility'
+  | 'add'
+  | 'airplane'
+  | 'arrowForward'
+  | 'arrowBack'
+  | 'arrowUp'
+  | 'arrowDown'
+  | 'attach'
+  | 'business'
+  | 'calculator'
+  | 'calendar'
+  | 'call'
+  | 'car'
+  | 'cardWithCheckmark'
+  | 'caretDown'
+  | 'caretUp'
+  | 'cellular'
+  | 'chatbubble'
+  | 'checkmark'
+  | 'checkmarkCircle'
+  | 'chevronBack'
+  | 'chevronUp'
+  | 'chevronDown'
+  | 'chevronForward'
+  | 'closeCircle'
+  | 'close'
+  | 'copy'
+  | 'document'
+  | 'documents'
+  | 'dots'
+  | 'download'
+  | 'ellipse'
+  | 'ellipsisHorizontal'
+  | 'ellipsisVertical'
+  | 'expand'
+  | 'eye'
+  | 'eyeOff'
+  | 'facebook'
+  | 'fileTrayFull'
+  | 'filter'
+  | 'heart'
+  | 'home'
+  | 'homeWithCar'
+  | 'informationCircle'
+  | 'link'
+  | 'location'
+  | 'lockClosed'
+  | 'lockOpened'
+  | 'logOut'
+  | 'mail'
+  | 'mailOpen'
+  | 'menu'
+  | 'notifications'
+  | 'open'
+  | 'pencil'
+  | 'people'
+  | 'person'
+  | 'playCircle'
+  | 'pause'
+  | 'pauseCircle'
+  | 'print'
+  | 'reader'
+  | 'receipt'
+  | 'removeCircle'
+  | 'school'
+  | 'search'
+  | 'settings'
+  | 'star'
+  | 'time'
+  | 'timer'
+  | 'trash'
+  | 'volumeHigh'
+  | 'volumeMute'
+  | 'wallet'
+  | 'warning'
+  | 'reload'
+  | 'remove'
+  | 'save'
+  | 'bookmark'
+  | 'share'
+  | 'QRCode'
+  | 'globe'
+  | 'signLanguage'
+  | 'listView'
+  | 'gridView'
+  | 'swapVertical'
+  | 'thumbsUp'
+  | 'thumbsDown'
+
+export type InputButton = {
+  label: string
+  name: Icon
+  onClick: () => void
 }
