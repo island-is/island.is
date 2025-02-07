@@ -57,8 +57,18 @@ export const FieldsRepeaterFormField = ({
     answers,
     id,
   )?.length
+
+  const minRowsValue =
+    typeof minRows === 'function'
+      ? minRows(answers, application.externalData)
+      : minRows
+  const maxRowsValue =
+    typeof maxRows === 'function'
+      ? maxRows(answers, application.externalData)
+      : maxRows
+
   const [numberOfItems, setNumberOfItems] = useState(
-    Math.max(numberOfItemsInAnswers ?? 0, minRows),
+    Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
   )
   const [updatedApplication, setUpdatedApplication] = useState(application)
   const stableApplication = useMemo(() => application, [application])
@@ -158,7 +168,9 @@ export const FieldsRepeaterFormField = ({
                       {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
                       {formTitle &&
                         formatTextWithLocale(
-                          formTitle,
+                          typeof formTitle === 'function'
+                            ? formTitle(i)
+                            : formTitle,
                           application,
                           locale as Locale,
                           formatMessage,
@@ -172,7 +184,7 @@ export const FieldsRepeaterFormField = ({
             ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > minRows && (
+            {numberOfItems > minRowsValue && (
               <Box marginRight={2}>
                 <Button
                   variant="ghost"
@@ -193,7 +205,7 @@ export const FieldsRepeaterFormField = ({
               type="button"
               onClick={handleNewItem}
               icon="add"
-              disabled={!maxRows ? false : numberOfItems >= maxRows}
+              disabled={!maxRowsValue ? false : numberOfItems >= maxRowsValue}
             >
               {formatText(addItemButtonText, updatedApplication, formatMessage)}
             </Button>

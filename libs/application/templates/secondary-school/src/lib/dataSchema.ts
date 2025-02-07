@@ -1,8 +1,8 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
-import { ApplicationType } from '../utils'
+import { ApplicationType, hasDuplicates } from '../utils'
 import { YES } from '@island.is/application/types'
-import { error } from './messages'
+import { error, school } from './messages'
 
 const FileDocumentSchema = z.object({
   name: z.string(),
@@ -83,7 +83,6 @@ const OtherContactSchema = z.object({
 
 const SelectionSchema = z
   .object({
-    include: z.boolean().optional(),
     school: z
       .object({
         id: z.string().optional().nullable(),
@@ -101,8 +100,9 @@ const SelectionSchema = z
       .optional(),
     secondProgram: z
       .object({
-        // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
+        // Note: is true if more than one program is available (this is only used for zod validation)
         include: z.boolean().optional(),
+        // Note: is true if freshman and firstProgram is not special needs program
         require: z.boolean().optional(),
         id: z.string().optional().nullable(),
         nameIs: z.string().optional(),
@@ -125,26 +125,33 @@ const SelectionSchema = z
     requestDormitory: z.array(z.enum([YES])).optional(),
   })
   .refine(
-    ({ include, school }) => {
-      if (!include) return true
+    ({ school }) => {
       return !!school?.id
     },
     { path: ['school', 'id'] },
   )
   .refine(
-    ({ include, firstProgram }) => {
-      if (!include) return true
+    ({ firstProgram }) => {
       return !!firstProgram?.id
     },
     { path: ['firstProgram', 'id'] },
   )
   .refine(
-    ({ include, secondProgram }) => {
-      if (!include) return true
+    ({ secondProgram }) => {
       if (!secondProgram?.include || !secondProgram?.require) return true
       return !!secondProgram?.id
     },
     { path: ['secondProgram', 'id'] },
+  )
+  .refine(
+    ({ firstProgram, secondProgram }) => {
+      return (
+        !firstProgram?.id ||
+        !secondProgram?.id ||
+        firstProgram?.id !== secondProgram?.id
+      )
+    },
+    { path: ['secondProgram', 'id'], params: error.errorProgramDuplicate },
   )
 
 export const SecondarySchoolSchema = z.object({
@@ -171,7 +178,22 @@ export const SecondarySchoolSchema = z.object({
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),
-  selection: z.array(SelectionSchema),
+  selection: z
+    .array(SelectionSchema)
+    .refine(
+      (arr) => {
+        const schoolIds = [arr[0].school?.id || '', arr[1].school?.id || '']
+        return !hasDuplicates(schoolIds.filter((x) => !!x))
+      },
+      { path: ['1', 'school', 'id'], params: error.errorSchoolDuplicate },
+    )
+    .refine(
+      (arr) => {
+        const schoolIds = arr.map((x) => x.school?.id || '')
+        return !hasDuplicates(schoolIds.filter((x) => !!x))
+      },
+      { path: ['2', 'school', 'id'], params: error.errorSchoolDuplicate },
+    ),
   extraInformation: z.object({
     nativeLanguageCode: z.string().optional().nullable(),
     otherDescription: z.string().optional(),

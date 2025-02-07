@@ -1,3 +1,4 @@
+/*
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -196,8 +197,6 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
 
   return (
     <Box>
-      {/* First selection */}
-      {/* Required for everyone */}
       {showSecondSelection && (
         <Text variant="h5">
           {formatMessage(school.firstSelection.subtitle)}
@@ -212,8 +211,6 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         otherFieldIds={[`${props.field.id}[1]`, `${props.field.id}[2]`]}
       />
 
-      {/* Second selection */}
-      {/* Required for freshman, optional for non-freshman */}
       {showSecondSelection && (
         <>
           <Text variant="h5" marginTop={2}>
@@ -230,8 +227,6 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         </>
       )}
 
-      {/* Third selection */}
-      {/* Optional for freshman, hidden for non-freshman */}
       {showThirdSelection && (
         <>
           <Text variant="h5" marginTop={2}>
@@ -282,7 +277,6 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
         </Box>
       )}
 
-      {/* Duplicate error */}
       {schoolDuplicateError && (
         <Box marginTop={4}>
           <AlertMessage
@@ -306,3 +300,4 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     </Box>
   )
 }
+*/

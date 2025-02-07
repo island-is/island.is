@@ -1,3 +1,4 @@
+/*
 import { FieldBaseProps, YES } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -378,3 +379,4 @@ export const SelectionItem: FC<FieldBaseProps & SelectionItemProps> = (
     </Box>
   )
 }
+*/

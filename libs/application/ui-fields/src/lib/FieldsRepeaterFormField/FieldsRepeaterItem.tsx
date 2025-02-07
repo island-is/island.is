@@ -46,8 +46,8 @@ export const Item = ({
   index,
   values,
 }: ItemFieldProps) => {
-  const { formatMessage } = useLocale()
-  const { setValue, control, clearErrors } = useFormContext()
+  const { formatMessage, lang } = useLocale()
+  const { setValue, getValues, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
   const getSpan = (component: string, width: string) => {
@@ -74,6 +74,8 @@ export const Item = ({
     condition,
     readonly = false,
     disabled = false,
+    required = false,
+    isClearable = false,
     updateValueObj,
     defaultValue,
     ...props
@@ -146,12 +148,14 @@ export const Item = ({
       return undefined
     }
 
-    return defaultValue(application, activeField)
+    return typeof defaultValue === 'function'
+      ? defaultValue(application, activeField)
+      : defaultValue
   }
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues)
+    translatedOptions = options(application, activeValues, lang)
   } else {
     translatedOptions =
       options?.map((option) => ({
@@ -161,6 +165,14 @@ export const Item = ({
           tooltip: formatText(option.tooltip, application, formatMessage),
         }),
       })) ?? []
+  }
+
+  if (props.filterOptions && typeof props.filterOptions === 'function') {
+    translatedOptions = props.filterOptions(
+      translatedOptions,
+      getValues(),
+      index,
+    )
   }
 
   let Readonly: boolean | undefined
@@ -175,6 +187,20 @@ export const Item = ({
     Disabled = disabled(application, activeValues)
   } else {
     Disabled = disabled
+  }
+
+  let Required: boolean | undefined
+  if (typeof required === 'function') {
+    Required = required(application, activeValues)
+  } else {
+    Required = required
+  }
+
+  let IsClearable: boolean | undefined
+  if (typeof isClearable === 'function') {
+    IsClearable = isClearable(application, activeValues)
+  } else {
+    IsClearable = isClearable
   }
 
   let DefaultValue: any
@@ -202,8 +228,16 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
-  if (condition && !condition(application, activeValues)) {
+  if (
+    typeof condition === 'function'
+      ? condition && !condition(application, activeValues)
+      : condition
+  ) {
     return null
+  }
+
+  const mapKeyWithIndex = (key: string) => {
+    return `${dataId}[${index}].${key}`
   }
 
   return (
@@ -224,6 +258,8 @@ export const Item = ({
         control={control}
         readOnly={Readonly}
         disabled={Disabled}
+        required={Required}
+        isClearable={IsClearable}
         backgroundColor={backgroundColor}
         onChange={() => {
           if (error) {
@@ -233,6 +269,29 @@ export const Item = ({
         application={application}
         defaultValue={DefaultValue}
         large={true}
+        clearOnChange={props.clearOnChangeByIndex?.map((key) =>
+          mapKeyWithIndex(key),
+        )}
+        setOnChange={
+          props.setOnChangeByIndex &&
+          ((option) => {
+            if (typeof props.setOnChangeByIndex === 'function') {
+              return props
+                .setOnChangeByIndex(option, application)
+                .map(({ key, value }) => ({
+                  key: mapKeyWithIndex(key),
+                  value,
+                }))
+            } else {
+              return (
+                props.setOnChangeByIndex?.map(({ key, value }) => ({
+                  key: mapKeyWithIndex(key),
+                  value,
+                })) || []
+              )
+            }
+          })
+        }
         {...props}
       />
     </GridColumn>
