@@ -81,7 +81,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -94,7 +94,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Check node version
@@ -249,7 +249,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -262,7 +262,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Run unit tests
@@ -312,7 +312,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -325,7 +325,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Running e2e tests
@@ -356,7 +356,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -369,7 +369,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Linting workspace
@@ -423,7 +423,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -436,7 +436,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: NX format:check
@@ -481,7 +481,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -494,7 +494,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Linting
@@ -532,7 +532,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -545,7 +545,7 @@ jobs:
         with:
           path: |
             node_modules
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}/install-state.gz
+            .yarn/install-state.gz
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Building
