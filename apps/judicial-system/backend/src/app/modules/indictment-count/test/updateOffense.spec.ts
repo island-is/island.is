@@ -23,7 +23,10 @@ describe('IndictmentCountController - Update offense', () => {
   const caseId = uuid()
   const indictmentCountId = uuid()
   const offenseId = uuid()
-  const offenseToUpdate = { offense: IndictmentCountOffense.DRUNK_DRIVING, substances: {"ALCOHOL":"0,10"} }
+  const offenseToUpdate = {
+    offense: IndictmentCountOffense.DRUNK_DRIVING,
+    substances: { ALCOHOL: '0,10' },
+  }
 
   let mockOffenseModel: typeof Offense
   let givenWhenThen: GivenWhenThen
@@ -47,7 +50,7 @@ describe('IndictmentCountController - Update offense', () => {
           caseId,
           indictmentCountId,
           offenseId,
-          offenseToUpdate
+          offenseToUpdate,
         )
       } catch (error) {
         then.error = error as Error
@@ -60,7 +63,7 @@ describe('IndictmentCountController - Update offense', () => {
   describe('offense updated', () => {
     const updatedOffense = {
       id: offenseId,
-      indictmentCountId
+      indictmentCountId,
     }
     let then: Then
 
@@ -72,18 +75,15 @@ describe('IndictmentCountController - Update offense', () => {
         caseId,
         indictmentCountId,
         offenseId,
-        offenseToUpdate
+        offenseToUpdate,
       )
     })
 
     it('should update the offense', () => {
-      expect(mockOffenseModel.update).toHaveBeenCalledWith(
-        offenseToUpdate,
-        {
-          where: { id: offenseId, indictmentCountId },
-          returning: true,
-        },
-      )
+      expect(mockOffenseModel.update).toHaveBeenCalledWith(offenseToUpdate, {
+        where: { id: offenseId, indictmentCountId },
+        returning: true,
+      })
       expect(then.result).toBe(updatedOffense)
     })
   })

@@ -14,7 +14,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   indictmentCountId: string,
-  offense: IndictmentCountOffense
+  offense: IndictmentCountOffense,
 ) => Promise<Then>
 
 describe('IndictmentCountController - Create offense', () => {
@@ -27,7 +27,11 @@ describe('IndictmentCountController - Create offense', () => {
 
     mockOffenseModel = offenseModel
 
-    givenWhenThen = async (caseId: string, indictmentCountId: string, offense: IndictmentCountOffense) => {
+    givenWhenThen = async (
+      caseId: string,
+      indictmentCountId: string,
+      offense: IndictmentCountOffense,
+    ) => {
       const then = {} as Then
 
       try {
@@ -61,7 +65,7 @@ describe('IndictmentCountController - Create offense', () => {
     it('should create an offense', () => {
       expect(mockOffenseModel.create).toHaveBeenCalledWith({
         indictmentCountId,
-        offense
+        offense,
       })
       expect(then.result).toBe(createdOffense)
     })

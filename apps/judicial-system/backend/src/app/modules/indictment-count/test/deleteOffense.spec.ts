@@ -13,7 +13,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   indictmentCountId: string,
-  offenseId: string
+  offenseId: string,
 ) => Promise<Then>
 
 describe('IndictmentCountController - Delete offense', () => {
@@ -24,16 +24,20 @@ describe('IndictmentCountController - Delete offense', () => {
     const { offenseModel, indictmentCountController } =
       await createTestingIndictmentCountModule()
 
-      mockOffenseModel = offenseModel
+    mockOffenseModel = offenseModel
 
-    givenWhenThen = async (caseId: string, indictmentCountId: string, offenseId: string) => {
+    givenWhenThen = async (
+      caseId: string,
+      indictmentCountId: string,
+      offenseId: string,
+    ) => {
       const then = {} as Then
 
       try {
         then.result = await indictmentCountController.deleteOffense(
           caseId,
           indictmentCountId,
-          offenseId
+          offenseId,
         )
       } catch (error) {
         then.error = error as Error
