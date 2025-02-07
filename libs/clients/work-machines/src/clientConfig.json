@@ -20,6 +20,34 @@
     }
   ],
   "paths": {
+    "/api/License": {
+      "get": {
+        "tags": ["License"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineLicenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MachineCategory": {
       "get": {
         "tags": ["MachineCategory"],
@@ -1433,6 +1461,61 @@
         }
       }
     },
+    "/api/MachineTypes/TypeByRegistrationNumber": {
+      "get": {
+        "tags": ["MachineTypes"],
+        "parameters": [
+          {
+            "name": "RegistrationNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineTypeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TechnicalInfo/Inputs": {
       "get": {
         "tags": ["TechnicalInfo"],
@@ -2002,6 +2085,40 @@
           },
           "email": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineLicenseCategoryDto": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryPrefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasInstructorLicense": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineLicenseDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MachineLicenseCategoryDto"
+            },
             "nullable": true
           }
         },

@@ -42,6 +42,11 @@ export const reviewOverviewSection = buildSection({
             },
           ],
         }),
+        buildCustomField({
+          id: 'reviewOverviewSection.handleReject',
+          title: '',
+          component: 'HandleReject',
+        }),
       ],
     }),
   ],

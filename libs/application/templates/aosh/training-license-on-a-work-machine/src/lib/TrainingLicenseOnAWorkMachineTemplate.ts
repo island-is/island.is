@@ -20,12 +20,13 @@ import { Events, States, Roles, ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TrainingLicenseOnAWorkMachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { IdentityApi, UserProfileApi } from '../dataProviders'
+import { IdentityApi, LicensesApi, UserProfileApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { isContractor } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -42,6 +43,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces:
     ApplicationConfigurations[
@@ -92,7 +94,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi],
+              api: [IdentityApi, UserProfileApi, LicensesApi],
             },
           ],
         },
@@ -262,11 +264,20 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 // Change to rejected
-                import('../forms/Conclusion').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
                 ),
               read: 'all',
-            }, // Should assignee see anything here?
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                // Change to rejected
+                import('../forms/Rejected').then((module) =>
+                  Promise.resolve(module.Rejected),
+                ),
+              read: 'all',
+            },
           ],
         },
       },

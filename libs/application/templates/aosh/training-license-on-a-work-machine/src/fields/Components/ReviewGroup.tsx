@@ -31,7 +31,9 @@ export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
 
       <Box paddingY={4}>
         <GridRow>
-          <GridColumn span={['1/2', '1/2', '1/2', '4/7', '2/3']}>
+          <GridColumn
+            span={editMessage ? ['1/2', '1/2', '1/2', '4/7', '2/3'] : '12/12'}
+          >
             <Box
               display={'flex'}
               alignItems={'center'}

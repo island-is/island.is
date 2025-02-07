@@ -37,4 +37,16 @@ export const conclusion = {
       description: 'Conclusion seller expandable description',
     },
   }),
+  rejected: defineMessages({
+    alertMessage: {
+      id: 'aosh.tmo.application:conclusion.rejected.alertMessage',
+      defaultMessage: 'Vottorð um starfstíma hafnað!',
+      description: 'Conclusion rejected alert message',
+    },
+    message: {
+      id: 'aosh.tmo.application:conclusion.rejected.message',
+      defaultMessage: `Vinsamlegast hafið samband við Vinnueftirlitið, vinnueftirlit@ver.is, ef nánari upplýsinga er þörf.`,
+      description: 'Conclusion rejected third text',
+    },
+  }),
 }

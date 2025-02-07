@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiLicenseGetRequest,
   ApiMachineModelsGetRequest,
   ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
@@ -12,6 +13,7 @@ import {
   ApiTechnicalInfoInputsGetRequest,
   ExcelRequest,
   GetMachineRequest,
+  LicenseApi,
   MachineCategoryApi,
   MachineHateoasDto,
   MachineInspectionRequestCreateDto,
@@ -68,6 +70,7 @@ export class WorkMachinesClientService {
     private readonly machineParentCategoriesApi: MachineParentCategoriesApi,
     private readonly machineSubCategoriesApi: MachineSubCategoriesApi,
     private readonly technicalInfoApi: TechnicalInfoApi,
+    private readonly licenseApi: LicenseApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -124,6 +127,10 @@ export class WorkMachinesClientService {
 
   private technicalReadOnlyApiWithAuth(auth: Auth) {
     return this.technicalInfoApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private licenseApiWithAuth(auth: Auth) {
+    return this.licenseApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getWorkMachines = async (
@@ -360,5 +367,9 @@ export class WorkMachinesClientService {
     return await this.machinesApiWithAuth(auth).apiMachinesPost(
       requestParameters,
     )
+  }
+
+  async getLicenses(auth: Auth, requestParameters: ApiLicenseGetRequest) {
+    return await this.licenseApiWithAuth(auth).apiLicenseGet(requestParameters)
   }
 }

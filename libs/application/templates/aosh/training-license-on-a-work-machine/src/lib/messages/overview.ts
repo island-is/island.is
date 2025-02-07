@@ -56,4 +56,26 @@ export const overview = {
       description: 'Assignee label on overview page',
     },
   }),
+  confirmationModal: defineMessages({
+    title: {
+      id: 'aosh.tlwm.application:overview.confirmationModal.title',
+      defaultMessage: 'Hafna tilkynningu',
+      description: 'Confirmation modal reject title',
+    },
+    text: {
+      id: 'aosh.tlwm.application:overview.confirmationModal.text',
+      defaultMessage: 'Þú ert að fara að hafna tilkynningu.',
+      description: 'Confirmation modal reject text',
+    },
+    buttonText: {
+      id: 'aosh.tlwm.application:overview.confirmationModal.buttonText',
+      defaultMessage: 'Hafna tilkynningu',
+      description: 'Confirmation modal reject button',
+    },
+    cancelButton: {
+      id: 'aosh.tlwm.application:overview.confirmationModal.cancelButton',
+      defaultMessage: 'Hætta við',
+      description: 'Confirmation modal cancel button',
+    },
+  }),
 }

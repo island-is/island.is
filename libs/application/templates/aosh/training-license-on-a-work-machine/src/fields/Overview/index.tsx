@@ -95,6 +95,7 @@ export const Overview: FC<
               : formatMessage(overview.labels.editMessage)
           }
           title={formatMessage(overview.labels.assignee)}
+          isLast
         >
           <KeyValueFormField
             application={application}
