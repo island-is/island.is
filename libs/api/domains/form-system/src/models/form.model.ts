@@ -132,4 +132,7 @@ export class FormResponse {
 
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  organizationNationalIds?: string[]
 }

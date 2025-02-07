@@ -1,6 +1,13 @@
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Resolver,
+  Query,
+  // ResolveField,
+  // Parent,
+} from '@nestjs/graphql'
 import { OrganizationsService } from './organizations.service'
 import {
   CurrentUser,
@@ -8,9 +15,15 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { Organization } from '../../models/organization.model'
+import {
+  Organization,
+  // OrganizationTitle,
+} from '../../models/organization.model'
 import { GetOrganizationInput } from '../../dto/organization.input'
 import { UseGuards } from '@nestjs/common'
+// import { OrganizationTitleByNationalIdLoader } from '@island.is/cms'
+// import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
+// import { Loader } from '@island.is/nest/dataloader'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -41,3 +54,18 @@ export class OrganizationsResolver {
     return this.organizationsService.createOrganization(user, input)
   }
 }
+
+// @Resolver(() => OrganizationTitle)
+// @UseGuards(IdsUserGuard)
+// @CodeOwner(CodeOwners.Advania)
+// @Audit({ namespace: '@island.is/api/form-system' })
+// export class OrganizationTitleResolver {
+//   @ResolveField('name', () => String, { nullable: true })
+//   async resolveOrganizationTitle(
+//     @Loader(OrganizationTitleByNationalIdLoader)
+//     organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+//     @Parent() organization: Organization,
+//   ): Promise<OrganizationTitle | undefined> {
+//     return organizationTitleLoader.load(organization.nationalId)
+//   }
+// }

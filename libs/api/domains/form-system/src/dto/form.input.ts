@@ -10,6 +10,7 @@ import {
   CertificationInput,
   FormCertificationTypeDtoInput,
 } from './certification.input'
+import { Organization } from '../models/organization.model'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -189,4 +190,10 @@ export class FormResponseInput {
 
   @Field(() => [FormInput], { nullable: 'itemsAndList' })
   forms?: FormInput[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  organizationNationalIds?: string[]
+
+  // @Field(() => [Organization], { nullable: 'itemsAndList' })
+  // organizations?: Organization[]
 }

@@ -242,6 +242,35 @@ export class CmsContentfulService {
     })
   }
 
+  async getOrganizationTitlesByNationalIds(
+    organizationNationalIds: string[],
+    locale?: 'en' | 'is',
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.title,fields.kennitala',
+      'fields.kennitala[in]': organizationNationalIds.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
+      .catch(errorHandler('getOrganizationsTitle'))
+
+    return organizationNationalIds.map((nationalId) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.kennitala === nationalId,
+        )
+
+        const title = organization?.fields.title || organization?.fields.title
+
+        return title ?? null
+      }
+    })
+  }
+
   async getOrganizationTitles(
     organizationKeys: string[],
     locale?: 'en' | 'is',

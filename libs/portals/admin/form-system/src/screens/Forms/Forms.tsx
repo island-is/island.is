@@ -14,7 +14,9 @@ import { TableHeader } from '../../components/TableRow/TableHeader'
 
 export const Forms = () => {
   const navigate = useNavigate()
-  const { forms } = useLoaderData() as FormsLoaderResponse
+  const { forms, organizationNationalIds } =
+    useLoaderData() as FormsLoaderResponse
+
   // const { data, refetch } = useQuery(GET_FORMS,)
   const { formatMessage } = useIntl()
   // const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
@@ -51,6 +53,7 @@ export const Forms = () => {
   // }, [formsState])
 
   if (forms) {
+    console.log('organizationNationalIds', organizationNationalIds)
     return (
       <>
         {/* Title and buttons  */}

@@ -25,6 +25,7 @@ export const FormResponseFragment = gql`
     forms {
       ...Form
     }
+    organizationNationalIds
   }
   ${FormApplicantFragment}
   ${FormFragment}

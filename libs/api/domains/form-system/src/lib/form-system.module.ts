@@ -21,6 +21,9 @@ import { ApplicantsService } from './applicants/applicants.service'
 import { LoggingModule } from '@island.is/logging'
 import { CertificationsResolver } from './certification/certification.resolver'
 import { CertificationsService } from './certification/certification.service'
+// import { OrganizationTitlesResolver } from './organizations/organizationTitles.resolver'
+// import { OrganizationTitleByNationalIdLoader } from 'libs/cms/src/lib/loaders/organizationTitleByNationalId.loader'
+// import { CmsContentfulService } from 'libs/cms/src/lib/cms.contentful.service'
 
 @Module({
   providers: [
@@ -34,6 +37,9 @@ import { CertificationsService } from './certification/certification.service'
     ListItemsResolver,
     OrganizationsService,
     OrganizationsResolver,
+    // OrganizationTitlesResolver,
+    // OrganizationTitleByNationalIdLoader,
+    // CmsContentfulService,
     ScreensService,
     ScreensResolver,
     SectionsService,

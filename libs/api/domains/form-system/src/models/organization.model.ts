@@ -16,3 +16,15 @@ export class Organization {
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
 }
+
+@ObjectType('FormSystemOrganizationTitle')
+export class OrganizationTitle {
+  @Field(() => LanguageType, { nullable: true })
+  name?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  nameEn?: LanguageType
+
+  @Field(() => String, { nullable: true })
+  nationalId?: string
+}
