@@ -17,6 +17,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstitutionVacancies/IcelandicGovernmentInstitutionVacanciesList'
 
 import * as styles from './DigitalIcelandLatestNewsSlice.css'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface ItemProps {
   imageSrc: string
@@ -132,7 +133,9 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
                 date={news.date}
                 description={news.intro}
                 imageSrc={news.image?.url ?? ''}
-                tags={news.genericTags.map((tag) => tag.title)}
+                tags={news.genericTags
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .map((tag) => tag.title)}
                 title={news.title}
               />
             ))}
