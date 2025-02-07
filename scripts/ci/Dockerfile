@@ -6,7 +6,7 @@ ARG PLAYWRIGHT_VERSION
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:20.9.0-bookworm-slim AS deps
+FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS deps
 
 RUN apt-get update && \
   apt-get install -y \
@@ -58,7 +58,7 @@ RUN --mount=type=secret,id=nx_cloud_access_token \
 # ------------------------------------------------
 # Minimal node base for outputs
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/node:20.9.0-bookworm-slim AS output-base
+FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS output-base
 ENV NODE_ENV=production
 WORKDIR /webapp
 RUN groupadd runners && useradd -m -g runners runner
