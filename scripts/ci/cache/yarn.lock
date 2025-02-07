@@ -492,9 +492,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.4.2":
-  version: 10.4.2
-  resolution: "glob@npm:10.4.2"
+"glob@npm:10.4.3":
+  version: 10.4.3
+  resolution: "glob@npm:10.4.3"
   dependencies:
     foreground-child: ^3.1.0
     jackspeak: ^3.1.2
@@ -504,7 +504,7 @@ __metadata:
     path-scurry: ^1.11.1
   bin:
     glob: dist/esm/bin.mjs
-  checksum: bd7c0e30701136e936f414e5f6f82c7f04503f01df77408f177aa584927412f0bde0338e6ec541618cd21eacc57dde33e7b3c6c0a779cc1c6e6a0e14f3d15d9b
+  checksum: a1daeb570b841480fe95b3dd9492a98a58759186d14cf2ebe81057c3f308b47980d5e757b533422dbc5288ebf7b06b169960ce9f71198d7dbe320bc5068f89f0
   languageName: node
   linkType: hard
 
@@ -653,7 +653,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@actions/cache": 3.2.4
-    glob: 10.4.2
+    glob: 10.4.3
   languageName: unknown
   linkType: soft
 
