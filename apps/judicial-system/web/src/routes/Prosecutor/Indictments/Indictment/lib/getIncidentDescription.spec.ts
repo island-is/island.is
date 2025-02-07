@@ -1,11 +1,11 @@
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema';
+import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { getIncidentDescription } from './getIncidentDescription'
 
-const IS_OFFENSE_ENDPOINT_ENABLED = true;
+const IS_OFFENSE_ENDPOINT_ENABLED = true
 
 describe('getIncidentDescription', () => {
   test('should return an empty string if there are no offenses in traffic violations', () => {
@@ -14,7 +14,7 @@ describe('getIncidentDescription', () => {
       formatMessage,
       {},
       { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
-      IS_OFFENSE_ENDPOINT_ENABLED
+      IS_OFFENSE_ENDPOINT_ENABLED,
     )
 
     expect(result).toBe('')
@@ -35,13 +35,15 @@ describe('getIncidentDescription', () => {
     const result = getIncidentDescription(
       {
         id: 'testId',
-        offenses: [{offense: IndictmentCountOffense.DRUNK_DRIVING}] as Offense[],
+        offenses: [
+          { offense: IndictmentCountOffense.DRUNK_DRIVING },
+        ] as Offense[],
         policeCaseNumber: '123-123-123',
       },
       formatMessage,
       {},
       { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
-      IS_OFFENSE_ENDPOINT_ENABLED
+      IS_OFFENSE_ENDPOINT_ENABLED,
     )
 
     expect(result).toBe(
@@ -68,7 +70,9 @@ describe('getIncidentDescription', () => {
       {
         id: 'testId',
         policeCaseNumber: '123-123-123',
-        offenses: [{offense: IndictmentCountOffense.DRUNK_DRIVING}] as Offense[],
+        offenses: [
+          { offense: IndictmentCountOffense.DRUNK_DRIVING },
+        ] as Offense[],
         indictmentCountSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
       formatMessage,
@@ -79,7 +83,7 @@ describe('getIncidentDescription', () => {
           IndictmentSubtype.TRAFFIC_VIOLATION,
         ],
       },
-      IS_OFFENSE_ENDPOINT_ENABLED
+      IS_OFFENSE_ENDPOINT_ENABLED,
     )
 
     expect(result).toBe(
@@ -92,7 +96,9 @@ describe('getIncidentDescription', () => {
       {
         id: 'testId',
         policeCaseNumber: '123-123-123',
-        offenses: [{offense: IndictmentCountOffense.DRUNK_DRIVING}] as Offense[],
+        offenses: [
+          { offense: IndictmentCountOffense.DRUNK_DRIVING },
+        ] as Offense[],
         indictmentCountSubtypes: [
           IndictmentSubtype.CUSTOMS_VIOLATION,
           IndictmentSubtype.THEFT,
@@ -106,7 +112,7 @@ describe('getIncidentDescription', () => {
           IndictmentSubtype.THEFT,
         ],
       },
-      IS_OFFENSE_ENDPOINT_ENABLED
+      IS_OFFENSE_ENDPOINT_ENABLED,
     )
 
     expect(result).toBe(
@@ -119,7 +125,9 @@ describe('getIncidentDescription', () => {
       {
         id: 'testId',
         policeCaseNumber: '123-123-123',
-        offenses: [{offense: IndictmentCountOffense.DRUNK_DRIVING}] as Offense[],
+        offenses: [
+          { offense: IndictmentCountOffense.DRUNK_DRIVING },
+        ] as Offense[],
         indictmentCountSubtypes: [
           IndictmentSubtype.CUSTOMS_VIOLATION,
           IndictmentSubtype.TRAFFIC_VIOLATION,
@@ -133,7 +141,7 @@ describe('getIncidentDescription', () => {
           IndictmentSubtype.TRAFFIC_VIOLATION,
         ],
       },
-      IS_OFFENSE_ENDPOINT_ENABLED
+      IS_OFFENSE_ENDPOINT_ENABLED,
     )
 
     expect(result).toBe(

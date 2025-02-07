@@ -53,6 +53,7 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
@@ -253,6 +254,7 @@ export const IndictmentCount: FC<Props> = ({
 
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
+  const { deleteOffense } = useOffenses()
 
   const [
     vehicleRegistrationNumberErrorMessage,
@@ -368,14 +370,31 @@ export const IndictmentCount: FC<Props> = ({
 
     checked ? currentSubtypes.add(subtype) : currentSubtypes.delete(subtype)
 
-    handleIndictmentCountChanges({
-      indictmentCountSubtypes: Array.from(currentSubtypes),
-      ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
-        deprecatedOffenses: [],
-        substances: {},
-        vehicleRegistrationNumber: null,
-      }),
-    })
+    const hasTrafficViolationSubType = currentSubtypes.has(
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
+    if (!hasTrafficViolationSubType) {
+      indictmentCount.offenses?.forEach(
+        async (o) =>
+          await deleteOffense(workingCase.id, indictmentCount.id, o.id),
+      )
+      const updatedOffenses: Offense[] = []
+      handleIndictmentCountChanges(
+        {
+          indictmentCountSubtypes: Array.from(currentSubtypes),
+          deprecatedOffenses: [],
+          substances: {},
+          vehicleRegistrationNumber: null,
+          recordedSpeed: null,
+          speedLimit: null,
+        },
+        updatedOffenses,
+      )
+    } else {
+      handleIndictmentCountChanges({
+        indictmentCountSubtypes: Array.from(currentSubtypes),
+      })
+    }
   }
 
   const shouldShowTrafficViolationFields = () => {
@@ -881,103 +900,102 @@ export const IndictmentCount: FC<Props> = ({
               ))}
             </Box>
           )}
-          <Box component="section" marginBottom={3}>
-            <SectionHeading
-              heading="h4"
-              title={formatMessage(strings.incidentDescriptionTitle)}
-              marginBottom={2}
-            />
-            <Box marginBottom={2}>
-              <Input
-                name="incidentDescription"
-                autoComplete="off"
-                label={formatMessage(strings.incidentDescriptionLabel)}
-                placeholder={formatMessage(
-                  strings.incidentDescriptionPlaceholder,
-                )}
-                errorMessage={incidentDescriptionErrorMessage}
-                hasError={incidentDescriptionErrorMessage !== ''}
-                value={indictmentCount.incidentDescription ?? ''}
-                onChange={(event) => {
-                  removeErrorMessageIfValid(
-                    ['empty'],
-                    event.target.value,
-                    incidentDescriptionErrorMessage,
-                    setIncidentDescriptionErrorMessage,
-                  )
-
-                  updateIndictmentCountState(
-                    indictmentCount.id,
-                    { incidentDescription: event.target.value },
-                    setWorkingCase,
-                  )
-                }}
-                onBlur={(event) => {
-                  validateAndSetErrorMessage(
-                    ['empty'],
-                    event.target.value,
-                    setIncidentDescriptionErrorMessage,
-                  )
-
-                  onChange(indictmentCount.id, {
-                    incidentDescription: event.target.value.trim(),
-                  })
-                }}
-                required
-                rows={7}
-                autoExpand={{ on: true, maxHeight: 600 }}
-                textarea
-              />
-            </Box>
-          </Box>
-          <Box component="section">
-            <SectionHeading
-              heading="h4"
-              title={formatMessage(strings.legalArgumentsTitle)}
-              marginBottom={2}
-            />
-
-            <Input
-              name="legalArguments"
-              autoComplete="off"
-              label={formatMessage(strings.legalArgumentsLabel)}
-              placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
-              errorMessage={legalArgumentsErrorMessage}
-              hasError={legalArgumentsErrorMessage !== ''}
-              value={indictmentCount.legalArguments ?? ''}
-              onChange={(event) => {
-                removeErrorMessageIfValid(
-                  ['empty'],
-                  event.target.value,
-                  legalArgumentsErrorMessage,
-                  setLegalArgumentsErrorMessage,
-                )
-
-                updateIndictmentCountState(
-                  indictmentCount.id,
-                  { legalArguments: event.target.value },
-                  setWorkingCase,
-                )
-              }}
-              onBlur={(event) => {
-                validateAndSetErrorMessage(
-                  ['empty'],
-                  event.target.value,
-                  setLegalArgumentsErrorMessage,
-                )
-
-                onChange(indictmentCount.id, {
-                  legalArguments: event.target.value.trim(),
-                })
-              }}
-              required
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 600 }}
-              textarea
-            />
-          </Box>
         </>
       )}
+
+      <Box component="section" marginBottom={3}>
+        <SectionHeading
+          heading="h4"
+          title={formatMessage(strings.incidentDescriptionTitle)}
+          marginBottom={2}
+        />
+        <Box marginBottom={2}>
+          <Input
+            name="incidentDescription"
+            autoComplete="off"
+            label={formatMessage(strings.incidentDescriptionLabel)}
+            placeholder={formatMessage(strings.incidentDescriptionPlaceholder)}
+            errorMessage={incidentDescriptionErrorMessage}
+            hasError={incidentDescriptionErrorMessage !== ''}
+            value={indictmentCount.incidentDescription ?? ''}
+            onChange={(event) => {
+              removeErrorMessageIfValid(
+                ['empty'],
+                event.target.value,
+                incidentDescriptionErrorMessage,
+                setIncidentDescriptionErrorMessage,
+              )
+
+              updateIndictmentCountState(
+                indictmentCount.id,
+                { incidentDescription: event.target.value },
+                setWorkingCase,
+              )
+            }}
+            onBlur={(event) => {
+              validateAndSetErrorMessage(
+                ['empty'],
+                event.target.value,
+                setIncidentDescriptionErrorMessage,
+              )
+
+              onChange(indictmentCount.id, {
+                incidentDescription: event.target.value.trim(),
+              })
+            }}
+            required
+            rows={7}
+            autoExpand={{ on: true, maxHeight: 600 }}
+            textarea
+          />
+        </Box>
+      </Box>
+      <Box component="section">
+        <SectionHeading
+          heading="h4"
+          title={formatMessage(strings.legalArgumentsTitle)}
+          marginBottom={2}
+        />
+
+        <Input
+          name="legalArguments"
+          autoComplete="off"
+          label={formatMessage(strings.legalArgumentsLabel)}
+          placeholder={formatMessage(strings.legalArgumentsPlaceholder)}
+          errorMessage={legalArgumentsErrorMessage}
+          hasError={legalArgumentsErrorMessage !== ''}
+          value={indictmentCount.legalArguments ?? ''}
+          onChange={(event) => {
+            removeErrorMessageIfValid(
+              ['empty'],
+              event.target.value,
+              legalArgumentsErrorMessage,
+              setLegalArgumentsErrorMessage,
+            )
+
+            updateIndictmentCountState(
+              indictmentCount.id,
+              { legalArguments: event.target.value },
+              setWorkingCase,
+            )
+          }}
+          onBlur={(event) => {
+            validateAndSetErrorMessage(
+              ['empty'],
+              event.target.value,
+              setLegalArgumentsErrorMessage,
+            )
+
+            onChange(indictmentCount.id, {
+              legalArguments: event.target.value.trim(),
+            })
+          }}
+          required
+          rows={7}
+          autoExpand={{ on: true, maxHeight: 600 }}
+          textarea
+        />
+      </Box>
     </BlueBox>
   )
 }

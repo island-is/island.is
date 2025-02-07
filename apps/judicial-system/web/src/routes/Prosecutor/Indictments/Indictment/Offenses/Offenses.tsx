@@ -21,19 +21,33 @@ import {
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
-import { DeprecatedSubstances as SubstanceChoices } from '../Substances/DeprecatedSubstances'
 import { Substances } from '../Substances/Substances'
 import { SpeedingOffenseFields } from './SpeedingOffenseFields'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
 
+const sortByCreatedDate = (o1: Offense, o2: Offense) => {
+  if (!(o1.created && o2.created)) {
+    return 0
+  }
+  if (o1.created < o2.created) {
+    return -1
+  }
+  if (o1.created > o2.created) {
+    return 1
+  }
+  return 0
+}
+
 const getUpdatedOffenses = (
   currentOffenses: Offense[],
   updatedOffense: Offense,
-) => [
-  ...currentOffenses.filter((o) => o.id !== updatedOffense.id),
-  updatedOffense,
-]
+) =>
+  [
+    ...currentOffenses.filter((o) => o.id !== updatedOffense.id),
+    updatedOffense,
+  ].sort(sortByCreatedDate)
+
 const getDrunkDriving = (offenses: Offense[]) =>
   offenses.find((o) => o.offense === IndictmentCountOffense.DRUNK_DRIVING)
 
