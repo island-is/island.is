@@ -23,13 +23,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 FROM base AS deps
 
 WORKDIR /build
-COPY .yarn/ .yarn/
-COPY .yarnrc.yml yarn.lock package.json ./
+
+COPY .yarnrc.yml package.json yarn.lock ./
+COPY .yarn/patches .yarn/patches
+COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
-RUN --mount=type=cache,target=/root/.yarn-cache,sharing=locked \
+RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
   yarn install --immutable
-
 
 # --------------------------------------------------
 # Build stage where NX artifacts are copied to image
@@ -95,7 +96,7 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY ${APP_DIST_HOME} /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \

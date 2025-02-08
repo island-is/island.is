@@ -1,7 +1,7 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # developer files
-scripts/ci/docker-build-ci.sh
+scripts/ci/docker-build-local.sh
 
 # compiled output
 dist/
@@ -85,6 +85,7 @@ fragmentTypes.json
 **/gen/graphql.ts
 *.generated.ts
 /apps/**/src/index.html
+nx_cloud_access_token.txt
 
 # IDE - Visual Studio
 *.suo

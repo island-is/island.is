@@ -11,17 +11,16 @@ mkdir -p "$PROJECT_ROOT"/cache
 NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-20}
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-821090935708.dkr.ecr.eu-west-1.amazonaws.com}
 
-docker buildx rm actions_builder || true
-docker buildx create --name actions_builder --driver docker-container --use --driver-opt image="${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1"
-
+# docker buildx rm actions_builder || true
+# docker buildx create --name actions_builder --driver docker-container --use --driver-opt image="${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1"
+#
 # Build and push deps layer to S3
 echo "Building and pushing deps layer to S3..."
 docker buildx build \
   --platform=linux/amd64 \
-  --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache" \
-  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache" \
-  --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION" \
-  -f "${DIR}"/Dockerfile \
+  -f "${DIR}/Dockerfile" \
+  --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache" \
+  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
   --target=deps \
   "$PROJECT_ROOT"
 
