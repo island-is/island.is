@@ -10,7 +10,6 @@ source "$DIR"/_common.sh
 source "$DIR"/09_load-buildkit-driver.sh
 
 APP_HOME=$(yarn nx show project "$APP" | jq ".root" -r)
-# APP_DIST_HOME=$(yarn nx show project $APP | jq ".targets.build.outputs[0]" -r | sed "s|{workspaceRoot}/||")
 APP_DIST_HOME="dist/${APP_HOME}"
 DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-jest)>'}}

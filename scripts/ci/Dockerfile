@@ -32,24 +32,23 @@ COPY apps/native/app/package.json ./apps/native/app/
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
   yarn install --immutable
 
+
 # ------------------------------------------------
 # Copy monorepo source
 # ------------------------------------------------
 FROM deps AS src
 
 COPY . ./
-# --------------------------------------------------
-# Build stage where NX artifacts are copied to image
-# --------------------------------------------------
-FROM deps AS builder-copy
 
+# ------------------------------------------------
+# Export APP_HOME
+# ------------------------------------------------
+FROM src AS app-home
 ARG APP
-ARG APP_HOME
-ARG APP_DIST_HOME
+ENV APP=${APP}
+RUN APP_HOME=$(yarn nx show project "${APP}" | jq ".root" -r) && \
+  echo "${APP_HOME}" > /app_home
 
-ENV NODE_ENV=production
-
-COPY ${APP_DIST_HOME} /build/${APP_DIST_HOME}
 
 # ------------------------------------------------
 # Build stage (app-specific args start here)
@@ -57,8 +56,6 @@ COPY ${APP_DIST_HOME} /build/${APP_DIST_HOME}
 FROM src AS builder
 
 ARG APP
-ARG APP_HOME
-ARG APP_DIST_HOME
 ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
@@ -70,10 +67,12 @@ ENV NODE_ENV=production \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
   APP=${APP}
 
+COPY --from=app-home /app_home /app_home
 RUN --mount=type=secret,id=nx_cloud_access_token \
   bash -c ' \
   export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
-  yarn codegen && yarn run build ${APP} --prod \
+  export APP_HOME=$(cat /app_home) && \
+  yarn run build ${APP} --prod \
   '
 
 # ------------------------------------------------
@@ -96,12 +95,12 @@ USER runner
 # ------------------------------------------------
 FROM output-base-with-pg AS output-express
 
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=app-home /app_home /app_home
+COPY --from=builder /build/dist/$(cat /app_home) /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
@@ -119,15 +118,16 @@ CMD ["node", "--no-experimental-fetch", "main.js"]
 # ------------------------------------------------
 FROM output-base-with-pg AS output-next
 
-ARG APP_DIST_HOME
+ARG APP
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
 ENV PORT=4200
 
+COPY --from=app-home /app_home /app_home
 COPY --from=deps /build/node_modules /webapp/node_modules
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=builder /build/dist/$(cat /app_home) /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
@@ -146,7 +146,6 @@ CMD ["node", "main.js"]
 FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS output-static
 
 ARG APP
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -156,7 +155,9 @@ RUN mkdir -p /etc/nginx/templates
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.* /docker-entrypoint.d/
-COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
+
+COPY --from=app-home /app_home /app_home
+COPY --from=builder /build/dist/$(cat /app_home) /usr/share/nginx/html/
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
@@ -174,7 +175,6 @@ LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 # ------------------------------------------------
 FROM output-base AS output-jest
 
-ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
@@ -182,7 +182,8 @@ ARG GIT_REPOSITORY_URL
 RUN echo 'module.exports = {};' > jest.config.js
 RUN npm install -g jest
 
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY --from=app-home /app_home /app_home
+COPY --from=builder /build/dist/$(cat /app_home) /webapp/
 
 USER runner
 
@@ -206,9 +207,6 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 # Playwright output
 # ------------------------------------------------
 FROM playwright-base AS output-playwright
-
-ARG APP_DIST_HOME
-ARG APP_HOME
 ARG PLAYWRIGHT_BROWSER=chromium
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
@@ -219,10 +217,11 @@ RUN apt-get update && \
   apt-get purge -y && \
   rm -rf /var/lib/apt/lists/*
 
-WORKDIR ${APP_DIST_HOME}
+COPY --from=app-home /app_home /app_home
+WORKDIR $(cat /app_home)
 
-COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/package.json .
+COPY --from=builder /build/dist/$(cat /app_home) /webapp/
+COPY /dist/$(cat /app_home)/package.json ./
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
@@ -233,7 +232,7 @@ COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
+COPY --chown=pwuser:pwuser --chmod=0755 $(cat /app_home)/entrypoint.sh ./
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
