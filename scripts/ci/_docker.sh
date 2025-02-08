@@ -6,6 +6,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
+source "$DIR"/09_load-buildkit-driver.sh
 
 APP_HOME=$(yarn nx show project "$APP" | jq ".root" -r)
 # APP_DIST_HOME=$(yarn nx show project $APP | jq ".targets.build.outputs[0]" -r | sed "s|{workspaceRoot}/||")

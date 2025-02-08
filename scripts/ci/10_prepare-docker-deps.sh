@@ -5,15 +5,13 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
+source "$DIR"/09_load-buildkit-driver.sh
 
 mkdir -p "$PROJECT_ROOT"/cache
 
 NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION:-20}
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-821090935708.dkr.ecr.eu-west-1.amazonaws.com}
 
-# docker buildx rm actions_builder || true
-# docker buildx create --name actions_builder --driver docker-container --use --driver-opt image="${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1"
-#
 # Build and push deps layer to S3
 echo "Building and pushing deps layer to S3..."
 docker buildx build \
