@@ -32,10 +32,16 @@ COPY apps/native/app/package.json ./apps/native/app/
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
   yarn install --immutable
 
+# ------------------------------------------------
+# Copy monorepo source
+# ------------------------------------------------
+FROM deps AS src
+
+COPY . ./
 # --------------------------------------------------
 # Build stage where NX artifacts are copied to image
 # --------------------------------------------------
-FROM deps AS builder
+FROM deps AS builder-copy
 
 ARG APP
 ARG APP_HOME
@@ -48,7 +54,7 @@ COPY ${APP_DIST_HOME} /build/${APP_DIST_HOME}
 # ------------------------------------------------
 # Build stage (app-specific args start here)
 # ------------------------------------------------
-FROM deps AS builder-all
+FROM src AS builder
 
 ARG APP
 ARG APP_HOME
@@ -65,10 +71,9 @@ ENV NODE_ENV=production \
   APP=${APP}
 
 RUN --mount=type=secret,id=nx_cloud_access_token \
-  --mount=type=secret,id=nx_cloud_access_token \
   bash -c ' \
   export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
-  yarn run build ${APP} --prod \
+  yarn codegen && yarn run build ${APP} --prod \
   '
 
 # ------------------------------------------------
@@ -96,7 +101,7 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-COPY ${APP_DIST_HOME} /webapp/
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \

@@ -537,45 +537,45 @@ jobs:
         continue-on-error: true
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-        if: steps.gather.outcome == 'success'
-
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - run: |
-          yarn codegen
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version-file: 'package.json'
+      #   if: steps.gather.outcome == 'success'
+      #
+      # - run: |
+      #     corepack enable
+      #
+      # - name: Install Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version-file: 'package.json'
+      #
+      # - name: Get Yarn Cache Directory Path
+      #   id: yarn-cache-dir-path
+      #   run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      #
+      # - name: Restore Dependencies Cache
+      #   uses: runs-on/cache/restore@v4
+      #   id: restore-cache
+      #   with:
+      #     path: |
+      #       ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      #     restore-keys: ${{ runner.os }}-
+      #
+      # - run: |
+      #     yarn install --immutable
+      #
+      # - name: Cache Dependencies
+      #   uses: runs-on/cache/save@v4
+      #   if: steps.restore-cache.outputs.cache-hit != 'true'
+      #   with:
+      #     path: |
+      #       ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      #
+      # - run: |
+      #     yarn codegen
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
@@ -583,9 +583,6 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
 
       - name: Prepare Docker build arguments
         id: dockerargs
