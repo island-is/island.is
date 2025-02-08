@@ -18,8 +18,8 @@ docker buildx create --name actions_builder --driver docker-container --use --dr
 echo "Building and pushing deps layer to S3..."
 docker buildx build \
   --platform=linux/amd64 \
-  --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache-deps" \
-  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache-deps,mode=max" \
+  --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache" \
+  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=cache" \
   --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION" \
   -f "${DIR}"/Dockerfile \
   --target=deps \
