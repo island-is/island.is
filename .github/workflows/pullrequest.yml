@@ -95,16 +95,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Run codegen
-        run: node scripts/ci/generated-files.mjs
-
-      - name: Cache generated files
-        uses: runs-on/cache/save@v4
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
+      - run: |
+          yarn codegen
 
       - name: Check node version
         run: |
@@ -272,18 +264,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Restore Codegen Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-codegen-cache
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar zxf generated_files.tar.gz
+      - run: |
+          yarn codegen
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -346,18 +328,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Restore Codegen Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-codegen-cache
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar zxf generated_files.tar.gz
+      - run: |
+          yarn codegen
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -401,18 +373,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Restore Codegen Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-codegen-cache
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar zxf generated_files.tar.gz
+      - run: |
+          yarn codegen
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -479,18 +441,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Restore Codegen Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-codegen-cache
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar zxf generated_files.tar.gz
+      - run: |
+          yarn codegen
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -548,18 +500,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Restore Codegen Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-codegen-cache
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar zxf generated_files.tar.gz
+      - run: |
+          yarn codegen
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -610,18 +552,8 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Restore Codegen Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-codegen-cache
-        with:
-          path: |
-            generated_files.tar.gz
-            generated_files_list.txt
-          key: ${{ runner.os }}-codegen-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar zxf generated_files.tar.gz
+      - run: |
+          yarn codegen
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
