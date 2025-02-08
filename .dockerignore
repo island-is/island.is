@@ -12,8 +12,6 @@
 **/node_modules/
 # Ignoring _all_ cache folders dosen't work, because we have libraries named `cache`
 # **/cache/
-/.yarn/cache/
-/.yarn/install-state*
 # Ignores e.g. `cache/` and `cache_outptut/`
 /cache*
 /.cache*/
