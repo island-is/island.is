@@ -39,7 +39,7 @@ env:
   NX_TASKS_RUNNER: ci
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
-  DISABLE_CHUNKS: 'true'
+  DISABLE_CHUNKS: 'false'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '3'
@@ -519,6 +519,8 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
       PUBLISH: true
+      DISABLE_CHUNKS: true
+      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix:
