@@ -85,7 +85,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -254,7 +254,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -318,7 +318,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -363,7 +363,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -431,7 +431,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -490,7 +490,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -542,7 +542,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
 
       - run: |
-          yarn install
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
