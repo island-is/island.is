@@ -42,7 +42,7 @@ COPY . ./
 # ------------------------------------------------
 # Build stage (app-specific args start here)
 # ------------------------------------------------
-FROM deps AS builder
+FROM src AS builder
 
 ARG APP
 ARG APP_HOME
