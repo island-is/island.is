@@ -428,7 +428,7 @@ jobs:
       - name: Generate docker matrix
         id: docker_matrix
         run: |
-          DOCKER_MATRIX="$(node ./scripts/ci/get-app-home.mjs ${{ steps.buil_map.outputs.BUILD_CHUNKS }})"
+          DOCKER_MATRIX="$(node ./scripts/ci/get-app-home.mjs ${{ steps.build_map.outputs.BUILD_CHUNKS }})"
           echo DOCKER_MATRIX="$DOCKER_MATRIX" >> "$GITHUB_OUTPUT"
 
       - name: Gather unaffected docker images
