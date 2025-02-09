@@ -66,5 +66,5 @@ const result = chunks.flatMap((chunk, index) => {
   })
 })
 
-// Output the final JSON string
-console.log(JSON.stringify(result))
+// Output the final JSON string, escaped for GitHub Actions
+console.log(JSON.stringify(result).replace(/"/g, '\\"'))
