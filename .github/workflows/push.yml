@@ -52,7 +52,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CHUNKS_DEBUG: '["web"]'
+  CHUNKS_DEBUG: '[{"projects":"web","docker_type":"docker-next","home":"apps/web","dist":"dist/apps/web"}]'
 
 jobs:
   pre-checks:
@@ -532,7 +532,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-docker
+    runs-on: arc-runners
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
