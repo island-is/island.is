@@ -557,12 +557,12 @@ jobs:
         id: gather
         run: |
           set -euo pipefail
-          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.project')"
-          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
-          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
+          AFFECTED_PROJECTS="${{ matrix.chunk.project }}"
+          DOCKER_TYPE="${{ matrix.chunk.docker_type }}"
+          APP_HOME="${{ matrix.chunk.home }}"
+          echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+          echo "DOCKER_TYPE=$DOCKER_TYPE" >> "$GITHUB_ENV"
+          echo "APP_HOME=$APP_HOME" >> "$GITHUB_ENV"
         continue-on-error: true
 
       - uses: actions/checkout@v3
