@@ -421,7 +421,7 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
