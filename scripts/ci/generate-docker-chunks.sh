@@ -8,7 +8,7 @@ export HEAD=${HEAD:-HEAD}
 export BASE=${BASE:-main}
 export MAX_JOBS='100'
 
-# Function to process a single project
+# process a single project
 process_project() {
   local project=$1
   local docker_type=$2
