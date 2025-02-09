@@ -354,7 +354,7 @@ jobs:
 
       - name: Prepare generated files
         run: |
-          echo "generated files: ${{ env.GENERATED_FILES }}
+          echo "generated files: ${{ env.GENERATED_FILES }}"
           node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
           tar -xzvf ${{ env.GENERATED_FILES }}
 
