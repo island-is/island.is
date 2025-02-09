@@ -28,12 +28,12 @@ for target in "$@"; do
           --arg home "$home" \
           --arg dist "$dist" \
           --arg docker_type "$target" \
-          '{projects: $project, home: $home, dist: $dist, docker_type: $docker_type}')
+          '{projects: $project, docker_type: $docker_type, home: $home, dist: $dist}')
         chunks=$(echo "$chunks" | jq -c '. + ['"$new_chunk"']')
       done
     done < <(echo "$affected_chunks" | jq -r '.[]')
   fi
 done
 
->&2 echo "Map: ${chunks}"
-echo "$chunks"
+# Output the chunks as a JSON string
+echo "$chunks" | jq -c 'map(to_entries | map("\(.key)=\(.value)") | join(",")) | join(" ")'
