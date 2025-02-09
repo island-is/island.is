@@ -363,7 +363,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: ${{ runner.os }}-${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
 
       - name: Set Test Everything true
         run: |
@@ -518,7 +518,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
 
       - name: Extract generated files
         run: |
@@ -573,7 +573,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
 
       - name: Extract generated files
         run: |
