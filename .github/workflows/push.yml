@@ -531,7 +531,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
