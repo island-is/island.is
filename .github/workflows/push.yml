@@ -541,7 +541,7 @@ jobs:
       NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
       PUBLISH: true
       DISABLE_CHUNKS: true
-      MAX_JOBS: 1
+      MAX_JOBS: 3
       NX_PARALLEL: 1
     strategy:
       fail-fast: false
