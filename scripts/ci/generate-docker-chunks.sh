@@ -10,7 +10,7 @@ export \
   MAX_JOBS='100'
 
 if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
-  echo "$CHUNKS_DEBUG"
+  echo "$CHUNKS_DEBUG" | jq -cM '. | map("\(.|tostring)")'
   exit 0
 fi
 
