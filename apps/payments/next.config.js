@@ -38,6 +38,7 @@ const nextConfig = {
   publicRuntimeConfig: {
     graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
+    basepath: BASEPATH,
   },
   basePath: `${BASEPATH}`,
   env: {
