@@ -457,7 +457,7 @@ jobs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: arc-runners
-    timeout-minutes: 45
+    timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
