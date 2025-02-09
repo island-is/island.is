@@ -1,45 +1,67 @@
 import { execSync } from 'child_process'
 import fs from 'fs/promises'
 import { globSync } from 'glob'
-import path from 'path'
+import yaml from 'js-yaml'
 
-const patterns = [
-  'scripts/codegen.js',
-  'libs/cms/src/lib/generated/contentfulTypes.d.ts',
-  'apps/air-discount-scheme/web/i18n/withLocale.tsx',
-  'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx',
-  'apps/air-discount-scheme/web/components/Header/Header.tsx',
-  'apps/air-discount-scheme/web/screens/**/*.tsx',
-  'libs/application/types/src/lib/ApplicationTypes.ts',
-  '**/codegen.yml',
-  '**/*.model.ts',
-  '**/*.enum.ts',
-  '**/queries/**/*',
-  '**/mutations/**/*',
-  '**/fragments/**/*',
-  '**/gen/fetch/**/*',
-  '**/*.resolver.ts',
-  '**/*.service.ts',
-  '**/*.dto.ts',
-  '**/*.input.ts',
-  '**/*.module.ts',
-  '**/*.controller.ts',
-  '**/*.union.ts',
-  '**/*.graphql.tsx?',
-  '**/*.graphql',
-  '**/clientConfig.*',
-  'libs/judicial-system/**',
-]
+const findCodegenFiles = () => {
+  return globSync('**/codegen.yml', { ignore: ['**/node_modules/**'] })
+}
 
-const ignorePatterns = ['node_modules/**', '**/node_modules/**']
+const parseCodegenFile = async (filePath) => {
+  const content = await fs.readFile(filePath, 'utf8')
+  return yaml.load(content)
+}
 
-function isNotIgnored(file) {
-  return !ignorePatterns.some((pattern) =>
-    file.includes(pattern.replace('**/', '').replace('/**', '')),
-  )
+const addToPatterns = (patterns, item) => {
+  if (Array.isArray(item)) {
+    item.forEach((i) => patterns.add(i))
+  } else if (typeof item === 'string') {
+    patterns.add(item)
+  }
+}
+
+const getPatterns = async () => {
+  const codegenFiles = findCodegenFiles()
+  const patterns = new Set()
+
+  for (const file of codegenFiles) {
+    const config = await parseCodegenFile(file)
+
+    if (config.schema) {
+      addToPatterns(patterns, config.schema)
+    }
+
+    if (config.generates) {
+      Object.entries(config.generates).forEach(([outputFile, options]) => {
+        patterns.add(outputFile)
+
+        if (typeof options === 'object') {
+          if (options.schema) {
+            addToPatterns(patterns, options.schema)
+          }
+          if (options.documents) {
+            addToPatterns(patterns, options.documents)
+          }
+        }
+      })
+    }
+  }
+
+  return Array.from(patterns)
+}
+
+const fileExists = async (filePath) => {
+  try {
+    await fs.access(filePath)
+    return true
+  } catch {
+    return false
+  }
 }
 
 async function main() {
+  console.log('Starting codegen process...')
+
   const [outputFileName, ...args] = process.argv.slice(2)
 
   if (!outputFileName) {
@@ -50,26 +72,38 @@ async function main() {
 
   const skipCodegen = args.includes('--skip-codegen')
 
-  if (!skipCodegen) {
+  if (skipCodegen) {
+    console.log('Skipping codegen command...')
+  } else {
     console.log('Running codegen...')
     execSync('yarn codegen', { stdio: 'inherit' })
   }
 
-  console.log('Identifying generated files...')
-  const generatedFiles = globSync(patterns, {
-    ignore: ignorePatterns,
-    nodir: true,
-  }).filter(isNotIgnored)
+  console.log('Gathering patterns from codegen.yml files...')
+  const patterns = await getPatterns()
 
-  if (generatedFiles.length === 0) {
-    throw new Error('No generated files detected. This might be an issue.')
+  console.log(`Found ${patterns.length} patterns`)
+
+  const existingFiles = []
+  const missingFiles = []
+
+  for (const pattern of patterns) {
+    const matchingFiles = globSync(pattern, { nodir: true })
+    if (matchingFiles.length > 0) {
+      existingFiles.push(...matchingFiles)
+    } else {
+      missingFiles.push(pattern)
+    }
   }
 
-  await fs.writeFile('generated_files_list.txt', generatedFiles.join('\n'))
+  console.log(`\nExisting files: ${existingFiles.length}`)
+  console.log(`Missing files or patterns: ${missingFiles.length}`)
 
-  console.log(`Creating archive: ${outputFileName}...`)
-  execSync(`tar zcf "${outputFileName}" -T generated_files_list.txt`, {
-    stdio: 'ignore',
+  await fs.writeFile('generated_files_list.txt', existingFiles.join('\n'))
+
+  console.log(`\nCreating archive: ${outputFileName}...`)
+  execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
+    stdio: 'inherit',
   })
 
   const stats = await fs.stat(outputFileName)
@@ -77,23 +111,14 @@ async function main() {
 
   const cacheKey = `codegen-${execSync('git rev-parse HEAD').toString().trim()}`
 
-  const patternCounts = patterns.reduce((acc, pattern) => {
-    const count = globSync(pattern, { ignore: ignorePatterns, nodir: true })
-      .length
-    acc[pattern] = count
-    return acc
-  }, {})
-
-  console.log('\n--- Codegen stats ---')
-  console.log(`Cache key: ${cacheKey}`)
+  console.log(`\nCache key: ${cacheKey}`)
   console.log(`Archive created: ${outputFileName}`)
   console.log(`Archive size: ${fileSizeInMegabytes.toFixed(2)} MB`)
-  console.log(`Total files archived: ${generatedFiles.length}`)
 
-  console.log('\nFiles matched per pattern:')
-  Object.entries(patternCounts).forEach(([pattern, count]) => {
-    console.log(`${pattern}: ${count}`)
-  })
+  if (missingFiles.length > 0) {
+    console.log('\nMissing files or patterns:')
+    missingFiles.forEach((file) => console.log(file))
+  }
 }
 
 main().catch((error) => {
