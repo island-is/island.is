@@ -28,7 +28,7 @@ for target in "$@"; do
           --arg home "$home" \
           --arg dist "$dist" \
           --arg docker_type "$target" \
-          '{project: $project, home: $home, dist: $dist, docker_type: $docker_type}')
+          '{projects: $project, home: $home, dist: $dist, docker_type: $docker_type}')
         chunks=$(echo "$chunks" | jq -c '. + ['"$new_chunk"']')
       done
     done < <(echo "$affected_chunks" | jq -r '.[]')
