@@ -67,4 +67,4 @@ const result = chunks.flatMap((chunk, index) => {
 })
 
 // Output the final JSON string
-console.log(JSON.stringify(result, null, 2))
+console.log(JSON.stringify(result))
