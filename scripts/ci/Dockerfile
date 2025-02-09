@@ -38,23 +38,11 @@ RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
 FROM deps AS src
 
 COPY . ./
-# --------------------------------------------------
-# Build stage where NX artifacts are copied to image
-# --------------------------------------------------
-FROM deps AS builder-copy
-
-ARG APP
-ARG APP_HOME
-ARG APP_DIST_HOME
-
-ENV NODE_ENV=production
-
-COPY ${APP_DIST_HOME} /build/${APP_DIST_HOME}
 
 # ------------------------------------------------
 # Build stage (app-specific args start here)
 # ------------------------------------------------
-FROM src AS builder
+FROM deps AS builder
 
 ARG APP
 ARG APP_HOME
