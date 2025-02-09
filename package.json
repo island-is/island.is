@@ -5,7 +5,7 @@
   "engines": {
     "npm": "please-use-yarn",
     "node": "20.15.0",
-    "yarn": "3.2"
+    "yarn": "4.6"
   },
   "repository": {
     "type": "git",
@@ -450,7 +450,6 @@
     "eslint-plugin-cypress": "2.14.0",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsx-a11y": "6.7.1",
-    "eslint-plugin-playwright": "^0.15.3",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-storybook": "^0.6.12",
@@ -496,7 +495,7 @@
     "hosted-git-info": "3.0.8",
     "lodash": "4.17.21",
     "node-fetch": "2.6.7",
-    "browserslist": "4.24.2",
+    "browserslist": "4.16.6",
     "ws": "8.8.0",
     "glob-parent": "5.1.2",
     "trim-newlines": "3.0.1",
@@ -517,7 +516,7 @@
   },
   "volta": {
     "node": "20.15.0",
-    "yarn": "3.2.3"
+    "yarn": "4.6.0"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@4.6.0"
 }
