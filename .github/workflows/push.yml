@@ -51,6 +51,7 @@ env:
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
 
 jobs:
   pre-checks:
@@ -174,6 +175,7 @@ jobs:
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+      DOCKER_MATRIX: ${{ steps.docker_matrix.outputs.DOCKER_MATRIX }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -350,8 +352,16 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: Run codegen
-        run: yarn codegen
+      - name: Prepare generated files
+        run: |
+          node ./scripts/ci/generate-files.mjs $GENERATED_FILES
+
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            $GENERATED_FILES
+          key: ${{ runner.os }}-$GENERATED_FILES
 
       - name: Set Test Everything true
         run: |
@@ -415,6 +425,11 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
+      - name: Generate docker matrix
+        id: docker_matrix
+        run: |
+          DOCKER_MATRIX="$(node ./scripts/ci/get-app-home.mjs ${{ steps.buil_map.outputs.BUILD_CHUNKS }})"
+          echo DOCKER_MATRIX="$DOCKER_MATRIX" >> "$GITHUB_OUTPUT"
 
       - name: Gather unaffected docker images
         id: unaffected
@@ -454,6 +469,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -494,8 +510,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            $GENERATED_FILES
+          key: $GENERATED_FILES
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf generated_files.tar.gz
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -512,7 +537,7 @@ jobs:
       - prepare
     runs-on: arc-docker
     timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: needs.prepare.outputs.DOCKER_MATRIX
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -524,19 +549,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+        chunk: ${{ fromJson(needs.prepare.outputs.DOCKER_MATRIX) }}
     steps:
       - name: Gather apps
         id: gather
         run: |
           set -euo pipefail
-          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.project')"
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
           echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
           echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
+          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
         continue-on-error: true
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            $GENERATED_FILES
+          key: $GENERATED_FILES
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf generated_files.tar.gz
+
       # - uses: actions/setup-node@v4
       #   with:
       #     node-version-file: 'package.json'
