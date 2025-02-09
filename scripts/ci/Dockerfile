@@ -37,7 +37,7 @@ RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
 # ------------------------------------------------
 FROM deps AS src
 
-COPY . ./
+COPY . .
 
 # ------------------------------------------------
 # Build stage (app-specific args start here)
