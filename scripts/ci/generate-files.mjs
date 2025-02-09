@@ -3,7 +3,19 @@ import fs from 'fs/promises'
 import { globSync } from 'glob'
 import yaml from 'js-yaml'
 
-const additionalPatterns = ['libs/api/mocks/src/schema.ts', '**/gen/fetch/**/*']
+const additionalPatterns = [
+  '**/openapi.yaml',
+  '**/api.graphql',
+  '**/schema.d.ts',
+  '**/schema.tsx',
+  '**/schema.ts',
+  '**/gen/graphql.ts',
+  '**/*.generated.ts',
+  '**/possibleTypes.json',
+  '**/fragmentTypes.json',
+  'libs/api/mocks/src/schema.ts',
+  '**/gen/fetch/**/*',
+]
 
 const findCodegenFiles = () => {
   return globSync('**/codegen.yml', { ignore: ['**/node_modules/**'] })
