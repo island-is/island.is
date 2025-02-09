@@ -52,6 +52,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CHUNKS_DEBUG: '["web"]'
 
 jobs:
   pre-checks:

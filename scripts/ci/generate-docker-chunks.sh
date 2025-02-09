@@ -9,6 +9,11 @@ export \
   BASE=${BASE:-main} \
   MAX_JOBS='100'
 
+if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
+  echo "$CHUNKS_DEBUG"
+  exit 0
+fi
+
 chunks='[]'
 for target in "$@"; do
   processed_chunks=$(yarn nx show projects --withTarget="$target" --affected --base "$BASE" --head "$HEAD" --json |
