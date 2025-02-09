@@ -3,6 +3,8 @@ import fs from 'fs/promises'
 import { globSync } from 'glob'
 import yaml from 'js-yaml'
 
+const additionalPatterns = ['libs/api/mocks/src/schema.ts']
+
 const findCodegenFiles = () => {
   return globSync('**/codegen.yml', { ignore: ['**/node_modules/**'] })
 }
@@ -47,16 +49,10 @@ const getPatterns = async () => {
     }
   }
 
-  return Array.from(patterns)
-}
+  // Add additional patterns
+  additionalPatterns.forEach((pattern) => patterns.add(pattern))
 
-const fileExists = async (filePath) => {
-  try {
-    await fs.access(filePath)
-    return true
-  } catch {
-    return false
-  }
+  return Array.from(patterns)
 }
 
 async function main() {
@@ -79,7 +75,9 @@ async function main() {
     execSync('yarn codegen', { stdio: 'inherit' })
   }
 
-  console.log('Gathering patterns from codegen.yml files...')
+  console.log(
+    'Gathering patterns from codegen.yml files and additional patterns...',
+  )
   const patterns = await getPatterns()
 
   console.log(`Found ${patterns.length} patterns`)
