@@ -76,14 +76,21 @@ export abstract class BaseNotificationService {
     return whitelistedEmails
   }
 
-  protected async sendEmail(
-    subject: string,
-    html: string,
-    recipientName?: string,
-    recipientEmail?: string,
-    attachments?: Attachment[],
-    skipTail?: boolean,
-  ): Promise<Recipient> {
+  protected async sendEmail({
+    subject,
+    html,
+    recipientName,
+    recipientEmail,
+    attachments,
+    skipTail,
+  }: {
+    subject: string
+    html: string
+    recipientName?: string
+    recipientEmail?: string
+    attachments?: Attachment[]
+    skipTail?: boolean
+  }): Promise<Recipient> {
     try {
       // This is to handle a comma separated list of emails
       // We use the first one as the main recipient and the rest as CC
