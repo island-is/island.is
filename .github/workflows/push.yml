@@ -520,7 +520,7 @@ jobs:
 
       - name: Extract generated files
         run: |
-          tar -xzvf generated_files.tar.gz
+          tar -xzvf $GENERATED_FILES
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -575,7 +575,7 @@ jobs:
 
       - name: Extract generated files
         run: |
-          tar -xzvf generated_files.tar.gz
+          tar -xzvf $GENERATED_FILES
 
       # - uses: actions/setup-node@v4
       #   with:
