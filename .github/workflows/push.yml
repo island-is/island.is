@@ -354,14 +354,16 @@ jobs:
 
       - name: Prepare generated files
         run: |
-          node ./scripts/ci/generate-files.mjs $GENERATED_FILES
+          echo "generated files: ${{ env.GENERATED_FILES }}
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Cache Generated files
         uses: runs-on/cache/save@v4
         with:
           path: |
-            $GENERATED_FILES
-          key: ${{ runner.os }}-$GENERATED_FILES
+            ${{ env.GENERATED_FILES }}
+          key: ${{ runner.os }}-${{ env.GENERATED_FILES }}
 
       - name: Set Test Everything true
         run: |
@@ -515,12 +517,12 @@ jobs:
         id: restore-generated-files-cache
         with:
           path: |
-            $GENERATED_FILES
-          key: $GENERATED_FILES
+            ${{ env.GENERATED_FILES }}
+          key: ${{ env.GENERATED_FILES }}
 
       - name: Extract generated files
         run: |
-          tar -xzvf $GENERATED_FILES
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -570,12 +572,12 @@ jobs:
         id: restore-generated-files-cache
         with:
           path: |
-            $GENERATED_FILES
-          key: $GENERATED_FILES
+            ${{ env.GENERATED_FILES }}
+          key: ${{ env.GENERATED_FILES }}
 
       - name: Extract generated files
         run: |
-          tar -xzvf $GENERATED_FILES
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       # - uses: actions/setup-node@v4
       #   with:
