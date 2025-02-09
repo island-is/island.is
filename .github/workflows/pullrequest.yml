@@ -95,8 +95,18 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Prepare generated files
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
 
       - name: Check node version
         run: |
@@ -264,8 +274,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -328,8 +347,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -373,8 +401,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -441,8 +478,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -500,8 +546,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -552,8 +607,17 @@ jobs:
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - run: |
-          yarn codegen
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
