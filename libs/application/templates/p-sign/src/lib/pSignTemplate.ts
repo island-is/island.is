@@ -21,6 +21,7 @@ import { dataSchema } from './dataSchema'
 import { ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { DoctorsNoteApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -29,6 +30,7 @@ const PSignTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.P_SIGN,
   name: 'Stæðiskort',
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.LegalGuardian }],
   stateMachineConfig: {

@@ -21,7 +21,11 @@ import {
   getProps,
   StandaloneParentSubpageProps,
 } from './Standalone/ParentSubpage'
-import { getSubpageNavList, SubPageContent } from './SubPage'
+import {
+  getSubpageNavList,
+  SubPageBottomSlices,
+  SubPageContent,
+} from './SubPage'
 
 type OrganizationParentSubpageScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
@@ -70,50 +74,60 @@ const OrganizationParentSubpage: Screen<
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: getSubpageNavList(organizationPage, router, 3),
       }}
-    >
-      <Box paddingTop={4}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-              <Stack space={3}>
-                {parentSubpage.childLinks.length > 1 && (
-                  <Stack space={4}>
-                    <Text variant="h1" as="h1">
-                      {parentSubpage.title}
-                    </Text>
-                    <TableOfContents
-                      headings={tableOfContentHeadings}
-                      onClick={(headingId) => {
-                        const href = tableOfContentHeadings.find(
-                          (heading) => heading.headingId === headingId,
-                        )?.href
-                        if (href) {
-                          router.push(href)
+      mainContent={
+        <Box paddingTop={4}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <Stack space={3}>
+                  {parentSubpage.childLinks.length > 1 && (
+                    <Stack space={4}>
+                      <Text variant="h1" as="h1">
+                        {parentSubpage.title}
+                      </Text>
+                      <TableOfContents
+                        headings={tableOfContentHeadings}
+                        onClick={(headingId) => {
+                          const href = tableOfContentHeadings.find(
+                            (heading) => heading.headingId === headingId,
+                          )?.href
+                          if (href) {
+                            router.push(href)
+                          }
+                        }}
+                        tableOfContentsTitle={
+                          namespace?.['OrganizationTableOfContentsTitle'] ??
+                          activeLocale === 'is'
+                            ? 'Efnisyfirlit'
+                            : 'Table of contents'
                         }
-                      }}
-                      tableOfContentsTitle={
-                        namespace?.['OrganizationTableOfContentsTitle'] ??
-                        activeLocale === 'is'
-                          ? 'Efnisyfirlit'
-                          : 'Table of contents'
-                      }
-                      selectedHeadingId={selectedHeadingId}
-                    />
-                  </Stack>
-                )}
-              </Stack>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-        <SubPageContent
-          namespace={namespace}
-          organizationPage={organizationPage}
-          subpage={subpage}
-          subpageTitleVariant={
-            parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
-          }
-        />
-      </Box>
+                        selectedHeadingId={selectedHeadingId}
+                      />
+                    </Stack>
+                  )}
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+          <SubPageContent
+            namespace={namespace}
+            organizationPage={organizationPage}
+            subpage={subpage}
+            subpageTitleVariant={
+              parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
+            }
+          />
+        </Box>
+      }
+    >
+      <SubPageBottomSlices
+        namespace={namespace}
+        organizationPage={organizationPage}
+        subpage={subpage}
+      />
     </OrganizationWrapper>
   )
 }
