@@ -72,10 +72,12 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          yarn --version
+          ls -l "$(which node)"
 
       - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
@@ -87,7 +89,6 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            **/node_modules
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -103,7 +104,6 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            **/node_modules
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
 
@@ -119,13 +119,6 @@ jobs:
           path: |
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          yarn --version
-          ls -l "$(which node)"
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
@@ -257,17 +250,11 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -322,17 +309,11 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -369,17 +350,11 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -437,17 +412,11 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -494,17 +463,11 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -547,17 +510,11 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
