@@ -64,7 +64,7 @@ jobs:
   prepare:
     name: Prepare
     if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
+    runs-on: 'arc-runners'
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
@@ -128,6 +128,7 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+
       - name: Prepare arguments
         if: ${{ !!github.event.localrun }}
         id: args
