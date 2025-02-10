@@ -370,6 +370,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+
       - run: |
           corepack enable
 
@@ -445,8 +446,7 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/checkout@v4
-        if: ${{ github.ref == 'ref/heads/main' }}
+
       - run: |
           corepack enable
 
@@ -464,7 +464,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
           restore-keys: ${{ runner.os }}-
 
@@ -487,18 +487,15 @@ jobs:
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
 
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      # - name: NX format:check
+      #   if: ${{ github.ref == 'ref/heads/main' }}
+      #   run: ./scripts/ci/20_check-formatting.sh "check"
 
-      - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
-      # - name: NX format:write
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: |
-      #     ./scripts/ci/20_check-formatting.sh "write"
-      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+      - name: NX format:write
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          ./scripts/ci/20_check-formatting.sh "write"
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
     needs:
