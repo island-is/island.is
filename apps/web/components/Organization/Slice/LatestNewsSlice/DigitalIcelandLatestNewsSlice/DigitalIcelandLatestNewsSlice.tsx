@@ -12,6 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstitutionVacancies/IcelandicGovernmentInstitutionVacanciesList'
@@ -132,7 +133,9 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
                 date={news.date}
                 description={news.intro}
                 imageSrc={news.image?.url ?? ''}
-                tags={news.genericTags.map((tag) => tag.title)}
+                tags={news.genericTags
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .map((tag) => tag.title)}
                 title={news.title}
               />
             ))}
