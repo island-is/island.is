@@ -187,15 +187,6 @@ jobs:
         with:
           registry: ${{ steps.aws-creds.outputs.registry }}
 
-      - name: Debug AWS user/login
-        if: ${{ steps.aws-creds.outputs.conclusion != 'success' }}
-        env:
-          aws_output: ${{ toJson(steps.aws-creds.outputs) }}
-        run: |
-          echo "DEBUG AWS user/login"
-          echo "aws-creds.outputs: $aws_output"
-          aws sts get-caller-identity | xargs echo "STS caller identity:"
-
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
