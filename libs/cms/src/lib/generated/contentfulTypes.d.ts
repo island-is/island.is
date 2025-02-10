@@ -3176,8 +3176,8 @@ export interface IOrganizationFields {
   /** Kennitala */
   kennitala?: string | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
+  /** News Bottom Slices */
+  newsBottomSlices?: IEmailSignup[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
