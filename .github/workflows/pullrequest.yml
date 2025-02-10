@@ -45,9 +45,10 @@ jobs:
 
     outputs:
       SHOULD_RUN_NX: ${{steps.prepare-nx.outputs.SHOULD_RUN_NX}}
+      NX_RUN_ALL: ${{steps.prepare-nx.outputs.NX_RUN_ALL}}
       NX_RUNNERS: ${{ steps.prepare-nx.outputs.NX_RUNNERS }}
       NX_ASSIGNMENT_RULES: ${{ steps.prepare-nx.outputs.NX_ASSIGNMENT_RULES }}
-      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
+      NX_TARGETS: ${{ steps.prepare-nx.outputs.NX_TARGETS }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -205,6 +206,8 @@ jobs:
       assignmentrules: ${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
       NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      NX_TARGETS: ${{ needs.prepare.outputs.NX_TARGETS }}
+      NX_RUN_ALL: ${{ needs.prepare.outputs.NX_RUN_ALL }} 
     steps:
       - name: Nothing to do?
         if: ${{ env.should-run == 'false' }}
@@ -248,6 +251,12 @@ jobs:
             echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment-rules.yml
             cat .github/assignment-rules.yml
             yarn nx-cloud start-ci-run --distribute-on="manual" --assignment-rules=".github/assignment-rules.yml"
+            # Run NX
+            if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
+              yarn nx run-many --target=${{ env.NX_TARGETS }} --all
+            else
+              yarn nx affected --target=${{ env.NX_TARGETS }} --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
+            fi
   nx-runners:
     needs:
       - prepare

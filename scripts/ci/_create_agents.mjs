@@ -1,6 +1,5 @@
 // @ts-check
-import { writeFileSync } from 'fs'
-import { getAffectedProjectsMultipleTargetArray } from './_get_affected_projects.mjs'
+import { getAffectedProjectsMultipleTargetArray, getShowAllProjects } from './_get_affected_projects.mjs'
 import { setOutput } from '@actions/core'
 import json2yaml from 'js-yaml'
 const _TARGETS = ['test', 'build']
@@ -47,6 +46,8 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     ],
   }
 
+  const targets = [..._TARGETS, ..._PROBLEMATIC_TARGETS];
+
   const defaultRunners = Array(normalAgentCount)
     .fill(0)
     .map((_e, i) => `default-runner-${i + 1}`)
@@ -70,9 +71,11 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     setOutput('SHOULD_RUN_NX', 'true')
     setOutput('NX_RUNNERS', JSON.stringify(runners))
     setOutput('NX_ASSIGNMENT_RULES', assignmentRules)
+    setOutput('NX_TARGETS', targets.join(','));
+    setOutput('NX_RUN_ALL', getShowAllProjects() ? 'true' : 'false');
   } else {
-    setOutput('SHOULD_RUN_NX', 'false')
-    setOutput('NX_RUNNERS', '[]')
+    setOutput('SHOULD_RUN_NX', 'false');
+    setOutput('NX_RUNNERS', '[]');
   }
 }
 

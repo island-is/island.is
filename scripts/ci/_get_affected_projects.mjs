@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 const IS_CI = process.env.CI === 'true'
 const DEFAULT_TARGET = 'lint'
 
-const getShowAllProjects = () => {
+export const getShowAllProjects = () => {
   return (
     (process.env.BRANCH &&
       process.env.AFFECTED_ALL &&
