@@ -39,7 +39,11 @@ export type OutputPersistentVolumeClaim = {
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
-
+export type DockerImage = {
+  name?: string
+  repository?: string
+  tag?: string
+}
 export interface HelmService {
   replicaCount?: {
     min: number
@@ -130,9 +134,7 @@ export interface HelmService {
   secrets: ContainerSecrets
   enabled: boolean
   namespace: string
-  image: {
-    repository: string
-  }
+  image: DockerImage
   extra?: Hash
   files?: string[]
 }
