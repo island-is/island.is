@@ -1013,6 +1013,21 @@ export const slices = gql`
     }
   }
 
+  fragment OrganizationParentSubpageListFields on OrganizationParentSubpageList {
+    __typename
+    id
+    title
+    pageLinks {
+      label
+      href
+      thumbnailImageHref
+    }
+    seeMoreLink {
+      text
+      url
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -1060,6 +1075,7 @@ export const slices = gql`
     ...LatestGenericListItemsFields
     ...FeaturedLinksFields
     ...GrantCardsListFields
+    ...OrganizationParentSubpageListFields
   }
 
   fragment AllSlices on Slice {
