@@ -157,7 +157,7 @@ export const NewsArticle: React.FC<
         <Box paddingTop={3}>
           <Stack space={3}>
             {bottomSlices.map((slice) => (
-              <EmailSignup slice={slice} />
+              <EmailSignup key={slice.id} slice={slice} />
             ))}
           </Stack>
         </Box>
