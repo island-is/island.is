@@ -46,9 +46,9 @@ export const serviceSetup = (services: {
         prod: 'master',
       },
       HIDDEN_FEATURES: {
-        dev: '',
-        staging: '',
-        prod: '',
+        dev: 'OFFENSE_ENDPOINTS',
+        staging: 'OFFENSE_ENDPOINTS',
+        prod: 'OFFENSE_ENDPOINTS',
       },
     })
     .secrets({

@@ -5,11 +5,14 @@ import { Box, Select } from '@island.is/island-ui/core'
 import {
   offenseSubstances,
   Substance as SubstanceEnum,
-  SubstanceMap,
 } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ReactSelectOption,
+  TempIndictmentCount as TIndictmentCount,
+} from '@island.is/judicial-system-web/src/types'
+import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substance } from '../Substance/Substance'
 import { substances as strings } from './Substances.strings'
@@ -17,85 +20,100 @@ import { substanceEnum } from './SubstancesEnum.strings'
 import * as styles from './Substances.css'
 
 interface Props {
-  offense: Offense
-  onChange: (offense: Offense, substances: SubstanceMap) => void
+  indictmentCount: TIndictmentCount
+  indictmentCountOffenseType: IndictmentCountOffense
+  onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-export const Substances: FC<Props> = ({ offense, onChange }) => {
+export const DeprecatedSubstances: FC<Props> = ({
+  indictmentCount,
+  indictmentCountOffenseType,
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
-  const { offense: offenseType, substances } = offense
 
   const getSubstanceOptions = useMemo(
     () =>
-      Object.values(offenseSubstances[offenseType]).map((sub) => ({
-        value: sub,
-        label: formatMessage(substanceEnum[sub]),
-        disabled: substances ? substances[sub] !== undefined : false,
-      })),
-    [formatMessage, substances, offenseType],
+      Object.values(offenseSubstances[indictmentCountOffenseType]).map(
+        (sub) => ({
+          value: sub,
+          label: formatMessage(substanceEnum[sub]),
+          disabled: indictmentCount.substances
+            ? indictmentCount.substances[sub] !== undefined
+            : false,
+        }),
+      ),
+    [formatMessage, indictmentCount.substances, indictmentCountOffenseType],
   )
 
   const handleUpdateSubstanceAmount = (
     substanceId: SubstanceEnum,
     substanceAmount: string,
   ) => {
-    const updatedSubstances = {
-      ...substances,
+    const substances = {
+      ...indictmentCount.substances,
       [substanceId]: substanceAmount,
     }
-    onChange(offense, updatedSubstances)
+    onChange({ substances })
   }
 
   const handleDeleteSubstance = (substanceId: SubstanceEnum) => {
-    if (substances) {
-      delete substances[substanceId]
+    if (indictmentCount.substances) {
+      delete indictmentCount.substances[substanceId]
     }
-    onChange(offense, substances)
+    onChange({ substances: indictmentCount.substances })
   }
 
   return (
     <Box marginBottom={2}>
       <SectionHeading
         title={formatMessage(strings.substanceTitle, {
-          substanceType: offenseType,
+          substanceType: indictmentCountOffenseType,
         })}
         heading="h4"
         marginBottom={2}
       />
       <Box marginBottom={2}>
         <Select
-          name={`${offenseType}-offense-type`}
+          name={`${indictmentCountOffenseType}-offense-type`}
           options={getSubstanceOptions}
           label={formatMessage(strings.substanceLabel, {
-            substanceType: offenseType,
+            substanceType: indictmentCountOffenseType,
           })}
           placeholder={formatMessage(strings.substancePlaceholder, {
-            substanceType: offenseType,
+            substanceType: indictmentCountOffenseType,
           })}
           onChange={(selectedOption) => {
             const substance = (selectedOption as ReactSelectOption).value
 
-            const updatedSubstances = {
-              ...substances,
+            const substances = {
+              ...indictmentCount.substances,
               [substance]: '',
             }
-            onChange(offense, updatedSubstances)
+
+            onChange({ substances })
           }}
           value={null}
           required
         />
       </Box>
 
-      {substances && (
+      {indictmentCount.substances && (
         <div className={styles.gridRow}>
-          {(Object.keys(substances) as SubstanceEnum[])
-            .filter((s) => offenseSubstances[offenseType].includes(s))
+          {(Object.keys(indictmentCount.substances) as SubstanceEnum[])
+            .filter((s) =>
+              offenseSubstances[indictmentCountOffenseType].includes(s),
+            )
             .map((substance) => (
               <div key={substance}>
                 {
                   <Substance
                     substance={substance}
-                    amount={(substances && substances[substance]) || ''}
+                    amount={
+                      (indictmentCount.substances &&
+                        indictmentCount.substances[substance]) ||
+                      ''
+                    }
                     onUpdateAmount={handleUpdateSubstanceAmount}
                     onDelete={handleDeleteSubstance}
                   ></Substance>

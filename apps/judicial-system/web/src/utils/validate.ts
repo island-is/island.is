@@ -300,20 +300,37 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
-  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) =>
-    indictmentCount.deprecatedOffenses?.includes(
+  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
+    if (indictmentCount.offenses) {
+      return indictmentCount.offenses.some(
+        (o) => o.offense === IndictmentCountOffense.SPEEDING,
+      )
+        ? Boolean(indictmentCount.recordedSpeed) &&
+            Boolean(indictmentCount.speedLimit)
+        : true
+    }
+    return indictmentCount.deprecatedOffenses?.includes(
       IndictmentCountOffense.SPEEDING,
     )
       ? Boolean(indictmentCount.recordedSpeed) &&
-        Boolean(indictmentCount.speedLimit)
+          Boolean(indictmentCount.speedLimit)
       : true
+  }
 
-  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
-    Boolean(indictmentCount.policeCaseNumber) &&
-    Boolean(
+  const hasOffenses = (indictmentCount: IndictmentCount) => {
+    if (indictmentCount.offenses) {
+      return Boolean(
+        indictmentCount.offenses && indictmentCount.offenses?.length > 0,
+      )
+    }
+    return Boolean(
       indictmentCount.deprecatedOffenses &&
         indictmentCount.deprecatedOffenses?.length > 0,
-    ) &&
+    )
+  }
+  const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
+    Boolean(indictmentCount.policeCaseNumber) &&
+    hasOffenses(indictmentCount) &&
     Boolean(indictmentCount.vehicleRegistrationNumber) &&
     Boolean(indictmentCount.lawsBroken) &&
     Boolean(indictmentCount.incidentDescription) &&
