@@ -134,6 +134,42 @@ export class InternalSubpoenaController {
   )
   @Post(
     `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a service certificate to the court',
+  })
+  deliverServiceCertificateToCourt(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering service certificate pdf to court for subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverServiceCertificateToCourt(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
     }/:defendantId/:subpoenaId`,
   )
