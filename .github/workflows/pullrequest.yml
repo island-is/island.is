@@ -86,10 +86,10 @@ jobs:
           path: |
             **/node_modules
             .yarn/install-state.gz
-          key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          key: cc2-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            cachetest-${{ runner.os }}-node_modules
-            cachetest-${{ runner.os }}-
+            cc2-${{ runner.os }}-node_modules
+            cc2-${{ runner.os }}-
 
       - run: |
           yarn install --immutable
@@ -101,7 +101,7 @@ jobs:
           path: |
             **/node_modules
             .yarn/install-state.gz
-          key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          key: cc2-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           
       - name: Prepare generated files
         run: |
@@ -234,7 +234,7 @@ jobs:
           path: |
             **/node_modules
             .yarn/install-state.gz
-          key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          key: cc2-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
       - if: ${{ env.should-run == 'true' }}
         run: |
           yarn install --immutable
@@ -304,7 +304,7 @@ jobs:
           path: |
             **/node_modules
             .yarn/install-state.gz
-          key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          key: cc2-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
       - if: ${{ env.should-run == 'true' }}
         run: |
           yarn install --immutable
@@ -324,7 +324,7 @@ jobs:
           echo "Running on agent ${{ matrix.agents }}"
           echo "Running on agent ${{ env.NX_AGENT_NAME }}"
           echo "Running on agent ${{ env.NX_AGENT_LAUNCH_TEMPLATE }}"
-          yarn nx nx-cloud start-agent
+          yarn nx-cloud start-agent
           
   linting-workspace:
     needs:
@@ -336,11 +336,6 @@ jobs:
 
       - run: |
           corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
 
       - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
