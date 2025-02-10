@@ -30,6 +30,7 @@ export const OrganizationParentSubpageListSlice = ({
         <Box className={styles.serviceCardContainer}>
           {slice.pageLinks.map((page) => (
             <IconTitleCard
+              key={page.id}
               heading={page.label}
               href={page.href}
               imgSrc={page.thumbnailImageHref ?? ''}
