@@ -41,7 +41,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         prod: 'https://innskra.island.is/api',
       },
       USER_PROFILE_CLIENT_URL: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
         staging:
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',

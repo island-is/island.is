@@ -60,7 +60,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
       SessionsApiSettings__BaseAddress: {
-        dev: 'http://web-services-sessions.services-sessions.svc.cluster.local',
+        dev: 'https://sessions-api.internal.dev01.devland.is',
         staging:
           'http://web-services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
@@ -71,7 +71,7 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       MeUserProfileApiSettings__BaseAddress: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
         staging:
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
