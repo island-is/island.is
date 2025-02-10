@@ -87,6 +87,7 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            **/node_modules
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -265,6 +266,7 @@ jobs:
         id: restore-cache
         with:
           path: |
+            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -329,6 +331,7 @@ jobs:
         id: restore-cache
         with:
           path: |
+            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -375,6 +378,7 @@ jobs:
         id: restore-cache
         with:
           path: |
+            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -442,6 +446,7 @@ jobs:
         id: restore-cache
         with:
           path: |
+            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -498,6 +503,7 @@ jobs:
         id: restore-cache
         with:
           path: |
+            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
@@ -550,6 +556,7 @@ jobs:
         id: restore-cache
         with:
           path: |
+            **/node_modules
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
