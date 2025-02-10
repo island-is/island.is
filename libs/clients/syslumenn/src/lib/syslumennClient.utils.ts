@@ -438,7 +438,7 @@ export const mapEstateRegistrant = (
   return {
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
-    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'Yes' : 'No',
+    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'yes' : 'no',
     districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -536,7 +536,7 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
       ? new Date(syslaData.danardagur)
       : new Date(),
     districtCommissionerHasWill: Boolean(syslaData?.erfdaskra),
-    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'Yes' : 'No',
+    knowledgeOfOtherWills: syslaData.erfdakraVitneskja ? 'yes' : 'no',
     marriageSettlement: syslaData.kaupmali ?? false,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',

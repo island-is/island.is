@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { EstateTypes, YES, NO } from './constants'
+import { EstateTypes } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
@@ -9,6 +9,7 @@ import {
   isValidPhoneNumber,
   isValidString,
 } from './utils'
+import { NO, YES } from '@island.is/application/core'
 
 const asset = z
   .object({
@@ -120,8 +121,8 @@ export const estateSchema = z.object({
           .optional(),
       })
       .refine(
-        ({ foreignCitizenship, nationalId }) => {
-          return !foreignCitizenship?.length
+        ({ foreignCitizenship, nationalId, enabled }) => {
+          return enabled && foreignCitizenship?.[0] === NO
             ? nationalId && kennitala.isValid(nationalId)
             : true
         },
@@ -168,6 +169,14 @@ export const estateSchema = z.object({
         },
         {
           path: ['advocate', 'email'],
+        },
+      )
+      .refine(
+        ({ foreignCitizenship, dateOfBirth, enabled }) => {
+          return enabled && foreignCitizenship?.[0] === YES ? dateOfBirth : true
+        },
+        {
+          path: ['dateOfBirth'],
         },
       )
       .array()

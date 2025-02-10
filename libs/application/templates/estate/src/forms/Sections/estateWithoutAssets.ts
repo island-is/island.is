@@ -4,9 +4,11 @@ import {
   buildMultiField,
   buildRadioField,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { JA, YES, NEI, NO } from '../../lib/constants'
+import { JA, NEI } from '../../lib/constants'
 
 export const estateWithoutAssets = buildSection({
   id: 'estateAssetsExist',
