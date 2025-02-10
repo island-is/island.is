@@ -86,7 +86,7 @@ export const Item = ({
   } = item
 
   const span = getSpan(component, width)
-  let Component: any
+  let Component: React.ComponentType<any>
   if (component === 'selectAsync') {
     Component = AsyncSelectFormField
   } else {
