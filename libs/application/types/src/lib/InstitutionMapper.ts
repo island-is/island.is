@@ -209,17 +209,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,

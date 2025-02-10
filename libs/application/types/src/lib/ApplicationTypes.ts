@@ -39,9 +39,7 @@ export enum ApplicationTypes {
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
   CHANGE_CO_OWNER_OF_VEHICLE = 'ChangeCoOwnerOfVehicle',
   CHANGE_OPERATOR_OF_VEHICLE = 'ChangeOperatorOfVehicle',
-  DIGITAL_TACHOGRAPH_COMPANY_CARD = 'DigitalTachographCompanyCard',
   DIGITAL_TACHOGRAPH_DRIVERS_CARD = 'DigitalTachographDriversCard',
-  DIGITAL_TACHOGRAPH_WORKSHOP_CARD = 'DigitalTachographWorkshopCard',
   LICENSE_PLATE_RENEWAL = 'LicensePlateRenewal',
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
@@ -242,17 +240,9 @@ export const ApplicationConfigurations = {
     slug: 'umradamadur-okutaekis',
     translation: 'ta.cov.application',
   },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
-    slug: 'okuritakort-fyrirtaekjakort',
-    translation: 'ta.dtcc.application',
-  },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
     slug: 'okuritakort-okumannskort',
     translation: 'ta.dtdc.application',
-  },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
-    slug: 'okuritakort-verkstaediskort',
-    translation: 'ta.dtwc.application',
   },
   [ApplicationTypes.LICENSE_PLATE_RENEWAL]: {
     slug: 'endurnyja-einkanumer',
