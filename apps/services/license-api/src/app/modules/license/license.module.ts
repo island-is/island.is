@@ -7,6 +7,8 @@ import {
   UserLicensesController,
 } from './license.controller'
 import { LicenseService } from './license.service'
+import { LicenseServiceV1 } from './licenseV1.service'
+import { LicenseServiceV2 } from './licenseV2.service'
 
 @Module({
   imports: [LicenseUpdateClientModule, LicenseCommonModule],
@@ -17,6 +19,8 @@ import { LicenseService } from './license.service'
       useValue: logger,
     },
     LicenseService,
+    LicenseServiceV1,
+    LicenseServiceV2,
   ],
 })
 export class LicenseModule {}

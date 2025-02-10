@@ -1,31 +1,33 @@
 import { AdrAndMachineLicenseClientModule } from '@island.is/clients/adr-and-machine-license'
-import {
-  SmartSolutionsApiClientModule,
-  SmartSolutionsConfig,
-} from '@island.is/clients/smartsolutions'
 import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { MachineLicenseClient } from './machineLicenseClient.service'
 import { MachineDigitalLicenseClientConfig } from './machineLicenseClient.config'
+import { SmartSolutionsApiClientModule } from '@island.is/clients/smartsolutions'
+import { SmartSolutionsModule } from '@island.is/clients/smart-solutions-v2'
+import { PkPassService } from '../../helpers/pkPassService/pkPass.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
+    FeatureFlagModule,
     AdrAndMachineLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof MachineDigitalLicenseClientConfig>,
-      ) => {
-        const smartConfig: SmartSolutionsConfig = {
-          apiKey: config.apiKey,
-          apiUrl: config.apiUrl,
-          passTemplateId: config.passTemplateId,
-        }
-        return smartConfig
-      },
+      ) => config,
+      inject: [MachineDigitalLicenseClientConfig.KEY],
+    }),
+    SmartSolutionsModule.registerAsync({
+      useFactory: (
+        config: ConfigType<typeof MachineDigitalLicenseClientConfig>,
+      ) => ({
+        config,
+      }),
       inject: [MachineDigitalLicenseClientConfig.KEY],
     }),
   ],
-  providers: [MachineLicenseClient],
+  providers: [PkPassService, MachineLicenseClient],
   exports: [MachineLicenseClient],
 })
 export class MachineClientModule {}
