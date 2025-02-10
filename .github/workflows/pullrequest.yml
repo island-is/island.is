@@ -54,6 +54,8 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+      YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
@@ -263,7 +265,7 @@ jobs:
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -322,16 +324,12 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -372,16 +370,12 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -443,16 +437,12 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -503,16 +493,12 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
@@ -559,16 +545,12 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
           restore-keys: |
