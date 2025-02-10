@@ -79,6 +79,8 @@ const CaseDocuments: FC<Props> = ({
 
   const { user } = useContext(UserContext)
 
+  const isRulingRequired = !workingCase.isCompletedWithoutRuling
+
   return (
     <Box marginBottom={10}>
       <Text as="h3" variant="h3" marginBottom={1}>
@@ -139,28 +141,31 @@ const CaseDocuments: FC<Props> = ({
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType={'ruling'}
+            disabled={!isRulingRequired}
           >
-            <Box display="flex" flexDirection="row">
-              {workingCase.rulingSignatureDate ? (
-                <SignedDocument
-                  signatory={workingCase.judge?.name}
-                  signingDate={workingCase.rulingSignatureDate}
-                />
-              ) : user?.id === workingCase.judge?.id ? (
-                <Button
-                  size="small"
-                  loading={isRequestingRulingSignature}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    requestRulingSignature()
-                  }}
-                >
-                  {formatMessage(m.signButton)}
-                </Button>
-              ) : (
-                <Text>{formatMessage(m.unsignedDocument)}</Text>
-              )}
-            </Box>
+            {isRulingRequired && (
+              <Box display="flex" flexDirection="row">
+                {workingCase.rulingSignatureDate ? (
+                  <SignedDocument
+                    signatory={workingCase.judge?.name}
+                    signingDate={workingCase.rulingSignatureDate}
+                  />
+                ) : user?.id === workingCase.judge?.id ? (
+                  <Button
+                    size="small"
+                    loading={isRequestingRulingSignature}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      requestRulingSignature()
+                    }}
+                  >
+                    {formatMessage(m.signButton)}
+                  </Button>
+                ) : (
+                  <Text>{formatMessage(m.unsignedDocument)}</Text>
+                )}
+              </Box>
+            )}
           </PdfButton>
         )}
       </Box>

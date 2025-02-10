@@ -63,6 +63,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { FjarsyslaRikisinsFooter } from './Themes/FjarsyslaRikisinsTheme'
@@ -155,10 +156,7 @@ export const getThemeConfig = (
   const usingDefaultHeader: boolean =
     organizationNamespace['usingDefaultHeader'] ?? false
 
-  const footerVersion: LayoutProps['footerVersion'] =
-    theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
-      ? 'organization'
-      : 'default'
+  const footerVersion: LayoutProps['footerVersion'] = 'organization'
 
   if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
     return { themeConfig: { footerVersion } }
@@ -795,6 +793,20 @@ export const OrganizationFooter: React.FC<
           />
         )
       }
+      break
+    case 'stafraent-island':
+    case 'digital-iceland':
+      OrganizationFooterComponent = (
+        <GridContainer>
+          <DigitalIcelandFooter
+            illustrationSrc={n(
+              'digitalIcelandFooterIllustrationSrc',
+              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
+            )}
+            links={n('digitalIcelandFooterLinks', [])}
+          />
+        </GridContainer>
+      )
       break
     default: {
       const footerItems = organization?.footerItems ?? []

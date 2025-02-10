@@ -23,6 +23,7 @@ query Cases {
       caseId
       nationalId
       name
+      gender
       noNationalId
       defenderChoice
       verdictViewDate
@@ -110,5 +111,6 @@ query Cases {
     indictmentCompletedDate
     courtSessionType
     caseSentToCourtDate
+    isCompletedWithoutRuling
   }
 }

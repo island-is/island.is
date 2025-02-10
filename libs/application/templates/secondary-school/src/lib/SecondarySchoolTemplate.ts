@@ -45,6 +45,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
@@ -71,6 +72,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.SECONDARY_SCHOOL,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.SecondarySchool.translation,
@@ -210,7 +212,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -271,7 +273,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
