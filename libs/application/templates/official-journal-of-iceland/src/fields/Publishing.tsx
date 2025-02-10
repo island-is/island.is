@@ -7,6 +7,8 @@ import { useApplication } from '../hooks/useUpdateApplication'
 import {
   AlertMessage,
   Box,
+  Icon,
+  Inline,
   Select,
   SkeletonLoader,
   Tag,
@@ -15,10 +17,14 @@ import { useCategories } from '../hooks/useCategories'
 import { MINIMUM_WEEKDAYS, OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
-import { addWeekdays, getWeekendDates } from '../lib/utils'
+import { addWeekdays, getFastTrack, getWeekendDates } from '../lib/utils'
+import { useState } from 'react'
+import { baseEntitySchema } from '../lib/dataSchema'
+import { z } from 'zod'
 
 export const Publishing = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
+  const [isUpdatingCategory, setIsUpdatingCategory] = useState(false)
 
   const { application: currentApplication, updateApplication } = useApplication(
     {
@@ -31,55 +37,6 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     error: categoryError,
     loading: categoryLoading,
   } = useCategories()
-
-  if (categoryLoading) {
-    return <SkeletonLoader height={OJOI_INPUT_HEIGHT} repeat={2} />
-  }
-
-  if (categoryError) {
-    return (
-      <AlertMessage
-        type="error"
-        message={f(error.fetchFailedTitle)}
-        title={f(error.fetchFailedTitle)}
-      />
-    )
-  }
-
-  const onCategoryChange = (value?: string) => {
-    if (!value) {
-      return
-    }
-
-    const currentAnswers = structuredClone(currentApplication.answers)
-    const selectedCategories = currentAnswers.advert?.categories || []
-
-    const newCategories = selectedCategories.includes(value)
-      ? selectedCategories.filter((c) => c !== value)
-      : [...selectedCategories, value]
-
-    const updatedAnswers = set(
-      currentAnswers,
-      InputFields.advert.categories,
-      newCategories,
-    )
-
-    updateApplication(updatedAnswers)
-  }
-
-  const defaultCategory = {
-    label: f(publishing.inputs.contentCategories.placeholder),
-    value: '',
-  }
-
-  const mappedCategories = categories?.map((c) => ({
-    label: c.title,
-    value: c.id,
-  }))
-
-  const selectedCategories = categories?.filter((c) =>
-    currentApplication.answers.advert?.categories?.includes(c.id),
-  )
 
   const today = new Date()
   const maxEndDate = addYears(today, 5)
@@ -94,6 +51,42 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
         .split('T')[0]
     : addWeekdays(today, MINIMUM_WEEKDAYS).toISOString().split('T')[0]
 
+  const [fastTrack, setFastTrack] = useState(
+    getFastTrack(new Date(defaultDate)).fastTrack,
+  )
+
+  const onCategoryChange = (value?: z.infer<typeof baseEntitySchema>) => {
+    setIsUpdatingCategory(true)
+    if (!value) {
+      setIsUpdatingCategory(false)
+      return
+    }
+
+    const currentAnswers = structuredClone(currentApplication.answers)
+    const selectedCategories = currentAnswers.advert?.categories || []
+
+    const newCategories = selectedCategories.find((cat) => cat.id === value.id)
+      ? selectedCategories.filter((c) => c.id !== value.id)
+      : [...selectedCategories, value]
+
+    const updatedAnswers = set(
+      currentAnswers,
+      InputFields.advert.categories,
+      newCategories,
+    )
+
+    updateApplication(updatedAnswers, () => {
+      setIsUpdatingCategory(false)
+    })
+  }
+
+  const mappedCategories = categories?.map((c) => ({
+    label: c.title,
+    value: c,
+  }))
+
+  const selectedCategories = currentApplication.answers.advert?.categories
+
   return (
     <FormGroup title={f(publishing.headings.date)}>
       <Box width="half">
@@ -106,31 +99,61 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
           minDate={minDate}
           maxDate={maxEndDate}
           defaultValue={defaultDate}
+          onChange={(date) => {
+            const fastTrack = getFastTrack(new Date(date)).fastTrack
+            setFastTrack(fastTrack)
+          }}
         />
       </Box>
       <Box width="half">
-        <Select
-          size="sm"
-          label={f(publishing.inputs.contentCategories.label)}
-          backgroundColor="blue"
-          defaultValue={defaultCategory}
-          options={mappedCategories}
-          onChange={(opt) => onCategoryChange(opt?.value)}
-        />
-        <Box
-          marginTop={1}
-          display="flex"
-          rowGap={1}
-          columnGap={1}
-          flexWrap="wrap"
-        >
-          {selectedCategories?.map((c) => (
-            <Tag onClick={() => onCategoryChange(c.id)} outlined key={c.id}>
-              {c.title}
-            </Tag>
-          ))}
-        </Box>
+        {categoryLoading ? (
+          <SkeletonLoader repeat={2} height={OJOI_INPUT_HEIGHT} space={2} />
+        ) : categoryError ? (
+          <AlertMessage
+            type="error"
+            message={f(error.fetchFailedTitle)}
+            title={f(error.fetchFailedTitle)}
+          />
+        ) : (
+          <>
+            <Select
+              size="sm"
+              label={f(publishing.inputs.contentCategories.label)}
+              backgroundColor="blue"
+              options={mappedCategories}
+              defaultValue={mappedCategories?.[0]}
+              onChange={(opt) => onCategoryChange(opt?.value)}
+              filterConfig={{
+                matchFrom: 'start',
+              }}
+            />
+            <Box marginTop={1}>
+              <Inline space={1} flexWrap="wrap">
+                {selectedCategories?.map((c) => (
+                  <Tag
+                    disabled={isUpdatingCategory}
+                    onClick={() => onCategoryChange(c)}
+                    outlined
+                    key={c.id}
+                  >
+                    <Box display="flex" alignItems="center">
+                      {c.title}
+                      <Icon icon="close" size="small" />
+                    </Box>
+                  </Tag>
+                ))}
+              </Inline>
+            </Box>
+          </>
+        )}
       </Box>
+      {fastTrack && (
+        <AlertMessage
+          type="info"
+          title={f(publishing.headings.fastTrack)}
+          message={f(publishing.headings.fastTrackMessage)}
+        />
+      )}
     </FormGroup>
   )
 }

@@ -21,16 +21,20 @@ import { Query } from '@island.is/api/schema'
 import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
 import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  formatTextWithLocale,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { error as errorMsg } from '../../lib/error'
+import { Locale } from '@island.is/shared/types'
 
 export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
   errors,
 }) => {
-  const { formatMessage } = useLocale()
-  const { id, title } = field
+  const { formatMessage, lang: locale } = useLocale()
+  const { id, title = '' } = field
   const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })
@@ -42,7 +46,12 @@ export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     error = getValueViaPath(errors, `properties.${id.split('.').pop() ?? ''}`)
   }
 
-  const repeaterTitle = formatText(title, application, formatMessage)
+  const repeaterTitle = formatTextWithLocale(
+    title,
+    application,
+    locale as Locale,
+    formatMessage,
+  )
   const handleAddProperty = () =>
     append({
       propertyNumber: '',

@@ -108,6 +108,9 @@ export const getCartesianGridComponents = ({
       type={slice.flipAxis ? 'number' : 'category'}
       height={customStyleConfig.xAxis?.height ?? DEFAULT_XAXIS_HEIGHT}
       tick={customStyleConfig.xAxis?.tick ?? undefined}
+      allowDecimals={
+        slice.reduceAndRoundValue === true && slice.flipAxis ? false : true
+      }
     />,
     <YAxis
       axisLine={{ stroke: theme.color.blue200 }}
@@ -126,6 +129,9 @@ export const getCartesianGridComponents = ({
       domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
       tick={customStyleConfig.yAxis?.tick ?? undefined}
       ticks={customStyleConfig.yAxis?.ticks ?? undefined}
+      allowDecimals={
+        slice.reduceAndRoundValue === true && !slice.flipAxis ? false : true
+      }
     >
       {slice.yAxisLabel && (
         <Label

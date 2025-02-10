@@ -39,6 +39,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
@@ -106,6 +107,9 @@ const Conclusion: FC = () => {
     useState<CourtSessionType>()
   const [selectedDecision, setSelectedDecision] =
     useState<CaseIndictmentRulingDecision>()
+  const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
+  const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
+    useState<string>()
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
@@ -119,6 +123,7 @@ const Conclusion: FC = () => {
         courtDate: null,
         postponedIndefinitelyExplanation: null,
         indictmentRulingDecision: null,
+        mergeCaseId: null,
         force: true,
       }
 
@@ -137,11 +142,15 @@ const Conclusion: FC = () => {
           break
         case IndictmentDecision.COMPLETING:
           update.indictmentRulingDecision = selectedDecision
-          update.mergeCaseId =
-            selectedDecision === CaseIndictmentRulingDecision.MERGE
-              ? workingCase.mergeCase?.id
-              : null
+          if (selectedDecision === CaseIndictmentRulingDecision.MERGE) {
+            if (mergeCaseNumber) {
+              update.mergeCaseNumber = mergeCaseNumber
+            }
 
+            if (workingCase.mergeCase?.id) {
+              update.mergeCaseId = workingCase.mergeCase?.id
+            }
+          }
           break
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
@@ -165,8 +174,9 @@ const Conclusion: FC = () => {
       )
     },
     [
-      courtDate?.date,
-      courtDate?.location,
+      courtDate.date,
+      courtDate.location,
+      mergeCaseNumber,
       postponementReason,
       selectedAction,
       selectedCourtSessionType,
@@ -187,13 +197,13 @@ const Conclusion: FC = () => {
         if (workingCase.postponedIndefinitelyExplanation) {
           setPostponementReason(workingCase.postponedIndefinitelyExplanation)
         }
-        setSelectedAction(IndictmentDecision.SCHEDULING)
+
         break
       case IndictmentDecision.SCHEDULING:
         if (workingCase.courtSessionType) {
           setSelectedCourtSessionType(workingCase.courtSessionType)
         }
-        setSelectedAction(IndictmentDecision.SCHEDULING)
+
         break
       case IndictmentDecision.COMPLETING:
         if (workingCase.indictmentRulingDecision) {
@@ -202,7 +212,7 @@ const Conclusion: FC = () => {
         setSelectedAction(IndictmentDecision.COMPLETING)
         break
       default:
-        setSelectedAction(IndictmentDecision.SCHEDULING)
+        return
     }
   }, [
     workingCase.courtSessionType,
@@ -210,6 +220,29 @@ const Conclusion: FC = () => {
     workingCase.indictmentRulingDecision,
     workingCase.postponedIndefinitelyExplanation,
   ])
+
+  useEffect(() => {
+    if (
+      workingCase.indictmentDecision &&
+      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING
+    ) {
+      setSelectedAction(IndictmentDecision.SCHEDULING)
+    }
+  }, [workingCase.indictmentDecision])
+
+  useEffect(() => {
+    if (workingCase.mergeCaseNumber) {
+      setMergeCaseNumber(workingCase.mergeCaseNumber)
+    }
+  }, [workingCase.mergeCaseNumber])
+
+  const handleMergeCaseNumberBlur = (value: string) => {
+    const validation = validate([[value, ['S-case-number']]])
+
+    setMergeCaseNumberErrorMessage(
+      validation.isValid ? undefined : validation.errorMessage,
+    )
+  }
 
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
@@ -251,7 +284,10 @@ const Conclusion: FC = () => {
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
                   file.status === 'done',
-              ) && workingCase.mergeCase?.id,
+              ) &&
+                (workingCase.mergeCase?.id ||
+                  validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
+                    .isValid),
             )
           default:
             return false
@@ -400,101 +436,132 @@ const Conclusion: FC = () => {
           </Box>
         )}
         {selectedAction === IndictmentDecision.COMPLETING && (
-          <Box marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.completingTitle)}
-              required
-            />
-            <BlueBox>
-              <Box marginBottom={2}>
-                <RadioButton
-                  id="decision-ruling"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.RULING
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.RULING)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.ruling)}
-                />
-              </Box>
-              <Box marginBottom={2}>
-                <RadioButton
-                  id="decision-fine"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.FINE
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.FINE)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.fine)}
-                />
-              </Box>
-              <Box marginBottom={2}>
-                <RadioButton
-                  id="decision-dismissal"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.DISMISSAL
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.DISMISSAL)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.dismissal)}
-                />
-              </Box>
-              <Box marginBottom={2}>
-                <RadioButton
-                  id="decision-merge"
-                  name="decision"
-                  checked={
-                    selectedDecision === CaseIndictmentRulingDecision.MERGE
-                  }
-                  onChange={() => {
-                    setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.merge)}
-                />
-              </Box>
-              <RadioButton
-                id="decision-cancellation"
-                name="decision"
-                checked={
-                  selectedDecision === CaseIndictmentRulingDecision.CANCELLATION
-                }
-                onChange={() => {
-                  setSelectedDecision(CaseIndictmentRulingDecision.CANCELLATION)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.cancellation)}
-              />
-            </BlueBox>
-          </Box>
-        )}
-        {selectedDecision &&
-          selectedDecision === CaseIndictmentRulingDecision.MERGE && (
+          <>
             <Box marginBottom={5}>
               <SectionHeading
-                title={formatMessage(strings.connectedCaseNumbersTitle)}
+                title={formatMessage(strings.completingTitle)}
                 required
               />
-              <SelectConnectedCase
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-ruling"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.RULING
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.RULING)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.ruling)}
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-fine"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.FINE
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.fine)}
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-dismissal"
+                    name="decision"
+                    checked={
+                      selectedDecision ===
+                      CaseIndictmentRulingDecision.DISMISSAL
+                    }
+                    onChange={() => {
+                      setSelectedDecision(
+                        CaseIndictmentRulingDecision.DISMISSAL,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.dismissal)}
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    id="decision-merge"
+                    name="decision"
+                    checked={
+                      selectedDecision === CaseIndictmentRulingDecision.MERGE
+                    }
+                    onChange={() => {
+                      setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.merge)}
+                  />
+                </Box>
+                <RadioButton
+                  id="decision-cancellation"
+                  name="decision"
+                  checked={
+                    selectedDecision ===
+                    CaseIndictmentRulingDecision.CANCELLATION
+                  }
+                  onChange={() => {
+                    setSelectedDecision(
+                      CaseIndictmentRulingDecision.CANCELLATION,
+                    )
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.cancellation)}
+                />
+              </BlueBox>
             </Box>
-          )}
+            {selectedDecision === CaseIndictmentRulingDecision.MERGE && (
+              <Box marginBottom={5}>
+                <SectionHeading
+                  title={formatMessage(strings.connectedCaseNumbersTitle)}
+                  required
+                />
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <SelectConnectedCase
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      mergeCaseNumber={mergeCaseNumber}
+                    />
+                  </Box>
+                  <Input
+                    name="mergeCaseNumber"
+                    label={formatMessage(strings.mergeCaseNumberLabel)}
+                    autoComplete="off"
+                    value={mergeCaseNumber}
+                    placeholder={formatMessage(
+                      strings.mergeCaseNumberPlaceholder,
+                    )}
+                    onChange={(evt) => {
+                      setMergeCaseNumberErrorMessage(undefined)
+                      setMergeCaseNumber(evt.target.value)
+                    }}
+                    onBlur={(evt) => {
+                      handleMergeCaseNumberBlur(evt.target.value)
+                    }}
+                    hasError={Boolean(mergeCaseNumberErrorMessage)}
+                    errorMessage={mergeCaseNumberErrorMessage}
+                    disabled={Boolean(workingCase.mergeCase)}
+                  />
+                </BlueBox>
+              </Box>
+            )}
+          </>
+        )}
         {selectedAction && (
           <Box
             component="section"

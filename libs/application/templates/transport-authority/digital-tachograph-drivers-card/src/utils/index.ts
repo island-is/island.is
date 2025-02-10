@@ -1,29 +1,35 @@
 import { DigitalTachographDriversCard } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { Application, ExternalData } from '@island.is/application/types'
+import {
+  Application,
+  BasicChargeItem,
+  ExternalData,
+} from '@island.is/application/types'
 import { getValueViaPath, YES } from '@island.is/application/core'
 
-export const getChargeItemCodes = (application: Application): Array<string> => {
+export const getChargeItems = (
+  application: Application,
+): Array<BasicChargeItem> => {
   const answers = application.answers as DigitalTachographDriversCard
-  return getChargeItemCodeWithAnswers(answers)
+  return getChargeItemsWithAnswers(answers)
 }
 
-export const getChargeItemCodeWithAnswers = (
+export const getChargeItemsWithAnswers = (
   answers: DigitalTachographDriversCard,
-): Array<string> => {
-  const result: Array<string> = []
+): Array<BasicChargeItem> => {
+  const result: Array<BasicChargeItem> = []
 
   const deliveryMethodIsSend =
     answers.cardDelivery?.deliveryMethodIsSend === YES
 
   if (!deliveryMethodIsSend) {
-    result.push(
-      ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD.toString(),
-    )
+    result.push({
+      code: ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD.toString(),
+    })
   } else {
-    result.push(
-      ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD_WITH_SHIPPING.toString(),
-    )
+    result.push({
+      code: ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_DRIVERS_CARD_WITH_SHIPPING.toString(),
+    })
   }
 
   return result

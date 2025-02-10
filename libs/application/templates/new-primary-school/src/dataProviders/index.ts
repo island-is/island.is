@@ -3,14 +3,8 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 
-export const GetTypesApi = defineTemplateApi({
-  action: 'getTypes',
-  externalDataId: 'types',
-  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-})
-
-export const GetHealthApi = defineTemplateApi({
-  action: 'getHealth',
-  externalDataId: 'health',
+export const ChildrenApi = defineTemplateApi({
+  action: 'getChildren',
+  externalDataId: 'children',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })

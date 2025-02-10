@@ -17,11 +17,6 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
     })
     .env({
       BASEPATH: '/stjornbord',
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
@@ -42,7 +37,6 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
           staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
@@ -54,3 +48,4 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
         paths: ['/stjornbord'],
       },
     })
+    .grantNamespaces('nginx-ingress-external', 'identity-server')

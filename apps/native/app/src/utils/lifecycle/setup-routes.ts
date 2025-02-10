@@ -150,6 +150,29 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/health-overview', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.HealthOverviewScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/vaccinations', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.VaccinationsScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
@@ -172,6 +195,26 @@ export function setupRoutes() {
           {
             component: {
               name: ComponentRegistry.PasskeyScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/update-app', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        options: {
+          modal: {
+            swipeToDismiss: false,
+          },
+        },
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.UpdateAppScreen,
               passProps,
             },
           },

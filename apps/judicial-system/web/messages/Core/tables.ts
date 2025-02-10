@@ -57,10 +57,10 @@ export const tables = defineMessages({
     description:
       'Notaður sem texti sem segir til um hvort mál sé framlenging í málalista.',
   },
-  created: {
-    id: 'judicial.system.core:tables.created',
-    defaultMessage: 'Stofnað',
-    description: 'Notaður sem titill fyrir stofnað dálk í lista yfir mál.',
+  sentToCourtDate: {
+    id: 'judicial.system.core:tables.sent_to_court_date',
+    defaultMessage: 'Útgáfudagur',
+    description: 'Notaður sem titill fyrir Útgáfudagur dálk í lista yfir mál.',
   },
   hearingArrangementDate: {
     id: 'judicial.system.core:tables.hearing_arrangement_date',
@@ -113,6 +113,11 @@ export const tables = defineMessages({
     defaultMessage: 'Dómstóll',
     description: 'Notaður sem titill fyrir dómstóll dálk í lista yfir mál.',
   },
+  punishmentType: {
+    id: 'judicial.system.core:tables.punishment_type',
+    defaultMessage: 'Refsitegund',
+    description: 'Notaður sem titill fyrir refsitegund dálk í lista yfir mál.',
+  },
   sentencingDate: {
     id: 'judicial.system.core:tables.sentencing_date',
     defaultMessage: 'Dómsuppkvaðning',
@@ -133,5 +138,16 @@ export const tables = defineMessages({
     id: 'judicial.system.core:tables.sent',
     defaultMessage: 'Sent',
     description: 'Notaður sem titill fyrir sent dálk í lista yfir mál.',
+  },
+  fineTag: {
+    id: 'judicial.system.core:tables.fine_tag',
+    defaultMessage: 'Viðurlagaákvörðun',
+    description:
+      'Notaðir sem texti í tagg þegar mál endar sem viðurlagaákvörðun',
+  },
+  rulingTag: {
+    id: 'judicial.system.core:tables.ruling_tag',
+    defaultMessage: 'Dómur',
+    description: 'Notaðir sem texti í tagg þegar mál endar sem dómur',
   },
 })

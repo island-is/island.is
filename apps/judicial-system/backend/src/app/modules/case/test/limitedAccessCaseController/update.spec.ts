@@ -4,7 +4,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
-  NotificationType,
+  CaseNotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -111,7 +111,7 @@ describe('LimitedAccessCaseController - Update', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.APPEAL_STATEMENT },
+          body: { type: CaseNotificationType.APPEAL_STATEMENT },
         },
       ])
     })

@@ -316,6 +316,7 @@ export class FixtureFactory {
       case AuthDelegationType.Custom:
         return AuthDelegationProvider.Custom
       case AuthDelegationType.LegalGuardian:
+      case AuthDelegationType.LegalGuardianMinor:
         return AuthDelegationProvider.NationalRegistry
       case AuthDelegationType.ProcurationHolder:
         return AuthDelegationProvider.CompanyRegistry
@@ -376,6 +377,7 @@ export class FixtureFactory {
     domainName,
     fromName,
     scopes = [],
+    referenceId,
   }: CreateCustomDelegation): Promise<Delegation> {
     const delegation = await this.get(Delegation).create({
       id: faker.datatype.uuid(),
@@ -384,6 +386,7 @@ export class FixtureFactory {
       domainName,
       fromDisplayName: fromName ?? faker.name.findName(),
       toName: faker.name.findName(),
+      referenceId: referenceId ?? undefined,
     })
 
     delegation.delegationScopes = await Promise.all(

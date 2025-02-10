@@ -5,9 +5,13 @@ import { lazy } from 'react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { delegationAdminLoader } from './screens/DelegationAdminDetails/DelegationAdmin.loader'
 import { FindDelegationForNationalId } from './screens/Root.action'
+import { createDelegationAction } from './screens/CreateDelegation/CreateDelegation.action'
 
 const DelegationAdminScreen = lazy(() =>
   import('./screens/DelegationAdminDetails/DelegationAdmin'),
+)
+const CreateDelegationScreen = lazy(() =>
+  import('./screens/CreateDelegation/CreateDelegation'),
 )
 const RootScreen = lazy(() => import('./screens/Root'))
 
@@ -36,6 +40,12 @@ export const delegationAdminModule: PortalModule = {
         path: DelegationAdminPaths.DelegationAdmin,
         element: <DelegationAdminScreen />,
         loader: delegationAdminLoader(props),
+      },
+      {
+        name: m.createNewDelegation,
+        path: DelegationAdminPaths.CreateDelegation,
+        element: <CreateDelegationScreen />,
+        action: createDelegationAction(props),
       },
     ]
   },

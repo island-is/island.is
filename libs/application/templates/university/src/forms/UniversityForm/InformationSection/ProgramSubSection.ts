@@ -3,6 +3,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildCustomField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
@@ -20,6 +21,10 @@ export const ProgramSubSection = buildSubSection({
           id: `${Routes.PROGRAMINFORMATION}.selectTitle`,
           title: information.labels.programSelection.selectProgramTitle,
           titleVariant: 'h5',
+        }),
+        buildHiddenInput({
+          id: `${Routes.MODEOFDELIVERYINFORMATION}.chosenMode`,
+          doesNotRequireAnswer: true,
         }),
         buildCustomField({
           id: `${Routes.PROGRAMINFORMATION}`,

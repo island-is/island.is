@@ -25,10 +25,10 @@ import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license
 import { EducationModule } from '@island.is/api/domains/education'
 import { EducationV2Module } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
-import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
   ZenterSignupConfig,
+  CampaignMonitorSignupConfig,
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
@@ -89,7 +89,6 @@ import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
-import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
@@ -145,6 +144,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
+import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
 
 import {
   ConfigModule,
@@ -152,6 +152,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
+import { CodeOwnerInterceptor } from '@island.is/nest/core'
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
@@ -173,6 +174,7 @@ import { FormSystemModule } from '@island.is/api/domains/form-system'
 import { HealthDirectorateModule } from '@island.is/api/domains/health-directorate'
 
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
+
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
@@ -188,7 +190,9 @@ import {
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
+import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system-sp'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
@@ -197,6 +201,9 @@ import { GradeClientConfig } from '@island.is/clients/mms/grade'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 
 const environment = getConfig
 
@@ -206,6 +213,10 @@ const environment = getConfig
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CodeOwnerInterceptor,
     },
   ],
   imports: [
@@ -281,7 +292,6 @@ const environment = getConfig
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
     DisabilityLicenseModule,
-    ElectronicRegistrationsModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
@@ -328,8 +338,10 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    LawAndOrderModule,
     UmbodsmadurSkuldaraModule,
     HealthDirectorateModule,
+    SecondarySchoolApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -370,7 +382,6 @@ const environment = getConfig
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
-        ElectronicRegistrationsClientConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         SocialInsuranceAdministrationClientConfig,
@@ -387,6 +398,7 @@ const environment = getConfig
         DocumentClientConfig,
         DocumentsClientV2Config,
         ZenterSignupConfig,
+        CampaignMonitorSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
@@ -419,13 +431,17 @@ const environment = getConfig
         LicenseConfig,
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
+        JudicialSystemSPClientConfig,
         FriggClientConfig,
         GradeClientConfig,
         VmstClientConfig,
-        HealthInsuranceV2ClientConfig,
         CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
+        WorkAccidentClientConfig,
+        ZendeskServiceConfig,
         emailModuleConfig,
+        SecondarySchoolClientConfig,
       ],
     }),
   ],

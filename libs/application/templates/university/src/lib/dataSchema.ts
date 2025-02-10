@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
 import { ApplicationTypes, ModeOfDelivery } from '@island.is/university-gateway'
+import { EMPTY_MODE_OF_DELIVERY } from './constants'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -119,16 +120,17 @@ const EducationDetailsSchema = z.object({
   thirdLevelDetails: RepeateableEducationDetailsSchema.optional(),
 })
 
-const otherDocumentsSchema = z.object({
+export const OtherDocumentsSchema = z.object({
   attachments: z.array(FileDocumentSchema).optional(),
 })
 
-const modeOfDeliverInformationSchema = z.object({
+const ModeOfDeliverInformationSchema = z.object({
   chosenMode: z.enum([
     ModeOfDelivery.ONLINE,
     ModeOfDelivery.ON_SITE,
     ModeOfDelivery.MIXED,
     ModeOfDelivery.REMOTE,
+    EMPTY_MODE_OF_DELIVERY,
   ]),
   location: z.string().optional(),
 })
@@ -137,7 +139,7 @@ export const UniversitySchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
   programInformation: ProgramSchema,
-  modeOfDeliveryInformation: modeOfDeliverInformationSchema,
+  modeOfDeliveryInformation: ModeOfDeliverInformationSchema,
   educationOptions: z
     .enum([
       ApplicationTypes.DIPLOMA,
@@ -147,7 +149,7 @@ export const UniversitySchema = z.object({
     ])
     .optional(),
   educationDetails: EducationDetailsSchema,
-  otherDocuments: z.array(otherDocumentsSchema).optional(),
+  otherDocuments: z.array(OtherDocumentsSchema).optional(),
 })
 
 export type UniversityApplication = z.TypeOf<typeof UniversitySchema>

@@ -4,8 +4,8 @@ import {
   Schema,
   Section,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import { FormScreen } from '../types'
-import { User } from '@island.is/shared/types'
 
 export interface ApplicationUIState {
   application: Application
@@ -16,7 +16,7 @@ export interface ApplicationUIState {
   screens: FormScreen[]
   sections: Section[]
   historyReason: 'initial' | 'navigate' | 'pop'
-  user: User | null
+  user: BffUser | null
 }
 
 export enum ActionTypes {

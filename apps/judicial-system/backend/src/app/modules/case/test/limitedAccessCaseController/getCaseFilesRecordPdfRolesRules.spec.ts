@@ -1,4 +1,4 @@
-import { defenderRule } from '../../../../guards'
+import { defenderGeneratedPdfRule } from '../../guards/rolesRules'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get case files record pdf rules', () => {
@@ -14,6 +14,6 @@ describe('LimitedAccessCaseController - Get case files record pdf rules', () => 
 
   it('should give permission to one roles', () => {
     expect(rules).toHaveLength(1)
-    expect(rules).toContain(defenderRule)
+    expect(rules).toContain(defenderGeneratedPdfRule)
   })
 })

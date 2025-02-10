@@ -27,6 +27,9 @@ import { RegulationDraftTypes } from '../types'
 import ConfirmModal from './ConfirmModal/ConfirmModal'
 import { ReferenceText } from './impacts/ReferenceText'
 import { DraftChangeForm, DraftImpactForm } from '../state/types'
+import { makeDraftAppendixForm } from '../state/makeFields'
+import { hasAnyChange } from '../utils/formatAmendingUtils'
+import { usePristineRegulations } from '../utils/hooks'
 
 const updateText =
   'Ósamræmi er í texta stofnreglugerðar og breytingareglugerðar. Texti breytingareglugerðar þarf að samræmast breytingum sem gerðar hafa verið á stofnreglugerð, eigi breytingarnar að færast inn með réttum hætti.'
@@ -36,17 +39,18 @@ export const EditBasics = () => {
   const { draft, actions, ministries } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
-  const [hasUpdated, setHasUpdated] = useState<boolean>(false)
+  const [hasUpdatedAppendix, setHasUpdatedAppendix] = useState<boolean>(false)
   const [references, setReferences] = useState<DraftImpactForm[]>()
   const [isModalVisible, setIsModalVisible] = useState<boolean>(true)
   const [hasConfirmed, setHasConfirmed] = useState<boolean>(false)
   const [hasSeenModal, setHasSeenModal] = useState<boolean>(false)
+  const { removePristineRegulation, isPristineRegulation } =
+    usePristineRegulations()
 
   const { text, appendixes } = draft
   const { updateState } = actions
 
-  const startTextExpanded =
-    !text.value || appendixes.length === 0 || !!text.error
+  const startTextExpanded = true
 
   const regType =
     draft.type.value &&
@@ -118,6 +122,38 @@ export const EditBasics = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
 
+  const updateAppendixes = () => {
+    // FORMAT AMENDING REGULATION APPENDIXES
+    const impactArray = Object.values(draft.impacts).flat()
+    const amendingArray = impactArray.filter(
+      (item) => item.type === 'amend',
+    ) as DraftChangeForm[]
+
+    if (appendixes?.length > 0) {
+      appendixes.splice(0, appendixes.length)
+    }
+
+    amendingArray.map((item) => {
+      item.appendixes.map((apx, idx) => {
+        if (apx.diff?.value && hasAnyChange(apx.diff.value)) {
+          const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
+          const defaultText = apx.text.value
+          if (
+            appendixes?.length === 0 ||
+            !appendixes.some((ap) => ap.text.value === defaultText)
+          ) {
+            appendixes.push(
+              makeDraftAppendixForm(
+                { title: defaultTitle, text: defaultText },
+                String(appendixes.length),
+              ),
+            )
+          }
+        }
+      })
+    })
+  }
+
   const updateEditorText = () => {
     const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
 
@@ -125,9 +161,18 @@ export const EditBasics = () => {
     updateState('title', formatAmendingRegTitle(draft))
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
-    setHasUpdated(true)
+
+    // Update appendixes
+    if (!hasUpdatedAppendix) {
+      updateAppendixes()
+      setHasUpdatedAppendix(true)
+    }
+
+    // Remove from session storage
+    removePristineRegulation(draft.id)
   }
 
+  const shouldShowModal = isPristineRegulation(draft.id)
   return (
     <>
       <Box marginBottom={3}>
@@ -228,7 +273,7 @@ export const EditBasics = () => {
                     name: (references[0].name as RegName) ?? '',
                     appendixes: references[0].appendixes.map((apx) => ({
                       title: apx.title.value,
-                      text: apx.text.value,
+                      text: apx.diff?.value,
                     })),
                   } as Regulation
                 }
@@ -286,7 +331,7 @@ export const EditBasics = () => {
             )}
           </AccordionItem>
         </Accordion>
-        {!hasUpdated ? (
+        {shouldShowModal ? (
           <ConfirmModal
             isVisible={
               draft.type.value === RegulationDraftTypes.amending &&

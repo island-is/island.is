@@ -1,4 +1,8 @@
-import { ModeOfDelivery, ApplicationTypes } from '@island.is/university-gateway'
+import {
+  ModeOfDelivery,
+  ApplicationTypes,
+  FieldType,
+} from '@island.is/university-gateway'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsArray,
@@ -106,17 +110,10 @@ class CreateApplicationFileDto {
 
   @IsString()
   @ApiProperty({
-    description: 'File type',
-    example: 'profskirteini',
-  })
-  fileType!: string
-
-  @IsString()
-  @ApiProperty({
     description: 'A public download link to a s3 file',
     example: '',
   })
-  url!: string
+  fileUrl!: string
 }
 
 class CreateApplicationEducationDto {
@@ -210,12 +207,21 @@ class CreateApplicationWorkExperienceDto {
 }
 
 class CreateApplicationExtraFieldsDto {
+  @IsEnum(FieldType)
+  @ApiProperty({
+    description:
+      'What type of field should be displayed in the application form',
+    example: FieldType.UPLOAD,
+    enum: FieldType,
+  })
+  fieldType!: FieldType
+
   @IsString()
   @ApiProperty({
-    description: 'Field key',
+    description: 'External key for field',
     example: 'cv_field',
   })
-  key!: string
+  externalKey!: string
 
   @IsObject()
   @ApiProperty({

@@ -1,6 +1,10 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../../infra/src/dsl/types/input-types'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -42,12 +46,31 @@ export const serviceSetup =
           prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
         },
         COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+        SYSLUMENN_HOST: {
+          dev: 'https://api.syslumenn.is/staging',
+          staging: 'https://api.syslumenn.is/staging',
+          prod: 'https://api.syslumenn.is/api',
+        },
+        SYSLUMENN_TIMEOUT: '3000',
+        ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+          prod: 'digitaliceland',
+          staging: 'digitaliceland',
+          dev: 'digitaliceland',
+        },
       })
       .secrets({
+        ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+        ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
+        ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
+          '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+        SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+        SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
+        NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+          '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       })
-      .xroad(Base, Client, RskProcuring)
+      .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
       .ingress({
         primary: {
           host: {
@@ -58,15 +81,6 @@ export const serviceSetup =
           },
           paths: ['/'],
           public: false,
-        },
-        demo: {
-          host: {
-            dev: 'personal-representative-xrd.dev01.devland.is',
-            staging: MissingSetting,
-            prod: MissingSetting,
-          },
-          paths: ['/'],
-          public: true,
         },
       })
       .readiness('/health/check')

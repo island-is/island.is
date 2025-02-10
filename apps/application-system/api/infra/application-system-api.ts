@@ -1,4 +1,10 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  Context,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   ChargeFjsV2,
@@ -36,85 +42,103 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateOrganDonation,
+  WorkAccidents,
+  NationalRegistryB2C,
+  SecondarySchool,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
+/**
+ * Make sure that each feature deployment has its own bull prefix. Since each
+ * feature deployment has its own database and applications, we don't want bull
+ * jobs to jump between environments.
+ */
+const APPLICATION_SYSTEM_BULL_PREFIX = (ctx: Context) =>
+  ctx.featureDeploymentName
+    ? `application_system_api_bull_module.${ctx.featureDeploymentName}`
+    : 'application_system_api_bull_module'
+
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
-export const workerSetup =
-  (): ServiceBuilder<'application-system-api-worker'> =>
-    service('application-system-api-worker')
-      .namespace(namespace)
-      .image('application-system-api')
-      .db()
-      .serviceAccount('application-system-api-worker')
-      .redis()
-      .env({
-        IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
-        IDENTITY_SERVER_ISSUER_URL: {
-          dev: 'https://identity-server.dev01.devland.is',
-          staging: 'https://identity-server.staging01.devland.is',
-          prod: 'https://innskra.island.is',
-        },
-        XROAD_CHARGE_FJS_V2_PATH: {
-          dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-          staging: 'IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2',
-          prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
-        },
-        APPLICATION_ATTACHMENT_BUCKET: {
-          dev: 'island-is-dev-storage-application-system',
-          staging: 'island-is-staging-storage-application-system',
-          prod: 'island-is-prod-storage-application-system',
-        },
-        FILE_SERVICE_PRESIGN_BUCKET: {
-          dev: 'island-is-dev-fs-presign-bucket',
-          staging: 'island-is-staging-fs-presign-bucket',
-          prod: 'island-is-prod-fs-presign-bucket',
-        },
-        FILE_STORAGE_UPLOAD_BUCKET: {
-          dev: 'island-is-dev-upload-api',
-          staging: 'island-is-staging-upload-api',
-          prod: 'island-is-prod-upload-api',
-        },
-        CLIENT_LOCATION_ORIGIN: {
-          dev: 'https://beta.dev01.devland.is/umsoknir',
-          staging: 'https://beta.staging01.devland.is/umsoknir',
-          prod: 'https://island.is/umsoknir',
-          local: 'http://localhost:4200/umsoknir',
-        },
-      })
-      .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
-      .secrets({
-        IDENTITY_SERVER_CLIENT_SECRET:
-          '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
-        SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
-        SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
-        SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
-        DRIVING_LICENSE_BOOK_XROAD_PATH:
-          '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
-        DRIVING_LICENSE_BOOK_USERNAME:
-          '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
-        DRIVING_LICENSE_BOOK_PASSWORD:
-          '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
-        DOKOBIT_ACCESS_TOKEN:
-          '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
-        DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
-        ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
-        DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
-        DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
-      })
-      .args('main.js', '--job', 'worker')
-      .command('node')
-      .extraAttributes({
-        dev: { schedule: '*/30 * * * *' },
-        staging: { schedule: '*/30 * * * *' },
-        prod: { schedule: '*/30 * * * *' },
-      })
-      .resources({
-        limits: { cpu: '400m', memory: '768Mi' },
-        requests: { cpu: '150m', memory: '384Mi' },
-      })
+export const workerSetup = (services: {
+  userNotificationService: ServiceBuilder<'services-user-notification'>
+}): ServiceBuilder<'application-system-api-worker'> =>
+  service('application-system-api-worker')
+    .namespace(namespace)
+    .image('application-system-api')
+    .db()
+    .serviceAccount('application-system-api-worker')
+    .redis()
+    .codeOwner(CodeOwners.NordaApplications)
+    .env({
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      XROAD_CHARGE_FJS_V2_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+        staging: 'IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2',
+        prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+      },
+      APPLICATION_ATTACHMENT_BUCKET: {
+        dev: 'island-is-dev-storage-application-system',
+        staging: 'island-is-staging-storage-application-system',
+        prod: 'island-is-prod-storage-application-system',
+      },
+      FILE_SERVICE_PRESIGN_BUCKET: {
+        dev: 'island-is-dev-fs-presign-bucket',
+        staging: 'island-is-staging-fs-presign-bucket',
+        prod: 'island-is-prod-fs-presign-bucket',
+      },
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
+      CLIENT_LOCATION_ORIGIN: {
+        dev: 'https://beta.dev01.devland.is/umsoknir',
+        staging: 'https://beta.staging01.devland.is/umsoknir',
+        prod: 'https://island.is/umsoknir',
+        local: 'http://localhost:4200/umsoknir',
+      },
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
+      ),
+      APPLICATION_SYSTEM_BULL_PREFIX,
+    })
+    .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
+    .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
+      SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
+      SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+      DRIVING_LICENSE_BOOK_XROAD_PATH:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+      DRIVING_LICENSE_BOOK_USERNAME:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
+      DRIVING_LICENSE_BOOK_PASSWORD:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
+      DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
+      DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
+      ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+      DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
+      DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+    })
+    .args('main.js', '--job', 'worker')
+    .command('node')
+    .extraAttributes({
+      dev: { schedule: '*/30 * * * *' },
+      staging: { schedule: '*/30 * * * *' },
+      prod: { schedule: '*/30 * * * *' },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '768Mi' },
+      requests: { cpu: '150m', memory: '384Mi' },
+    })
 
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
@@ -122,12 +146,14 @@ export const serviceSetup = (services: {
   skilavottordWs: ServiceBuilder<'skilavottord-ws'>
   // The user profile service is named service-portal-api in infra setup
   servicePortalApi: ServiceBuilder<'service-portal-api'>
+  userNotificationService: ServiceBuilder<'services-user-notification'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
     .serviceAccount(serviceAccount)
     .command('node')
     .redis()
+    .codeOwner(CodeOwners.NordaApplications)
     .args('main.js')
     .env({
       EMAIL_REGION: 'eu-west-1',
@@ -256,6 +282,10 @@ export const serviceSetup = (services: {
       SERVICE_USER_PROFILE_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
       ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
+      ),
+      APPLICATION_SYSTEM_BULL_PREFIX,
     })
     .xroad(
       Base,
@@ -263,6 +293,7 @@ export const serviceSetup = (services: {
       Labor,
       HealthInsurance,
       NationalRegistry,
+      NationalRegistryB2C,
       Payment,
       DrivingLicense,
       PaymentSchedule,
@@ -294,6 +325,8 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateVaccination,
       HealthDirectorateOrganDonation,
+      WorkAccidents,
+      SecondarySchool,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -333,14 +366,16 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .db()
     .migrations()
-    .liveness('/liveness')
-    .readiness('/liveness')
+    .liveness({ path: '/liveness', initialDelaySeconds: 20 })
+    .readiness({ path: '/liveness', initialDelaySeconds: 20 })
     .resources({
-      limits: { cpu: '400m', memory: '1024Mi' },
-      requests: { cpu: '75m', memory: '512Mi' },
+      limits: { cpu: '600m', memory: '1024Mi' },
+      requests: { cpu: '200m', memory: '512Mi' },
     })
     .replicaCount({
       default: 2,

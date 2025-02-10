@@ -108,6 +108,8 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
       Redaction__UserIdentifiers__Key:
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
+      Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID',
+      Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
@@ -120,13 +122,13 @@ export const serviceSetup = (services: {
         public: true,
         extraAnnotations: {
           dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
           staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
           prod: {
@@ -192,4 +194,10 @@ export const serviceSetup = (services: {
         },
       },
     })
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'user-notification',
+      'portals-admin',
+      'datadog',
+    )
 }

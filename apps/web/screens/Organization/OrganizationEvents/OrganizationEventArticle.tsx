@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -14,6 +13,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 import {
   EventLocation,
   EventTime,
@@ -41,8 +41,9 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import type { Screen } from '@island.is/web/types'
+import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -75,7 +76,7 @@ const EventItemImage = ({
         className={styles.image}
         src={
           eventItem.contentImage?.url
-            ? eventItem.contentImage?.url + '?w=774&fm=webp&q=80'
+            ? eventItem.contentImage?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
         alt=""
@@ -104,7 +105,7 @@ const EventInformationBox = ({
           <Icon color="blue400" icon="calendar" type="outline" />
           <Text>{formattedDate}</Text>
         </Box>
-        {event.time?.startTime && (
+        {Boolean(event.time?.startTime) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
             <Icon color="blue400" icon="time" type="outline" />
             <EventTime
@@ -133,19 +134,21 @@ const EventInformationBox = ({
   )
 }
 
-interface OrganizationEventArticleProps {
+export interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
   event: EventModel
   namespace: Record<string, string>
   locale: Locale
 }
 
-const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
-  organizationPage,
-  event,
-  namespace,
-  locale,
-}) => {
+type OrganizationEventArticleScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const OrganizationEventArticle: Screen<
+  OrganizationEventArticleProps,
+  OrganizationEventArticleScreenContext
+> = ({ organizationPage, event, namespace, locale }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -265,7 +268,11 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
                 renderComponent: {
                   Image: (slice: ImageSchema) => (
                     <Box className={styles.clearBoth}>
-                      <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                      <Image
+                        {...slice}
+                        thumbnail={slice.url + '?w=50'}
+                        url={slice.url + '?w=1000'}
+                      />
                     </Box>
                   ),
                 },
@@ -284,23 +291,31 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
     </>
   )
 }
-OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
+OrganizationEventArticle.getProps = async ({
+  apolloClient,
+  query,
+  locale,
+  organizationPage: _organizationPage,
+}) => {
+  const [organizationPageSlug, _, eventSlug] = query.slugs as string[]
   const [organizationPageResponse, eventResponse, namespace] =
     await Promise.all([
-      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-        query: GET_ORGANIZATION_PAGE_QUERY,
-        variables: {
-          input: {
-            slug: query.slug as string,
-            lang: locale as Locale,
-          },
-        },
-      }),
+      !_organizationPage
+        ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+            query: GET_ORGANIZATION_PAGE_QUERY,
+            variables: {
+              input: {
+                slug: organizationPageSlug,
+                lang: locale as Locale,
+              },
+            },
+          })
+        : { data: { getOrganizationPage: _organizationPage } },
       apolloClient.query<Query, QueryGetSingleEventArgs>({
         query: GET_SINGLE_EVENT_QUERY,
         variables: {
           input: {
-            slug: query.eventSlug as string,
+            slug: eventSlug,
             lang: locale as Locale,
           },
         },
@@ -341,11 +356,16 @@ OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage,
     event,
     namespace,
     locale: locale as Locale,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }

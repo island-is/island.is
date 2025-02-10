@@ -580,6 +580,10 @@ components:
           type: string
         otherParentBlocked:
           type: boolean
+        applicationRights:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationRights'
     PaymentInfo:
       type: object
       additionalProperties: false

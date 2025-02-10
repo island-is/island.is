@@ -2,8 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseNotificationType,
   CaseState,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -41,7 +41,7 @@ describe('NotificationController - Send ready for court notification', () => {
 
       await notificationController
         .sendCaseNotification(theCase.id, user, theCase, {
-          type: NotificationType.READY_FOR_COURT,
+          type: CaseNotificationType.READY_FOR_COURT,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -64,7 +64,7 @@ describe('NotificationController - Send ready for court notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.READY_FOR_COURT },
+          body: { type: CaseNotificationType.READY_FOR_COURT },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })
@@ -88,7 +88,7 @@ describe('NotificationController - Send ready for court notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.READY_FOR_COURT },
+          body: { type: CaseNotificationType.READY_FOR_COURT },
         },
         { type: MessageType.DELIVERY_TO_COURT_REQUEST, user, caseId },
       ])

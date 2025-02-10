@@ -4,9 +4,9 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Application, DefaultEvents, Field } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { removeCountryCode } from '@island.is/application/ui-components'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { getChildPassport, hasSecondGuardian } from '../../lib/utils'
@@ -17,6 +17,12 @@ export const childsPersonalInfo = buildMultiField({
   description: m.personalInfoSubtitle,
   condition: (answers) => (answers.passport as Passport)?.childPassport !== '',
   children: [
+    buildDescriptionField({
+      id: 'childsPersonalInfo.child',
+      title: m.child,
+      titleVariant: 'h3',
+      marginBottom: 'smallGutter',
+    }),
     buildTextField({
       id: 'childsPersonalInfo.name',
       title: m.name,
@@ -67,7 +73,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        formatKennitala(application.applicant),
+        formatNationalId(application.applicant),
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.email',

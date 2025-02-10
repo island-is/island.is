@@ -1,13 +1,14 @@
 import React from 'react'
+import capitalize from 'lodash/capitalize'
+
+import { Box, DialogPrompt, Tag, Tooltip } from '@island.is/island-ui/core'
 import {
+  AccessCategory,
   DataCategory,
   PricingCategory,
   TypeCategory,
-  AccessCategory,
 } from '@island.is/web/graphql/schema'
-import { Box, Tag, DialogPrompt, Tooltip } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import capitalize from 'lodash/capitalize'
 
 interface ServiceTagProps {
   category: string

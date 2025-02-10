@@ -6,6 +6,8 @@ export type NameIdTuple = [name: string, id: string]
 export const getFakeNationalId = () =>
   faker.helpers.replaceSymbolWithNumber('##########')
 
+export const getFakeCompanyNationalId = () => createNationalId('company')
+
 export const getFakeName = () =>
   faker.fake('{{name.firstName}} {{name.lastName}}')
 
@@ -18,4 +20,5 @@ export default {
   getFakeNationalId,
   getFakeName,
   getFakePerson,
+  getFakeCompanyNationalId,
 }

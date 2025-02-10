@@ -1,3 +1,7 @@
+import { useIntl } from 'react-intl'
+import { TouchableOpacity, View } from 'react-native'
+import { useTheme } from 'styled-components'
+
 import {
   Badge,
   badgeColorSchemes,
@@ -6,11 +10,7 @@ import {
   StatusCard,
   Typography,
   ViewPager,
-} from '@ui'
-import { useIntl } from 'react-intl'
-import { TouchableOpacity, View } from 'react-native'
-import { useTheme } from 'styled-components'
-
+} from '../../../ui'
 import { Application } from '../../../graphql/types/schema'
 import { getApplicationType } from '../utils/getApplicationType'
 import { getBadgeVariant } from '../utils/getBadgeVariant'
@@ -68,11 +68,15 @@ export const ApplicationsPreview = ({
             />
           }
           progress={
-            type !== 'incomplete'
-              ? undefined
-              : application.actionCard?.draftFinishedSteps ?? 0
+            type === 'incomplete'
+              ? application.actionCard?.draftFinishedSteps ?? 0
+              : undefined
           }
-          progressTotalSteps={application.actionCard?.draftTotalSteps ?? 0}
+          progressTotalSteps={
+            type === 'incomplete'
+              ? application.actionCard?.draftTotalSteps ?? 0
+              : undefined
+          }
           progressMessage={intl.formatMessage(
             {
               id: 'applicationStatusCard.draftProgress',
@@ -83,7 +87,7 @@ export const ApplicationsPreview = ({
             },
           )}
           progressContainerWidth={
-            slider ? screenWidth - theme.spacing[2] * 6 : undefined
+            slider && count > 1 ? screenWidth - theme.spacing[2] * 6 : undefined
           }
           description={
             type !== 'incomplete'

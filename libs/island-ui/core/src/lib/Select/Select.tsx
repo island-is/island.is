@@ -18,6 +18,7 @@ import {
   MultiValue,
   MultiValueLabel,
   customStyles,
+  ClearIndicator,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
 
@@ -116,6 +117,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
+          ClearIndicator,
         }}
         isClearable
         backspaceRemovesValue
@@ -177,6 +179,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
+          ClearIndicator,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

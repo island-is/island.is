@@ -25,16 +25,23 @@ test.describe('Endorsements', () => {
     const page = await context.newPage()
     await disableI18n(page)
 
-    // Navigate to the specified page
+    const timeout = 10000
+
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
 
-    // Check for ui things
-    await expect(
-      page.locator('button:text("Stofna nýjan lista")'),
-    ).toBeVisible()
-
-    // check for tabs
-    await expect(page.locator('button:text("Virkir listar")')).toBeVisible()
-    await expect(page.locator('button:text("Liðnir listar")')).toBeVisible()
+    await Promise.all([
+      expect(
+        page.getByRole('button', { name: 'Stofna nýjan lista' }),
+      ).toBeVisible({ timeout }),
+      expect(
+        page.getByRole('link', { name: 'Almennir undirskriftalistar' }),
+      ).toBeVisible({ timeout }),
+      expect(page.getByRole('tab', { name: 'Virkir listar' })).toBeVisible({
+        timeout,
+      }),
+      expect(page.getByRole('tab', { name: 'Liðnir listar' })).toBeVisible({
+        timeout,
+      }),
+    ])
   })
 })

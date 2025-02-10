@@ -1,6 +1,8 @@
-import { Field, FieldCard, FieldGroup, FieldLabel, FieldRow } from '@ui'
 import React from 'react'
 import { View } from 'react-native'
+import { useTheme } from 'styled-components'
+
+import { Field, FieldCard, FieldGroup, FieldLabel, FieldRow } from '../../../ui'
 import {
   GenericLicenseDataField,
   GenericLicenseType,
@@ -15,6 +17,7 @@ export const FieldRender = ({
   level?: number
   licenseType?: GenericLicenseType
 }) => {
+  const theme = useTheme()
   return (
     <>
       {(data || []).map(
@@ -45,7 +48,44 @@ export const FieldRender = ({
             case 'Group':
               if (label) {
                 return (
-                  <View key={key} style={{ marginTop: 24, paddingBottom: 4 }}>
+                  <View
+                    key={key}
+                    style={{
+                      marginTop: theme.spacing[3],
+                      paddingBottom: theme.spacing.smallGutter,
+                    }}
+                  >
+                    <FieldLabel>{label}</FieldLabel>
+                    {FieldRender({
+                      data: fields as GenericLicenseDataField[],
+                      level: 2,
+                      licenseType: licenseType,
+                    })}
+                  </View>
+                )
+              }
+              return (
+                <FieldGroup key={key}>
+                  <View>
+                    {FieldRender({
+                      data: fields as GenericLicenseDataField[],
+                      level: 2,
+                      licenseType: licenseType,
+                    })}
+                  </View>
+                </FieldGroup>
+              )
+
+            case 'Table':
+              if (label) {
+                return (
+                  <View
+                    key={key}
+                    style={{
+                      marginTop: theme.spacing[3],
+                      paddingBottom: theme.spacing.smallGutter,
+                    }}
+                  >
                     <FieldLabel>{label}</FieldLabel>
                     {FieldRender({
                       data: fields as GenericLicenseDataField[],

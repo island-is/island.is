@@ -1,15 +1,22 @@
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, FileUploadField } from '@island.is/application/types'
-import { Box } from '@island.is/island-ui/core'
+import { Box, UploadFile } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { FileUploadController } from '@island.is/application/ui-components'
+import { useFormContext } from 'react-hook-form'
+import set from 'lodash/set'
 
 interface Props extends FieldBaseProps {
   field: FileUploadField
 }
 
-export const FileUploadFormField = ({ application, field, error }: Props) => {
+export const FileUploadFormField = ({
+  application,
+  answerQuestions,
+  field,
+  error,
+}: Props) => {
   const {
     id,
     introduction,
@@ -21,12 +28,28 @@ export const FileUploadFormField = ({ application, field, error }: Props) => {
     maxSize,
     maxSizeErrorText,
     forImageUpload,
+    marginTop,
+    marginBottom,
   } = field
-
   const { formatMessage } = useLocale()
+  const { watch } = useFormContext()
+  const currentValue = watch(id)
+
+  const onFileRemoveWhenInAnswers = (fileToRemove: UploadFile) => {
+    const answers = structuredClone(application.answers)
+    const updatedAnswers = set(
+      answers,
+      id,
+      currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key),
+    )
+    answerQuestions?.({
+      ...application.answers,
+      ...updatedAnswers,
+    })
+  }
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {introduction && (
         <FieldDescription
           description={formatText(introduction, application, formatMessage)}
@@ -57,8 +80,9 @@ export const FileUploadFormField = ({ application, field, error }: Props) => {
             formatText(maxSizeErrorText, application, formatMessage)
           }
           forImageUpload={forImageUpload}
+          onRemove={onFileRemoveWhenInAnswers}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

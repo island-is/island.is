@@ -3,4 +3,3 @@ export { UniversityOfIcelandApplicationClientConfig } from './lib/universityOfIc
 export { UniversityOfIcelandApplicationClient } from './lib/universityOfIcelandClient.service'
 
 export { mapUglaPrograms } from './lib/utils/mapUglaPrograms'
-export { mapUglaCourses } from './lib/utils/mapUglaCourses'

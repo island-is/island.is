@@ -12,11 +12,13 @@ import { AccessDate } from '../../AccessDate/AccessDate'
 import { AccessList } from '../AccessList'
 import { AccessListLoading } from '../AccessListLoading'
 import { AuthScopeTree } from '../../access.types'
-import { AuthCustomDelegation } from '../../../../types/customDelegation'
 import { m } from '../../../../lib/messages'
 
 type AccessListContainerProps = {
-  delegation?: AuthCustomDelegation
+  delegation?: {
+    validTo?: string | null
+    scopes?: AuthDelegationScope[]
+  }
   scopeTree?: AuthScopeTree
   scopes?: Pick<AuthDelegationScope, 'name' | 'validTo' | 'displayName'>[]
   loading?: boolean

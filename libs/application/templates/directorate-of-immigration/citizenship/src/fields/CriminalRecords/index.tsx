@@ -3,14 +3,18 @@ import { Box } from '@island.is/island-ui/core'
 import { FileUploadController } from '@island.is/application/ui-components'
 import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FILE_TYPES_ALLOWED } from '../../shared'
 
-export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
+export const CriminalRecords: FC<FieldBaseProps> = ({
+  field,
+  application,
+  errors,
+}) => {
   const { setValue } = useFormContext()
 
   const answers = application.answers as Citizenship
@@ -43,6 +47,10 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
                 key={x.countryId}
                 application={application}
                 id={`${field.id}[${index}].attachment`}
+                error={
+                  errors &&
+                  getErrorViaPath(errors, `${field.id}[${index}].attachment`)
+                }
                 accept={FILE_TYPES_ALLOWED}
                 header={`${formatMessage(
                   supportingDocuments.labels.otherDocuments.criminalRecord,

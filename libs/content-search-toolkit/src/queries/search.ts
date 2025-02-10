@@ -35,6 +35,8 @@ export const searchQuery = (
   // Handle aliases since the search engine has not been configured to support organization aliases
   if (queryString.trim().toLowerCase() === 'tr') {
     queryString = 'Tryggingastofnun'
+  } else if (queryString.trim().toLowerCase() === 'vmst') {
+    queryString = 'Vinnumálastofnun'
   }
 
   // * wildcard support for internal clients - eg. used by island.is app
@@ -97,6 +99,19 @@ export const searchQuery = (
             fuzziness: 1,
             operator: 'and',
             type: 'best_fields',
+          },
+        })
+        should.push({
+          nested: {
+            path: 'tags',
+            query: {
+              bool: {
+                must: [
+                  { term: { 'tags.type': 'keyword' } },
+                  { match: { 'tags.value': queryString } },
+                ],
+              },
+            },
           },
         })
         break

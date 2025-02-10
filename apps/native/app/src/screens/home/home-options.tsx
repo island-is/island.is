@@ -1,10 +1,10 @@
-import { Heading, TableViewCell, Typography } from '@ui'
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Platform, SafeAreaView, ScrollView, Switch } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
 
+import { Heading, TableViewCell, Typography } from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import {
   preferencesStore,
@@ -66,7 +66,7 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
         <Typography>
           <FormattedMessage
             id="homeOptions.heading.subtitle"
-            defaultMessage="Hér er hægt að stilla hvað birtist á heimaskjá.s"
+            defaultMessage="Hér er hægt að stilla hvað birtist á heimaskjá."
           />
         </Typography>
       </SafeAreaView>

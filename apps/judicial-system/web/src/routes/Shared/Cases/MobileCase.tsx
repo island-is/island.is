@@ -7,6 +7,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
+  districtCourtAbbreviation,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
@@ -69,6 +70,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
   isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
+  const courtAbbreviation = districtCourtAbbreviation(theCase.court?.name)
 
   return (
     <CategoryCard
@@ -84,6 +86,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
           courtDate={theCase.courtDate}
           indictmentRulingDecision={theCase.indictmentRulingDecision}
           indictmentDecision={theCase.indictmentDecision}
+          defendants={theCase.defendants}
         />,
       ]}
       isLoading={isLoading}
@@ -91,10 +94,13 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
       <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
-      {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
-      <br />
+      {theCase.courtCaseNumber && (
+        <Text>{`${courtAbbreviation ? `${courtAbbreviation}: ` : ''}${
+          theCase.courtCaseNumber
+        }`}</Text>
+      )}
       {theCase.defendants && theCase.defendants.length > 0 && (
-        <>
+        <Box marginTop={3}>
           <Text>{theCase.defendants[0].name ?? ''}</Text>
           {theCase.defendants.length === 1 ? (
             <Text>
@@ -106,18 +112,17 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>
           )}
-        </>
+        </Box>
       )}
-      {theCase.created && (
-        <>
-          <br />
-          <Text variant="small" fontWeight={'medium'}>
-            {`${formatMessage(tables.created)} ${format(
-              parseISO(theCase.created),
+      {theCase.caseSentToCourtDate && (
+        <Box marginTop={3}>
+          <Text variant="small" fontWeight="medium">
+            {`${formatMessage(tables.sentToCourtDate)} ${format(
+              parseISO(theCase.caseSentToCourtDate),
               'd.M.y',
             )}`}
           </Text>
-        </>
+        </Box>
       )}
       <Box marginTop={1}>{children}</Box>
     </CategoryCard>

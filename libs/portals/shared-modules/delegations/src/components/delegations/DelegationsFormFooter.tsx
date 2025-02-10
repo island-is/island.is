@@ -20,6 +20,7 @@ type DelegationsFormFooterProps = {
   confirmIcon?: IconType
   confirmButtonColorScheme?: 'destructive' | 'default'
   showShadow?: boolean
+  divider?: boolean
   containerPaddingBottom?: ResponsiveSpace
 }
 
@@ -31,6 +32,7 @@ export const DelegationsFormFooter = ({
   confirmIcon,
   confirmButtonColorScheme = 'default',
   showShadow = true,
+  divider = true,
   containerPaddingBottom = 4,
   ...rest
 }: DelegationsFormFooterProps) => {
@@ -39,9 +41,11 @@ export const DelegationsFormFooter = ({
   return (
     <Box position="relative" className={styles.container}>
       <div className={styles.shadow({ showShadow })} />
-      <div className={styles.dividerContainer}>
-        <Divider />
-      </div>
+      {divider && (
+        <div className={styles.dividerContainer}>
+          <Divider />
+        </div>
+      )}
       <Box
         display="flex"
         alignItems="center"

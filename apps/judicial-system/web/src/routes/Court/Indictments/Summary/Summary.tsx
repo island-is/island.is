@@ -2,7 +2,7 @@ import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -19,11 +19,9 @@ import {
   PageTitle,
   RenderFiles,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Defendants,
-  Prosecutor,
-} from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import {
   CaseFile,
   CaseFileCategory,
@@ -43,6 +41,7 @@ const Summary: FC = () => {
     useContext(FormContext)
   const { transitionCase, isTransitioningCase } = useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const { user } = useContext(UserContext)
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -52,7 +51,7 @@ const Summary: FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleNextButtonClick = async () => {
+  const handleModalPrimaryButtonClick = async () => {
     const transitionSuccess = await transitionCase(
       workingCase.id,
       CaseTransition.COMPLETE,
@@ -63,7 +62,7 @@ const Summary: FC = () => {
       return
     }
 
-    setModalVisible('CONFIRM_INDICTMENT')
+    router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
 
   const [courtRecordFiles, rulingFiles] = (workingCase.caseFiles || []).reduce(
@@ -89,6 +88,13 @@ const Summary: FC = () => {
   const indictmentRulingTag = getIndictmentRulingDecisionTag(
     workingCase.indictmentRulingDecision,
   )
+
+  const canUserCompleteCase =
+    (workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.RULING &&
+      workingCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.DISMISSAL) ||
+    workingCase.judge?.id === user?.id
 
   return (
     <PageLayout
@@ -120,19 +126,23 @@ const Summary: FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={2}>
-          <Prosecutor workingCase={workingCase} />
-          <Defendants workingCase={workingCase} />
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
         </Box>
-        {workingCase.mergedCases &&
-          workingCase.mergedCases.length > 0 &&
-          workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
-            </Box>
-          ))}
+        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+          <Accordion>
+            {workingCase.mergedCases.map((mergedCase) => (
+              <Box marginBottom={5} key={mergedCase.id}>
+                <ConnectedCaseFilesAccordionItem
+                  connectedCaseParentId={workingCase.id}
+                  connectedCase={mergedCase}
+                />
+              </Box>
+            ))}
+          </Accordion>
+        )}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
         {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
           <Box marginBottom={5}>
@@ -140,18 +150,10 @@ const Summary: FC = () => {
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
             {rulingFiles.length > 0 && (
-              <RenderFiles
-                caseFiles={rulingFiles}
-                workingCase={workingCase}
-                onOpenFile={onOpen}
-              />
+              <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
             )}
             {courtRecordFiles.length > 0 && (
-              <RenderFiles
-                caseFiles={courtRecordFiles}
-                workingCase={workingCase}
-                onOpenFile={onOpen}
-              />
+              <RenderFiles caseFiles={courtRecordFiles} onOpenFile={onOpen} />
             )}
           </Box>
         )}
@@ -161,20 +163,30 @@ const Summary: FC = () => {
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={async () => await handleNextButtonClick()}
-          nextIsDisabled={isTransitioningCase}
+          onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          hideNextButton={!canUserCompleteCase}
+          infoBoxText={
+            canUserCompleteCase
+              ? ''
+              : formatMessage(strings.onlyAssignedJudgeCanComplete)
+          }
         />
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title={formatMessage(strings.completedCaseModalTitle)}
-          text={formatMessage(strings.completedCaseModalBody)}
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() =>
-            router.push(
-              `${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`,
-            )
+          title={formatMessage(strings.completeCaseModalTitle)}
+          text={formatMessage(strings.completeCaseModalBody)}
+          primaryButtonText={formatMessage(
+            strings.completeCaseModalPrimaryButton,
+          )}
+          onPrimaryButtonClick={async () =>
+            await handleModalPrimaryButtonClick()
           }
+          secondaryButtonText={formatMessage(
+            strings.completeCaseModalSecondaryButton,
+          )}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
+          isPrimaryButtonLoading={isTransitioningCase}
         />
       )}
     </PageLayout>

@@ -21,8 +21,10 @@ import {
   ParliamentaryCollectionApi,
   CandidateApi,
   ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -37,6 +39,7 @@ const createListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   featureFlag: Features.ParliamentaryElectionApplication,
   dataSchema,
@@ -81,6 +84,7 @@ const createListTemplate: ApplicationTemplate<
                 CandidateApi,
                 ParliamentaryCollectionApi,
                 ParliamentaryIdentityApi,
+                IsDelegatedToCompanyApi,
               ],
             },
           ],

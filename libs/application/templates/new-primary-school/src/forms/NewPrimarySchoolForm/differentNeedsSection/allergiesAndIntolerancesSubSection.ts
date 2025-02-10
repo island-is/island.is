@@ -1,140 +1,203 @@
 import {
   buildAlertMessageField,
-  buildAsyncSelectField,
   buildCheckboxField,
-  buildDescriptionField,
+  buildCustomField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { YES } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/types'
+import { ApplicationType, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  getFoodAllergiesOptions,
-  getFoodIntolerancesOptions,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
 export const allergiesAndIntolerancesSubSection = buildSubSection({
   id: 'allergiesAndIntolerancesSubSection',
   title:
     newPrimarySchoolMessages.differentNeeds
       .allergiesAndIntolerancesSubSectionTitle,
+  condition: (answers) => {
+    // Only display section if application type is "Enrollment in primary school"
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+  },
   children: [
     buildMultiField({
       id: 'allergiesAndIntolerances',
       title:
         newPrimarySchoolMessages.differentNeeds
-          .foodAllergiesAndIntolerancesTitle,
+          .allergiesAndIntolerancesSubSectionTitle,
       description:
         newPrimarySchoolMessages.differentNeeds
-          .foodAllergiesAndIntolerancesDescription,
+          .allergiesAndIntolerancesDescription,
       children: [
         buildCheckboxField({
-          id: 'allergiesAndIntolerances.hasFoodAllergies',
-          title: '',
-          spacing: 0,
-          options: [
-            {
-              value: YES,
-              label:
-                newPrimarySchoolMessages.differentNeeds.childHasFoodAllergies,
-            },
-          ],
-        }),
-        buildAsyncSelectField({
-          id: 'allergiesAndIntolerances.foodAllergies',
-          title: newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
-          dataTestId: 'food-allergies',
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds.typeOfAllergiesPlaceholder,
-          // TODO: Nota gögn fá Júní
-          loadOptions: async ({ apolloClient }) => {
-            /*  return await getOptionsListByType(
-              apolloClient,
-              OptionsType.ALLERGRY,
-            )*/
-
-            return getFoodAllergiesOptions()
-          },
-          isMulti: true,
-          condition: (answers) => {
-            const { hasFoodAllergies } = getApplicationAnswers(answers)
-
-            return hasFoodAllergies?.includes(YES)
-          },
-        }),
-        buildAlertMessageField({
-          id: 'allergiesAndIntolerances.info',
-          title: newPrimarySchoolMessages.shared.alertTitle,
-          message:
-            newPrimarySchoolMessages.differentNeeds
-              .confirmFoodAllergiesAlertMessage,
-          doesNotRequireAnswer: true,
-          alertType: 'info',
-          marginBottom: 4,
-          condition: (answers) => {
-            const { hasFoodAllergies } = getApplicationAnswers(answers)
-
-            return hasFoodAllergies?.includes(YES)
-          },
-        }),
-        buildCheckboxField({
-          id: 'allergiesAndIntolerances.hasFoodIntolerances',
-          title: '',
+          id: 'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
           spacing: 0,
           options: [
             {
               value: YES,
               label:
                 newPrimarySchoolMessages.differentNeeds
-                  .childHasFoodIntolerances,
+                  .hasFoodAllergiesOrIntolerances,
             },
           ],
         }),
-        buildAsyncSelectField({
-          id: 'allergiesAndIntolerances.foodIntolerances',
-          title: newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
-          dataTestId: 'food-intolerances',
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .typeOfIntolerancesPlaceholder,
-          // TODO: Nota gögn fá Júní
-          loadOptions: async ({ apolloClient }) => {
-            /*return await getOptionsListByType(
-              apolloClient,
-              OptionsType.INTELERENCE,
-            )*/
+        buildCustomField(
+          {
+            id: 'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+            title:
+              newPrimarySchoolMessages.differentNeeds
+                .typeOfFoodAllergiesOrIntolerances,
+            component: 'FriggOptionsAsyncSelectField',
+            marginBottom: 3,
+            condition: (answers) => {
+              const { hasFoodAllergiesOrIntolerances } =
+                getApplicationAnswers(answers)
 
-            return getFoodIntolerancesOptions()
+              return hasFoodAllergiesOrIntolerances?.includes(YES)
+            },
           },
-          isMulti: true,
-          condition: (answers) => {
-            const { hasFoodIntolerances } = getApplicationAnswers(answers)
-
-            return hasFoodIntolerances?.includes(YES)
+          {
+            optionsType: OptionsType.FOOD_ALLERGY_AND_INTOLERANCE,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .typeOfFoodAllergiesOrIntolerancesPlaceholder,
+            isMulti: true,
           },
-        }),
-        buildDescriptionField({
-          // Needed to add space
-          id: 'allergiesAndIntolerances.divider',
-          title: '',
-          marginBottom: 4,
-          condition: (answers) => {
-            const { hasFoodIntolerances } = getApplicationAnswers(answers)
-
-            return hasFoodIntolerances?.includes(YES)
-          },
-        }),
+        ),
         buildCheckboxField({
-          id: 'allergiesAndIntolerances.isUsingEpiPen',
-          title: '',
+          id: 'allergiesAndIntolerances.hasOtherAllergies',
           spacing: 0,
           options: [
             {
               value: YES,
-              label: newPrimarySchoolMessages.differentNeeds.usesEpinephrinePen,
+              label: newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
             },
           ],
+        }),
+        buildCustomField(
+          {
+            id: 'allergiesAndIntolerances.otherAllergies',
+            title: newPrimarySchoolMessages.differentNeeds.typeOfOtherAllergies,
+            component: 'FriggOptionsAsyncSelectField',
+            condition: (answers) => {
+              const { hasOtherAllergies } = getApplicationAnswers(answers)
+
+              return hasOtherAllergies?.includes(YES)
+            },
+          },
+          {
+            optionsType: OptionsType.ALLERGY,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .typeOfOtherAllergiesPlaceholder,
+            isMulti: true,
+          },
+        ),
+        buildAlertMessageField({
+          id: 'allergiesAndIntolerances.allergiesCertificateAlertMessage',
+          title: newPrimarySchoolMessages.shared.alertTitle,
+          message:
+            newPrimarySchoolMessages.differentNeeds
+              .allergiesCertificateAlertMessage,
+          doesNotRequireAnswer: true,
+          alertType: 'info',
+          marginTop: 4,
+          condition: (answers) => {
+            const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
+              getApplicationAnswers(answers)
+
+            return (
+              hasFoodAllergiesOrIntolerances?.includes(YES) ||
+              hasOtherAllergies?.includes(YES)
+            )
+          },
+        }),
+        buildRadioField({
+          id: 'allergiesAndIntolerances.usesEpiPen',
+          title: newPrimarySchoolMessages.differentNeeds.usesEpiPen,
+          width: 'half',
+          required: true,
+          options: [
+            {
+              label: newPrimarySchoolMessages.shared.yes,
+              value: YES,
+            },
+            {
+              label: newPrimarySchoolMessages.shared.no,
+              value: NO,
+            },
+          ],
+          condition: (answers) => {
+            const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
+              getApplicationAnswers(answers)
+
+            return (
+              hasFoodAllergiesOrIntolerances?.includes(YES) ||
+              hasOtherAllergies?.includes(YES)
+            )
+          },
+        }),
+        buildRadioField({
+          id: 'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+          title:
+            newPrimarySchoolMessages.differentNeeds
+              .hasConfirmedMedicalDiagnoses,
+          description:
+            newPrimarySchoolMessages.differentNeeds
+              .hasConfirmedMedicalDiagnosesDescription,
+          width: 'half',
+          required: true,
+          space: 4,
+          options: [
+            {
+              label: newPrimarySchoolMessages.shared.yes,
+              value: YES,
+            },
+            {
+              label: newPrimarySchoolMessages.shared.no,
+              value: NO,
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'allergiesAndIntolerances.requestMedicationAssistance',
+          title:
+            newPrimarySchoolMessages.differentNeeds.requestMedicationAssistance,
+          width: 'half',
+          required: true,
+          space: 4,
+          options: [
+            {
+              label: newPrimarySchoolMessages.shared.yes,
+              value: YES,
+            },
+            {
+              label: newPrimarySchoolMessages.shared.no,
+              value: NO,
+            },
+          ],
+        }),
+        buildAlertMessageField({
+          id: 'allergiesAndIntolerances.schoolNurseAlertMessage',
+          title: newPrimarySchoolMessages.shared.alertTitle,
+          message:
+            newPrimarySchoolMessages.differentNeeds.schoolNurseAlertMessage,
+          doesNotRequireAnswer: true,
+          alertType: 'info',
+          marginTop: 4,
+          condition: (answers) => {
+            const {
+              hasConfirmedMedicalDiagnoses,
+              requestMedicationAssistance,
+            } = getApplicationAnswers(answers)
+
+            return (
+              hasConfirmedMedicalDiagnoses === YES ||
+              requestMedicationAssistance === YES
+            )
+          },
         }),
       ],
     }),

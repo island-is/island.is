@@ -15,7 +15,6 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isRestrictionCase,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
@@ -32,7 +31,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
+import { shouldUseAppealWithdrawnRoutes } from '../../utils'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -402,7 +401,6 @@ const useSections = (
       state === CaseState.RECEIVED ||
       state === CaseState.WAITING_FOR_CANCELLATION ||
       router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
-    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
@@ -499,39 +497,31 @@ const useSections = (
                       )
                   : undefined,
             },
-            ...(isTrafficViolation
-              ? [
-                  {
-                    name: formatMessage(
-                      sections.indictmentCaseProsecutorSection.indictment,
-                    ),
-                    href: `${constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE}/${id}`,
-                    isActive: isActive(
-                      constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-                    ),
-                    onClick:
-                      !isActive(
-                        constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-                      ) &&
-                      validateFormStepper(
-                        isValid,
-                        [
-                          constants.INDICTMENTS_DEFENDANT_ROUTE,
-                          constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
-                          constants.INDICTMENTS_CASE_FILE_ROUTE,
-                          constants.INDICTMENTS_PROCESSING_ROUTE,
-                        ],
-                        workingCase,
-                      ) &&
-                      onNavigationTo
-                        ? async () =>
-                            await onNavigationTo(
-                              constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE,
-                            )
-                        : undefined,
-                  },
-                ]
-              : []),
+            {
+              name: formatMessage(
+                sections.indictmentCaseProsecutorSection.indictment,
+              ),
+              href: `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${id}`,
+              isActive: isActive(constants.INDICTMENTS_INDICTMENT_ROUTE),
+              onClick:
+                !isActive(constants.INDICTMENTS_INDICTMENT_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_INDICTMENT_ROUTE,
+                      )
+                  : undefined,
+            },
             {
               name: capitalize(
                 formatMessage(

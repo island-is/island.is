@@ -26,9 +26,10 @@ export const OtherDocuments: FC<FieldBaseProps> = ({
       setExtraApplicationUploadFields(chosenProgramData?.extraApplicationFields)
   }, [])
 
+  // TODO display different type of fields
   return extraApplicationUploadFields.map((uploadField, index) => {
     return (
-      <Box marginTop={1} marginBottom={2}>
+      <Box marginTop={1} marginBottom={2} key={index}>
         <FileUploadController
           id={`${field.id}[${index}].attachments`}
           key={index}

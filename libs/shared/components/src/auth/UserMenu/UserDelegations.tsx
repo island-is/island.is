@@ -1,23 +1,20 @@
-import React from 'react'
-import { Stack, Text, SkeletonLoader, Box } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { userMessages } from '@island.is/shared/translations'
-import { UserTopicCard } from './UserTopicCard'
 import { UserDropdownItem } from './UserDropdownItem'
-import { useAuth } from '@island.is/auth/react'
+import { UserTopicCard } from './UserTopicCard'
 
 interface UserDelegationsProps {
-  user: User
   showActorButton: boolean
   onSwitchUser: (nationalId: string) => void
 }
 
 export const UserDelegations = ({
-  user,
   showActorButton,
   onSwitchUser,
 }: UserDelegationsProps) => {
+  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { switchUser } = useAuth()
   const actor = user.profile.actor
@@ -28,9 +25,9 @@ export const UserDelegations = ({
         {showActorButton && !!actor && (
           <UserTopicCard
             colorScheme="blue"
-            onClick={() => onSwitchUser(actor?.nationalId)}
+            onClick={() => onSwitchUser(actor.nationalId)}
           >
-            {actor?.name}
+            {actor.name}
           </UserTopicCard>
         )}
         <UserDropdownItem

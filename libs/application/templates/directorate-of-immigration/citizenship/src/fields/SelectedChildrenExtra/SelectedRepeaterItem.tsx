@@ -76,7 +76,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
     `,
     {
       onCompleted: (data) => {
-        const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
+        const currentName = data.identity?.name ?? ''
         setCurrentName(currentName)
         setValue(currentNameField, currentName)
       },
@@ -99,6 +99,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
     application.externalData,
     application.answers,
     index,
+    repeaterField.nationalId || '',
   )
 
   useEffect(() => {
@@ -124,7 +125,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   }, [showMoreQuestions, wasRemovedField, setValue])
 
   return (
-    <Box>
+    <Box key={`child-${index}`}>
       <Text variant="h4" as="h3" paddingBottom={1}>
         {formatMessage(selectChildren.extraInformation.areaSeparator, {
           fullName: child?.fullName,
@@ -161,7 +162,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
           ...field,
           id: `selectedChildrenExtraData[${index}].nationalId`,
           props: {
-            index: index,
+            nationalId: repeaterField.nationalId || '',
           },
         }}
       />

@@ -29,6 +29,10 @@ export const done: Form = buildForm({
         answers.applicationFor === PREPAID_INHERITANCE
           ? m.doneDescriptionPrepaidEFS
           : m.doneDescriptionEFS,
+      bottomButtonMessage: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.bottomButtonMessagePrepaidEFS
+          : m.bottomButtonMessageEFS,
     }),
   ],
 })

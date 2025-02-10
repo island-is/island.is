@@ -22,7 +22,7 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
     return entries.filter((entry) => {
       return (
         isManual(entry) &&
-        entry.fields.chapters.length > 0 &&
+        entry.fields.chapters?.length > 0 &&
         entry.fields.chapters.some(
           (chapter) =>
             chapter.fields.title &&

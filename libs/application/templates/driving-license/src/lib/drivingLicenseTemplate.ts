@@ -22,6 +22,7 @@ import {
   InstitutionNationalIds,
   Application,
   ApplicationConfigurations,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -33,6 +34,8 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   ApiActions,
+  CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -41,27 +44,44 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
+import { Pickup } from './types'
+import { CodeOwners } from '@island.is/shared/constants'
 
-const getCodes = (application: Application) => {
-  const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
-    application.answers,
-    'applicationFor',
-    'B-full',
-  )
+const getCodes = (application: Application): BasicChargeItem[] => {
+  const applicationFor = getValueViaPath<
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
+  >(application.answers, 'applicationFor', 'B-full')
 
-  const chargeItemCode =
-    applicationFor === 'B-full'
-      ? 'AY110'
-      : applicationFor === BE
-      ? 'AY115'
-      : 'AY114'
+  const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
-  if (!chargeItemCode) {
+  const codes: BasicChargeItem[] = []
+
+  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+
+  const targetCode =
+    typeof applicationFor === 'string'
+      ? CHARGE_ITEM_CODES[applicationFor]
+        ? CHARGE_ITEM_CODES[applicationFor]
+        : DEFAULT_ITEM_CODE
+      : DEFAULT_ITEM_CODE
+
+  codes.push({ code: targetCode })
+
+  if (pickup === Pickup.POST) {
+    codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
+  }
+
+  if (!targetCode) {
     throw new Error('No selected charge item code')
   }
-  return [chargeItemCode]
+
+  return codes
 }
 
 const configuration =
@@ -89,6 +109,7 @@ const template: ApplicationTemplate<
         ' - ' +
         m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
   translationNamespaces: [configuration.translation],
@@ -124,6 +145,8 @@ const template: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
+                  allowAdvanced:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
               },
               write: 'all',
@@ -133,6 +156,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
                 JurisdictionApi,
                 CurrentLicenseApi.configure({
@@ -210,7 +234,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

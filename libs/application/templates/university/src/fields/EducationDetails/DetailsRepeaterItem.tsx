@@ -23,6 +23,7 @@ import { getAllCountryCodes } from '@island.is/shared/utils'
 import { FileUploadController } from '@island.is/application/ui-components'
 import { useFormContext } from 'react-hook-form'
 import { EducationDetailsItem } from '../../shared/types'
+import { degreeLevelOptions } from '../../lib/constants'
 
 interface DetailsRepeaterItemProps extends FieldBaseProps {
   index: number
@@ -38,8 +39,6 @@ interface DetailsRepeaterItemProps extends FieldBaseProps {
 export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   id,
   application,
-  field,
-  goToScreen,
   index,
   repeaterField,
   itemNumber,
@@ -122,7 +121,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
   return (
     <Box
       position="relative"
-      marginBottom={1}
+      marginBottom={2}
       hidden={repeaterField.wasRemoved === 'true' && !readOnly}
     >
       {itemNumber > 0 && (
@@ -180,36 +179,10 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
                   index,
                 )
               }
-              options={[
-                {
-                  label: formatMessage(
-                    formerEducation.labels.educationDetails
-                      .framhaldsskoliSelectionLabel,
-                  ),
-                  value: 'framhaldsskoli',
-                },
-                {
-                  label: formatMessage(
-                    formerEducation.labels.educationDetails
-                      .bachelorsSelectionLabel,
-                  ),
-                  value: 'bachelors',
-                },
-                {
-                  label: formatMessage(
-                    formerEducation.labels.educationDetails
-                      .mastersSelectionLabel,
-                  ),
-                  value: 'masters',
-                },
-                {
-                  label: formatMessage(
-                    formerEducation.labels.educationDetails
-                      .doctorsSelectionLabel,
-                  ),
-                  value: 'doctors',
-                },
-              ]}
+              options={degreeLevelOptions.map((x) => ({
+                label: formatMessage(x.label),
+                value: x.value,
+              }))}
             />
           </GridColumn>
         ) : (
@@ -417,21 +390,23 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
         />
       )}
       {!readOnly && (
-        <InputController
-          id={moreDetailsField}
-          textarea
-          backgroundColor="blue"
-          label={formatMessage(
-            formerEducation.labels.educationDetails.moreDetailsLabel,
-          )}
-          onChange={(value) =>
-            addDataToEducationList(
-              'moreDetails',
-              value.target.value as string,
-              index,
-            )
-          }
-        />
+        <Box marginTop={2}>
+          <InputController
+            id={moreDetailsField}
+            textarea
+            backgroundColor="blue"
+            label={formatMessage(
+              formerEducation.labels.educationDetails.moreDetailsLabel,
+            )}
+            onChange={(value) =>
+              addDataToEducationList(
+                'moreDetails',
+                value.target.value as string,
+                index,
+              )
+            }
+          />
+        </Box>
       )}
     </Box>
   )

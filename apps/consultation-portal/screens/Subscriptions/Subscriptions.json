@@ -91,6 +91,10 @@
       "text": " Hægt er að afskrá sig hér",
       "href": "/minaraskriftir"
     },
+    "rssFeedSubscription": {
+      "description": "Áskrift að RSS veitir þér aðgang að nýjustu málum í Samráðsgátt.",
+      "text": "Hér er hægt að skrá sig í áskrift að RSS veitu"
+    },
     "tabsLabel": "Veldu tegund áskrifta"
   },
   "subscriptionTable": {

@@ -100,7 +100,7 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       extraApplicationFields {
         descriptionEn
         descriptionIs
-        externalId
+        externalKey
         fieldType
         nameEn
         nameIs

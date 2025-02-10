@@ -5,6 +5,7 @@ import {
   formatText,
   getValueViaPath,
   buildFieldOptions,
+  formatTextWithLocale,
 } from '@island.is/application/core'
 import { FieldBaseProps, RadioField } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
@@ -15,6 +16,8 @@ import {
 } from '@island.is/shared/form-fields'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -29,7 +32,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     disabled,
     id,
-    title,
+    title = '',
     description,
     options,
     width,
@@ -38,37 +41,50 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     required,
     hasIllustration,
     widthWithIllustration,
+    marginTop,
+    marginBottom,
+    clearOnChange,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application],
+    () => buildFieldOptions(options, application, field, locale),
+    [options, application, locale],
   )
 
-  console.debug(
-    `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(
-      title,
-      application,
-      formatMessage,
-    )}`,
-  )
+  const paddingTop = field.space ?? 2
 
   return (
-    <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
+    <Box
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      paddingTop={paddingTop}
+      role="region"
+      aria-labelledby={id + 'title'}
+    >
       {showFieldName && (
         <Text variant="h4" as="h4" id={id + 'title'}>
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
 
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 
-      <Box marginTop={3}>
+      <Box>
         <RadioController
           largeButtons={largeButtons}
           backgroundColor={backgroundColor}
@@ -90,7 +106,11 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
-            label: HtmlParser(formatText(label, application, formatMessage)),
+            label: (
+              <Markdown>
+                {formatText(label, application, formatMessage)}
+              </Markdown>
+            ),
             subLabel:
               subLabel &&
               HtmlParser(formatText(subLabel, application, formatMessage)),
@@ -102,6 +122,9 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }))}
           onSelect={field.onSelect}
           hasIllustration={hasIllustration}
+          paddingBottom={0}
+          paddingTop={2}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

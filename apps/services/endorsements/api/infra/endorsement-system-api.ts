@@ -1,4 +1,8 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -12,6 +16,7 @@ export const serviceSetup =
       .image('services-endorsements-api')
       .namespace('endorsement-system')
       .serviceAccount('endorsement-system-api')
+      .codeOwner(CodeOwners.Juni)
       .command('node')
       .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
       .db({ name: 'services-endorsements-api' })

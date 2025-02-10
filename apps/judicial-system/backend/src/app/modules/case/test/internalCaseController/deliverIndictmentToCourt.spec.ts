@@ -103,8 +103,8 @@ describe('InternalCaseController - Deliver indictment to court', () => {
         courtId,
         courtCaseNumber,
         CourtDocumentFolder.INDICTMENT_DOCUMENTS,
-        `Ákæra`,
-        `Ákæra.pdf`,
+        `Ákæra ${courtCaseNumber}`,
+        `Ákæra ${courtCaseNumber}.pdf`,
         'application/pdf',
         pdf,
       )
@@ -128,8 +128,8 @@ describe('InternalCaseController - Deliver indictment to court', () => {
         courtId,
         courtCaseNumber,
         CourtDocumentFolder.INDICTMENT_DOCUMENTS,
-        `Ákæra`,
-        `Ákæra.pdf`,
+        `Ákæra ${courtCaseNumber}`,
+        `Ákæra ${courtCaseNumber}.pdf`,
         'application/pdf',
         pdf,
       )

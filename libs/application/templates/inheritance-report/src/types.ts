@@ -115,6 +115,7 @@ export interface GunsData extends DeceasedShare {
   description: string
   propertyValuation: string
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface Money extends DeceasedShare {
@@ -129,6 +130,7 @@ export interface ClaimsData extends DeceasedShare {
   issuer: string
   nationalId: string
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface Claims {
@@ -148,6 +150,7 @@ export interface StocksData extends DeceasedShare {
   rateOfExchange: string
   exchangeRateOrInterest: string
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface Stocks {
@@ -160,6 +163,7 @@ export interface VehiclesData extends DeceasedShare {
   description: string
   propertyValuation: string
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface Vehicles {
@@ -302,7 +306,8 @@ export enum DebtTypes {
   Overdraft = 'Yfirdráttur',
   CreditCard = 'Kreditkort',
   Loan = 'Lán',
-  InsuranceCompany = 'Tryggingafélag',
-  PropertyFees = 'Fastagjöld',
+  PropertyFees = 'Fasteignagjöld',
   OtherDebts = 'Aðrar skuldir',
+  PublicCharges = 'Opinber gjöld',
+  InsuranceInstitute = 'Tryggingarstofnun ríkisins',
 }

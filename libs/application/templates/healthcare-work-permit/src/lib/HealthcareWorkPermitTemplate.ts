@@ -19,7 +19,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import {
   UserProfileApi,
@@ -29,7 +28,8 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { HealthcareWorkPermitSchema } from './dataSchema'
-import { getChargeItemCodes } from '../utils'
+import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -38,12 +38,12 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTHCARE_WORK_PERMIT,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.HealthcareWorkPermit.translation,
   ],
   dataSchema: HealthcareWorkPermitSchema,
-  featureFlag: Features.healthcareWorkPermit,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -137,7 +137,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         lifecycle: {
           shouldBeListed: true,

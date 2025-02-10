@@ -2,8 +2,9 @@ import { FieldBaseProps, StaticTableField } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: StaticTableField
@@ -14,8 +15,14 @@ export const StaticTableFormField: FC<Props> = ({
   application,
   showFieldName,
 }) => {
-  const { marginTop, marginBottom, description, title, titleVariant } = field
-  const { formatMessage } = useLocale()
+  const {
+    marginTop,
+    marginBottom,
+    description,
+    title = '',
+    titleVariant,
+  } = field
+  const { formatMessage, lang: locale } = useLocale()
   const header =
     typeof field.header === 'function'
       ? field.header(application)
@@ -31,12 +38,22 @@ export const StaticTableFormField: FC<Props> = ({
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
         <Text variant={titleVariant} marginBottom={2}>
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
       <Box marginTop={description ? 3 : 0}>

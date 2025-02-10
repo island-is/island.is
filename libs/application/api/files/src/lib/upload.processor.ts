@@ -6,6 +6,13 @@ import { Inject } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationFilesConfig } from './files.config'
 import { ConfigType } from '@nestjs/config'
+import {
+  LOGGER_PROVIDER,
+  withLoggingContext,
+  type Logger,
+} from '@island.is/logging'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 interface JobData {
   applicationId: string
@@ -19,60 +26,95 @@ interface JobResult {
 }
 
 @Processor('upload')
+@CodeOwner(CodeOwners.NordaApplications)
 export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
     @Inject(ApplicationFilesConfig.KEY)
     private config: ConfigType<typeof ApplicationFilesConfig>,
+    @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
   ) {}
 
   @Process('upload')
   async handleUpload(job: Job<JobData>): Promise<JobResult> {
     const { attachmentUrl, applicationId } = job.data
     const destinationBucket = this.config.attachmentBucket
+    try {
+      if (!destinationBucket) {
+        throw new Error('Application attachment bucket not configured.')
+      }
 
-    if (!destinationBucket) {
-      throw new Error('Application attachment bucket not configured.')
-    }
+      const { key: sourceKey } = AmazonS3URI(attachmentUrl)
+      const destinationKey = `${applicationId}/${sourceKey}`
+      const resultUrl =
+        await this.fileStorageService.copyObjectFromUploadBucket(
+          sourceKey,
+          destinationBucket,
+          destinationKey,
+        )
 
-    const { key: sourceKey } = AmazonS3URI(attachmentUrl)
-    const destinationKey = `${applicationId}/${sourceKey}`
-    const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
-      sourceKey,
-      destinationBucket,
-      destinationKey,
-    )
-
-    return {
-      attachmentKey: sourceKey,
-      resultUrl,
+      return {
+        attachmentKey: sourceKey,
+        resultUrl,
+      }
+    } catch (error) {
+      withLoggingContext(
+        {
+          applicationId: applicationId,
+        },
+        () => {
+          this.logger.error(
+            'An error occurred while processing upload job',
+            error,
+          )
+        },
+      )
+      throw error
     }
   }
 
   @OnQueueCompleted()
   async onCompleted(job: Job, result: JobResult) {
     const { applicationId, nationalId }: JobData = job.data
-    const existingApplication = await this.applicationService.findOneById(
-      applicationId,
-      nationalId,
-    )
-
-    if (
-      existingApplication &&
-      !Object.prototype.hasOwnProperty.call(
-        existingApplication.attachments,
-        result.attachmentKey,
+    try {
+      const existingApplication = await this.applicationService.findOneById(
+        applicationId,
+        nationalId,
       )
-    ) {
-      return
-    }
 
-    return await this.applicationService.updateAttachment(
-      applicationId,
-      nationalId,
-      result.attachmentKey,
-      result.resultUrl,
-    )
+      // If the application exists
+      // And the attachments object doesnt have a property with the given key
+      // Dont update it with the new storage s3 url (because it doesnt exist)
+      if (
+        existingApplication &&
+        !Object.prototype.hasOwnProperty.call(
+          existingApplication.attachments,
+          result.attachmentKey,
+        )
+      ) {
+        return
+      }
+
+      return await this.applicationService.updateAttachment(
+        applicationId,
+        nationalId,
+        result.attachmentKey,
+        result.resultUrl,
+      )
+    } catch (error) {
+      withLoggingContext(
+        {
+          applicationId: applicationId,
+        },
+        () => {
+          this.logger.error(
+            'An error occurred while completing upload job',
+            error,
+          )
+        },
+      )
+      throw error
+    }
   }
 }

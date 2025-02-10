@@ -65,5 +65,25 @@ export const summary = {
       defaultMessage: 'Málalokkun auglýsingar',
       description: 'Classification of the advertisement',
     },
+    communicationChannels: {
+      id: 'ojoi.application:summary.properties.communicationChannels',
+      defaultMessage: 'Samskiptaaðilar',
+      description: 'Communication channels of the advertisement',
+    },
+    message: {
+      id: 'ojoi.application:summary.properties.message',
+      defaultMessage: 'Skilaboð',
+      description: 'Message of the advertisement',
+    },
+    fastTrackYes: {
+      id: 'ojoi.application:summary.properties.fastTrackYes',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    fastTrackNo: {
+      id: 'ojoi.application:summary.properties.fastTrackNo',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
   }),
 }

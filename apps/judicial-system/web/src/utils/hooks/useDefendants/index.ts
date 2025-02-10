@@ -12,6 +12,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
+import { useLimitedAccessUpdateDefendantMutation } from './limitedAccessUpdateDefendant.generated'
 import { useUpdateDefendantMutation } from './updateDefendant.generated'
 
 const useDefendants = () => {
@@ -19,8 +20,14 @@ const useDefendants = () => {
 
   const [createDefendantMutation, { loading: isCreatingDefendant }] =
     useCreateDefendantMutation()
+
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
-  const [updateDefendantMutation] = useUpdateDefendantMutation()
+
+  const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
+    useUpdateDefendantMutation()
+
+  const [limitedAccessUpdateDefendantMutation] =
+    useLimitedAccessUpdateDefendantMutation()
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -50,13 +57,10 @@ const useDefendants = () => {
           variables: { input: { caseId, defendantId } },
         })
 
-        if (data?.deleteDefendant?.deleted) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(data?.deleteDefendant?.deleted)
       } catch (error) {
-        formatMessage(errors.deleteDefendant)
+        toast.error(formatMessage(errors.deleteDefendant))
+        return false
       }
     },
     [deleteDefendantMutation, formatMessage],
@@ -71,16 +75,31 @@ const useDefendants = () => {
           },
         })
 
-        if (data) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(data)
       } catch (error) {
         toast.error(formatMessage(errors.updateDefendant))
+        return false
       }
     },
     [formatMessage, updateDefendantMutation],
+  )
+
+  const limitedAccessUpdateDefendant = useCallback(
+    async (updateDefendant: UpdateDefendantInput) => {
+      try {
+        const { data } = await limitedAccessUpdateDefendantMutation({
+          variables: {
+            input: updateDefendant,
+          },
+        })
+
+        return Boolean(data)
+      } catch (error) {
+        toast.error(formatMessage(errors.updateDefendant))
+        return false
+      }
+    },
+    [formatMessage, limitedAccessUpdateDefendantMutation],
   )
 
   const updateDefendantState = useCallback(
@@ -124,6 +143,8 @@ const useDefendants = () => {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    limitedAccessUpdateDefendant,
+    isUpdatingDefendant,
     updateDefendantState,
     setAndSendDefendantToServer,
   }

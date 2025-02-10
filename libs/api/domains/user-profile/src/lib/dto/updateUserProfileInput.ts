@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsEnum,
   IsBoolean,
+  ValidateIf,
 } from 'class-validator'
 import { Locale } from '../types/locales.enum'
 import { DataStatus } from '../types/dataStatus.enum'
@@ -23,6 +24,7 @@ export class UpdateUserProfileInput {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
+  @ValidateIf((e) => e.email !== '')
   @IsEmail()
   email?: string
 

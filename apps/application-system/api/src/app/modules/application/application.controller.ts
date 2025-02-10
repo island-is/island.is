@@ -40,7 +40,6 @@ import {
   FormValue,
   ExternalData,
   TemplateApi,
-  PdfTypes,
   ApplicationStatus,
   ApplicationTemplate,
   ApplicationContext,
@@ -69,20 +68,18 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
-import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
-import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
-import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
-import { getApplicationLifecycle } from './utils/application'
+import {
+  getApplicationLifecycle,
+  removeObjectWithKeyFromAnswers,
+} from './utils/application'
 import { DecodedAssignmentToken } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
@@ -95,11 +92,14 @@ import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '@island.is/application/api/payment'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import { ApplicationActionService } from './application-action.service'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { withCodeOwner } from '@island.is/infra-tracing'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -109,6 +109,7 @@ import { ApplicationActionService } from './application-action.service'
 })
 @ApiBearerAuth()
 @Controller()
+@CodeOwner(CodeOwners.NordaApplications)
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -642,70 +643,90 @@ export class ApplicationController {
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
-
-    const helper = new ApplicationTemplateHelper(
-      existingApplication as BaseApplication,
-      template,
-    )
-
-    const userRole = template.mapUserToRole(
-      user.nationalId,
-      existingApplication as BaseApplication,
-    )
-
-    const providersFromRole = userRole
-      ? helper.getApisFromRoleInState(userRole)
-      : []
-
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
-    const templateApis: TemplateApi[] = []
-
-    for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
-      const found = providersFromRole.find(
-        (x) => x.actionId === externalDataDto.dataProviders[i].actionId,
+    return withCodeOwner(template.codeOwner, async () => {
+      const helper = new ApplicationTemplateHelper(
+        existingApplication as BaseApplication,
+        template,
       )
 
-      if (found) {
-        templateApis.push(found)
-      } else {
-        throw new BadRequestException(
-          `Current user is not permitted to update external data in this state with actionId: ${externalDataDto.dataProviders[i].actionId}`,
+      const userRole = template.mapUserToRole(
+        user.nationalId,
+        existingApplication as BaseApplication,
+      )
+
+      const providersFromRole = userRole
+        ? helper.getApisFromRoleInState(userRole)
+        : []
+
+      const namespaces = await getApplicationTranslationNamespaces(
+        existingApplication as BaseApplication,
+      )
+      const intl = await this.intlService.useIntl(namespaces, locale)
+
+      const templateApis: TemplateApi[] = []
+
+      for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
+        const found = providersFromRole.find(
+          (x) => x.actionId === externalDataDto.dataProviders[i].actionId,
+        )
+
+        if (found) {
+          templateApis.push(found)
+        } else {
+          throw new BadRequestException(
+            `Current user is not permitted to update external data in this state with actionId: ${externalDataDto.dataProviders[i].actionId}`,
+          )
+        }
+      }
+
+      await this.validationService.validateIncomingExternalDataProviders(
+        existingApplication as BaseApplication,
+        templateApis,
+        user.nationalId,
+      )
+
+      const updatedApplication = await this.templateApiActionRunner.run(
+        existingApplication as BaseApplication,
+        templateApis,
+        user,
+        locale,
+        intl.formatMessage,
+      )
+
+      if (!updatedApplication) {
+        throw new NotFoundException(
+          `An application with the id ${id} does not exist`,
         )
       }
-    }
 
-    await this.validationService.validateIncomingExternalDataProviders(
-      existingApplication as BaseApplication,
-      templateApis,
-      user.nationalId,
-    )
+      this.auditService.audit({
+        auth: user,
+        action: 'updateExternalData',
+        resources: existingApplication.id,
+        meta: { providers: externalDataDto },
+      })
 
-    const updatedApplication = await this.templateApiActionRunner.run(
-      existingApplication as BaseApplication,
-      templateApis,
-      user,
-      locale,
-      intl.formatMessage,
-    )
-
-    if (!updatedApplication) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
-
-    this.auditService.audit({
-      auth: user,
-      action: 'updateExternalData',
-      resources: existingApplication.id,
-      meta: { providers: externalDataDto },
+      return updatedApplication
     })
+  }
 
-    return updatedApplication
+  private logSubmissionResult(
+    applicationId: string,
+    templateId: string,
+    hasError = false,
+  ) {
+    const context = {
+      applicationId,
+      templateId,
+    }
+
+    withLoggingContext(context, () => {
+      if (hasError) {
+        this.logger.error(`Application submission ended with an error`)
+      } else {
+        this.logger.info(`Application submission ended successfully`)
+      }
+    })
   }
 
   @Scopes(ApplicationScope.write)
@@ -731,81 +752,83 @@ export class ApplicationController {
       })
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
-
     // TODO
     if (template === null) {
       throw new BadRequestException(
         `No application template exists for type: ${existingApplication.typeId}`,
       )
     }
-
-    const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
-    const permittedAnswers =
-      await this.validationService.validateIncomingAnswers(
+    return withCodeOwner(template.codeOwner, async () => {
+      const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
+      const namespaces = await getApplicationTranslationNamespaces(
         existingApplication as BaseApplication,
-        newAnswers,
-        user.nationalId,
-        false,
+      )
+      const intl = await this.intlService.useIntl(namespaces, locale)
+
+      const permittedAnswers =
+        await this.validationService.validateIncomingAnswers(
+          existingApplication as BaseApplication,
+          newAnswers,
+          user.nationalId,
+          false,
+          intl.formatMessage,
+        )
+
+      await this.validationService.validateApplicationSchema(
+        existingApplication as BaseApplication,
+        permittedAnswers,
         intl.formatMessage,
+        user,
       )
 
-    await this.validationService.validateApplicationSchema(
-      existingApplication as BaseApplication,
-      permittedAnswers,
-      intl.formatMessage,
-      user,
-    )
+      const mergedAnswers = mergeAnswers(
+        existingApplication.answers,
+        permittedAnswers,
+      )
 
-    const mergedAnswers = mergeAnswers(
-      existingApplication.answers,
-      permittedAnswers,
-    )
+      const mergedApplication: BaseApplication = {
+        ...(existingApplication.toJSON() as BaseApplication),
+        answers: mergedAnswers,
+      }
 
-    const mergedApplication: BaseApplication = {
-      ...(existingApplication.toJSON() as BaseApplication),
-      answers: mergedAnswers,
-    }
+      const {
+        hasChanged,
+        hasError,
+        error,
+        application: updatedApplication,
+      } = await this.applicationActionService.changeState(
+        mergedApplication,
+        template,
+        updateApplicationStateDto.event,
+        user,
+        locale,
+      )
 
-    const {
-      hasChanged,
-      hasError,
-      error,
-      application: updatedApplication,
-    } = await this.applicationActionService.changeState(
-      mergedApplication,
-      template,
-      updateApplicationStateDto.event,
-      user,
-      locale,
-    )
+      this.auditService.audit({
+        auth: user,
+        action: 'submitApplication',
+        resources: existingApplication.id,
+        meta: {
+          event: updateApplicationStateDto.event,
+          before: existingApplication.state,
+          after: updatedApplication.state,
+          fields: Object.keys(permittedAnswers),
+        },
+      })
 
-    this.auditService.audit({
-      auth: user,
-      action: 'submitApplication',
-      resources: existingApplication.id,
-      meta: {
-        event: updateApplicationStateDto.event,
-        before: existingApplication.state,
-        after: updatedApplication.state,
-        fields: Object.keys(permittedAnswers),
-      },
+      if (hasError && error) {
+        this.logSubmissionResult(existingApplication.id, templateId, hasError)
+        throw new TemplateApiError(error, 500)
+      }
+
+      this.logSubmissionResult(existingApplication.id, templateId)
+
+      if (hasChanged) {
+        return updatedApplication
+      }
+
+      return existingApplication
     })
-
-    if (hasError && error) {
-      throw new TemplateApiError(error, 500)
-    }
-    this.logger.info(`Application submission ended successfully`)
-
-    if (hasChanged) {
-      return updatedApplication
-    }
-
-    return existingApplication
   }
 
   @Scopes(ApplicationScope.write)
@@ -876,6 +899,10 @@ export class ApplicationController {
       existingApplication.id,
       {
         attachments: omit(existingApplication.attachments, key),
+        answers: removeObjectWithKeyFromAnswers(
+          existingApplication.answers,
+          key,
+        ),
       },
     )
 
@@ -889,140 +916,6 @@ export class ApplicationController {
     })
 
     return updatedApplication
-  }
-
-  @Scopes(ApplicationScope.write)
-  @Put('applications/:id/generatePdf')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application to create a pdf for',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: PresignedUrlResponseDto })
-  async generatePdf(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: GeneratePdfDto,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const url = await this.fileService.generatePdf(
-      existingApplication,
-      input.type,
-    )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'generatePdf',
-      resources: existingApplication.id,
-      meta: { type: input.type },
-    })
-
-    return { url }
-  }
-
-  @Scopes(ApplicationScope.write)
-  @Put('applications/:id/requestFileSignature')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description:
-      'The id of the application which the file signature is requested for.',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: RequestFileSignatureResponseDto })
-  async requestFileSignature(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: RequestFileSignatureDto,
-    @CurrentUser() user: User,
-  ): Promise<RequestFileSignatureResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const { controlCode, documentToken } =
-      await this.fileService.requestFileSignature(
-        existingApplication,
-        input.type,
-      )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'requestFileSignature',
-      resources: existingApplication.id,
-      meta: { type: input.type },
-    })
-
-    return { controlCode, documentToken }
-  }
-
-  @Scopes(ApplicationScope.write)
-  @Put('applications/:id/uploadSignedFile')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application which the file was created for.',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: UploadSignedFileResponseDto })
-  async uploadSignedFile(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: UploadSignedFileDto,
-    @CurrentUser() user: User,
-  ): Promise<UploadSignedFileResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-
-    await this.fileService.uploadSignedFile(
-      existingApplication,
-      input.documentToken,
-      input.type,
-    )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'uploadSignedFile',
-      resources: existingApplication.id,
-      meta: { type: input.type },
-    })
-
-    return {
-      documentSigned: true,
-    }
-  }
-
-  @Scopes(ApplicationScope.read)
-  @Get('applications/:id/:pdfType/presignedUrl')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application which the file was created for.',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: PresignedUrlResponseDto })
-  async getPresignedUrl(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Param('pdfType') type: PdfTypes,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const url = await this.fileService.getPresignedUrl(
-      existingApplication,
-      type,
-    )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'getPresignedUrl',
-      resources: existingApplication.id,
-      meta: { type },
-    })
-
-    return { url }
   }
 
   @Get('applications/:id/attachments/:attachmentKey/presigned-url')
@@ -1079,6 +972,7 @@ export class ApplicationController {
   async delete(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ) {
     const { nationalId } = user
     const existingApplication =
@@ -1097,6 +991,53 @@ export class ApplicationController {
       )
     }
 
+    const template = await getApplicationTemplateByTypeId(
+      existingApplication.typeId,
+    )
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
+
+    let onDeleteActions = new ApplicationTemplateHelper(
+      existingApplication,
+      template,
+    ).getOnDeleteStateAPIAction()
+    if (onDeleteActions) {
+      const namespaces = await getApplicationTranslationNamespaces(
+        existingApplication,
+      )
+      if (!Array.isArray(onDeleteActions)) {
+        onDeleteActions = [onDeleteActions]
+      }
+
+      const intl = await this.intlService.useIntl(namespaces, locale)
+      const deletingApplication = await this.templateApiActionRunner.run(
+        existingApplication,
+        onDeleteActions,
+        user,
+        locale,
+        intl.formatMessage,
+      )
+
+      for (const api of onDeleteActions) {
+        const result =
+          deletingApplication.externalData[api.externalDataId || api.action]
+
+        this.logger.debug(
+          `Performing action ${api.action} on ${JSON.stringify(
+            template.name,
+          )} ended with ${result.status}`,
+        )
+
+        if (result.status === 'failure' && api.throwOnError) {
+          const reason = result.reason ?? 'Unknown error'
+          throw new TemplateApiError(reason, 500)
+        }
+      }
+    }
+
     // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
 
@@ -1111,5 +1052,12 @@ export class ApplicationController {
     )
 
     await this.applicationService.delete(existingApplication.id)
+
+    this.auditService.audit({
+      auth: user,
+      action: 'delete',
+      resources: existingApplication.id,
+      meta: { type: existingApplication.typeId },
+    })
   }
 }

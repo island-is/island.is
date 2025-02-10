@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',
@@ -33,6 +38,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
     .image('services-search-indexer')
     .namespace('search-indexer')
     .serviceAccount('search-indexer')
+    .codeOwner(CodeOwners.Stefna)
     .secrets({
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
       API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN',
@@ -127,7 +133,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           staging: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
-          prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
+          prod: {},
         },
       },
     })

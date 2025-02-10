@@ -8,10 +8,15 @@ import {
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
-import { Application, ActionCardTag } from './Application'
+import {
+  Application,
+  ActionCardTag,
+  ApplicationWithAttachments,
+} from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
+import { PruningApplication, PruningNotification } from './ApplicationLifecycle'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -52,7 +57,7 @@ export interface ApplicationContext {
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
-  type: 'primary' | 'subtle' | 'reject' | 'sign'
+  type: 'primary' | 'subtle' | 'reject' | 'sign' | 'signGhost' | 'rejectGhost'
   condition?: Condition
 } & TestSupport
 
@@ -69,6 +74,9 @@ export type StateLifeCycle =
       // If set to a number prune date will equal current timestamp + whenToPrune (ms)
       whenToPrune: number | ((application: Application) => Date)
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+      pruneMessage?:
+        | PruningNotification
+        | ((application: PruningApplication) => PruningNotification)
     }
 
 export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'
@@ -131,6 +139,7 @@ export interface ApplicationStateMeta<
   roles?: RoleInState<T>[]
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onEntry?: TemplateApi<R>[] | TemplateApi<R>
+  onDelete?: TemplateApi<R>[] | TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

@@ -58,7 +58,7 @@ class MockPaymentService {
     }
   }
 
-  async findChargeItems() {
+  async findCatalogChargeItems() {
     return [
       {
         performingOrgID: faker.datatype.number(),

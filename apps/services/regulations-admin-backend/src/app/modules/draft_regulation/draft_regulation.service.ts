@@ -28,7 +28,7 @@ import {
   ShippedSummary,
   TaskListType,
 } from '@island.is/regulations/admin'
-import { Kennitala, RegQueryName } from '@island.is/regulations'
+import { Kennitala, MinistrySlug, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import type { User } from '@island.is/auth-nest-tools'
@@ -255,13 +255,20 @@ export class DraftRegulationService {
   ): Promise<DraftRegulationModel> {
     this.logger.debug('Creating a new DraftRegulation')
 
+    // If user is in delegation, use actor. Else use user.
+    let creatorNationalId = user?.nationalId
+    if (user?.actor) {
+      creatorNationalId = user.actor.nationalId
+      // If the user is in delegation from a valid ministry, add ministry to create?
+    }
+
     const createData: Partial<DraftRegulationModel> = {
       drafting_status: 'draft',
       title: '',
       text: '',
       drafting_notes: '',
       type: create.type,
-      authors: [user?.nationalId as Kennitala],
+      authors: [creatorNationalId as Kennitala],
     }
 
     return this.draftRegulationModel.create(createData)

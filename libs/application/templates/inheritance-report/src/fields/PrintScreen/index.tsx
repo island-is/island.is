@@ -12,7 +12,10 @@ export const PrintScreen = () => {
         colorScheme="default"
         icon="print"
         iconType="filled"
-        onClick={() => window.print()}
+        onClick={(e) => {
+          e.preventDefault()
+          window.print()
+        }}
         preTextIconType="filled"
         variant="ghost"
       ></Button>

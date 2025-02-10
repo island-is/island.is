@@ -7,9 +7,18 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
   CaseFileCategory,
+  CreateFileInput,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import {
+  CreateCivilClaimantFileMutation,
+  useCreateCivilClaimantFileMutation,
+} from './createCivilClaimantFile.generated'
+import {
+  CreateDefendantFileMutation,
+  useCreateDefendantFileMutation,
+} from './createDefendantFile.generated'
 import {
   CreateFileMutation,
   useCreateFileMutation,
@@ -22,6 +31,14 @@ import {
   DeleteFileMutation,
   useDeleteFileMutation,
 } from './deleteFile.generated'
+import {
+  LimitedAccessCreateCivilClaimantFileMutation,
+  useLimitedAccessCreateCivilClaimantFileMutation,
+} from './limitedAccessCreateCivilClaimantFile.generated'
+import {
+  LimitedAccessCreateDefendantFileMutation,
+  useLimitedAccessCreateDefendantFileMutation,
+} from './limitedAccessCreateDefendantFile.generated'
 import {
   LimitedAccessCreateFileMutation,
   useLimitedAccessCreateFileMutation,
@@ -189,7 +206,11 @@ const uploadToS3 = (
   return promise
 }
 
-const useS3Upload = (caseId: string) => {
+const useS3Upload = (
+  caseId: string,
+  defendantId?: string,
+  civilClaimantId?: string,
+) => {
   const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -198,6 +219,12 @@ const useS3Upload = (caseId: string) => {
     useLimitedAccessCreatePresignedPostMutation()
   const [createFile] = useCreateFileMutation()
   const [limitedAccessCreateFile] = useLimitedAccessCreateFileMutation()
+  const [createDefendantFile] = useCreateDefendantFileMutation()
+  const [limitedAccessCreateDefendantFile] =
+    useLimitedAccessCreateDefendantFileMutation()
+  const [createCivilClaimantFile] = useCreateCivilClaimantFileMutation()
+  const [limitedAccessCreateCivilClaimantFile] =
+    useLimitedAccessCreateCivilClaimantFileMutation()
   const [deleteFile] = useDeleteFileMutation()
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
@@ -239,37 +266,106 @@ const useS3Upload = (caseId: string) => {
 
   const addFileToCaseState = useCallback(
     async (file: TUploadFile) => {
-      const mutation = limitedAccess ? limitedAccessCreateFile : createFile
+      const addCaseFileToCaseState = async (input: CreateFileInput) => {
+        const mutation = limitedAccess ? limitedAccessCreateFile : createFile
 
-      const { data } = await mutation({
-        variables: {
-          input: {
-            caseId,
-            type: file.type ?? '',
-            key: file.key ?? '',
-            size: file.size ?? 0,
-            category: file.category,
-            policeCaseNumber: file.policeCaseNumber,
-            chapter: file.chapter,
-            orderWithinChapter: file.orderWithinChapter,
-            displayDate: file.displayDate,
-            policeFileId: file.policeFileId,
-            userGeneratedFilename: file.userGeneratedFilename,
-          },
-        },
-      })
+        const { data } = await mutation({ variables: { input } })
 
-      const createdFile = limitedAccess
-        ? (data as LimitedAccessCreateFileMutation)?.limitedAccessCreateFile
-        : (data as CreateFileMutation)?.createFile
+        const createdFile = limitedAccess
+          ? (data as LimitedAccessCreateFileMutation)?.limitedAccessCreateFile
+          : (data as CreateFileMutation)?.createFile
 
-      if (!createdFile?.id) {
-        throw Error('Failed to add file to case')
+        if (!createdFile?.id) {
+          throw Error('Failed to add file to case')
+        }
+
+        return createdFile.id
       }
 
-      return createdFile.id
+      const addDefendantFileToCaseState = async (
+        input: CreateFileInput,
+        defendantId: string,
+      ) => {
+        const mutation = limitedAccess
+          ? limitedAccessCreateDefendantFile
+          : createDefendantFile
+
+        const { data } = await mutation({
+          variables: { input: { ...input, defendantId } },
+        })
+
+        const createdFile = limitedAccess
+          ? (data as LimitedAccessCreateDefendantFileMutation)
+              ?.limitedAccessCreateDefendantFile
+          : (data as CreateDefendantFileMutation)?.createDefendantFile
+
+        if (!createdFile?.id) {
+          throw Error('Failed to add file to case')
+        }
+
+        return createdFile.id
+      }
+
+      const addCivilClaimantFileToCaseState = async (
+        input: CreateFileInput,
+        civilClaimantId: string,
+      ) => {
+        const mutation = limitedAccess
+          ? limitedAccessCreateCivilClaimantFile
+          : createCivilClaimantFile
+
+        const { data } = await mutation({
+          variables: { input: { ...input, civilClaimantId } },
+        })
+
+        const createdFile = limitedAccess
+          ? (data as LimitedAccessCreateCivilClaimantFileMutation)
+              ?.limitedAccessCreateCivilClaimantFile
+          : (data as CreateCivilClaimantFileMutation)?.createCivilClaimantFile
+
+        if (!createdFile?.id) {
+          throw Error('Failed to add file to case')
+        }
+
+        return createdFile.id
+      }
+
+      const baseInput = {
+        caseId,
+        type: file.type ?? '',
+        key: file.key ?? '',
+        size: file.size ?? 0,
+        category: file.category,
+        policeCaseNumber: file.policeCaseNumber,
+        chapter: file.chapter,
+        orderWithinChapter: file.orderWithinChapter,
+        displayDate: file.displayDate,
+        policeFileId: file.policeFileId,
+        userGeneratedFilename: file.userGeneratedFilename,
+      }
+
+      if (defendantId) {
+        return addDefendantFileToCaseState(baseInput, defendantId)
+      }
+
+      if (civilClaimantId) {
+        return addCivilClaimantFileToCaseState(baseInput, civilClaimantId)
+      }
+
+      return addCaseFileToCaseState(baseInput)
     },
-    [limitedAccess, limitedAccessCreateFile, createFile, caseId],
+    [
+      caseId,
+      defendantId,
+      civilClaimantId,
+      limitedAccess,
+      limitedAccessCreateFile,
+      createFile,
+      limitedAccessCreateDefendantFile,
+      createDefendantFile,
+      limitedAccessCreateCivilClaimantFile,
+      createCivilClaimantFile,
+    ],
   )
 
   const handleUpload = useCallback(
@@ -312,9 +408,17 @@ const useS3Upload = (caseId: string) => {
         }
       })
 
-      return Promise.all(promises).then((results) =>
-        results.every((result) => result),
-      )
+      return Promise.all(promises).then((results) => {
+        if (results.every((result) => result)) {
+          return 'ALL_SUCCEEDED'
+        }
+
+        if (results.some((result) => result)) {
+          return 'SOME_SUCCEEDED'
+        }
+
+        return 'NONE_SUCCEEDED'
+      })
     },
     [getPresignedPost, addFileToCaseState, formatMessage],
   )

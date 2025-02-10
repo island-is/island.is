@@ -1,7 +1,11 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   Application,
@@ -16,6 +20,7 @@ import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
+import { Locale } from '@island.is/shared/types'
 
 enum ACTION {
   EXISTING = 'existing',
@@ -204,7 +209,14 @@ export const LinkExistingApplication: FC<
     <>
       {description && (
         <Box marginBottom={4}>
-          <Text>{formatText(description, application, formatMessage)}</Text>
+          <Text>
+            {formatTextWithLocale(
+              description,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
+          </Text>
         </Box>
       )}
       {mappedExisting && (

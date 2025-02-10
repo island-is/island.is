@@ -4,4 +4,7 @@ export class InternalDefendantResponse {
   id!: string
   defenderChoice?: DefenderChoice
   defenderName?: string
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
 }

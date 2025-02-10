@@ -87,7 +87,7 @@ export async function runLocalServices(
     noUpdateSecrets,
   })
 
-  // Verify tat all dependencies exist in the rendered dependency list
+  // Verify that all dependencies exist in the rendered dependency list
   for (const dependency of dependencies) {
     if (!renderedLocalServices.services[dependency]) {
       throw new Error(`Dependency ${dependency} not found`)
@@ -109,13 +109,13 @@ export async function runLocalServices(
   }
   if (renderedLocalServices.mocks) {
     logger.warn('Starting mocks in the background')
-    processes.push(
-      runCommand({
-        command: renderedLocalServices.mocks,
-        project: 'mocks',
-        dryRun,
-      }),
-    )
+    const options = {
+      command: renderedLocalServices.mocks,
+      project: 'mocks',
+      dryRun,
+    }
+    logger.debug('Mocks command options', { options })
+    processes.push(runCommand(options))
   }
 
   for (const [name, service] of Object.entries(

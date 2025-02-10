@@ -12,6 +12,7 @@ import {
   courtOfAppealsRoles,
   DateType,
   districtCourtRoles,
+  EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
@@ -306,11 +307,22 @@ describe('getCasesQueryFilter', () => {
       expect(res).toStrictEqual({
         [Op.and]: [
           { is_archived: false },
+          { type: indictmentCases },
+          { state: CaseState.COMPLETED },
           {
-            state: [CaseState.COMPLETED],
+            indictment_ruling_decision: [
+              CaseIndictmentRulingDecision.FINE,
+              CaseIndictmentRulingDecision.RULING,
+            ],
           },
           {
-            type: indictmentCases,
+            id: {
+              [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM event_log
+              WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
+          `),
+            },
           },
         ],
       })
@@ -335,7 +347,6 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { is_archived: false },
-        { state: CaseState.ACCEPTED },
         {
           type: [
             CaseType.CUSTODY,
@@ -343,6 +354,7 @@ describe('getCasesQueryFilter', () => {
             CaseType.PAROLE_REVOCATION,
           ],
         },
+        { state: CaseState.ACCEPTED },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -370,25 +382,24 @@ describe('getCasesQueryFilter', () => {
 
       [Op.or]: [
         {
+          type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
           state: CaseState.ACCEPTED,
-          type: [
-            CaseType.CUSTODY,
-            CaseType.ADMISSION_TO_FACILITY,
-            CaseType.PAROLE_REVOCATION,
-            CaseType.TRAVEL_BAN,
-          ],
         },
         {
-          type: CaseType.INDICTMENT,
+          type: indictmentCases,
           state: CaseState.COMPLETED,
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_ruling_decision: {
+            [Op.or]: [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.FINE,
+            ],
+          },
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           id: {
-            [Op.notIn]: Sequelize.literal(`
+            [Op.in]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE service_requirement <> 'NOT_REQUIRED'
-              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE is_sent_to_prison_admin = true)
           `),
           },
         },
@@ -430,7 +441,15 @@ describe('getCasesQueryFilter', () => {
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
-                        { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
+                        {
+                          id: {
+                            [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM date_log
+                            WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                        `),
+                          },
+                        },
                       ],
                     },
                     { state: completedRequestCaseStates },
@@ -452,13 +471,29 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  id: {
-                    [Op.in]: Sequelize.literal(`
-                (SELECT case_id
-                  FROM defendant
-                  WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
-              `),
-                  },
+                  [Op.or]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM defendant
+                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}')
+                          AND is_defender_choice_confirmed = true)
+                    `),
+                      },
+                    },
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM civil_claimant
+                        WHERE has_spokesperson = true
+                          AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}')
+                          AND is_spokesperson_confirmed = true)
+                    `),
+                      },
+                    },
+                  ],
                 },
               ],
             },

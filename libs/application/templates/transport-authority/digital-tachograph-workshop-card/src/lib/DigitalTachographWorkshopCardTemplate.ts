@@ -27,7 +27,8 @@ import {
   SamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
-import { ChargeItemCode } from '@island.is/shared/constants'
+import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -36,6 +37,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD,
   name: application.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DigitalTachographWorkshopCard.translation,
@@ -93,9 +95,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: [
-          ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_WORKSHOP_CARD,
-        ],
+        chargeItems: getChargeItems(),
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

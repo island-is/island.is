@@ -1,0 +1,19 @@
+{
+  "name": "testing-e2e",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/testing/e2e/src",
+  "projectType": "library",
+  "tags": ["lib:react", "scope:react"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/testing/e2e"],
+      "options": {
+        "jestConfig": "libs/testing/e2e/jest.config.ts"
+      }
+    }
+  }
+}

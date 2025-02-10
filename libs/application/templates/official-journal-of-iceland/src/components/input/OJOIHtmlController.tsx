@@ -54,7 +54,6 @@ export const OJOIHtmlController = ({
     >
       <Editor
         key={editorKey}
-        config={baseConfig}
         classes={classes}
         fileUploader={fileUploader}
         valueRef={valueRef}

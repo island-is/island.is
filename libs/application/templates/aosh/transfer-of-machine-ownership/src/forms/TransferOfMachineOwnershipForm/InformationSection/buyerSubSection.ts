@@ -1,12 +1,15 @@
 import {
+  buildAlertMessageField,
+  buildCustomField,
   buildMultiField,
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
-  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
+import { FormValue } from '@island.is/application/types'
+import { doSellerAndBuyerHaveSameNationalId } from '../../../utils'
 
 export const buyerSubSection = buildSubSection({
   id: 'buyer',
@@ -34,6 +37,19 @@ export const buyerSubSection = buildSubSection({
           title: information.labels.buyer.phone,
           width: 'half',
           required: true,
+        }),
+        buildAlertMessageField({
+          id: 'buyer.alertMessage',
+          alertType: 'warning',
+          title: information.labels.buyer.alertTitle,
+          message: information.labels.buyer.alertMessage,
+          condition: (answer: FormValue) =>
+            doSellerAndBuyerHaveSameNationalId(answer),
+        }),
+        buildCustomField({
+          id: 'buyer.custom',
+          title: '',
+          component: 'StopBuyerIfSameAsSeller',
         }),
       ],
     }),

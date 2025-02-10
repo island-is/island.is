@@ -11,7 +11,6 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, toast } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 import { core, errors, tables } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -24,14 +23,15 @@ import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
@@ -74,7 +74,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
     }
 
     const updated = await updateCase(caseToCancelId, {
-      indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
     })
 
     if (!updated) {
@@ -112,19 +112,17 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 {
-                  title: capitalize(
-                    formatMessage(tables.created, { suffix: 'i' }),
-                  ),
-                  sortable: { isSortable: true, key: 'created' },
+                  title: capitalize(formatMessage(tables.sentToCourtDate)),
+                  sortBy: 'caseSentToCourtDate',
                 },
                 { title: formatMessage(tables.state) },
                 {
                   title: formatMessage(tables.hearingArrangementDate),
-                  sortable: { isSortable: true, key: 'courtDate' },
+                  sortBy: 'courtDate',
                 },
               ]}
               data={cases}
@@ -141,15 +139,29 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
-                { cell: (row) => <ColumnCaseType type={row.type} /> },
-                { cell: (row) => <CreatedDate created={row.created} /> },
+                {
+                  cell: (row) => (
+                    <ColumnCaseType
+                      type={row.type}
+                      decision={row.decision}
+                      parentCaseId={row.parentCaseId}
+                    />
+                  ),
+                },
+                {
+                  cell: (row) => (
+                    <TableDate displayDate={row.caseSentToCourtDate} />
+                  ),
+                },
                 {
                   cell: (row) => (
                     <TagCaseState
                       caseState={row.state}
+                      caseType={row.type}
                       isCourtRole={true}
                       courtDate={row.courtDate}
                       indictmentDecision={row.indictmentDecision}
+                      defendants={row.defendants}
                     />
                   ),
                 },

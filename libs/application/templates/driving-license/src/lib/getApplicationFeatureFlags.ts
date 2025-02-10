@@ -5,6 +5,7 @@ export enum DrivingLicenseFeatureFlags {
   ALLOW_LICENSE_SELECTION = 'applicationTemplateDrivingLicenseAllowLicenseSelection',
   ALLOW_BE_LICENSE = 'isBEApplicationEnabled',
   ALLOW_65_RENEWAL = 'is65RenewalApplicationEnabled',
+  ALLOW_ADVANCED = 'isDrivingLicenseAdvancedEnabled',
 }
 
 export const getApplicationFeatureFlags = async (
@@ -15,6 +16,7 @@ export const getApplicationFeatureFlags = async (
     DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION,
     DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE,
     DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL,
+    DrivingLicenseFeatureFlags.ALLOW_ADVANCED,
   ]
 
   return (

@@ -44,13 +44,18 @@ const mapSeeMorePage = (seeMorePage: IOrganizationSubpage | undefined) => {
   return mapOrganizationSubpage({
     ...seeMorePage,
     fields: {
-      ...seeMorePage.fields,
+      title: seeMorePage.fields?.title,
+      slug: seeMorePage.fields?.slug,
       organizationPage: {
-        ...seeMorePage.fields.organizationPage,
+        ...seeMorePage.fields?.organizationPage,
         fields: {
-          ...seeMorePage.fields.organizationPage?.fields,
-          slices: [],
-          bottomSlices: [],
+          title: seeMorePage.fields?.organizationPage?.fields?.title,
+          slug: seeMorePage.fields?.organizationPage?.fields?.slug,
+          featuredImage:
+            seeMorePage.fields?.organizationPage?.fields?.featuredImage,
+          organization:
+            seeMorePage.fields?.organizationPage?.fields?.organization,
+          theme: seeMorePage.fields?.organizationPage?.fields?.theme,
         },
       },
     },
@@ -60,22 +65,28 @@ const mapSeeMorePage = (seeMorePage: IOrganizationSubpage | undefined) => {
 export const mapLatestGenericListItems = ({
   fields,
   sys,
-}: ILatestGenericListItems): SystemMetadata<LatestGenericListItems> => ({
-  typename: 'LatestGenericListItems',
-  id: sys.id,
-  title: fields.title ?? '',
-  genericList: fields.genericList ? mapGenericList(fields.genericList) : null,
-  seeMorePage: mapSeeMorePage(fields.seeMorePage),
-  seeMoreLinkText: fields.seeMoreLinkText ?? '',
-  itemResponse: fields.genericList?.sys.id
-    ? {
-        genericListId: fields.genericList?.sys.id,
-        lang:
-          sys.locale === 'is-IS'
-            ? 'is'
-            : (sys.locale as ElasticsearchIndexLocale),
-        page: 1,
-        size: 2,
-      }
-    : null,
-})
+}: ILatestGenericListItems): SystemMetadata<LatestGenericListItems> => {
+  const genericList = fields.genericList
+    ? mapGenericList(fields.genericList)
+    : null
+  return {
+    typename: 'LatestGenericListItems',
+    id: sys.id,
+    title: fields.title ?? '',
+    genericList,
+    seeMorePage: mapSeeMorePage(fields.seeMorePage),
+    seeMoreLinkText: fields.seeMoreLinkText ?? '',
+    itemResponse: fields.genericList?.sys.id
+      ? {
+          genericListId: fields.genericList?.sys.id,
+          lang:
+            sys.locale === 'is-IS'
+              ? 'is'
+              : (sys.locale as ElasticsearchIndexLocale),
+          page: 1,
+          size: fields.itemCount ?? 2,
+          orderBy: genericList?.defaultOrder,
+        }
+      : null,
+  }
+}

@@ -93,6 +93,7 @@ export const Header = ({
         height="full"
         marginLeft={[1, 1, 2, 4]}
         marginRight="auto"
+        paddingRight={[1, 1, 2, 4]}
       >
         <Box marginLeft={[1, 1, 2, 4]}>
           <Text variant="eyebrow">{info.title}</Text>
@@ -128,14 +129,14 @@ export const Header = ({
       alignItems="center"
       justifyContent="spaceBetween"
     >
-      <Inline alignY="center" flexWrap="nowrap">
-        {renderLogo()}
+      <Box display="flex" columnGap={2} alignItems="center" flexWrap="nowrap">
+        <Box flexShrink={0}>{renderLogo()}</Box>
         {renderInfo()}
-      </Inline>
-      <Inline alignY="center" space={2}>
+      </Box>
+      <Box display="flex" alignItems="center" columnGap={2} flexShrink={0}>
         {renderOldDropdown()}
         {headerItems}
-      </Inline>
+      </Box>
     </Box>
   )
 }

@@ -14,9 +14,15 @@ interface Props {
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
   rows?: number
+  disabled?: boolean
 }
 
-const RulingInput: FC<Props> = ({ workingCase, setWorkingCase, rows }) => {
+const RulingInput: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  rows,
+  disabled = false,
+}) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -52,6 +58,7 @@ const RulingInput: FC<Props> = ({ workingCase, setWorkingCase, rows }) => {
         on: !rows,
         maxHeight: 600,
       }}
+      disabled={disabled}
     />
   )
 }

@@ -1,5 +1,5 @@
 import { AdvertSignatureTypeEnum } from '@island.is/clients/official-journal-of-iceland'
-import { InputType, Field, registerEnumType } from '@nestjs/graphql'
+import { InputType, Field, registerEnumType, Int } from '@nestjs/graphql'
 
 registerEnumType(AdvertSignatureTypeEnum, {
   name: 'OfficialJournalOfIcelandAdvertSignatureType',
@@ -10,10 +10,10 @@ export class AdvertsInput {
   @Field(() => String, { nullable: true })
   search?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   page?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   pageSize?: number
 
   @Field(() => [String], { nullable: true })
@@ -28,11 +28,11 @@ export class AdvertsInput {
   @Field(() => [String], { nullable: true })
   involvedParty?: string[]
 
-  @Field(() => Date, { nullable: true })
-  dateFrom?: Date
+  @Field(() => String, { nullable: true })
+  dateFrom?: string
 
-  @Field(() => Date, { nullable: true })
-  dateTo?: Date
+  @Field(() => String, { nullable: true })
+  dateTo?: string
 }
 
 @InputType('OfficialJournalOfIcelandTypesInput')
@@ -43,10 +43,10 @@ export class TypeQueryParams {
   @Field(() => String, { nullable: true })
   department?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   page?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   pageSize?: number
 }
 
@@ -61,10 +61,10 @@ export class QueryParams {
   @Field(() => String, { nullable: true })
   search?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   page?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   pageSize?: number
 }
 
@@ -133,4 +133,16 @@ export class SubmitApplicationInput {
 
   @Field(() => AdvertSignature)
   signature!: AdvertSignature
+}
+
+@InputType('OfficialJournalOfIcelandMainTypesInput')
+export class MainTypesQueryParams {
+  @Field(() => String, { nullable: true })
+  department?: string
+
+  @Field(() => Int, { nullable: true })
+  page?: number
+
+  @Field(() => Int, { nullable: true })
+  pageSize?: number
 }

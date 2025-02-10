@@ -46,6 +46,7 @@ import {
   BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getApplicationAnswers, isEligible } from './householdSupplementUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -54,6 +55,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,
@@ -354,6 +356,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
             },
           ],
         },

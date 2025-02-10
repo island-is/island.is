@@ -2,68 +2,89 @@ import {
   buildAsyncSelectField,
   buildMultiField,
   buildSubSection,
+  coreErrorMessages,
+  NO,
 } from '@island.is/application/core'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../lib/newPrimarySchoolUtils'
+import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication } = getApplicationAnswers(answers)
-    return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+    const { applyForNeighbourhoodSchool, applicationType } =
+      getApplicationAnswers(answers)
+    return (
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+        applyForNeighbourhoodSchool === NO)
+    )
   },
   children: [
     buildMultiField({
-      id: 'school',
+      id: 'newSchool',
       title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
       children: [
         buildAsyncSelectField({
-          id: 'schools.newSchool.municipality',
+          id: 'newSchool.municipality',
           title: newPrimarySchoolMessages.shared.municipality,
-          // TODO: get data from Juni
+          placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
+          loadingError: coreErrorMessages.failedDataProvider,
+          dataTestId: 'new-school-municipality',
           loadOptions: async ({ apolloClient }) => {
-            return [{ value: 'Reykjavík', label: 'Reykjavík' }]
-            /*const { municipalities } = getApplicationExternalData(
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
+                value: name,
+                label: name,
+              })) ?? []
+            )
+          },
+        }),
+        buildAsyncSelectField({
+          id: 'newSchool.school',
+          title: newPrimarySchoolMessages.shared.school,
+          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
+          loadingError: coreErrorMessages.failedDataProvider,
+          dataTestId: 'new-school-school',
+          updateOnSelect: 'newSchool.municipality',
+          loadOptions: async ({ application, apolloClient, selectedValue }) => {
+            const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
 
-            return municipalities.map(
-              (municipality: NationalRegistryMunicipality) => ({
-                value: municipality?.code || '',
-                label: municipality.name || '',
-              }),
-            )*/
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality
+                ?.find(({ name }) => name === selectedValue)
+                ?.children?.filter((school) =>
+                  school.gradeLevels?.includes(childGradeLevel),
+                )
+                ?.map((school) => ({
+                  value: school.id,
+                  label: school.name,
+                })) ?? []
+            )
           },
-
-          placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
-          dataTestId: 'new-school-municipality',
-        }),
-
-        buildAsyncSelectField({
-          id: 'schools.newSchool.school',
-          title: newPrimarySchoolMessages.shared.school,
           condition: (answers) => {
             const { schoolMunicipality } = getApplicationAnswers(answers)
+
             return !!schoolMunicipality
           },
-          // TODO: get data from Juni
-          loadOptions: async ({ apolloClient }) => {
-            return [
-              {
-                value: 'Ártúnsskóli',
-                label: 'Ártúnsskóli',
-              },
-              {
-                value: 'Árbæjarskóli',
-                label: 'Árbæjarskóli',
-              },
-            ]
-          },
-          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
-          dataTestId: 'new-school-school',
         }),
       ],
     }),

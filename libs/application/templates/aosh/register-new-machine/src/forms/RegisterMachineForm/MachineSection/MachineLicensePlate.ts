@@ -25,7 +25,7 @@ export const MachineLicensePlate = buildSubSection({
       description: licensePlate.general.description,
       children: [
         buildRadioField({
-          id: 'streetRegistration.registerToTraffic',
+          id: 'machine.streetRegistration.registerToTraffic',
           title: licensePlate.general.subTitle,
           width: 'half',
           defaultValue: NO,
@@ -41,7 +41,7 @@ export const MachineLicensePlate = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'streetRegistration.size',
+          id: 'machine.streetRegistration.size',
           title: '',
           backgroundColor: 'white',
           options: [
@@ -67,7 +67,7 @@ export const MachineLicensePlate = buildSubSection({
           condition: (answers) => {
             const registerToTraffic = getValueViaPath(
               answers,
-              'streetRegistration.registerToTraffic',
+              'machine.streetRegistration.registerToTraffic',
               NO,
             ) as typeof NO | typeof YES
 

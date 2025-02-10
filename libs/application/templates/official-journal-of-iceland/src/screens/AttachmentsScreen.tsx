@@ -8,6 +8,7 @@ export const AttachmentsScreen = ({
   application,
   errors,
   field,
+  goToScreen,
 }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
 
@@ -15,6 +16,7 @@ export const AttachmentsScreen = ({
     <FormScreen
       title={f(attachments.general.title)}
       intro={f(attachments.general.intro)}
+      goToScreen={goToScreen}
     >
       <Attachments field={field} application={application} errors={errors} />
     </FormScreen>

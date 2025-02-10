@@ -1,4 +1,13 @@
-import { Controller, Get, Headers, Inject, Query } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Headers,
+  Inject,
+  NotFoundException,
+  Param,
+  Query,
+} from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -6,8 +15,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
-import { ApplicationBackendModel } from './backendModels'
-import { ApplicationModel } from './models'
+import {
+  ApplicationBackendModel,
+  PdfResponseBackendModel,
+} from './backendModels'
+import { ApplicationModel, PdfModel } from './models'
 
 @Controller('api/open/v1')
 export class AppController {
@@ -32,6 +44,42 @@ export class AppController {
       .then((applications) => {
         this.logger.info(`Application fetched`)
         return applications
+      })
+  }
+
+  @Get('pdf')
+  @ApiCreatedResponse({
+    type: PdfResponseBackendModel,
+    description: 'Gets application from id and returns pdf',
+  })
+  async getPdf(
+    @Headers('API-Key') apiKey: string,
+    @Headers('Municipality-Code') municipalityCode: string,
+    @Query('id') id: string,
+  ): Promise<PdfModel> {
+    if (!id) {
+      throw new BadRequestException('Application ID is required')
+    }
+    this.logger.info('Gets one application and returns pdf')
+    return this.appService
+      .getApplicationPdfById(apiKey, municipalityCode, id)
+      .then((application) => {
+        this.logger.info(`Application fetched and returned as pdf`)
+        if (!application.file) {
+          throw new NotFoundException(`Application ${id} not found`)
+        }
+        return application
+      })
+      .catch((error) => {
+        if (error instanceof NotFoundException) {
+          this.logger.warn(`Application ${id} not found`)
+        } else {
+          this.logger.error(
+            `Failed to generate PDF for application ${id}`,
+            error,
+          )
+        }
+        throw error
       })
   }
 }

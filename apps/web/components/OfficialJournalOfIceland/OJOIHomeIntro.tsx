@@ -1,5 +1,3 @@
-import { ReactNode } from 'react'
-
 import {
   Box,
   GridColumn,
@@ -17,7 +15,7 @@ import * as s from './OJOIHomeIntro.css'
 
 export type OJOIHomeIntroProps = {
   organization?: Organization
-  breadCrumbs: ReactNode
+  breadCrumbs: React.ReactNode
   searchPlaceholder: string
   quickLinks: Array<{ title: string; href: string; variant?: TagVariant }>
   searchUrl: string

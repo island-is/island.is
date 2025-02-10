@@ -33,7 +33,7 @@ export const FaqList: FC<React.PropsWithChildren<FaqListProps>> = ({
           <span data-sidebar-link={slugify(title)}>{title}</span>
         </Text>
       )}
-      <Accordion>
+      <Accordion singleExpand={false}>
         {questions.map(({ id, question, answer }) => {
           return (
             <AccordionItem

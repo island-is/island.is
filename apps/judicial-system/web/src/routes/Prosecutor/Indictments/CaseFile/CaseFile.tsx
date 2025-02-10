@@ -1,9 +1,9 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 import router from 'next/router'
 
-import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -13,16 +13,34 @@ import {
   IndictmentsCaseFilesAccordionItem,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile as TCaseFile,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { caseFile as m } from './CaseFile.strings'
 
 const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const caseFiles = useMemo(() => {
+    return new Map<string, TCaseFile[]>(
+      workingCase.policeCaseNumbers?.map((policeCaseNumber) => [
+        policeCaseNumber,
+        workingCase.caseFiles?.filter(
+          (caseFile) =>
+            caseFile.policeCaseNumber === policeCaseNumber &&
+            caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
+        ) ?? [],
+      ]),
+    )
+  }, [workingCase.caseFiles, workingCase.policeCaseNumbers])
+
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState<number>(0)
 
@@ -43,11 +61,7 @@ const CaseFile = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFile)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
@@ -57,24 +71,20 @@ const CaseFile = () => {
         <Box marginBottom={5}>
           <LayoutGroup>
             <Accordion singleExpand>
-              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-                <IndictmentsCaseFilesAccordionItem
-                  key={index}
-                  caseId={workingCase.id}
-                  policeCaseNumber={policeCaseNumber}
-                  shouldStartExpanded={index === 0}
-                  caseFiles={
-                    workingCase.caseFiles?.filter(
-                      (caseFile) =>
-                        caseFile.policeCaseNumber === policeCaseNumber &&
-                        caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
-                    ) ?? []
-                  }
-                  subtypes={workingCase.indictmentSubtypes}
-                  crimeScenes={workingCase.crimeScenes}
-                  setEditCount={setEditCount}
-                />
-              ))}
+              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+                return (
+                  <IndictmentsCaseFilesAccordionItem
+                    key={index}
+                    caseId={workingCase.id}
+                    policeCaseNumber={policeCaseNumber}
+                    shouldStartExpanded={index === 0}
+                    caseFiles={caseFiles.get(policeCaseNumber) ?? []}
+                    subtypes={workingCase.indictmentSubtypes}
+                    crimeScenes={workingCase.crimeScenes}
+                    setEditCount={setEditCount}
+                  />
+                )
+              })}
             </Accordion>
           </LayoutGroup>
         </Box>

@@ -5,8 +5,10 @@ import { VehiclesCurrentVehicle, CurrentVehiclesAndRecords } from '../shared'
 export const getSelectedVehicle = (
   externalData: ExternalData,
   answers: FormValue,
-): VehiclesCurrentVehicle => {
-  if (answers.findVehicle) {
+): VehiclesCurrentVehicle | undefined => {
+  if (
+    getValueViaPath<boolean | undefined>(answers, 'pickVehicle.findVehicle')
+  ) {
     const vehicle = getValueViaPath(
       answers,
       'pickVehicle',
@@ -23,5 +25,5 @@ export const getSelectedVehicle = (
     '',
   ) as string
 
-  return currentVehicleList?.vehicles[parseInt(vehicleIndex, 10)]
+  return currentVehicleList?.vehicles?.[parseInt(vehicleIndex, 10)]
 }

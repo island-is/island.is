@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Post,
@@ -27,12 +28,12 @@ import {
 import { EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
-import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { IndictmentCaseExistsForDefendantGuard } from './guards/indictmentCaseExistsForDefendant.guard'
 import {
   CaseInterceptor,
   CasesInterceptor,
@@ -76,42 +77,63 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @Post('cases/indictments')
+  @Post('cases/postHearingArrangements')
+  async postHearingArrangements(
+    @Body() { date }: { date: Date },
+  ): Promise<void> {
+    this.logger.debug(
+      `Post internal summary of all cases that have court hearing arrangement at ${date}`,
+    )
+
+    const cases = await this.internalCaseService.getCaseHearingArrangements(
+      new Date(date),
+    )
+    await this.eventService.postDailyHearingArrangementEvents(date, cases)
+  }
+
+  @Get('cases/indictments/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
     isArray: true,
-    description: 'Gets all indictment cases',
+    description: 'Gets all indictment cases for a given defendant',
   })
   @UseInterceptors(CasesInterceptor)
-  getIndictmentCases(
-    @Body() internalCasesDto: InternalCasesDto,
+  getAllDefendantIndictmentCases(
+    @Param('defendantNationalId') defendantNationalId: string,
   ): Promise<Case[]> {
-    this.logger.debug('Getting all indictment cases')
+    this.logger.debug('Getting all indictment cases for a given defendant')
 
-    return this.internalCaseService.getIndictmentCases(
-      internalCasesDto.nationalId,
+    return this.internalCaseService.getAllDefendantIndictmentCases(
+      defendantNationalId,
     )
   }
 
-  @Post('case/indictment/:caseId')
+  @UseGuards(IndictmentCaseExistsForDefendantGuard)
+  @Get('case/indictment/:caseId/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
-    description: 'Gets indictment case by id',
+    description: 'Gets an existing indictment case by id for a given defendant',
   })
   @UseInterceptors(CaseInterceptor)
-  getIndictmentCase(
+  getDefendantIndictmentCaseById(
     @Param('caseId') caseId: string,
-    @Body() internalCasesDto: InternalCasesDto,
+    @Param('defendantNationalId') defendantNationalId: string,
+    @CurrentCase() theCase: Case,
   ): Promise<Case> {
-    this.logger.debug(`Getting indictment case ${caseId}`)
+    this.logger.debug(
+      `Getting indictment case ${caseId} by id for a given defendant`,
+    )
 
-    return this.internalCaseService.getIndictmentCase(
-      caseId,
-      internalCasesDto.nationalId,
+    return this.internalCaseService.getDefendantIndictmentCase(
+      theCase,
+      defendantNationalId,
     )
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+  )
   @Post(
     `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_PROSECUTOR]}`,
   )
@@ -173,31 +195,6 @@ export class InternalCaseController {
     )
 
     return this.internalCaseService.deliverIndictmentInfoToCourt(
-      theCase,
-      deliverDto.user,
-    )
-  }
-
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post(
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]
-    }`,
-  )
-  @ApiOkResponse({
-    type: DeliverResponse,
-    description: 'Delivers indictment case defender info to court',
-  })
-  deliverIndictmentDefenderInfoToCourt(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-    @Body() deliverDto: DeliverDto,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Delivering the indictment defender info for case ${caseId} to court`,
-    )
-
-    return this.internalCaseService.deliverIndictmentDefenderInfoToCourt(
       theCase,
       deliverDto.user,
     )
@@ -587,6 +584,35 @@ export class InternalCaseController {
     return this.internalCaseService.deliverCaseFilesRecordToPolice(
       theCase,
       policeCaseNumber,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a signed court record to police',
+  })
+  deliverSignedCourtRecordToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the signed court record for case ${caseId} to police`,
+    )
+
+    return this.internalCaseService.deliverSignedCourtRecordToPolice(
+      theCase,
       deliverDto.user,
     )
   }

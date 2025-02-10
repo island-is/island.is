@@ -10,6 +10,11 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${RESTART_MAX_RETRIES:=3}"
 : "${LOCAL_PORT:=}"
 : "${DRY:=}"
+: "${AWS_PROFILE:=islandis-dev}"
+: "${CLUSTER:=${AWS_PROFILE##*-}-cluster01}"
+
+echo "AWS_PROFILE=${AWS_PROFILE}" >&2
+echo "CLUSTER=${CLUSTER}" >&2
 
 ARGS=()
 PROXIES=()
@@ -240,7 +245,7 @@ run-proxy() {
     --service "${service}" \
     --port "${service_port}" \
     --proxy-port "${host_port}" \
-    --cluster "${CLUSTER:-dev-cluster01}"
+    --cluster "${CLUSTER}"
 }
 run-db-proxy() {
   run-proxy 5432 "${LOCAL_PORT:=5432}" db

@@ -40,7 +40,7 @@ export const ChildrenPassportReview: FC<Props> = ({
   ) as OptionSetItem[]
 
   const passport = answers.childrenPassport?.find(
-    (x) => x.nationalId === child.nationalId,
+    (x) => x?.nationalId === child.nationalId,
   )
 
   if (passport) {

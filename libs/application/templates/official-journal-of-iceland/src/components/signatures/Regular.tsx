@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { InputFields } from '../../lib/types'
@@ -56,18 +56,20 @@ export const RegularSignature = ({ applicationId }: Props) => {
                   <Text variant="h5" marginBottom={2}>
                     {f(messages.headings.signedBy)}
                   </Text>
-                  {signature.members?.map((_, memberIndex) => {
-                    const member = signature.members?.at(memberIndex)
-                    return (
-                      <RegularMember
-                        key={`signature.${index}.member.${memberIndex}`}
-                        applicationId={applicationId}
-                        signatureIndex={index}
-                        memberIndex={memberIndex}
-                        member={member}
-                      />
-                    )
-                  })}
+                  <Stack space={2} dividers="regular">
+                    {signature.members?.map((_, memberIndex) => {
+                      const member = signature.members?.at(memberIndex)
+                      return (
+                        <RegularMember
+                          key={`signature.${index}.member.${memberIndex}`}
+                          applicationId={applicationId}
+                          signatureIndex={index}
+                          memberIndex={memberIndex}
+                          member={member}
+                        />
+                      )
+                    })}
+                  </Stack>
                   <AddRegularMember
                     applicationId={applicationId}
                     signatureIndex={index}

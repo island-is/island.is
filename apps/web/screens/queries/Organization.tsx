@@ -127,6 +127,14 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      canBeFoundInSearchResults
+      showPastEventsOption
+      topLevelNavigation {
+        links {
+          label
+          href
+        }
+      }
       defaultHeaderImage {
         url
         contentType
@@ -268,6 +276,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         ...AllSlices
         ${nestedFields}
       }
+      bottomSlices {
+        ...AllSlices
+      }
       showTableOfContents
       sliceCustomRenderer
       sliceExtraText
@@ -407,6 +418,53 @@ export const EMAIL_SIGNUP_MUTATION = gql`
   mutation EmailSignupSubscription($input: EmailSignupInput!) {
     emailSignupSubscription(input: $input) {
       subscribed
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
+  query GetOrganizationParentSubpageQuery(
+    $input: GetOrganizationParentSubpageInput!
+  ) {
+    getOrganizationParentSubpage(input: $input) {
+      id
+      title
+      childLinks {
+        label
+        href
+      }
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL1_QUERY = gql`
+  query GetOrganizationPageStandaloneSitemapLevel1Query(
+    $input: GetOrganizationPageStandaloneSitemapLevel1Input!
+  ) {
+    getOrganizationPageStandaloneSitemapLevel1(input: $input) {
+      childLinks {
+        label
+        href
+        description
+      }
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PAGE_STANDALONE_SITEMAP_LEVEL2_QUERY = gql`
+  query GetOrganizationPageStandaloneSitemapLevel2Query(
+    $input: GetOrganizationPageStandaloneSitemapLevel2Input!
+  ) {
+    getOrganizationPageStandaloneSitemapLevel2(input: $input) {
+      label
+      childCategories {
+        label
+        href
+        childLinks {
+          label
+          href
+        }
+      }
     }
   }
 `

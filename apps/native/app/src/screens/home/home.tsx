@@ -1,4 +1,3 @@
-import { TopLine } from '@ui'
 import React, {
   ReactElement,
   useCallback,
@@ -17,6 +16,7 @@ import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
+import { TopLine } from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -28,8 +28,10 @@ import {
 } from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
+import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { navigateTo } from '../../lib/deep-linking'
 import {
   AirDiscountModule,
   useGetAirDiscountQuery,
@@ -53,7 +55,7 @@ import {
 } from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
 import {
-  useListVehiclesQuery,
+  useListVehiclesV2Query,
   validateVehiclesInitialData,
   VehiclesModule,
 } from './vehicles-module'
@@ -172,13 +174,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     skip: !airDiscountWidgetEnabled,
   })
 
-  const vehiclesRes = useListVehiclesQuery({
+  const vehiclesRes = useListVehiclesV2Query({
     variables: {
       input: {
         page: 1,
         pageSize: 15,
-        showDeregeristered: false,
-        showHistory: false,
       },
     },
     skip: !vehiclesWidgetEnabled,
@@ -254,12 +254,21 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
+  const isAppUpdateRequired = useCallback(async () => {
+    const needsUpdate = await needsToUpdateAppVersion()
+    if (needsUpdate) {
+      navigateTo('/update-app', { closable: false })
+    }
+  }, [])
+
   useEffect(() => {
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
     // Get user locale from server
     getAndSetLocale()
+    // Check if upgrade wall should be shown
+    isAppUpdateRequired()
   }, [])
 
   const refetch = useCallback(async () => {

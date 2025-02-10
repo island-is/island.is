@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -37,7 +37,7 @@ describe('NotificationController - Send court date notification', () => {
 
       await notificationController
         .sendCaseNotification(caseId, user, { id: caseId } as Case, {
-          type: NotificationType.COURT_DATE,
+          type: CaseNotificationType.COURT_DATE,
           eventOnly,
         })
         .then((result) => (then.result = result))
@@ -61,7 +61,7 @@ describe('NotificationController - Send court date notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.COURT_DATE },
+          body: { type: CaseNotificationType.COURT_DATE },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })
@@ -82,7 +82,7 @@ describe('NotificationController - Send court date notification', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.DEFENDER_ASSIGNED },
+          body: { type: CaseNotificationType.ADVOCATE_ASSIGNED },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

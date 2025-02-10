@@ -1,6 +1,15 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { json } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../../infra/src/dsl/dsl'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -19,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .namespace('identity-server-admin')
     .image('services-auth-public-api')
     .db({ name: 'servicesauth' })
+    .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -64,14 +74,33 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         // Origin for Android prod app
         'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
       ]),
+      SYSLUMENN_HOST: {
+        dev: 'https://api.syslumenn.is/staging',
+        staging: 'https://api.syslumenn.is/staging',
+        prod: 'https://api.syslumenn.is/api',
+      },
+      SYSLUMENN_TIMEOUT: '3000',
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        prod: 'digitaliceland',
+        staging: 'digitaliceland',
+        dev: 'digitaliceland',
+      },
     })
     .secrets({
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
+      ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .ingress({
       primary: {
         host: {

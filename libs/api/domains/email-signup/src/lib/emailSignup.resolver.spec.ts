@@ -6,6 +6,7 @@ import { emailSignup } from './fixtures/emailSignup'
 import { EmailSignupInput } from './dto/emailSignup.input'
 import { EmailSignupService } from './emailSignup.service'
 import { ZenterSignupService } from './services/zenter/zenter.service'
+import { CampaignMonitorSignupService } from './services/campaignMonitor/campaignMonitor.service'
 import { MailchimpSignupService } from './services/mailchimp/mailchimp.service'
 import { ZENTER_IMPORT_ENDPOINT_URL } from './constants'
 
@@ -25,6 +26,15 @@ describe('emailSignupResolver', () => {
               fiskistofaZenterClientPassword: '',
               fiskistofaZenterEmail: '',
               fiskistofaZenterPassword: '',
+              isConfigured: true,
+            })
+          },
+        },
+        {
+          provide: CampaignMonitorSignupService,
+          useFactory() {
+            return new CampaignMonitorSignupService({
+              vinnueftirlitidCampaignMonitorApiKey: '',
               isConfigured: true,
             })
           },
@@ -154,7 +164,6 @@ describe('emailSignupResolver', () => {
         )
 
       jest.spyOn(axios, 'post').mockImplementation((url) => {
-        console.log('yee', url, url === ZENTER_IMPORT_ENDPOINT_URL)
         return Promise.resolve({
           data: url === ZENTER_IMPORT_ENDPOINT_URL ? 1 : 0,
         })
@@ -166,6 +175,81 @@ describe('emailSignupResolver', () => {
         ],
         signupID: '456',
       })
+
+      expect(result?.subscribed).toBe(true)
+    })
+  })
+
+  describe('subscribeToCampaignMonitor', () => {
+    const testEmailSlice: EmailSignup = {
+      id: '345',
+      title: '',
+      description: '',
+      configuration: {
+        signupUrl: 'test.is',
+      },
+      formFields: [
+        {
+          id: '1',
+          options: [],
+          placeholder: '',
+          required: true,
+          title: '',
+          type: 'email',
+          name: 'EmailAddress',
+          emailConfig: {},
+        },
+      ],
+      signupType: 'campaign monitor',
+      translations: {},
+    }
+    const testInput: EmailSignupInput = {
+      signupID: '345',
+      inputFields: [
+        {
+          name: 'EmailAddress',
+          type: 'email',
+          value: 'test@example.com',
+          id: '1',
+        },
+      ],
+    }
+
+    it('should handle errors from the subscription API', async () => {
+      jest
+        .spyOn(cmsContentfulService, 'getEmailSignup')
+        .mockImplementation(({ id }) =>
+          Promise.resolve(id === '345' ? testEmailSlice : null),
+        )
+      jest.spyOn(axios, 'post').mockImplementation(() => {
+        return Promise.reject(new Error('Network error'))
+      })
+
+      const result = await emailSignupResolver.emailSignupSubscription(
+        testInput,
+      )
+
+      expect(result?.subscribed).toBe(false)
+    })
+
+    it('should get a successful response if input is valid', async () => {
+      jest
+        .spyOn(cmsContentfulService, 'getEmailSignup')
+        .mockImplementation(({ id }) =>
+          Promise.resolve(id === '345' ? testEmailSlice : null),
+        )
+
+      jest.spyOn(axios, 'post').mockImplementation((_url, data) => {
+        const EmailAddress = (data as { EmailAddress: string }).EmailAddress
+
+        return Promise.resolve({
+          data: EmailAddress === testInput.inputFields[0].value ? 1 : 0,
+        })
+      })
+
+      const result = await emailSignupResolver.emailSignupSubscription(
+        testInput,
+      )
 
       expect(result?.subscribed).toBe(true)
     })

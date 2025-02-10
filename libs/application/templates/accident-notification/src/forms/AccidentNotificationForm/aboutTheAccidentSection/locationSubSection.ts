@@ -12,19 +12,6 @@ import {
   sportsClubInfo,
 } from '../../../lib/messages'
 import {
-  hideLocationAndPurpose,
-  isAgricultureAccident,
-  isFishermanAccident,
-  isGeneralWorkplaceAccident,
-  isHomeActivitiesAccident,
-  isInternshipStudiesAccident,
-  isProfessionalAthleteAccident,
-  isRescueWorkAccident,
-  isStudiesAccident,
-} from '../../../utils'
-import { NO, YES } from '../../../constants'
-import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmployee'
-import {
   AgricultureAccidentLocationEnum,
   FishermanWorkplaceAccidentLocationEnum,
   FishermanWorkplaceAccidentShipLocationEnum,
@@ -33,6 +20,21 @@ import {
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
 } from '../../../types'
+import {
+  isAgricultureAccident,
+  isFishermanAccident,
+  isGeneralWorkplaceAccident,
+  isInternshipStudiesAccident,
+  isProfessionalAthleteAccident,
+  isSportAccidentAndEmployee,
+} from '../../../utils/occupationUtils'
+import { NO, YES } from '@island.is/application/types'
+import {
+  isHomeActivitiesAccident,
+  isRescueWorkAccident,
+  isStudiesAccident,
+} from '../../../utils/accidentUtils'
+import { hideLocationAndPurpose } from '../../../utils/miscUtils'
 
 // Location Subsection
 export const locationSubSection = buildSubSection({
@@ -69,7 +71,6 @@ export const locationSubSection = buildSubSection({
         }),
       ],
     }),
-
     // Accident location section
     // location of home related accident
     buildMultiField({

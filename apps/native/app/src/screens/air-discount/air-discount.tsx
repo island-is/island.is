@@ -1,14 +1,5 @@
-import {
-  Alert,
-  Heading,
-  Link,
-  LinkText,
-  Problem,
-  Skeleton,
-  Typography,
-} from '@ui'
 import React from 'react'
-import { SafeAreaView, ScrollView, View } from 'react-native'
+import { Image, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { FormattedMessage, useIntl } from 'react-intl'
 import styled, { useTheme } from 'styled-components/native'
@@ -18,10 +9,20 @@ import {
   useGetAirDiscountFlightLegsQuery,
   useGetAirDiscountQuery,
 } from '../../graphql/types/schema'
-import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
-import { Bullet } from '@ui/lib/bullet/bullet'
+import {
+  Alert,
+  Heading,
+  Link,
+  LinkText,
+  Problem,
+  Skeleton,
+  Typography,
+  Bullet,
+  AirDiscountCard,
+} from '../../ui'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { AirfaresUsageTable } from './airfares-usage-table'
+import externalLinkIcon from '../../assets/icons/external-link.png'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -152,7 +153,8 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
               <FormattedMessage
                 id="airDiscount.tosLinkText"
                 defaultMessage="Notendaskilmálar"
-              />
+              />{' '}
+              <Image source={externalLinkIcon} />
             </LinkText>
           </Link>
         </TOSLink>

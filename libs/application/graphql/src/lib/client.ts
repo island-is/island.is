@@ -1,19 +1,18 @@
-import fetch from 'cross-fetch'
 import {
   ApolloClient,
-  InMemoryCache,
-  HttpLink,
   ApolloLink,
+  HttpLink,
+  InMemoryCache,
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-import { authLink } from '@island.is/auth/react'
+import fetch from 'cross-fetch'
 
 const retryLink = new RetryLink()
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
-    graphQLErrors.map(({ message, locations, path, extensions }) => {
+    graphQLErrors.map(({ message, path, extensions }) => {
       const problem = JSON.stringify(extensions?.problem, null, '  ')
       console.log(
         `[GraphQL error]: Message: ${message}, Path: ${path}, Problem: ${problem}`,
@@ -23,14 +22,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
 
-export const initializeClient = (baseApiUrl: string) => {
-  const httpLink = new HttpLink({
-    uri: ({ operationName }) => `${baseApiUrl}/api/graphql?op=${operationName}`,
-    fetch,
-  })
+const httpLink = new HttpLink({
+  uri: ({ operationName }) => `/bff/api/graphql?op=${operationName}`,
+  fetch,
+})
 
-  return new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
-    cache: new InMemoryCache(),
-  })
-}
+export const client = new ApolloClient({
+  link: ApolloLink.from([retryLink, errorLink, httpLink]),
+  cache: new InMemoryCache(),
+})

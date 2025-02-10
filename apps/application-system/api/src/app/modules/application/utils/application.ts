@@ -156,3 +156,105 @@ export const mockApplicationFromTypeId = (
     status: ApplicationStatus.IN_PROGRESS,
   }
 }
+
+type RecordType = Record<string, unknown>
+
+const MAX_DEPTH = 100
+
+export const removeObjectWithKeyFromAnswers = (
+  answers: object,
+  keyToRemove: string,
+  depth = 0,
+): object => {
+  if (depth >= MAX_DEPTH) {
+    console.warn(
+      'Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers',
+    )
+    return answers
+  }
+  // Handle arrays
+  if (Array.isArray(answers)) {
+    return cleanArray(answers, keyToRemove, depth)
+  }
+
+  // Handle objects
+  if (isValidObject(answers)) {
+    return cleanObject(answers, keyToRemove, depth)
+  }
+
+  return answers
+}
+
+const cleanArray = (
+  array: unknown[],
+  keyToRemove: string,
+  depth: number,
+): unknown[] => {
+  const filteredArray = array.filter((item) => {
+    if (isValidObject(item)) {
+      return !containsKey(item, keyToRemove)
+    }
+    return item !== keyToRemove
+  })
+
+  return filteredArray.map((item) => {
+    if (isObject(item)) {
+      return removeObjectWithKeyFromAnswers(item, keyToRemove, depth + 1)
+    }
+    return item
+  })
+}
+
+const cleanObject = (
+  obj: object,
+  keyToRemove: string,
+  depth: number,
+): RecordType => {
+  return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
+    if (isValidObject(value)) {
+      if (!Array.isArray(value) && containsKey(value, keyToRemove)) {
+        return acc
+      }
+
+      const cleanedValue = removeObjectWithKeyFromAnswers(
+        value,
+        keyToRemove,
+        depth + 1,
+      )
+
+      // For arrays or objects with content, keep them
+      if (hasContent(cleanedValue)) {
+        acc[field] = cleanedValue
+      }
+      // Special case: keep empty arrays
+      else if (Array.isArray(value)) {
+        acc[field] = cleanedValue
+      }
+      return acc
+    }
+
+    // Handle primitive values
+    if (value !== keyToRemove) {
+      acc[field] = value
+    }
+    return acc
+  }, {})
+}
+
+const isValidObject = (value: unknown): value is object => {
+  return value !== null && typeof value === 'object'
+}
+
+const containsKey = (obj: object, key: string): boolean => {
+  return Object.values(obj).includes(key)
+}
+
+const hasContent = (value: unknown): boolean => {
+  if (Array.isArray(value)) {
+    return value.length > 0
+  }
+  if (isValidObject(value)) {
+    return Object.keys(value).length > 0
+  }
+  return false
+}

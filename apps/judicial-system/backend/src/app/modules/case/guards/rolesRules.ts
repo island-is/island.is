@@ -6,6 +6,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CivilClaimant, Defendant } from '../../defendant'
 import { TransitionCaseDto } from '../dto/transitionCase.dto'
 import { UpdateCaseDto } from '../dto/updateCase.dto'
 import { Case } from '../models/case.model'
@@ -56,7 +57,10 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'hasCivilClaims',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
+  'indictmentReviewerId',
+  'indictmentReviewDecision',
+]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
@@ -102,6 +106,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'indictmentDecision',
   'courtSessionType',
   'mergeCaseId',
+  'mergeCaseNumber',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -210,7 +215,7 @@ export const prosecutorTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !dto || !theCase) {
       return false
     }
@@ -257,7 +262,7 @@ export const defenderTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!dto || !theCase) {
       return false
     }
@@ -271,6 +276,42 @@ export const defenderTransitionRule: RolesRule = {
     }
 
     return true
+  },
+}
+
+// Allows defenders to access generated PDFs
+export const defenderGeneratedPdfRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.BASIC,
+  canActivate: (request) => {
+    const user: User = request.user
+    const theCase: Case = request.case
+
+    // Deny if something is missing - should never happen
+    if (!user || !theCase) {
+      return false
+    }
+
+    // Allow if the user is a defender of a defendant of the case
+    if (
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+    ) {
+      return true
+    }
+
+    return false
   },
 }
 
@@ -356,7 +397,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     const user: User = request.user
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !theCase) {
       return false
     }

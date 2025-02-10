@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -14,63 +15,83 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { isNonEmptyArray } from '../../utils/arrayHelpers'
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
-import {
-  DefendantInfo,
-  DefendantInfoActionButton,
-} from './DefendantInfo/DefendantInfo'
+import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
+import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { Item } from './InfoCard'
-import { strings } from './InfoCardIndictment.strings'
+import { strings } from './useInfoCardItems.strings'
+import * as styles from './InfoCard.css'
 
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
+  // helper for info card items. If items have no values they will have [{falsy value}]
+  const showItem = (item: Item) =>
+    isNonEmptyArray(item.values) && !!item.values[0]
+
   const defendants = (
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
-    defendantInfoActionButton?: DefendantInfoActionButton,
     displayVerdictViewDate?: boolean,
-  ): Item => ({
-    id: 'defendant-item',
-    title: capitalize(
-      isRequestCase(caseType)
-        ? formatMessage(core.defendant, {
-            suffix:
-              workingCase.defendants && workingCase.defendants.length > 1
-                ? 'ar'
-                : 'i',
-          })
-        : workingCase.defendants && workingCase.defendants.length > 1
-        ? formatMessage(core.indictmentDefendants)
-        : formatMessage(core.indictmentDefendant, {
-            gender: workingCase.defendants && workingCase.defendants[0].gender,
-          }),
-    ),
-    values: workingCase.defendants
-      ? workingCase.defendants.map((defendant) => (
-          <DefendantInfo
-            key={defendant.id}
-            defendant={defendant}
-            defender={{
-              name: workingCase.defenderName,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-              sessionArrangement: workingCase.sessionArrangements,
-            }}
-            displayAppealExpirationInfo={displayAppealExpirationInfo}
-            displayVerdictViewDate={displayVerdictViewDate}
-            defendantInfoActionButton={defendantInfoActionButton}
-          />
-        ))
-      : [],
-  })
+    displaySentToPrisonAdminDate?: boolean,
+  ): Item => {
+    const defendants = workingCase.defendants
+    const isMultipleDefendants = defendants && defendants.length > 1
+
+    return {
+      id: 'defendant-item',
+      title: (
+        <Text variant="h4" as="h4" marginBottom={isMultipleDefendants ? 3 : 2}>
+          {capitalize(
+            isRequestCase(caseType)
+              ? formatMessage(core.defendant, {
+                  suffix: isMultipleDefendants ? 'ar' : 'i',
+                })
+              : isMultipleDefendants
+              ? formatMessage(core.indictmentDefendants)
+              : formatMessage(core.indictmentDefendant, {
+                  gender: defendants?.[0].gender,
+                }),
+          )}
+        </Text>
+      ),
+      values: defendants
+        ? defendants.map((defendant, index) => (
+            <div
+              key={defendant.id}
+              className={cn(
+                isMultipleDefendants ? styles.renderDivider : undefined,
+                defendants && index === defendants.length - 1
+                  ? styles.last
+                  : undefined,
+              )}
+            >
+              <DefendantInfo
+                defendant={defendant}
+                defender={{
+                  name: workingCase.defenderName,
+                  email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
+                  sessionArrangement: workingCase.sessionArrangements,
+                }}
+                displayAppealExpirationInfo={displayAppealExpirationInfo}
+                displayVerdictViewDate={displayVerdictViewDate}
+                displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
+              />
+            </div>
+          ))
+        : [],
+    }
+  }
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
@@ -116,9 +137,9 @@ const useInfoCardItems = () => {
     values: [workingCase.courtCaseNumber],
   }
 
-  const offences: Item = {
-    id: 'offences-item',
-    title: formatMessage(strings.offence),
+  const offenses: Item = {
+    id: 'offenses-item',
+    title: formatMessage(strings.offense),
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -156,9 +177,9 @@ const useInfoCardItems = () => {
     ],
   }
 
-  const offence: Item = {
-    id: 'offence-item',
-    title: formatMessage(strings.offence),
+  const offense: Item = {
+    id: 'offense-item',
+    title: formatMessage(strings.offense),
     values: [
       <>
         {readableIndictmentSubtypes(
@@ -184,10 +205,26 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const getMergeCaseValue = () => {
+    const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
+    if (internalCourtCaseNumber) {
+      return internalCourtCaseNumber
+    }
+
+    const externalCourtCaseNumber = workingCase.mergeCaseNumber
+    if (externalCourtCaseNumber) {
+      return formatMessage(strings.externalMergeCase, {
+        mergeCaseNumber: externalCourtCaseNumber,
+      })
+    }
+
+    return undefined
+  }
+
   const mergeCase: Item = {
     id: 'merge-case-item',
     title: formatMessage(strings.indictmentMergedTitle),
-    values: [workingCase.mergeCase?.courtCaseNumber],
+    values: [getMergeCaseValue()],
   }
 
   const mergedCasePoliceCaseNumbers = (mergedCase: Case): Item => ({
@@ -264,11 +301,16 @@ const useInfoCardItems = () => {
           IndictmentCaseReviewDecision.ACCEPT
           ? strings.reviewTagAccepted
           : strings.reviewTagAppealed,
+        {
+          isFine:
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE,
+        },
       ),
     ],
   }
 
-  const indictmentReviewedDate = (date?: string | null): Item => ({
+  const indictmentReviewedDate = (date: string): Item => ({
     id: 'indictment-reviewed-date-item',
     title: formatMessage(strings.indictmentReviewedDateTitle),
     values: [formatDate(date, 'PP')],
@@ -297,7 +339,48 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const civilClaimants: Item = {
+    id: 'civil-claimant-item',
+    title: (
+      <Text
+        variant="h4"
+        as="h4"
+        marginBottom={
+          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+            ? 3
+            : 2
+        }
+      >
+        {capitalize(
+          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+            ? formatMessage(strings.civilClaimants)
+            : formatMessage(strings.civilClaimant),
+        )}
+      </Text>
+    ),
+    values: workingCase.civilClaimants
+      ? workingCase.civilClaimants.map((civilClaimant, index) => (
+          <div
+            key={civilClaimant.id}
+            className={cn(
+              workingCase.civilClaimants &&
+                workingCase.civilClaimants.length > 1
+                ? styles.renderDivider
+                : undefined,
+              workingCase.civilClaimants &&
+                index === workingCase.civilClaimants.length - 1
+                ? styles.last
+                : undefined,
+            )}
+          >
+            <CivilClaimantInfo civilClaimant={civilClaimant} />
+          </div>
+        ))
+      : [],
+  }
+
   return {
+    showItem,
     defendants,
     indictmentCreated,
     prosecutor,
@@ -305,11 +388,11 @@ const useInfoCardItems = () => {
     policeCaseNumbers,
     court,
     courtCaseNumber,
-    offences,
+    offenses,
     judge,
     caseType,
     registrar,
-    offence,
+    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
@@ -324,6 +407,7 @@ const useInfoCardItems = () => {
     indictmentReviewDecision,
     indictmentReviewedDate,
     parentCaseValidToDate,
+    civilClaimants,
   }
 }
 

@@ -73,7 +73,7 @@ export class SamgongustofaService {
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
       const vehicleInformationList: VehicleInformation[] = await parser
         .parseStringPromise(allCarsResponse.data.replace(/(\t\n|\t|\n)/gm, ''))
-        .then(function (allCarsResult) {
+        .then((allCarsResult) => {
           // check if SOAP returns 200 status code but with Fault message
           if (
             Object.prototype.hasOwnProperty.call(
@@ -99,7 +99,7 @@ export class SamgongustofaService {
                 'ns1:allVehiclesForPersidnoResponse'
               ][0]['allVehiclesForPersidnoReturn'][0]['_'],
             )
-            .then(function (allCars) {
+            .then((allCars) => {
               if (allCars['persidnolookup']['vehicleList'][0] == '') {
                 return []
               }
@@ -144,7 +144,7 @@ export class SamgongustofaService {
               )
               return vehicleArr
             })
-            .catch(function (err) {
+            .catch((err) => {
               logger.error(
                 `Failed while parsing xml to json on getUserVehiclesInformation request with error: ${err}`,
               )
@@ -153,7 +153,7 @@ export class SamgongustofaService {
               )
             })
         })
-        .catch(function (err) {
+        .catch((err) => {
           logger.error(
             `Failed while parsing xml to json on allVehiclesForPersidno request with error: ${err}`,
           )
@@ -203,7 +203,7 @@ export class SamgongustofaService {
             .parseStringPromise(
               basicInforesponse.data.replace(/(\t\n|\t|\n)/gm, ''),
             )
-            .then(function (basicResult) {
+            .then((basicResult) => {
               // check if SOAP returns 200 status code but with Fault message
               if (
                 Object.prototype.hasOwnProperty.call(
@@ -224,7 +224,7 @@ export class SamgongustofaService {
                     'ns1:basicVehicleInformationResponse'
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
-                .then(function (basicInfo) {
+                .then((basicInfo) => {
                   //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
                     typeof basicInfo.vehicle.ownerregistrationerrors[0]
@@ -266,7 +266,7 @@ export class SamgongustofaService {
                   }
                   return newVehicleArr[i]
                 })
-                .catch(function (err) {
+                .catch((err) => {
                   logger.error(
                     `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
                   )
@@ -275,7 +275,7 @@ export class SamgongustofaService {
                   )
                 })
             })
-            .catch(function (err) {
+            .catch((err) => {
               logger.error(
                 `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
               )
@@ -347,23 +347,49 @@ export class SamgongustofaService {
       )
 
       if (result.status === 200) {
-        // Get the latest registered traffic data
-        const traffic = Object.values(result.data).reduce(
-          (prev: Traffic, current: Traffic) =>
-            new Date(prev.useDate) > new Date(current.useDate) ? prev : current,
-          {} as Traffic,
-        ) as Traffic
+        if (result.data.length) {
+          // Get the latest registered traffic data
+          const traffic = Object.values(result.data).reduce(
+            (prev: Traffic, current: Traffic) =>
+              new Date(prev.useDate) > new Date(current.useDate)
+                ? prev
+                : current,
+            {} as Traffic,
+          ) as Traffic
 
-        logger.info(
-          `car-recycling: Got traffic data for ${getShortPermno(permno)}`,
-          {
-            outInStatus: traffic.outInStatus,
-            useStatus: traffic.useStatus,
-            useStatusName: traffic.useStatusName,
-          },
+          logger.info(
+            `car-recycling: Got traffic data for ${getShortPermno(permno)}`,
+            {
+              permno: getShortPermno(traffic.permno),
+              outInStatus: traffic.outInStatus,
+              useStatus: traffic.useStatus,
+              useStatusName: traffic.useStatusName,
+            },
+          )
+
+          //
+          if (!traffic.outInStatus) {
+            logger.warn(
+              `car-recycling: No traffic data being returned for ${getShortPermno(
+                permno,
+              )}`,
+              { dataFromServer: result.data },
+            )
+          }
+
+          return traffic
+        }
+
+        logger.warn(
+          `car-recycling: No traffic data found for ${getShortPermno(permno)}`,
         )
 
-        return traffic
+        return {
+          permno,
+          outInStatus: '',
+          useStatus: '',
+          useStatusName: '',
+        } as Traffic
       }
 
       throw new Error(

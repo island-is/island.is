@@ -6,7 +6,7 @@ import { RouteObject } from 'react-router-dom'
 
 import type { Features } from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
+import { BffUser } from '@island.is/shared/types'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 
 /**
@@ -79,7 +79,7 @@ export interface PortalNavigationItem {
  * The props provided to a  portal module
  */
 export interface PortalModuleProps {
-  userInfo: User
+  userInfo: BffUser
 }
 
 export interface PortalModuleRoutesProps extends PortalModuleProps {
@@ -166,7 +166,7 @@ export interface PortalModule {
   /**
    * Indicates if module is enabled or not
    */
-  enabled?: (props: { userInfo: User; isCompany: boolean }) => boolean
+  enabled?: (props: { userInfo: BffUser; isCompany: boolean }) => boolean
 
   /**
    * The layout type of the module

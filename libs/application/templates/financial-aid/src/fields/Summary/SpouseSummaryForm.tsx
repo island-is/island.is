@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
 import { Box } from '@island.is/island-ui/core'
-import { useAuth } from '@island.is/auth/react'
-
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
@@ -20,8 +17,8 @@ import {
   Files,
   DirectTaxPaymentCell,
 } from './index'
-import withLogo from '../Logo/Logo'
 import { useFormContext } from 'react-hook-form'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
@@ -33,8 +30,8 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const nationalId =
     externalData.nationalRegistrySpouse.data?.nationalId ||
     answers?.relationshipStatus?.spouseNationalId
+  const userInfo = useUserInfo()
 
-  const { userInfo } = useAuth()
   useEffect(() => {
     setValue('spouseName', userInfo?.profile.name)
   }, [])
@@ -114,4 +111,4 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(SpouseSummaryForm)
+export default SpouseSummaryForm

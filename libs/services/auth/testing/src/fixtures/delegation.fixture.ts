@@ -16,7 +16,7 @@ export interface CreateDelegationOptions {
   today?: Date
   expired?: boolean
   future?: boolean
-  domainName?: string
+  domainName?: string | null
 }
 
 export type CreateDelegationScope = Pick<

@@ -6,18 +6,21 @@ import { information } from '../lib/messages'
 export const getTechnicalInformation = (
   answers: FormValue,
   formatMessage: FormatMessage,
+  lang: 'is' | 'en',
 ) => {
   const techInfo = getValueViaPath(answers, 'techInfo', []) as TechInfo[]
 
-  return techInfo.map(({ label, value }) => {
-    return `${label}: ${
-      value === undefined
+  return techInfo.map(({ label, labelEn, value }) => {
+    return `${lang === 'is' ? label : labelEn}: ${
+      value?.nameIs === undefined
         ? ''
-        : value === 'yes'
+        : value.nameIs === 'yes'
         ? formatMessage(information.labels.radioButtons.radioOptionYes)
-        : value === 'no'
+        : value.nameIs === 'no'
         ? formatMessage(information.labels.radioButtons.radioOptionNo)
-        : value
+        : lang === 'is'
+        ? value.nameIs
+        : value.nameEn
     }`
   })
 }

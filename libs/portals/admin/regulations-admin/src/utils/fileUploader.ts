@@ -1,13 +1,9 @@
 import { EditorFileUploader } from '@island.is/regulations-tools/Editor'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { fileUrl, useS3Upload } from './dataHooks'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export function useFileUploader(draftId: RegulationDraftId) {
   const { createPresignedPost, createFormData } = useS3Upload()
-
-  const isDevelopment =
-    isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
   const fileUploader =
     (): EditorFileUploader => async (blobInfo, success, failure, progress) => {
@@ -47,11 +43,7 @@ export function useFileUploader(draftId: RegulationDraftId) {
 
         // Create FormData and send the request
         const formData = createFormData(presignedPost, blob as File)
-        request.open(
-          'POST',
-          `${isDevelopment ? presignedPost?.url : fileUrl + '/'}`,
-          true,
-        )
+        request.open('POST', presignedPost?.url, true)
         request.send(formData)
       } catch (error) {
         console.error('Error during upload:', error)

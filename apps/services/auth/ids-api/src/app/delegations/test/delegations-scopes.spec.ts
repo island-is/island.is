@@ -19,15 +19,19 @@ const domainName = faker.random.word()
 const identityResources = ['id1', 'id2']
 
 const legalGuardianScopes = ['lg1', 'lg2']
+const legalGuardianMinorScopes = ['lgm1', 'lgm2']
 const procurationHolderScopes = ['ph1', 'ph2']
 const customScopes1 = ['cu1', 'cu2']
 const customScopes2 = ['cu3', 'cu4']
+const legalRepresentativeScopes = ['lr1', 'lr2']
 
 const apiScopes = [
   ...legalGuardianScopes,
+  ...legalGuardianMinorScopes,
   ...procurationHolderScopes,
   ...customScopes1,
   ...customScopes2,
+  ...legalRepresentativeScopes,
 ]
 
 const fromCustom = [
@@ -42,11 +46,17 @@ const supportedDelegationTypes = (scopeName: string): AuthDelegationType[] => {
   if (legalGuardianScopes.includes(scopeName)) {
     result.push(AuthDelegationType.LegalGuardian)
   }
+  if (legalGuardianMinorScopes.includes(scopeName)) {
+    result.push(AuthDelegationType.LegalGuardianMinor)
+  }
   if (procurationHolderScopes.includes(scopeName)) {
     result.push(AuthDelegationType.ProcurationHolder)
   }
   if (customScopes1.includes(scopeName) || customScopes2.includes(scopeName)) {
     result.push(AuthDelegationType.Custom)
+  }
+  if (legalRepresentativeScopes.includes(scopeName)) {
+    result.push(AuthDelegationType.LegalRepresentative)
   }
   return result
 }
@@ -97,6 +107,23 @@ const testCases: Record<string, TestCase> = {
       AuthDelegationType.Custom,
     ],
     expected: [...legalGuardianScopes, ...identityResources],
+  },
+  '7': {
+    fromNationalId: createNationalId('person'),
+    delegationType: [AuthDelegationType.LegalRepresentative],
+    expected: [...legalRepresentativeScopes, ...identityResources],
+  },
+  '8': {
+    fromNationalId: createNationalId('person'),
+    delegationType: [
+      AuthDelegationType.LegalGuardian,
+      AuthDelegationType.LegalGuardianMinor,
+    ],
+    expected: [
+      ...legalGuardianScopes,
+      ...legalGuardianMinorScopes,
+      ...identityResources,
+    ],
   },
 }
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -18,9 +18,7 @@ export class LawyersService {
   async getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
-        lawyerType && lawyerType === LawyerType.LITIGATORS
-          ? '?isCorporate=0'
-          : ''
+        lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
       }`,
       {
         headers: {
@@ -31,7 +29,7 @@ export class LawyersService {
     )
 
     if (response.ok) {
-      return await response.json()
+      return response.json()
     }
 
     const reason = await response.text()
@@ -51,11 +49,16 @@ export class LawyersService {
     )
 
     if (response.ok) {
-      return await response.json()
+      return response.json()
     }
 
     const reason = await response.text()
     this.logger.info('Failed to get lawyer from lawyer registry:', reason)
+
+    if (response.status === 404) {
+      throw new NotFoundException('Lawyer not found')
+    }
+
     throw new Error(reason)
   }
 }

@@ -6,7 +6,7 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 let newestVisitedUrl = ''
 
-export const usePlausiblePageview = (domain?: string) => {
+export const usePlausiblePageview = (domain?: string | null) => {
   const router = useRouter()
 
   useEffect(() => {

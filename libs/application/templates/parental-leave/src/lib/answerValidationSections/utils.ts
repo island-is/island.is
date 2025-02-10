@@ -1,6 +1,7 @@
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
 import isThisMonth from 'date-fns/isThisMonth'
 import isValid from 'date-fns/isValid'
 import {
@@ -141,7 +142,7 @@ export const validatePeriod = (
     -minimumPeriodStartBeforeExpectedDateOfBirth,
   )
 
-  const maximumStartDate = addMonths(dob, usageMaxMonths - usageMinMonths)
+  const maximumStartDate = addDays(addMonths(dob, usageMaxMonths), -15)
   const maximumEndDate = addMonths(dob, usageMaxMonths)
 
   const { firstPeriodStart, startDate, useLength, endDate, ratio } = period

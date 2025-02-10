@@ -6,3 +6,11 @@ export const IDENTITY_QUERY = `
     }
   }
 `
+
+export const COMPANY_IDENTITY_QUERY = `
+  query CompanyIdentityQuery($input: RskCompanyInfoInput!) {
+    companyRegistryCompany(input: $input) {
+      name
+    }
+  }
+`

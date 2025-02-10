@@ -1,27 +1,34 @@
-import React, { FC, ReactNode } from 'react'
-import { BrowserRouter } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+import { LocaleContext, LocaleProvider } from '@island.is/localization'
 import {
+  BffContext,
+  BffContextType,
+  createMockedInitialState,
+} from '@island.is/react-spa/bff'
+import { BffUser } from '@island.is/shared/types'
+import '@testing-library/jest-dom'
+import {
+  act,
+  fireEvent,
+  getByRole,
+  getByText,
   render,
   screen,
-  fireEvent,
-  act,
-  getByText,
-  getByRole,
 } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { MockedProvider } from '@apollo/client/testing'
-import { LocaleProvider, LocaleContext } from '@island.is/localization'
-import { MockedAuthProvider, MockUser } from '@island.is/auth/react'
+import React, { FC, ReactNode } from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import { ActorDelegationsQuery, GetUserProfileQuery } from '../../../gen/schema'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
-import { ActorDelegationsQuery } from '../../../gen/schema'
 import { USER_PROFILE } from './userProfile.graphql'
-import { GetUserProfileQuery } from '../../../gen/schema'
 
 const delegation = {
   name: 'Phil',
   nationalId: '1111111111',
 }
+
+const mockedUser = createMockedInitialState().userInfo
+
 const mocks = [
   {
     request: {
@@ -74,12 +81,23 @@ describe('UserMenu', () => {
 
   const renderAuthenticated = (
     ui: ReactNode,
-    { user }: { user?: MockUser } = {},
+    user: {
+      profile?: Partial<BffUser['profile']>
+      scopes?: Partial<BffUser['scopes']>
+    } | null = null,
   ) =>
     render(
-      <MockedAuthProvider switchUser={switchUser} signOut={signOut} user={user}>
+      <BffContext.Provider
+        value={
+          {
+            userInfo: user as BffUser,
+            switchUser,
+            signOut,
+          } as BffContextType
+        }
+      >
         {ui}
-      </MockedAuthProvider>,
+      </BffContext.Provider>,
       {
         wrapper,
       },
@@ -101,7 +119,9 @@ describe('UserMenu', () => {
   it('shows user menu when authenticated', async () => {
     // Act
     renderAuthenticated(<UserMenu />, {
-      user: { profile: { name: 'John' } },
+      profile: {
+        name: 'John',
+      },
     })
 
     // Assert
@@ -112,11 +132,9 @@ describe('UserMenu', () => {
   it('shows delegation name when authenticated with delegations', async () => {
     // Act
     renderAuthenticated(<UserMenu />, {
-      user: {
-        profile: {
-          name: 'John',
-          actor: { name: 'Anna', nationalId: '2222222222' },
-        },
+      profile: {
+        name: 'John',
+        actor: { name: 'Anna', nationalId: '2222222222' },
       },
     })
 
@@ -128,7 +146,7 @@ describe('UserMenu', () => {
 
   it('can open and close user menu', async () => {
     // Arrange
-    renderAuthenticated(<UserMenu />, { user: { profile: { name: 'John' } } })
+    renderAuthenticated(<UserMenu />, { profile: { name: 'John' } })
 
     // Act
     const dialog = await openMenu()
@@ -144,7 +162,7 @@ describe('UserMenu', () => {
   })
   it('can log out user', async () => {
     // Arrange
-    renderAuthenticated(<UserMenu />, { user: {} })
+    renderAuthenticated(<UserMenu />, mockedUser)
     await openMenu()
 
     // Act
@@ -164,7 +182,7 @@ describe('UserMenu', () => {
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>
       </>,
-      { user: {} },
+      mockedUser,
     )
     const dialog = await openMenu()
     const languageSelector = dialog.querySelector('#language-switcher')!
@@ -191,7 +209,7 @@ describe('UserMenu', () => {
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>
       </>,
-      { user: {} },
+      mockedUser,
     )
     const languageSelector = screen.getByTestId('language-switcher-button')
     expect(languageSelector).not.toBeNull()
@@ -205,9 +223,7 @@ describe('UserMenu', () => {
 
   it('can switch between delegations', async () => {
     // Arrange
-    renderAuthenticated(<UserMenu />, {
-      user: {},
-    })
+    renderAuthenticated(<UserMenu />, mockedUser)
     const dialog = await openMenu()
     const delegationButton = getByRole(dialog, 'button', {
       name: 'Skipta um notanda',
@@ -224,7 +240,7 @@ describe('UserMenu', () => {
 
   it('hides language switcher', async () => {
     // Arrange
-    renderAuthenticated(<UserMenu showLanguageSwitcher={false} />, { user: {} })
+    renderAuthenticated(<UserMenu showLanguageSwitcher={false} />, mockedUser)
 
     // Assert
     const languageSelector = await screen.queryByTestId(
@@ -236,7 +252,7 @@ describe('UserMenu', () => {
   it('user button shows icon only in mobile and not name', async () => {
     // Act
     renderAuthenticated(<UserMenu iconOnlyMobile />, {
-      user: { profile: { name: 'John' } },
+      profile: { name: 'John' },
     })
 
     // Assert

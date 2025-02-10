@@ -5,6 +5,8 @@ export const notificationModuleConfig = defineConfig({
   load: (env) => ({
     production: env.optional('NODE_ENV') === 'production',
     courtOfAppealsId: '4676f08b-aab4-4b4f-a366-697540788088',
+    shouldUseWhitelist:
+      env.required('CONTENTFUL_ENVIRONMENT', 'test') !== 'master',
     email: {
       fromEmail: env.required('EMAIL_FROM', 'ben10@omnitrix.is'),
       fromName: env.required('EMAIL_FROM_NAME', 'Réttarvörslugátt'),
@@ -12,7 +14,25 @@ export const notificationModuleConfig = defineConfig({
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
       prisonEmail: env.required('PRISON_EMAIL', ''),
       prisonAdminEmail: env.required('PRISON_ADMIN_EMAIL', ''),
+      prisonAdminIndictmentEmails: env.required(
+        'PRISON_ADMIN_INDICTMENT_EMAILS',
+        '',
+      ),
+      publicProsecutorCriminalRecordsEmail: env.required(
+        'PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
+        '',
+      ),
       courtsEmails: env.requiredJSON('COURTS_EMAILS', {}) as {
+        [key: string]: string
+      },
+      courtOfAppealsAssistantEmails: env.required(
+        'COURT_OF_APPEALS_ASSISTANT_EMAILS',
+        '',
+      ),
+      policeInstitutionEmails: env.requiredJSON(
+        'POLICE_INSTITUTIONS_EMAILS',
+        {},
+      ) as {
         [key: string]: string
       },
     },

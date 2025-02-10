@@ -2,10 +2,9 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -13,6 +12,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
   SectionHeading,
@@ -40,21 +40,7 @@ const CaseFiles = () => {
     workingCase.id,
   )
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
-
-  const stepIsValid =
-    (isTrafficViolationCaseCheck ||
-      uploadFiles.some(
-        (file) =>
-          file.category === CaseFileCategory.INDICTMENT &&
-          file.status === 'done',
-      )) &&
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.CRIMINAL_RECORD &&
-        file.status === 'done',
-    ) &&
-    allFilesDoneOrError
+  const stepIsValid = allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -72,42 +58,11 @@ const CaseFiles = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.caseFiles.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.caseFiles.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        {!isTrafficViolationCaseCheck && (
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.caseFiles.indictmentSection)}
-              required
-            />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === CaseFileCategory.INDICTMENT,
-              )}
-              accept={Object.values(fileExtensionWhitelist)}
-              header={formatMessage(strings.caseFiles.inputFieldLabel)}
-              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-              onChange={(files) =>
-                handleUpload(
-                  addUploadFiles(files, {
-                    category: CaseFileCategory.INDICTMENT,
-                  }),
-                  updateUploadFile,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
-        )}
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
-            required
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
@@ -153,9 +108,7 @@ const CaseFiles = () => {
         </Box>
         <Box
           component="section"
-          marginBottom={
-            workingCase.hasCivilClaims || isTrafficViolationCaseCheck ? 5 : 10
-          }
+          marginBottom={workingCase.hasCivilClaims ? 5 : 10}
         >
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
@@ -178,10 +131,7 @@ const CaseFiles = () => {
           />
         </Box>
         {workingCase.hasCivilClaims && (
-          <Box
-            component="section"
-            marginBottom={isTrafficViolationCaseCheck ? 5 : 10}
-          >
+          <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.caseFiles.civilClaimSection)}
             />
@@ -205,24 +155,18 @@ const CaseFiles = () => {
             />
           </Box>
         )}
-        {isTrafficViolationCaseCheck && (
-          <Box marginBottom={10}>
-            <PdfButton
-              caseId={workingCase.id}
-              title={formatMessage(strings.caseFiles.pdfButtonIndictment)}
-              pdfType="indictment"
-            />
-          </Box>
-        )}
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(strings.caseFiles.pdfButtonIndictment)}
+            pdfType="indictment"
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${
-            isTrafficViolationCaseCheck
-              ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
-              : constants.INDICTMENTS_PROCESSING_ROUTE
-          }/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }

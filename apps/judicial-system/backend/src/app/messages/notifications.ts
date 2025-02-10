@@ -45,6 +45,16 @@ export const notifications = {
       'Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.',
     description: 'Notaður sem texti í email til þess að tilgreina slóð á RVG',
   }),
+  emailWhitelist: defineMessage({
+    id: 'judicial.system.backend:notifications.email_whitelist',
+    defaultMessage: '',
+    description: 'Notað til að tilgreina hvort póstfang sé í hvítlista',
+  }),
+  emailWhitelistDomains: defineMessage({
+    id: 'judicial.system.backend:notifications.email_whitelist_domains',
+    defaultMessage: 'omnitrix.is,kolibri.is,dummy.dd',
+    description: 'Notað til að tilgreina hvort póstfang sé í hvítlista',
+  }),
   readyForCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',
@@ -293,6 +303,28 @@ export const notifications = {
         'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til Fangelsismálastofnun vegna undirritunar úrskurðar',
+    },
+  }),
+  acceptedWithoutRuling: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.subject',
+      defaultMessage: 'Niðurstaða í máli {courtCaseNumber}',
+      description:
+        'Notaður sem titill í pósti til hagaðila þegar máli er lokið án úrskurðar',
+    },
+    prosecutorBody: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.prosecutor_body',
+      defaultMessage:
+        'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til sækjanda þegar máli er lokið án úrskurðar',
+    },
+    defenderBody: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.defender_body',
+      defaultMessage:
+        'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description:
+        'Notaður sem texti í pósti til verjanda/talsmanns þegar máli er lokið án úrskurðar',
     },
   }),
   caseCompleted: defineMessages({
@@ -607,20 +639,6 @@ export const notifications = {
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
-  defenderAssignedEmail: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.subject',
-      defaultMessage: '{court} - aðgangur að málsgögnum',
-      description:
-        'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body_v3',
-      defaultMessage:
-        '{court} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
-      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
-    },
-  }),
   defendantsNotUpdatedAtCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.defendants_not_updated_at_court.subject',
@@ -785,6 +803,11 @@ export const notifications = {
       defaultMessage: 'Landsréttur',
       description: 'Nafn á Landsrétti í tölvupóstum',
     },
+    publicProsecutorCriminalRecords: {
+      id: 'judicial.system.backend:notifications.email_names.public_prosecutor_criminal_records',
+      defaultMessage: 'Ritari sakaskrár',
+      description: 'Nafn á ritara sakaskrá í tölvupóstum',
+    },
   }),
   COAJudgeAssigned: defineMessages({
     subject: {
@@ -841,10 +864,38 @@ export const notifications = {
       description: 'Fyrirsögn í pósti til dómstóls þegar ákæra er afturkölluð',
     },
     body: {
-      id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body',
+      id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body_v1',
       defaultMessage:
-        '{prosecutorsOffice} hefur afturkallað ákæru {courtCaseNumber, select, NONE {í máli sem ekki hefur enn fengið málsnúmer} other {í máli {courtCaseNumber}}}.',
+        '{prosecutorsOffice} hefur afturkallað ákæru í máli {caseNumber}.',
       description: 'Texti í pósti til dómstóls þegar ákæra er afturkölluð',
+    },
+  }),
+  caseFilesUpdated: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_files_updated.subject',
+      defaultMessage: 'Ný gögn í máli {courtCaseNumber}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar ný gögn eru send',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_files_updated.body',
+      defaultMessage:
+        'Ný gögn hafa borist vegna máls {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
+    },
+  }),
+  courtOfficialAssignedEmail: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.court_official_assigned_email.subject',
+      defaultMessage: 'Úthlutun máls {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar máli er úthlutað á þau',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.court_official_assigned_email.body',
+      defaultMessage:
+        'Héraðsdómur hefur skráð þig sem {role, select, DISTRICT_COURT_JUDGE {dómara} DISTRICT_COURT_REGISTRAR {dómritara} other {óþekkt}} í máli {courtCaseNumber}. Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}',
+      description:
+        'Texti í pósti til dómara og dómritara þegar máli er úthlutað á þau',
     },
   }),
 }

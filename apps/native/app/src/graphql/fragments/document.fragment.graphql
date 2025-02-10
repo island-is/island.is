@@ -8,6 +8,22 @@ fragment ListDocument on DocumentV2 {
   opened
   categoryId
   bookmarked
+  isUrgent
+  actions {
+    type
+    title
+    icon
+    data
+  }
+  alert {
+    title
+    data
+  }
+  confirmation {
+    title
+    data
+    icon
+  }
   sender {
     id
     name

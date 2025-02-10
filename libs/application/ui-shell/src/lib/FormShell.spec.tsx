@@ -1,19 +1,25 @@
-import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { act, render, screen } from '@testing-library/react'
 import { z } from 'zod'
 
-import { FormShell } from './FormShell'
-import { buildForm, buildDescriptionField } from '@island.is/application/core'
+import { ApolloProvider } from '@apollo/client'
+import { buildDescriptionField, buildForm } from '@island.is/application/core'
+import { client } from '@island.is/application/graphql'
 import {
   Application,
+  ApplicationStatus,
   ApplicationTypes,
   Form,
-  ApplicationStatus,
 } from '@island.is/application/types'
-import { initializeClient } from '@island.is/application/graphql'
-import { ApolloProvider } from '@apollo/client'
+import { applicationSystemScopes } from '@island.is/auth/scopes'
 import { LocaleProvider } from '@island.is/localization'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
+import { RouterProvider, createMemoryRouter } from 'react-router-dom'
+import { FormShell } from './FormShell'
+
+const mockedInitialState = createMockedInitialState({
+  scopes: applicationSystemScopes,
+})
 
 describe(' FormShell', () => {
   const applicant = '1111112219'
@@ -64,9 +70,14 @@ describe(' FormShell', () => {
     let baseElement
 
     const wrapper = await render(
-      <ApolloProvider client={initializeClient('')}>
+      <ApolloProvider client={client}>
         <LocaleProvider locale="is" messages={{}}>
-          <RouterProvider router={router} />
+          <BffProvider
+            applicationBasePath="/umsoknir"
+            mockedInitialState={mockedInitialState}
+          >
+            <RouterProvider router={router} />
+          </BffProvider>
         </LocaleProvider>
       </ApolloProvider>,
     )
@@ -81,9 +92,14 @@ describe(' FormShell', () => {
   it('should render the application title', async () => {
     await act(async () => {
       render(
-        <ApolloProvider client={initializeClient('')}>
+        <ApolloProvider client={client}>
           <LocaleProvider locale="is" messages={{}}>
-            <RouterProvider router={router} />
+            <BffProvider
+              applicationBasePath="/umsoknir"
+              mockedInitialState={mockedInitialState}
+            >
+              <RouterProvider router={router} />
+            </BffProvider>
           </LocaleProvider>
         </ApolloProvider>,
       )

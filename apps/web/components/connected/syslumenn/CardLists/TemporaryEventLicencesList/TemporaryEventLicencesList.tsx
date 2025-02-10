@@ -358,14 +358,16 @@ const TemporaryEventLicencesList: FC<
                           formatMessage(t.licenseResponsibleNotRegistered)}
                       </Text>
 
-                      {temporaryEventLicence.estimatedNumberOfGuests && (
+                      {Boolean(
+                        temporaryEventLicence.estimatedNumberOfGuests,
+                      ) && (
                         <Text>
                           {formatMessage(t.licenseEstimatedNumberOfGuests)}:{' '}
                           {temporaryEventLicence.estimatedNumberOfGuests}
                         </Text>
                       )}
 
-                      {temporaryEventLicence.maximumNumberOfGuests && (
+                      {Boolean(temporaryEventLicence.maximumNumberOfGuests) && (
                         <Text>
                           {formatMessage(t.licenseMaximumNumberOfGuests)}:{' '}
                           {temporaryEventLicence.maximumNumberOfGuests}

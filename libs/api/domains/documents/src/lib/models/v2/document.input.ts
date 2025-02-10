@@ -12,6 +12,14 @@ export class DocumentInput {
   @IsString()
   readonly provider?: string
 
+  @Field({ nullable: true, description: 'Optional. For logging only.' })
+  @IsOptional()
+  @IsString()
+  readonly category?: string
+
   @Field({ defaultValue: 10 })
   readonly pageSize!: number
+
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  readonly includeDocument?: boolean
 }

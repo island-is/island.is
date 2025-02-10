@@ -204,7 +204,8 @@ export const extractCategoryGroups = (
 
     if (isSameCategory(mainCategory, selectedCategory)) {
       addPageToGroupMap(groupMap, page, page.group, page.subgroup)
-    } else if (isSameCategory(secondaryCategory, selectedCategory)) {
+    }
+    if (isSameCategory(secondaryCategory, selectedCategory)) {
       addPageToGroupMap(
         groupMap,
         page,

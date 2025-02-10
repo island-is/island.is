@@ -36,10 +36,13 @@ import {
   CurrentCase,
   LimitedAccessCaseExistsGuard,
 } from '../case'
+import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
+import { CivilClaimantExistsGuard } from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
@@ -48,9 +51,9 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
+@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,
@@ -107,9 +110,49 @@ export class LimitedAccessFileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
+  // This endpoint is not used by any role at the moment
+  // Before using the endpoint we should probably change
+  // the createCaseFile endpoint to createDefendantCaseFile and
+  // limit file creation to defendant's and spokesperson's clients
+  @UseGuards(
+    new CaseTypeGuard([...indictmentCases]),
+    CivilClaimantExistsGuard,
+    CaseWriteGuard,
+    LimitedAccessWriteCaseFileGuard,
+    CreateCivilClaimantCaseFileGuard,
+  )
+  @RolesRules()
+  @Post('civilClaimant/:civilClaimantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file for a civil claimant',
+  })
+  createCivilClaimantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} and civil claimant ${civilClaimantId}`,
+    )
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, civilClaimantId },
+      user,
+    )
+  }
+
+  @UseGuards(
+    CaseReadGuard,
+    MergedCaseExistsGuard,
+    CaseFileExistsGuard,
+    LimitedAccessViewCaseFileGuard,
+  )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('file/:fileId/url')
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',

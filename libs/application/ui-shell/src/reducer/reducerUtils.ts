@@ -1,5 +1,3 @@
-import get from 'lodash/get'
-import isArray from 'lodash/isArray'
 import {
   findSectionIndex,
   findSubSectionIndex,
@@ -13,9 +11,9 @@ import {
   ExternalData,
   ExternalDataProvider,
   Field,
+  FieldTypes,
   Form,
   FormItemTypes,
-  FieldTypes,
   FormLeaf,
   FormNode,
   FormValue,
@@ -24,7 +22,10 @@ import {
   Section,
   SubSection,
 } from '@island.is/application/types'
+import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 
+import { BffUser } from '@island.is/shared/types'
 import {
   ExternalDataProviderScreen,
   FieldDef,
@@ -33,7 +34,6 @@ import {
   RepeaterScreen,
 } from '../types'
 import { answerIsMissing } from '../utils'
-import { User } from '@island.is/shared/types'
 
 export const screenRequiresAnswer = (screen: FormScreen) => {
   if (!screen.isNavigable) {
@@ -181,6 +181,25 @@ export const moveToScreen = (
   return screenIndex
 }
 
+export const canGoBack = (
+  screens: FormScreen[],
+  screenIndex: number,
+): boolean => {
+  // Check if we're already at the start
+  if (screenIndex <= 0) {
+    return false
+  }
+
+  // Look for any navigable screen behind where we are
+  for (let i = screenIndex - 1; i >= 0; i--) {
+    if (screens[i].isNavigable) {
+      return true
+    }
+  }
+
+  return false
+}
+
 const convertFieldToScreen = (
   field: Field,
   answers: FormValue,
@@ -188,7 +207,7 @@ const convertFieldToScreen = (
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
-  user: User | null,
+  user: BffUser | null,
 ): FieldDef => {
   return {
     ...field,
@@ -207,7 +226,7 @@ const convertDataProviderToScreen = (
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
-  user: User | null,
+  user: BffUser | null,
 ): ExternalDataProviderScreen => {
   return {
     ...externalDataProvider,
@@ -226,7 +245,7 @@ export const convertMultiFieldToScreen = (
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
-  user: User | null,
+  user: BffUser | null,
 ): MultiFieldScreen => {
   let isMultiFieldVisible = false
   const children: FieldDef[] = []
@@ -267,7 +286,7 @@ const convertRepeaterToScreens = (
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
-  user: User | null,
+  user: BffUser | null,
 ): FormScreen[] => {
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
@@ -339,7 +358,7 @@ const convertLeafToScreens = (
   isParentNavigable = true,
   sectionIndex: number,
   subSectionIndex: number,
-  user: User | null,
+  user: BffUser | null,
 ): FormScreen[] => {
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
     return [
@@ -398,7 +417,7 @@ const convertFormNodeToScreens = (
   isParentNavigable: boolean,
   sectionIndex: number,
   subSectionIndex: number,
-  user: User | null,
+  user: BffUser | null,
 ): FormScreen[] => {
   const { children } = formNode
 
@@ -472,7 +491,7 @@ export const convertFormToScreens = (
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
-  user: User | null,
+  user: BffUser | null,
 ): FormScreen[] => {
   return convertFormNodeToScreens(
     form,
@@ -490,7 +509,7 @@ export const getNavigableSectionsInForm = (
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
-  user: User | null,
+  user: BffUser | null,
 ): Section[] => {
   const sections: Section[] = []
 

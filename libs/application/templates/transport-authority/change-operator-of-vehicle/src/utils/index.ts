@@ -1,6 +1,10 @@
-export { getChargeItemCodes } from './getChargeItemCodes'
+export {
+  getChargeItems,
+  getChargeItemsWithAnswers,
+  getExtraData,
+} from './getChargeItems'
 export { getReviewSteps } from './getReviewSteps'
-export { hasReviewerApproved } from './hasReviewerApproved'
+export { canReviewerApprove, canReviewerReApprove } from './canReviewerApprove'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'

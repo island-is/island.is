@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
@@ -6,6 +11,7 @@ export const serviceSetup = (services: {
   const web = service('web')
   web
     .namespace('islandis')
+    .codeOwner(CodeOwners.Stefna)
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       TRACKING_DOMAIN: {
@@ -45,7 +51,6 @@ export const serviceSetup = (services: {
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
         paths: ['/'],

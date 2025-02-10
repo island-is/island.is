@@ -30,18 +30,20 @@ import {
   IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
+  MockableSamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItemCodes, getExtraData, hasReviewerApproved } from '../utils'
+import { getChargeItems, getExtraData, canReviewerApprove } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(23, 59, 59)
+  const pruneDate = new Date(date)
+  pruneDate.setUTCHours(23, 59, 59)
   return pruneDate
 }
 
@@ -62,7 +64,7 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -84,6 +86,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfVehicleOwnership.translation,
@@ -142,6 +145,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 InsuranceCompaniesApi,
               ],
@@ -154,7 +158,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes(),
+        chargeItems: getChargeItems(),
         extraData: getExtraData,
         submitTarget: States.REVIEW,
         onExit: [
@@ -201,8 +205,12 @@ const template: ApplicationTemplate<
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
           }),
+          // Note: only re-validating because it is possible to add buyerCoOwners and buyerOperators in this step
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
           }),
           roles: [
             {

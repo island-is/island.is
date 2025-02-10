@@ -1,14 +1,14 @@
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { LawChapter, MinistryList } from '@island.is/regulations'
+import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
+import { produce, setAutoFreeze } from 'immer'
 import { Reducer, useReducer } from 'react'
 import { RegulationDraftTypes, Step } from '../types'
-import { LawChapter, MinistryList } from '@island.is/regulations'
-import { Action, DraftingState, RegDraftFormSimpleProps } from './types'
-import { produce, setAutoFreeze } from 'immer'
-import { DraftImpactId, RegulationDraft } from '@island.is/regulations/admin'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { derivedUpdates, validateState } from './validations'
-import { makeDraftForm, stepsAmending, stepsBase } from './makeFields'
 import { actionHandlers } from './actionHandlers'
+import { makeDraftForm, stepsAmending, stepsBase } from './makeFields'
+import { Action, DraftingState, RegDraftFormSimpleProps } from './types'
+import { derivedUpdates, validateState } from './validations'
 
 const draftingStateReducer: Reducer<DraftingState, Action> = (
   state,
@@ -40,9 +40,8 @@ export const useEditDraftReducer = (inputs: StateInputs) => {
   const { regulationDraft, ministries, lawChapters, stepName } = inputs
 
   const isEditor =
-    useAuth().userInfo?.scopes?.includes(
-      AdminPortalScope.regulationAdminManage,
-    ) || false
+    useUserInfo()?.scopes?.includes(AdminPortalScope.regulationAdminManage) ||
+    false
 
   const makeInitialState = () => {
     const draft = makeDraftForm(regulationDraft)

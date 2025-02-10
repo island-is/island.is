@@ -1,9 +1,10 @@
-import { EmptyCard, StatusCardSkeleton } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Image, SafeAreaView } from 'react-native'
+import styled from 'styled-components'
+import { Image, SafeAreaView, View } from 'react-native'
 import { ApolloError } from '@apollo/client'
 
+import { EmptyCard, StatusCardSkeleton } from '../../ui'
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -20,6 +21,10 @@ interface ApplicationsModuleProps {
   componentId: string
 }
 
+const Wrapper = styled(View)`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const validateApplicationsInitialData = ({
   data,
   loading,
@@ -31,7 +36,10 @@ const validateApplicationsInitialData = ({
     return true
   }
   // Only show widget initially if there are applications
-  if (data?.applicationApplications?.length !== 0) {
+  if (
+    data?.applicationApplications?.length &&
+    data?.applicationApplications?.length !== 0
+  ) {
     return true
   }
   return false
@@ -50,23 +58,27 @@ const ApplicationsModule = React.memo(
     return (
       <SafeAreaView>
         {loading && !data ? (
-          <StatusCardSkeleton />
+          <Wrapper>
+            <StatusCardSkeleton />
+          </Wrapper>
         ) : (
           <>
             {count === 0 && (
-              <EmptyCard
-                text={intl.formatMessage({
-                  id: 'applications.emptyDescription',
-                })}
-                image={
-                  <Image
-                    source={leJobss3}
-                    resizeMode="contain"
-                    style={{ height: 87, width: 69 }}
-                  />
-                }
-                link={null}
-              />
+              <Wrapper>
+                <EmptyCard
+                  text={intl.formatMessage({
+                    id: 'applications.emptyDescription',
+                  })}
+                  image={
+                    <Image
+                      source={leJobss3}
+                      resizeMode="contain"
+                      style={{ height: 87, width: 69 }}
+                    />
+                  }
+                  link={null}
+                />
+              </Wrapper>
             )}
             {count !== 0 && (
               <ApplicationsPreview

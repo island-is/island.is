@@ -21,14 +21,16 @@ import {
   IdentityApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getApplicationFeatureFlags, getChargeItemCodes } from '../util'
+import { getApplicationFeatureFlags, getChargeItems } from '../util'
 import { MortgageCertificateSchema } from './dataSchema'
 import { application } from './messages'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { MortgageCertificateFeatureFlags } from '../util/getApplicationFeatureFlags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -37,6 +39,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.MORTGAGE_CERTIFICATE,
   name: application.general.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.general.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.MortgageCertificate.translation,
@@ -84,7 +87,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, SyslumadurPaymentCatalogApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
           ],
         },
@@ -145,7 +153,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

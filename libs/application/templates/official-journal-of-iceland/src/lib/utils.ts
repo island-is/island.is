@@ -2,6 +2,8 @@ import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { z } from 'zod'
 import {
+  additionSchema,
+  baseEntitySchema,
   committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
@@ -13,8 +15,11 @@ import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { SignatureTypes } from './constants'
+import { SignatureTypes, OJOI_DF, FAST_TRACK_DAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
+import { v4 as uuid } from 'uuid'
+import Hypher from 'hypher'
+import { hyphenateText } from '@island.is/island-ui/core'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -69,6 +74,16 @@ export const getEmptyMember = () => ({
   below: '',
 })
 
+export const getAddition = (
+  index: number,
+  roman = true,
+): z.infer<typeof additionSchema>[number] => ({
+  id: uuid(),
+  title: roman ? `Viðauki ${convertNumberToRoman(index)}` : `Viðauki ${index}`,
+  content: '',
+  type: 'html',
+})
+
 export const getRegularSignature = (
   signatureCount: number,
   memberCount: number,
@@ -117,6 +132,16 @@ export const getSignatureDefaultValues = (signature: any, index?: number) => {
 
   return { institution: signature.institution, date: signature.date }
 }
+
+export const isBaseEntity = (
+  entity: unknown,
+): entity is z.infer<typeof baseEntitySchema> =>
+  baseEntitySchema.safeParse(entity).success
+
+export const isAddition = (
+  addition: unknown,
+): addition is z.infer<typeof additionSchema> =>
+  additionSchema.safeParse(addition).success
 
 export const isRegularSignature = (
   any: unknown,
@@ -167,6 +192,8 @@ export const getRegularAnswers = (answers: OJOIApplication['answers']) => {
     signature: null,
   }
 }
+const hyphenate = (text = '') =>
+  hyphenateText(text, { locale: 'is', minLeft: 4, minRight: 4 })
 
 const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
   if (!member.name) return ''
@@ -175,18 +202,21 @@ const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
     marginBottom: member.below ? '0' : '1.5em',
   }
 
-  const aboveMarkup = member.above
-    ? `<p style="margin-bottom: ${styleObject.marginBottom}" margins align="center">${member.above}</p>`
+  const name = hyphenate(member.name)
+  const above = hyphenate(member.above)
+  const after = hyphenate(member.after)
+  const below = hyphenate(member.below)
+
+  const aboveMarkup = above
+    ? `<p style="margin-bottom: 0;" align="center">${above}</p>`
     : ''
-  const afterMarkup = member.after ? ` ${member.after}` : ''
-  const belowMarkup = member.below
-    ? `<p align="center">${member.below}</p>`
-    : ''
+  const afterMarkup = after ? ` ${after}` : ''
+  const belowMarkup = below ? `<p align="center">${below}</p>` : ''
 
   return `
-    <div class="signature__member">
+    <div class="signature__member" style="margin-bottom: 1.5em;">
       ${aboveMarkup}
-      <p style="margin-bottom: ${styleObject.marginBottom}" align="center"><strong>${member.name}</strong>${afterMarkup}</p>
+      <p style="margin-bottom: ${styleObject.marginBottom}" align="center"><strong>${name}</strong>${afterMarkup}</p>
       ${belowMarkup}
     </div>
   `
@@ -199,19 +229,20 @@ const signatureTemplate = (
 ) => {
   const markup = signatures
     ?.map((signature) => {
-      const membersCount = Math.min(signature.members?.length ?? 1, 3)
+      const membersCount = signature?.members?.length || 0
+
       const styleObject = {
         display: membersCount > 1 ? 'grid' : 'block',
         gridTemplateColumns:
           membersCount === 1
             ? '1fr'
-            : membersCount === 2 || membersCount === 4
-            ? '1fr 1fr'
-            : '1fr 1fr 1fr',
+            : membersCount === 3
+            ? '1fr 1fr 1fr'
+            : '1fr 1fr',
       }
 
       const date = signature.date
-        ? format(new Date(signature.date), 'dd. MMM yyyy.', { locale: is })
+        ? format(new Date(signature.date), OJOI_DF, { locale: is })
         : ''
 
       const chairmanMarkup = chairman
@@ -226,7 +257,7 @@ const signatureTemplate = (
 
       return `
   <div class="signature">
-    <p align="center"><em>${signature.institution} ${date}</em></p>
+    <p align="center"><em>${signature.institution} <span class="signature__date">${date}</span></em></p>
     ${chairmanMarkup}
     <div style="margin-bottom: 1.5em; display: ${styleObject.display}; grid-template-columns: ${styleObject.gridTemplateColumns};" class="signature__content">
     ${membersMarkup}
@@ -237,7 +268,9 @@ const signatureTemplate = (
     .join('')
 
   const additionalMarkup = additionalSignature
-    ? `<p style="font-size: 16px;" align="right"><em>${additionalSignature}</em></p>`
+    ? `<p style="font-size: 16px;" align="right"><em>${hyphenate(
+        additionalSignature,
+      )}</em></p>`
     : ''
 
   return `${markup}${additionalMarkup}` as HTMLText
@@ -319,4 +352,49 @@ export const getSingleSignatureMarkup = (
   chairman?: z.infer<typeof memberItemSchema>,
 ) => {
   return signatureTemplate([signature], additionalSignature, chairman)
+}
+
+export const getFastTrack = (date?: Date) => {
+  const now = new Date()
+  if (!date)
+    return {
+      fastTrack: false,
+      now,
+    }
+
+  const diff = date.getTime() - now.getTime()
+  const diffDays = diff / (1000 * 3600 * 24)
+  let fastTrack = false
+
+  if (diffDays <= FAST_TRACK_DAYS) {
+    fastTrack = true
+  }
+  return {
+    fastTrack,
+    now,
+  }
+}
+
+export const base64ToBlob = (base64: string, mimeType = 'application/pdf') => {
+  if (!base64) {
+    return null
+  }
+
+  const byteCharacters = Buffer.from(base64, 'base64')
+  return new Blob([byteCharacters], { type: mimeType })
+}
+
+export const convertNumberToRoman = (num: number) => {
+  const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
+  return roman[num - 1]
+}
+
+export const cleanTypename = (obj: {
+  __typename?: string
+  id: string
+  title: string
+  slug: string
+}) => {
+  const { __typename: _, ...rest } = obj
+  return rest
 }

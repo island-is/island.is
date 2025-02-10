@@ -32,6 +32,10 @@ export const InvestigationCaseTypes = [
     label: '',
     options: [
       {
+        label: 'Brottvísun af heimili',
+        value: CaseType.EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Geðrannsókn',
         value: CaseType.PSYCHIATRIC_EXAMINATION,
       },
@@ -60,16 +64,20 @@ export const InvestigationCaseTypes = [
         value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
       },
       {
-        label: 'Brottvísun af heimili',
-        value: CaseType.EXPULSION_FROM_HOME,
-      },
-      {
         label: 'Rannsókn á rafrænum gögnum',
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
       {
         label: 'Rof á reynslulausn',
         value: CaseType.PAROLE_REVOCATION,
+      },
+      {
+        label: 'Skýrslutaka brotaþola yngri en 18 ára',
+        value: CaseType.STATEMENT_FROM_MINOR,
+      },
+      {
+        label: 'Skýrslutaka fyrir dómi',
+        value: CaseType.STATEMENT_IN_COURT,
       },
       {
         label: 'Upplýsingar um vefnotkun',
@@ -100,6 +108,8 @@ export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 //#region Public prosecutor user routes
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
+  '/rikissaksoknari/akaera/senda-til-fmst'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
@@ -186,7 +196,7 @@ export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
-export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
+export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
@@ -202,6 +212,7 @@ export const CHANGE_USER_ROUTE = '/notendur/breyta'
 //#region Shared routes
 export const CASES_ROUTE = '/krofur'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+export const ROUTE_HANDLER_ROUTE = '/beinir'
 //#endregion Shared routes
 
 export const prosecutorRestrictionCasesRoutes = [
@@ -222,12 +233,12 @@ export const prosecutorInvestigationCasesRoutes = [
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
 ]
 
-export const prosecutorIndictmentRoutes = (isTrafficViolation: boolean) => [
+export const prosecutorIndictmentRoutes = [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
-  ...(isTrafficViolation ? [INDICTMENTS_TRAFFIC_VIOLATION_ROUTE] : []),
+  INDICTMENTS_INDICTMENT_ROUTE,
   INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]

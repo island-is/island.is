@@ -10,6 +10,7 @@ import {
   GridContainer,
   GridRow,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -17,9 +18,11 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
+  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertMainCategory,
   Query,
   QueryGetOrganizationArgs,
+  QueryOfficialJournalOfIcelandAdvertsArgs,
   QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -27,6 +30,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  OJOIAdvertCards,
   OJOIHomeIntro,
   OJOIWrapper,
 } from '../../components/OfficialJournalOfIceland'
@@ -35,10 +39,14 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
-import { MAIN_CATEGORIES_QUERY } from '../queries/OfficialJournalOfIceland'
+import {
+  ADVERTS_QUERY,
+  MAIN_CATEGORIES_QUERY,
+} from '../queries/OfficialJournalOfIceland'
 import { m } from './messages'
 
 const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
+  adverts,
   mainCategories,
   organization,
   locale,
@@ -52,7 +60,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
   const breadcrumbItems = [
     {
-      title: 'Ísland.is',
+      title: formatMessage(m.breadcrumb.frontpage),
       href: linkResolver('homepage', [], locale).href,
     },
     {
@@ -67,6 +75,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
       pageDescription={formatMessage(m.home.description)}
       organization={organization ?? undefined}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
+      isHomePage
     >
       <Stack space={SLICE_SPACING}>
         <OJOIHomeIntro
@@ -124,32 +133,65 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
-            <Box
-              display={'flex'}
-              justifyContent={'spaceBetween'}
-              alignItems="flexEnd"
-            >
-              <Text variant="h3">{formatMessage(m.home.mainCategories)}</Text>
-              <ArrowLink href={categoriesUrl}>
-                {formatMessage(m.home.allCategories)}
-              </ArrowLink>
-            </Box>
+            <GridRow>
+              <GridColumn span="12/12">
+                <Stack space={2}>
+                  <Box
+                    display={'flex'}
+                    justifyContent={'spaceBetween'}
+                    alignItems="flexEnd"
+                    marginBottom={3}
+                  >
+                    <Text variant="h3">
+                      {formatMessage(m.home.mainCategories)}
+                    </Text>
+                    <ArrowLink href={categoriesUrl}>
+                      {formatMessage(m.home.allCategories)}
+                    </ArrowLink>
+                  </Box>
+                </Stack>
+              </GridColumn>
+            </GridRow>
 
             <GridRow>
-              {mainCategories?.map((y, i) => (
-                <GridColumn
-                  key={i}
-                  span={['1/1', '1/2', '1/2', '1/3', '1/4']}
-                  paddingTop={3}
-                  paddingBottom={4}
-                >
-                  <CategoryCard
-                    href={`${categoriesUrl}?yfirflokkur=${y.slug}`}
-                    heading={y.title}
-                    text={y.description ?? ''}
-                  />
-                </GridColumn>
-              ))}
+              {mainCategories?.map((category, i) => {
+                const subCategories = category.categories
+                  .slice(0, 3)
+                  .map((subCategory) => ({
+                    label: subCategory.title,
+                    href: `${searchUrl}?malaflokkur=${subCategory.slug}`,
+                  }))
+
+                return (
+                  <GridColumn
+                    paddingBottom={4}
+                    span={['12/12', '6/12', '4/12', '3/12']}
+                    key={category.slug}
+                  >
+                    <CategoryCard
+                      key={category.slug}
+                      href={`${categoriesUrl}?yfirflokkur=${category.slug}`}
+                      heading={category.title}
+                      text={category.description}
+                      tags={subCategories}
+                    />
+                  </GridColumn>
+                )
+              })}
+            </GridRow>
+
+            <GridRow>
+              <GridColumn span="12/12">
+                <Text marginBottom={3} variant="h3">
+                  {formatMessage(m.home.latestAdverts)}
+                </Text>
+
+                <Stack space={3}>
+                  {adverts && (
+                    <OJOIAdvertCards adverts={adverts} locale={locale} />
+                  )}
+                </Stack>
+              </GridColumn>
             </GridRow>
           </GridContainer>
         </Box>
@@ -159,12 +201,14 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 }
 
 interface OJOIHomeProps {
+  adverts: OfficialJournalOfIcelandAdvert[]
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   organization?: Query['getOrganization']
   locale: Locale
 }
 
 const OJOIHome: CustomScreen<OJOIHomeProps> = ({
+  adverts,
   mainCategories,
   organization,
   customPageData,
@@ -172,6 +216,7 @@ const OJOIHome: CustomScreen<OJOIHomeProps> = ({
 }) => {
   return (
     <OJOIHomePage
+      adverts={adverts}
       mainCategories={mainCategories}
       organization={organization}
       locale={locale}
@@ -185,12 +230,25 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
+      data: { officialJournalOfIcelandAdverts },
+    },
+    {
       data: { officialJournalOfIcelandMainCategories },
     },
     {
       data: { getOrganization },
     },
   ] = await Promise.all([
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertsArgs>({
+      query: ADVERTS_QUERY,
+      variables: {
+        input: {
+          page: 1,
+          pageSize: 5,
+        },
+      },
+    }),
+
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
@@ -213,6 +271,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
+    adverts: officialJournalOfIcelandAdverts.adverts,
     mainCategories: officialJournalOfIcelandMainCategories.mainCategories,
     organization: getOrganization,
     locale: locale as Locale,

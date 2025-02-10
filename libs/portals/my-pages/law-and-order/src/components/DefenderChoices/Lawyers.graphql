@@ -1,0 +1,21 @@
+query GetLawyers($locale: String!) {
+  lawAndOrderLawyers(locale: $locale) {
+    lawyers {
+      title
+      nationalId
+    }
+    choices {
+      id
+      label
+    }
+  }
+}
+
+mutation PostDefenseChoice(
+  $input: LawAndOrderDefenseChoiceInput!
+  $locale: String!
+) {
+  lawAndOrderDefenseChoicePost(input: $input, locale: $locale) {
+    caseId
+  }
+}

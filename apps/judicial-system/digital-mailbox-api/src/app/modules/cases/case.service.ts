@@ -42,15 +42,15 @@ export class CaseService {
   }
 
   async getCase(
-    id: string,
+    caseId: string,
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,
-      this.getCaseInfo(id, nationalId, lang),
-      () => id,
+      this.getCaseInfo(caseId, nationalId, lang),
+      () => caseId,
     )
   }
 
@@ -86,15 +86,17 @@ export class CaseService {
     lang?: string,
   ): Promise<CasesResponse[]> {
     const response = await this.fetchCases(nationalId)
+
     return CasesResponse.fromInternalCasesResponse(response, lang)
   }
 
   private async getCaseInfo(
-    id: string,
+    caseId: string,
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
-    const response = await this.fetchCase(id, nationalId)
+    const response = await this.fetchCase(caseId, nationalId)
+
     return CaseResponse.fromInternalCaseResponse(response, lang)
   }
 
@@ -104,6 +106,7 @@ export class CaseService {
     lang?: string,
   ): Promise<SubpoenaResponse> {
     const caseData = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,
@@ -117,7 +120,7 @@ export class CaseService {
     defenderAssignment: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    let defenderChoice = { ...defenderAssignment }
+    let chosenLawyer = null
 
     if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
       if (!defenderAssignment.defenderNationalId) {
@@ -126,7 +129,7 @@ export class CaseService {
         )
       }
 
-      const chosenLawyer = await this.lawyersService.getLawyer(
+      chosenLawyer = await this.lawyersService.getLawyer(
         defenderAssignment.defenderNationalId,
       )
 
@@ -135,20 +138,22 @@ export class CaseService {
           'Selected lawyer was not found in the lawyer registry',
         )
       }
-
-      defenderChoice = {
-        ...defenderChoice,
-        ...{
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
-        },
-      }
     }
 
-    await this.patchSubpoenaInfo(defendantNationalId, caseId, defenderChoice)
+    const defenderChoice = {
+      defenderChoice: defenderAssignment.defenderChoice,
+      defenderNationalId: defenderAssignment.defenderNationalId,
+      defenderName: chosenLawyer?.Name,
+      defenderEmail: chosenLawyer?.Email,
+      defenderPhoneNumber: chosenLawyer?.Phone,
+      requestedDefenderChoice: defenderAssignment.defenderChoice,
+      requestedDefenderNationalId: defenderAssignment.defenderNationalId,
+      requestedDefenderName: chosenLawyer?.Name,
+    }
+    await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
 
     const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
       defendantNationalId,
@@ -161,14 +166,13 @@ export class CaseService {
   ): Promise<InternalCasesResponse[]> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/indictments`,
+        `${this.config.backendUrl}/api/internal/cases/indictments/defendant/${nationalId}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-          body: JSON.stringify({ nationalId }),
         },
       )
 
@@ -185,25 +189,24 @@ export class CaseService {
   }
 
   private async fetchCase(
-    id: string,
+    caseId: string,
     nationalId: string,
   ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/case/indictment/${id}`,
+        `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/defendant/${nationalId}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-          body: JSON.stringify({ nationalId }),
         },
       )
 
       if (!res.ok) {
         if (res.status === 404) {
-          throw new NotFoundException(`Case ${id} not found`)
+          throw new NotFoundException(`Case ${caseId} not found`)
         }
 
         const reason = await res.text()
@@ -230,10 +233,14 @@ export class CaseService {
     }
   }
 
-  private async patchSubpoenaInfo(
+  private async patchDefenseInfo(
     defendantNationalId: string,
     caseId: string,
-    defenderChoice: UpdateSubpoenaDto,
+    defenderChoice: {
+      requestedDefenderChoice: DefenderChoice
+      requestedDefenderNationalId: string | undefined
+      requestedDefenderName?: string
+    },
   ): Promise<InternalDefendantResponse> {
     try {
       const response = await fetch(

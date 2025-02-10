@@ -4,7 +4,7 @@ import { IslyklarApi } from '@island.is/clients/islykill'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -30,7 +30,7 @@ export class UserProfileService extends BaseTemplateApiService {
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
     @Inject(ConfigService)
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super('UserProfile')
   }
@@ -71,7 +71,13 @@ export class UserProfileService extends BaseTemplateApiService {
       )
     }
 
-    if (params?.validateEmail && !email) {
+    const isActor = !!auth.actor?.nationalId
+
+    if (
+      (params?.validateEmail ||
+        (params?.validateEmailIfNotActor && !isActor)) &&
+      !email
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.noEmailFound,
@@ -84,7 +90,10 @@ export class UserProfileService extends BaseTemplateApiService {
       )
     }
 
-    if (params?.validatePhoneNumber) {
+    if (
+      params?.validatePhoneNumber ||
+      (params?.validatePhoneNumberIfNotActor && !isActor)
+    ) {
       if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
         throw new TemplateApiError(
           {

@@ -1,15 +1,3 @@
-import {
-  Accordion,
-  AccordionItem,
-  Alert,
-  CustomLicenseType,
-  dynamicColor,
-  font,
-  Input,
-  InputRow,
-  LicenseCard,
-  LinkText,
-} from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -21,9 +9,22 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
+
+import {
+  Accordion,
+  AccordionItem,
+  Alert,
+  CustomLicenseType,
+  dynamicColor,
+  font,
+  Input,
+  InputRow,
+  LicenseCard,
+  LinkText,
+  theme,
+} from '../../ui'
 import IconStatusVerified from '../../assets/icons/valid.png'
 import IconStatusNonVerified from '../../assets/icons/warning.png'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -94,10 +95,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
   const { openBrowser } = useBrowser()
-  const showChildrenPassport = useFeatureFlag(
-    'isChildrenPassportEnabled',
-    false,
-  )
 
   const intl = useIntl()
   const { data, loading, error } = useGetIdentityDocumentQuery({
@@ -119,7 +116,12 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
       <View style={{ height: cardHeight }} />
       <Information contentInset={{ bottom: 162 }}>
         <SafeAreaView style={{ marginHorizontal: 0 }}>
-          <View style={{ paddingTop: 24, paddingHorizontal: 16 }}>
+          <View
+            style={{
+              paddingTop: theme.spacing[5],
+              paddingHorizontal: theme.spacing[2],
+            }}
+          >
             <Alert
               title={intl.formatMessage({ id: 'walletPassport.infoTitle' })}
               message={intl.formatMessage({
@@ -133,8 +135,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           {expireWarning ? (
             <View
               style={{
-                paddingTop: 16,
-                paddingHorizontal: 16,
+                paddingTop: theme.spacing[2],
+                paddingHorizontal: theme.spacing[2],
                 paddingBottom: 10,
               }}
             >
@@ -160,7 +162,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
               size="big"
-              borderDark
             />
           </InputRow>
 
@@ -218,7 +219,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
             />
           </InputRow>
 
-          {showChildrenPassport && childrenPassport?.length > 0 ? (
+          {childrenPassport?.length > 0 ? (
             <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
               <Label>
                 {intl.formatMessage({ id: 'walletPassport.children' })}
@@ -359,8 +360,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
       </Information>
       <SafeAreaView
         style={{
-          marginTop: 16,
-          marginHorizontal: 16,
+          marginTop: theme.spacing[2],
+          marginHorizontal: theme.spacing[2],
           position: 'absolute',
           top: 0,
           left: 0,

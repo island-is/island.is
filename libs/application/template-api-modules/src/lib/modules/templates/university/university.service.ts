@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
+  ApplicationWithAttachments,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
@@ -20,6 +20,9 @@ import {
   CreateApplicationEducationDto,
   UniversityApplicationControllerCreateApplicationRequest,
   CreateApplicationDtoEducationOptionEnum,
+  CreateApplicationExtraFieldsDto,
+  ProgramExtraApplicationFieldFieldTypeEnum,
+  CreateApplicationExtraFieldsDtoFieldTypeEnum,
 } from '@island.is/clients/university-gateway-api'
 
 import {
@@ -28,11 +31,12 @@ import {
 } from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { InnaClientService } from '@island.is/clients/inna'
+import { AttachmentS3Service } from '../../shared/services'
 
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentService: AttachmentS3Service,
     private readonly nationalRegistryApi: NationalRegistryClientService,
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
@@ -108,6 +112,7 @@ export class UniversityService extends BaseTemplateApiService {
     const externalData = application.externalData
     const nationalRegistryUser = externalData.nationalRegistry
       .data as NationalRegistryIndividual
+
     const user = {
       givenName: nationalRegistryUser.givenName || '',
       middleName: '',
@@ -122,120 +127,137 @@ export class UniversityService extends BaseTemplateApiService {
       email: userFromAnswers.email,
       phone: userFromAnswers.phone,
     }
+
     const programs = externalData.programs
       ?.data as Array<UniversityGatewayProgram>
-    const modesOfDeliveryFromChosenProgram = programs.find(
+    const chosenProgram = programs.find(
       (x) => x.id === answers.programInformation.program,
     )
-    const defaultModeOfDelivery = modesOfDeliveryFromChosenProgram
-      ?.modeOfDelivery[0]
+
+    const defaultModeOfDelivery = chosenProgram?.modeOfDelivery[0]
       .modeOfDelivery as CreateApplicationDtoModeOfDeliveryEnum
+
+    // Education list:
 
     //all possible types of education data from the application answers
     const educationOptionChosen =
       answers.educationOptions || UniversityApplicationTypes.DIPLOMA
-    const notFinishedData =
-      educationOptionChosen === UniversityApplicationTypes.NOTFINISHED
-        ? {
-            schoolName: answers.educationDetails.notFinishedDetails?.school,
-            degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
-            moreDetails:
-              answers.educationDetails.notFinishedDetails?.moreDetails,
-          }
-        : undefined
-    const exemptionData =
-      educationOptionChosen === UniversityApplicationTypes.EXEMPTION
-        ? {
-            degreeAttachments: await this.getAttachmentUrls(
-              answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
-                (x, i) => {
-                  const type = this.mapFileTypes(i)
-                  return {
-                    name: x.name,
-                    key: x.key,
-                    type: type,
-                  }
-                },
-              ),
-            ),
-            moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
-          }
-        : undefined
-    const thirdLevelData =
-      educationOptionChosen === UniversityApplicationTypes.THIRDLEVEL
-        ? {
-            schoolName: answers.educationDetails.thirdLevelDetails?.school,
-            degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
-            degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
-            degreeCountry:
-              answers.educationDetails.thirdLevelDetails?.degreeCountry,
-            finishedUnits:
-              answers.educationDetails.thirdLevelDetails?.finishedUnits,
-            degreeStartDate:
-              answers.educationDetails.thirdLevelDetails?.beginningDate,
-            degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
-            moreDetails:
-              answers.educationDetails.thirdLevelDetails?.moreDetails,
-            degreeAttachments: await this.getAttachmentUrls(
-              answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
-                (x, i) => {
-                  const type = this.mapFileTypes(i)
-                  return {
-                    name: x.name,
-                    key: x.key,
-                    type: type,
-                  }
-                },
-              ),
-            ),
-          }
-        : undefined
-    const finishedDataPromises =
-      (answers.educationDetails.finishedDetails &&
-        answers.educationDetails.finishedDetails.map(async (item) => {
-          return {
-            ...item,
-            degreeAttachments: await this.getAttachmentUrls(
-              item.degreeAttachments?.map((x, i) => {
-                const type = this.mapFileTypes(i)
-                return {
-                  name: x.name,
-                  key: x.key,
-                  type: type,
-                }
-              }),
-            ),
-          }
-        })) ||
-      []
 
-    const finishedData = await Promise.all(finishedDataPromises)
+    const combinedEducationList: Array<CreateApplicationEducationDto> = []
 
-    const combinedEducationList: Array<CreateApplicationEducationDto> = [
-      ...finishedData
-        .filter((x) => x && x.wasRemoved !== 'true')
-        .map((education) => {
-          return {
-            schoolName: education.school,
-            degree: education.degreeLevel,
-            degreeName: education.degreeMajor,
-            degreeCountry: education.degreeCountry,
-            finishedUnits: education.finishedUnits,
-            degreeStartDate: education.beginningDate,
-            degreeEndDate: education.endDate,
-            moreDetails: education.moreDetails,
-            degreeAttachments: education.degreeAttachments,
-          }
-        }),
-    ]
-    if (notFinishedData) {
-      combinedEducationList.push(notFinishedData)
+    // A: ekki námsgögn í Innu, eldra próf eða annað
+    // Note: Includes also data from "Bæta við námsferli"
+    const finishedData =
+      answers.educationDetails.finishedDetails?.filter(
+        (x) => x && x.wasRemoved !== 'true',
+      ) || []
+    for (let i = 0; i < finishedData.length; i++) {
+      const item = finishedData[i]
+      combinedEducationList.push({
+        schoolName: item.school,
+        degree: item.degreeLevel,
+        degreeName: item.degreeMajor,
+        degreeCountry: item.degreeCountry,
+        finishedUnits: item.finishedUnits,
+        degreeStartDate: item.beginningDate,
+        degreeEndDate: item.endDate,
+        moreDetails: item.moreDetails,
+        degreeAttachments: await this.getAttachmentUrls(
+          application,
+          item.degreeAttachments?.map((x) => {
+            return {
+              name: x.name,
+              key: x.key,
+            }
+          }),
+        ),
+      })
     }
-    if (exemptionData) {
-      combinedEducationList.push(exemptionData)
+
+    // B: Þú munt ljúka stúdentsprófi eftir að umsóknarfrestur rennur út
+    if (educationOptionChosen === UniversityApplicationTypes.NOTFINISHED) {
+      combinedEducationList.push({
+        schoolName: answers.educationDetails.notFinishedDetails?.school,
+        degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
+        moreDetails: answers.educationDetails.notFinishedDetails?.moreDetails,
+      })
     }
-    if (thirdLevelData) {
-      combinedEducationList.push(thirdLevelData)
+
+    // C: Ef þú þarft undanþágu frá Stúdentsprófi
+    if (educationOptionChosen === UniversityApplicationTypes.EXEMPTION) {
+      combinedEducationList.push({
+        degreeAttachments: await this.getAttachmentUrls(
+          application,
+          answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
+            (x) => {
+              return {
+                name: x.name,
+                key: x.key,
+              }
+            },
+          ),
+        ),
+        moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
+      })
+    }
+
+    //D: Ef þú ert með annað próf á þriðja hæfnisþrepi
+    if (educationOptionChosen === UniversityApplicationTypes.THIRDLEVEL) {
+      combinedEducationList.push({
+        schoolName: answers.educationDetails.thirdLevelDetails?.school,
+        degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
+        degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
+        degreeCountry:
+          answers.educationDetails.thirdLevelDetails?.degreeCountry,
+        finishedUnits:
+          answers.educationDetails.thirdLevelDetails?.finishedUnits,
+        degreeStartDate:
+          answers.educationDetails.thirdLevelDetails?.beginningDate,
+        degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
+        moreDetails: answers.educationDetails.thirdLevelDetails?.moreDetails,
+        degreeAttachments: await this.getAttachmentUrls(
+          application,
+          answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
+            (x) => {
+              return {
+                name: x.name,
+                key: x.key,
+              }
+            },
+          ),
+        ),
+      })
+    }
+
+    // Extra field list:
+    const otherDocuments = answers.otherDocuments || []
+    const extraFieldList: Array<CreateApplicationExtraFieldsDto> = []
+    for (let i = 0; i < otherDocuments.length; i++) {
+      const fieldInfo = chosenProgram?.extraApplicationFields[i]
+      if (!fieldInfo) continue
+
+      if (
+        fieldInfo.fieldType === ProgramExtraApplicationFieldFieldTypeEnum.UPLOAD
+      ) {
+        const attachments = await this.getAttachmentUrls(
+          application,
+          otherDocuments[i].attachments?.map((attachment) => {
+            return {
+              name: attachment.name,
+              key: attachment.key,
+            }
+          }),
+        )
+
+        for (let j = 0; j < attachments.length; j++) {
+          extraFieldList.push({
+            fieldType: CreateApplicationExtraFieldsDtoFieldTypeEnum.UPLOAD,
+            externalKey: fieldInfo.externalKey,
+            value: attachments[j],
+          })
+        }
+      }
+      // TODO handle other field types when ready
     }
 
     const createApplicationDto: UniversityApplicationControllerCreateApplicationRequest =
@@ -258,7 +280,7 @@ export class UniversityService extends BaseTemplateApiService {
           ),
           educationList: combinedEducationList,
           workExperienceList: [],
-          extraFieldList: [],
+          extraFieldList: extraFieldList,
         },
       }
     await this.universityApplicationApiWithAuth(
@@ -267,39 +289,22 @@ export class UniversityService extends BaseTemplateApiService {
   }
 
   private async getAttachmentUrls(
-    attachments?: { name: string; key: string; type: string }[],
-  ): Promise<{ fileName: string; fileType: string; url: string }[]> {
+    application: ApplicationWithAttachments,
+    attachments?: { name: string; key: string }[],
+  ): Promise<{ fileName: string; fileUrl: string }[]> {
     const expiry = 36000
 
     return await Promise.all(
       attachments?.map(async (file) => {
         return {
           fileName: file.name,
-          fileType: file.type,
-          url: await this.sharedTemplateAPIService.getAttachmentUrl(
+          fileUrl: await this.attachmentService.getAttachmentUrl(
+            application,
             file.key,
             expiry,
           ),
         }
       }) || [],
     )
-  }
-
-  private mapFileTypes = (fileIndex: number): string => {
-    let type
-    switch (fileIndex) {
-      case 1:
-        type = 'profskirteini'
-        break
-      case 2:
-        type = 'profskirteini2'
-        break
-      case 3:
-        type = 'profskirteini3'
-        break
-      default:
-        type = ''
-    }
-    return type
   }
 }

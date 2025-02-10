@@ -2,7 +2,7 @@ import { FormText } from '@island.is/application/types'
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
-    identityRegistry: {
+    identity: {
       data: {
         name: 'string'
         nationalId: 'string'
@@ -40,4 +40,5 @@ export type applicantInformationProps = {
   emailRequired?: boolean
   emailDisabled?: boolean
   applicantInformationDescription?: FormText
+  readOnly?: boolean
 }

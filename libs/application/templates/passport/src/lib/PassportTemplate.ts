@@ -9,10 +9,11 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  BasicChargeItem,
   DefaultEvents,
   defineTemplateApi,
-  DistrictsApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -20,7 +21,6 @@ import { assign } from 'xstate'
 import {
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
-  DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
   NationalRegistryUserParentB,
@@ -38,6 +38,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import { needAssignment } from './utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneAfter = (time: number) => {
   return {
@@ -46,7 +47,7 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
-const getCode = (application: Application) => {
+const getCode = (application: Application): BasicChargeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -54,7 +55,7 @@ const getCode = (application: Application) => {
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')
   }
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 export const hasReviewer = (context: ApplicationContext) => {
@@ -69,6 +70,7 @@ const PassportTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT,
   name: m.formName.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportApplication,
   dataSchema,
   stateMachineConfig: {
@@ -107,10 +109,11 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                MockablePaymentCatalogApi.configure({
+                  externalDataId: 'payment',
+                }),
                 PassportsApi,
-                DistrictsApi,
                 IdentityDocumentApi,
-                DeliveryAddressApi,
               ],
             },
           ],
@@ -130,7 +133,7 @@ const PassportTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCode,
+        chargeItems: getCode,
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,
@@ -180,9 +183,7 @@ const PassportTemplate: ApplicationTemplate<
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
                 PassportsApi,
-                DistrictsApi,
                 IdentityDocumentApi,
-                DeliveryAddressApi,
               ],
             },
           ],

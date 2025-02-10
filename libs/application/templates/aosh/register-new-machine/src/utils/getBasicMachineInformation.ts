@@ -7,6 +7,7 @@ import { NEW } from '../shared/types'
 export const getBasicMachineInformation = (
   answers: FormValue,
   formatMessage: FormatMessage,
+  lang: 'is' | 'en',
 ) => {
   const basicMachineInformation = getValueViaPath(
     answers,
@@ -25,10 +26,14 @@ export const getBasicMachineInformation = (
       aboutMachineInformation.model
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.category)}: ${
-      aboutMachineInformation.category
+      lang === 'is'
+        ? aboutMachineInformation.category?.nameIs
+        : aboutMachineInformation.category?.nameEn
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.subcategory)}: ${
-      aboutMachineInformation.subcategory
+      lang === 'is'
+        ? aboutMachineInformation.subcategory?.nameIs
+        : aboutMachineInformation.subcategory?.nameEn
     }`,
     `${formatMessage(
       machine.labels.basicMachineInformation.productionCountry,

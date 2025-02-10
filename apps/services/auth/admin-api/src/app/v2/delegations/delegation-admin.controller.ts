@@ -1,34 +1,42 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Headers,
   Param,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import flatMap from 'lodash/flatMap'
 
 import {
+  BypassAuth,
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
   User,
+  ZendeskAuthGuard,
 } from '@island.is/auth-nest-tools'
 import {
+  CreatePaperDelegationDto,
   DelegationAdminCustomDto,
   DelegationAdminCustomService,
+  DelegationDTO,
+  ZendeskWebhookInputDto,
 } from '@island.is/auth-api-lib'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { DelegationAdminScopes } from '@island.is/auth/scopes'
-import flatMap from 'lodash/flatMap'
 import { isDefined } from '@island.is/shared/utils'
+
+import env from '../../../environments/environment'
 
 const namespace = '@island.is/auth/delegation-admin'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(DelegationAdminScopes.read)
 @ApiTags('delegation-admin')
 @Controller('delegation-admin')
 @Audit({ namespace })
@@ -39,6 +47,7 @@ export class DelegationAdminController {
   ) {}
 
   @Get()
+  @Scopes(DelegationAdminScopes.read)
   @Documentation({
     response: { status: 200, type: DelegationAdminCustomDto },
     request: {
@@ -62,6 +71,57 @@ export class DelegationAdminController {
   ): Promise<DelegationAdminCustomDto> {
     return await this.delegationAdminService.getAllDelegationsByNationalId(
       nationalId,
+    )
+  }
+
+  @Post()
+  @Scopes(DelegationAdminScopes.admin)
+  @Documentation({
+    response: { status: 201, type: DelegationDTO },
+  })
+  create(
+    @CurrentUser() user: User,
+    @Body() delegation: CreatePaperDelegationDto,
+  ): Promise<DelegationDTO> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'create',
+        resources: (result) => {
+          return result?.id ?? undefined
+        },
+      },
+      this.delegationAdminService.createDelegation(user, delegation),
+    )
+  }
+
+  @BypassAuth()
+  @UseGuards(new ZendeskAuthGuard(env.zendeskGeneralMandateWebhookSecret))
+  @Post('/zendesk')
+  @Documentation({
+    response: { status: 200 },
+  })
+  async createByZendeskId(
+    @Body() { id }: ZendeskWebhookInputDto,
+  ): Promise<void> {
+    await this.auditService.auditPromise<DelegationDTO>(
+      {
+        system: true,
+        namespace,
+        action: 'createByZendeskId',
+        resources: (res) => {
+          return `id: ${res.id ?? 'Unknown'}, toNationalId: ${
+            res.toNationalId ?? 'Unknown'
+          }, fromNationalId: ${
+            res.fromNationalId ?? 'Unknown'
+          }, createdByNationalId: ${res.createdByNationalId ?? 'Unknown'}`
+        },
+        meta: {
+          id,
+        },
+      },
+      this.delegationAdminService.createDelegationByZendeskId(id),
     )
   }
 

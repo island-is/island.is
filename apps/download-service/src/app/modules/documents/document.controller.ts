@@ -1,25 +1,25 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { GetDocumentDto } from './dto/getDocument.dto'
-import { Response } from 'express'
-import { DocumentClient } from '@island.is/clients/documents'
-import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
+import slugify from '@sindresorhus/slugify'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { DocumentClient } from '@island.is/clients/documents'
 import { AuditService } from '@island.is/nest/audit'
+import {
+  Controller,
+  Header,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+  Query,
+} from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)
@@ -40,8 +40,8 @@ export class DocumentController {
   async getPdf(
     @Param('pdfId') pdfId: string,
     @CurrentUser() user: User,
-    @Body() resource: GetDocumentDto,
     @Res() res: Response,
+    @Query('action') action: string,
   ) {
     const rawDocumentDTO = await this.documentClient.customersDocument({
       kennitala: user.nationalId,
@@ -61,14 +61,21 @@ export class DocumentController {
 
     const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
 
-    res.header('Content-length', buffer.length.toString())
+    const slugFileName = slugify(rawDocumentDTO.fileName ?? 'postholf-skjal', {
+      customReplacements: [
+        ['Þ', 'th'],
+        ['ö', 'o'],
+      ],
+    })
     res.header(
       'Content-Disposition',
-      `inline; filename=${rawDocumentDTO.fileName}.pdf`,
+      `${
+        action === 'download' ? 'attachment' : 'inline'
+      }; filename=${slugFileName}.pdf`,
     )
-    res.header('Pragma: no-cache')
-    res.header('Cache-Control: no-cache')
-    res.header('Cache-Control: nmax-age=0')
+    res.header('Pragma', 'no-cache')
+    res.header('Cache-Control', 'no-cache')
+    res.header('Cache-Control', 'nmax-age=0')
 
     return res.end(buffer)
   }

@@ -3,16 +3,21 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
-import { SubpoenaService } from '../subpoena.service'
+import { Defendant } from '../../defendant'
 
 @Injectable()
 export class SubpoenaExistsGuard implements CanActivate {
-  constructor(private readonly subpoenaService: SubpoenaService) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
+
+    const defendant: Defendant = request.defendant
+
+    if (!defendant) {
+      throw new InternalServerErrorException('Missing defendant')
+    }
 
     const subpoenaId = request.params.subpoenaId
 
@@ -20,8 +25,33 @@ export class SubpoenaExistsGuard implements CanActivate {
       throw new BadRequestException('Missing subpoena id')
     }
 
-    request.subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
+    const subpoena = defendant.subpoenas?.find(
+      (subpoena) => subpoena.id === subpoenaId,
+    )
+
+    if (!subpoena) {
+      throw new BadRequestException(
+        `Subpoena ${subpoenaId} of defendant ${defendant.id} does not exist`,
+      )
+    }
+
+    request.subpoena = subpoena
 
     return true
+  }
+}
+
+@Injectable()
+export class SubpoenaExistsOptionalGuard extends SubpoenaExistsGuard {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+
+    const subpoenaId = request.params.subpoenaId
+
+    if (!subpoenaId) {
+      return true
+    }
+
+    return super.canActivate(context)
   }
 }

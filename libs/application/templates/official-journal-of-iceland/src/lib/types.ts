@@ -4,21 +4,31 @@ import {
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
-import { partialSchema } from './dataSchema'
+import {
+  committeeSignatureSchema,
+  memberItemSchema,
+  partialSchema,
+  regularSignatureItemSchema,
+  signatureValidationSchema,
+} from './dataSchema'
+import { z } from 'zod'
 
 export const InputFields = {
   [Routes.REQUIREMENTS]: {
     approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
-    departmentId: 'advert.departmentId',
-    typeId: 'advert.typeId',
+    department: 'advert.department',
+    mainType: 'advert.mainType',
+    type: 'advert.type',
     title: 'advert.title',
     html: 'advert.html',
     requestedDate: 'advert.requestedDate',
     categories: 'advert.categories',
     channels: 'advert.channels',
     message: 'advert.message',
+    involvedPartyId: 'advert.involvedPartyId',
+    additions: 'advert.additions',
   },
   [Routes.SIGNATURE]: {
     regular: 'signatures.regular',
@@ -31,13 +41,15 @@ export const InputFields = {
   [Routes.MISC]: {
     signatureType: 'misc.signatureType',
     selectedTemplate: 'misc.selectedTemplate',
+    asDocument: 'misc.asDocument',
+    asRoman: 'misc.asRoman',
   },
 }
 
 export const RequiredInputFieldsNames = {
   [Routes.ADVERT]: {
-    departmentId: 'Deild',
-    typeId: 'Tegund',
+    department: 'Deild',
+    type: 'Tegund',
     title: 'Titill',
     html: 'Auglýsing',
     requestedDate: 'Útgáfudagur',
@@ -69,6 +81,11 @@ export type OJOIApplication = Override<
 >
 
 export type Answers = OJOIApplication['answers']
+
+export type Signature = z.infer<typeof signatureValidationSchema>
+export type SignatureItem = z.infer<typeof regularSignatureItemSchema>
+export type SignatureItemWithChairman = z.infer<typeof committeeSignatureSchema>
+export type SignatureMember = z.infer<typeof memberItemSchema>
 
 export type OJOIFieldBaseProps = Override<
   FieldBaseProps,

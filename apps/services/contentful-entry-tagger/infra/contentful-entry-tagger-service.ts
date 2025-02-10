@@ -20,15 +20,6 @@ export const serviceSetup =
             prod: 'contentful-entry-tagger-service.devland.is',
           },
           paths: ['/'],
-          extraAnnotations: {
-            dev: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            },
-            staging: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            },
-            prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
-          },
         },
       })
       .liveness('/liveness')

@@ -7,6 +7,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope, LicenseApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import type { Locale } from '@island.is/shared/types'
 import { ForbiddenException, UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
@@ -15,8 +17,11 @@ import { GenericUserLicense } from '../dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from '../dto/GetGenericLicense.input'
 import { LicenseService } from '../licenseService.service'
 import { GenericLicenseError } from '../dto/GenericLicenseError.dto'
+import { logger } from '@island.is/logging'
+import { ParsedUserAgent, type UserAgent } from '@island.is/nest/core'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => GenericUserLicense)
 @Audit({ namespace: '@island.is/api/license-service' })
@@ -29,6 +34,8 @@ export class UserLicenseResolver {
   @Audit()
   async genericLicense(
     @CurrentUser() user: User,
+    @ParsedUserAgent()
+    agent: UserAgent,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
@@ -38,6 +45,7 @@ export class UserLicenseResolver {
       locale,
       input.licenseType,
       input.licenseId,
+      agent,
     )
 
     if (license instanceof GenericLicenseError) {

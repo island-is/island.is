@@ -50,14 +50,14 @@ export class ProgramExtraApplicationField extends Model<
   program?: Program
 
   @ApiProperty({
-    description: 'External id for field',
+    description: 'External key for field',
     example: 'cv_field',
   })
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  externalId!: string
+  externalKey!: string
 
   @ApiProperty({
     description: 'Field name (Icelandic)',

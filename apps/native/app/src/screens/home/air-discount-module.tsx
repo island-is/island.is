@@ -1,3 +1,9 @@
+import React from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
+
 import {
   Typography,
   Heading,
@@ -5,21 +11,14 @@ import {
   ViewPager,
   EmptyCard,
   GeneralCardSkeleton,
-} from '@ui'
-
-import React from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { ApolloError } from '@apollo/client'
-
+  AirDiscountCard,
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s2.png'
 import { navigateTo } from '../../lib/deep-linking'
 import {
   GetAirDiscountQuery,
   useGetAirDiscountQuery,
 } from '../../graphql/types/schema'
-import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
 import { screenWidth } from '../../utils/dimensions'
 
 const Host = styled.View`

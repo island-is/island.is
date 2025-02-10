@@ -17,6 +17,22 @@
         "parallel": 1
       }
     },
+    "ci": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "codegen/backend-client",
+          "codegen/backend-schema",
+          "codegen/frontend-client",
+          "generateDevIndexHTML"
+        ],
+        "nxCloudId": "64e4eb6a54304f090734e8df"
+      }
+    },
     "docker-test": {
       "runner": "@nx/workspace/tasks-runners/default",
       "options": {
@@ -95,7 +111,7 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
       "inputs": ["default", "^production"]
@@ -151,6 +167,16 @@
       {
         "runtime": "node --version"
       }
+    ],
+    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
+    "CI": [
+      "{workspaceRoot}/.github/actions/",
+      "{workspaceRoot}/.github/workflows/",
+      "{workspaceRoot}/**/.dockerignore"
+    ],
+    "Dockerfiles": [
+      "{workspaceRoot}/**/Dockerfile",
+      "{workspaceRoot}/**/Dockerfile.*"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",

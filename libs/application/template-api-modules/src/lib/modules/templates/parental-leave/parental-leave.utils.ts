@@ -28,6 +28,7 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
+  ApplicationRights,
   Attachment,
   Employer,
   ParentalLeave,
@@ -371,6 +372,7 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'empdoc'
     | 'empdocper'
     | undefined,
+  applicationRights?: ApplicationRights[],
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -463,6 +465,7 @@ export const transformApplicationToParentalLeaveDTO = (
     type,
     language: language === Languages.EN ? language : undefined, // Only send language if EN
     otherParentBlocked: otherParentRightOfAccess === NO ? true : false,
+    applicationRights,
   }
 }
 
@@ -535,11 +538,21 @@ export const getFromDate = (
   isFirstPeriod: boolean,
   isActualDateOfBirth: boolean,
   useLength: string,
+  endDateAdjustLength: boolean,
   period: AnswerPeriod,
 ) => {
-  return isFirstPeriod && isActualDateOfBirth && useLength === YES
+  return isFirstPeriod &&
+    isActualDateOfBirth &&
+    (useLength === YES || (useLength === NO && endDateAdjustLength))
     ? apiConstants.actualDateOfBirthMonths
     : isFirstPeriod && isActualDateOfBirth
     ? apiConstants.actualDateOfBirth
     : period.startDate
+}
+
+export const isFixedRight = (right: string | undefined) => {
+  if (!right) {
+    return false
+  }
+  return ['VEIKMEÐG', 'ÖRYGGI-L', 'DVALSTYRK', 'DVAL.FJÖL'].includes(right)
 }

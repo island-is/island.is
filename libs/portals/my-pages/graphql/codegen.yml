@@ -1,0 +1,26 @@
+schema:
+  - apps/api/src/api.graphql
+documents:
+  - libs/portals/my-pages/graphql/src/lib/fragments/*.ts
+  - libs/portals/my-pages/graphql/src/lib/queries/*.ts
+  - libs/portals/my-pages/graphql/src/lib/mutations/*.ts
+generates:
+  libs/portals/my-pages/graphql/src/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      scalars:
+        DateTime: Date
+        JSON: '{ [key: string]: any }'
+      namingConvention:
+        typeNames: change-case#pascalCase
+      withHOC: false
+      withComponent: false
+      withHooks: true
+      withMutationFn: true
+      reactApolloVersion: 3
+hooks:
+  afterAllFileWrite:
+    - prettier --write

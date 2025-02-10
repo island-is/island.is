@@ -93,6 +93,7 @@ export const UserInformationSubSection = buildSubSection({
           id: 'userInformation.alert',
           title: '',
           alertType: 'info',
+          doesNotRequireAnswer: true,
           message: personal.labels.userInformation.alertMessage,
           links: [
             {

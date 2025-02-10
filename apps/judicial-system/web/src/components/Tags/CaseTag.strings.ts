@@ -92,4 +92,34 @@ export const strings = defineMessages({
     defaultMessage: 'Sameinað',
     description: 'Notað fyrir "Sameinað" tagg',
   },
+  indictmentWithdrawal: {
+    id: 'judicial.system.core:case_tag.withdrawal',
+    defaultMessage: 'Afturkallað',
+    description: 'Notað fyrir "Afturkallað" tagg',
+  },
+  punishmentTypeImprisonment: {
+    id: 'judicial.system.core:case_tag.punishment_type_imprisonment',
+    defaultMessage: 'Óskb.',
+    description: 'Notað fyrir "Óskilorðsbundið" tagg',
+  },
+  punishmentTypeProbation: {
+    id: 'judicial.system.core:case_tag.punishment_type_probation',
+    defaultMessage: 'Skb.',
+    description: 'Notað fyrir "Skilorðsbundið" tagg',
+  },
+  punishmentTypeFine: {
+    id: 'judicial.system.core:case_tag.punishment_type_fine',
+    defaultMessage: 'Sekt',
+    description: 'Notað fyrir "Sekt" tagg',
+  },
+  punishmentTypeIndictmentRulingDecisionFine: {
+    id: 'judicial.system.core:case_tag.punishment_type_indictment_ruling_decision_fine',
+    defaultMessage: 'VL',
+    description: 'Notað fyrir "Viðurlagaákvörðun" tagg',
+  },
+  punishmentTypeSignedFineInvitation: {
+    id: 'judicial.system.core:case_tag.punishment_type_signed_fine_invitation',
+    defaultMessage: 'ÁS',
+    description: 'Notað fyrir "Áritað sektarboð" tagg',
+  },
 })

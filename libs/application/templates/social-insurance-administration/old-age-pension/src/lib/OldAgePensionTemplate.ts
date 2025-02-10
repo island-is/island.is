@@ -38,6 +38,7 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
 } from '../dataProviders'
 import {
   determineNameFromApplicationAnswers,
@@ -50,6 +51,7 @@ import {
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -58,6 +60,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: ApplicationConfigurations.OldAgePension.translation,
   dataSchema,
@@ -97,6 +100,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationLatestIncomePlan,
               ],
               delete: true,
             },
@@ -162,8 +166,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
             pendingAction: {
               title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
-              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
-              displayStatus: 'info',
+              content: statesMessages.oldAgePensionSubmittedContent,
+              displayStatus: 'warning',
             },
             historyLogs: [
               {

@@ -88,16 +88,20 @@ export class DelegationIndexController {
       {
         auth: auth,
         action: 'createOrUpdateDelegationIndexItem',
+        namespace,
         resources: delegationIndexId,
         meta: {
           ...parsedDelegationInfo,
         },
       },
-      this.delegationIndexService.createOrUpdateDelegationRecord({
-        ...parsedDelegationInfo,
-        provider: auth.delegationProvider,
-        validTo: body.validTo,
-      }),
+      this.delegationIndexService.createOrUpdateDelegationRecord(
+        {
+          ...parsedDelegationInfo,
+          provider: auth.delegationProvider,
+          validTo: body.validTo,
+        },
+        auth,
+      ),
     )
   }
 
@@ -120,16 +124,20 @@ export class DelegationIndexController {
     await this.auditService.auditPromise(
       {
         auth: auth,
+        namespace,
         action: 'removeDelegationIndexItem',
         resources: delegationIndexId,
         meta: {
           ...parsedDelegationInfo,
         },
       },
-      this.delegationIndexService.removeDelegationRecord({
-        ...parsedDelegationInfo,
-        provider: auth.delegationProvider,
-      }),
+      this.delegationIndexService.removeDelegationRecord(
+        {
+          ...parsedDelegationInfo,
+          provider: auth.delegationProvider,
+        },
+        auth,
+      ),
     )
   }
 }

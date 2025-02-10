@@ -32,7 +32,6 @@ export const representative = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          disableDropdown: true,
           allowedCountryCodes: ['IS'],
         }),
         buildTextField({

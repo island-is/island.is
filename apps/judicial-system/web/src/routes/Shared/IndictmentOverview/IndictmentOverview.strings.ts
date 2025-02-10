@@ -23,4 +23,9 @@ export const strings = defineMessages({
     description:
       'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
   },
+  servedToElectronically: {
+    id: 'judicial.system.core:overview.served_electronically',
+    defaultMessage: 'Rafrænt pósthólf island.is',
+    description: 'Notaður sem texti þegar birt var í pósthólfi.',
+  },
 })

@@ -3,7 +3,7 @@ import * as styles from './Property.css'
 import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 type Props = {
   name?: string
-  value?: string
+  value?: string | React.ReactNode
   loading?: boolean
 }
 

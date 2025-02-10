@@ -23,6 +23,7 @@ const Label = styled.Text`
 `
 
 const Value = styled.Text<{ size?: 'large' | 'small' }>`
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
   ${font({
     fontWeight: '600',
     fontSize: (props) => (props.size === 'large' ? 20 : 16),

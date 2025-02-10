@@ -24,6 +24,8 @@ describe('JwtStrategy#validate', () => {
 
     fakePayload = {
       nationalId: '1234567890',
+      sub: 'sub',
+      sid: 'sid',
       scope: ['test-scope-1'],
       client_id: 'test-client',
       delegationType: [AuthDelegationType.Custom],
@@ -112,6 +114,30 @@ describe('JwtStrategy#validate', () => {
     expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
     expect(user.actor!.scope).toEqual(payload.actor!.scope)
     expect(user.act).toEqual(payload.act)
+  })
+
+  it('picks up __accessToken field in request body', async () => {
+    // Arrange
+    const payload: JwtPayload = {
+      nationalId: '1234567890',
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+    }
+    const request = {
+      headers: {
+        'user-agent': 'test user agent',
+        'x-forwarded-for': '2.2.2.2, 3.3.3.3',
+      },
+      body: {
+        __accessToken: 'some-token',
+      },
+    } as unknown as Request
+
+    // Act
+    const user = await jwtStrategy.validate(request, payload)
+
+    // Assert
+    expect(user.authorization).toEqual('Bearer some-token')
   })
 
   it('supports actor claim', async () => {

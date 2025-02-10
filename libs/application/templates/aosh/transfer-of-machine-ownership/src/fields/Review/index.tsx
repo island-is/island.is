@@ -1,18 +1,18 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
-import { ApplicationStatus } from '../ApplicationStatus'
-import { Overview } from '../Overview'
-import { Location } from '../Location'
-import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
-import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
-import { useAuth } from '@island.is/auth/react'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box } from '@island.is/island-ui/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { MachineLocation, Operator, ReviewState } from '../../shared'
+import { ApplicationStatus } from '../ApplicationStatus'
+import { Location } from '../Location'
+import { Overview } from '../Overview'
+import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [step, setStep] = useState<ReviewState>('states')
 
   const [location, setLocation] = useState<MachineLocation>(

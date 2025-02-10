@@ -9,6 +9,8 @@ import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
+import { sharedModuleConfig } from '../modules/shared'
+import { ConfigType } from '@nestjs/config'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -36,6 +38,9 @@ export interface BaseTemplateAPIModuleConfig {
   }
   islykill: IslykillApiModuleConfig
 }
+
+export interface SharedModuleConfig
+  extends ConfigType<typeof sharedModuleConfig> {}
 
 export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
@@ -70,7 +75,7 @@ export type AttachmentEmailTemplateGenerator = (
 
 @Injectable()
 export abstract class BaseTemplateApiApplicationService {
-  abstract saveAttachmentToApplicaton(
+  abstract saveAttachmentToApplication(
     application: ApplicationWithAttachments,
     fileName: string,
     buffer: Buffer,

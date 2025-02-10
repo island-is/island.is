@@ -26,8 +26,8 @@ const t = getTexts({
 
   effectiveDate: 'Tekur gildi þann',
 
-  referenceLegend: 'Texti áhrifareglugerðar {name}',
-  referenceBaseLegend: 'Texti grunnreglugerðarinnar {name}',
+  referenceLegend: 'Texti breytingareglugerðar {name}',
+  referenceBaseLegend: 'Texti stofnreglugerðarinnar {name}',
   referenceMeta: 'Útgáfudagur: {published}',
   referenceEditLink: 'Leiðrétta',
 
@@ -87,7 +87,10 @@ export const ReferenceText = (props: ReferenceTextProps) => {
           {appendixes.map(({ title, text }, i) => (
             <div className={s.referenceTextAppendix} key={i}>
               <h2 className={s.referenceTextAppendixTitle}>{title}</h2>
-              <HTMLDump className={ed.classes.editor} html={text as HTMLText} />
+              <HTMLDump
+                className={cn(ed.classes.editor, s.diff)}
+                html={text as HTMLText}
+              />
             </div>
           ))}
 

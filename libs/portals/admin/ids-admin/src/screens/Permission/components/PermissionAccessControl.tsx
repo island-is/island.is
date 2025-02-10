@@ -9,6 +9,7 @@ import { m } from '../../../lib/messages'
 import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 const commonProps: Pick<CheckboxProps, 'backgroundColor' | 'large' | 'value'> =
   {
@@ -20,14 +21,21 @@ const commonProps: Pick<CheckboxProps, 'backgroundColor' | 'large' | 'value'> =
 export const PermissionAccessControl = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
-  const { isAccessControlled, grantToAuthenticatedUser } = selectedPermission
+  const { isSuperAdmin } = useSuperAdmin()
+  const {
+    isAccessControlled,
+    grantToAuthenticatedUser,
+    automaticDelegationGrant,
+  } = selectedPermission
 
   const [inputValues, setInputValues] = useEnvironmentState<{
     isAccessControlled: boolean
     grantToAuthenticatedUser: boolean
+    automaticDelegationGrant: boolean
   }>({
     isAccessControlled,
     grantToAuthenticatedUser,
+    automaticDelegationGrant,
   })
 
   return (
@@ -37,22 +45,25 @@ export const PermissionAccessControl = () => {
       inSync={checkEnvironmentsSync(permission.environments, [
         'isAccessControlled',
         'grantToAuthenticatedUser',
+        'automaticDelegationGrant',
       ])}
     >
       <Stack space={3}>
-        <Checkbox
-          label={formatMessage(m.isAccessControlled)}
-          subLabel={formatMessage(m.isAccessControlledDescription)}
-          name="isAccessControlled"
-          checked={inputValues.isAccessControlled}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              isAccessControlled: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
+        {isSuperAdmin && (
+          <Checkbox
+            label={formatMessage(m.isAccessControlled)}
+            subLabel={formatMessage(m.isAccessControlledDescription)}
+            name="isAccessControlled"
+            checked={inputValues.isAccessControlled}
+            onChange={(e) => {
+              setInputValues({
+                ...inputValues,
+                isAccessControlled: e.target.checked,
+              })
+            }}
+            {...commonProps}
+          />
+        )}
         <Checkbox
           label={formatMessage(m.grantToAuthenticatedUser)}
           subLabel={formatMessage(m.grantToAuthenticatedUserDescription)}
@@ -66,6 +77,19 @@ export const PermissionAccessControl = () => {
           }}
           {...commonProps}
         />
+        <Checkbox
+          label={formatMessage(m.automaticDelegationGrant)}
+          subLabel={formatMessage(m.automaticDelegationGrantDescription)}
+          name="automaticDelegationGrant"
+          checked={inputValues.automaticDelegationGrant}
+          onChange={(e) => {
+            setInputValues({
+              ...inputValues,
+              automaticDelegationGrant: e.target.checked,
+            })
+          }}
+          {...commonProps}
+        ></Checkbox>
       </Stack>
     </FormCard>
   )

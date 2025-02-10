@@ -1,12 +1,12 @@
 import fetch from 'node-fetch'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { NotificationType } from '@island.is/judicial-system/types'
+import { NotificationDispatchType } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
 import { now } from './date.factory'
@@ -24,22 +24,24 @@ export class AppService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async run() {
-    this.logger.info('Scheduler starting')
-
-    const startTime = now()
-
-    this.messageService
+  private addMessagesForIndictmentsWaitingForConfirmationToQueue() {
+    return this.messageService
       .sendMessagesToQueue([
         {
           type: MessageType.NOTIFICATION_DISPATCH,
-          body: { type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION },
+          body: {
+            type: NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          },
         },
       ])
       .catch((reason) =>
         // Tolerate failure, but log
         this.logger.error('Failed to dispatch notifications', { reason }),
       )
+  }
+
+  private async archiveCases() {
+    const startTime = now()
 
     let done = false
 
@@ -74,6 +76,39 @@ export class AppService {
       !done &&
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
     )
+  }
+
+  private async postDailyHearingArrangementSummary() {
+    const today = now()
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/cases/postHearingArrangements`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ date: today }),
+        },
+      )
+
+      if (!res.ok) {
+        throw new BadGatewayException(
+          'Unexpected error occurred while fetching cases',
+        )
+      }
+    } catch (error) {
+      throw new BadGatewayException(`Failed to fetch cases: ${error.message}`)
+    }
+  }
+
+  async run() {
+    this.logger.info('Scheduler starting')
+
+    await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
+    await this.archiveCases()
+    await this.postDailyHearingArrangementSummary()
 
     this.logger.info('Scheduler done')
   }

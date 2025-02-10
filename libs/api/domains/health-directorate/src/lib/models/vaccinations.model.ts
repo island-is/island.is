@@ -1,5 +1,6 @@
 import { DiseaseVaccinationDtoVaccinationStatusEnum } from '@island.is/clients/health-directorate'
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { VaccinationStatusEnum } from './enums'
 
 registerEnumType(DiseaseVaccinationDtoVaccinationStatusEnum, {
   name: 'HealthDirectorateVaccinationsStatus',
@@ -36,6 +37,9 @@ export class Info {
 
   @Field(() => Boolean, { nullable: true })
   rejected?: boolean
+
+  @Field({ nullable: true })
+  location?: string
 }
 
 @ObjectType('HealthDirectorateVaccination')
@@ -52,8 +56,8 @@ export class Vaccination {
   @Field(() => Boolean, { nullable: true })
   isFeatured?: boolean
 
-  @Field({ nullable: true })
-  status?: string
+  @Field(() => VaccinationStatusEnum, { nullable: true })
+  status?: VaccinationStatusEnum
 
   @Field({ nullable: true })
   statusName?: string

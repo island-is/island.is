@@ -87,11 +87,6 @@ export const Prerequisites: Form = buildForm({
               title: '',
               subTitle: '',
             }),
-            buildDataProviderItem({
-              //provider: TODO: Add providers needed for signing collection,
-              title: '',
-              subTitle: '',
-            }),
           ],
         }),
       ],

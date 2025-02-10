@@ -22,10 +22,33 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
+      isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDate
+      isVerdictAppealDeadlineExpired
       subpoenaType
+      isSentToPrisonAdmin
+      sentToPrisonAdminDate
+      openedByPrisonAdminDate
+      punishmentType
+      subpoenas {
+        id
+        created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        defendantId
+        subpoenaId
+      }
     }
     defenderName
     defenderNationalId
@@ -190,11 +213,14 @@ query Case($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
+      deprecatedOffenses
       substances
       lawsBroken
       incidentDescription
       legalArguments
+      indictmentCountSubtypes
+      recordedSpeed
+      speedLimit
     }
     requestDriversLicenseSuspension
     appealState
@@ -296,14 +322,57 @@ query Case($input: CaseQueryInput!) {
         id
         name
       }
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defenderChoice
+        defendantPlea
+        requestedDefenderChoice
+        requestedDefenderNationalId
+        requestedDefenderName
+        isDefenderChoiceConfirmed
+        caseFilesSharedWithDefender
+        serviceRequirement
+        verdictViewDate
+        verdictAppealDeadline
+        verdictAppealDate
+        isVerdictAppealDeadlineExpired
+        subpoenaType
+        punishmentType
+        subpoenas {
+          id
+          created
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          subpoenaId
+        }
+      }
       caseFiles {
         id
         created
+        modified
         name
+        type
+        category
         state
         key
         size
-        category
+        userGeneratedFilename
+        displayDate
+        submittedBy
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -321,7 +390,9 @@ query Case($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
     }
+    mergeCaseNumber
     civilDemands
     hasCivilClaims
   }

@@ -4,7 +4,7 @@ export const original = {
   general: defineMessages({
     title: {
       id: 'ojoi.application:original.general.title',
-      defaultMessage: 'Frumgögn',
+      defaultMessage: 'Frumrit',
       description: 'Title of the original data form',
     },
     intro: {
@@ -15,24 +15,25 @@ export const original = {
     },
     section: {
       id: 'ojoi.application:original.general.section',
-      defaultMessage: 'Frumgögn',
+      defaultMessage: 'Frumrit',
       description: 'Title of the original data section',
     },
   }),
   fileUpload: defineMessages({
     header: {
       id: 'ojoi.application:original.fileUpload.header',
-      defaultMessage: 'Dragðu undirritað PDF skjal hingað',
+      defaultMessage:
+        'Dragðu skannað afrit eða rafrænt undirritað skjal með frumtexta',
       description: 'Header of the file upload',
     },
     description: {
       id: 'ojoi.application:original.fileUpload.description',
-      defaultMessage: 'Leyfileg skráarsnið: PDF',
+      defaultMessage: 'Tekið er við skjali af gerð .pdf',
       description: 'Description of the file upload',
     },
     buttonLabel: {
       id: 'ojoi.application:original.fileUpload.buttonLabel',
-      defaultMessage: 'Hlaða upp undirrituðu eintaki',
+      defaultMessage: 'Veljið skjal',
       description: 'Label of the file upload button',
     },
   }),

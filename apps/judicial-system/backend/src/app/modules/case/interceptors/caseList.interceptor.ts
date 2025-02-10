@@ -9,9 +9,11 @@ import {
 
 import { IndictmentDecision } from '@island.is/judicial-system/types'
 
+import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
+import { transformDefendants } from './case.interceptor'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -22,14 +24,13 @@ export class CaseListInterceptor implements NestInterceptor {
           // WARNING: Be careful when adding to this list. No sensitive information should be returned.
           // If you need to add sensitive information, then you should consider adding a new endpoint
           // for defenders and other user roles that are not allowed to see sensitive information.
-
           return {
             id: theCase.id,
             created: theCase.created,
             policeCaseNumbers: theCase.policeCaseNumbers,
             state: theCase.state,
             type: theCase.type,
-            defendants: theCase.defendants,
+            defendants: transformDefendants(theCase.defendants),
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
@@ -64,6 +65,10 @@ export class CaseListInterceptor implements NestInterceptor {
             indictmentRulingDecision: theCase.indictmentRulingDecision,
             courtSessionType: theCase.courtSessionType,
             eventLogs: theCase.eventLogs,
+            court: theCase.court,
+            caseSentToCourtDate: EventLog.caseSentToCourtEvent(
+              theCase.eventLogs,
+            )?.created,
           }
         }),
       ),

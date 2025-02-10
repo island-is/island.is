@@ -37,7 +37,7 @@ export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
             </GridColumn>
           </GridRow>
           <GridRow>
-            <GridColumn span={['10/10', '10/10', '5/10']}>
+            <GridColumn span={['10/10', '10/10', '10/10', '10/10', '5/10']}>
               {slice.description && (
                 <Box paddingRight={[0, 0, 6]}>
                   <Text marginTop={3}>{slice.description}</Text>
@@ -50,7 +50,12 @@ export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                 className={styles.districtsList}
               >
                 {slice.links.map((link, index) => (
-                  <Box component="li" key={index} marginBottom={4}>
+                  <Box
+                    component="li"
+                    key={index}
+                    marginBottom={4}
+                    className={styles.districtsListItem}
+                  >
                     <Link href={link.url}>
                       <Button variant="text" as="span">
                         {link.text}
@@ -61,7 +66,7 @@ export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
               </Box>
             </GridColumn>
             {!!slice.image && (
-              <GridColumn span={['10/10', '10/10', '5/10']}>
+              <GridColumn span={['10/10', '10/10', '10/10', '10/10', '5/10']}>
                 {slice.image.url.split('.').pop() === 'svg' ? (
                   <object data={slice.image.url} type="image/svg+xml">
                     <img src={slice.image.url} alt="" />

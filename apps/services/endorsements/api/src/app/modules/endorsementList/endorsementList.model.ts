@@ -87,6 +87,13 @@ export class EndorsementList extends Model {
 
   @ApiProperty()
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  ownerName?: string
+
+  @ApiProperty()
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })

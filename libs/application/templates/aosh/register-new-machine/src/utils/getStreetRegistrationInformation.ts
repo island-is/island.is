@@ -8,13 +8,13 @@ export const getStreetRegistrationInformation = (
 ) => {
   const registerToTraffic = getValueViaPath(
     answers,
-    'streetRegistration.registerToTraffic',
+    'machine.streetRegistration.registerToTraffic',
   ) as typeof NO | typeof YES
 
   const licensePlateSize = getValueViaPath(
     answers,
-    'streetRegistration.size',
-  ) as 'A' | 'B' | 'D'
+    'machine.streetRegistration.size',
+  ) as '1' | '2' | '3'
 
   return registerToTraffic === YES
     ? [
@@ -22,9 +22,9 @@ export const getStreetRegistrationInformation = (
           licensePlate.labels.streetRegistration,
         )}: ${formatMessage(information.labels.radioButtons.radioOptionYes)}`,
         `${formatMessage(licensePlate.labels.plateSize)}: ${
-          licensePlateSize === 'A'
+          licensePlateSize === '1'
             ? formatMessage(licensePlate.labels.plate110)
-            : licensePlateSize === 'B'
+            : licensePlateSize === '2'
             ? formatMessage(licensePlate.labels.plate200)
             : formatMessage(licensePlate.labels.plate155)
         }`,

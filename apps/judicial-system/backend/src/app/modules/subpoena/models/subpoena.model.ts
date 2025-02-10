@@ -11,6 +11,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { ServiceStatus } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 import { Defendant } from '../../defendant/models/defendant.model'
 
@@ -19,6 +21,20 @@ import { Defendant } from '../../defendant/models/defendant.model'
   timestamps: true,
 })
 export class Subpoena extends Model {
+  static serviceStatusText(serviceStatus: ServiceStatus) {
+    return serviceStatus === ServiceStatus.DEFENDER
+      ? 'Birt fyrir verjanda'
+      : serviceStatus === ServiceStatus.ELECTRONICALLY
+      ? 'Birt rafrænt'
+      : serviceStatus === ServiceStatus.IN_PERSON
+      ? 'Birt persónulega'
+      : serviceStatus === ServiceStatus.FAILED
+      ? 'Árangurslaus birting'
+      : serviceStatus === ServiceStatus.EXPIRED
+      ? 'Rann út á tíma'
+      : 'Í birtingarferli' // This should never happen
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -49,23 +65,47 @@ export class Subpoena extends Model {
   defendant?: Defendant
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
-  caseId?: string
+  caseId!: string
 
   @BelongsTo(() => Case, 'caseId')
   @ApiPropertyOptional({ type: Case })
   case?: Case
 
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiPropertyOptional({ type: Boolean })
-  acknowledged?: string
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(ServiceStatus),
+  })
+  @ApiPropertyOptional({ enum: ServiceStatus })
+  serviceStatus?: ServiceStatus
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  serviceDate?: Date
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
-  registeredBy?: string
+  servedBy?: string
 
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   comment?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  defenderNationalId?: string
+
+  @Column({ type: DataType.DATE, allowNull: false })
+  @ApiProperty({ type: Date })
+  arraignmentDate!: Date
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
+  location!: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  hash?: string
 }

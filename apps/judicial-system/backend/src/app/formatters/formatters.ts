@@ -5,7 +5,6 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  capitalize,
   enumerate,
   formatCaseType,
   formatDate,
@@ -14,7 +13,7 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import type { Gender, UserRole } from '@island.is/judicial-system/types'
+import { Gender, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -664,27 +663,6 @@ export const formatCustodyRestrictions = (
   })
 }
 
-export const formatDefenderAssignedEmailNotification = (
-  formatMessage: FormatMessage,
-  theCase: Case,
-  overviewUrl?: string,
-): SubjectAndBody => {
-  const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
-    court: capitalize(theCase.court?.name ?? ''),
-  })
-
-  const body = formatMessage(notifications.defenderAssignedEmail.body, {
-    defenderHasAccessToRVG: Boolean(overviewUrl),
-    courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
-    court: theCase.court?.name ?? '',
-    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
-    linkStart: `<a href="${overviewUrl}">`,
-    linkEnd: '</a>',
-  })
-
-  return { body, subject }
-}
-
 export const formatCourtOfAppealJudgeAssignedEmailNotification = (
   formatMessage: FormatMessage,
   caseNumber: string,
@@ -776,3 +754,31 @@ export const formatDefenderRoute = (
 
 export const formatConfirmedIndictmentKey = (key?: string) =>
   key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
+
+export const filterWhitelistEmails = (
+  emails: string[],
+  domainWhitelist: string,
+  emailWhitelist: string,
+) => {
+  if (!emails || emails.length === 0) return []
+
+  const allowedDomains = new Set(
+    domainWhitelist
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean),
+  )
+  const allowedEmails = new Set(
+    emailWhitelist
+      .split(',')
+      .map((e) => e.trim())
+      .filter(Boolean),
+  )
+
+  return emails.filter((email) => {
+    const domain = email.split('@')[1]
+    return (
+      domain && (allowedDomains.has(domain) || allowedEmails.has(email.trim()))
+    )
+  })
+}

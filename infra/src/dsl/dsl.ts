@@ -1,11 +1,11 @@
 import { merge } from 'lodash'
-import {
+import { CodeOwners } from '../../../libs/shared/constants/src/lib/codeOwners'
+import type {
   Context,
   EnvironmentVariables,
   ExtraValues,
   Features,
   HealthProbe,
-  Ingress,
   InitContainers,
   MountedFile,
   PersistentVolumeClaim,
@@ -17,7 +17,10 @@ import {
   ServiceDefinition,
   XroadConfig,
   PodDisruptionBudget,
+  IngressMapping,
+  BffInfo,
 } from './types/input-types'
+import { bffConfig } from './bff'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
 
@@ -167,19 +170,33 @@ export class ServiceBuilder<ServiceType extends string> {
    * @example
    * ```
    * .env({
-   *        MY_VAR: 'foo',
-   *        YOUR_VAR: {
-   *            dev: 'foo',
-   *            staging: 'bar',
-   *            prod: 'baz',
-   *        },
-   *    })
+   *    MY_VAR: 'foo',
+   *    YOUR_VAR: {
+   *      dev: 'foo',
+   *      staging: 'bar',
+   *      prod: 'baz',
+   *    },
+   *  })
    * ```
    *
    */
   env(envs: EnvironmentVariables) {
     this.assertUnset(this.serviceDef.env, envs)
     this.serviceDef.env = { ...this.serviceDef.env, ...envs }
+    return this
+  }
+
+  bff(config: BffInfo) {
+    this.serviceDef.env = { ...bffConfig(config).env, ...this.serviceDef.env }
+    this.serviceDef.secrets = {
+      ...bffConfig(config).secrets,
+      ...this.serviceDef.secrets,
+    }
+    return this
+  }
+
+  codeOwner(codeOwner: CodeOwners) {
+    this.serviceDef.env['CODE_OWNER'] = codeOwner
     return this
   }
 
@@ -336,7 +353,7 @@ export class ServiceBuilder<ServiceType extends string> {
   /**
    * Initializes a container with optional parameters and checks for unique container names.
    * If the 'withDB' flag is set or if the 'postgres' property is present in the input object,
-   * it grants database access to the container.
+   * it grants database access toethe container.
    * Maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    *
    * @param ic - The initial container configuration.
@@ -461,7 +478,7 @@ export class ServiceBuilder<ServiceType extends string> {
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
    * @param ingress - Ingress parameters
    */
-  ingress(ingress: { [name: string]: Ingress }) {
+  ingress(ingress: IngressMapping) {
     this.serviceDef.ingress = ingress
     return this
   }
@@ -479,6 +496,9 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
+  /**
+   * Validates that no environment variables are set twice. Throws if any are duplicated.
+   */
   private assertUnset<T extends {}>(current: T, envs: T) {
     const intersection = Object.keys({
       ...current,
@@ -551,3 +571,6 @@ export const service = <Service extends string>(
 }
 
 export const json = (value: unknown): string => JSON.stringify(value)
+
+export { CodeOwners }
+export type { Context }

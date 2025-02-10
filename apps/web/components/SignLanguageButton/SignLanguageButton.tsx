@@ -44,7 +44,7 @@ export const SignLanguageButton = ({
   )
 
   const namespace = useMemo(
-    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    () => JSON.parse(data?.getNamespace?.fields || '{}'),
     [data?.getNamespace?.fields],
   )
 

@@ -3,25 +3,22 @@ import {
   FinancialStatementsInaoClientModule,
 } from '@island.is/clients/financial-statements-inao'
 
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao.service'
+import { AwsModule } from '@island.is/nest/aws'
 
-export class FinancialStatementsInaoTemplateModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: FinancialStatementsInaoTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        ConfigModule.forRoot({
-          load: [FinancialStatementsInaoClientConfig],
-        }),
-        FinancialStatementsInaoClientModule,
-      ],
-      providers: [FinancialStatementsInaoTemplateService],
-      exports: [FinancialStatementsInaoTemplateService],
-    }
-  }
-}
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    ConfigModule.forRoot({
+      load: [FinancialStatementsInaoClientConfig],
+    }),
+    FinancialStatementsInaoClientModule,
+    AwsModule,
+  ],
+  providers: [FinancialStatementsInaoTemplateService],
+  exports: [FinancialStatementsInaoTemplateService],
+})
+export class FinancialStatementsInaoTemplateModule {}

@@ -7,6 +7,7 @@ export const buttonWrapper = style({
 
 export const menuItem = style({
   paddingTop: '16px',
+  paddingBottom: '16px',
   display: 'flex',
   justifyContent: 'center',
   transition: 'color .2s',
@@ -16,6 +17,11 @@ export const menuItem = style({
     '&:hover, &:focus': {
       textDecoration: 'none',
       color: theme.color.blue400,
+    },
+  },
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      fontSize: 12,
     },
   },
 })

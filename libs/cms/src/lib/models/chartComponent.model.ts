@@ -24,6 +24,9 @@ export class ChartComponent {
 
   @Field(() => String, { nullable: true })
   stackId?: string
+
+  @Field({ nullable: true })
+  values?: string
 }
 
 export const mapChartComponent = ({
@@ -38,5 +41,6 @@ export const mapChartComponent = ({
     sourceDataKey: fields.sourceDataKey ?? '',
     stackId: fields.stackId,
     interval: fields.interval ? Number(fields.interval) : undefined,
+    values: fields.values ? JSON.stringify(fields.values) : undefined,
   }
 }

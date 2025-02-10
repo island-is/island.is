@@ -4,14 +4,17 @@ import { useIntl } from 'react-intl'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { TagCaseState } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import {
+  ContextMenuItem,
+  useContextMenu,
+} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -19,10 +22,11 @@ import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema
 interface Props {
   cases: CaseListEntry[]
   onContextMenuDeleteClick: (id: string) => void
+  canDeleteCase: (caseToDelete: CaseListEntry) => boolean
 }
 
 const ActiveCases: FC<Props> = (props) => {
-  const { cases, onContextMenuDeleteClick } = props
+  const { cases, onContextMenuDeleteClick, canDeleteCase } = props
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
@@ -34,37 +38,36 @@ const ActiveCases: FC<Props> = (props) => {
         },
         {
           title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-          sortable: { isSortable: true, key: 'defendants' },
+          sortBy: 'defendants',
         },
         {
           title: formatMessage(tables.type),
         },
         {
-          title: capitalize(formatMessage(tables.created, { suffix: 'i' })),
-          sortable: { isSortable: true, key: 'created' },
+          title: capitalize(formatMessage(tables.sentToCourtDate)),
+          sortBy: 'caseSentToCourtDate',
         },
         { title: formatMessage(tables.state) },
         {
           title: formatMessage(tables.hearingArrangementDate),
-          sortable: {
-            isSortable: true,
-            key: 'courtDate',
-          },
+          sortBy: 'courtDate',
         },
       ]}
       data={cases}
-      generateContextMenuItems={(row) => {
-        return [
-          openCaseInNewTabMenuItem(row.id),
-          {
-            title: formatMessage(contextMenu.deleteCase),
-            onClick: () => {
-              onContextMenuDeleteClick(row.id)
-            },
-            icon: 'trash',
-          },
-        ]
-      }}
+      generateContextMenuItems={(row) => [
+        openCaseInNewTabMenuItem(row.id),
+        ...(canDeleteCase(row)
+          ? [
+              {
+                title: formatMessage(contextMenu.deleteCase),
+                onClick: () => {
+                  onContextMenuDeleteClick(row.id)
+                },
+                icon: 'trash',
+              } as ContextMenuItem,
+            ]
+          : []),
+      ]}
       columns={[
         {
           cell: (row) => (
@@ -79,10 +82,16 @@ const ActiveCases: FC<Props> = (props) => {
           cell: (row) => <DefendantInfo defendants={row.defendants} />,
         },
         {
-          cell: (row) => <ColumnCaseType type={row.type} />,
+          cell: (row) => (
+            <ColumnCaseType
+              type={row.type}
+              decision={row.decision}
+              parentCaseId={row.parentCaseId}
+            />
+          ),
         },
         {
-          cell: (row) => <CreatedDate created={row.created} />,
+          cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
         },
         {
           cell: (row) => (
@@ -93,6 +102,7 @@ const ActiveCases: FC<Props> = (props) => {
               courtDate={row.courtDate}
               indictmentDecision={row.indictmentDecision}
               indictmentRulingDecision={row.indictmentRulingDecision}
+              defendants={row.defendants}
             />
           ),
         },

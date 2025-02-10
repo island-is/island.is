@@ -668,16 +668,22 @@ OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
+  const usingDefaultHeader: boolean = namespace['usingDefaultHeader'] ?? false
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
+    themeConfig: !usingDefaultHeader
+      ? {
+          headerButtonColorScheme: 'negative',
+          headerColorScheme: 'white',
+        }
+      : {},
   }
 }
 
 export default withMainLayout(OperatingLicenses, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
   footerVersion: 'organization',
 })

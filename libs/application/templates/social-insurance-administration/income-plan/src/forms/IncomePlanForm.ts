@@ -4,6 +4,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -32,11 +33,13 @@ import {
   YES,
 } from '../lib/constants'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getCategoriesOptions,
   getTypesOptions,
 } from '../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../lib/messages'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -80,7 +83,9 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: incomePlanConditions.incomePlanYear,
+                    incomePlanYear:
+                      incomePlanConditions?.incomePlanYear ??
+                      new Date().getFullYear(),
                   },
                 }
               },
@@ -118,12 +123,10 @@ export const IncomePlanForm: Form = buildForm({
                         application.externalData,
                         activeField?.incomeCategory,
                       )
-
-                      return (
-                        options.find(
-                          (option) => option.value === activeField?.incomeType,
-                        )?.value ?? ''
-                      )
+                      const selectedOption = options.find(
+                        (option) => option.value === activeField?.incomeType,
+                      )?.value
+                      return selectedOption ?? null
                     },
                     watchValues: 'incomeCategory',
                   },
@@ -148,7 +151,7 @@ export const IncomePlanForm: Form = buildForm({
                         activeField?.incomeType ===
                           INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
                         activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                          ? ''
+                          ? null
                           : ISK
 
                       return defaultCurrency
@@ -627,6 +630,21 @@ export const IncomePlanForm: Form = buildForm({
           description: incomePlanFormMessage.info.tableDescription,
           children: [
             buildCustomField({
+              title: '',
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
+            }),
+            buildSelectField({
+              id: 'temporaryCalculation.month',
+              title: socialInsuranceAdministrationMessage.period.month,
+              width: 'half',
+              options: MONTHS,
+              defaultValue: MONTHS[new Date().getMonth()].value,
+              condition: (answers) =>
+                getApplicationAnswers(answers).temporaryCalculationShow,
+            }),
+            buildCustomField({
               id: 'temporaryCalculationTable',
               title: '',
               component: 'TemporaryCalculationTable',
@@ -683,7 +701,7 @@ export const IncomePlanForm: Form = buildForm({
       expandableIntro: '',
       bottomButtonMessage:
         incomePlanFormMessage.conclusionScreen.bottomButtonMessage,
-      bottomButtonLink: '/minarsidur/framfaersla/tekjuaaetlun',
+      bottomButtonLink: '/minarsidur/umsoknir',
     }),
   ],
 })

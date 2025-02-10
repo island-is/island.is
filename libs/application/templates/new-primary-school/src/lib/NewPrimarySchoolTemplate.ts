@@ -12,18 +12,31 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChildrenCustodyInformationApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  YES,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
+import { ChildrenApi } from '../dataProviders'
+import {
+  ApiModuleActions,
+  Events,
+  ReasonForApplicationOptions,
+  Roles,
+  States,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { getApplicationAnswers } from './newPrimarySchoolUtils'
+import { CodeOwners } from '@island.is/shared/constants'
+import {
+  determineNameFromApplicationAnswers,
+  getApplicationAnswers,
+  hasForeignLanguages,
+} from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -31,7 +44,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-  name: newPrimarySchoolMessages.shared.applicationName,
+  name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
@@ -51,11 +65,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.getChildInformation,
+            externalDataId: 'childInformation',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((val) =>
+                import('../forms/Prerequisites/index').then((val) =>
                   Promise.resolve(val.Prerequisites),
                 ),
               actions: [
@@ -67,11 +86,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                ChildrenCustodyInformationApi,
-                NationalRegistryUserApi,
-                UserProfileApi,
-              ],
+              api: [NationalRegistryUserApi, UserProfileApi, ChildrenApi],
             },
           ],
         },
@@ -85,7 +100,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
-          'clearPublication',
+          'clearFreeSchoolMeal',
+          'clearSupport',
         ],
         meta: {
           name: States.DRAFT,
@@ -97,6 +113,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -158,25 +179,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear answers if "Moving abroad" is selected as reason for application
-        if (
-          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-        ) {
-          unset(application.answers, 'support')
-          unset(application.answers, 'siblings')
-          unset(application.answers, 'languages')
-          unset(application.answers, 'startDate')
-          unset(application.answers, 'photography')
-          unset(application.answers, 'allergiesAndIntolerances')
-        } else {
-          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
-          unset(application.answers, 'reasonForApplication.movingAbroad')
-        }
-
-        // Clear transferOfLegalDomicile if "Transfer of legal domicile" is not selected as reason for application
+        // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
         if (
           reasonForApplication !==
-          ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ) {
           unset(
             application.answers,
@@ -184,10 +190,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           )
         }
 
-        // Clear siblings if "Siblings in the same primary school" is not selected as reason for application
+        // Clear siblings if "Siblings in the same school" is not selected as reason for application
         if (
           reasonForApplication !==
-          ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+          ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
         ) {
           unset(application.answers, 'siblings')
         }
@@ -195,54 +201,81 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearPlaceOfResidence: assign((context) => {
         const { application } = context
-        const { differentPlaceOfResidence } = getApplicationAnswers(
-          application.answers,
-        )
-        if (differentPlaceOfResidence === NO) {
+        const { childInfo } = getApplicationAnswers(application.answers)
+        if (childInfo?.differentPlaceOfResidence === NO) {
           unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),
       clearLanguages: assign((context) => {
         const { application } = context
-        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
-          application.answers,
-        )
-        if (otherLanguagesSpokenDaily === NO) {
-          unset(application.answers, 'languages.otherLanguages')
-          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+
+        if (!hasForeignLanguages(application.answers)) {
+          unset(application.answers, 'languages.language1')
+          unset(application.answers, 'languages.language2')
+          unset(application.answers, 'languages.language3')
+          unset(application.answers, 'languages.language4')
+          unset(application.answers, 'languages.childLanguage')
+          unset(application.answers, 'languages.interpreter')
         }
         return context
       }),
-      /**
-       * If the user changes his answers,
-       * clear selected food allergies and intolerances.
-       */
       clearAllergiesAndIntolerances: assign((context) => {
         const { application } = context
-        const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
-          application.answers,
-        )
+        const { hasFoodAllergiesOrIntolerances, hasOtherAllergies } =
+          getApplicationAnswers(application.answers)
 
-        if (hasFoodAllergies?.length === 0) {
-          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
-        }
-        if (hasFoodIntolerances?.length === 0) {
+        if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
           unset(
             application.answers,
-            'allergiesAndIntolerances.foodIntolerances',
+            'allergiesAndIntolerances.foodAllergiesOrIntolerances',
           )
+        }
+        if (!hasOtherAllergies?.includes(YES)) {
+          unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
+        }
+        if (
+          !hasFoodAllergiesOrIntolerances?.includes(YES) &&
+          !hasOtherAllergies?.includes(YES)
+        ) {
+          unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
         }
         return context
       }),
-      clearPublication: assign((context) => {
+      clearFreeSchoolMeal: assign((context) => {
         const { application } = context
-        const { photographyConsent } = getApplicationAnswers(
-          application.answers,
-        )
-        if (photographyConsent === NO) {
-          unset(application.answers, 'photography.photoSchoolPublication')
-          unset(application.answers, 'photography.photoMediaPublication')
+        const { acceptFreeSchoolLunch, hasSpecialNeeds } =
+          getApplicationAnswers(application.answers)
+
+        if (acceptFreeSchoolLunch !== YES) {
+          unset(application.answers, 'freeSchoolMeal.hasSpecialNeeds')
+          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        if (hasSpecialNeeds !== YES) {
+          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        return context
+      }),
+      clearSupport: assign((context) => {
+        const { application } = context
+        const {
+          developmentalAssessment,
+          specialSupport,
+          hasIntegratedServices,
+          hasCaseManager,
+        } = getApplicationAnswers(application.answers)
+
+        if (developmentalAssessment !== YES && specialSupport !== YES) {
+          unset(application.answers, 'support.hasIntegratedServices')
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasIntegratedServices !== YES) {
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasCaseManager !== YES) {
+          unset(application.answers, 'support.caseManager')
         }
         return context
       }),

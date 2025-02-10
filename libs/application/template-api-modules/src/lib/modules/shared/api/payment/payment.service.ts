@@ -3,8 +3,10 @@ import {
   PaymentCatalogItem,
   PaymentCatalogParameters,
 } from '@island.is/application/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../../types'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
@@ -16,14 +18,16 @@ import { getSlugFromType } from '@island.is/application/core'
 import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super('Payment')
   }
@@ -40,8 +44,57 @@ export class PaymentService extends BaseTemplateApiService {
     const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       params.organizationId,
     )
-
     return data.item
+  }
+
+  async mockPaymentCatalog({
+    params,
+    application,
+  }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
+    PaymentCatalogItem[]
+  > {
+    if (!params?.organizationId) {
+      throw Error('Missing performing organization ID')
+    }
+    if (isRunningOnEnvironment('production')) {
+      this.logger.warn('Attempt to use mock payments in production', {
+        applicationId: application.id,
+        organizationId: params?.organizationId,
+      })
+      throw new Error('Mock payments are not allowed in production')
+    }
+
+    this.logger.info('Using mock payment catalog', {
+      applicationId: application.id,
+      hasMockCatalog: !!params?.mockPaymentCatalog?.length,
+    })
+    if (params?.mockPaymentCatalog?.length) {
+      const isValid = params.mockPaymentCatalog.every(
+        (item): item is PaymentCatalogItem => {
+          return (
+            typeof item.performingOrgID === 'string' &&
+            typeof item.chargeType === 'string' &&
+            typeof item.chargeItemCode === 'string' &&
+            typeof item.chargeItemName === 'string' &&
+            typeof item.priceAmount === 'number'
+          )
+        },
+      )
+      if (!isValid) {
+        throw new Error('Invalid mock payment catalog structure')
+      }
+      return params.mockPaymentCatalog
+    } else {
+      return [
+        {
+          performingOrgID: params?.organizationId ?? 'string',
+          chargeType: 'string',
+          chargeItemCode: 'Payment',
+          chargeItemName: 'Mock',
+          priceAmount: 123123,
+        },
+      ]
+    }
   }
 
   async createCharge({
@@ -49,10 +102,18 @@ export class PaymentService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
-    const { organizationId, chargeItemCodes, extraData } = params ?? {}
+    const { organizationId, chargeItems, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
 
-    if (shouldUseMockPayment) {
+    if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
+      this.logger.warn('Attempt to use mock payments in production', {
+        applicationId: application.id,
+        organizationId: organizationId,
+      })
+      throw new Error('Mock payments are not allowed in production')
+    }
+
+    if (shouldUseMockPayment && !isRunningOnEnvironment('production')) {
       const list = [
         {
           performingOrgID: organizationId ?? 'string',
@@ -82,6 +143,7 @@ export class PaymentService extends BaseTemplateApiService {
       )
 
       const slug = getSlugFromType(application.typeId)
+
       const clientLocationOrigin = getConfigValue(
         this.configService,
         'clientLocationOrigin',
@@ -94,12 +156,10 @@ export class PaymentService extends BaseTemplateApiService {
     }
 
     if (!organizationId) throw Error('Missing performing organization ID')
-    if (!chargeItemCodes) throw Error('No selected charge item code')
+    if (!chargeItems) throw Error('No selected charge item code')
 
-    const codes =
-      typeof chargeItemCodes === 'function'
-        ? chargeItemCodes(application)
-        : chargeItemCodes
+    const items =
+      typeof chargeItems === 'function' ? chargeItems(application) : chargeItems
 
     const extraDataItems =
       typeof extraData === 'function' ? extraData(application) : extraData ?? []
@@ -107,7 +167,7 @@ export class PaymentService extends BaseTemplateApiService {
     const response = await this.paymentModelService.createCharge(
       auth,
       organizationId,
-      codes,
+      items,
       application.id,
       extraDataItems,
     )

@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
@@ -70,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -208,6 +210,7 @@ judicial-system-backend:
     COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
     COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+    COURT_OF_APPEALS_ASSISTANT_EMAILS: '/k8s/judicial-system/COURT_OF_APPEALS_ASSISTANT_EMAILS'
     COURT_ROBOT_CLIENT_ID: '/k8s/judicial-system/COURT_ROBOT_CLIENT_ID'
     COURT_ROBOT_CLIENT_SECRET: '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET'
     COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'
@@ -224,8 +227,11 @@ judicial-system-backend:
     NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD'
     NOVA_URL: '/k8s/judicial-system/NOVA_URL'
     NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'
+    POLICE_INSTITUTIONS_EMAILS: '/k8s/judicial-system/POLICE_INSTITUTIONS_EMAILS'
     PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
+    PRISON_ADMIN_INDICTMENT_EMAILS: '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS'
     PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
+    PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL: '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'
@@ -376,76 +382,6 @@ judicial-system-message-handler:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-message-handler'
     create: true
     name: 'judicial-system-message-handler'
-judicial-system-robot-api:
-  enabled: true
-  env:
-    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
-    AUDIT_TRAIL_REGION: 'eu-west-1'
-    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    BACKEND_URL: 'http://web-judicial-system-backend'
-    LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 3
-        min: 1
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-robot-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/service-upstream: 'true'
-      hosts:
-        - host: 'judicial-system-robot-api-xrd.internal.dev01.devland.is'
-          paths:
-            - '/'
-  namespace: 'judicial-system'
-  podDisruptionBudget:
-    maxUnavailable: 1
-  podSecurityContext:
-    fsGroup: 65534
-  pvcs: []
-  replicaCount:
-    default: 1
-    max: 3
-    min: 1
-  resources:
-    limits:
-      cpu: '200m'
-      memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
-  secrets:
-    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-robot-api'
-    create: true
-    name: 'judicial-system-robot-api'
 judicial-system-scheduler:
   args:
     - '--no-experimental-fetch'
@@ -532,7 +468,7 @@ judicial-system-web:
     readiness:
       initialDelaySeconds: 3
       path: '/readiness'
-      timeoutSeconds: 3
+      timeoutSeconds: 10
   hpa:
     scaling:
       metric:

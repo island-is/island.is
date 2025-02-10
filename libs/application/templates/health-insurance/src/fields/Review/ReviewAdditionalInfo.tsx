@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { formatText } from '@island.is/application/core'
 import {
   Box,
@@ -9,23 +8,23 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AdditionalInfoType, ReviewFieldProps } from '../../types'
-import { m } from '../../forms/messages'
+import { AdditionalInfoType, ReviewFieldProps } from '../../utils/types'
+import { m } from '../../lib/messages/messages'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { NO, YES } from '../../shared'
+import { NO, YES } from '../../utils/constants'
 
 interface Props extends ReviewFieldProps {
   additionalInfo: AdditionalInfoType
 }
 
-const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
+export const ReviewMissingInfo = ({
   application,
   isEditable,
-  additionalInfo = {},
-}) => {
+  additionalInfo = { remarks: '' },
+}: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -86,5 +85,3 @@ const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
     </Box>
   )
 }
-
-export default ReviewMissingInfo

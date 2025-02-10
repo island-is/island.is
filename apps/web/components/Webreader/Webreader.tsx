@@ -109,7 +109,7 @@ const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
       : 'Listen to this page using ReadSpeaker'
 
   return (
-    <Box marginTop={marginTop} marginBottom={marginBottom}>
+    <Box marginTop={marginTop} marginBottom={marginBottom} printHidden={true}>
       <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
         <a
           rel="nofollow"

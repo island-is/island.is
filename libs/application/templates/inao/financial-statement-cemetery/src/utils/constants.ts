@@ -14,6 +14,7 @@ export const PartiesBackwardLimit = 'PartiesBackwardLimit'
 export const CemeteriesBackwardLimit = 'CemeteriesBackwardLimit'
 export const PartiesYearAllowed = 'PartiesYearAllowed'
 export const CemeteriesYearAllowed = 'CemeteriesYearAllowed'
+export const CEMETERY_USER_TYPE = 150000002 // Number that comes from the INAO API
 
 // error helpers
 export const VALIDATOR = 'validator'
@@ -25,6 +26,7 @@ export enum TaxInfoTypes {
   CARE_INCOME = 300,
   BURIAL_REVENUE = 301,
   GRANT_FROM_THE_CEMETERY_FUND = 302,
+  DONATIONS_TO_CEMETERYFUND = 334,
 }
 
 export const CEMETERYOPERATIONIDS = {
@@ -62,16 +64,20 @@ export const CEMETERYEQUITIESANDLIABILITIESIDS = {
   equityPrefix: 'cemeteryEquity',
   currentAssets: 'cemeteryAsset.currentAssets',
   fixedAssetsTotal: 'cemeteryAsset.fixedAssetsTotal',
-  assetTotal: 'cemeteryAsset.total',
   longTerm: 'cemeteryLiability.longTerm',
   shortTerm: 'cemeteryLiability.shortTerm',
-  liabilityTotal: 'cemeteryLiability.total',
   equityAtTheBeginningOfTheYear: 'cemeteryEquity.equityAtTheBeginningOfTheYear',
   revaluationDueToPriceChanges: 'cemeteryEquity.revaluationDueToPriceChanges',
   reevaluateOther: 'cemeteryEquity.reevaluateOther',
   operationResult: 'cemeteryEquity.operationResult',
   equityTotal: 'cemeteryEquity.total',
-  totalEquityAndLiabilities: 'equityAndLiabilities.total',
+}
+
+export const EQUITYANDLIABILITIESTOTALS = {
+  assetsTotal: 'equityAndLiabilitiesTotals.assetsTotal',
+  liabilitiesTotal: 'equityAndLiabilitiesTotals.liabilitiesTotal',
+  equityAndLiabilitiesTotal:
+    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
 }
 
 export const OPERATINGCOST = {

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { HTMLText, PlainText } from '@island.is/regulations'
 
 export class AppendixModel {
@@ -7,4 +7,7 @@ export class AppendixModel {
 
   @ApiProperty()
   text!: HTMLText
+
+  @ApiPropertyOptional()
+  diff?: HTMLText
 }

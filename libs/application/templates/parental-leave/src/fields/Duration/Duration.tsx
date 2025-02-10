@@ -80,8 +80,9 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (chosenEndDate) {
       setValue(`periods[${currentIndex}].endDate`, chosenEndDate)
+      setValue(`periods[${currentIndex}].months`, chosenDuration)
     }
-  }, [chosenEndDate, setValue, currentIndex])
+  }, [chosenEndDate, setValue, currentIndex, chosenDuration])
 
   const handleChange = async (months: number) => {
     clearErrors([id, 'component'])
@@ -137,7 +138,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
       <Box
         background="blue100"
-        paddingTop={6}
+        paddingTop={1}
         paddingBottom={4}
         paddingX={3}
         marginTop={3}

@@ -19,28 +19,20 @@ Start by creating `{your_template_name}.module.ts` and `{your_template_name}.ser
 Example of a template API module:
 
 ```typescript
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
 // This is a shared module that gives you access to common methods
 import { SharedTemplateAPIModule } from '../../shared'
 
-// The base config that template api modules are registered with by default
-// (configurable inside `template-api.module.ts`)
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-
 // Here you import your module service
 import { ReferenceTemplateService } from './reference-template.service'
 
-export class ReferenceTemplateModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ReferenceTemplateModule,
-      imports: [SharedTemplateAPIModule.register(config)],
-      providers: [ReferenceTemplateService],
-      exports: [ReferenceTemplateService],
-    }
-  }
-}
+@Module({
+  imports: [SharedTemplateAPIModule],
+  providers: [ReferenceTemplateService],
+  exports: [ReferenceTemplateService],
+})
+export class ReferenceTemplateModule {}
 ```
 
 Create your service class that extends the `BaseTemplateApiService` and provide the application type to the `super` constructor. \
@@ -420,8 +412,7 @@ import { SharedApi } from '@island.is/application/types'
 
 ## Enabling payment mocking
 
-To enable payment mocking on dev and local you need to add `enableMockPayment: true` to the arguments object passed to the
-`buildExternalDataProvider` function when constructing your `approveExternalData` field.
+To enable payment mocking on dev and local you need to add a `MockablePaymentCatalogApi` in your application. Make sure though to not remove the existing `PaymentCatalogApi` as this is the api that is used on prod. You also need to make sure to update your template in the same manner
 
 A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`
 
@@ -431,10 +422,9 @@ buildExternalDataProvider({
           id: 'approveExternalData',
           subTitle: m.draft.externalDataTitle,
           checkboxLabel: m.draft.externalDataTitle,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: MockablePaymentCatalogApi,
               title: m.draft.feeInfo,
             }),
           ],
@@ -442,4 +432,88 @@ buildExternalDataProvider({
 
 ```
 
+and `libs/application/templates/example-payment/src/lib/examplePaymentTemplate.ts`
+
+```typescript
+[States.PREREQUISITES]: {
+        meta: {
+          status: 'draft',
+          name: 'Draft',
+          progress: 0.4,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () => (await import('../forms/draft')).draft,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.payUp,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [MockablePaymentCatalogApi, PaymentCatalogApi],
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: {
+            target: States.PAYMENT,
+          },
+        },
+      },
+```
+
 This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.
+
+### Create your own MockablePaymentCatalogApi
+
+If for some reason you need to create your own MockablePaymentCatalogApi you can do so by defining it in your dataprovider definitions.
+
+Here is an example of how you can do this:
+
+```typescript
+export const MockableSyslumadurPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'payment',
+  })
+```
+
+### Mocking payment catalog items
+
+To have the paymentcatalog return a mocked list of items you can set the `mockPaymentCatalog` parameter in the `MockablePaymentCatalogApi` configuration in your dataProviders.
+
+Here is an example from example-payment:
+
+```typescript
+export const MockPaymentCatalogWithTwoItems =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+      enableMockPayment: true,
+      mockPaymentCatalog: [
+        {
+          performingOrgID: InstitutionNationalIds.SYSLUMENN,
+          chargeType: 'string',
+          chargeItemCode: 'fakeItemCode1',
+          chargeItemName: 'fakepayment 1',
+          priceAmount: 123123,
+        },
+        {
+          performingOrgID: InstitutionNationalIds.SYSLUMENN,
+          chargeType: 'string',
+          chargeItemCode: 'fakeItemCode2',
+          chargeItemName: 'fakepayment 2',
+          priceAmount: 321321,
+        },
+      ],
+    },
+    externalDataId: 'paymentCatalog',
+  })
+```

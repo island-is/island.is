@@ -132,7 +132,14 @@
             "in": "query",
             "required": false,
             "type": "string",
-            "enum": ["Date", "Category", "Type", "Sender", "Subject"]
+            "enum": [
+              "Date",
+              "Category",
+              "Type",
+              "Sender",
+              "Subject",
+              "Publication"
+            ]
           },
           {
             "name": "order",
@@ -390,6 +397,18 @@
             "in": "query",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "includeDocument",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -520,7 +539,14 @@
             "in": "query",
             "required": false,
             "type": "string",
-            "enum": ["Date", "Category", "Type", "Sender", "Subject"]
+            "enum": [
+              "Date",
+              "Category",
+              "Type",
+              "Sender",
+              "Subject",
+              "Publication"
+            ]
           },
           {
             "name": "order",
@@ -560,6 +586,28 @@
           "200": {
             "description": "OK",
             "schema": { "$ref": "#/definitions/MessagePageDTO" }
+          }
+        }
+      }
+    },
+    "/api/mail/v1/customers/{kennitala}/messages/unreadCount": {
+      "get": {
+        "tags": ["Customers"],
+        "operationId": "Customers_GetUnreadCount",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "format": "int32", "type": "integer" }
           }
         }
       }
@@ -633,7 +681,9 @@
         "withdrawn": { "type": "boolean" },
         "withdrawnReason": { "type": "string" },
         "minumumAuthenticationType": { "type": "string" },
-        "bookmarked": { "type": "boolean" }
+        "bookmarked": { "type": "boolean" },
+        "fileType": { "type": "string" },
+        "urgent": { "type": "boolean" }
       }
     },
     "BatchRequest": {
@@ -677,7 +727,20 @@
         "senderName": { "type": "string" },
         "senderKennitala": { "type": "string" },
         "subject": { "type": "string" },
-        "categoryId": { "format": "int32", "type": "integer" }
+        "categoryId": { "format": "int32", "type": "integer" },
+        "urgent": { "type": "boolean" },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MessageAction" }
+        }
+      }
+    },
+    "MessageAction": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "data": { "type": "string" }
       }
     },
     "PaperMailDTO": {

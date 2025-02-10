@@ -4,6 +4,7 @@ import {
   UserProfileApi,
   NationalRegistryUserApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
 } from '@island.is/application/types'
 import { error } from '../lib/messages'
 
@@ -54,6 +55,14 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
+
+export const MockableSyslumadurPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'payment',
+  })
 
 export const DeliveryAddressApi = defineTemplateApi({
   action: 'deliveryAddress',

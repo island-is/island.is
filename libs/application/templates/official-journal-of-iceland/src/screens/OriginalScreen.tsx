@@ -10,6 +10,7 @@ export const OriginalScreen = (props: OJOIFieldBaseProps) => {
     <FormScreen
       title={f(original.general.title)}
       intro={f(original.general.intro)}
+      goToScreen={props.goToScreen}
     >
       <Original {...props} />
     </FormScreen>

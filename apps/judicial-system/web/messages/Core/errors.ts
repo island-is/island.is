@@ -12,11 +12,23 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að uppfæra varnaraðila',
   },
+  updateCivilClaimant: {
+    id: 'judicial.system.core:errors.update_civil_claimant',
+    defaultMessage: 'Upp kom villa við að uppfæra kröfuhafa',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að uppfæra kröfuhafa',
+  },
   createDefendant: {
     id: 'judicial.system.core:errors.create_defendant',
     defaultMessage: 'Upp kom villa við að stofna nýjan varnaraðila',
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að stofna varnaraðila',
+  },
+  createCivilClaimant: {
+    id: 'judicial.system.core:errors.create_civil_claimant',
+    defaultMessage: 'Upp kom villa við að stofna nýjan kröfuhafa',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að stofna kröfuhafa',
   },
   deleteDefendant: {
     id: 'judicial.system.core:errors.delete_defendant',
@@ -24,9 +36,15 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að eyða varnaraðila',
   },
+  deleteCivilClaimant: {
+    id: 'judicial.system.core:errors.delete_civil_claimant',
+    defaultMessage: 'Upp kom villa við að eyða kröfuhafa',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að eyða kröfuhafa',
+  },
   createCase: {
-    id: 'judicial.system.core:errors.create_case',
-    defaultMessage: 'Upp kom villa við að stofnun máls',
+    id: 'judicial.system.core:errors.create_case_v1',
+    defaultMessage: 'Upp kom villa við stofnun máls',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að stofna mál',
   },
   updateCase: {
@@ -75,6 +93,12 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að sækja lögmanna skrá',
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmanna skrá',
+  },
+  fetchLawyer: {
+    id: 'judicial.system.core:errors.fetch_lawyer',
+    defaultMessage: 'Upp kom villa við að sækja lögmann úr lögmanna skrá',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmann úr lögmanna skrá',
   },
   copyLink: {
     id: 'judicial.system.core:errors.copy_link',
@@ -126,5 +150,28 @@ export const errors = defineMessages({
     id: 'judicial.system.core:errors.open_document',
     defaultMessage: 'Upp kom villa við að opna skjal',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að opna skjal',
+  },
+  getSubpoenaStatusTitle: {
+    id: 'judicial.system.core:errors.get_subpoena_status_title',
+    defaultMessage: 'Ekki tókst að sækja stöðu birtingar',
+    description:
+      'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
+  },
+  getSubpoenaStatus: {
+    id: 'judicial.system.core:errors.get_subpoena_status',
+    defaultMessage: 'Vinsamlegast reyndu aftur síðar',
+    description:
+      'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
+  },
+  invalidDate: {
+    id: 'judicial.system.core:errors.invalid_date',
+    defaultMessage: 'Dagsetning ekki rétt slegin inn',
+    description: 'Notaður sem villuskilaboð þegar dagsetning er ekki löggild',
+  },
+  uploadFailed: {
+    id: 'judicial.system.core:errors.upload_failed',
+    defaultMessage: 'Upp kom villa við að hlaða upp skjali',
+    description:
+      'Notaður sem villuskilaboð þegar ekki tekst að hlaða upp skjali',
   },
 })

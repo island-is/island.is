@@ -3,4 +3,5 @@ export enum ApiActions {
   rejectApplication = 'rejectApplication',
   submitApplication = 'submitApplication',
   validateApplication = 'validateApplication',
+  deleteApplication = 'deleteApplication',
 }

@@ -13,7 +13,10 @@ import {
   Application,
   VerifyPaymentApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
+  BasicChargeItem,
 } from '@island.is/application/types'
+import { MockPaymentCatalogWithTwoItems } from '../dataProviders'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -21,8 +24,9 @@ import { m } from './messages'
 import { PaymentCatalogApi } from '@island.is/application/types'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   // This is where you'd pick and validate that you are going to create a charge for a
   // particular charge item code. Note that creating these charges creates an actual "krafa"
   // with FJS
@@ -33,7 +37,7 @@ const getCodes = (application: Application) => {
   if (!chargeItemCode) {
     throw new Error('No selected charge item code')
   }
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 const template: ApplicationTemplate<
@@ -43,6 +47,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_PAYMENT,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema,
   readyForProduction: false,
@@ -68,7 +73,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [PaymentCatalogApi],
+              api: [MockPaymentCatalogWithTwoItems, PaymentCatalogApi],
               delete: true,
             },
           ],
@@ -81,7 +86,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

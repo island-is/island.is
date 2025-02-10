@@ -23,9 +23,6 @@ import {
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3URI from 'amazon-s3-uri'
-
-import { S3 } from 'aws-sdk'
 import {
   mapValuesToIndividualtype,
   mapValuesToPartytype,
@@ -33,6 +30,7 @@ import {
 } from './mappers/mapValuesToUsertype'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 
 export interface AttachmentData {
   key: string
@@ -56,16 +54,17 @@ export interface DataResponse {
 
 @Injectable()
 export class FinancialStatementsInaoTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
-    this.s3 = new S3()
   }
 
-  private async getAttachment(application: Application): Promise<string> {
+  private async getAttachmentAsBase64(
+    application: Application,
+  ): Promise<string> {
     const attachments: AttachmentData[] | undefined = getValueViaPath(
       application.answers,
       'attachments.file',
@@ -80,23 +79,22 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     )[attachmentKey]
 
     if (!fileName) {
-      return Promise.reject({})
+      throw new Error(
+        `Attachment filename not found in application on attachment key: ${attachmentKey}`,
+      )
     }
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
+      if (!fileContent) {
+        throw new Error(`File content not found for: ${fileName}`)
+      }
+      return fileContent
     } catch (error) {
-      throw new Error('Villa kom kom upp við að senda umsókn')
+      throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
   }
 
@@ -139,7 +137,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const fileName = noValueStatement
         ? undefined
-        : await this.getAttachment(application)
+        : await this.getAttachmentAsBase64(application)
 
       this.logger.info(
         `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
@@ -231,7 +229,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       ) as string
       const clientEmail = getValueViaPath(answers, 'about.email') as string
 
-      const fileName = await this.getAttachment(application)
+      const fileName = await this.getAttachmentAsBase64(application)
 
       const client = {
         nationalId: nationalId,
@@ -306,7 +304,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const file = getValueViaPath(answers, 'attachments.file')
 
-      const fileName = file ? await this.getAttachment(application) : undefined
+      const fileName = file
+        ? await this.getAttachmentAsBase64(application)
+        : undefined
 
       const client = {
         nationalId: nationalId,

@@ -20,6 +20,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   RestrictionLength,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -176,11 +177,7 @@ const CourtOfAppealRuling = () => {
     >
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CaseNumbers />
         <Box marginBottom={5}>
           <Box marginBottom={3} display="flex">

@@ -10,7 +10,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
 import { Answers } from '../../types'
-import { ESTATE_INHERITANCE, PrePaidInheritanceOptions } from '../constants'
+import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
 export const currencyStringToNumber = (str: string) => {

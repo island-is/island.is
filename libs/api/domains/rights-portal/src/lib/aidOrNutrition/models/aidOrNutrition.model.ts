@@ -1,7 +1,14 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { AidOrNutritionType } from '../utils/generateAidOrNutrition'
+import {
+  AidOrNutritionRenewalStatus,
+  AidOrNutritionType,
+} from '../utils/generateAidOrNutrition'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Refund } from './aidOrNutritionRefund.model'
+
+registerEnumType(AidOrNutritionRenewalStatus, {
+  name: 'RightsPortalAidOrNutritionRenewalStatus',
+})
 
 registerEnumType(AidOrNutritionType, {
   name: 'RightsPortalAidOrNutritionType',
@@ -50,6 +57,9 @@ export class AidOrNutrition {
 
   @Field()
   expiring!: boolean
+
+  @Field(() => AidOrNutritionRenewalStatus, { nullable: true })
+  renewalStatus?: AidOrNutritionRenewalStatus
 }
 
 @ObjectType('RightsPortalPaginatedAidsOrNutrition')

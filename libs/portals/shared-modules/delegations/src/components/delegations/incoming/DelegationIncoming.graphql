@@ -1,0 +1,37 @@
+fragment AuthCustomDelegation on AuthCustomDelegation {
+  validTo
+  scopes {
+    id
+    name
+    validTo
+    displayName
+    apiScope(lang: $lang) {
+      ...AuthApiScope
+    }
+  }
+  domain {
+    name
+    displayName
+    organisationLogoKey
+    organisationLogoUrl
+  }
+}
+
+query AuthDelegationsIncoming($input: AuthDelegationsInput!, $lang: String) {
+  authDelegations(input: $input) {
+    id
+    type
+    validTo
+    to {
+      nationalId
+      name
+    }
+    from {
+      nationalId
+      name
+    }
+    ... on AuthCustomDelegation {
+      ...AuthCustomDelegation
+    }
+  }
+}

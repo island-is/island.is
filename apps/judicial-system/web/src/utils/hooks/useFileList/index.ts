@@ -9,18 +9,25 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import useIsMobile from '../useIsMobile/useIsMobile'
 import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
 import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendUrl.generated'
 
 interface Parameters {
   caseId: string
+  connectedCaseParentId?: string
 }
 
-const useFileList = ({ caseId }: Parameters) => {
+const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
+  const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
+
+  const openFile = (url: string) => {
+    window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
+  }
 
   const [
     getSignedUrl,
@@ -30,7 +37,7 @@ const useFileList = ({ caseId }: Parameters) => {
     errorPolicy: 'all',
     onCompleted(data) {
       if (data?.getSignedUrl?.url) {
-        window.open(data.getSignedUrl.url, '_blank')
+        openFile(data.getSignedUrl.url)
       }
     },
     onError: () => {
@@ -46,7 +53,7 @@ const useFileList = ({ caseId }: Parameters) => {
     errorPolicy: 'all',
     onCompleted(data) {
       if (data?.limitedAccessGetSignedUrl?.url) {
-        window.open(data.limitedAccessGetSignedUrl.url, '_blank')
+        openFile(data.limitedAccessGetSignedUrl.url)
       }
     },
     onError: () => {
@@ -100,9 +107,23 @@ const useFileList = ({ caseId }: Parameters) => {
     () => (fileId: string) => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
-      query({ variables: { input: { id: fileId, caseId } } })
+      query({
+        variables: {
+          input: {
+            id: fileId,
+            caseId: connectedCaseParentId ?? caseId,
+            mergedCaseId: connectedCaseParentId && caseId,
+          },
+        },
+      })
     },
-    [caseId, getSignedUrl, limitedAccess, limitedAccessGetSignedUrl],
+    [
+      caseId,
+      connectedCaseParentId,
+      getSignedUrl,
+      limitedAccess,
+      limitedAccessGetSignedUrl,
+    ],
   )
 
   const dismissFileNotFound = () => {

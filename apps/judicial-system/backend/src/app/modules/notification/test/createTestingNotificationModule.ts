@@ -24,16 +24,43 @@ import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import { UserService } from '../../user'
-import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
-import { InternalNotificationService } from '../internalNotification.service'
 import { Notification } from '../models/notification.model'
 import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
 import { NotificationService } from '../notification.service'
 import { NotificationDispatchService } from '../notificationDispatch.service'
+import { CaseNotificationService } from '../services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from '../services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from '../services/defendantNotification/defendantNotification.service'
+import { IndictmentCaseNotificationService } from '../services/indictmentCaseNotification/indictmentCaseNotification.service'
+import { InstitutionNotificationService } from '../services/institutionNotification/institutionNotification.service'
 
 jest.mock('@island.is/judicial-system/message')
+
+export const createTestUsers = (
+  roles: string[],
+): Record<
+  string,
+  {
+    id: string
+    name: string
+    email: string
+    mobile: string
+    nationalId: string
+  }
+> =>
+  roles.reduce((acc, role) => {
+    const id = uuid()
+    acc[role] = {
+      id: id,
+      name: `${role}-${id}`,
+      email: `${role}-${id}@omnitrix.is`,
+      mobile: id,
+      nationalId: '1234567890',
+    }
+    return acc
+  }, {} as Record<string, { id: string; name: string; email: string; mobile: string; nationalId: string }>)
 
 const formatMessage = createTestIntl({
   onError: jest.fn(),
@@ -99,9 +126,12 @@ export const createTestingNotificationModule = async () => {
       { provide: InstitutionService, useValue: { getAll: jest.fn() } },
       EventService,
       NotificationService,
-      InternalNotificationService,
+      CaseNotificationService,
       NotificationDispatchService,
       InstitutionNotificationService,
+      DefendantNotificationService,
+      CivilClaimantNotificationService,
+      IndictmentCaseNotificationService,
     ],
   })
     .useMocker((token) => {
@@ -129,6 +159,9 @@ export const createTestingNotificationModule = async () => {
     notificationController: notificationModule.get(NotificationController),
     internalNotificationController: notificationModule.get(
       InternalNotificationController,
+    ),
+    indictmentCaseNotificationService: notificationModule.get(
+      IndictmentCaseNotificationService,
     ),
   }
 

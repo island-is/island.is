@@ -17,6 +17,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textStyle?: TextStyle
   textProps?: TextProps
   iconStyle?: ImageStyle
+  ellipsis?: boolean
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -29,7 +30,7 @@ interface TextButtonProps extends ButtonBaseProps {
   icon?: ImageSourcePropType
 }
 
-type ButtonProps = IconButtonProps | TextButtonProps
+export type ButtonProps = IconButtonProps | TextButtonProps
 
 type HostProps = Omit<ButtonProps, 'title'>
 
@@ -115,6 +116,7 @@ export function Button({
   textStyle,
   textProps,
   iconStyle,
+  ellipsis,
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
@@ -139,6 +141,8 @@ export function Button({
             isUtilityButton={isUtilityButton}
             disabled={rest.disabled}
             style={textStyle}
+            numberOfLines={ellipsis ? 1 : undefined}
+            ellipsizeMode={ellipsis ? 'tail' : undefined}
           >
             {title}
           </Text>

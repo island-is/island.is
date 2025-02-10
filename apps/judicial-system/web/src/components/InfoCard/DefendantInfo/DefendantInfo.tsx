@@ -1,8 +1,9 @@
 import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
-import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
   ServiceRequirement,
@@ -10,8 +11,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
-import * as styles from './DefendantInfo.css'
 
 interface Defender {
   name?: string | null
@@ -21,131 +22,132 @@ interface Defender {
   phoneNumber?: string | null
 }
 
-export type DefendantInfoActionButton = {
-  text: string
-  onClick: (defendant: Defendant) => void
-  icon?: IconMapIcon
-  isDisabled: (defendant: Defendant) => boolean
-}
-
 interface DefendantInfoProps {
   defendant: Defendant
   displayAppealExpirationInfo?: boolean
-  defendantInfoActionButton?: DefendantInfoActionButton
   displayVerdictViewDate?: boolean
+  displaySentToPrisonAdminDate?: boolean
   defender?: Defender
 }
 
 export const getAppealExpirationInfo = (
   verdictAppealDeadline?: string | null,
+  isVerdictAppealDeadlineExpired?: boolean | null,
   serviceRequirement?: ServiceRequirement | null,
 ) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
-    return { message: strings.serviceRequirementNotRequired, data: null }
+    return { message: strings.serviceNotRequired, data: null }
   }
 
   if (!verdictAppealDeadline) {
     return { message: strings.appealDateNotBegun, date: null }
   }
 
-  // TODO: Move to the server as today may not be accurate in the client
-  const today = new Date()
   const expiryDate = new Date(verdictAppealDeadline)
 
-  const message =
-    today < expiryDate
-      ? strings.appealExpirationDate
-      : strings.appealDateExpired
+  const message = isVerdictAppealDeadlineExpired
+    ? strings.appealDateExpired
+    : strings.appealExpirationDate
 
   return { message, date: formatDate(expiryDate) }
+}
+
+const getVerdictViewDateText = (
+  formatMessage: IntlShape['formatMessage'],
+  verdictViewDate?: string | null,
+): string => {
+  if (verdictViewDate) {
+    return formatMessage(strings.verdictDisplayedDate, {
+      date: formatDate(verdictViewDate, 'PPP'),
+    })
+  } else {
+    return formatMessage(strings.serviceRequired)
+  }
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
     displayAppealExpirationInfo,
-    defendantInfoActionButton,
     displayVerdictViewDate,
+    displaySentToPrisonAdminDate = true,
     defender,
   } = props
   const { formatMessage } = useIntl()
+  const hasDefender = defendant.defenderName || defender?.name
+  const defenderLabel =
+    defender?.sessionArrangement ===
+    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+      ? formatMessage(strings.spokesperson)
+      : formatMessage(strings.defender)
+  const defenderName = defendant.defenderName || defender?.name
+  const defenderEmail = defendant.defenderEmail || defender?.email
+  const defenderPhoneNumber =
+    defendant.defenderPhoneNumber || defender?.phoneNumber
 
   const appealExpirationInfo = getAppealExpirationInfo(
     defendant.verdictAppealDeadline,
+    defendant.isVerdictAppealDeadlineExpired,
     defendant.serviceRequirement,
   )
 
   return (
-    <div
-      className={
-        defendantInfoActionButton
-          ? styles.gridRow.withButton
-          : styles.gridRow.withoutButton
-      }
-    >
-      <div className={styles.infoCardDefendant}>
-        <span>
-          <Text as="span" fontWeight="semiBold">
-            {defendant.name}
-            {defendant.nationalId &&
-              `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
-          </Text>
-          <Text as="span" fontWeight="light">
-            {defendant.citizenship && `, (${defendant.citizenship})`}
-            {defendant.address && `, ${defendant.address}`}
-          </Text>
-        </span>
-        {defendant.defenderName || defender?.name ? (
-          <Box display={['block', 'block', 'block', 'flex']}>
-            <Text as="span" whiteSpace="pre">
-              {defender?.sessionArrangement ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? `${formatMessage(strings.spokesperson)}: `
-                : `${formatMessage(strings.defender)}: `}
-            </Text>
-            {RenderPersonalData(
-              defendant.defenderName || defender?.name,
-              defendant.defenderEmail || defender?.email,
-              defendant.defenderPhoneNumber || defender?.phoneNumber,
-              false,
-            )}
-          </Box>
+    <>
+      <Box component="p" marginBottom={1}>
+        <Text as="span" fontWeight="semiBold">{`${formatMessage(
+          infoCardStrings.name,
+        )}: `}</Text>
+        <Text as="span">
+          {defendant.name}
+          {defendant.nationalId &&
+            `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
+          {defendant.citizenship && `, (${defendant.citizenship})`}
+        </Text>
+      </Box>
+      <Box component="p" marginBottom={1}>
+        <Text as="span" fontWeight="semiBold">{`${formatMessage(
+          core.addressOrResidence,
+        )}: `}</Text>
+        <Text as="span">
+          {defendant.address ? defendant.address : 'Ekki skráð'}
+        </Text>
+      </Box>
+      <Box component="p">
+        <Text as="span" whiteSpace="pre" fontWeight="semiBold">
+          {`${defenderLabel}: `}
+        </Text>
+        {hasDefender ? (
+          RenderPersonalData(
+            defenderName,
+            defenderEmail,
+            defenderPhoneNumber,
+            false,
+          )
         ) : (
-          <Text>{`${formatMessage(strings.defender)}: ${formatMessage(
-            strings.noDefender,
-          )}`}</Text>
+          <Text as="span">{formatMessage(strings.noDefender)}</Text>
         )}
-        {displayAppealExpirationInfo && (
-          <Box>
-            <Text as="span">
-              {formatMessage(appealExpirationInfo.message, {
-                appealExpirationDate: appealExpirationInfo.date,
-              })}
-            </Text>
-          </Box>
-        )}
-        {displayVerdictViewDate && (
-          <Text>
-            {formatMessage(strings.verdictDisplayedDate, {
-              date: formatDate(defendant.verdictViewDate, 'PPP'),
-            })}
+      </Box>
+      {displayAppealExpirationInfo && (
+        <Text as="p" marginTop={1} fontWeight="semiBold">
+          {formatMessage(appealExpirationInfo.message, {
+            appealExpirationDate: appealExpirationInfo.date,
+          })}
+        </Text>
+      )}
+      {displayVerdictViewDate &&
+        defendant.serviceRequirement &&
+        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED && (
+          <Text marginTop={1} fontWeight="semiBold">
+            {getVerdictViewDateText(formatMessage, defendant.verdictViewDate)}
           </Text>
         )}
-      </div>
-      {defendantInfoActionButton && (
-        <Box>
-          <Button
-            variant="text"
-            size="small"
-            onClick={() => defendantInfoActionButton.onClick(defendant)}
-            icon={defendantInfoActionButton.icon}
-            iconType="outline"
-            disabled={defendantInfoActionButton.isDisabled(defendant)}
-          >
-            {defendantInfoActionButton.text}
-          </Button>
-        </Box>
+      {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
+        <Text marginTop={1} fontWeight="semiBold">
+          {formatMessage(strings.sendToPrisonAdminDate, {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          })}
+        </Text>
       )}
-    </div>
+    </>
   )
 }

@@ -45,7 +45,7 @@ const Icon = styled.View<{ unread?: boolean }>`
   width: 42px;
   align-items: center;
   justify-content: center;
-  border-radius: ${({ theme }) => theme.border.radius.circle};
+  border-radius: ${({ theme }) => theme.border.radius.full};
   flex-direction: column;
 `
 

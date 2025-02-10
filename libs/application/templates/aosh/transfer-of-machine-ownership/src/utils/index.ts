@@ -1,6 +1,10 @@
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  BasicChargeItem,
+  FormValue,
+} from '@island.is/application/types'
 import { TransferOfMachineOwnershipAnswers } from '..'
 
 export const formatIsk = (value: number): string =>
@@ -15,14 +19,17 @@ export { getReviewSteps } from './getReviewSteps'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
+export { doSellerAndBuyerHaveSameNationalId } from './doSellerAndBuyerHaveSameNationalId'
 
-export const getChargeItemCodes = (
+export const getChargeItems = (
   application: Application<FormValue>,
-): Array<string> => {
+): Array<BasicChargeItem> => {
   const answers = application.answers as TransferOfMachineOwnershipAnswers
   if (answers.machine?.paymentRequiredForOwnerChange === false) {
     return []
   }
 
-  return [ChargeItemCode.AOSH_TRANSFER_OF_MACHINE_OWNERSHIP.toString()]
+  return [
+    { code: ChargeItemCode.AOSH_TRANSFER_OF_MACHINE_OWNERSHIP.toString() },
+  ]
 }

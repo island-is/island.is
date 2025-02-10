@@ -5,52 +5,46 @@ import {
   FormValue,
   YesOrNo,
 } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
+import { Locale } from '@island.is/shared/types'
+import { MessageDescriptor } from 'react-intl'
 import {
   Child,
   ChildInformation,
-  Parents,
+  ContactsRow,
+  FriggChildInformation,
+  Membership,
   Person,
-  RelativesRow,
+  SelectOption,
   SiblingsRow,
 } from '../types'
 import {
-  FoodAllergiesOptions,
-  FoodIntolerancesOptions,
-  Gender,
+  ApplicationType,
+  LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
-  RelationOptions,
-  SiblingRelationOptions,
 } from './constants'
+
 import { newPrimarySchoolMessages } from './messages'
 
-import { ApolloClient } from '@apollo/client'
-import { friggOptionsQuery } from '../graphql/queries'
-import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
-
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  let applicationType = getValueViaPath(
+    answers,
+    'applicationType',
+  ) as ApplicationType
+
+  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
+
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
 
-  const differentPlaceOfResidence = getValueViaPath(
-    answers,
-    'childInfo.differentPlaceOfResidence',
-  ) as YesOrNo
+  const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
-  const parents = getValueViaPath(answers, 'parents') as Parents
-
-  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+  const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
 
   const reasonForApplication = getValueViaPath(
     answers,
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
-
-  const reasonForApplicationCountry = getValueViaPath(
-    answers,
-    'reasonForApplication.movingAbroad.country',
-  ) as string
 
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
@@ -64,49 +58,82 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const nativeLanguage = getValueViaPath(
+  const languageEnvironment = getValueViaPath(
     answers,
-    'languages.nativeLanguage',
+    'languages.languageEnvironment',
   ) as string
 
-  const otherLanguagesSpokenDaily = getValueViaPath(
+  const signLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguagesSpokenDaily',
+    'languages.signLanguage',
   ) as YesOrNo
 
-  const otherLanguages = getValueViaPath(
+  const language1 = getValueViaPath(answers, 'languages.language1') as string
+
+  const language2 = getValueViaPath(answers, 'languages.language2') as string
+
+  const language3 = getValueViaPath(answers, 'languages.language3') as string
+
+  const language4 = getValueViaPath(answers, 'languages.language4') as string
+
+  const childLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguages',
+    'languages.childLanguage',
+  ) as string
+
+  const interpreter = getValueViaPath(
+    answers,
+    'languages.interpreter',
+  ) as YesOrNo
+
+  const acceptFreeSchoolLunch = getValueViaPath(
+    answers,
+    'freeSchoolMeal.acceptFreeSchoolLunch',
+  ) as YesOrNo
+
+  const hasSpecialNeeds = getValueViaPath(
+    answers,
+    'freeSchoolMeal.hasSpecialNeeds',
+  ) as YesOrNo
+
+  const specialNeedsType = getValueViaPath(
+    answers,
+    'freeSchoolMeal.specialNeedsType',
+  ) as string
+
+  const hasFoodAllergiesOrIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
   ) as string[]
 
-  const icelandicNotSpokenAroundChild = getValueViaPath(
+  const foodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'languages.icelandicNotSpokenAroundChild',
+    'allergiesAndIntolerances.foodAllergiesOrIntolerances',
   ) as string[]
 
-  const hasFoodAllergies = getValueViaPath(
+  const hasOtherAllergies = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasFoodAllergies',
+    'allergiesAndIntolerances.hasOtherAllergies',
   ) as string[]
 
-  const foodAllergies = getValueViaPath(
+  const otherAllergies = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.foodAllergies',
-  ) as FoodAllergiesOptions[]
-
-  const hasFoodIntolerances = getValueViaPath(
-    answers,
-    'allergiesAndIntolerances.hasFoodIntolerances',
+    'allergiesAndIntolerances.otherAllergies',
   ) as string[]
 
-  const foodIntolerances = getValueViaPath(
+  const usesEpiPen = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.foodIntolerances',
-  ) as FoodIntolerancesOptions[]
+    'allergiesAndIntolerances.usesEpiPen',
+  ) as YesOrNo
 
-  const isUsingEpiPen = getValueViaPath(
+  const hasConfirmedMedicalDiagnoses = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.isUsingEpiPen',
+    'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+  ) as YesOrNo
+
+  const requestMedicationAssistance = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.requestMedicationAssistance',
   ) as YesOrNo
 
   const developmentalAssessment = getValueViaPath(
@@ -119,6 +146,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.specialSupport',
   ) as YesOrNo
 
+  const hasIntegratedServices = getValueViaPath(
+    answers,
+    'support.hasIntegratedServices',
+  ) as YesOrNo
+
+  const hasCaseManager = getValueViaPath(
+    answers,
+    'support.hasCaseManager',
+  ) as YesOrNo
+
+  const caseManagerName = getValueViaPath(
+    answers,
+    'support.caseManager.name',
+  ) as string
+
+  const caseManagerEmail = getValueViaPath(
+    answers,
+    'support.caseManager.email',
+  ) as string
+
   const requestMeeting = getValueViaPath(
     answers,
     'support.requestMeeting[0]',
@@ -129,100 +176,127 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const schoolMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.municipality',
+    'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(
+  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
+
+  const currentNurseryMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.school',
+    'currentNursery.municipality',
   ) as string
 
-  const photographyConsent = getValueViaPath(
+  const currentNursery = getValueViaPath(
     answers,
-    'photography.photographyConsent',
-  ) as YesOrNo
+    'currentNursery.nursery',
+  ) as string
 
-  const photoSchoolPublication = getValueViaPath(
+  const applyForNeighbourhoodSchool = getValueViaPath(
     answers,
-    'photography.photoSchoolPublication',
-  ) as YesOrNo
-
-  const photoMediaPublication = getValueViaPath(
-    answers,
-    'photography.photoMediaPublication',
+    'school.applyForNeighbourhoodSchool',
   ) as YesOrNo
 
   return {
+    applicationType,
     childNationalId,
     childInfo,
-    differentPlaceOfResidence,
-    parents,
-    relatives,
+    guardians,
+    contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
-    hasFoodAllergies,
-    foodAllergies,
-    hasFoodIntolerances,
-    foodIntolerances,
-    isUsingEpiPen,
+    languageEnvironment,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    signLanguage,
+    interpreter,
+    acceptFreeSchoolLunch,
+    hasSpecialNeeds,
+    specialNeedsType,
+    hasFoodAllergiesOrIntolerances,
+    foodAllergiesOrIntolerances,
+    hasOtherAllergies,
+    otherAllergies,
+    usesEpiPen,
+    hasConfirmedMedicalDiagnoses,
+    requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     requestMeeting,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
-
     startDate,
     schoolMunicipality,
     selectedSchool,
+    currentNurseryMunicipality,
+    currentNursery,
+    applyForNeighbourhoodSchool,
   }
 }
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const children = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-    [],
-  ) as Child[]
+  const children = getValueViaPath(externalData, 'children.data', []) as Child[]
 
   const applicantName = getValueViaPath(
     externalData,
     'nationalRegistry.data.name',
+    '',
   ) as string
 
   const applicantNationalId = getValueViaPath(
     externalData,
     'nationalRegistry.data.nationalId',
+    '',
   ) as string
 
   const applicantAddress = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.streetAddress',
+    '',
   ) as string
 
   const applicantPostalCode = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.postalCode',
+    '',
   ) as string
 
   const applicantCity = getValueViaPath(
     externalData,
     'nationalRegistry.data.address.city',
+    '',
   ) as string
 
-  const otherParentName = getValueViaPath(
+  const childInformation = getValueViaPath(
     externalData,
-    'childrenCustodyInformation.data.otherParent.fullName',
+    'childInformation.data',
+  ) as FriggChildInformation
+
+  const childGradeLevel = getValueViaPath(
+    externalData,
+    'childInformation.data.gradeLevel',
+    '',
   ) as string
+
+  const primaryOrgId = getValueViaPath(
+    externalData,
+    'childInformation.data.primaryOrgId',
+    '',
+  ) as string
+
+  const childMemberships = getValueViaPath(
+    externalData,
+    'childInformation.data.memberships',
+    [],
+  ) as Membership[]
 
   return {
     children,
@@ -231,21 +305,11 @@ export const getApplicationExternalData = (
     applicantAddress,
     applicantPostalCode,
     applicantCity,
-    otherParentName,
+    childInformation,
+    childGradeLevel,
+    primaryOrgId,
+    childMemberships,
   }
-}
-
-export const canApply = (child: Child): boolean => {
-  // Check if the child is at primary school age and lives with the applicant
-  if (
-    kennitala.info(child.nationalId).age >= 5 &&
-    kennitala.info(child.nationalId).age <= 15 &&
-    child.livesWithApplicant
-  ) {
-    return true
-  }
-
-  return false
 }
 
 export const getSelectedChild = (application: Application) => {
@@ -259,7 +323,7 @@ export const getSelectedChild = (application: Application) => {
   return selectedChild
 }
 
-export const getOtherParent = (
+export const getOtherGuardian = (
   application: Application,
 ): Person | undefined => {
   const selectedChild = getSelectedChild(application)
@@ -267,242 +331,135 @@ export const getOtherParent = (
   return selectedChild?.otherParent as Person | undefined
 }
 
-export const hasOtherParent = (
+export const hasOtherGuardian = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean => {
-  const otherParent = getOtherParent({ answers, externalData } as Application)
-  return !!otherParent
+  const otherGuardian = getOtherGuardian({
+    answers,
+    externalData,
+  } as Application)
+  return !!otherGuardian
 }
 
-export const getRelationOptions = () => [
-  {
-    value: RelationOptions.GRANDPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparent,
-  },
-  {
-    value: RelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSibling,
-  },
-  {
-    value: RelationOptions.STEPPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationStepparent,
-  },
-  {
-    value: RelationOptions.RELATIVE,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelative,
-  },
-  {
-    value: RelationOptions.FRIEND_OR_OTHER,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationFriendOrOther,
-  },
-]
-
-export const getRelationOptionLabel = (value: RelationOptions) => {
-  const relationOptions = getRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const getReasonForApplicationOptions = () => [
-  {
-    value: ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
-    label: newPrimarySchoolMessages.primarySchool.transferOfLegalDomicile,
-  },
-  {
-    value: ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
-    label: newPrimarySchoolMessages.primarySchool.studyStayForParents,
-  },
-  {
-    value: ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
-    label:
-      newPrimarySchoolMessages.primarySchool.parentsParliamentaryMembership,
-  },
-  {
-    value: ReasonForApplicationOptions.TEMPORARY_FROSTER,
-    label: newPrimarySchoolMessages.primarySchool.temporaryFoster,
-  },
-  {
-    value: ReasonForApplicationOptions.EXPERT_SERVICE,
-    label: newPrimarySchoolMessages.primarySchool.expertService,
-  },
-  {
-    value: ReasonForApplicationOptions.SICKLY,
-    label: newPrimarySchoolMessages.primarySchool.sickly,
-  },
-  {
-    value: ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
-    label: newPrimarySchoolMessages.primarySchool.livesInTwoHomes,
-  },
-  {
-    value: ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
-    label: newPrimarySchoolMessages.primarySchool.siblingsTitle,
-  },
-  {
-    value: ReasonForApplicationOptions.MOVING_ABROAD,
-    label: newPrimarySchoolMessages.primarySchool.movingAbroad,
-  },
-  {
-    value: ReasonForApplicationOptions.OTHER_REASONS,
-    label: newPrimarySchoolMessages.primarySchool.otherReasons,
-  },
-]
-
-export const getReasonForApplicationOptionLabel = (
-  value: ReasonForApplicationOptions,
+export const getSelectedOptionLabel = (
+  options: SelectOption[],
+  key?: string,
 ) => {
-  const reasonForApplicationOptions = getReasonForApplicationOptions()
-  return (
-    reasonForApplicationOptions.find((option) => option.value === value)
-      ?.label ?? ''
+  if (key === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === key)?.label
+}
+
+export const formatGrade = (gradeLevel: string, lang: Locale) => {
+  let grade = gradeLevel
+  if (gradeLevel.startsWith('0')) {
+    grade = gradeLevel.substring(1)
+  }
+
+  if (lang === 'en') {
+    switch (grade) {
+      case '1':
+        return `${grade}st`
+      case '2':
+        return `${grade}nd`
+      case '3':
+        return `${grade}rd`
+      default:
+        return `${grade}th`
+    }
+  }
+  return grade
+}
+
+export const getCurrentSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
   )
+
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getSiblingRelationOptions = () => [
-  {
-    value: SiblingRelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.siblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.HALF_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.halfSiblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.STEP_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.stepSiblingsRelationSibling,
-  },
-]
+export const getLanguageEnvironments = () => {
+  return [
+    {
+      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
+    },
+  ]
+}
 
-export const getSiblingRelationOptionLabel = (
-  value: SiblingRelationOptions,
+export const hasForeignLanguages = (answers: FormValue) => {
+  const { languageEnvironment } = getApplicationAnswers(answers)
+
+  if (!languageEnvironment) {
+    return false
+  }
+
+  return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const getNeighbourhoodSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
+  // This function needs to be improved when Juni is ready with the neighbourhood school data
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
 ) => {
-  const relationOptions = getSiblingRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : newPrimarySchoolMessages.shared.applicationName
 }
 
-export const getGenderOptions = () => [
-  {
-    value: Gender.MALE,
-    label: newPrimarySchoolMessages.shared.male,
-  },
-  {
-    value: Gender.FEMALE,
-    label: newPrimarySchoolMessages.shared.female,
-  },
-  {
-    value: Gender.OTHER,
-    label: newPrimarySchoolMessages.shared.otherGender,
-  },
-]
-
-export const formatGender = (genderCode?: string): Gender | undefined => {
+export const formatGender = (genderCode?: string): MessageDescriptor => {
   switch (genderCode) {
     case '1':
     case '3':
-      return Gender.MALE
+      return newPrimarySchoolMessages.shared.male
     case '2':
     case '4':
-      return Gender.FEMALE
+      return newPrimarySchoolMessages.shared.female
     case '7':
     case '8':
-      return Gender.OTHER
     default:
-      return undefined
+      return newPrimarySchoolMessages.shared.otherGender
   }
 }
 
-export const getGenderOptionLabel = (value: Gender) => {
-  const genderOptions = getGenderOptions()
-  return genderOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const getFoodAllergiesOptions = () => [
-  {
-    value: FoodAllergiesOptions.EGG_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.eggAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.FISH_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.fishAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.PENUT_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.nutAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.WHEAT_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.wheatAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.MILK_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.milkAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.OTHER,
-    label: newPrimarySchoolMessages.differentNeeds.other,
-  },
-]
-
-export const getFoodAllergiesOptionsLabel = (value: FoodAllergiesOptions) => {
-  const foodAllergiesOptions = getFoodAllergiesOptions()
-  return (
-    foodAllergiesOptions.find((option) => option.value === value)?.label ?? ''
-  )
-}
-
-export const getFoodIntolerancesOptions = () => [
-  {
-    value: FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.lactoseIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.glutenIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.MSG_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.msgIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.OTHER,
-    label: newPrimarySchoolMessages.differentNeeds.other,
-  },
-]
-
-export const getFoodIntolerancesOptionsLabel = (
-  value: FoodIntolerancesOptions,
-) => {
-  const foodIntolerancesOptions = getFoodIntolerancesOptions()
-  return (
-    foodIntolerancesOptions.find((option) => option.value === value)?.label ??
-    ''
-  )
-}
-
-export const getOptionsListByType = async (
-  apolloClient: ApolloClient<object>,
-  type: string,
-) => {
-  const { data } = await apolloClient.query<
-    FriggOptionsQuery,
-    FriggOptionsQueryVariables
-  >({
-    query: friggOptionsQuery,
-    variables: {
-      type: {
-        type,
-      },
-    },
-  })
-
-  return (
-    data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, id }) => {
-        const content = value.find(({ language }) => language === 'is')?.content
-        return { value: id ?? '', label: content ?? '' }
-      }),
-    ) ?? []
-  )
+export const getGenderMessage = (application: Application) => {
+  const selectedChild = getSelectedChild(application)
+  const gender = formatGender(selectedChild?.genderCode)
+  return gender
 }

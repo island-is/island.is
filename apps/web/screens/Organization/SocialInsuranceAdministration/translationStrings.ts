@@ -17,6 +17,19 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
   },
+  form2025PreviewLabel: {
+    id: 'web.pensionCalculator:form2025PreviewLabel',
+    defaultMessage: 'Eftir 1. september 2025',
+    description:
+      'Valmöguleiki í dropdown fyrir "Allar reiknivélar" ef það á að leyfa eftir 1. sept 2025 preview',
+  },
+  results2025ImageUrl: {
+    id: 'web.pensionCalculator:results2025ImageUrl',
+    defaultMessage:
+      'https://images.ctfassets.net/8k0h54kbe6bj/fkWhyD4Bcn1Osh4qJQasW/d15e433d2f6747a3ec4d79da49bb25f1/Fi_rildi_-_gr_nt.png',
+    description:
+      'Hlekkur á mynd sem sést þegar borið er saman 2025 örorkulífeyrisútreikninga við núverandi ár',
+  },
   pensionStartIsHurried: {
     id: 'web.pensionCalculator:pensionStartIsHurried',
     defaultMessage: 'Þú vilt hefja töku fyrir 67 ára aldur',
@@ -46,6 +59,24 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:basePensionRetirementLabel',
     defaultMessage: 'Ellilífeyrir',
     description: 'Tegund lífeyris, Ellilífeyrir',
+  },
+  basePensionNewSystemDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionNewSystemDisabilityLabel',
+    defaultMessage: 'Örorkulífeyrir',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Örorkulífeyrir',
+  },
+  basePensionNewSystemPartialDisabilityLabel: {
+    id: 'web.pensionCalculator:basePensionNewSystemPartialDisabilityLabel',
+    defaultMessage: 'Hlutaörorkulífeyrir',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Hlutaörorkulífeyrir',
+  },
+  basePensionNewSystemMedicalAndRehabilitation: {
+    id: 'web.pensionCalculator:basePensionNewSystemMedicalAndRehabilitation',
+    defaultMessage: 'Sjúkra- og endurhæfing',
+    description:
+      'Tegund lífeyris fyrir nýtt kerfi þann 1. sept 2025, Sjúkra- og endurhæfing',
   },
   basePensionFishermanRetirementLabel: {
     id: 'web.pensionCalculator:basePensionFishermanRetirementLabel',
@@ -422,16 +453,33 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Reiknivél lífeyris',
     description: 'Aðal titill',
   },
+  form2025PreviewMainTitle: {
+    id: 'web.pensionCalculator:form2025PreviewMainTitle',
+    defaultMessage: 'Reiknivél örorku- og endurhæfingargreiðslna',
+    description: 'Aðal titill fyrir nýju eftir 1. sept 2025 reiknivél',
+  },
   resultDisclaimer: {
     id: 'web.pensionCalculator:resultDisclaimer',
     defaultMessage:
       'Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað við þær forsendur sem þú gefur upp. Líkanið er einungis til leiðbeiningar en veitir ekki bindandi upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir',
     description: 'Fyrirvari á niðurstöðuskjá',
   },
+  result2025Disclaimer: {
+    id: 'web.pensionCalculator:result2025Disclaimer',
+    defaultMessage:
+      'Reiknivélinni byggir á þeim forsendum sem þú gafst upp. Upphæðir eru aðeins leiðbeinandi og veita ekki bindandi upplýsingar um endanlega afgreiðslu mála eða greiðsluupphæða. Annars vegar eru niðurstöður birtar fyrir árið núna og hins vegar í nýju kerfi eftir 1. september 2025',
+    description:
+      'Fyrirvari á niðurstöðuskjá fyrir örorkulífeyrissamanburð eftir 1. september 2025',
+  },
   highlightedResultItemHeading: {
     id: 'web.pensionCalculator:highlighedResultItemHeading',
     defaultMessage: 'Samtals greiðslur frá TR eftir skatt',
     description: 'H2, Samtals greiðslur frá TR eftir skatt',
+  },
+  highlightedResult2025ItemHeading: {
+    id: 'web.pensionCalculator:highlighedResult2025ItemHeading',
+    defaultMessage: 'Samtals ráðstöfunartekjur eftir skatt',
+    description: 'H2, Samtals ráðstöfunartekjur eftir skatt',
   },
   changeAssumptions: {
     id: 'web.pensionCalculator:changeAssumptions',
@@ -442,6 +490,16 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:resultDetailsLabel',
     defaultMessage: 'Sundurliðun',
     description: 'Sundurliðun',
+  },
+  resultDetails2024Label: {
+    id: 'web.pensionCalculator:resultDetails2024Label',
+    defaultMessage: 'Sundurliðun upphæða 2024',
+    description: 'Sundurliðun upphæða 2024',
+  },
+  result2025DetailsLabel: {
+    id: 'web.pensionCalculator:result2025DetailsLabel',
+    defaultMessage: 'Sundurliðun upphæða eftir 1. september 2025',
+    description: 'Sundurliðun upphæða eftir 1. september 2025',
   },
   print: {
     id: 'web.pensionCalculator:print',
@@ -561,6 +619,28 @@ export const translationStrings = defineMessages({
       'Þú getur byrjað töku ellilífeyris frá {month} {year}. Þú getur flýtt um 2 ár eða frestað töku ellilífeyris.',
     description:
       'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
+  },
+  after1stSeptember2025: {
+    id: 'web.pensionCalculator:after1stSeptember2025',
+    defaultMessage: 'Eftir 1. september 2025',
+    description: 'Eftir 1. september 2025',
+  },
+  after1stSeptember2025IconUrl: {
+    id: 'web.pensionCalculator:after1stSeptember2025IconUrl',
+    defaultMessage:
+      'https://images.ctfassets.net/8k0h54kbe6bj/5RIwKVet87Nm4ycltkzjnX/9c594855a9b2f90dde63766ee87a09ca/58dd40fbf365769d984be22a9b64bc29.png',
+    description:
+      'Mynd vinstra megin við titil "Reiknivél örorku- og endurhæfingargreiðslna eftir 1. september 2025"',
+  },
+  after1stSeptember2025Calculate: {
+    id: 'web.pensionCalculator:after1stSeptember2025Calculate',
+    defaultMessage: 'Reikna',
+    description: 'Reikna',
+  },
+  after1stSeptember2025Description: {
+    id: 'web.pensionCalculator:after1stSeptember2025Description',
+    defaultMessage: 'Sjá útreikning örorkulífeyris í nýju kerfi',
+    description: 'Sjá útreikning örorkulífeyris í nýju kerfi',
   },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',
@@ -867,6 +947,74 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.UPPBVREKSTURSBIFR',
     defaultMessage: 'Uppbót v/reksturs bifreiðar (óskattskyld)',
     description: 'Niðurstöðuskjár, Uppbót v/reksturs bifreiðar (óskattskyld) ',
+  },
+  'REIKNH.GRUNNLIFORORKA2025': {
+    id: 'web.pensionCalculator:REIKNH.GRUNNLIFORORKA2025',
+    defaultMessage: 'Örorkulífeyrir',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
+  },
+  'REIKNH.ORHEIMILISUPPB2025': {
+    id: 'web.pensionCalculator:REIKNH.ORHEIMILISUPPB2025',
+    defaultMessage: 'Heimilisuppbót',
+    description: 'Niðurstöðuskjár, Heimilisuppbót 2025',
+  },
+  'REIKNH.ORALDURSVIDBOT2025': {
+    id: 'web.pensionCalculator:REIKNH.ORALDURSVIDBOT2025',
+    defaultMessage: 'Aldursviðbót',
+    description: 'Niðurstöðuskjár, Aldursviðbót 2025',
+  },
+  'REIKNH.ORORKA_ALDURSV_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_ALDURSV_HUPPBOT_2025',
+    defaultMessage: 'Örorkulífeyrir, aldursviðbót og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Örorkulífeyrir, aldursviðbót og heimilisuppbót 2025',
+  },
+  'REIKNH.ORORKA_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_HUPPBOT_2025',
+    defaultMessage: 'Örorkulífeyrir og heimilisuppbót',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir og heimilisuppbót 2025',
+  },
+  'REIKNH.ORORKA_ALDURSV_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_ALDURSV_2025',
+    defaultMessage: 'Örorkulífeyrir og aldursviðbót',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir og aldursviðbót 2025',
+  },
+  'REIKNH.ORORKA_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_2025',
+    defaultMessage: 'Örorkulífeyrir',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
+  },
+  'REIKNH.SJUKRAOGENDURH_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.SJUKRAOGENDURH_HUPPBOT_2025',
+    defaultMessage: 'Sjúkra- og endurhæfingargreiðslur og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Sjúkra- og endurhæfingargreiðslur og heimilisuppbót',
+  },
+  'REIKNH.SJUKRAOGENDURH_2025': {
+    id: 'web.pensionCalculator:REIKNH.SJUKRAOGENDURH_2025',
+    defaultMessage: 'Sjúkra- og endurhæfingargreiðslur',
+    description: 'Niðurstöðuskjár, Sjúkra- og endurhæfingargreiðslur',
+  },
+  'REIKNH.HLUTAORORKA_ALDURSV_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_ALDURSV_HUPPBOT_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir, aldursviðbót og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Hlutaörorkulífeyrir, aldursviðbót og heimilisuppbót',
+  },
+  'REIKNH.HLUTAORORKA_ALDURSV_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_ALDURSV_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir og aldursviðbót',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir og aldursviðbót',
+  },
+  'REIKNH.HLUTAORORKA_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA_HUPPBOT_2025',
+    defaultMessage: 'Hlutaörorkulífeyrir og heimilisuppbót',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir og heimilisuppbót',
+  },
+  'REIKNH.HLUTAORORKA': {
+    id: 'web.pensionCalculator:REIKNH.HLUTAORORKA',
+    defaultMessage: 'Hlutaörorkulífeyrir',
+    description: 'Niðurstöðuskjár, Hlutaörorkulífeyrir',
   },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',

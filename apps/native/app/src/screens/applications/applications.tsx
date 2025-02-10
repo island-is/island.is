@@ -1,4 +1,3 @@
-import { EmptyList, StatusCardSkeleton } from '@ui'
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Image, RefreshControl, ScrollView, View } from 'react-native'
@@ -6,6 +5,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { useTheme } from 'styled-components'
 
+import { EmptyList, StatusCardSkeleton } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -14,11 +14,11 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
 import { testIDs } from '../../utils/test-ids'
 import { isIos } from '../../utils/devices'
 import { ApplicationsPreview } from './components/applications-preview'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { usePreferencesStore } from '../../stores/preferences-store'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -102,10 +102,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
   const [hiddenContent, setHiddenContent] = useState(isIos)
-  const { locale } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery({
-    variables: { locale: locale === 'is-US' ? 'is' : 'en' },
+    variables: { locale: useLocale() },
   })
 
   const applications = useMemo(

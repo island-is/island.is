@@ -6,7 +6,10 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 import { CeremonyPlaces, States, YES } from '../../lib/constants'
 import is from 'date-fns/locale/is'
 
@@ -23,6 +26,7 @@ export const ApplicationOverview: FC<
   const spouse = answers.spouse as Individual
   const witness1 = answers.witness1 as Individual
   const witness2 = answers.witness2 as Individual
+  const ceremony = answers.ceremony as Ceremony
 
   const InfoSection: FC<React.PropsWithChildren<InfoProps>> = ({ side }) => {
     return (
@@ -40,7 +44,7 @@ export const ApplicationOverview: FC<
         <Box display="flex">
           <Box width="half">
             <Text variant="h4">{formatMessage(m.phone)}</Text>
-            <Text>{formatPhoneNumber(side.phone)}</Text>
+            <Text>{formatPhoneNumber(removeCountryCode(side.phone))}</Text>
           </Box>
           <Box width="half">
             <Text variant="h4">{formatMessage(m.email)}</Text>
@@ -117,29 +121,25 @@ export const ApplicationOverview: FC<
         <Text variant="h3" marginBottom={3}>
           {formatMessage(m.ceremony)}
         </Text>
-        {(answers.ceremony as Ceremony).hasDate === YES ? (
+        {ceremony.hasDate === YES ? (
           <Box marginTop={3}>
             <Box display="flex" marginBottom={3}>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
                 <Text>
-                  {format(
-                    new Date((answers.ceremony as Ceremony).date),
-                    'dd. MMMM, yyyy',
-                    { locale: is },
-                  ).toLowerCase()}
+                  {format(new Date(ceremony.date), 'dd. MMMM, yyyy', {
+                    locale: is,
+                  }).toLowerCase()}
                 </Text>
               </Box>
             </Box>
             <Box display="flex">
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
-                {(answers.ceremony as Ceremony).place.ceremonyPlace ===
-                CeremonyPlaces.office ? (
-                  <Text>{(answers.ceremony as Ceremony).place.office}</Text>
-                ) : (answers.ceremony as Ceremony).place.ceremonyPlace ===
-                  CeremonyPlaces.society ? (
-                  <Text>{(answers.ceremony as Ceremony).place.society}</Text>
+                {ceremony.place.ceremonyPlace === CeremonyPlaces.office ? (
+                  <Text>{ceremony.place.office}</Text>
+                ) : ceremony.place.ceremonyPlace === CeremonyPlaces.society ? (
+                  <Text>{ceremony.place.society}</Text>
                 ) : (
                   <Text>{formatMessage(m.ceremonyPlaceNone)}</Text>
                 )}
@@ -150,17 +150,13 @@ export const ApplicationOverview: FC<
           <>
             <Text variant="h4">{formatMessage(m.ceremonyPeriod)}</Text>
             <Text variant="default">
-              {format(
-                new Date((answers.ceremony as Ceremony).period.dateFrom),
-                'dd. MMMM, yyyy',
-                { locale: is },
-              ).toLowerCase() +
+              {format(new Date(ceremony.period.dateFrom), 'dd. MMMM, yyyy', {
+                locale: is,
+              }).toLowerCase() +
                 ' - ' +
-                format(
-                  new Date((answers.ceremony as Ceremony).period.dateTo),
-                  'dd. MMMM, yyyy',
-                  { locale: is },
-                ).toLowerCase()}
+                format(new Date(ceremony.period.dateTo), 'dd. MMMM, yyyy', {
+                  locale: is,
+                }).toLowerCase()}
             </Text>
           </>
         )}

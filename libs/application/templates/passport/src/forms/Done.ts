@@ -2,9 +2,10 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { ChildsPersonalInfo, Passport, PersonalInfo } from '../lib/constants'
+import { Passport } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
@@ -19,9 +20,8 @@ export const Done: Form = buildForm({
         ...m.applicationCompleteDescriptionText,
         values: {
           name:
-            (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-              ?.name ??
-            (application.answers.personalInfo as PersonalInfo)?.name,
+            getValueViaPath(application.answers, 'childsPersonalInfo.name') ??
+            getValueViaPath(application.answers, 'personalInfo.name'),
         },
       }),
       children: [
@@ -29,7 +29,6 @@ export const Done: Form = buildForm({
           id: 'nextStepsTitle',
           title: m.applicationCompleteNextSteps,
           titleVariant: 'h3',
-          description: '',
           marginBottom: 1,
         }),
         buildDescriptionField({

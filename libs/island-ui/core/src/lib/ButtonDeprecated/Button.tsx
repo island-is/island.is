@@ -318,7 +318,7 @@ const LeftContentContainer: FC<React.PropsWithChildren<unknown>> = ({
           display="flex"
           alignItems="center"
           justifyContent="center"
-          borderRadius="circle"
+          borderRadius="full"
           overflow="hidden"
           className={styles.leftContent}
         >

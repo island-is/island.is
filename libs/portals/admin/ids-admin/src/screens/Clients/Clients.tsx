@@ -8,12 +8,13 @@ import {
   Inline,
   Stack,
   Text,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
-import { IDSAdminPaths } from '../../lib/paths'
+import { IDSAdminExternalPaths, IDSAdminPaths } from '../../lib/paths'
 import { AuthClients } from './Clients.loader'
 import { ClientType } from '../../components/ClientType'
 import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
@@ -96,7 +97,15 @@ const Clients = () => {
           </Button>
         </Box>
         <Box marginTop="gutter">
-          <Button variant={'text'}>{formatMessage(m.learnMore)}</Button>
+          <LinkV2
+            color="blue400"
+            underline="normal"
+            underlineVisibility="always"
+            href={IDSAdminExternalPaths.DocsClients}
+            newTab
+          >
+            {formatMessage(m.learnMore)}
+          </LinkV2>
         </Box>
       </Box>
       <Outlet />

@@ -4,7 +4,12 @@ import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
-const InfoCardActiveIndictment = () => {
+interface Props {
+  displayVerdictViewDate?: boolean
+}
+
+const InfoCardActiveIndictment: React.FC<Props> = (props) => {
+  const { displayVerdictViewDate } = props
   const { workingCase } = useContext(FormContext)
   const {
     defendants,
@@ -12,24 +17,27 @@ const InfoCardActiveIndictment = () => {
     prosecutor,
     policeCaseNumbers,
     court,
-    offences,
+    offenses,
     mergedCasePoliceCaseNumbers,
     mergedCaseCourtCaseNumber,
     mergedCaseProsecutor,
     mergedCaseJudge,
     mergedCaseCourt,
+    civilClaimants,
+    courtCaseNumber,
   } = useInfoCardItems()
 
   return (
     <InfoCard
       sections={[
-        ...(workingCase.defendants
-          ? [
-              {
-                id: 'defendant-section',
-                items: [defendants(workingCase.type)],
-              },
-            ]
+        {
+          id: 'defendant-section',
+          items: [
+            defendants(workingCase.type, undefined, displayVerdictViewDate),
+          ],
+        },
+        ...(workingCase.hasCivilClaims
+          ? [{ id: 'civil-claimant-section', items: [civilClaimants] }]
           : []),
         {
           id: 'case-info-section',
@@ -38,7 +46,8 @@ const InfoCardActiveIndictment = () => {
             prosecutor(workingCase.type),
             policeCaseNumbers,
             court,
-            offences,
+            courtCaseNumber,
+            offenses,
           ],
           columns: 2,
         },

@@ -1,8 +1,7 @@
 import { EmailTemplateGenerator } from '../../../../../types'
-import { CreateListSchema } from '@island.is/application/templates/signature-collection/presidential-list-creation'
 import { OwnerInput } from '@island.is/clients/signature-collection'
-import { SignatureCollection } from '../types'
 import { Message, Body } from '@island.is/email-service'
+import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
 
 export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   props,
@@ -13,16 +12,14 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   } = props
 
   const answers = application.answers as CreateListSchema
-
   const owner: OwnerInput = answers.applicant
-  const currentCollection: SignatureCollection = application.externalData
-    .currentCollection?.data as SignatureCollection
 
-  const subject = 'Ný meðmælasöfnun hefur verið stofnuð'
-  const lists: Body[] = currentCollection.areas.map((area) => {
+  const subject = 'Ný meðmælasöfnun fyrir alþingiskosningar hefur verið stofnuð'
+  const areas: Body[] = answers.constituency.map((c) => {
     return {
       component: 'Copy',
-      context: { copy: `${owner.name} - ${area.name}` },
+      context: { copy: `${c.split('|')[1]}` },
+      align: 'left',
     }
   })
 
@@ -49,14 +46,16 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
         {
           component: 'Copy',
           context: {
-            copy: `${owner.name} Kt: ${owner.nationalId} hefur stofnað eftirfarandi lista til meðmælasöfnunar:`,
+            copy: `${owner.name} Kt: ${owner.nationalId} hefur stofnað lista fyrir flokkinn ${answers.list.name} með listabókstaf ${answers.list.letter} til meðmælasöfnunar fyrir alþingiskosningar í eftirfarandi kjördæmum:`,
+            align: 'left',
           },
         },
-        ...lists,
+        ...areas,
         {
           component: 'Copy',
           context: {
             copy: `Samskiptaupplýsingar framboðs. Sími ${owner.phone} Netfang: ${owner.email} `,
+            align: 'left',
           },
         },
       ],

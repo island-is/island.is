@@ -1,7 +1,7 @@
-import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
-import { useLocation } from 'react-router-dom'
+import { isLocale, useLocale, useNamespaces } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect } from 'react'
-import { useAuth } from '@island.is/auth/react'
+import { useLocation } from 'react-router-dom'
 import { useGetUserProfileLocaleLazyQuery } from '../../../gen/schema'
 
 /**
@@ -15,7 +15,7 @@ import { useGetUserProfileLocaleLazyQuery } from '../../../gen/schema'
 export const UserProfileLocale = () => {
   const { changeLanguage } = useNamespaces()
   const { lang } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [getUserProfile, { data }] = useGetUserProfileLocaleLazyQuery()
   const location = useLocation()
 
@@ -23,7 +23,7 @@ export const UserProfileLocale = () => {
 
   useEffect(() => {
     if (userInfo?.profile.nationalId) getUserProfile()
-  }, [userInfo, getUserProfile])
+  }, [userInfo?.profile.nationalId, getUserProfile])
 
   useEffect(() => {
     const query = new URLSearchParams(location.search)

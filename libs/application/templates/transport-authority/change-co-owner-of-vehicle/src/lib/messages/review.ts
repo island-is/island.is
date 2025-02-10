@@ -110,8 +110,13 @@ export const review = {
     },
     approve: {
       id: 'ta.ccov.application:review.buttons.approve',
-      defaultMessage: `Samþykkja`,
+      defaultMessage: 'Samþykkja',
       description: 'Approve button in review process',
+    },
+    tryAgain: {
+      id: 'ta.ccov.application:review.buttons.tryAgain',
+      defaultMessage: 'Reyna aftur',
+      description: 'Try again button in review process',
     },
   }),
 }

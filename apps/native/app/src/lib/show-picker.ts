@@ -1,6 +1,6 @@
-import { dynamicColor } from '@ui'
 import { ActionSheetIOS } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
+import { dynamicColor } from '../ui'
 import { uiStore } from '../stores/ui-store'
 import { isAndroid, isIos } from '../utils/devices'
 

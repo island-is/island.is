@@ -7,6 +7,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .namespace('air-discount-scheme')
     .secrets({
       ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',
+      MYFLUG_API_KEY: '/k8s/air-discount-scheme/backend/MYFLUG_API_KEY',
       ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY',
       NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY',
       NATIONAL_REGISTRY_PASSWORD:
@@ -56,9 +57,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           staging: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
-          prod: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
+          prod: {},
         },
         paths: ['/api/swagger', '/api/public'],
       },

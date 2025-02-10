@@ -1,16 +1,22 @@
-import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
   Disability,
-  Firearm,
   DrivingLicense,
+  Firearm,
   Hunting,
 } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
   service('license-api')
     .namespace('license-api')
+    .codeOwner(CodeOwners.Hugsmidjan)
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
@@ -78,13 +84,6 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
         },
         paths: ['/'],
         public: false,
-        extraAnnotations: {
-          dev: {},
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: {},
-        },
       },
     })
     .replicaCount({

@@ -167,7 +167,9 @@ function buildDockerImage(containerImage, builder, target) {
   const dirnameSafe = `"${__dirname}"`
   const buildCmd = [
     builder,
+    'buildx', // Require buildx to prevent accidental legacy building
     'build',
+    '--load',
     `-f ${dirnameSafe}/Dockerfile.proxy`,
     `--target ${target}`,
     `-t ${containerImage}`,

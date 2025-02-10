@@ -1,13 +1,10 @@
-import React, { FC } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Input, Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
-import { MissingInfoType } from '../../types'
+import { MissingInfoType } from '../../utils/types'
 
-const HiddenDateField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+export const HiddenDateField = ({ application }: FieldBaseProps) => {
   const { register } = useFormContext()
   const missingInfo =
     (getValueViaPath(
@@ -31,5 +28,3 @@ const HiddenDateField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     </Box>
   )
 }
-
-export default HiddenDateField

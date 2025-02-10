@@ -226,11 +226,17 @@ export class ApplicationService {
     })
   }
 
-  async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments' | 'typeId' | 'state'>[]
-  > {
+  async findAllDueToBePruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
-      attributes: ['id', 'attachments', 'typeId', 'state'],
+      attributes: [
+        'id',
+        'attachments',
+        'typeId',
+        'state',
+        'applicant',
+        'answers',
+        'externalData',
+      ],
       where: {
         [Op.and]: {
           pruneAt: {
@@ -299,6 +305,7 @@ export class ApplicationService {
         | 'applicantActors'
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
+        | 'pruneAt'
       >
     >,
   ) {

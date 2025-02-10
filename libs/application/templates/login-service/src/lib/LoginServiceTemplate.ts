@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/types'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const States = {
   draft: 'draft',
@@ -39,6 +40,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.LOGIN_SERVICE,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.institutionName,
   translationNamespaces: [ApplicationConfigurations.LoginService.translation],
   dataSchema: LoginServiceSchema,

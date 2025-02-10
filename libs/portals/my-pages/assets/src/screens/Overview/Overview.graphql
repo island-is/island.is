@@ -1,0 +1,21 @@
+query GetUsersVehiclesV2($input: GetVehiclesListV2Input!) {
+  vehiclesListV2(input: $input) {
+    vehicleList {
+      permno
+      regno
+      make
+      colorName
+      modelYear
+      requiresMileageRegistration
+      canRegisterMileage
+      nextMainInspection
+    }
+    paging {
+      pageNumber
+      pageSize
+      totalPages
+      totalRecords
+    }
+    downloadServiceURL
+  }
+}

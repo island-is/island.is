@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
 import {
@@ -15,15 +15,23 @@ import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
-import { SignatureCollectionOwnerInput } from './dto/owner.input'
-import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
+import { SignatureCollectionCollector } from './models/collector.model'
+import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 
 @Injectable()
 export class SignatureCollectionService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
+
+  private checkListAccess(listId: string, signee: SignatureCollectionSignee) {
+    if (!signee.ownedLists?.some((list) => list.id === listId)) {
+      throw new NotFoundException('List not found')
+    }
+  }
 
   async currentCollection(): Promise<SignatureCollection> {
     return await this.signatureCollectionClientService.currentCollection()
@@ -79,7 +87,12 @@ export class SignatureCollectionService {
     )
   }
 
-  async list(listId: string, user: User): Promise<SignatureCollectionList> {
+  async list(
+    listId: string,
+    user: User,
+    signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionList> {
+    this.checkListAccess(listId, signee)
     return await this.signatureCollectionClientService.getList(listId, user)
   }
 
@@ -140,6 +153,61 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.candidacyUploadPaperSignature(
       user,
       input,
+    )
+  }
+
+  async canSignFromPaper(
+    user: User,
+    input: SignatureCollectionCanSignFromPaperInput,
+    signee: SignatureCollectionSignee,
+  ): Promise<boolean> {
+    const signatureSignee =
+      await this.signatureCollectionClientService.getSignee(
+        user,
+        input.signeeNationalId,
+      )
+    const list = await this.list(input.listId, user, signee)
+    // Current signatures should not prevent paper signatures
+    const canSign =
+      signatureSignee.canSign ||
+      (signatureSignee.canSignInfo?.length === 1 &&
+        (signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned ||
+          signatureSignee.canSignInfo[0] === ReasonKey.noInvalidSignature))
+
+    return canSign && list.area.id === signatureSignee.area?.id
+  }
+
+  async collectors(
+    user: User,
+    candidateId: string | undefined,
+  ): Promise<SignatureCollectionCollector[]> {
+    if (!candidateId) {
+      return []
+    }
+    return await this.signatureCollectionClientService.getCollectors(
+      user,
+      candidateId,
+    )
+  }
+
+  async listOverview(
+    user: User,
+    listId: string,
+  ): Promise<SignatureCollectionListSummary> {
+    return await this.signatureCollectionClientService.getListOverview(
+      user,
+      listId,
+    )
+  }
+
+  async updateSignaturePageNumber(
+    user: User,
+    input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.updateSignaturePageNumber(
+      user,
+      input.signatureId,
+      input.pageNumber,
     )
   }
 }

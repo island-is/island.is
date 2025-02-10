@@ -8,9 +8,9 @@ import { application, workMachine } from '../../../lib/messages'
 import {
   isAgricultureAccident,
   isGeneralWorkplaceAccident,
-} from '../../../utils'
-import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmployee'
-import { NO, YES } from '../../../constants'
+  isSportAccidentAndEmployee,
+} from '../../../utils/occupationUtils'
+import { NO, YES } from '@island.is/application/types'
 
 // Workmachine information only applicable to generic workplace accidents
 export const workMachineSubSection = buildSubSection({
@@ -45,9 +45,9 @@ export const workMachineSubSection = buildSubSection({
       condition: (formValue) => formValue.workMachineRadio === YES,
       children: [
         buildTextField({
-          id: 'workMachine.desriptionOfMachine',
-          title: workMachine.labels.desriptionOfMachine,
-          placeholder: workMachine.placeholder.desriptionOfMachine,
+          id: 'workMachine.descriptionOfMachine',
+          title: workMachine.labels.descriptionOfMachine,
+          placeholder: workMachine.placeholder.descriptionOfMachine,
           backgroundColor: 'blue',
           rows: 4,
           variant: 'textarea',

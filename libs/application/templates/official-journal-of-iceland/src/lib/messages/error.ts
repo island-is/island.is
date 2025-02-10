@@ -64,7 +64,7 @@ export const error = defineMessages({
   },
   missingSignatureFieldsMessage: {
     id: 'ojoi.application:error.missingSignatureFieldsMessage',
-    defaultMessage: 'Undirritunarkafli er undir {x}',
+    defaultMessage: '(Undirritunarkafli er hluti {x})',
     description: 'Error message when signature fields are missing',
   },
   noSignatureMembers: {
@@ -74,7 +74,7 @@ export const error = defineMessages({
   },
   missingSignatureMember: {
     id: 'ojoi.application:error.missingSignatureMember',
-    defaultMessage: 'Nafn undirskriftar meðlims vantar',
+    defaultMessage: 'Nafn undirritara vantar',
     description: 'Error message when signature member is missing',
   },
   noCategorySelected: {
@@ -82,24 +82,44 @@ export const error = defineMessages({
     defaultMessage: 'Enginn efnisflokkur valinn, vinsamlegast veldu efnisflokk',
     description: 'Error message when no category is selected',
   },
+  missingPreviewType: {
+    id: 'ojoi.application:error.missingPreviewType',
+    defaultMessage: 'Tegund auglýsingar',
+    description: 'Error message when type is missing',
+  },
+  missingPreviewDepartment: {
+    id: 'ojoi.application:error.missingPreviewDepartment',
+    defaultMessage: 'Deild',
+    description: 'Error message when department is missing',
+  },
+  missingPreviewTitle: {
+    id: 'ojoi.application:error.missingPreviewTitle',
+    defaultMessage: 'Heiti auglýsingar',
+    description: 'Error message when title is missing',
+  },
+  missingPreviewHtml: {
+    id: 'ojoi.application:error.missingPreviewHtml',
+    defaultMessage: 'Meginmál auglýsingar',
+    description: 'Error message when html is missing',
+  },
   missingType: {
     id: 'ojoi.application:error.missingType',
-    defaultMessage: 'Velja þarf tegund innsendingar',
+    defaultMessage: 'Velja þarf tegund auglýsingar',
     description: 'Error message when type is missing',
   },
   missingDepartment: {
     id: 'ojoi.application:error.missingDepartment',
-    defaultMessage: 'Velja þarf deild innsendingar',
+    defaultMessage: 'Velja þarf deild auglýsingar',
     description: 'Error message when department is missing',
   },
   missingTitle: {
     id: 'ojoi.application:error.missingTitle',
-    defaultMessage: 'Fylla þarf út titill innsendingar',
+    defaultMessage: 'Fylla þarf út titill auglýsingar',
     description: 'Error message when title is missing',
   },
   missingHtml: {
     id: 'ojoi.application:error.missingHtml',
-    defaultMessage: 'Innihald innsendingar má ekki vera autt',
+    defaultMessage: 'Meginmál auglýsingar má ekki vera autt',
     description: 'Error message when html is missing',
   },
   missingHtmlMessage: {
@@ -191,6 +211,17 @@ export const error = defineMessages({
     id: 'ojoi.application:error.datePicker',
     defaultMessage: 'Vinsamlegast veldu dagsetningu',
     description: 'Error message when date is invalid or not present',
+  },
+  emptyChannel: {
+    id: 'ojoi.application:error.emptyChannel',
+    defaultMessage:
+      'Samskiptaleið þarf að innihalda að minnstakosti einn aðila',
+    description: 'Error message when channel is empty',
+  },
+  invalidChannel: {
+    id: 'ojoi.application:error.invalidChannel',
+    defaultMessage: 'Samskiptaleið þarf að vera með gilt netfang',
+    description: 'Error message when channel is invalid',
   },
   invalidDate: {
     id: 'ojoi.application:error.invalidDate',

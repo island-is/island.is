@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+
 import { Box, Hidden, Inline, Text } from '@island.is/island-ui/core'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -13,7 +14,7 @@ export const FiskistofaDashboardHeader: React.FC<
   React.PropsWithChildren<FiskistofaDashboardHeaderProps>
 > = ({ projectPage }) => {
   const namespace = useMemo(() => {
-    return JSON.parse(projectPage?.namespace?.fields ?? '{}')
+    return JSON.parse(projectPage?.namespace?.fields || '{}')
   }, [projectPage?.namespace?.fields])
 
   const n = useNamespace(namespace)

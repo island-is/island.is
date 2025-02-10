@@ -13,6 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DigitalIcelandLatestNewsSlice,
   getThemeConfig,
   IconTitleCard,
   OrganizationWrapper,
@@ -29,8 +30,9 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 
-import { Screen } from '../../../types'
+import { Screen, ScreenContext } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
@@ -50,11 +52,11 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   return link
 }
 
-const OrganizationHomePage: Screen<HomeProps> = ({
+const OrganizationHomePage = ({
   organizationPage,
   organization,
   namespace,
-}) => {
+}: HomeProps) => {
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
@@ -203,21 +205,39 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             : 0
         }
       >
-        {organizationPage?.bottomSlices.map((slice) => (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            namespace={namespace}
-            slug={organizationPage.slug}
-            fullWidth={true}
-            params={{
-              latestNewsSliceColorVariant:
-                organizationPage.theme === 'landing_page' ? 'blue' : 'default',
-            }}
-          />
-        ))}
+        {organizationPage?.bottomSlices.map((slice) => {
+          if (
+            (organizationPage.slug === 'stafraent-island' ||
+              organizationPage.slug === 'digital-iceland') &&
+            slice.__typename === 'LatestNewsSlice'
+          ) {
+            return (
+              <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={organizationPage.slug}
+                />
+              </Box>
+            )
+          }
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              namespace={namespace}
+              slug={organizationPage.slug}
+              fullWidth={true}
+              params={{
+                latestNewsSliceColorVariant:
+                  organizationPage.theme === 'landing_page'
+                    ? 'blue'
+                    : 'default',
+              }}
+            />
+          )
+        })}
       </Stack>
       {organizationPage?.theme === 'landing_page' && (
         <LandingPageFooter
@@ -228,13 +248,17 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   )
 }
 
-interface HomeProps {
+export interface HomeProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
 }
 
-const Home: Screen<HomeProps> = ({
+type HomeScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const Home: Screen<HomeProps, HomeScreenContext> = ({
   organizationPage,
   organization,
   namespace,
@@ -259,7 +283,8 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getProps = async ({ apolloClient, locale, query }) => {
+Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
+  const slug = (query.slugs as string[])[0]
   const [
     {
       data: { getOrganizationPage },
@@ -269,20 +294,22 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
+    !organizationPage
+      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      : { data: { getOrganizationPage: organizationPage } },
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -308,11 +335,15 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
+  const organizationNamespace =
+    extractNamespaceFromOrganization(getOrganization)
+
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
       getOrganization ?? getOrganizationPage?.organization,

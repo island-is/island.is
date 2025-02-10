@@ -5,6 +5,7 @@ import {
   NO_ANSWER,
   extractRepeaterIndexFromField,
   getErrorViaPath,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   FieldBaseProps,
@@ -13,12 +14,16 @@ import {
   FieldTypes,
   MaybeWithApplicationAndField,
 } from '@island.is/application/types'
-import { DateFormField } from '@island.is/application/ui-fields'
+import {
+  DateFormField,
+  CheckboxFormField,
+} from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
+import { YES, StartDateOptions } from '../../constants'
 
 type FieldPeriodEndDateProps = {
   field: {
@@ -38,6 +43,11 @@ export const PeriodEndDate: FC<
   const { title, props } = field
   const currentIndex = extractRepeaterIndexFromField(field)
   const fieldId = `periods[${currentIndex}].endDate`
+  const lengthFieldId = `periods[${currentIndex}].endDateAdjustLength`
+  const currentFirstPeriodStart = getValueViaPath(
+    application.answers,
+    `periods[${currentIndex}].firstPeriodStart`,
+  ) as StartDateOptions
   const error = getErrorViaPath(errors as FieldErrors<FieldValues>, fieldId)
 
   useEffect(() => {
@@ -79,6 +89,28 @@ export const PeriodEndDate: FC<
           defaultValue: NO_ANSWER,
         }}
       />
+      {currentFirstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH && (
+        <CheckboxFormField
+          application={application}
+          field={{
+            type: FieldTypes.CHECKBOX,
+            component: FieldComponents.CHECKBOX,
+            title: '',
+            id: lengthFieldId,
+            children: undefined,
+            backgroundColor: 'blue',
+            width: 'full',
+            large: true,
+            defaultValue: [YES],
+            options: [
+              {
+                value: YES,
+                label: parentalLeaveFormMessages.endDate.adjustPeriodLength,
+              },
+            ],
+          }}
+        />
+      )}
     </>
   )
 }

@@ -1,11 +1,7 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
 // This is a shared module that gives you access to common methods
 import { SharedTemplateAPIModule } from '../../shared'
-
-// The base config that template api modules are registered with by default
-// (configurable inside `template-api.module.ts`)
-import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan.service'
@@ -13,16 +9,9 @@ import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan
 import { PaymentScheduleClientModule } from '@island.is/clients/payment-schedule'
 import { PrerequisitesService } from './paymentPlanPrerequisites.service'
 
-export class PublicDebtPaymentPlanTemplateModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: PublicDebtPaymentPlanTemplateModule,
-      imports: [
-        SharedTemplateAPIModule.register(config),
-        PaymentScheduleClientModule,
-      ],
-      providers: [PublicDebtPaymentPlanTemplateService, PrerequisitesService],
-      exports: [PublicDebtPaymentPlanTemplateService],
-    }
-  }
-}
+@Module({
+  imports: [SharedTemplateAPIModule, PaymentScheduleClientModule],
+  providers: [PublicDebtPaymentPlanTemplateService, PrerequisitesService],
+  exports: [PublicDebtPaymentPlanTemplateService],
+})
+export class PublicDebtPaymentPlanTemplateModule {}

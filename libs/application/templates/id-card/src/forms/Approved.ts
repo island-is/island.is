@@ -4,16 +4,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-// import { Logo } from '../../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { reviewConfirmation } from '../lib/messages'
 import { getChosenApplicant, hasSecondGuardian } from '../utils'
-import { IdentityDocumentChild } from '@island.is/clients/passports'
 
 export const Approved: Form = buildForm({
   id: 'Approved',
   title: '',
-  // logo: Logo,
   mode: FormModes.APPROVED,
   children: [
     buildFormConclusionSection({

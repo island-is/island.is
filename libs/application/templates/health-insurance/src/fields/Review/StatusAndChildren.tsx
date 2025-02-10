@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,19 +6,25 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../../shared'
-import { ReviewFieldProps, Status } from '../../types'
-import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
-import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
-import { m } from '../../forms/messages'
+import { ReviewFieldProps, Status } from '../../utils/types'
+// import { ChildrenInfoMessage } from '../ChildrenInfoMessage/ChildrenInfoMessage'
+import { TextWithTooltip } from '../TextWithTooltip/TextWithTooltip'
+
+import { m } from '../../lib/messages/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
+import {
+  FILE_SIZE_LIMIT,
+  NO,
+  EmploymentStatus,
+  YES,
+} from '../../utils/constants'
 
-const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
+export const StatusAndChildren = ({
   application,
   isEditable,
   field,
-}) => {
+}: ReviewFieldProps) => {
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(
@@ -43,12 +49,12 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
             largeButtons={true}
             split={'1/2'}
             onSelect={(value) =>
-              setStatus({ ...status, type: value as StatusTypes })
+              setStatus({ ...status, type: value as EmploymentStatus })
             }
             options={[
               {
                 label: formatText(m.statusEmployed, application, formatMessage),
-                value: StatusTypes.EMPLOYED,
+                value: EmploymentStatus.EMPLOYED,
                 tooltip: formatText(
                   m.statusEmployedInformation,
                   application,
@@ -57,7 +63,7 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
               },
               {
                 label: formatText(m.statusStudent, application, formatMessage),
-                value: StatusTypes.STUDENT,
+                value: EmploymentStatus.STUDENT,
                 tooltip: formatText(
                   m.statusStudentInformation,
                   application,
@@ -70,7 +76,7 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
                   application,
                   formatMessage,
                 ),
-                value: StatusTypes.PENSIONER,
+                value: EmploymentStatus.PENSIONER,
                 tooltip: formatText(
                   m.statusPensionerInformation,
                   application,
@@ -79,7 +85,7 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
               },
               {
                 label: formatText(m.statusOther, application, formatMessage),
-                value: StatusTypes.OTHER,
+                value: EmploymentStatus.OTHER,
                 tooltip: formatText(
                   m.statusOtherInformation,
                   application,
@@ -89,7 +95,7 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
             ]}
           />
         </Stack>
-        {status.type === StatusTypes.STUDENT && (
+        {status.type === EmploymentStatus.STUDENT && (
           <Box marginBottom={2}>
             <Stack space={4}>
               <TextWithTooltip
@@ -168,15 +174,15 @@ const StatusAndChildren: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
               ]}
             />
           </Stack>
+          {/* 
+          TODO: Refactor the whole review section when build accordion field merges and add this back in
           {children === YES && (
             <Box marginBottom={[2, 2, 4]}>
               <ChildrenInfoMessage application={application} field={field} />
             </Box>
-          )}
+          )} */}
         </Stack>
       </Stack>
     </Box>
   )
 }
-
-export default StatusAndChildren

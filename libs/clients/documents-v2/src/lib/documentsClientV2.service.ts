@@ -31,6 +31,7 @@ export class DocumentsClientV2Service {
      * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
      * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
      */
+
     const sanitizeObject = function <T extends { [key: string]: any }>(
       obj: T,
     ): T {
@@ -41,6 +42,15 @@ export class DocumentsClientV2Service {
         }
       }
       return sanitizedObj
+    }
+
+    // If hiddenCats is not empty and categories are empty, the API will return no documents
+    if (input.hiddenCategoryIds !== '' && input.categoryId === '') {
+      return {
+        totalCount: 0,
+        unreadCount: 0,
+        documents: [],
+      }
     }
 
     const inputObject = sanitizeObject({
@@ -78,14 +88,18 @@ export class DocumentsClientV2Service {
   async getCustomersDocument(
     customerId: string,
     documentId: string,
+    locale?: string,
+    includeDocument?: boolean,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
+      locale: locale,
+      includeDocument: includeDocument,
     })
 
-    const mappedDocument = mapToDocument(document)
+    const mappedDocument = mapToDocument(document, includeDocument)
 
     if (!mappedDocument) {
       this.logger.warn('No document content available for findDocumentById', {

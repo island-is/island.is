@@ -1,7 +1,19 @@
-# application-templates-id-card
+# ID CARD APPLICATION
 
-This library was generated with [Nx](https://nx.dev).
+## About
 
-## Running unit tests
+Application for id cards with or without travel rights
 
-Run `nx test application-templates-id-card` to execute the unit tests via [Jest](https://jestjs.io).
+## URLs
+
+- [Dev](https://beta.dev01.devland.is/umsoknir/nafnskirteini)
+- [Staging]()
+- [Production](https://island.is/umsoknir/nafnskirteini)
+
+## Project owner
+
+- [Þjóðskrá](http://www.skra.is)
+
+## Code owners and maintainers
+
+- [Origo]

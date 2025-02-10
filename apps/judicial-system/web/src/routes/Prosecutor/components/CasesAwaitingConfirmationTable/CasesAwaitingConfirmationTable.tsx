@@ -9,13 +9,16 @@ import {
   SectionHeading,
   TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import {
+  ContextMenuItem,
+  useContextMenu,
+} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
@@ -33,12 +36,19 @@ interface CasesAwaitingConfirmationTableProps {
   isFiltering: boolean
   cases: CaseListEntry[]
   onContextMenuDeleteClick: (id: string) => void
+  canDeleteCase: (caseToDelete: CaseListEntry) => boolean
 }
 
 const CasesAwaitingConfirmationTable: FC<
   CasesAwaitingConfirmationTableProps
 > = (props) => {
-  const { loading, isFiltering, cases, onContextMenuDeleteClick } = props
+  const {
+    loading,
+    isFiltering,
+    cases,
+    onContextMenuDeleteClick,
+    canDeleteCase,
+  } = props
   const { formatMessage } = useIntl()
 
   const { openCaseInNewTabMenuItem } = useContextMenu()
@@ -58,14 +68,14 @@ const CasesAwaitingConfirmationTable: FC<
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 {
                   title: formatMessage(tables.type),
                 },
                 {
-                  title: capitalize(formatMessage(tables.created)),
-                  sortable: { isSortable: true, key: 'created' },
+                  title: capitalize(formatMessage(tables.sentToCourtDate)),
+                  sortBy: 'caseSentToCourtDate',
                 },
                 { title: formatMessage(tables.state) },
                 {
@@ -76,13 +86,17 @@ const CasesAwaitingConfirmationTable: FC<
               generateContextMenuItems={(row) => {
                 return [
                   openCaseInNewTabMenuItem(row.id),
-                  {
-                    title: formatMessage(contextMenu.deleteCase),
-                    onClick: () => {
-                      onContextMenuDeleteClick(row.id)
-                    },
-                    icon: 'trash',
-                  },
+                  ...(canDeleteCase(row)
+                    ? [
+                        {
+                          title: formatMessage(contextMenu.deleteCase),
+                          onClick: () => {
+                            onContextMenuDeleteClick(row.id)
+                          },
+                          icon: 'trash',
+                        } as ContextMenuItem,
+                      ]
+                    : []),
                 ]
               }}
               columns={[
@@ -102,7 +116,9 @@ const CasesAwaitingConfirmationTable: FC<
                   cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row) => <CreatedDate created={row.created} />,
+                  cell: (row) => (
+                    <TableDate displayDate={row.caseSentToCourtDate} />
+                  ),
                 },
                 {
                   cell: () => (

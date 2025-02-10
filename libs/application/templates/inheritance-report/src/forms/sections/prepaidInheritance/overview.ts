@@ -153,18 +153,14 @@ export const prepaidOverview = buildSubSection({
         }),
         buildDescriptionField({
           id: 'heirs_space5',
-          title: '',
+          title: m.fileUploadOtherDocumentsPrePaid,
+          titleVariant: 'h3',
           space: 'gutter',
         }),
-        buildKeyValueField({
-          label: m.fileUploadOtherDocumentsPrePaid,
-          value: ({ answers }) => {
-            const files = getValueViaPath<any>(
-              answers,
-              'heirsAdditionalInfoFilesOtherDocuments',
-            )
-            return files.map((file: any) => file.name).join(', ')
-          },
+        buildCustomField({
+          title: '',
+          id: 'otherDocs',
+          component: 'OverviewOtherDocuments',
         }),
         buildCustomField({
           title: '',

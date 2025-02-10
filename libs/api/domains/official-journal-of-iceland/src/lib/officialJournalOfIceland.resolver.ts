@@ -8,6 +8,7 @@ import {
   AdvertsInput,
   QueryParams,
   TypeQueryParams,
+  MainTypesQueryParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
@@ -19,9 +20,11 @@ import {
   AdvertsResponse,
   AdvertTypeResponse,
   AdvertTypesResponse,
+  MainTypesResponse,
 } from './models/advert.response'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlag } from '@island.is/nest/feature-flags'
+import { CasesInProgressResponse } from './models/cases.response'
 
 @Scopes(ApiScope.internal)
 @FeatureFlag(Features.officialJournalOfIceland)
@@ -71,6 +74,13 @@ export class OfficialJournalOfIcelandResolver {
     return this.ojoiService.getAdvertTypes(params)
   }
 
+  @Query(() => MainTypesResponse, {
+    name: 'officialJournalOfIcelandMainTypes',
+  })
+  getAdvertMainTypes(@Args('params') params: MainTypesQueryParams) {
+    return this.ojoiService.getMainTypes(params)
+  }
+
   @Query(() => AdvertMainCategoriesResponse, {
     name: 'officialJournalOfIcelandMainCategories',
   })
@@ -90,5 +100,12 @@ export class OfficialJournalOfIcelandResolver {
   })
   getInstitutions(@Args('params') params: QueryParams) {
     return this.ojoiService.getInstitutions(params)
+  }
+
+  @Query(() => CasesInProgressResponse, {
+    name: 'officialJournalOfIcelandCasesInProgress',
+  })
+  getCasesInProgress(@Args('params') params: QueryParams) {
+    return this.ojoiService.getCasesInProgress(params)
   }
 }

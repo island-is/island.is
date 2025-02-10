@@ -3,6 +3,7 @@ import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord`
+const delegationTarget = 'text="65° ARTIC ehf."'
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal (Endorsements)', () => {
@@ -29,8 +30,8 @@ test.describe('Admin portal (Endorsements)', () => {
   test('Open old endorsement list and go back', async ({ page }) => {
     test.slow()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
-    await page.getByTestId('active-module-name').click()
-    await page.getByRole('link', { name: 'Undirskriftalistar' }).click()
+    await page.click(delegationTarget)
+    await page.click('[title="Undirskriftalistar"]')
 
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
@@ -41,6 +42,11 @@ test.describe('Admin portal (Endorsements)', () => {
   })
 
   test('Update old endorsement list', async ({ page }) => {
+    test.slow()
+    await page.goto(icelandicAndNoPopupUrl(homeUrl))
+    await page.click(delegationTarget)
+    await page.click('[title="Undirskriftalistar"]')
+
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     await page.getByRole('button', { name: 'Uppfæra lista' }).click()
@@ -49,28 +55,12 @@ test.describe('Admin portal (Endorsements)', () => {
     ).toBeVisible()
   })
 
-  test.skip('See locked lists are present and locked', async ({ page }) => {
-    await page.getByRole('tab', { name: 'Læstir listar' }).click()
-    const lockedLists = page.getByRole('button', { name: 'Skoða lista' })
-    await expect(lockedLists).toHaveCountGreaterThan(1)
-    await lockedLists.first().click()
-    await expect(
-      page.getByRole('alert', { name: 'Listi er læstur' }),
-    ).toBeVisible()
-  })
-
-  test('Go back to overview', async ({ page }) => {
-    await page.getByTestId('active-module-name').click()
-    await page
-      .getByRole('menu', { name: 'Stjórnborðs valmynd' })
-      .getByRole('link', { name: 'Yfirlit' })
-      .click()
-    await expect(
-      page.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
-    ).toBeVisible()
-  })
-
   test('Access and edit a list', async ({ page }) => {
+    test.slow()
+    await page.goto(icelandicAndNoPopupUrl(homeUrl))
+    await page.click(delegationTarget)
+    await page.click('[title="Undirskriftalistar"]')
+
     // Setup
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
 

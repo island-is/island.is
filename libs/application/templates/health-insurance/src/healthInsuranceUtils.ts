@@ -1,9 +1,10 @@
 import { ExternalData } from '@island.is/application/types'
 import { NationalRegistryAddress as Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
-import { NordicCountriesCountryCode } from './shared'
-import { EU } from './lib/EU'
-import { EFTA } from './lib/EFTA'
+
+import { EU } from './utils/EU'
+import { EFTA } from './utils/EFTA'
+import { NordicCountriesCountryCode } from './utils/constants'
 
 export const getDraftApplications = (applications: Applications[]) => {
   return applications?.filter((application) => application.state === 'draft')

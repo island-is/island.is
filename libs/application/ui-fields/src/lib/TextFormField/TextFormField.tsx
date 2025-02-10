@@ -1,7 +1,11 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { formatText } from '@island.is/application/core'
+import {
+  buildFieldRequired,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import { FieldBaseProps, TextField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -11,6 +15,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: TextField
@@ -26,7 +31,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     placeholder,
     backgroundColor,
@@ -42,33 +47,54 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     max,
     min,
     step,
+    marginBottom,
+    marginTop,
+    tooltip,
     onChange = () => undefined,
+    clearOnChange,
   } = field
   const { clearErrors } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 
       <Box paddingTop={2}>
         <InputController
+          tooltip={formatTextWithLocale(
+            tooltip || '',
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           disabled={disabled}
           readOnly={readOnly}
           id={id}
           dataTestId={dataTestId}
-          placeholder={formatText(
+          placeholder={formatTextWithLocale(
             placeholder || '',
             application,
+            locale as Locale,
             formatMessage,
           )}
           label={
             showFieldName
-              ? formatText(title, application, formatMessage)
+              ? formatTextWithLocale(
+                  title,
+                  application,
+                  locale as Locale,
+                  formatMessage,
+                )
               : undefined
           }
           autoFocus={autoFocus}
@@ -90,13 +116,14 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           rows={rows}
-          required={required}
+          required={buildFieldRequired(application, required)}
           rightAlign={rightAlign}
           max={max}
           min={min}
           step={step}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

@@ -7,6 +7,7 @@ import {
   GridRow,
   GridColumn,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useEffect, useState, useMemo } from 'react'
 import {
@@ -51,11 +52,15 @@ import {
   updateFieldValue,
   validateImpact,
 } from '../../state/validations'
-import { useGetRegulationHistory } from '../../utils/hooks'
+import {
+  useGetRegulationHistory,
+  usePristineRegulations,
+} from '../../utils/hooks'
 import { DraftRegulationChange } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 import { errorMsgs as msg } from '../../lib/messages'
+import { getWorkdayMinimumDate } from '../../utils'
 
 /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -73,6 +78,7 @@ export const EditChange = (props: EditChangeProp) => {
   const today = useMemo(() => new Date(), [])
   const [minDate, setMinDate] = useState<Date | undefined>()
   const [showChangeForm, setShowChangeForm] = useState(false)
+  const { addPristineRegulation } = usePristineRegulations()
 
   // Target regulation for impact
   const [activeRegulation, setActiveRegulation] = useState<
@@ -197,7 +203,7 @@ export const EditChange = (props: EditChangeProp) => {
       !regulationLoading &&
       toISODate(minDate) !== toISODate(activeChange.date.value)
     ) {
-      changeDate(minDate)
+      changeDate(getWorkdayMinimumDate(11))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minDate, impactsLoading, regulationLoading])
@@ -220,12 +226,38 @@ export const EditChange = (props: EditChangeProp) => {
     validateImpact(activeChange)
   }, [activeChange])
 
-  const getDiffHtml = () => {
-    const emptyHTML = '' as HTMLText
-    const prev = previousRegulation?.text || emptyHTML
-    const current = activeChange.text.value || emptyHTML
+  const emptyHTML = '' as HTMLText
+  const getDiffHtml = (previous?: HTMLText, current?: HTMLText) => {
+    const prev = previous || previousRegulation?.text || emptyHTML
+    const curr = current || activeChange.text.value || emptyHTML
 
-    return getDiff(dirtyClean(prev), dirtyClean(current)).diff || emptyHTML
+    return getDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+  }
+
+  const getAppendixDiffHtml = (i: number) => {
+    const previous = previousRegulation?.appendixes[i]?.text || emptyHTML
+    const current = activeChange?.appendixes[i]?.text.value || emptyHTML
+
+    const diff = getDiff(dirtyClean(previous), dirtyClean(current)).diff
+
+    if (!previousRegulation?.appendixes[i]) {
+      // If the appendix is new
+      return `<div data-diff="new">${diff}</div>` as HTMLText
+    }
+
+    const noChange = dirtyClean(previous) === dirtyClean(current)
+    if (noChange) {
+      // If the appendix has no changes
+      return undefined
+    }
+
+    if (diff) {
+      // If the appendix has changes
+      return diff
+    } else {
+      // If the appendix has no diff
+      return undefined
+    }
   }
 
   const saveChange = async () => {
@@ -238,9 +270,10 @@ export const EditChange = (props: EditChangeProp) => {
             title: activeChange.title.value,
             text: activeChange.text.value,
             diff: getDiffHtml(),
-            appendixes: activeChange.appendixes.map((apx) => ({
+            appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
+              diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
           },
@@ -252,7 +285,12 @@ export const EditChange = (props: EditChangeProp) => {
           }
           return { success: true, error: undefined }
         })
+        .then(() => {
+          addPristineRegulation(draft.id)
+          closeModal(true)
+        })
         .catch((error) => {
+          toast.error(t(msg.errorOnSaveReg))
           return { success: false, error: error as Error }
         })
     } else {
@@ -263,9 +301,10 @@ export const EditChange = (props: EditChangeProp) => {
             title: activeChange.title.value,
             text: activeChange.text.value,
             diff: getDiffHtml(),
-            appendixes: activeChange.appendixes.map((apx) => ({
+            appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
+              diff: getAppendixDiffHtml(i),
             })),
             date: toISODate(activeChange.date.value),
           },
@@ -277,12 +316,15 @@ export const EditChange = (props: EditChangeProp) => {
           }
           return { success: true, error: undefined }
         })
+        .then(() => {
+          addPristineRegulation(draft.id)
+          closeModal(true)
+        })
         .catch((error) => {
+          toast.error(t(msg.errorOnSaveReg))
           return { success: false, error: error as Error }
         })
     }
-
-    closeModal(true)
   }
 
   const localActions = {
@@ -404,6 +446,7 @@ export const EditChange = (props: EditChangeProp) => {
             } as Regulation
           }
           baseName={'' as RegName}
+          asBase={draft.type.value === 'base'}
         />
       )}
       <GridContainer>

@@ -1,13 +1,13 @@
-import React, { FC, createContext, useContext, useMemo } from 'react'
-import * as ConfigCatJS from 'configcat-js'
 import {
   FeatureFlagClient,
   FeatureFlagUser,
-  SettingValue,
   SettingTypeOf,
+  SettingValue,
   createClientFactory,
 } from '@island.is/feature-flags'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import * as ConfigCatJS from 'configcat-js'
+import React, { FC, createContext, useContext, useMemo } from 'react'
 
 const createClient = createClientFactory(ConfigCatJS)
 
@@ -26,7 +26,7 @@ export interface FeatureFlagContextProviderProps {
 export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
 > = ({ children, sdkKey, defaultUser: userProp }) => {
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const featureFlagClient = useMemo(() => {
     return createClient({ sdkKey })
   }, [sdkKey])

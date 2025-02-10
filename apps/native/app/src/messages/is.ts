@@ -18,6 +18,7 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -176,7 +177,7 @@ export const is = {
   'home.onboardingModule.card2':
     'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
   'home.onboardingModule.card3':
-    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
+    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
@@ -213,6 +214,8 @@ export const is = {
   'inbox.markAllAsReadPromptConfirm': 'Merkja lesið',
   'inbox.cardNoInboxDocuments':
     'Þegar þú færð sendan póst í pósthólfið þá birtist hann hér.',
+  'inbox.urgent': 'Áríðandi',
+  'inbox.openDocument': 'Opna erindi',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Sía skjöl',
@@ -248,6 +251,7 @@ export const is = {
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
+  'profile.health': 'Heilsa',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -382,6 +386,8 @@ export const is = {
   'wallet.emptyListTitle': 'Hér eru engin skírteini sem stendur',
   'wallet.emptyListDescription':
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
+  'wallet.lastUpdated': 'Síðast uppfært: {date}',
+  'wallet.update': 'Uppfæra',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
@@ -392,6 +398,22 @@ export const is = {
     'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
   'walletPass.moreInfo': 'Nánari upplýsingar',
   'walletPass.alertClose': 'Loka',
+  'walletPass.errorCannotAddPasses':
+    'Þú getur ekki bætt við skírteini. Vinsamlegast vertu viss um að þú sért með Smartwallet appið sett upp á tækinu.',
+  'walletPass.errorAddingOrFetching':
+    'Tókst ekki að sækja eða bæta við skírteini.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'Þú getur ekki bætt við skírteinum á þetta tæki.',
+  'walletPass.barcodeErrorNotConnected':
+    'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
+  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorBadSession':
+    'Of stutt síðan skírteini var sótt á öðru tæki',
+  'walletPass.validLicense': 'Í gildi',
+  'walletPass.expiredLicense': 'Útrunnið',
+  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
+  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
+  'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
@@ -584,6 +606,8 @@ export const is = {
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'problem.offline.title': 'Samband næst ekki',
   'problem.offline.message': 'Villa kom upp í samskiptum við þjónustuaðila',
+  'problem.thirdParty.title': 'Samband næst ekki',
+  'problem.thirdParty.message': 'Villa kom upp í samskiptum við þjónustuaðila',
 
   // passkeys
   'passkeys.headingTitle': 'Innskrá með Ísland.is appinu',
@@ -591,8 +615,77 @@ export const is = {
     'Þú ert að fara að opna Ísland.is í vafra. Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
   'passkeys.headingSubtitle':
     'Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.settings':
+    'Undir stillingum er alltaf hægt að eyða eða búa til aðgangslykil',
+  'passkeys.furtherInformation': 'Nánar um aðgangslykla',
   'passkeys.createButton': 'Búa til aðgangslykil',
   'passkeys.skipButton': 'Sleppa',
   'passkeys.errorRegistering': 'Villa',
   'passkeys.errorRegisteringMessage': 'Tókst ekki að búa til aðgangslykil',
+
+  // update app
+  'updateApp.title': 'Uppfæra app',
+  'updateApp.description':
+    'Þú ert að fara að nota gamla útgáfu af Ísland.is appinu. Vinsamlegast uppfærðu appið til að halda áfram.',
+  'updateApp.button': 'Uppfæra',
+  'updateApp.buttonSkip': 'Sleppa',
+
+  // health - overview
+  'health.overview.screenTitle': 'Heilsa',
+  'health.overview.title': 'Heilsan mín',
+  'health.overview.description':
+    'Hér finnur þú þín heilsufarsgögn, heilsugæslu og sjúkratryggingar',
+  'health.overview.healthCenter': 'Heilsugæsla',
+  'health.overview.noHealthCenterRegistered': 'Engin heilsugæsla skráð',
+  'health.overview.physician': 'Heimilislæknir',
+  'health.overview.noPhysicianRegistered': 'Enginn læknir skráður',
+  'health.overview.statusOfRights': 'Réttindastaða',
+  'health.overview.insuredFrom': 'Sjúkratrygging frá',
+  'health.overview.status': 'Staða',
+  'health.overview.notInsured': 'Þú ert ekki með sjúkratryggingu',
+  'health.overview.coPayments': 'Greiðsluþátttaka',
+  'health.overview.maxMonthlyPayment': 'Hámarksgreiðslan þín á mánuði',
+  'health.overview.paymentLimit': 'Greiðslumark',
+  'health.overview.paymentCredit': 'Inneign',
+  'health.overview.paymentDebt': 'Skuld',
+  'health.overview.therapy': 'Þjálfun',
+  'health.overview.vaccinations': 'Bólusetningar',
+  'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
+  'health.overview.medicinePurchase': 'Lyfjakaup',
+  'health.overview.period': 'Tímabil',
+  'health.overview.levelStatus': 'Þrepastaða',
+  'health.overview.levelStatusValue':
+    'Greiðsluþrep {level}, þú greiðir {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+
+  // health - vaccinations
+  'health.vaccinations.screenTitle': 'Bólusetningar',
+  'health.vaccinations.title': 'Bólusetningar',
+  'health.vaccinations.description':
+    'Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  'health.vaccinations.generalVaccinations': 'Almennar bólusetningar',
+  'health.vaccinations.otherVaccinations': 'Aðrar bólusetningar',
+  'health.vaccinations.number': 'Nr.',
+  'health.vaccinations.date': 'Dags.',
+  'health.vaccinations.age': 'Aldur',
+  'health.vaccinations.vaccine': 'Bóluefni',
+  'health.vaccinations.noVaccinations': 'Engar bólusetningar skráðar',
+  'health.vaccinations.noVaccinationsDescription':
+    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+  'health.vaccinations.directorateOfHealth': 'Embætti landlæknis',
+
+  // health - organ donation
+  'health.organDonation': 'Líffæragjöf',
+  'health.organDonation.change': 'Breyta afstöðu',
+  'health.organDonation.isDonor': 'Ég er líffæragjafi',
+  'health.organDonation.isDonorWithLimitations':
+    'Ég heimila líffæragjöf, með takmörkunum.',
+  'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
+  'health.organDonation.isDonorDescription':
+    'Öll líffærin mín má nota til ígræðslu.',
+  'health.organDonation.isNotDonorDescription':
+    'Engin líffæri má nota til ígræðslu.',
+  'health.organDonation.isDonorWithLimitationsDescription':
+    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 }

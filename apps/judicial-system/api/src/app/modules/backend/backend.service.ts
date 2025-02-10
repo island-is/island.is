@@ -32,10 +32,14 @@ import {
 } from '../file'
 import {
   CreateIndictmentCountInput,
+  CreateOffenseInput,
   DeleteIndictmentCountInput,
-  DeleteIndictmentCountResponse,
+  DeleteOffenseInput,
+  DeleteResponse,
   IndictmentCount,
+  Offense,
   UpdateIndictmentCountInput,
+  UpdateOffenseInput,
 } from '../indictment-count'
 import { Institution } from '../institution'
 import {
@@ -43,6 +47,7 @@ import {
   PoliceCaseInfo,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { Subpoena } from '../subpoena'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()
@@ -269,8 +274,35 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file`, createFile)
   }
 
-  getCaseFileSignedUrl(caseId: string, id: string): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/file/${id}/url`)
+  createDefendantCaseFile(
+    id: string,
+    createFile: unknown,
+    defendantId: string,
+  ): Promise<CaseFile> {
+    return this.post(`case/${id}/defendant/${defendantId}/file`, createFile)
+  }
+
+  createCivilClaimantCaseFile(
+    id: string,
+    createFile: unknown,
+    civilClaimantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/civilClaimant/${civilClaimantId}/file`,
+      createFile,
+    )
+  }
+
+  getCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+    mergedCaseId?: string,
+  ): Promise<SignedUrl> {
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
   }
 
   deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
@@ -327,11 +359,32 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  limitedAccessUpdateDefendant(
+    caseId: string,
+    defendantId: string,
+    updateDefendant: unknown,
+  ): Promise<Defendant> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}`,
+      updateDefendant,
+    )
+  }
+
   deleteDefendant(
     caseId: string,
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  getSubpoena(
+    caseId: string,
+    defendantId: string,
+    subpoenaId: string,
+  ): Promise<Subpoena> {
+    return this.get(
+      `case/${caseId}/defendant/${defendantId}/subpoena/${subpoenaId}`,
+    )
   }
 
   createCivilClaimant(
@@ -380,10 +433,36 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   deleteIndictmentCount(
     input: DeleteIndictmentCountInput,
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     const { caseId, indictmentCountId } = input
 
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
+  }
+
+  createOffense(input: CreateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, ...createOffense } = input
+
+    return this.post(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense`,
+      createOffense,
+    )
+  }
+
+  updateOffense(input: UpdateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, offenseId, ...updateOffense } = input
+
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+      updateOffense,
+    )
+  }
+
+  deleteOffense(input: DeleteOffenseInput): Promise<DeleteResponse> {
+    const { caseId, offenseId, indictmentCountId } = input
+
+    return this.delete(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+    )
   }
 
   limitedAccessGetCase(id: string): Promise<Case> {
@@ -423,11 +502,40 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/limitedAccess/file`, createFile)
   }
 
+  limitedAccessCreateDefendantCaseFile(
+    id: string,
+    createFile: unknown,
+    defendantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/limitedAccess$/defendant/${defendantId}/file`,
+      createFile,
+    )
+  }
+
+  limitedAccessCreateCivilClaimantCaseFile(
+    id: string,
+    createFile: unknown,
+    civilClaimantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${id}/limitedAccess$/civilClaimant/${civilClaimantId}/file`,
+      createFile,
+    )
+  }
+
   limitedAccessGetCaseFileSignedUrl(
     caseId: string,
     id: string,
+    mergedCaseId?: string,
   ): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(
+      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${id}/url`,
+    )
   }
 
   limitedAccessDeleteCaseFile(

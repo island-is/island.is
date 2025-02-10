@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { S3 } from 'aws-sdk'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -13,6 +12,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
 import { DataResponse } from '../financial-statements-inao/financial-statements-inao.service'
 import { getInput, getShouldGetFileName } from './mappers/helpers'
+import { S3Service } from '@island.is/nest/aws'
 
 export interface AttachmentData {
   key: string
@@ -31,13 +31,12 @@ export const getCurrentUserType = (answers: any, externalData: any) => {
 
 @Injectable()
 export class FinancialStatementIndividualElectionService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementIndividualClientService: FinancialStatementsInaoClientService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION)
-    this.s3 = new S3()
   }
 
   private async getAttachment(application: Application): Promise<string> {
@@ -57,17 +56,12 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
       return Promise.reject({})
     }
 
-    const { bucket, key } = AmazonS3Uri(fileName)
-
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: bucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent.toString('base64') || ''
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
+      return fileContent || ''
     } catch (error) {
       throw new Error('Villa kom upp við að senda umsókn')
     }

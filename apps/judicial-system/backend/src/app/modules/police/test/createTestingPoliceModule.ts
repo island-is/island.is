@@ -12,6 +12,7 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
 import { PoliceService } from '../police.service'
@@ -20,6 +21,7 @@ jest.mock('../../event/event.service')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../case/case.service.ts')
 jest.mock('../../case/internalCase.service.ts')
+jest.mock('../../subpoena/subpoena.service.ts')
 
 export const createTestingPoliceModule = async () => {
   const policeModule = await Test.createTestingModule({
@@ -36,6 +38,7 @@ export const createTestingPoliceModule = async () => {
       CaseService,
       InternalCaseService,
       PoliceService,
+      SubpoenaService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {

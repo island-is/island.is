@@ -21,6 +21,7 @@ import {
   Item,
   PageHeader,
   PageLayout,
+  PageTitle,
   ParentCaseFiles,
   ProsecutorCaseInfo,
   SectionHeading,
@@ -197,11 +198,7 @@ export const CaseFiles = () => {
     >
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
         <SectionHeading

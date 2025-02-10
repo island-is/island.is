@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { EnergyFundsSchema } from './dataSchema'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -29,6 +28,7 @@ import {
   CurrentVehiclesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -49,10 +49,10 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ENERGY_FUNDS,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [ApplicationConfigurations.EnergyFunds.translation],
   dataSchema: EnergyFundsSchema,
-  featureFlag: Features.energyFunds,
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,

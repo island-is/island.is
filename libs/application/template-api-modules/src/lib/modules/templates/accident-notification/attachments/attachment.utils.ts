@@ -1,7 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
+import {
+  AccidentNotificationAnswers,
   ReviewAddAttachmentData,
+  ReviewApprovalEnum,
   SubmittedApplicationData,
 } from '@island.is/application/templates/accident-notification'
 import { AccidentNotificationAttachmentStatus } from '../types/applicationStatus'
@@ -17,6 +22,9 @@ import {
   powerOfAttorneyRequest,
   additionalFilesFromReviewerRequest,
 } from '../config'
+import { AccidentNotificationAttachmentProvider } from './applicationAttachmentProvider'
+import { getApplicationDocumentId } from '../accident-notification.utils'
+import { utils } from '@island.is/application/templates/accident-notification'
 
 export const attachmentStatusToAttachmentRequests = (
   receivedAttachments?: AccidentNotificationAttachmentStatus,
@@ -91,8 +99,46 @@ export const getAddAttachmentSentDocumentHashList = (
 ): string[] => {
   const addAttachmentAppData = application.externalData
     .addAdditionalAttachment as ReviewAddAttachmentData
-  const addAttachmentSentDocuments =
-    addAttachmentAppData?.data?.sentDocuments ?? []
+  return addAttachmentAppData?.data?.sentDocuments ?? []
+}
 
-  return addAttachmentSentDocuments.map((x) => x)
+export const getReportId = (application: ApplicationWithAttachments) => {
+  const externalData = application.externalData
+  return getValueViaPath(
+    externalData,
+    'submitApplication.data.documentId',
+  ) as number
+}
+
+export const getNewAttachments = async (
+  application: ApplicationWithAttachments,
+  attachmentProvider: AccidentNotificationAttachmentProvider,
+) => {
+  const attachmentStatus = getApplicationAttachmentStatus(application)
+  const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
+  const attachments = await attachmentProvider.getFiles(requests, application)
+
+  const newAttachments = filterOutAlreadySentDocuments(attachments, application)
+
+  return newAttachments
+}
+
+export const getReviewApplicationData = (application: Application) => {
+  const documentId = getApplicationDocumentId(application)
+
+  const isRepresentativeOfCompanyOrInstitute =
+    utils.isRepresentativeOfCompanyOrInstitute(application.answers)
+  const reviewApproval = getValueViaPath(
+    application.answers,
+    'reviewApproval',
+  ) as ReviewApprovalEnum
+  const reviewComment =
+    (getValueViaPath(application.answers, 'reviewComment') as string) || ''
+
+  return {
+    documentId,
+    isRepresentativeOfCompanyOrInstitute,
+    reviewApproval,
+    reviewComment,
+  }
 }

@@ -1,5 +1,5 @@
 import { RenderedNotificationDto } from '@island.is/clients/user-notification'
-import { Notification } from '../lib/notifications.model'
+import { AdminNotification, Notification } from '../lib/notifications.model'
 
 const cleanString = (str?: string) => {
   if (!str) {
@@ -38,5 +38,15 @@ export const notificationMapper = (
     link: {
       url: notification.clickActionUrl,
     },
+  },
+})
+export const adminNotificationMapper = (
+  notification: RenderedNotificationDto,
+): AdminNotification => ({
+  id: notification.id,
+  notificationId: notification.messageId,
+  sent: notification.created,
+  sender: {
+    id: notification.senderId,
   },
 })

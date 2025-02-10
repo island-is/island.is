@@ -34,3 +34,9 @@ export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationCurrencies',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
+  action: 'getLatestIncomePlan',
+  externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',
+  namespace: 'SocialInsuranceAdministration',
+})

@@ -38,13 +38,15 @@ interface AvatarProps {
 
 export function Avatar({ name, isSmall }: AvatarProps) {
   function getFirstLetters(str: string) {
-    const firstLetters = str
-      .split(' ')
-      .slice(0, 2)
-      .map((word) => word[0])
-      .join('')
+    const names = str.split(' ')
 
-    return firstLetters
+    let initials = names[0].substring(0, 1).toUpperCase()
+
+    if (names.length > 1) {
+      initials += names[names.length - 1].substring(0, 1).toUpperCase()
+    }
+
+    return initials
   }
 
   return (

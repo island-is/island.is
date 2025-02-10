@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
   Delete,
+  Query,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -16,6 +17,7 @@ import {
   AdminCreateClientDto,
   AdminPatchClientDto,
   MeTenantGuard,
+  ClientType,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -74,7 +76,7 @@ export class MeClientsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
-    @Param('includeArchived') includeArchived?: boolean,
+    @Query('includeArchived') includeArchived?: boolean,
   ): Promise<AdminClientDto> {
     return this.clientsService.findByTenantIdAndClientId(
       tenantId,
@@ -98,6 +100,10 @@ export class MeClientsController {
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
     const client = await this.clientsService.create(input, user, tenantId)
+
+    if (client.clientType === ClientType.native) {
+      return client
+    }
 
     await this.clientsSecretsService.create(tenantId, client.clientId)
 

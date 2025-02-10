@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
-  Button,
   InputFileUpload,
   Text,
   UploadFile,
@@ -23,11 +22,12 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
+  RequestAppealRulingNotToBePublishedCheckbox,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
   CaseAppealDecision,
   CaseFileCategory,
@@ -83,12 +83,12 @@ const AppealFiles = () => {
   }/${id}`
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 
@@ -119,20 +119,9 @@ const AppealFiles = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
       <FormContentContainer>
-        <Box marginBottom={2}>
-          <Button
-            variant="text"
-            preTextIcon="arrowBack"
-            onClick={() => router.push(previousUrl)}
-          >
-            {formatMessage(core.back)}
-          </Button>
-        </Box>
-        <Box marginBottom={1}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.title)}
-          </Text>
-        </Box>
+        <PageTitle previousUrl={previousUrl}>
+          {formatMessage(strings.title)}
+        </PageTitle>
         <Box marginBottom={7}>
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />

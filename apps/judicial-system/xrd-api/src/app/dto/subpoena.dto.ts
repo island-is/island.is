@@ -18,7 +18,12 @@ export class UpdateSubpoenaDto {
   @IsOptional()
   @IsString()
   @ApiProperty({ type: String, required: false })
-  registeredBy?: string
+  servedBy?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, required: false })
+  servedAt?: string
 
   @IsOptional()
   @IsEnum(DefenderChoice)
@@ -29,4 +34,24 @@ export class UpdateSubpoenaDto {
   @IsString()
   @ApiProperty({ type: String, required: false })
   defenderNationalId?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  prosecutedConfirmedSubpoenaThroughIslandis?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  delivered?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  deliveredOnPaper?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean, required: false })
+  deliveredToLawyer?: boolean
 }

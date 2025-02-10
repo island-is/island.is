@@ -1,6 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { EndorsementListOpenTagsEnum } from '../enums/endorsementListOpenTagsEnum'
-import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class EndorsementListOpen {
@@ -13,7 +12,7 @@ export class EndorsementListOpen {
   @Field(() => String, { nullable: true })
   description!: string | null
 
-  @CacheField(() => [EndorsementListOpenTagsEnum], { nullable: true })
+  @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })
   tags?: EndorsementListOpenTagsEnum[]
 
   @Field(() => Date)

@@ -1,17 +1,17 @@
-import { FC } from 'react'
-import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { formatText, coreMessages } from '@island.is/application/core'
+import { coreMessages, formatText } from '@island.is/application/core'
 import {
   Application,
-  FormModes,
-  SubmitField,
   CallToAction,
+  FormModes,
   FormText,
+  SubmitField,
 } from '@island.is/application/types'
+import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { FC } from 'react'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
 import * as styles from './ScreenFooter.css'
-import { useAuth } from '@island.is/auth/react'
 
 interface FooterProps {
   application: Application
@@ -27,6 +27,7 @@ interface FooterProps {
   renderLastScreenBackButton?: boolean
   submitButtonDisabled?: boolean
   nextButtonText?: FormText
+  canGoBack: boolean
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -48,10 +49,20 @@ const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
     colorScheme: 'light',
     variant: 'ghost',
   },
+  signGhost: {
+    icon: 'pencil',
+    colorScheme: 'light',
+    variant: 'ghost',
+  },
   reject: {
     icon: 'close',
     colorScheme: 'destructive',
     variant: 'primary',
+  },
+  rejectGhost: {
+    icon: 'close',
+    colorScheme: 'destructive',
+    variant: 'ghost',
   },
 }
 
@@ -68,13 +79,13 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   renderLastScreenBackButton,
   submitButtonDisabled,
   nextButtonText,
+  canGoBack,
 }) => {
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
-  const showGoBack =
-    activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
+  const showGoBack = canGoBack && (!isLastScreen || renderLastScreenBackButton)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||

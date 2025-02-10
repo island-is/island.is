@@ -1,24 +1,25 @@
-import { Module } from '@nestjs/common'
 import { ApolloDriver } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
+import { AuthModule as AuthJwtModule } from '@island.is/auth-nest-tools'
+import { environment } from '../environments'
 import {
   AccessControlModule,
   AuthModule,
-  GdprModule,
-  VehicleModule,
-  RecyclingRequestModule,
-  RecyclingPartnerModule,
-  VehicleOwnerModule,
-  SamgongustofaModule,
   FjarsyslaModule,
+  GdprModule,
+  MunicipalityModule,
+  RecyclingPartnerModule,
+  RecyclingRequestModule,
+  SamgongustofaModule,
+  VehicleModule,
+  VehicleOwnerModule,
 } from './modules'
-import { AuthModule as AuthJwtModule } from '@island.is/auth-nest-tools'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { environment } from '../environments'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -51,6 +52,7 @@ const autoSchemaFile = environment.production
     RecyclingPartnerModule,
     VehicleModule,
     VehicleOwnerModule,
+    MunicipalityModule,
   ],
 })
 export class AppModule {}

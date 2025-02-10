@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'api'>
@@ -7,6 +12,7 @@ export const serviceSetup = (services: {
   consultationService
     .image('consultation-portal')
     .namespace('consultation-portal')
+    .codeOwner(CodeOwners.Advania)
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({
@@ -28,6 +34,7 @@ export const serviceSetup = (services: {
         prod: 'innskra.island.is',
       },
       NEXTAUTH_URL: {
+        local: 'http://localhost:4200/samradsgatt/api/auth',
         dev: 'https://beta.dev01.devland.is/samradsgatt/api/auth',
         staging: 'https://beta.staging01.devland.is/samradsgatt/api/auth',
         prod: 'https://island.is/samradsgatt/api/auth',
@@ -56,7 +63,6 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
           staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },

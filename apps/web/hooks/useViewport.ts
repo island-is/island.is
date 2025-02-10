@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 
 type Position = {
   x: number
@@ -28,33 +29,6 @@ export const useScrollPosition = (): Position => {
   return position
 }
 
-export const useWindowSize = (): Rect => {
-  const [size, setSize] = useState<Rect>({ width: 0, height: 0 })
-
-  const onResize = useCallback(() => {
-    setSize({
-      width:
-        window.innerWidth ||
-        document.documentElement.clientWidth ||
-        document.body.clientWidth,
-      height:
-        window.innerHeight ||
-        document.documentElement.clientHeight ||
-        document.body.clientHeight,
-    })
-  }, [])
-
-  useEffect(() => {
-    onResize()
-    window.addEventListener('resize', onResize, { passive: true })
-    return () => {
-      window.removeEventListener('resize', onResize)
-    }
-  }, [onResize])
-
-  return size
-}
-
 const useViewport = (): [Position, Rect] => {
   const position = useScrollPosition()
   const size = useWindowSize()
@@ -63,3 +37,5 @@ const useViewport = (): [Position, Rect] => {
 }
 
 export default useViewport
+
+export { useWindowSize }

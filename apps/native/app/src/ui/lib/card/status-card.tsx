@@ -99,6 +99,8 @@ export function StatusCard({
   const icon = getOrganizationLogoUrl(institution ?? '')
   const theme = useTheme()
 
+  const hideProgress = !progress && !progressTotalSteps
+
   return (
     <Host style={style}>
       <Row>
@@ -128,9 +130,9 @@ export function StatusCard({
           </Typography>
         </Title>
         {!!description && <Typography>{description}</Typography>}
-        {!!progress && (
+        {!hideProgress && (
           <ProgressMeter
-            finishedSteps={progress}
+            finishedSteps={progress ?? 0}
             totalSteps={progressTotalSteps ?? 0}
             progressMessage={progressMessage}
             containerWidth={progressContainerWidth}

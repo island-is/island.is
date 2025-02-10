@@ -1,36 +1,35 @@
-import React, { FC, useContext, useEffect, useRef } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FC, useContext, useEffect, useRef } from 'react'
 
 import {
   Box,
-  Stack,
-  Text,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
   GridColumn,
   LoadingDots,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 
-import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
 import {
-  Sidenav,
   NotFound,
   PartnerPageLayout,
+  Sidenav,
 } from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
 import {
-  RecyclingPartner,
-  RecyclingRequest,
-  Vehicle,
   Query,
   Role,
+  Vehicle,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { CarsTable } from './components/CarsTable'
+import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 
 export const SkilavottordRecyclingPartnerVehiclesQuery = gql`
   query skilavottordRecyclingPartnerVehiclesQuery($after: String!) {
@@ -169,10 +168,7 @@ const Overview: FC<React.PropsWithChildren<unknown>> = () => {
               </Link>
               <span>{t.title}</span>
             </Breadcrumbs>
-            <Stack space={2}>
-              <Text variant="h1">{t.title}</Text>
-              <Text variant="intro">{t.info}</Text>
-            </Stack>
+            <PageHeader title={t.title} info={t.info} />
             <Box marginTop={4}>
               <Button onClick={handleDeregister}>{t.buttons.deregister}</Button>
             </Box>

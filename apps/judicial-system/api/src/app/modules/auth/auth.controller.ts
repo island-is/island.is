@@ -256,16 +256,16 @@ export class AuthController {
             ? PRISON_CASES_ROUTE
             : CASES_ROUTE,
       }
-    } else {
-      const defender = await this.authService.findDefender(authUser.nationalId)
+    }
 
-      if (defender) {
-        return {
-          userId: defender.id,
-          userNationalId: defender.nationalId,
-          jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
-          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
-        }
+    const defender = await this.authService.findDefender(authUser.nationalId)
+
+    if (defender) {
+      return {
+        userId: defender.id,
+        userNationalId: defender.nationalId,
+        jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
+        redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
       }
     }
 

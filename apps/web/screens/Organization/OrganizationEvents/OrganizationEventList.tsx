@@ -1,5 +1,5 @@
-import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
+import { parseAsBoolean, useQueryState } from 'next-usequerystate'
 
 import {
   Box,
@@ -8,7 +8,9 @@ import {
   Pagination,
   Stack,
   Text,
+  ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 import {
   EventList,
   getThemeConfig,
@@ -32,14 +34,16 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_EVENTS_QUERY } from '../../queries/Events'
 
 const PAGE_SIZE = 10
+const INCLUDE_PAST_EVENTS_KEY = 'includePastEvents'
 
-interface OrganizationEventListProps {
+export interface OrganizationEventListProps {
   organizationPage: OrganizationPage
   eventList: EventListSchema
   namespace: Record<string, string>
@@ -83,6 +87,14 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
     organizationPage.slug,
   ]).href
 
+  const [includePastEvents, setIncludePastEvents] = useQueryState(
+    INCLUDE_PAST_EVENTS_KEY,
+    parseAsBoolean.withDefault(false).withOptions({
+      clearOnDefault: true,
+      shallow: false,
+    }),
+  )
+
   return (
     <OrganizationWrapper
       pageTitle={eventsHeading}
@@ -111,6 +123,17 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             readId={undefined}
             readClass="rs_read"
           />
+          {organizationPage.showPastEventsOption && (
+            <Box display="flex" justifyContent="flexEnd">
+              <ToggleSwitchCheckbox
+                label={
+                  activeLocale === 'is' ? 'Liðnir viðburðir' : 'Past events'
+                }
+                checked={includePastEvents}
+                onChange={setIncludePastEvents}
+              />
+            </Box>
+          )}
           <EventList
             namespace={namespace}
             eventList={eventList?.items}
@@ -127,7 +150,7 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
                 <LinkV2
                   href={{
                     pathname: eventOverviewHref,
-                    query: { page },
+                    query: { page, includePastEvents },
                   }}
                 >
                   <span className={className}>{children}</span>
@@ -153,12 +176,13 @@ const extractPageNumberQueryParameter = (query: ScreenContext['query']) => {
 }
 
 OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
+  const slug = (query.slugs as string[])[0]
   const [organizationPageResponse] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as Locale,
         },
       },
@@ -170,9 +194,15 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
   if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find organization page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${slug}`,
     )
   }
+
+  const includePastEvents =
+    parseAsBoolean
+      .withDefault(false)
+      .parseServerSide(query[INCLUDE_PAST_EVENTS_KEY]) &&
+    Boolean(organizationPage.showPastEventsOption)
 
   const selectedPage = extractPageNumberQueryParameter(query)
 
@@ -181,12 +211,12 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
       query: GET_EVENTS_QUERY,
       variables: {
         input: {
-          organization:
-            organizationPage?.organization?.slug ?? (query.slug as string),
+          organization: organizationPage?.organization?.slug ?? slug,
           lang: locale as Locale,
           page: selectedPage,
           size: PAGE_SIZE,
-          order: 'asc',
+          order: includePastEvents ? 'desc' : 'asc',
+          includePastEvents,
         },
       },
     }),
@@ -208,11 +238,16 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
       ),
   ])
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage,
     eventList: eventsResponse?.data?.getEvents,
     namespace,
     selectedPage,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }

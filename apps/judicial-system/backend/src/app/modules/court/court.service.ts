@@ -1,9 +1,9 @@
 import formatISO from 'date-fns/formatISO'
-import { Sequelize } from 'sequelize-typescript'
+import { Base64 } from 'js-base64'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -23,8 +23,6 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../factories'
-import { Defendant } from '../defendant'
 import { EventService } from '../event'
 import { RobotLog } from './models/robotLog.model'
 import { courtModuleConfig } from './court.config'
@@ -35,6 +33,7 @@ export enum CourtDocumentFolder {
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
+  SUBPOENA_DOCUMENTS = 'Boðanir',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -112,8 +111,8 @@ export const courtSubtypes: CourtSubtypes = {
   // 'Sektir málflytjenda',
   PHONE_TAPPING: 'Símhlerun',
   // 'Skýrslutaka brotaþola eldri en 18 ára',
-  // 'Skýrslutaka brotaþola yngri en 18 ára',
-  // 'Skýrslutaka fyrir dómi',
+  STATEMENT_FROM_MINOR: 'Skýrslutaka brotaþola yngri en 18 ára',
+  STATEMENT_IN_COURT: 'Skýrslutaka fyrir dómi',
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
@@ -141,7 +140,6 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(RobotLog) private readonly robotLogModel: typeof RobotLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
@@ -163,7 +161,9 @@ export class CourtService {
             },
           })
       } else {
-        logger.error('Missing required configuration for Microsoft Graph API')
+        this.logger.error(
+          'Missing required configuration for Microsoft Graph API',
+        )
       }
     }
   }
@@ -323,6 +323,7 @@ export class CourtService {
     caseId: string,
     courtId = '',
     type: CaseType,
+    receivalDate: Date,
     policeCaseNumbers: string[],
     isExtension: boolean,
     indictmentSubtypes?: IndictmentSubtypeMap,
@@ -336,15 +337,19 @@ export class CourtService {
       )
 
       const isIndictment = isIndictmentCase(type)
+      const policeCaseNumber = policeCaseNumbers[0]
+        ? policeCaseNumbers[0].replace(/-/g, '')
+        : ''
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        // TODO: send a list of subtypes when CourtService supports it
         subtype: courtSubtype as string,
         status: 'Skráð',
-        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
+        receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
-        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+        sourceNumber: policeCaseNumber,
       })
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
@@ -524,7 +529,6 @@ export class CourtService {
       const subject = `${courtName} - ${courtCaseNumber} - lyktir`
       const content = JSON.stringify({
         isCorrection,
-        courtName,
         courtCaseNumber,
         decision,
         rulingDate,
@@ -570,10 +574,13 @@ export class CourtService {
     policeCaseNumber?: string,
     subtypes?: string[],
     defendants?: { name?: string; nationalId?: string }[],
-    prosecutor?: { name?: string; nationalId?: string },
+    prosecutor?: { name?: string; nationalId?: string; email?: string },
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - upplýsingar`
+
+      policeCaseNumber = policeCaseNumber?.replace(/-/g, '')
+
       const content = JSON.stringify({
         receivedByCourtDate,
         indictmentDate,
@@ -613,17 +620,17 @@ export class CourtService {
     caseId: string,
     courtName?: string,
     courtCaseNumber?: string,
-    defendants?: Defendant[],
+    defendantNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
   ): Promise<unknown> {
     try {
-      const defendantInfo = defendants?.map((defendant) => ({
-        nationalId: defendant.nationalId,
-        defenderName: defendant.defenderName,
-        defenderEmail: defendant.defenderEmail,
-      }))
-
-      const subject = `${courtName} - ${courtCaseNumber} - verjanda upplýsingar`
-      const content = JSON.stringify(defendantInfo)
+      const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
+      const content = JSON.stringify({
+        nationalId: defendantNationalId,
+        defenderName,
+        defenderEmail,
+      })
 
       return this.sendToRobot(
         subject,
@@ -633,7 +640,7 @@ export class CourtService {
       )
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to update indictment with defender info',
+        'Failed to update indictment case with defender info',
         {
           caseId,
           actor: user.name,
@@ -688,7 +695,10 @@ export class CourtService {
     noticeText?: string,
   ): Promise<unknown> {
     const subject = `${courtName} - ${courtCaseNumber} - afturköllun`
-    const content = JSON.stringify({ subject: noticeSubject, text: noticeText })
+    const content = JSON.stringify({
+      subject: noticeSubject,
+      text: noticeText,
+    })
 
     return this.sendToRobot(
       subject,
@@ -840,7 +850,12 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ category, name, dateSent, url })
+      const content = JSON.stringify({
+        category,
+        name,
+        dateSent,
+        url: url && Base64.encode(url),
+      })
 
       return this.sendToRobot(
         subject,

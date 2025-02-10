@@ -113,16 +113,13 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,
-    formatMessage(
-      indictment.signature,
-      {
-        prosecutorsOfficeName:
-          lowercase(theCase.prosecutorsOffice?.name)
-            .replace('lögreglustjórinn', 'lögreglustjórans')
-            .replace('saksóknari', 'saksóknara') ?? '',
-        date: formatDate(nowFactory(), 'PPP'),
-      } ?? '',
-    ),
+    formatMessage(indictment.signature, {
+      prosecutorsOfficeName:
+        lowercase(theCase.prosecutorsOffice?.name)
+          .replace('lögreglustjórinn', 'lögreglustjórans')
+          .replace('saksóknari', 'saksóknara') ?? '',
+      date: formatDate(confirmation?.date || nowFactory(), 'PPP'),
+    }),
   )
 
   doc.end()

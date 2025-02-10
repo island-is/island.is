@@ -1,17 +1,17 @@
-import {
-  Typography,
-  Heading,
-  ChevronRight,
-  ListItemSkeleton,
-  EmptyCard,
-} from '@ui'
-
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { ApolloError } from '@apollo/client'
 
+import {
+  Typography,
+  Heading,
+  ChevronRight,
+  ListItemSkeleton,
+  EmptyCard,
+  InboxCard,
+} from '../../ui'
 import leCompanys3 from '../../assets/illustrations/le-company-s3.png'
 import { navigateTo } from '../../lib/deep-linking'
 import {
@@ -19,7 +19,6 @@ import {
   useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import { InboxCard } from '@ui/lib/card/inbox-card'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -124,14 +123,15 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               publicationDate={item.publicationDate}
               id={`${item.id}-${index}`}
               unread={!item.opened}
-              bookmarked={item.bookmarked}
               senderName={item.sender.name}
               icon={
                 item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)
               }
+              isUrgent={item.isUrgent}
               onPress={() =>
                 navigateTo(`/inbox/${item.id}`, {
                   title: item.sender.name,
+                  isUrgent: item.isUrgent,
                 })
               }
             />

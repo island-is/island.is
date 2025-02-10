@@ -27,6 +27,7 @@ import {
 import { z } from 'zod'
 import { signatureInstitutionSchema } from '../../lib/dataSchema'
 import { RemoveRegularSignature } from './RemoveRegularSignature'
+import { useFormContext } from 'react-hook-form'
 type Props = {
   applicationId: string
   type: SignatureType
@@ -48,6 +49,8 @@ export const InstitutionSignature = ({
   } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleInstitutionChange = (
     value: string,
@@ -88,6 +91,8 @@ export const InstitutionSignature = ({
         updatedRegularSignature,
       )
 
+      setValue(InputFields.signature[type], updatedRegularSignature)
+
       return updatedSignatures
     }
 
@@ -114,6 +119,8 @@ export const InstitutionSignature = ({
         },
       )
 
+      setValue(InputFields.signature[type], updatedCommitteeSignature)
+
       return updatedCommitteeSignature
     }
 
@@ -134,6 +141,7 @@ export const InstitutionSignature = ({
       <Box className={styles.institution}>
         <Box flexGrow={1}>
           <Input
+            maxLength={100}
             name={`signature.${type}.institution${
               signatureIndex ? `.${signatureIndex}` : ''
             }`}

@@ -14,6 +14,8 @@ definitions:
     #      - pattern: "main"
     #        include: true
     #        source: true
+  environment: &environment
+    node: 20.15.0
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
@@ -95,6 +97,13 @@ definitions:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
+    slack_errors: &slack_errors
+      slack:
+        channel: '#team-app-builds'
+        notify:
+          # don't want to spam slack with 4 successful builds. Overridden in dev-app-ios.
+          success: false
+          failure: true
 
 workflows:
   prod-app-ios:
@@ -109,6 +118,7 @@ workflows:
     integrations:
       app_store_connect: 'Island.is API Key'
     environment:
+      <<: *environment
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app
@@ -132,6 +142,7 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       <<: *ios_publishing
+      <<: *slack_errors
 
   dev-app-ios:
     <<: *base
@@ -141,6 +152,7 @@ workflows:
     integrations:
       app_store_connect: 'Island.is API Key'
     environment:
+      <<: *environment
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
@@ -161,10 +173,10 @@ workflows:
     publishing:
       <<: *ios_publishing
       slack:
-        channel: '#codemagic-test'
+        channel: '#team-app-builds'
         notify:
           success: true
-          failure: false
+          failure: true
 
   prod-app-android:
     <<: *base
@@ -178,6 +190,7 @@ workflows:
         - $CM_BUILD_DIR/.yarn/cache
         - $CM_BUILD_DIR/.cache/nx
     environment:
+      <<: *environment
       android_signing:
         - island-upload-keystore
       groups:
@@ -195,7 +208,9 @@ workflows:
       - *build_android
     artifacts: &android_artifacts
       - android/app/build/outputs/**/*.aab
-    publishing: *android_publishing
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors
 
   dev-app-android:
     <<: *base
@@ -205,11 +220,12 @@ workflows:
     # instance_type: linux_x2
     cache: *android_cache
     environment:
+      <<: *environment
       android_signing:
         - island-upload-keystore
       groups:
         - google_credentials
-        - firebase_credentials
+        - firebase_credentials_dev
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'
@@ -221,4 +237,6 @@ workflows:
       - *codegen
       - *build_android
     artifacts: *android_artifacts
-    publishing: *android_publishing
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors

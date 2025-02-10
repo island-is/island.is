@@ -1,16 +1,15 @@
-import React, { FC } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { m } from '../../forms/messages'
-import { MissingInfoType, ReviewFieldProps } from '../../types'
+import { m } from '../../lib/messages/messages'
+import { MissingInfoType, ReviewFieldProps } from '../../utils/types'
 
-const MissingInfoRemarks: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
+export const MissingInfoRemarks = ({
   application,
   isEditable = true,
   index = 0,
-}) => {
+}: ReviewFieldProps) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -40,5 +39,3 @@ const MissingInfoRemarks: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
     />
   )
 }
-
-export default MissingInfoRemarks

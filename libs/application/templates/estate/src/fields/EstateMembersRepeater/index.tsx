@@ -27,7 +27,10 @@ import {
   NO,
   YES,
   heirAgeValidation,
+  missingHeirUndividedEstateValidation,
+  missingSpouseUndividedEstateValidation,
   relationWithApplicant,
+  SPOUSE,
 } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils'
@@ -74,6 +77,18 @@ export const EstateMembersRepeater: FC<
     },
   )
 
+  const missingHeirsForUndividedEstate =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    !values.estate?.estateMembers?.some(
+      (member: EstateMember) => member.enabled,
+    )
+
+  const missingSpouseForUndividedEstate =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    !values.estate?.estateMembers?.some(
+      (member: EstateMember) => member.enabled && member.relation === SPOUSE,
+    )
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (
@@ -94,6 +109,20 @@ export const EstateMembersRepeater: FC<
           type: 'custom',
         })
         return [false, 'invalid member age']
+      }
+
+      if (missingHeirsForUndividedEstate) {
+        setError(missingHeirUndividedEstateValidation, {
+          type: 'custom',
+        })
+        return [false, 'missing heir for undivided estate']
+      }
+
+      if (missingSpouseForUndividedEstate) {
+        setError(missingSpouseUndividedEstateValidation, {
+          type: 'custom',
+        })
+        return [false, 'missing spouse for undivided estate']
       }
 
       return [true, null]
@@ -136,11 +165,15 @@ export const EstateMembersRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    if (!missingHeirsForUndividedEstate) {
+      clearErrors(missingHeirUndividedEstateValidation)
+    }
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
     clearErrors,
+    missingHeirsForUndividedEstate,
   ])
 
   useEffect(() => {
@@ -240,7 +273,7 @@ export const EstateMembersRepeater: FC<
               </GridColumn>
               {application.answers.selectedEstate ===
                 EstateTypes.permitForUndividedEstate &&
-                member.relation !== 'Maki' && (
+                member.relation !== SPOUSE && (
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <SelectController
                       id={`${id}[${index}].relationWithApplicant`}
@@ -248,9 +281,9 @@ export const EstateMembersRepeater: FC<
                       label={formatMessage(
                         m.inheritanceRelationWithApplicantLabel,
                       )}
-                      defaultValue={member.relationWithApplicant}
+                      defaultValue={member.relationWithApplicant || ''}
                       options={relationsWithApplicant}
-                      error={error?.relationWithApplicant}
+                      error={error && error[index]?.relationWithApplicant}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       required
@@ -418,7 +451,7 @@ export const EstateMembersRepeater: FC<
           {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
-      {errors && errors[heirAgeValidation] ? (
+      {!!errors?.[heirAgeValidation] && (
         <Box marginTop={4}>
           <InputError
             errorMessage={
@@ -428,7 +461,23 @@ export const EstateMembersRepeater: FC<
             }
           />
         </Box>
-      ) : null}
+      )}
+      {!!errors?.[missingHeirUndividedEstateValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.missingHeirUndividedEstateValidation)}
+          />
+        </Box>
+      )}
+      {!!errors?.[missingSpouseUndividedEstateValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(
+              m.missingSpouseUndividedEstateValidation,
+            )}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

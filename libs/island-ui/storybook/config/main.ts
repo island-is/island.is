@@ -75,7 +75,6 @@ const config: StorybookConfig = {
         '@island.is/application/ui-components': rootDir(
           '../../../application/ui-components/src',
         ),
-        '@island.is/auth/react': rootDir('../../../auth/react/src'),
         '@island.is/shared/constants': rootDir('../../../shared/constants/src'),
         '@island.is/shared/form-fields': rootDir(
           '../../../shared/form-fields/src',
@@ -96,6 +95,7 @@ const config: StorybookConfig = {
         ),
         '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
         '@island.is/react-spa/shared': rootDir('../../../react-spa/shared/src'),
+        '@island.is/react-spa/bff': rootDir('../../../react-spa/bff/src'),
       },
     }
     return config

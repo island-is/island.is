@@ -40,7 +40,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
 
   const breadcrumbItems = [
     {
-      title: 'Ísland.is',
+      title: formatMessage(m.breadcrumb.frontpage),
       href: linkResolver('homepage', [], locale).href,
     },
     {

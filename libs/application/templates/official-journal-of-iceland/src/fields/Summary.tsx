@@ -1,35 +1,36 @@
-import { useUserInfo } from '@island.is/auth/react'
 import {
   AlertMessage,
   Box,
   Bullet,
   BulletList,
+  Button,
+  Inline,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Property } from '../components/property/Property'
-import { advert, error, publishing, summary } from '../lib/messages'
-import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { MINIMUM_WEEKDAYS } from '../lib/constants'
-import { addWeekdays, parseZodIssue } from '../lib/utils'
-import { useCategories } from '../hooks/useCategories'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { useEffect } from 'react'
+import { ZodCustomIssue } from 'zod'
+import { Property } from '../components/property/Property'
+import { usePrice } from '../hooks/usePrice'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { Routes } from '../lib/constants'
 import {
   advertValidationSchema,
   publishingValidationSchema,
   signatureValidationSchema,
 } from '../lib/dataSchema'
-import { useApplication } from '../hooks/useUpdateApplication'
-import { ZodCustomIssue } from 'zod'
-import { useType } from '../hooks/useType'
-import { useDepartment } from '../hooks/useDepartment'
-import { usePrice } from '../hooks/usePrice'
-import { useEffect } from 'react'
+import { advert, error, publishing, summary } from '../lib/messages'
 import { signatures } from '../lib/messages/signatures'
+import { OJOIFieldBaseProps } from '../lib/types'
+import { getFastTrack, parseZodIssue } from '../lib/utils'
 
 export const Summary = ({
   application,
   setSubmitButtonDisabled,
+  goToScreen,
 }: OJOIFieldBaseProps) => {
   const { formatMessage: f, formatDate, formatNumber } = useLocale()
   const { application: currentApplication } = useApplication({
@@ -38,26 +39,11 @@ export const Summary = ({
 
   const user = useUserInfo()
 
-  const { type, loading: loadingType } = useType({
-    typeId: currentApplication.answers.advert?.typeId,
-  })
-
   const { price, loading: loadingPrice } = usePrice({
     applicationId: application.id,
   })
 
-  const { department, loading: loadingDepartment } = useDepartment({
-    departmentId: currentApplication.answers.advert?.departmentId,
-  })
-
-  const { categories, loading: loadingCategories } = useCategories()
-
-  const selectedCategories = categories?.filter((c) =>
-    currentApplication.answers?.advert?.categories?.includes(c.id),
-  )
-
-  const today = new Date()
-  const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
+  const selectedCategories = application.answers?.advert?.categories
 
   const advertValidationCheck = advertValidationSchema.safeParse(
     currentApplication.answers,
@@ -82,12 +68,21 @@ export const Summary = ({
     } else {
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     }
+
+    return () => {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+    }
   }, [
     advertValidationCheck,
     signatureValidationCheck,
     publishingCheck,
     setSubmitButtonDisabled,
   ])
+
+  const requestedDate = application.answers.advert?.requestedDate
+  const { fastTrack } = getFastTrack(
+    requestedDate ? new Date(requestedDate) : new Date(),
+  )
 
   return (
     <>
@@ -106,16 +101,29 @@ export const Summary = ({
                 x: f(advert.general.section),
               })}
               message={
-                <BulletList color="black">
-                  {advertValidationCheck.error.issues.map((issue) => {
-                    const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                    return (
-                      <Bullet key={issue.path.join('.')}>
-                        {f(parsedIssue.message)}
-                      </Bullet>
-                    )
-                  })}
-                </BulletList>
+                <Stack space={2}>
+                  <BulletList color="black">
+                    {advertValidationCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                  <Button
+                    onClick={() => {
+                      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+                      goToScreen && goToScreen(Routes.ADVERT)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(advert.general.section)}
+                  </Button>
+                </Stack>
               }
             />
           )}
@@ -128,10 +136,16 @@ export const Summary = ({
                 }),
               })}
               message={
-                <Stack space={1}>
+                <Stack space={2}>
                   <Text>
                     {f(error.missingSignatureFieldsMessage, {
-                      x: <strong>{f(advert.general.section)}</strong>,
+                      x: (
+                        <strong>
+                          {f(advert.general.sectionWithAbbreviation, {
+                            x: 'a',
+                          })}
+                        </strong>
+                      ),
                     })}
                   </Text>
                   <BulletList color="black">
@@ -144,6 +158,17 @@ export const Summary = ({
                       )
                     })}
                   </BulletList>
+                  <Button
+                    onClick={() => {
+                      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+                      goToScreen && goToScreen(Routes.ADVERT)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(advert.general.section)}
+                  </Button>
                 </Stack>
               }
             />
@@ -153,16 +178,29 @@ export const Summary = ({
               type="warning"
               title={f(error.missingFieldsTitle)}
               message={
-                <BulletList color="black">
-                  {publishingCheck.error.issues.map((issue) => {
-                    const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                    return (
-                      <Bullet key={issue.path.join('.')}>
-                        {f(parsedIssue.message)}
-                      </Bullet>
-                    )
-                  })}
-                </BulletList>
+                <Stack space={2}>
+                  <BulletList color="black">
+                    {publishingCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                  <Button
+                    onClick={() => {
+                      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+                      goToScreen && goToScreen(Routes.PUBLISHING)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(publishing.general.section)}
+                  </Button>
+                </Stack>
               }
             />
           )}
@@ -175,18 +213,16 @@ export const Summary = ({
           value={user.profile.name}
         />
         <Property
-          loading={loadingType}
           name={f(summary.properties.type)}
-          value={type?.title}
+          value={currentApplication.answers?.advert?.type?.title}
         />
         <Property
           name={f(summary.properties.title)}
           value={currentApplication.answers?.advert?.title}
         />
         <Property
-          loading={loadingDepartment}
           name={f(summary.properties.department)}
-          value={department?.title}
+          value={currentApplication.answers?.advert?.department?.title}
         />
         <Property
           name={f(summary.properties.submissionDate)}
@@ -194,7 +230,19 @@ export const Summary = ({
         />
         <Property
           name={f(summary.properties.estimatedDate)}
-          value={formatDate(estimatedDate)}
+          value={formatDate(currentApplication.answers.advert?.requestedDate)}
+        />
+        <Property
+          name={f(summary.properties.fastTrack)}
+          value={
+            <Tag disabled variant={fastTrack ? 'rose' : 'blue'}>
+              {f(
+                fastTrack
+                  ? summary.properties.fastTrackYes
+                  : summary.properties.fastTrackNo,
+              )}
+            </Tag>
+          }
         />
         <Property
           loading={loadingPrice}
@@ -202,9 +250,30 @@ export const Summary = ({
           value={`${formatNumber(price)}. kr`}
         />
         <Property
-          loading={loadingCategories}
           name={f(summary.properties.classification)}
           value={selectedCategories?.map((c) => c.title).join(', ')}
+        />
+        <Property
+          name={f(summary.properties.communicationChannels)}
+          value={
+            currentApplication.answers.advert?.channels?.length !== 0 && (
+              <Inline flexWrap="wrap" space={1}>
+                {currentApplication.answers.advert?.channels?.map(
+                  (channel, i) => {
+                    return (
+                      <Tag variant="blue" disabled key={i}>
+                        {channel.name}
+                      </Tag>
+                    )
+                  },
+                )}
+              </Inline>
+            )
+          }
+        />
+        <Property
+          name={f(summary.properties.message)}
+          value={currentApplication.answers?.advert?.message}
         />
       </Stack>
     </>

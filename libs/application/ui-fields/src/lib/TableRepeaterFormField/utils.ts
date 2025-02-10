@@ -1,8 +1,9 @@
-import { TableRepeaterItem } from '@island.is/application/types'
+import { RepeaterItem } from '@island.is/application/types'
+import { coreMessages } from '@island.is/application/core'
 
 type Item = {
   id: string
-} & TableRepeaterItem
+} & RepeaterItem
 
 export type Value<T> = { [key: string]: T }
 
@@ -31,7 +32,7 @@ const handleNationalIdWithNameItem = <T>(
   // with a nested object inside it. This function will extract the nested
   // object and merge it with the rest of the values.
   const newValues = values.map((value) => {
-    if (typeof value[item.id] === 'object' && value[item.id] !== null) {
+    if (!!value[item.id] && typeof value[item.id] === 'object') {
       const { [item.id]: nestedObject, ...rest } = value
       return { ...nestedObject, ...rest }
     }
@@ -40,3 +41,25 @@ const handleNationalIdWithNameItem = <T>(
 
   return newValues
 }
+
+export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
+  items
+    .map((item) =>
+      // nationalIdWithName is a special case where the value is an object of name and nationalId
+      item.component === 'nationalIdWithName'
+        ? [coreMessages.name, coreMessages.nationalId]
+        : item.label,
+    )
+    .flat(2)
+
+export const buildDefaultTableRows = (
+  items: Array<RepeaterItem & { id: string }>,
+) =>
+  items
+    .map((item) =>
+      // nationalIdWithName is a special case where the value is an object of name and nationalId
+      item.component === 'nationalIdWithName'
+        ? ['name', 'nationalId']
+        : item.id,
+    )
+    .flat(2)

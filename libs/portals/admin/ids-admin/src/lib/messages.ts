@@ -77,6 +77,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clients-description',
     defaultMessage: 'Here you can view and create applications.',
   },
+  needHelpTitle: {
+    id: 'ap.ids-admin:need-help-title',
+    defaultMessage: 'Do you need help?',
+  },
+  needHelpDescription: {
+    id: 'ap.ids-admin:need-help-description',
+    defaultMessage: 'Check out the documentation.',
+  },
   learnMore: {
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
@@ -532,6 +540,14 @@ export const m = defineMessages({
     defaultMessage:
       'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
   },
+  documentation: {
+    id: 'ap.ids-admin:documentation',
+    defaultMessage: 'Documentation',
+  },
+  documentationDescription: {
+    id: 'ap.ids-admin:documentation-description',
+    defaultMessage: 'Link to external documentation for IDS admin.',
+  },
   permissionsAdd: {
     id: 'ap.ids-admin:permissions-add',
     defaultMessage: 'Add permissions',
@@ -778,6 +794,15 @@ export const m = defineMessages({
     defaultMessage:
       'Should the authenticated individual get this scope (uncheck if only delegated users should be allowed).',
   },
+  automaticDelegationGrant: {
+    id: 'ap.ids-admin:automatic-delegation-grant',
+    defaultMessage: 'Automatic delegation grant',
+  },
+  automaticDelegationGrantDescription: {
+    id: 'ap.ids-admin:automatic-delegation-grant-description',
+    defaultMessage:
+      'Should users automatically get this permission when they authenticate with this application',
+  },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',
     defaultMessage: 'Companies',
@@ -820,11 +845,11 @@ export const m = defineMessages({
   },
   successDeletingClient: {
     id: 'ap.ids-admin:success-deleting-client',
-    defaultMessage: 'Successfully deleted application',
+    defaultMessage: 'Successfully archived application',
   },
   delete: {
     id: 'ap.ids-admin:delete',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Archive',
   },
   closeDeleteModal: {
     id: 'ap.ids-admin:close-delete-modal',
@@ -836,12 +861,12 @@ export const m = defineMessages({
   },
   deleteClient: {
     id: 'ap.ids-admin:delete-client-all-env',
-    defaultMessage: 'Delete application',
+    defaultMessage: 'Archive application',
   },
   deleteClientAlertMessage: {
     id: 'ap.ids-admin:delete-client-alert-message',
     defaultMessage:
-      'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
+      'The client ID will be archived from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
   },
   partiallyCreatedClient: {
     id: 'ap.ids-admin:partially-created-client',
@@ -898,6 +923,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:client-delegation-provider-tjodskra-description',
     defaultMessage:
       'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
+  },
+  clientDelegationTypeLegalGuardianMinorName: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-name',
+    defaultMessage: 'Legal guardian minor',
+  },
+  clientDelegationTypeLegalGuardianMinorDescription: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-description',
+    defaultMessage: 'Legal guardian of children 16 years and younger.',
   },
   clientDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:client-delegation-type-legal-guardian-name',
@@ -962,6 +995,15 @@ export const m = defineMessages({
   apiScopeDelegationProviderThjodskraName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-tjodskra-name',
     defaultMessage: 'National registry',
+  },
+  apiScopeDelegationTypeLegalGuardianMinorName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-name',
+    defaultMessage: 'Legal guardian minor',
+  },
+  apiScopeDelegationTypeLegalGuardianMinorDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards, 16 and younger.',
   },
   apiScopeDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-name',

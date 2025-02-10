@@ -1,6 +1,7 @@
 import {
   NO,
   YES,
+  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
@@ -11,6 +12,8 @@ import {
 import { information, machine } from '../../../lib/messages'
 import { NEW, USED } from '../../../shared/types'
 import { getAllCountryCodes } from '@island.is/shared/utils'
+import { isNotCEmarked } from '../../../utils'
+import { FormValue } from '@island.is/application/types'
 
 export const MachineBasicInformation = buildSubSection({
   id: 'machineBasicInformation',
@@ -119,17 +122,24 @@ export const MachineBasicInformation = buildSubSection({
           titleVariant: 'h5',
           marginTop: 3,
         }),
-        buildTextField({
+        buildCustomField({
           id: 'machine.basicInformation.location',
-          title: machine.labels.basicMachineInformation.location,
+          title: '',
           width: 'half',
-          maxLength: 255,
+          component: 'LocationInputField',
         }),
         buildTextField({
           id: 'machine.basicInformation.cargoFileNumber',
           title: machine.labels.basicMachineInformation.cargoFileNumber,
           width: 'half',
           maxLength: 50,
+        }),
+        buildAlertMessageField({
+          id: 'machine.basicInformation.alert',
+          title: machine.labels.basicMachineInformation.alertTitle,
+          message: machine.labels.basicMachineInformation.alertMessage,
+          alertType: 'warning',
+          condition: (answer: FormValue) => isNotCEmarked(answer),
         }),
       ],
     }),

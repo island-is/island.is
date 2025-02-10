@@ -1,14 +1,10 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { SyslumennService } from './syslumenn.service'
 
-export class SyslumennModule {
-  static register(): DynamicModule {
-    return {
-      module: SyslumennModule,
-      imports: [SyslumennClientModule],
-      providers: [SyslumennService],
-      exports: [SyslumennService],
-    }
-  }
-}
+@Module({
+  imports: [SyslumennClientModule],
+  providers: [SyslumennService],
+  exports: [SyslumennService],
+})
+export class SyslumennModule {}
