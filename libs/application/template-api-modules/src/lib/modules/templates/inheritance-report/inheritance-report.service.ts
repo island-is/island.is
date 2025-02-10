@@ -22,6 +22,7 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import { messages } from '@island.is/application/templates/inheritance-report'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -83,7 +84,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
         {
           title: coreErrorMessages.failedDataProviderSubmit,
           summary:
-            coreErrorMessages.errorDataProviderEstateValidationNothingFoundSummary,
+            messages.errorDataProviderEstateValidationNothingFoundSummary,
         },
         400,
       )
