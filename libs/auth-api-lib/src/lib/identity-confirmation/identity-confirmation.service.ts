@@ -130,10 +130,8 @@ export class IdentityConfirmationService {
   }
 
   async sendViaChat(id: string, link: string) {
-    await this.zendeskService.sendToLiveChat(
-      id,
-      `Vinsalmlegast opnaðu þetta: ${link}`,
-    )
+    // TODO: Implement this
+    console.log(`Sending chat message to chat: ${id} with link: ${link}`)
   }
 
   private generateLink = (id: string) => {

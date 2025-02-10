@@ -181,29 +181,4 @@ export class ZendeskService {
       throw new Error(`${errMsg}: ${description}`)
     }
   }
-
-  // WIP
-  async sendToLiveChat(chatId: string, message: string) {
-    const endpoint = `${this.api}/chat/chats/${chatId}`
-
-    try {
-      await axios.post(
-        endpoint,
-        {
-          type: 'text',
-          content: message,
-        },
-        this.params,
-      )
-    } catch (e) {
-      const errMsg = 'Failed to send message to live chat'
-      const description = e.response.data
-
-      this.logger.error(errMsg, {
-        message: description,
-      })
-
-      throw new Error(`${errMsg}: ${description}`)
-    }
-  }
 }
