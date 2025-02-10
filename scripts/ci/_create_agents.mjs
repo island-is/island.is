@@ -94,6 +94,9 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     setOutput('NX_ASSIGNMENT_RULES', assignmentRules)
     setOutput('NX_TARGETS', targets.join(','));
     setOutput('NX_RUN_ALL', getShowAllProjects() ? 'true' : 'false');
+    setOutput('NX_BASE', process.env.NX_BASE ?? 'main');
+    setOutput('NX_HEAD', process.env.NX_HEAD ?? 'HEAD');
+
   } else {
     setOutput('SHOULD_RUN_NX', 'false');
     setOutput('NX_RUNNERS', '[]');

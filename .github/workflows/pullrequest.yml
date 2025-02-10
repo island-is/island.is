@@ -54,8 +54,8 @@ jobs:
       NX_RUNNERS: ${{ steps.prepare-nx.outputs.NX_RUNNERS }}
       NX_ASSIGNMENT_RULES: ${{ steps.prepare-nx.outputs.NX_ASSIGNMENT_RULES }}
       NX_TARGETS: ${{ steps.prepare-nx.outputs.NX_TARGETS }}
-      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+      NX_BASE: ${{ steps.prepare-nx.outputs.NX_BASE }}
+      NX_HEAD: ${{ steps.prepare-nx.outputs.NX_HEAD }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
@@ -84,8 +84,8 @@ jobs:
         id: restore-cache
         with:
           path: |
-            '**/node_modules'
-            '.yarn/install-state.gz'
+            **/node_modules
+            .yarn/install-state.gz
           key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             cachetest-${{ runner.os }}-node_modules
@@ -99,8 +99,8 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            '**/node_modules'
-            '.yarn/install-state.gz'
+            **/node_modules
+            .yarn/install-state.gz
           key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           
       - name: Prepare generated files
@@ -232,8 +232,8 @@ jobs:
         id: restore-cache
         with:
           path: |
-            '**/node_modules'
-            '.yarn/install-state.gz'
+            **/node_modules
+            .yarn/install-state.gz
           key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
       - if: ${{ env.should-run == 'true' }}
         run: |
@@ -248,7 +248,7 @@ jobs:
       - name: Extract generated files
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
-      - name: Debug
+      - name: Start NX 
         if: ${{ env.should-run == 'true' }}
         run: |
             echo "Runners: $runners"
@@ -302,8 +302,8 @@ jobs:
         id: restore-cache
         with:
           path: |
-            '**/node_modules'
-            '.yarn/install-state.gz'
+            **/node_modules
+            .yarn/install-state.gz
           key: cachetest-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
       - if: ${{ env.should-run == 'true' }}
         run: |
@@ -324,7 +324,7 @@ jobs:
           echo "Running on agent ${{ matrix.agents }}"
           echo "Running on agent ${{ env.NX_AGENT_NAME }}"
           echo "Running on agent ${{ env.NX_AGENT_LAUNCH_TEMPLATE }}"
-          nx nx-cloud start-agent
+          yarn nx nx-cloud start-agent
           
   linting-workspace:
     needs:
