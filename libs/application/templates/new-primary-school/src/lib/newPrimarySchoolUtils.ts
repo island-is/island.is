@@ -401,23 +401,6 @@ export const getCurrentSchoolName = (application: Application) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getLanguageEnvironments = () => {
-  return [
-    {
-      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
-      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
-    },
-    {
-      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
-      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
-    },
-    {
-      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
-      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
-    },
-  ]
-}
-
 export const hasForeignLanguages = (answers: FormValue) => {
   const { languageEnvironment } = getApplicationAnswers(answers)
 
@@ -432,31 +415,27 @@ export const showChildLangagueFields = (answers: FormValue) => {
   const { languageEnvironment, selectedLanguages } =
     getApplicationAnswers(answers)
 
-  console.log('showChildLangagueFields', selectedLanguages)
-
   if (!selectedLanguages) {
     return false
   }
 
   if (
-    languageEnvironment === LanguageEnvironmentOptions.ONLY_FOREIGN &&
+    languageEnvironment ===
+      LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
     selectedLanguages.length >= 1 &&
     selectedLanguages.filter((language) => language.code).length >= 1
   ) {
-    console.log('ONLY_FOREIGN')
     return true
   }
 
   if (
-    languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN &&
+    languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
     selectedLanguages.length >= 2 &&
     selectedLanguages.filter((language) => language.code).length >= 2
   ) {
-    console.log('ICELANDIC_AND_FOREIGN')
     return true
   }
 
-  // Ef þetta er sett sem false að þá uppfærist ekki childlanguage þegar tungumál 1-4  er breytt
   return false
 }
 

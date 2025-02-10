@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
@@ -8,11 +9,10 @@ import {
 } from '@island.is/application/core'
 import { Application, NO, YES } from '@island.is/application/types'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { LanguageEnvironmentOptions } from '../../../lib/constants'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getLanguageEnvironments,
   hasForeignLanguages,
   showChildLangagueFields,
 } from '../../../lib/newPrimarySchoolUtils'
@@ -31,18 +31,21 @@ export const languageSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.languageSubTitle,
           titleVariant: 'h4',
         }),
-        buildSelectField({
-          id: 'languages.languageEnvironment',
-          dataTestId: 'languages-language-environment',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageEnvironmentPlaceholder,
-          options: () => {
-            return getLanguageEnvironments()
+        buildCustomField(
+          {
+            id: 'languages.languageEnvironment',
+            title:
+              newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
+            component: 'FriggOptionsAsyncSelectField',
+            dataTestId: 'languages-language-environment',
           },
-        }),
+          {
+            optionsType: OptionsType.LANGUAGE_ENVIRONMENT,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .languageEnvironmentPlaceholder,
+          },
+        ),
         buildDescriptionField({
           id: 'languages.languages.title',
           title:
@@ -88,7 +91,7 @@ export const languageSubSection = buildSubSection({
                     if (
                       language.code === 'is' &&
                       languageEnvironment ===
-                        LanguageEnvironmentOptions.ONLY_FOREIGN
+                        LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
                     ) {
                       return false
                     }

@@ -138,45 +138,24 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ languageEnvironment, selectedLanguages, childLanguage }) => {
-        console.log(' selectedLanguages', {
-          languageEnvironment,
-          selectedLanguages,
-          childLanguage,
-        })
-
-        const onlyfore =
-          languageEnvironment === LanguageEnvironmentOptions.ONLY_FOREIGN &&
-          !!selectedLanguages &&
-          selectedLanguages?.length > 1
-
-        const iceAndFor =
-          languageEnvironment ===
-            LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN &&
-          !!selectedLanguages &&
-          selectedLanguages?.length > 2
-
-        console.log('COMMon', { iceAndFor, onlyfore })
-
-        if (onlyfore || iceAndFor) {
-          console.log('INNNI')
+        if (
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 1) ||
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 2)
+        ) {
           return !!childLanguage
         }
 
-        return false
-        /*
-        return (languageEnvironment ===
-          LanguageEnvironmentOptions.ONLY_FOREIGN &&
-          !!selectedLanguages &&
-          selectedLanguages?.length > 1) ||
-          (languageEnvironment ===
-            LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN &&
-            !!selectedLanguages &&
-            selectedLanguages?.length > 2)
-          ? !!childLanguage
-          : true */
+        return true
       },
       {
         path: ['childLanguage'],
+        params: errorMessages.languageRequired,
       },
     )
     .refine(
