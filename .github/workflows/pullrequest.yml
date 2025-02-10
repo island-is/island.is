@@ -85,14 +85,15 @@ jobs:
         with:
           path: |
             node_modules
+            apps/native/app/node_modules
             .yarn/install-state.gz
-          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ss-${{ runner.os }}-node_modules
-            ss-${{ runner.os }}-
+            sx-${{ runner.os }}-node_modules
+            sx-${{ runner.os }}-
 
       - run: |
-          yarn install --immutable --verbose
+          yarn install --immutable
 
       - name: Cache Dependencies
         uses: runs-on/cache/save@v4
@@ -100,8 +101,9 @@ jobs:
         with:
           path: |
             node_modules
+            apps/native/app/node_modules
             .yarn/install-state.gz
-          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           
       - name: Prepare generated files
         run: |
@@ -233,11 +235,9 @@ jobs:
         with:
           path: |
             node_modules
+            apps/native/app/node_modules
             .yarn/install-state.gz
-          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ss-${{ runner.os }}-node_modules
-            ss-${{ runner.os }}-
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
       - if: ${{ env.should-run == 'true' }}
         run: |
           yarn install --immutable
@@ -306,11 +306,9 @@ jobs:
         with:
           path: |
             node_modules
+            apps/native/app/node_modules
             .yarn/install-state.gz
-          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ss-${{ runner.os }}-node_modules
-            ss-${{ runner.os }}-
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
       - if: ${{ env.should-run == 'true' }}
         run: |
           yarn install --immutable
