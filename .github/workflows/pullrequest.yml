@@ -1,10 +1,9 @@
 name: Monorepo pipeline - pull request
 
 on:
-  workflow_run:
-    workflows: ["Monorepo pipeline - build and deploy"]
-    types:
-      - completed
+  pull_request: {}
+  workflow_dispatch: {}
+
 defaults:
   run:
     shell: bash
