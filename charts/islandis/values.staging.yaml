@@ -325,7 +325,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://web-user-notification-test.user-notification-test.svc.cluster.local'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
@@ -627,7 +627,7 @@ application-system-api:
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://web-user-notification-test.user-notification-test.svc.cluster.local'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS-TEST/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/'
@@ -852,7 +852,7 @@ application-system-api-worker:
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://web-user-notification-test.user-notification-test.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -1547,7 +1547,7 @@ namespaces:
     - 'endorsement-system'
     - 'air-discount-scheme'
     - 'regulations-admin'
-    - 'user-notification'
+    - 'user-notification-test'
     - 'license-api'
     - 'services-sessions'
     - 'services-university-gateway'
@@ -2959,7 +2959,7 @@ unicorn-app:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/unicorn-app'
     create: true
     name: 'unicorn-app'
-user-notification:
+user-notification-test:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
@@ -2973,14 +2973,14 @@ user-notification:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification'
+    DB_NAME: 'user_notification_test'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'user_notification'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    DB_USER: 'user_notification_test'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-test-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    MAIN_QUEUE_NAME: 'user-notification'
+    MAIN_QUEUE_NAME: 'user-notification-test'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -3021,7 +3021,7 @@ user-notification:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification-test'
   ingress:
     primary-alb:
       annotations:
@@ -3030,10 +3030,10 @@ user-notification:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'user-notification-xrd.internal.staging01.devland.is'
+        - host: 'user-notification-test-xrd.internal.staging01.devland.is'
           paths:
             - '/'
-  namespace: 'user-notification'
+  namespace: 'user-notification-test'
   podDisruptionBudget:
     maxUnavailable: 1
   podSecurityContext:
@@ -3052,21 +3052,21 @@ user-notification:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
-    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
-    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification-test/CONTENTFUL_ACCESS_TOKEN'
+    DB_PASS: '/k8s/user-notification-test/DB_PASSWORD'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification-test/firestore-credentials'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification-test/USER_NOTIFICATION_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification-test/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-test'
     create: true
-    name: 'user-notification'
-user-notification-cleanup-worker:
+    name: 'user-notification-test'
+user-notification-test-cleanup-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
@@ -3107,7 +3107,7 @@ user-notification-cleanup-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification-test'
   initContainer:
     containers:
       - args:
@@ -3131,7 +3131,7 @@ user-notification-cleanup-worker:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
-  namespace: 'user-notification'
+  namespace: 'user-notification-test'
   podDisruptionBudget:
     maxUnavailable: 1
   podSecurityContext:
@@ -3157,10 +3157,10 @@ user-notification-cleanup-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-cleanup-worker'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-test-cleanup-worker'
     create: true
-    name: 'user-notification-cleanup-worker'
-user-notification-worker:
+    name: 'user-notification-test-cleanup-worker'
+user-notification-test-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
@@ -3176,15 +3176,15 @@ user-notification-worker:
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'user_notification'
+    DB_NAME: 'user_notification_test'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'user_notification'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    DB_USER: 'user_notification_test'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-test-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
-    MAIN_QUEUE_NAME: 'user-notification'
+    MAIN_QUEUE_NAME: 'user-notification-test'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -3225,7 +3225,7 @@ user-notification-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification-test'
   initContainer:
     containers:
       - args:
@@ -3243,13 +3243,13 @@ user-notification-worker:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'user_notification'
+      DB_NAME: 'user_notification_test'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'user_notification'
+      DB_USER: 'user_notification_test'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
-  namespace: 'user-notification'
+      DB_PASS: '/k8s/user-notification-test/DB_PASSWORD'
+  namespace: 'user-notification-test'
   podDisruptionBudget:
     maxUnavailable: 1
   podSecurityContext:
@@ -3268,20 +3268,20 @@ user-notification-worker:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
-    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
-    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification-test/CONTENTFUL_ACCESS_TOKEN'
+    DB_PASS: '/k8s/user-notification-test/DB_PASSWORD'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification-test/firestore-credentials'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification-test/USER_NOTIFICATION_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification-test/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-test-worker'
     create: true
-    name: 'user-notification-worker'
+    name: 'user-notification-test-worker'
 web:
   basicAuth: '/k8s/web/basic_auth'
   enabled: true
