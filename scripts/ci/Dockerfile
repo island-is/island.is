@@ -39,12 +39,6 @@ FROM deps AS src
 
 COPY . .
 
-ARG NX_TASKS_RUNNER=ci
-RUN --mount=type=secret,id=nx_cloud_access_token \
-  NX_TASKS_RUNNER="${NX_TASKS_RUNNER}" NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" \
-  yarn codegen
-
-
 # ------------------------------------------------
 # Build stage (app-specific args start here)
 # ------------------------------------------------
