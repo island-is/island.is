@@ -29,7 +29,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       IDENTITY_SERVER_ISSUER_DOMAIN: {
-        dev: 'identity-server.dev01.devland.is',
+        dev: 'innskra.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',
         prod: 'innskra.island.is',
       },

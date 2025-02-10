@@ -1,7 +1,7 @@
 const devConfig = {
   production: false,
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
     audience: '',
   },
   audit: {

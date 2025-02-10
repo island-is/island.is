@@ -19,7 +19,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -83,7 +83,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },

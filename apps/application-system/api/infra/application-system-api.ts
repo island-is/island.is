@@ -74,7 +74,7 @@ export const workerSetup = (services: {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -158,7 +158,7 @@ export const serviceSetup = (services: {
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -263,7 +263,7 @@ export const serviceSetup = (services: {
         prod: 'false',
       },
       AUTH_PUBLIC_API_URL: {
-        dev: 'https://identity-server.dev01.devland.is/api',
+        dev: 'https://innskra.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
