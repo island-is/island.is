@@ -31,6 +31,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   prepare:
@@ -84,8 +85,11 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
@@ -96,7 +100,8 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
 
       - name: Prepare generated files
         run: |
@@ -225,7 +230,6 @@ jobs:
         if: ${{ env.should-run == 'true' }}
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         if: ${{ env.should-run == 'true' }}
         uses: runs-on/cache/restore@v4
@@ -323,6 +327,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+
       - run: |
           corepack enable
 
@@ -341,19 +346,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -383,7 +383,6 @@ jobs:
           reporter: github-pr-review
           fail-level: info
           exclude: >-
-            */node_modules/*  
   success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
