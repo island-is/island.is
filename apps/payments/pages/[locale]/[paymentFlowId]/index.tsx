@@ -349,6 +349,8 @@ export default function PaymentPage({
 
     const isCardVerified = await waitForCardVerification()
 
+    popup.close()
+
     if (!isCardVerified) {
       throw new Error(CardErrorCode.VerificationDeadlineExceeded)
     }
