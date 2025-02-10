@@ -177,6 +177,7 @@ export interface UpdateCase
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
+    | 'isCompletedWithoutRuling'
   > {
   type?: CaseType
   state?: CaseState
@@ -997,7 +998,7 @@ export class CaseService {
     }
 
     // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
-    if (theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING) {
+    if (theCase.isCompletedWithoutRuling) {
       messages.push({
         type: MessageType.NOTIFICATION,
         user,

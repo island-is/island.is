@@ -395,5 +395,6 @@ query Case($input: CaseQueryInput!) {
     mergeCaseNumber
     civilDemands
     hasCivilClaims
+    isCompletedWithoutRuling
   }
 }
