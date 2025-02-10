@@ -257,7 +257,7 @@ jobs:
             echo "Runners: $runners"
             echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment-rules.yml
             cat .github/assignment-rules.yml
-            yarn nx-cloud start-ci-run --distribute-on=".github/assignment-rules.yml" --stop-agents-on-failure=true
+            npx nx-cloud@next start-ci-run --distribute-on=".github/assignment-rules.yml" --stop-agents-on-failure=true
             # Run NX
             if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
               yarn nx run-many --target=${{ env.NX_TARGETS }} --all
@@ -282,8 +282,8 @@ jobs:
         run: |
           NX_AGENT_LAUNCH_TEMPLATE="${NX_AGENT_FULL_NAME%-*}"
           NX_AGENT_NAME="${NX_AGENT_FULL_NAME##*-}"
-          echo "NX_AGENT_LAUNCH_TEMPLATE="$NX_AGENT_LAUNCH_TEMPLATE" >> $GITHUB_ENV
-          echo "NX_AGENT_NAME="$NX_AGENT_NAME" >> $GITHUB_ENV
+          echo "NX_AGENT_LAUNCH_TEMPLATE=\"$NX_AGENT_LAUNCH_TEMPLATE\"" >> $GITHUB_ENV
+          echo "NX_AGENT_NAME=\"$NX_AGENT_NAME\"" >> $GITHUB_ENV
           echo "Running ${NX_AGENT_NAME} on ${NX_AGENT_LAUNCH_TEMPLATE}"
       - uses: actions/checkout@v4
         if: ${{ env.should-run == 'true' }}
@@ -328,7 +328,7 @@ jobs:
           echo "Running on agent ${{ matrix.agents }}"
           echo "Running on agent ${{ env.NX_AGENT_NAME }}"
           echo "Running on agent ${{ env.NX_AGENT_LAUNCH_TEMPLATE }}"
-          # yarn nx-cloud start-agent
+          npx nx-cloud@next start-agent
           
   linting-workspace:
     needs:
