@@ -49,6 +49,7 @@ jobs:
       NX_ASSIGNMENT_RULES: ${{ steps.prepare-nx.outputs.NX_ASSIGNMENT_RULES }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
@@ -139,6 +140,7 @@ jobs:
           HEAD_SHA=${{ env.NX_HEAD }}
           echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
           echo "NX_BASE=$BASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -201,6 +203,8 @@ jobs:
       should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       runners: ${{ needs.prepare.outputs.NX_RUNNERS }}
       assignmentrules: ${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     steps:
       - name: Nothing to do?
         if: ${{ env.should-run == 'false' }}
@@ -211,7 +215,24 @@ jobs:
         if: ${{ env.should-run == 'true' }}
         run: |
             echo "Runners: $runners"
-            echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment.yml
+            echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment-rules.yml
+            cat .github/assignment-rules.yml
+  nx-runners:
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    runs-on: arc-runners
+    env:
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    strategy:
+      matrix:
+        agents: ${{ fromJson(needs.prepare.outputs.NX_RUNNERS) }}
+    steps:
+      - name: "Run on agent ${{ matrix.agents }}"
+        run: |
+          echo "Running on agent ${{ matrix.agents }}"
+          
   linting-workspace:
     needs:
       - prepare
@@ -293,10 +314,13 @@ jobs:
       - name: Check linting-workspace success
         run: '[[ ${{ needs.linting-workspace.result }} != "failure" ]] || exit 1'
       - name: Check if deploy-feature is enabled
-        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
-          exit 1
+          if [ "$DEPLOY_FEATURE" == "true" ]; then
+            echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+            exit 1
+          else
+            echo "::notice::Deploy-feature flag is not enabled. Proceeding with the workflow."
+          fi
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success

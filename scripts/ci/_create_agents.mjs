@@ -68,10 +68,11 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
   })
   if (shouldRun) {
     setOutput('SHOULD_RUN_NX', 'true')
-    setOutput('NX_RUNNERS', runners.join(','))
+    setOutput('NX_RUNNERS', JSON.stringify(runners))
     setOutput('NX_ASSIGNMENT_RULES', assignmentRules)
   } else {
     setOutput('SHOULD_RUN_NX', 'false')
+    setOutput('NX_RUNNERS', '[]')
   }
 }
 
