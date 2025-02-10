@@ -2,9 +2,9 @@ import {
   buildSection,
   buildMultiField,
   buildDescriptionField,
-  buildCustomField,
   buildSubmitField,
   buildOverviewField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -20,78 +20,142 @@ export const overviewSection = buildSection({
         buildDescriptionField({
           id: 'overview',
           title: 'Overview',
-          description: m.overviewDescription,
+          description: m.overviewDescriptionText,
         }),
         buildOverviewField({
           id: 'overviewX',
-          title: 'asdf',
-          description: m.overviewDescription,
-          sections: (_answers, _externalData) => {
+          title: 'Upplýsingar um þig',
+          description: m.overviewInfoDescripton,
+          fieldType: 'keyValue',
+          backId: 'testBack.id',
+          bottomLine: false,
+          items: (answers, _externalData) => {
             return [
               {
-                type: 'keyValue',
-                title: 'asdf',
-                backId: 'clearOnChangeMultiField',
-                items: [
-                  {
-                    width: 'full',
-                    keyValue: [
-                      {
-                        keyText: 'asdf',
-                        valueText: 'asdf',
-                      },
-                      {
-                        keyText: 'asdf',
-                        valueText: 'asdf',
-                      },
-                    ],
-                  },
-                  {
-                    width: 'half',
-                    keyValue: [
-                      {
-                        keyText: 'asdf',
-                        valueText: 'asdf',
-                      },
-                    ],
-                    sum: {
-                      keyText: 'asdf',
-                      valueText: 'asdf',
-                    },
-                  },
-                  {
-                    width: 'half',
-                    keyValue: [
-                      {
-                        keyText: 'asdf',
-                        valueText: 'asdf',
-                      },
-                    ],
-                    sum: {
-                      keyText: 'asdf',
-                      valueText: 'asdf',
-                    },
-                  },
-                ],
+                width: 'full',
+                keyText: 'Full width',
+                valueText:
+                  getValueViaPath<string>(answers, 'applicant.name') ?? '',
               },
               {
-                type: 'attachments',
-                title: 'asdf',
-                backId: 'conditionsCheckbox',
-                attachmentItems: [
-                  {
-                    keyText: 'asdf',
-                    valueText: 'asdf',
-                  },
-                ],
+                width: 'half',
+                keyText: 'Half width',
+                valueText:
+                  getValueViaPath<string>(answers, 'applicant.phoneNumber') ??
+                  '',
+              },
+              {
+                width: 'half',
+                keyText: 'Half width',
+                valueText: 'Hvassaleiti 5',
+              },
+              {
+                width: 'full',
+                // empty item to end line
+              },
+              {
+                width: 'snug',
+                keyText: 'Snug width',
+                valueText: 'test@test.is',
+              },
+              {
+                width: 'snug',
+                keyText: 'Snug width',
+                valueText: '+354 123 4567',
+              },
+              {
+                width: 'snug',
+                keyText: 'Snug width',
+                valueText: '+354 123 4567',
+              },
+              {
+                width: 'snug',
+                keyText: 'Snug width',
+                valueText: '+354 123 4567',
+              },
+              {
+                width: 'full',
+                // empty item to end line
+              },
+              {
+                width: 'snug',
+                keyText: 'Snug width',
+                valueText: 'Reykjavík',
+              },
+              {
+                width: 'half',
+                keyText: 'Half width',
+                valueText: 'test@test.is',
+              },
+              {
+                width: 'snug',
+                keyText: 'Snug width',
+                valueText: 'test@test.is',
               },
             ]
           },
         }),
-        buildCustomField({
-          id: 'customComponent',
-          title: '',
-          component: 'Overview',
+        buildOverviewField({
+          id: 'overviewY',
+          title: 'Summing up numbers',
+          fieldType: 'keyValue',
+          backId: 'testBack.id',
+          bottomLine: false,
+          items: (answers, externalData) => {
+            return [
+              {
+                width: 'full',
+                keyText: m.number1,
+                valueText: '1.000 kr.',
+              },
+              {
+                width: 'full',
+                keyText: 'Number 2',
+                valueText: '2.000 kr.',
+              },
+              {
+                width: 'full',
+                keyText: 'Number 3',
+                valueText: '3.000 kr.',
+              },
+              {
+                width: 'half',
+                lineAboveKeyText: true,
+                keyText: 'The sum',
+                valueText: '6.000 kr.',
+                boldValueText: true,
+              },
+            ]
+          },
+        }),
+        buildOverviewField({
+          id: 'overviewZ',
+          title: 'File overview',
+          description: m.overviewFileDescription,
+          fieldType: 'attachments',
+          backId: 'testBack.id',
+          bottomLine: true,
+          attachments: (answers, externalData) => {
+            return [
+              {
+                width: 'full',
+                fileName: 'full-width-file.pdf',
+                fileType: 'pdf',
+              },
+              {
+                width: 'half',
+                fileName: 'half-width-file.pdf',
+                fileSize: '1.000 kb',
+                fileType: 'pdf',
+              },
+              {
+                width: 'half',
+                fileName: 'half-width-file.pdf',
+                fileSize: '1.000 kb',
+                fileType: 'pdf',
+              },
+            ]
+          },
         }),
         buildSubmitField({
           id: 'submitApplication',

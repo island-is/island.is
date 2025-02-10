@@ -189,11 +189,23 @@ export const m = defineMessages({
     defaultMessage: 'Overview',
     description: 'Overview title',
   },
-  overviewDescription: {
-    id: 'example.application:overviewTitle',
+  overviewDescriptionText: {
+    id: 'example.application:overviewDescriptionText',
     defaultMessage:
-      'At the moment the form overview is a custom component. The plan is to make this a shared component in the near future.',
-    description: 'Overview title',
+      'The overview section is made up of buildOverviewFields, each one is a block with an edit button. The best organization for this screen is that each buildOverviewField has values corresponding to one screen.',
+    description: 'Overview description',
+  },
+  overviewInfoDescripton: {
+    id: 'example.application:overviewInfoDescripton',
+    defaultMessage:
+      'Everything is built around key-value pairs. The Key is bold by default and the value is regular. The key can be made bold by setting the boldValueText property to true. Width can be controled for each key-value pair and can be set to "full", "half" or "snug". Note that the "snug" width can sneak up to the previous line, but that can be mitigated with an empty key-value pair, with width:"full".',
+    description: 'Overview description for the info section',
+  },
+  overviewFileDescription: {
+    id: 'example.application:overviewFileDescription',
+    defaultMessage:
+      'The file overview can have width "full" or "half". The file name is the only required property.',
+    description: 'Overview description for the file section',
   },
   overviewSubmit: {
     id: 'example.application:overviewSubmit',
@@ -229,5 +241,10 @@ export const m = defineMessages({
     defaultMessage:
       'Here is a list of all the options for text from buildDescriptionField. Most of them are related to adding `#markdown` to the id to be able to use markdown in the text. It is also possible to put variables into the text and control title font sizes.',
     description: 'Description field description',
+  },
+  number1: {
+    id: 'example.application:number1',
+    defaultMessage: 'Number 1',
+    description: 'key for number 1',
   },
 })

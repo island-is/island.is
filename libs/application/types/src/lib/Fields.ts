@@ -819,22 +819,18 @@ export interface DisplayField extends BaseField {
 }
 
 type KeyValueItem = {
-  keyText: FormText
-  valueText: FormText
+  width?: 'full' | 'half' | 'snug'
+  keyText?: FormText
+  valueText?: FormText
+  boldValueText?: boolean
+  lineAboveKeyText?: boolean
 }
 
-export type OverviewItem = {
-  width: 'full' | 'half'
-  keyValue: Array<KeyValueItem>
-  sum?: KeyValueItem
-}
-
-export type OverviewSection = {
-  type: 'keyValue' | 'attachments'
-  title?: FormText
-  items?: Array<OverviewItem>
-  attachmentItems?: Array<KeyValueItem>
-  backId?: string
+type AttachmentItem = {
+  width?: 'full' | 'half'
+  fileName: FormText
+  fileSize?: FormText
+  fileType?: FormText
 }
 
 export interface OverviewField extends BaseField {
@@ -842,10 +838,17 @@ export interface OverviewField extends BaseField {
   component: FieldComponents.OVERVIEW
   title: FormText
   description?: FormText
-  sections: (
+  backId?: string
+  fieldType: 'keyValue' | 'attachments'
+  bottomLine?: boolean
+  items?: (
     answers: FormValue,
     externalData: ExternalData,
-  ) => Array<OverviewSection>
+  ) => Array<KeyValueItem>
+  attachments?: (
+    answers: FormValue,
+    externalData: ExternalData,
+  ) => Array<AttachmentItem>
 }
 
 export type Field =

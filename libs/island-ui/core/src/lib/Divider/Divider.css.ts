@@ -15,4 +15,5 @@ export const weight = styleVariants({
   blue300: { background: theme.color.blue300 },
   blueberry200: { background: theme.color.blueberry200 },
   red200: { background: theme.color.red200 },
+  thick: { background: theme.border.color.black, height: '2px' },
 })
