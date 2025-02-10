@@ -63,18 +63,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.languageEnvironment',
   ) as string
 
+  const selectedLanguages = getValueViaPath(
+    answers,
+    'languages.selectedLanguages',
+  ) as Array<{
+    code: string
+  }>
+
+  let language1 = ''
+  let language2 = ''
+  let language3 = ''
+  let language4 = ''
+
+  if (selectedLanguages) {
+    language1 = selectedLanguages[0]?.code
+    language2 = selectedLanguages[1]?.code
+    language3 = selectedLanguages[2]?.code
+    language4 = selectedLanguages[3]?.code
+  }
+
   const signLanguage = getValueViaPath(
     answers,
     'languages.signLanguage',
   ) as YesOrNo
-
-  const language1 = getValueViaPath(answers, 'languages.language1') as string
-
-  const language2 = getValueViaPath(answers, 'languages.language2') as string
-
-  const language3 = getValueViaPath(answers, 'languages.language3') as string
-
-  const language4 = getValueViaPath(answers, 'languages.language4') as string
 
   const childLanguage = getValueViaPath(
     answers,
@@ -207,6 +218,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationPostalCode,
     siblings,
     languageEnvironment,
+    selectedLanguages,
     language1,
     language2,
     language3,
@@ -389,23 +401,6 @@ export const getCurrentSchoolName = (application: Application) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getLanguageEnvironments = () => {
-  return [
-    {
-      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
-      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
-    },
-    {
-      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
-      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
-    },
-    {
-      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
-      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
-    },
-  ]
-}
-
 export const hasForeignLanguages = (answers: FormValue) => {
   const { languageEnvironment } = getApplicationAnswers(answers)
 
@@ -414,6 +409,34 @@ export const hasForeignLanguages = (answers: FormValue) => {
   }
 
   return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const showChildLangagueFields = (answers: FormValue) => {
+  const { languageEnvironment, selectedLanguages } =
+    getApplicationAnswers(answers)
+
+  if (!selectedLanguages) {
+    return false
+  }
+
+  if (
+    languageEnvironment ===
+      LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
+    selectedLanguages.length >= 1 &&
+    selectedLanguages.filter((language) => language.code).length >= 1
+  ) {
+    return true
+  }
+
+  if (
+    languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
+    selectedLanguages.length >= 2 &&
+    selectedLanguages.filter((language) => language.code).length >= 2
+  ) {
+    return true
+  }
+
+  return false
 }
 
 export const getNeighbourhoodSchoolName = (application: Application) => {

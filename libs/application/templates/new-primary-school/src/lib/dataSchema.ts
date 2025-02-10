@@ -133,29 +133,25 @@ export const dataSchema = z.object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
       interpreter: z.string().optional(),
-      language1: z.string().optional().nullable(),
-      language2: z.string().optional().nullable(),
+      selectedLanguages: z.array(z.object({ code: z.string() })).optional(),
       childLanguage: z.string().optional().nullable(),
     })
     .refine(
-      ({ languageEnvironment, language1 }) => {
-        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-          ? !!language1
-          : true
-      },
-      {
-        path: ['language1'],
-        params: errorMessages.languagesRequired,
-      },
-    )
-    .refine(
-      ({ languageEnvironment, language1, language2, childLanguage }) => {
-        return languageEnvironment !==
-          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
-          !!language1 &&
-          !!language2
-          ? !!childLanguage
-          : true
+      ({ languageEnvironment, selectedLanguages, childLanguage }) => {
+        if (
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 1) ||
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 2)
+        ) {
+          return !!childLanguage
+        }
+
+        return true
       },
       {
         path: ['childLanguage'],

@@ -562,7 +562,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Tungumálaumhverfi',
       description: 'Language environment',
     },
-    languageEnvironmentPlaceeholder: {
+    languageEnvironmentPlaceholder: {
       id: 'nps.application:different.needs.language.environment.placeholder',
       defaultMessage: 'Veldu það sem best á við',
       description: 'Choose the most appropriate',
@@ -591,13 +591,18 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     languageSelectionTitle: {
       id: 'nps.application:different.needs.language.selection.title',
-      defaultMessage: 'Tungumál {no}',
-      description: 'Language {no}',
+      defaultMessage: 'Tungumál {index}',
+      description: 'Language {index}',
     },
     addLanguageButton: {
       id: 'nps.application:different.needs.language.add.button',
       defaultMessage: 'Bæta við tungumáli',
       description: 'Add language',
+    },
+    removeLanguageButton: {
+      id: 'nps.application:different.needs.language.remove.button',
+      defaultMessage: 'Fjarlægja tungumál',
+      description: 'Remove language',
     },
     languageSelectionPlaceholder: {
       id: 'nps.application:different.needs.language.selection.placeholder',

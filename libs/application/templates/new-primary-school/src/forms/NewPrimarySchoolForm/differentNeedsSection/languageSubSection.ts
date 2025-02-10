@@ -1,19 +1,21 @@
 import {
   buildCustomField,
   buildDescriptionField,
+  buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
+import { Application, NO, YES } from '@island.is/application/types'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getLanguageEnvironments,
   hasForeignLanguages,
+  showChildLangagueFields,
 } from '../../../lib/newPrimarySchoolUtils'
-import { LanguageSelectionProps } from '../../../fields/LanguageSelection'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
@@ -29,18 +31,21 @@ export const languageSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.languageSubTitle,
           titleVariant: 'h4',
         }),
-        buildSelectField({
-          id: 'languages.languageEnvironment',
-          dataTestId: 'languages-language-environment',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageEnvironmentPlaceholder,
-          options: () => {
-            return getLanguageEnvironments()
+        buildCustomField(
+          {
+            id: 'languages.languageEnvironment',
+            title:
+              newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
+            component: 'FriggOptionsAsyncSelectField',
+            dataTestId: 'languages-language-environment',
           },
-        }),
+          {
+            optionsType: OptionsType.LANGUAGE_ENVIRONMENT,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .languageEnvironmentPlaceholder,
+          },
+        ),
         buildDescriptionField({
           id: 'languages.languages.title',
           title:
@@ -48,21 +53,97 @@ export const languageSubSection = buildSubSection({
           description:
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
+          marginTop: 'gutter',
           condition: (answers) => {
             return hasForeignLanguages(answers)
           },
-          marginBottom: 'gutter',
         }),
-        buildCustomField(
-          {
-            id: 'languages',
-            component: 'LanguageSelection',
-            condition: (answers) => {
-              return hasForeignLanguages(answers)
+        buildFieldsRepeaterField({
+          id: 'languages.selectedLanguages',
+          title: '',
+          formTitleNumbering: 'none',
+          addItemButtonText:
+            newPrimarySchoolMessages.differentNeeds.addLanguageButton,
+          removeItemButtonText:
+            newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
+          minRows: 1,
+          maxRows: 4,
+          condition: (answers) => {
+            return hasForeignLanguages(answers)
+          },
+          fields: {
+            code: {
+              component: 'select',
+              label:
+                newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
+              placeholder:
+                newPrimarySchoolMessages.differentNeeds
+                  .languageSelectionPlaceholder,
+              width: 'full',
+              options: (application: Application) => {
+                const { languageEnvironment } = getApplicationAnswers(
+                  application.answers,
+                )
+
+                const languages = getAllLanguageCodes()
+                return languages
+                  .filter((language) => {
+                    if (
+                      language.code === 'is' &&
+                      languageEnvironment ===
+                        LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+                    ) {
+                      return false
+                    }
+                    return true
+                  })
+                  .map((language) => ({
+                    label: language.name,
+                    value: language.code,
+                  }))
+              },
             },
           },
-          {} as LanguageSelectionProps,
-        ),
+        }),
+        buildDescriptionField({
+          id: 'languages.child.language.title',
+          title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
+          titleVariant: 'h4',
+          marginTop: 'gutter',
+          condition: (answers) => {
+            return showChildLangagueFields(answers)
+          },
+        }),
+        buildSelectField({
+          id: 'languages.childLanguage',
+          dataTestId: 'languages-child-language',
+          title:
+            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+          placeholder:
+            newPrimarySchoolMessages.differentNeeds
+              .languageSelectionPlaceholder,
+          options: (application) => {
+            const { selectedLanguages } = getApplicationAnswers(
+              application.answers,
+            )
+
+            return getAllLanguageCodes()
+              .filter((language) => {
+                return selectedLanguages.some(
+                  (lang) => lang?.code === language.code,
+                )
+              })
+              .map((language) => {
+                return {
+                  label: language.name,
+                  value: language.code,
+                }
+              })
+          },
+          condition: (answers) => {
+            return showChildLangagueFields(answers)
+          },
+        }),
         buildRadioField({
           id: 'languages.signLanguage',
           title: newPrimarySchoolMessages.differentNeeds.signLanguage,
