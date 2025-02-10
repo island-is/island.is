@@ -396,7 +396,10 @@ const renderSlices = (
       return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (slice.__typename === 'AnchorPageListSlice') {
+        if (
+          slice.__typename === 'AnchorPageListSlice' ||
+          slice.__typename === 'OrganizationParentSubpageList'
+        ) {
           return (
             <SliceMachine
               key={slice.id}
