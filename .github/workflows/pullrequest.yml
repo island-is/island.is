@@ -326,7 +326,9 @@ jobs:
         if: ${{ env.should-run == 'true' }}
         run: |
           echo "Running on agent ${{ matrix.agents }}"
-          yarn nx-cloud start-agent
+          echo "Running on agent ${{ env.NX_AGENT_NAME }}"
+          echo "Running on agent ${{ env.NX_AGENT_LAUNCH_TEMPLATE }}"
+          # yarn nx-cloud start-agent
           
   linting-workspace:
     needs:
