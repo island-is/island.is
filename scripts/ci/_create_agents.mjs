@@ -44,9 +44,6 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
       .flat()
   ])).map((e) => `1 ${e}`).join(' ');
   const rules = {
-    'distribute-on': {
-      "default": `${normalAgentCount} default-runner ${distributeRuleRunners}`
-    },
     'assignment-rules': [
       ...problematicProjects.map((project) => {
         return {
@@ -66,7 +63,7 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
       }),
     ],
   }
-
+  const distributeOn = `${normalAgentCount} default-runner ${distributeRuleRunners}`;
   const targets = [..._TARGETS, ..._PROBLEMATIC_TARGETS];
 
   const defaultRunners = Array(normalAgentCount)
@@ -92,6 +89,7 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     setOutput('SHOULD_RUN_NX', 'true')
     setOutput('NX_RUNNERS', JSON.stringify(runners))
     setOutput('NX_ASSIGNMENT_RULES', assignmentRules)
+    setOutput('NX_DISTRIBUTE_ON', distributeOn)
     setOutput('NX_TARGETS', targets.join(','));
     setOutput('NX_RUN_ALL', getShowAllProjects() ? 'true' : 'false');
     setOutput('NX_BASE', process.env.NX_BASE ?? 'main');
