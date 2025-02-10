@@ -7,7 +7,6 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseIndictmentRulingDecision,
-  EventType,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
   isRequestCase,
@@ -16,7 +15,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
-import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
@@ -43,7 +41,6 @@ interface IndictmentInfoParams {
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   rulingDate?: string
   defendants?: Defendant[]
-  eventLogs?: EventLog[]
 }
 
 const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
@@ -163,7 +160,6 @@ export const getIndictmentInfo = ({
   indictmentRulingDecision,
   rulingDate,
   defendants,
-  eventLogs,
 }: IndictmentInfoParams): IndictmentInfo => {
   const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
   const isRuling =
@@ -174,7 +170,6 @@ export const getIndictmentInfo = ({
   }
 
   const theRulingDate = new Date(rulingDate)
-
   const indictmentAppealDeadline = getIndictmentAppealDeadlineDate(
     theRulingDate,
     isFine,
@@ -194,11 +189,7 @@ export const getIndictmentInfo = ({
   const [indictmentVerdictViewedByAll, indictmentVerdictAppealDeadlineExpired] =
     getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
 
-  const indictmentCompletedDate = rulingDate
-    ? new Date(rulingDate).toISOString()
-    : eventLogs
-        ?.find((log) => log.eventType === EventType.INDICTMENT_COMPLETED)
-        ?.created?.toString()
+  const indictmentCompletedDate = new Date(rulingDate).toISOString()
 
   return {
     indictmentAppealDeadline,
@@ -233,8 +224,7 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 }
 
 const transformIndictmentCase = (theCase: Case): Case => {
-  const { rulingDate, defendants, eventLogs, indictmentRulingDecision } =
-    theCase
+  const { rulingDate, defendants, indictmentRulingDecision } = theCase
 
   return {
     ...theCase,
@@ -242,7 +232,6 @@ const transformIndictmentCase = (theCase: Case): Case => {
       indictmentRulingDecision,
       rulingDate,
       defendants,
-      eventLogs,
     }),
     defendants: getIndictmentDefendantsInfo(theCase),
   }

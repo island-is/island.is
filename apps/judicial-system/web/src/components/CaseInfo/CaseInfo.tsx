@@ -19,6 +19,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
+import { strings } from './CaseInfo.strings'
+
 const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null
 }> = ({ policeCaseNumbers }) => (
@@ -141,13 +143,13 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
       )}
       {isIndictmentCase(workingCase.type) &&
       isCompletedCase(workingCase.state) ? (
-        workingCase.courtEndTime && (
-          <Box marginTop={1}>
-            <Text as="h5" variant="h5">
-              {`Máli lokið ${formatDate(workingCase.rulingDate, 'PPP')}`}
-            </Text>
-          </Box>
-        )
+        <Box marginTop={1}>
+          <Text as="h5" variant="h5">
+            {formatMessage(strings.rulingDate, {
+              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
+            })}
+          </Text>
+        </Box>
       ) : (
         <ProsecutorAndDefendantsEntries workingCase={workingCase} />
       )}
