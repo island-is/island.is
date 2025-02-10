@@ -26,11 +26,15 @@ const getScrollPosition = ({ element, useWindow }: GetScrollPositionProps) => {
   if (!isBrowser) return { x: 0, y: 0 }
 
   const target = element?.current || document.body
-  const position = target.getBoundingClientRect()
-
-  return useWindow
-    ? { x: window.scrollX, y: window.scrollY }
-    : { x: position.left, y: position.top }
+  try {
+    const position = target.getBoundingClientRect()
+    return useWindow
+      ? { x: window.scrollX, y: window.scrollY }
+      : { x: position.left, y: position.top }
+  } catch (error) {
+    console.warn('Failed to get scroll position:', error)
+    return { x: 0, y: 0 }
+  }
 }
 
 export const useScrollPosition = (
