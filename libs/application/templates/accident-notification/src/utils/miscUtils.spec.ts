@@ -9,7 +9,7 @@ import {
   isUniqueAssignee,
   shouldRequestReview,
 } from './miscUtils'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import {
   AccidentTypeEnum,
   GeneralWorkplaceAccidentLocationEnum,
@@ -18,6 +18,7 @@ import {
   WorkAccidentTypeEnum,
 } from '../types'
 import { AccidentNotificationAnswers } from '..'
+import { NO, YES } from '@island.is/application/core'
 
 describe('formatPhonenumber', () => {
   it.each([

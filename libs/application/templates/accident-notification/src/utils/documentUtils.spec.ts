@@ -5,7 +5,6 @@ import {
   AttachmentsEnum,
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
-  YesOrNo,
 } from '../types'
 import {
   getAttachmentTitles,
@@ -18,6 +17,7 @@ import {
   hasReceivedAllDocuments,
 } from './documentUtils'
 import { FormValue } from '@island.is/application/types'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 describe('hasMissingDocuments', () => {
   it('should return true when missing documents', () => {
@@ -56,10 +56,10 @@ describe('getErrorMessageForMissingDocuments', () => {
 
 describe('hasReceivedAllDocuments', () => {
   const testCases = [
-    { who: WhoIsTheNotificationForEnum.ME, fatal: YesOrNo.NO },
-    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: YesOrNo.NO },
-    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNo.YES },
-    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNo.NO },
+    { who: WhoIsTheNotificationForEnum.ME, fatal: YesOrNoEnum.NO },
+    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: YesOrNoEnum.NO },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNoEnum.YES },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNoEnum.NO },
   ]
   it.each(testCases)(
     'should return true when all documents are received',
@@ -91,7 +91,7 @@ const getMissingDocuments = (): FormValue => ({
   whoIsTheNotificationFor: {
     answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
   },
-  wasTheAccidentFatal: YesOrNo.YES,
+  wasTheAccidentFatal: YesOrNoEnum.YES,
   injuryCertificate: {
     answer: AttachmentsEnum.SENDCERTIFICATELATER,
   },
@@ -114,7 +114,7 @@ const getNoMissingDocuments = (): FormValue => ({
   whoIsTheNotificationFor: {
     answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
   },
-  wasTheAccidentFatal: YesOrNo.YES,
+  wasTheAccidentFatal: YesOrNoEnum.YES,
   injuryCertificate: {
     answer: AttachmentsEnum.SENDCERTIFICATELATER,
   },
@@ -247,7 +247,7 @@ describe('returnMissingDocumentsList', () => {
       whoIsTheNotificationFor: {
         answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
       },
-      wasTheAccidentFatal: YesOrNo.YES,
+      wasTheAccidentFatal: YesOrNoEnum.YES,
       injuryCertificate: {
         answer: AttachmentsEnum.SENDCERTIFICATELATER,
       },

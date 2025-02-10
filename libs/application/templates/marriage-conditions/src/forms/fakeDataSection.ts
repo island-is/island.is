@@ -4,8 +4,9 @@ import {
   buildDescriptionField,
   buildRadioField,
   buildSelectField,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { NationalRegistryMaritalStatus as MaritalStatus } from '../types/schema'
 

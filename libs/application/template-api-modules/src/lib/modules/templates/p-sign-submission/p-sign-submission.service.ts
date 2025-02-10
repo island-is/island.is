@@ -8,7 +8,7 @@ import {
   DataUploadResponse,
   CertificateInfoResponse,
 } from '@island.is/clients/syslumenn'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
@@ -54,7 +54,6 @@ type Delivery = {
   district: string
 }
 
-const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService extends BaseTemplateApiService {
   constructor(

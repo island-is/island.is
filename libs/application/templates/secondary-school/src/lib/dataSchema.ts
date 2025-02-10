@@ -1,7 +1,7 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { ApplicationType } from '../utils'
-import { YES } from '@island.is/application/types'
+import { YES } from '@island.is/application/core'
 import { error } from './messages'
 
 const FileDocumentSchema = z.object({

@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 
@@ -36,11 +37,7 @@ export enum States {
   APPROVED = 'approved',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
 type FakeCurrentLicense = 'none' | 'temp' | 'B-full'
-type YesOrNo = 'yes' | 'no'
 
 export interface LearnersPermitFakeData {
   useFakeData?: YesOrNo

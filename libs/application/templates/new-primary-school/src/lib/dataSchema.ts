@@ -1,4 +1,3 @@
-import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
@@ -9,6 +8,7 @@ import {
 } from './constants'
 
 import { errorMessages } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const validatePhoneNumber = (value: string) => {
   const phoneNumber = parsePhoneNumberFromString(value, 'IS')

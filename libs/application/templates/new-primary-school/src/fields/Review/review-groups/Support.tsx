@@ -1,4 +1,3 @@
-import { YES } from '@island.is/application/types'
 import {
   DataValue,
   RadioValue,
@@ -10,6 +9,7 @@ import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { YES } from '@island.is/application/core'
 
 export const Support = ({
   application,

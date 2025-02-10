@@ -5,10 +5,12 @@ import {
   buildRadioField,
   buildDescriptionField,
   buildFileUploadField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
-import { UPLOAD_ACCEPT, YES, NO } from '../../lib/constants'
+import { UPLOAD_ACCEPT } from '../../lib/constants'
 import { Photo } from '../../types'
 
 export const sectionPhoto = buildSection({

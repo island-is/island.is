@@ -9,7 +9,6 @@ import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
 import {
   MANUAL,
-  NO,
   ParentalRelations,
   SINGLE,
   SPOUSE,
@@ -23,6 +22,7 @@ import {
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
+import { NO } from '@island.is/application/core'
 
 export const OtherParent = ({
   application,

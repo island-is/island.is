@@ -1,9 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
-  YES,
-  YesOrNo,
 } from '@island.is/application/types'
 import { AttachmentLabel } from './constants'
 import {

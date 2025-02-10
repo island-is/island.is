@@ -6,11 +6,11 @@ import {
   buildSubmitField,
   coreMessages,
   buildKeyValueField,
+  YES,
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
-import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,

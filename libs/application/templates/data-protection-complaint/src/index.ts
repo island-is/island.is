@@ -8,8 +8,6 @@ export {
   SubjectOfComplaint,
   subjectOfComplaintValueLabelMapper,
   onBehalfValueLabelMapper,
-  YES,
-  NO,
   yesNoValueLabelMapper,
 } from './shared'
 

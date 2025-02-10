@@ -7,11 +7,6 @@ export enum States {
   WAITINGTOASSIGN = 'waitingToAssign',
 }
 
-export enum YesNoEnum {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export enum CareerHistoryEnum {
   GOVERNMENT = 'government',
   ARANJA = 'aranja',

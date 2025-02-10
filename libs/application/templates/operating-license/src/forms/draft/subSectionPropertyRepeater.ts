@@ -2,12 +2,12 @@ import {
   buildMultiField,
   buildSubSection,
   buildCustomField,
+  YES,
 } from '@island.is/application/core'
 import {
   APPLICATION_TYPES,
   Operation,
   OPERATION_CATEGORY,
-  YES,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 

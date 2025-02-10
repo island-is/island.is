@@ -5,6 +5,8 @@ import { assign } from 'xstate'
 
 import {
   EphemeralStateLifeCycle,
+  NO,
+  YES,
   coreHistoryMessages,
   coreMessages,
   pruneAfterDays,
@@ -27,7 +29,6 @@ import {
   ApiModuleActions,
   Events,
   MANUAL,
-  NO,
   NO_MULTIPLE_BIRTHS,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -40,7 +41,6 @@ import {
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {

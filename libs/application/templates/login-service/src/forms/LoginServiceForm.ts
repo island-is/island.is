@@ -10,6 +10,7 @@ import {
   getValueViaPath,
   buildDescriptionField,
   buildLinkField,
+  YES,
 } from '@island.is/application/core'
 import {
   Form,
@@ -28,7 +29,6 @@ import {
   submitted,
   selectCompany,
 } from '../lib/messages'
-import { YES } from '../shared/constants'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',

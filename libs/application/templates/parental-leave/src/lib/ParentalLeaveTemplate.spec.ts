@@ -1,4 +1,4 @@
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import { ApplicationTemplateHelper, NO, YES } from '@island.is/application/core'
 import {
   Application,
   ApplicationTypes,
@@ -10,12 +10,10 @@ import {
 } from '@island.is/application/types'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
-  NO,
   PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
   States,
-  YES,
   PARENTAL_GRANT,
 } from '../constants'
 

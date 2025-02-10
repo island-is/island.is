@@ -1,5 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue, NO, YES } from '@island.is/application/types'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { FormatMessage, FormValue } from '@island.is/application/types'
 import { information, licensePlate } from '../lib/messages'
 
 export const getStreetRegistrationInformation = (

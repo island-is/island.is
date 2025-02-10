@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -13,7 +13,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC, useEffect } from 'react'
 import { TemporaryCalculationQuery } from '../../graphql/queries'
-import { INCOME, RatioType, YES } from '../../lib/constants'
+import { INCOME, RatioType } from '../../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,

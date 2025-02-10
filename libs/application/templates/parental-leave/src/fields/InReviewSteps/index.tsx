@@ -19,9 +19,9 @@ import {
   States as ApplicationStates,
   StartDateOptions,
   States,
-  YES,
 } from '../../constants'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, refetch, errors } = props

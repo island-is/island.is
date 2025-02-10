@@ -1,9 +1,8 @@
-import { NO, getValueViaPath } from '@island.is/application/core'
+import { NO, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
-  YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'

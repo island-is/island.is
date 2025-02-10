@@ -6,10 +6,12 @@ import {
   buildSubSection,
   getValueViaPath,
   buildDescriptionField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { B_FULL, NO, YES, B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { B_FULL, B_FULL_RENEWAL_65 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,

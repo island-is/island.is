@@ -2,8 +2,8 @@ import {
   buildCheckboxField,
   buildMultiField,
   buildSection,
+  YES,
 } from '@island.is/application/core'
-import { YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const sectionReasonForApplication = buildSection({

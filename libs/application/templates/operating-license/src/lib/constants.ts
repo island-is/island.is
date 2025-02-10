@@ -31,9 +31,6 @@ export enum APPLICATION_TYPES {
   RESTURANT = 'resturant',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
 export enum OPERATION_CATEGORY {
   TWO = '2',
   THREE = '3',

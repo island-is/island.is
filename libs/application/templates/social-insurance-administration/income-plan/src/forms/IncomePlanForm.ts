@@ -1,4 +1,5 @@
 import {
+  YES,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -30,7 +31,6 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
-  YES,
 } from '../lib/constants'
 import {
   getApplicationAnswers,

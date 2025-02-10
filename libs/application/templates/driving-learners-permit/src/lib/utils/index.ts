@@ -1,6 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { YES } from '../constants'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 
 export const allowFakeCondition =

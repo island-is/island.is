@@ -9,7 +9,6 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   PARENTAL_LEAVE,
-  YES,
 } from '../../../constants'
 import { usePensionFund as usePensionFundOptions } from '../../../hooks/usePensionFund'
 import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../../hooks/usePrivatePensionFund'
@@ -20,6 +19,7 @@ import {
   getSelectOptionLabel,
 } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
+import { YES } from '@island.is/application/core'
 
 export const Payments = ({
   application,

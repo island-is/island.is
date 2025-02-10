@@ -5,10 +5,6 @@ export enum PASSPORT_CHARGE_CODES {
   DISCOUNT_EXPRESS = 'AY108',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-export type YesOrNo = 'yes' | 'no'
-
 export type DiscountCheck = {
   hasDiscount: boolean
 }

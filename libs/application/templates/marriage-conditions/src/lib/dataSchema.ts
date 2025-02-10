@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import { YES, NO } from './constants'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i

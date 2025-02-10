@@ -1,4 +1,5 @@
 import {
+  YES,
   buildAlertMessageField,
   buildCustomField,
   buildDateField,
@@ -17,7 +18,6 @@ import {
   Application,
   FormValue,
   DefaultEvents,
-  YES,
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import { deathBenefitsFormMessage } from '../lib/messages'

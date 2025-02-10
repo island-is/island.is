@@ -1,5 +1,3 @@
-export const YES = 'yes'
-export const NO = 'no'
 export const FOREIGN_BASIC_PENSION = 'Erlendur grunnlífeyrir'
 export const FOREIGN_PENSION = 'Erlendur lífeyrir'
 export const FOREIGN_INCOME = 'Erlendar tekjur'
