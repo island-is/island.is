@@ -67,14 +67,14 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
-          this.sendEmail(
-            formattedSubject,
-            formattedBody,
-            recipient.name,
-            recipient.email,
-            undefined,
-            true,
-          ),
+          this.sendEmail({
+            subject: formattedSubject,
+            html: formattedBody,
+            recipientName: recipient.name,
+            recipientEmail: recipient.email,
+            attachments: undefined,
+            skipTail: true,
+          }),
         )
       }
     }

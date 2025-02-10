@@ -8,6 +8,7 @@ import {
   AdvertSingleParams,
   QueryParams,
   TypeQueryParams,
+  MainTypesQueryParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
@@ -17,6 +18,7 @@ import {
   AdvertResponse,
   AdvertsResponse,
   AdvertTypesResponse,
+  MainTypesResponse,
 } from './models/advert.response'
 import { CasesInProgressResponse } from './models/cases.response'
 
@@ -52,6 +54,10 @@ export class OfficialJournalOfIcelandService {
 
   async getAdvertTypes(params: TypeQueryParams): Promise<AdvertTypesResponse> {
     return await this.ojoiService.getAdvertTypes(params)
+  }
+
+  async getMainTypes(params: MainTypesQueryParams): Promise<MainTypesResponse> {
+    return await this.ojoiService.getAdvertMainTypes(params)
   }
 
   async getInstitutions(

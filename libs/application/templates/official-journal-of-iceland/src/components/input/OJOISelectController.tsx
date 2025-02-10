@@ -4,7 +4,12 @@ import { useApplication } from '../../hooks/useUpdateApplication'
 import { OJOIApplication } from '../../lib/types'
 import { useFormContext } from 'react-hook-form'
 import set from 'lodash/set'
-import { Select, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Box,
+  Select,
+  SkeletonLoader,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 import { isBaseEntity } from '../../lib/utils'
 import { getValueViaPath } from '@island.is/application/core'
@@ -15,6 +20,7 @@ type SelectOption<T> = {
 }
 
 type Props<T> = {
+  controller?: boolean
   name: string
   label: string | MessageDescriptor
   placeholder: string | MessageDescriptor
@@ -23,11 +29,13 @@ type Props<T> = {
   loading?: boolean
   applicationId: string
   disabled?: boolean
+  width?: 'full' | 'half'
   onBeforeChange?: (answers: OJOIApplication['answers'], value: T) => void
   onChange?: (value: T) => void
 }
 
 export const OJOISelectController = <T,>({
+  controller = true,
   name,
   label,
   placeholder,
@@ -36,6 +44,7 @@ export const OJOISelectController = <T,>({
   loading,
   applicationId,
   disabled,
+  width = 'full',
   onBeforeChange,
   onChange,
 }: Props<T>) => {
@@ -45,6 +54,9 @@ export const OJOISelectController = <T,>({
   })
 
   const { setValue } = useFormContext()
+
+  const { xs, sm, md } = useBreakpoint()
+  const isSmOrSmaller = xs || (sm && !md)
 
   const placeholderText =
     typeof placeholder === 'string' ? placeholder : f(placeholder)
@@ -68,35 +80,36 @@ export const OJOISelectController = <T,>({
       return opt.value.id === defaultVal.id
     }
 
-    return false
+    return undefined
   })
 
-  if (loading) {
-    return (
-      <SkeletonLoader
-        borderRadius="standard"
-        display="block"
-        height={OJOI_INPUT_HEIGHT}
-      />
-    )
-  }
-
   return (
-    <Select
-      size="sm"
-      name={name}
-      label={labelText}
-      isDisabled={disabled}
-      placeholder={placeholderText}
-      backgroundColor="blue"
-      options={options}
-      defaultValue={defaultOpt}
-      isSearchable={true}
-      filterConfig={{ matchFrom: 'start' }}
-      onChange={(opt) => {
-        if (!opt?.value) return
-        return handleChange(opt.value)
-      }}
-    />
+    <Box width={isSmOrSmaller ? 'full' : width}>
+      {loading ? (
+        <SkeletonLoader
+          borderRadius="standard"
+          display="block"
+          height={OJOI_INPUT_HEIGHT}
+        />
+      ) : (
+        <Select
+          size="sm"
+          name={name}
+          label={labelText}
+          isDisabled={disabled}
+          placeholder={placeholderText}
+          backgroundColor="blue"
+          options={options}
+          defaultValue={defaultOpt}
+          onChange={(opt) => {
+            if (!opt?.value) return
+            if (controller) {
+              handleChange(opt.value)
+            }
+            onChange && onChange(opt.value)
+          }}
+        />
+      )}
+    </Box>
   )
 }

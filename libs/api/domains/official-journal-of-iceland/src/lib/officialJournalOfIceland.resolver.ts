@@ -8,6 +8,7 @@ import {
   AdvertsInput,
   QueryParams,
   TypeQueryParams,
+  MainTypesQueryParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
@@ -19,6 +20,7 @@ import {
   AdvertsResponse,
   AdvertTypeResponse,
   AdvertTypesResponse,
+  MainTypesResponse,
 } from './models/advert.response'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlag } from '@island.is/nest/feature-flags'
@@ -70,6 +72,13 @@ export class OfficialJournalOfIcelandResolver {
   })
   getAdvertTypes(@Args('params') params: TypeQueryParams) {
     return this.ojoiService.getAdvertTypes(params)
+  }
+
+  @Query(() => MainTypesResponse, {
+    name: 'officialJournalOfIcelandMainTypes',
+  })
+  getAdvertMainTypes(@Args('params') params: MainTypesQueryParams) {
+    return this.ojoiService.getMainTypes(params)
   }
 
   @Query(() => AdvertMainCategoriesResponse, {

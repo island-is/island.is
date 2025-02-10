@@ -1,4 +1,3 @@
-import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,6 +10,7 @@ import {
   TopicCard,
 } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
+import { Locale } from '@island.is/shared/types'
 import { sortAlpha } from '@island.is/shared/utils'
 import {
   Card,
@@ -52,7 +52,7 @@ import {
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { getSlugPart } from '../utils'
+import { getSlugPart, shouldShowInstitutionContactBanner } from '../utils'
 import * as styles from './Home.css'
 
 interface HomeProps {
@@ -92,9 +92,7 @@ const Home: Screen<HomeProps> = ({
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
 
-  const institutionSlugBelongsToTryggingastofnun =
-    institutionSlug.includes('tryggingastofnun') ||
-    institutionSlug.includes('social-insurance-administration')
+  const showContactBanner = shouldShowInstitutionContactBanner(institutionSlug)
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const headerTitle = institutionSlugBelongsToMannaudstorg
@@ -277,7 +275,7 @@ const Home: Screen<HomeProps> = ({
                     </GridRow>
                   </GridContainer>
                 </Box>
-                {!institutionSlugBelongsToTryggingastofnun && (
+                {showContactBanner && (
                   <Box marginY={[7, 10, 10]}>
                     <GridContainer>
                       <GridRow>
@@ -439,6 +437,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       : [],
     serviceWebPage: getServiceWebPage,
     locale: locale as Locale,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

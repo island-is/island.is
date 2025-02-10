@@ -719,6 +719,63 @@
         ]
       }
     },
+    "/api/Brennuleyfi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Brennuleyfi_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Brennuleyfi"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/Meistaraleyfi/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -4333,6 +4390,56 @@
           }
         }
       },
+      "Brennuleyfi": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "abyrgdaradili": {
+            "type": "string",
+            "nullable": true
+          },
+          "leyfishafi": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsetningFra": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dagsetningTil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timiFra": {
+            "type": "string",
+            "nullable": true
+          },
+          "timiTil": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "undirtegund": {
+            "type": "string",
+            "nullable": true
+          },
+          "embaetti": {
+            "type": "string",
+            "nullable": true
+          },
+          "staerd": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "Meistaraleyfi": {
         "type": "object",
         "additionalProperties": false,
@@ -5134,8 +5241,7 @@
         "additionalProperties": false,
         "properties": {
           "stada": {
-            "type": "string",
-            "nullable": true
+            "type": "boolean"
           },
           "skyring": {
             "type": "string",

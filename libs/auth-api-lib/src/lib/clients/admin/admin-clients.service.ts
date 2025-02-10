@@ -173,21 +173,6 @@ export class AdminClientsService {
       throw new BadRequestException('Invalid client id')
     }
 
-    // If user is not super admin, we remove the super admin fields from the input to default to the client base attributes
-    if (!this.isSuperAdmin(user)) {
-      clientDto = {
-        clientId: clientDto.clientId,
-        clientType: clientDto.clientType,
-        clientName: clientDto.clientName,
-        // Remove defined super admin fields
-        ...omit(clientDto, superUserFields),
-        // Remove personal representative from delegation types since it is not allowed for non-super admins
-        supportedDelegationTypes: delegationTypeSuperUserFilter(
-          clientDto.supportedDelegationTypes ?? [],
-        ),
-      }
-    }
-
     const {
       customClaims,
       displayName,
@@ -600,7 +585,7 @@ export class AdminClientsService {
         client.supportedDelegationTypes?.map(
           (clientDelegationType) => clientDelegationType.delegationType,
         ) ?? [],
-      allowedAcr: client.allowedAcr ?? [],
+      allowedAcr: client.allowedAcr.map((v) => v.toString()) ?? [],
     }
   }
 

@@ -35,9 +35,10 @@ export const LinkFormField = ({ field, application }: Props) => {
     }
     return () => ''
   }
+  const { marginTop = 2, marginBottom = 2 } = field
 
   return (
-    <Box marginY={2}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       <Button
         colorScheme="default"
         icon={field.iconProps?.icon ?? 'download'}
@@ -49,7 +50,7 @@ export const LinkFormField = ({ field, application }: Props) => {
         variant="ghost"
       >
         {formatTextWithLocale(
-          field.title,
+          field.title ?? '',
           application,
           locale as Locale,
           formatMessage,

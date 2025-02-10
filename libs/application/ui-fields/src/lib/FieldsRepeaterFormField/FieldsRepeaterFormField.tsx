@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -40,7 +40,7 @@ export const FieldsRepeaterFormField = ({
     description,
     marginTop = 6,
     marginBottom,
-    title,
+    title = '',
     titleVariant = 'h2',
     formTitle,
     formTitleVariant = 'h4',
@@ -61,15 +61,18 @@ export const FieldsRepeaterFormField = ({
     Math.max(numberOfItemsInAnswers ?? 0, minRows),
   )
   const [updatedApplication, setUpdatedApplication] = useState(application)
+  const stableApplication = useMemo(() => application, [application])
+  const stableAnswers = useMemo(() => answers, [answers])
 
   useEffect(() => {
-    if (!isEqual(application, updatedApplication)) {
-      setUpdatedApplication({
-        ...application,
-        answers: { ...answers },
-      })
-    }
-  }, [answers])
+    setUpdatedApplication((prev) => {
+      if (isEqual(prev, { ...stableApplication, answers: stableAnswers })) {
+        return prev
+      }
+
+      return { ...stableApplication, answers: stableAnswers }
+    })
+  }, [stableApplication, stableAnswers])
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
@@ -90,17 +93,19 @@ export const FieldsRepeaterFormField = ({
   }
 
   const handleRemoveItem = () => {
+    const items = getValueViaPath<Array<unknown>>(answers, id)
+
     if (numberOfItems > (numberOfItemsInAnswers || 0)) {
       setNumberOfItems(numberOfItems - 1)
     } else if (numberOfItems === numberOfItemsInAnswers) {
-      setValue(id, answers[id].slice(0, -1))
+      setValue(id, items?.slice(0, -1))
       setNumberOfItems(numberOfItems - 1)
     } else if (
       numberOfItemsInAnswers &&
       numberOfItems < numberOfItemsInAnswers
     ) {
       const difference = numberOfItems - numberOfItemsInAnswers
-      setValue(id, answers[id].slice(0, difference))
+      setValue(id, items?.slice(0, difference))
       setNumberOfItems(numberOfItems)
     }
 
@@ -148,7 +153,7 @@ export const FieldsRepeaterFormField = ({
             {Array.from({ length: numberOfItems }).map((_i, i) => (
               <Fragment key={i}>
                 {(formTitleNumbering !== 'none' || formTitle) && (
-                  <Box marginTop={4} marginLeft={2}>
+                  <Box marginTop={i === 0 ? 0 : 4} marginLeft={2} width="full">
                     <Text variant={formTitleVariant}>
                       {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
                       {formTitle &&

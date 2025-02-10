@@ -15,18 +15,12 @@ import {
   fatalAccidentAttachment,
   injuredPersonInformation,
 } from '../../../lib/messages'
-import {
-  isFatalAccident,
-  isReportingOnBehalfOfInjured,
-  isRepresentativeOfCompanyOrInstitute,
-} from '../../../utils'
+import { isRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 import { AttachmentsEnum } from '../../../types'
-import {
-  FILE_SIZE_LIMIT,
-  NO,
-  UPLOAD_ACCEPT,
-  YES,
-} from '../../../utils/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
+import { isReportingOnBehalfOfInjured } from '../../../utils/reportingUtils'
+import { NO, YES } from '@island.is/application/types'
+import { isFatalAccident } from '../../../utils/accidentUtils'
 
 // Injury certificate and fatal accident section
 export const attachmentsSubSection = buildSubSection({

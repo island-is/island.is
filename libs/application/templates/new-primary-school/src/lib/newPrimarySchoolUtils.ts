@@ -6,46 +6,45 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { MessageDescriptor } from 'react-intl'
 import {
   Child,
   ChildInformation,
+  ContactsRow,
   FriggChildInformation,
   Membership,
-  Parents,
   Person,
-  RelativesRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
 import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
-  SiblingRelationOptions,
 } from './constants'
+
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  let applicationType = getValueViaPath(
+    answers,
+    'applicationType',
+  ) as ApplicationType
+
+  if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
+
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
 
-  const differentPlaceOfResidence = getValueViaPath(
-    answers,
-    'childInfo.differentPlaceOfResidence',
-  ) as YesOrNo
+  const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
-  const parents = getValueViaPath(answers, 'parents') as Parents
-
-  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+  const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
 
   const reasonForApplication = getValueViaPath(
     answers,
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
-
-  const reasonForApplicationCountry = getValueViaPath(
-    answers,
-    'reasonForApplication.movingAbroad.country',
-  ) as string
 
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
@@ -59,25 +58,83 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const nativeLanguage = getValueViaPath(
+  const languageEnvironment = getValueViaPath(
     answers,
-    'languages.nativeLanguage',
+    'languages.languageEnvironment',
   ) as string
 
-  const otherLanguagesSpokenDaily = getValueViaPath(
+  const signLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguagesSpokenDaily',
+    'languages.signLanguage',
   ) as YesOrNo
 
-  const otherLanguages = getValueViaPath(
+  const language1 = getValueViaPath(answers, 'languages.language1') as string
+
+  const language2 = getValueViaPath(answers, 'languages.language2') as string
+
+  const language3 = getValueViaPath(answers, 'languages.language3') as string
+
+  const language4 = getValueViaPath(answers, 'languages.language4') as string
+
+  const childLanguage = getValueViaPath(
     answers,
-    'languages.otherLanguages',
+    'languages.childLanguage',
+  ) as string
+
+  const interpreter = getValueViaPath(
+    answers,
+    'languages.interpreter',
+  ) as YesOrNo
+
+  const acceptFreeSchoolLunch = getValueViaPath(
+    answers,
+    'freeSchoolMeal.acceptFreeSchoolLunch',
+  ) as YesOrNo
+
+  const hasSpecialNeeds = getValueViaPath(
+    answers,
+    'freeSchoolMeal.hasSpecialNeeds',
+  ) as YesOrNo
+
+  const specialNeedsType = getValueViaPath(
+    answers,
+    'freeSchoolMeal.specialNeedsType',
+  ) as string
+
+  const hasFoodAllergiesOrIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
   ) as string[]
 
-  const icelandicNotSpokenAroundChild = getValueViaPath(
+  const foodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'languages.icelandicNotSpokenAroundChild',
+    'allergiesAndIntolerances.foodAllergiesOrIntolerances',
   ) as string[]
+
+  const hasOtherAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasOtherAllergies',
+  ) as string[]
+
+  const otherAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.otherAllergies',
+  ) as string[]
+
+  const usesEpiPen = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.usesEpiPen',
+  ) as YesOrNo
+
+  const hasConfirmedMedicalDiagnoses = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+  ) as YesOrNo
+
+  const requestMedicationAssistance = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.requestMedicationAssistance',
+  ) as YesOrNo
 
   const developmentalAssessment = getValueViaPath(
     answers,
@@ -89,6 +146,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.specialSupport',
   ) as YesOrNo
 
+  const hasIntegratedServices = getValueViaPath(
+    answers,
+    'support.hasIntegratedServices',
+  ) as YesOrNo
+
+  const hasCaseManager = getValueViaPath(
+    answers,
+    'support.hasCaseManager',
+  ) as YesOrNo
+
+  const caseManagerName = getValueViaPath(
+    answers,
+    'support.caseManager.name',
+  ) as string
+
+  const caseManagerEmail = getValueViaPath(
+    answers,
+    'support.caseManager.email',
+  ) as string
+
   const requestMeeting = getValueViaPath(
     answers,
     'support.requestMeeting[0]',
@@ -99,41 +176,67 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const schoolMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.municipality',
+    'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(
+  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
+
+  const currentNurseryMunicipality = getValueViaPath(
     answers,
-    'schools.newSchool.school',
+    'currentNursery.municipality',
   ) as string
 
-  const newSchoolHiddenInput = getValueViaPath(
+  const currentNursery = getValueViaPath(
     answers,
-    'schools.newSchool.hiddenInput',
+    'currentNursery.nursery',
   ) as string
+
+  const applyForNeighbourhoodSchool = getValueViaPath(
+    answers,
+    'school.applyForNeighbourhoodSchool',
+  ) as YesOrNo
 
   return {
+    applicationType,
     childNationalId,
     childInfo,
-    differentPlaceOfResidence,
-    parents,
-    relatives,
+    guardians,
+    contacts,
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    languageEnvironment,
+    language1,
+    language2,
+    language3,
+    language4,
+    childLanguage,
+    signLanguage,
+    interpreter,
+    acceptFreeSchoolLunch,
+    hasSpecialNeeds,
+    specialNeedsType,
+    hasFoodAllergiesOrIntolerances,
+    foodAllergiesOrIntolerances,
+    hasOtherAllergies,
+    otherAllergies,
+    usesEpiPen,
+    hasConfirmedMedicalDiagnoses,
+    requestMedicationAssistance,
     developmentalAssessment,
     specialSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     requestMeeting,
     startDate,
     schoolMunicipality,
     selectedSchool,
-    newSchoolHiddenInput,
+    currentNurseryMunicipality,
+    currentNursery,
+    applyForNeighbourhoodSchool,
   }
 }
 
@@ -220,7 +323,7 @@ export const getSelectedChild = (application: Application) => {
   return selectedChild
 }
 
-export const getOtherParent = (
+export const getOtherGuardian = (
   application: Application,
 ): Person | undefined => {
   const selectedChild = getSelectedChild(application)
@@ -228,88 +331,15 @@ export const getOtherParent = (
   return selectedChild?.otherParent as Person | undefined
 }
 
-export const hasOtherParent = (
+export const hasOtherGuardian = (
   answers: FormValue,
   externalData: ExternalData,
 ): boolean => {
-  const otherParent = getOtherParent({ answers, externalData } as Application)
-  return !!otherParent
-}
-
-export const getReasonForApplicationOptions = () => [
-  {
-    value: ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
-    label: newPrimarySchoolMessages.primarySchool.transferOfLegalDomicile,
-  },
-  {
-    value: ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
-    label: newPrimarySchoolMessages.primarySchool.studyStayForParents,
-  },
-  {
-    value: ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
-    label:
-      newPrimarySchoolMessages.primarySchool.parentsParliamentaryMembership,
-  },
-  {
-    value: ReasonForApplicationOptions.TEMPORARY_FROSTER,
-    label: newPrimarySchoolMessages.primarySchool.temporaryFoster,
-  },
-  {
-    value: ReasonForApplicationOptions.EXPERT_SERVICE,
-    label: newPrimarySchoolMessages.primarySchool.expertService,
-  },
-  {
-    value: ReasonForApplicationOptions.SICKLY,
-    label: newPrimarySchoolMessages.primarySchool.sickly,
-  },
-  {
-    value: ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
-    label: newPrimarySchoolMessages.primarySchool.livesInTwoHomes,
-  },
-  {
-    value: ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
-    label: newPrimarySchoolMessages.primarySchool.siblingsTitle,
-  },
-  {
-    value: ReasonForApplicationOptions.MOVING_ABROAD,
-    label: newPrimarySchoolMessages.primarySchool.movingAbroad,
-  },
-  {
-    value: ReasonForApplicationOptions.OTHER_REASONS,
-    label: newPrimarySchoolMessages.primarySchool.otherReasons,
-  },
-]
-
-export const getReasonForApplicationOptionLabel = (
-  value: ReasonForApplicationOptions,
-) => {
-  const reasonForApplicationOptions = getReasonForApplicationOptions()
-  return (
-    reasonForApplicationOptions.find((option) => option.value === value)
-      ?.label ?? ''
-  )
-}
-
-export const getSiblingRelationOptions = () => [
-  {
-    value: SiblingRelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.siblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.HALF_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.halfSiblingsRelationSibling,
-  },
-  {
-    value: SiblingRelationOptions.STEP_SIBLING,
-    label: newPrimarySchoolMessages.primarySchool.stepSiblingsRelationSibling,
-  },
-]
-
-export const getSiblingRelationOptionLabel = (
-  value: SiblingRelationOptions,
-) => {
-  const relationOptions = getSiblingRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
+  const otherGuardian = getOtherGuardian({
+    answers,
+    externalData,
+  } as Application)
+  return !!otherGuardian
 }
 
 export const getSelectedOptionLabel = (
@@ -357,4 +387,79 @@ export const getCurrentSchoolName = (application: Application) => {
   return childMemberships
     .map((membership) => membership.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const getLanguageEnvironments = () => {
+  return [
+    {
+      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
+    },
+    {
+      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
+      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
+    },
+  ]
+}
+
+export const hasForeignLanguages = (answers: FormValue) => {
+  const { languageEnvironment } = getApplicationAnswers(answers)
+
+  if (!languageEnvironment) {
+    return false
+  }
+
+  return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const getNeighbourhoodSchoolName = (application: Application) => {
+  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (!primaryOrgId || !childMemberships) {
+    return undefined
+  }
+
+  // This function needs to be improved when Juni is ready with the neighbourhood school data
+
+  // Find the school name since we only have primary org id
+  return childMemberships
+    .map((membership) => membership.organization)
+    .find((organization) => organization?.id === primaryOrgId)?.name
+}
+
+export const determineNameFromApplicationAnswers = (
+  application: Application,
+) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? newPrimarySchoolMessages.shared.enrollmentApplicationName
+    : newPrimarySchoolMessages.shared.applicationName
+}
+
+export const formatGender = (genderCode?: string): MessageDescriptor => {
+  switch (genderCode) {
+    case '1':
+    case '3':
+      return newPrimarySchoolMessages.shared.male
+    case '2':
+    case '4':
+      return newPrimarySchoolMessages.shared.female
+    case '7':
+    case '8':
+    default:
+      return newPrimarySchoolMessages.shared.otherGender
+  }
+}
+
+export const getGenderMessage = (application: Application) => {
+  const selectedChild = getSelectedChild(application)
+  const gender = formatGender(selectedChild?.genderCode)
+  return gender
 }

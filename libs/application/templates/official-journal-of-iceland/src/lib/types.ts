@@ -4,7 +4,14 @@ import {
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
-import { partialSchema } from './dataSchema'
+import {
+  committeeSignatureSchema,
+  memberItemSchema,
+  partialSchema,
+  regularSignatureItemSchema,
+  signatureValidationSchema,
+} from './dataSchema'
+import { z } from 'zod'
 
 export const InputFields = {
   [Routes.REQUIREMENTS]: {
@@ -12,6 +19,7 @@ export const InputFields = {
   },
   [Routes.ADVERT]: {
     department: 'advert.department',
+    mainType: 'advert.mainType',
     type: 'advert.type',
     title: 'advert.title',
     html: 'advert.html',
@@ -73,6 +81,11 @@ export type OJOIApplication = Override<
 >
 
 export type Answers = OJOIApplication['answers']
+
+export type Signature = z.infer<typeof signatureValidationSchema>
+export type SignatureItem = z.infer<typeof regularSignatureItemSchema>
+export type SignatureItemWithChairman = z.infer<typeof committeeSignatureSchema>
+export type SignatureMember = z.infer<typeof memberItemSchema>
 
 export type OJOIFieldBaseProps = Override<
   FieldBaseProps,

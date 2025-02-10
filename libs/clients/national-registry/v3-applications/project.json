@@ -1,0 +1,40 @@
+{
+  "name": "clients-national-registry-v3-applications",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/national-registry/v3-applications/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/national-registry/v3-applications"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/national-registry/v3-applications/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/getOpenAPI?serviceCode=MidlunUmsoknir-v1 -H \"Authorization:Bearer $(curl -X POST https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token -d grant_type='client_credentials&client_id=${NAT_REG_CLIENT_ID}&client_secret=${NAT_REG_CLIENT_SECRET}&scope=https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default')\" > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/national-registry/v3-applications"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/national-registry/v3-applications/gen/fetch -i libs/clients/national-registry/v3-applications/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

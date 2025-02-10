@@ -11,12 +11,10 @@ import {
   attachments,
   injuredPersonInformation,
 } from '../../../lib/messages'
-import {
-  isAgricultureAccident,
-  isReportingOnBehalfSelf,
-  isWorkAccident,
-} from '../../../utils'
 import { WorkAccidentTypeEnum } from '../../../types'
+import { isWorkAccident } from '../../../utils/accidentUtils'
+import { isAgricultureAccident } from '../../../utils/occupationUtils'
+import { isReportingOnBehalfSelf } from '../../../utils/reportingUtils'
 
 export const workAccidentSubSection = buildSubSection({
   id: 'workAccident.subSection',

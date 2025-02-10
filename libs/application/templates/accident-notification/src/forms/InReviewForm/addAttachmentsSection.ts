@@ -13,11 +13,10 @@ import {
   hasReceivedInjuryCertificate,
   hasReceivedPoliceReport,
   hasReceivedProxyDocument,
-  isFatalAccident,
-  isPowerOfAttorney,
-  isReportingOnBehalfOfInjured,
-  isUniqueAssignee,
-} from '../../utils'
+} from '../../utils/documentUtils'
+import { isPowerOfAttorney, isUniqueAssignee } from '../../utils/miscUtils'
+import { isReportingOnBehalfOfInjured } from '../../utils/reportingUtils'
+import { isFatalAccident } from '../../utils/accidentUtils'
 
 export const addAttachmentsSection = (isAssignee?: boolean) =>
   buildSection({

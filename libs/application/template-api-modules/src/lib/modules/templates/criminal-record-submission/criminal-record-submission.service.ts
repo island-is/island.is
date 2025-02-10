@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
-import {
-  SyslumennService,
-  Person,
-  PersonType,
-} from '@island.is/clients/syslumenn'
+import { SyslumennService, PersonType } from '@island.is/clients/syslumenn'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,

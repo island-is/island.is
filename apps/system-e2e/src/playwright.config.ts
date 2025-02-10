@@ -70,6 +70,12 @@ const config: PlaywrightTestConfig = {
     {
       name: 'judicial-system',
       testMatch: 'tests/judicial-system/**/*.spec.[tj]s',
+      use: {
+        /* Slows down execution in ms */
+        launchOptions: {
+          slowMo: 200,
+        },
+      },
     },
     { name: 'islandis', testMatch: 'tests/islandis/**/*.spec.[tj]s' },
     { name: 'everything', testMatch: 'tests/*/**/*.spec.[tj]s' },

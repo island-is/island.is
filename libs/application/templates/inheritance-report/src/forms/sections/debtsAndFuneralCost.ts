@@ -87,6 +87,9 @@ export const debtsAndFuneralCost = buildSection({
                   {
                     label: DebtTypes.OtherDebts,
                   },
+                  {
+                    label: DebtTypes.InsuranceInstitute,
+                  },
                 ],
               },
             ),

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Alert, FlatList, View } from 'react-native'
 import {
@@ -118,12 +118,19 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         +data[0].mileage
       : 0
 
-  // Editable Flags
+  // Editable Flags:
+  //Indicates that the user has already posted a reading today.
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
+  // Indicates that the mileage can be edited for this vehicle.
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
+  // Indicates that the user is allowed to register mileage for this vehicle.
   const canUserRegisterVehicleMileage =
     !!res.data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
+
+  const shouldDisableMileageForm =
+    !canRegisterMileage || !canUserRegisterVehicleMileage
+  const shouldDisableMileageEdit = !isFormEditable || shouldDisableMileageForm
 
   const vehicle = useMemo(() => {
     return {
@@ -341,7 +348,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
                   : '-'
               }
-              editable={isFormEditable && index === 0}
+              editable={!shouldDisableMileageEdit && index === 0}
               onPress={onEdit}
             />
           )
@@ -353,7 +360,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           <View key="list-header">
             <View style={{ flexDirection: 'column', gap: 16 }}>
               <TextField
-                editable={canRegisterMileage}
+                editable={!shouldDisableMileageForm}
                 key="mileage-input"
                 placeholder={intl.formatMessage({
                   id: 'vehicle.mileage.inputPlaceholder',
@@ -387,11 +394,11 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   id: 'vehicle.mileage.inputSubmitButton',
                 })}
                 onPress={onSubmit}
-                disabled={!canRegisterMileage || loadingSubmit}
+                disabled={shouldDisableMileageForm || loadingSubmit}
               />
             </View>
             <View>
-              {!canRegisterMileage && (
+              {shouldDisableMileageForm && (
                 <Typography
                   variant="body3"
                   textAlign="center"

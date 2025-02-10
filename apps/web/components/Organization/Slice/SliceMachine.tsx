@@ -107,6 +107,10 @@ const LatestGenericListItems = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestGenericListItems),
 )
 
+const FeaturedLinksSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.FeaturedLinksSlice),
+)
+
 interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
@@ -203,6 +207,8 @@ export const renderSlice = (
           }
           itemType={(slice as GenericListSchema).itemType}
           filterTags={(slice as GenericListSchema).filterTags}
+          defaultOrder={(slice as GenericListSchema).defaultOrder}
+          showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
         />
       )
     case 'TeamList':
@@ -219,6 +225,8 @@ export const renderSlice = (
     case 'LatestGenericListItems': {
       return <LatestGenericListItems slice={slice} />
     }
+    case 'FeaturedLinks':
+      return <FeaturedLinksSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

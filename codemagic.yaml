@@ -14,6 +14,8 @@ definitions:
     #      - pattern: "main"
     #        include: true
     #        source: true
+  environment: &environment
+    node: 20.15.0
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
@@ -116,6 +118,7 @@ workflows:
     integrations:
       app_store_connect: 'Island.is API Key'
     environment:
+      <<: *environment
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app
@@ -149,6 +152,7 @@ workflows:
     integrations:
       app_store_connect: 'Island.is API Key'
     environment:
+      <<: *environment
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
@@ -186,6 +190,7 @@ workflows:
         - $CM_BUILD_DIR/.yarn/cache
         - $CM_BUILD_DIR/.cache/nx
     environment:
+      <<: *environment
       android_signing:
         - island-upload-keystore
       groups:
@@ -215,6 +220,7 @@ workflows:
     # instance_type: linux_x2
     cache: *android_cache
     environment:
+      <<: *environment
       android_signing:
         - island-upload-keystore
       groups:

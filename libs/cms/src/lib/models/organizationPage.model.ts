@@ -86,6 +86,12 @@ export class OrganizationPage {
 
   @CacheField(() => OrganizationPageTopLevelNavigation, { nullable: true })
   topLevelNavigation?: OrganizationPageTopLevelNavigation | null
+
+  @Field(() => Boolean, { nullable: true })
+  canBeFoundInSearchResults?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  showPastEventsOption?: boolean
 }
 
 export const mapOrganizationPage = ({
@@ -125,7 +131,9 @@ export const mapOrganizationPage = ({
       .map(safelyMapSliceUnion)
       .filter(Boolean),
     secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
-    menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
+    menuLinks: (fields.menuLinks ?? [])
+      .map(mapLinkGroup)
+      .filter((linkGroup) => Boolean(linkGroup?.primaryLink)),
     secondaryMenu: fields.secondaryMenu
       ? mapLinkGroup(fields.secondaryMenu)
       : null,
@@ -144,5 +152,7 @@ export const mapOrganizationPage = ({
       ? mapImage(fields.defaultHeaderImage)
       : undefined,
     topLevelNavigation,
+    canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
+    showPastEventsOption: fields.showPastEventsOption ?? false,
   }
 }

@@ -28,12 +28,14 @@ export const getApplicationTitle = (
     )[activeScreen.subSectionIndex]
   }
 
-  const formName = formatMessage(state.form.title)
+  const formName = formatMessage(state.form.title ?? '')
   const titleParts = [`${formName} | Ísland.is`]
 
   if (activeSection) {
+    const tabTitle = activeSection.tabTitle
+    const title = activeSection.title ?? ''
     const sectionTitle = formatTextWithLocale(
-      activeSection.title,
+      tabTitle || title,
       state.application,
       locale as Locale,
       formatMessage,

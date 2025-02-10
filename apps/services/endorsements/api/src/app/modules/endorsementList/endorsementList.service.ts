@@ -247,7 +247,11 @@ export class EndorsementListService {
       ])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
-    const endorsementList = await this.endorsementListModel.create({ ...list })
+    const ownerName = await this.fetchOwnerNameFromRegistry(list.owner)
+    const endorsementList = await this.endorsementListModel.create({
+      ...list,
+      ownerName,
+    })
 
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
@@ -305,6 +309,10 @@ export class EndorsementListService {
         throw new NotFoundException(['This endorsement list does not exist.'])
       }
       owner = endorsementList.owner
+      // Use stored ownerName if available
+      if (endorsementList.ownerName) {
+        return endorsementList.ownerName
+      }
     }
 
     try {
@@ -951,6 +959,21 @@ export class EndorsementListService {
       throw new InternalServerErrorException(
         `Failed to upload file to S3: ${error.message}`,
       )
+    }
+  }
+
+  private async fetchOwnerNameFromRegistry(
+    nationalId: string,
+  ): Promise<string> {
+    try {
+      const person = await this.nationalRegistryApiV3.getName(nationalId)
+      return person?.fulltNafn ? person.fulltNafn : ''
+    } catch (error) {
+      this.logger.error('Failed to fetch owner name from NationalRegistry', {
+        error: error.message,
+        nationalId,
+      })
+      return ''
     }
   }
 }

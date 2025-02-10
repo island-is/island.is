@@ -32,10 +32,14 @@ import {
 } from '../file'
 import {
   CreateIndictmentCountInput,
+  CreateOffenseInput,
   DeleteIndictmentCountInput,
-  DeleteIndictmentCountResponse,
+  DeleteOffenseInput,
+  DeleteResponse,
   IndictmentCount,
+  Offense,
   UpdateIndictmentCountInput,
+  UpdateOffenseInput,
 } from '../indictment-count'
 import { Institution } from '../institution'
 import {
@@ -355,6 +359,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  limitedAccessUpdateDefendant(
+    caseId: string,
+    defendantId: string,
+    updateDefendant: unknown,
+  ): Promise<Defendant> {
+    return this.patch(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}`,
+      updateDefendant,
+    )
+  }
+
   deleteDefendant(
     caseId: string,
     defendantId: string,
@@ -418,10 +433,36 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   deleteIndictmentCount(
     input: DeleteIndictmentCountInput,
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     const { caseId, indictmentCountId } = input
 
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
+  }
+
+  createOffense(input: CreateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, ...createOffense } = input
+
+    return this.post(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense`,
+      createOffense,
+    )
+  }
+
+  updateOffense(input: UpdateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, offenseId, ...updateOffense } = input
+
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+      updateOffense,
+    )
+  }
+
+  deleteOffense(input: DeleteOffenseInput): Promise<DeleteResponse> {
+    const { caseId, offenseId, indictmentCountId } = input
+
+    return this.delete(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+    )
   }
 
   limitedAccessGetCase(id: string): Promise<Case> {

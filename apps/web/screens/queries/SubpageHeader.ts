@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { slices } from './fragments'
 
 export const GET_SUBPAGE_HEADER_QUERY = gql`

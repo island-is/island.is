@@ -41,11 +41,11 @@ export class Grant {
   @Field({ nullable: true })
   applicationId?: string
 
-  @Field({ nullable: true })
-  applicationDeadlineStatus?: string
-
   @CacheField(() => ReferenceLink, { nullable: true })
   applicationUrl?: ReferenceLink
+
+  @Field({ nullable: true })
+  applicationButtonLabel?: string
 
   @CacheField(() => [SliceUnion])
   specialEmphasis?: Array<typeof SliceUnion>
@@ -57,7 +57,7 @@ export class Grant {
   howToApply?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
-  applicationDeadline?: Array<typeof SliceUnion>
+  answeringQuestions?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
   applicationHints?: Array<typeof SliceUnion>
@@ -93,8 +93,15 @@ export class Grant {
 const parseStatus = (fields: IGrantFields): GrantStatus => {
   switch (fields.grantStatus) {
     case 'Automatic': {
-      const parsedDateTo = new Date(fields.grantDateTo ?? '')
-      const parsedDateFrom = new Date(fields.grantDateFrom ?? '')
+      const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
+      const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
+
+      if (!dateTo || !dateFrom) {
+        return GrantStatus.INVALID
+      }
+
+      const parsedDateTo = new Date(dateTo)
+      const parsedDateFrom = new Date(dateFrom)
 
       if (!isValidDate(parsedDateTo) || !isValidDate(parsedDateFrom)) {
         return GrantStatus.INVALID
@@ -103,12 +110,13 @@ const parseStatus = (fields: IGrantFields): GrantStatus => {
       const today = new Date()
 
       //opens soon!
-      if (today <= parsedDateFrom) {
-        return fields.grantFromDateIsEstimated
+      if (today < parsedDateFrom) {
+        const status = fields.grantFromDateIsEstimated
           ? GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION
           : GrantStatus.CLOSED_OPENING_SOON
+        return status
       }
-      if (today <= parsedDateTo) {
+      if (today < parsedDateTo) {
         return GrantStatus.OPEN
       }
       return GrantStatus.CLOSED
@@ -132,20 +140,20 @@ const parseDate = (date?: string, time?: number): string | undefined => {
   if (!time) {
     return format(parsedDate, 'yyyy-MM-dd')
   }
-  return addHours(new Date(date), time).toISOString()
+  return addHours(parsedDate, time).toISOString()
 }
 
 export const mapGrant = ({ fields, sys }: IGrant): Grant => {
+  const status = parseStatus(fields)
   return {
     id: sys.id,
     name: fields.grantName,
     description: fields.grantDescription,
     applicationId: fields.grantApplicationId,
-    applicationDeadlineStatus: fields.grantApplicationDeadlineStatus,
     applicationUrl: fields.granApplicationUrl?.fields
       ? mapReferenceLink(fields.granApplicationUrl)
       : undefined,
-
+    applicationButtonLabel: fields.grantButtonLabel,
     specialEmphasis: fields.grantSpecialEmphasis
       ? mapDocument(fields.grantSpecialEmphasis, sys.id + ':special-emphasis')
       : [],
@@ -155,24 +163,23 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     howToApply: fields.grantHowToApply
       ? mapDocument(fields.grantHowToApply, sys.id + ':how-to-apply')
       : [],
-    applicationDeadline: fields.grantApplicationDeadline
-      ? mapDocument(
-          fields.grantApplicationDeadline,
-          sys.id + ':application-deadline',
-        )
-      : [],
     applicationHints: fields.grantApplicationHints
       ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
       : [],
+    answeringQuestions: fields.grantAnsweringQuestions
+      ? mapDocument(
+          fields.grantAnsweringQuestions,
+          sys.id + ':answering-questions',
+        )
+      : [],
     dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
     dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
-    status: parseStatus(fields),
+    status: status,
     statusText: fields.grantStatusNote,
     fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
     files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
     supportLinks:
       (fields.grantSupportLinks ?? []).map((link) => mapLink(link)) ?? [],
-
     categoryTags: fields.grantCategoryTags
       ? fields.grantCategoryTags.map((tag) => mapGenericTag(tag))
       : undefined,

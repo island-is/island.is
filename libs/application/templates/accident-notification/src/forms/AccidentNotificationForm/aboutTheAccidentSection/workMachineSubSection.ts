@@ -8,9 +8,9 @@ import { application, workMachine } from '../../../lib/messages'
 import {
   isAgricultureAccident,
   isGeneralWorkplaceAccident,
-} from '../../../utils'
-import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmployee'
-import { NO, YES } from '../../../utils/constants'
+  isSportAccidentAndEmployee,
+} from '../../../utils/occupationUtils'
+import { NO, YES } from '@island.is/application/types'
 
 // Workmachine information only applicable to generic workplace accidents
 export const workMachineSubSection = buildSubSection({

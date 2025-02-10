@@ -270,11 +270,6 @@ export const incomePlanFormMessage: MessageDir = {
         'Vinsamlegast farðu yfir tekjuáætlunina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
-    buttonEdit: {
-      id: 'ip.application:button.edit',
-      defaultMessage: 'Breyta tekjuáætlun',
-      description: 'Edit application',
-    },
   }),
 
   conclusionScreen: defineMessages({
@@ -336,10 +331,8 @@ export const statesMessages = defineMessages({
   },
   tryggingastofnunSubmittedContent: {
     id: 'ip.application:tryggingastofnunSubmittedContent',
-    defaultMessage:
-      'Tekjuáætlunin þín er í bið eftir yfirferð. Hægt er að breyta tekjuáætlun þar til hún er komin í yfirferð.',
-    description:
-      'Your income plan is awaiting review. It is possible to edit the income plan until it is under review.',
+    defaultMessage: 'Tekjuáætlunin þín er í bið eftir yfirferð.',
+    description: 'Your income plan is awaiting review.',
   },
   incomePlanEdited: {
     id: 'ip.application:incomePlanEdited',

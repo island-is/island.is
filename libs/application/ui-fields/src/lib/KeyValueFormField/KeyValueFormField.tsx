@@ -23,6 +23,8 @@ export const KeyValueFormField: FC<
         paddingBottom={field.paddingBottom}
         display={field.display === 'flex' ? 'flex' : 'block'}
         justifyContent="spaceBetween"
+        marginTop={field.marginTop}
+        marginBottom={field.marginBottom}
       >
         <Box
           display="flex"

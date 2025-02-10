@@ -1,22 +1,20 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
+  isPrisonAdminUser,
   isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
   isSuccessfulServiceStatus,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -25,6 +23,7 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -43,6 +42,13 @@ interface Props {
 interface RenderFilesProps {
   caseFiles: CaseFile[]
   onOpenFile: (fileId: string) => void
+}
+
+interface FileSection {
+  title: string
+  onOpenFile: (fileId: string) => void
+  files?: CaseFile[]
+  shouldRender?: boolean
 }
 
 export const RenderFiles: FC<RenderFilesProps> = ({
@@ -65,6 +71,81 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
+const FileSection: FC<FileSection> = (props: FileSection) => {
+  const { title, files, onOpenFile, shouldRender = true } = props
+
+  if (!files?.length || !shouldRender) {
+    return null
+  }
+
+  return (
+    <Box marginBottom={5}>
+      <Text variant="h4" as="h4" marginBottom={1}>
+        {title}
+      </Text>
+      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
+    </Box>
+  )
+}
+
+const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
+  return useMemo(() => {
+    const filterByCategories = (
+      categories: CaseFileCategory | CaseFileCategory[],
+    ) => {
+      const categoryArray = Array.isArray(categories)
+        ? categories
+        : [categories]
+
+      return (
+        caseFiles?.filter(
+          (file) => file.category && categoryArray.includes(file.category),
+        ) ?? []
+      )
+    }
+
+    return {
+      criminalRecords: filterByCategories(CaseFileCategory.CRIMINAL_RECORD),
+      costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
+      others: filterByCategories(CaseFileCategory.CASE_FILE),
+      rulings: filterByCategories(CaseFileCategory.RULING),
+      courtRecords: filterByCategories(CaseFileCategory.COURT_RECORD),
+      criminalRecordUpdate: filterByCategories(
+        CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+      ),
+      uploadedCaseFiles: filterByCategories([
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
+      ]),
+      civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
+      sentToPrisonAdminFiles: filterByCategories(
+        CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+      ),
+    }
+  }, [caseFiles])
+}
+
+const useFilePermissions = (workingCase: Case, user?: User) => {
+  return useMemo(
+    () => ({
+      canViewCriminalRecordUpdate:
+        isDistrictCourtUser(user) ||
+        isPublicProsecutor(user) ||
+        isPublicProsecutorUser(user),
+      canViewCivilClaims:
+        Boolean(workingCase.hasCivilClaims) &&
+        (isDistrictCourtUser(user) ||
+          isProsecutionUser(user) ||
+          isDefenceUser(user)),
+      canViewSentToPrisonAdminFiles:
+        isPrisonAdminUser(user) || isPublicProsecutorUser(user),
+      canViewRulings:
+        isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
+    }),
+    [user, workingCase.hasCivilClaims, workingCase.state],
+  )
+}
+
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
@@ -73,15 +154,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
   })
-
-  const showTrafficViolationCaseFiles =
-    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-    isTrafficViolationCase(workingCase)
 
   const showSubpoenaPdf =
     displayGeneratedPDFs &&
@@ -89,52 +165,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
       (defendant) => defendant.subpoenas && defendant.subpoenas.length > 0,
     )
 
-  const cf = workingCase.caseFiles
-
-  const indictments = cf?.filter(
-    (file) => file.category === CaseFileCategory.INDICTMENT,
-  )
-  const criminalRecords = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
-  )
-  const costBreakdowns = cf?.filter(
-    (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
-  )
-  const others = cf?.filter(
-    (file) => file.category === CaseFileCategory.CASE_FILE,
-  )
-  const rulings = cf?.filter(
-    (file) => file.category === CaseFileCategory.RULING,
-  )
-  const courtRecords = cf?.filter(
-    (file) => file.category === CaseFileCategory.COURT_RECORD,
-  )
-  const criminalRecordUpdate = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-  )
-  const uploadedCaseFiles = cf?.filter(
-    (file) =>
-      file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
-      file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
-  )
-  const civilClaims = cf?.filter(
-    (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
-  )
+  const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
+  const permissions = useFilePermissions(workingCase, user)
 
   return (
     <>
       {displayHeading && (
         <SectionHeading title={formatMessage(strings.title)} />
       )}
-      {indictments && indictments.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.indictmentSection)}
-          </Text>
-          <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
-        </Box>
-      )}
-      {showTrafficViolationCaseFiles && displayGeneratedPDFs && (
+      {displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.indictmentSection)}
@@ -143,49 +182,34 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
+              title={formatMessage(caseFiles.indictmentTitle)}
               pdfType="indictment"
               renderAs="row"
             />
           </Box>
         </Box>
       )}
-      {criminalRecords && criminalRecords.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.criminalRecordSection)}
-          </Text>
-          <RenderFiles caseFiles={criminalRecords} onOpenFile={onOpen} />
-        </Box>
-      )}
-      {criminalRecordUpdate &&
-        criminalRecordUpdate.length > 0 &&
-        (isDistrictCourtUser(user) ||
-          isPublicProsecutor(user) ||
-          isPublicProsecutorUser(user)) && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.criminalRecordUpdateSection)}
-            </Text>
-            <RenderFiles caseFiles={criminalRecordUpdate} onOpenFile={onOpen} />
-          </Box>
-        )}
-      {costBreakdowns && costBreakdowns.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.costBreakdownSection)}
-          </Text>
-          <RenderFiles caseFiles={costBreakdowns} onOpenFile={onOpen} />
-        </Box>
-      )}
-      {others && others.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.otherDocumentsSection)}
-          </Text>
-          <RenderFiles caseFiles={others} onOpenFile={onOpen} />
-        </Box>
-      )}
+      <FileSection
+        title={formatMessage(caseFiles.criminalRecordSection)}
+        files={filteredFiles.criminalRecords}
+        onOpenFile={onOpen}
+      />
+      <FileSection
+        title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+        files={filteredFiles.criminalRecordUpdate}
+        onOpenFile={onOpen}
+        shouldRender={permissions.canViewCriminalRecordUpdate}
+      />
+      <FileSection
+        title={formatMessage(caseFiles.costBreakdownSection)}
+        files={filteredFiles.costBreakdowns}
+        onOpenFile={onOpen}
+      />
+      <FileSection
+        title={formatMessage(caseFiles.otherDocumentsSection)}
+        files={filteredFiles.others}
+        onOpenFile={onOpen}
+      />
       {displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -207,34 +231,34 @@ const IndictmentCaseFilesList: FC<Props> = ({
           ))}
         </Box>
       )}
-      {courtRecords?.length || rulings?.length ? (
+      {filteredFiles.courtRecords?.length || filteredFiles.rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
           </Text>
-          {courtRecords && courtRecords.length > 0 && (
-            <RenderFiles caseFiles={courtRecords} onOpenFile={onOpen} />
-          )}
-          {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
-            rulings &&
-            rulings.length > 0 && (
-              <RenderFiles caseFiles={rulings} onOpenFile={onOpen} />
+          {filteredFiles.courtRecords &&
+            filteredFiles.courtRecords.length > 0 && (
+              <RenderFiles
+                caseFiles={filteredFiles.courtRecords}
+                onOpenFile={onOpen}
+              />
+            )}
+          {permissions.canViewRulings &&
+            filteredFiles.rulings &&
+            filteredFiles.rulings.length > 0 && (
+              <RenderFiles
+                caseFiles={filteredFiles.rulings}
+                onOpenFile={onOpen}
+              />
             )}
         </Box>
       ) : null}
-      {workingCase.hasCivilClaims &&
-        civilClaims &&
-        civilClaims.length > 0 &&
-        (isDistrictCourtUser(user) ||
-          isProsecutionUser(user) ||
-          isDefenceUser(user)) && (
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.civilClaimsTitle)}
-            </Text>
-            <RenderFiles caseFiles={civilClaims} onOpenFile={onOpen} />
-          </Box>
-        )}
+      <FileSection
+        title={formatMessage(strings.civilClaimsTitle)}
+        files={filteredFiles.civilClaims}
+        onOpenFile={onOpen}
+        shouldRender={permissions.canViewCivilClaims}
+      />
       {showSubpoenaPdf && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -273,14 +297,24 @@ const IndictmentCaseFilesList: FC<Props> = ({
           )}
         </Box>
       )}
-      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={3}>
-            {formatMessage(strings.uploadedCaseFiles)}
-          </Text>
-          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
-        </Box>
-      )}
+      {filteredFiles.uploadedCaseFiles &&
+        filteredFiles.uploadedCaseFiles.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={3}>
+              {formatMessage(strings.uploadedCaseFiles)}
+            </Text>
+            <CaseFileTable
+              caseFiles={filteredFiles.uploadedCaseFiles}
+              onOpenFile={onOpen}
+            />
+          </Box>
+        )}
+      <FileSection
+        title={formatMessage(strings.sentToPrisonAdmin)}
+        files={filteredFiles.sentToPrisonAdminFiles}
+        onOpenFile={onOpen}
+        shouldRender={permissions.canViewSentToPrisonAdminFiles}
+      />
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>

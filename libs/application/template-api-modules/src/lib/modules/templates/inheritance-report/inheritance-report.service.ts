@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  Attachment,
   DataUploadResponse,
   Person,
   PersonType,
@@ -18,6 +19,7 @@ import { inheritanceReportSchema } from '@island.is/application/templates/inheri
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { S3Service } from '@island.is/nest/aws'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -27,6 +29,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
   }
@@ -48,7 +51,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
-      application.applicant.startsWith('110130') &&
+      application.applicant.startsWith('010130') &&
       application.applicant.endsWith('2399')
         ? [
             getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
@@ -105,9 +108,54 @@ export class InheritanceReportService extends BaseTemplateApiService {
 
     const uploadDataName = 'erfdafjarskysla1.0'
     const uploadDataId = 'erfdafjarskysla1.0'
+    const attachments: Attachment[] = []
+
+    if (answers?.heirsAdditionalInfoPrivateTransferFiles) {
+      attachments.push(
+        ...(await Promise.all(
+          answers.heirsAdditionalInfoPrivateTransferFiles.map(async (file) => {
+            const filename = (
+              application.attachments as {
+                [key: string]: string
+              }
+            )[file.key]
+            const content = await this.getFileContentBase64(filename)
+            return {
+              name: file.name,
+              content,
+            }
+          }),
+        )),
+      )
+    }
+
+    if (answers?.heirsAdditionalInfoFilesOtherDocuments) {
+      attachments.push(
+        ...(await Promise.all(
+          answers.heirsAdditionalInfoFilesOtherDocuments.map(async (file) => {
+            const filename = (
+              application.attachments as {
+                [key: string]: string
+              }
+            )[file.key]
+            const content = await this.getFileContentBase64(filename)
+            return {
+              name: file.name,
+              content,
+            }
+          }),
+        )),
+      )
+    }
 
     const result: DataUploadResponse = await this.syslumennService
-      .uploadData([person], undefined, uploadData, uploadDataName, uploadDataId)
+      .uploadData(
+        [person],
+        attachments,
+        uploadData,
+        uploadDataName,
+        uploadDataId,
+      )
       .catch((e) => {
         return {
           success: false,
@@ -130,5 +178,21 @@ export class InheritanceReportService extends BaseTemplateApiService {
   async maritalStatus({ auth }: TemplateApiModuleActionProps) {
     const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
     return { ...spouse, fullName: spouse?.name }
+  }
+
+  async getFileContentBase64(fileName: string): Promise<string> {
+    try {
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
+      return fileContent || ''
+    } catch (e) {
+      this.logger.warn(
+        '[inherhitance-report]: Failed to get file content - ',
+        e,
+      )
+      return 'err'
+    }
   }
 }

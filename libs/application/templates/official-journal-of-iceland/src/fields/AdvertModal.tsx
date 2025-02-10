@@ -26,6 +26,7 @@ import debounce from 'lodash/debounce'
 import { InputFields } from '../lib/types'
 import { useFormContext } from 'react-hook-form'
 import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
+import { cleanTypename } from '../lib/utils'
 type Props = {
   applicationId: string
   visible: boolean
@@ -75,20 +76,12 @@ export const AdvertModal = ({
       return
     }
 
-    const clean = (obj: {
-      __typename?: string
-      id: string
-      title: string
-      slug: string
-    }) => {
-      const { __typename: _, ...rest } = obj
-      return rest
-    }
+    const department = cleanTypename(advert.department)
+    const type = cleanTypename(advert.type)
 
-    const department = clean(advert.department)
-    const type = clean(advert.type)
-
-    const categories = advert.categories.map((category) => clean(category))
+    const categories = advert.categories.map((category) =>
+      cleanTypename(category),
+    )
 
     setValue(InputFields.advert.department, department)
     setValue(InputFields.advert.type, type)

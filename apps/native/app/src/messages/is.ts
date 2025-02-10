@@ -18,6 +18,7 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -385,6 +386,8 @@ export const is = {
   'wallet.emptyListTitle': 'Hér eru engin skírteini sem stendur',
   'wallet.emptyListDescription':
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
+  'wallet.lastUpdated': 'Síðast uppfært: {date}',
+  'wallet.update': 'Uppfæra',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
@@ -401,8 +404,16 @@ export const is = {
     'Tókst ekki að sækja eða bæta við skírteini.',
   'walletPass.errorNotPossibleOnThisDevice':
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
-  'walletPass.errorNotConnectedNoBarcode':
+  'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
+  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorBadSession':
+    'Of stutt síðan skírteini var sótt á öðru tæki',
+  'walletPass.validLicense': 'Í gildi',
+  'walletPass.expiredLicense': 'Útrunnið',
+  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
+  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
+  'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
@@ -632,7 +643,7 @@ export const is = {
   'health.overview.insuredFrom': 'Sjúkratrygging frá',
   'health.overview.status': 'Staða',
   'health.overview.notInsured': 'Þú ert ekki með sjúkratryggingu',
-  'health.overview.coPayments': 'Greiðsluþáttaka',
+  'health.overview.coPayments': 'Greiðsluþátttaka',
   'health.overview.maxMonthlyPayment': 'Hámarksgreiðslan þín á mánuði',
   'health.overview.paymentLimit': 'Greiðslumark',
   'health.overview.paymentCredit': 'Inneign',
