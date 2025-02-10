@@ -12,7 +12,7 @@ import {
   RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
 
-const serviceName = 'user-notification'
+const serviceName = 'user-notification-test'
 const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
