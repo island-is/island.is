@@ -3,6 +3,10 @@ name: Validate code in the merge queue (post merge)
 on:
   workflow_dispatch: {}
   merge_group:
+  push:
+    branches:
+      - feature/test-in-mergequeue
+
 defaults:
   run:
     shell: bash -euxo pipefail {0}
@@ -13,8 +17,6 @@ concurrency:
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
-  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 3 }}
   DISABLE_GROUPING: ${{ vars.DISABLE_GROUPING || false }}
   DISABLE_CHUNKS: ${{ vars.DISABLE_CHUNKS || false }}
@@ -22,179 +24,250 @@ env:
   MAX_JOBS: ${{ vars.MAX_JOBS || 2 }}
   NX_PARALLEL: ${{ vars.NX_PARALLEL || 2 }}
   NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 4 }}
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
-  # prepare:
-  #   runs-on: arc-runners
-  #   timeout-minutes: 35
-  #   env:
-  #     AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-  #     SERVERSIDE_FEATURES_ON: ''
-  #     DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+  prepare:
+    runs-on: arc-runners
+    timeout-minutes: 35
+    env:
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      SERVERSIDE_FEATURES_ON: ''
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
-  #   outputs:
-  #     CACHE_KEYS: ${{ steps.get_cache.outputs.keys }}
-  #     TEST_CHUNKS: ${{ steps.build_info.outputs.TEST_CHUNKS }}
-  #     E2E_CHUNKS: ${{ steps.build_info.outputs.E2E_CHUNKS }}
-  #     E2E_BUILD_ID: ${{ steps.build_info.outputs.BUILD_ID }}
-  #     BUILD_CHUNKS: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
+    outputs:
+      TEST_CHUNKS: ${{ steps.build_info.outputs.TEST_CHUNKS }}
+      E2E_CHUNKS: ${{ steps.build_info.outputs.E2E_CHUNKS }}
+      E2E_BUILD_ID: ${{ steps.build_info.outputs.BUILD_ID }}
+      BUILD_CHUNKS: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
+      NX_BASE: ${{ steps.build_info.outputs.NX_BASE }}
+      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: 'package.json'
+    steps:
 
-  #     - name: Setup yarn
-  #       run: corepack enable
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  #     - name: Get cache
-  #       id: get_cache
-  #       uses: ./.github/actions/get-cache
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         enable-cache: 'node_modules,cypress'
+      - run: corepack enable
 
-  #     - name: Derive appropriate SHAs
-  #       uses: nrwl/nx-set-shas@v4
+      - name: Set cache key
+        id: set-cache-key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-  #     - name: Gather branch info
-  #       id: build_info
-  #       run: |
-  #         export BASE=${{ env.NX_BASE }}
-  #         export HEAD=${{ env.NX_HEAD }}
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-  #         echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}" >> "$GITHUB_OUTPUT"
-  #         echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}" >> "$GITHUB_OUTPUT"
-  #         echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}" >> "$GITHUB_OUTPUT"
-  #         echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
-  # tests:
-  #   needs:
-  #     - prepare
-  #   if: needs.prepare.outputs.TEST_CHUNKS
-  #   runs-on: ec2-runners
-  #   container:
-  #     image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-  #   env:
-  #     AFFECTED_PROJECTS: ${{ matrix.projects }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-  #   steps:
-  #     - uses: actions/checkout@v4
 
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: 'package.json'
+      - run: yarn install --immutable
 
-  #     - name: Setup yarn
-  #       run: corepack enable
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
-  #     - name: Get cache
-  #       id: get-cache
-  #       uses: ./.github/actions/get-cache
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-  #         enable-cache: 'node_modules,cypress'
+      - name: Prepare generated files
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
-  #     - uses: ./.github/actions/unit-test
-  #       with:
-  #         dd-api-key: '${{ secrets.DD_API_KEY }}'
-  #         codecov-token: ${{ secrets.CODECOV_TOKEN }}
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
 
-  # e2e:
-  #   needs:
-  #     - prepare
-  #   if: needs.prepare.outputs.E2E_CHUNKS
-  #   runs-on: arc-runners
-  #   timeout-minutes: 45
-  #   env:
-  #     AFFECTED_PROJECT: ${{ matrix.projects }}
-  #     CYPRESS_PROJECT_ID: 4q7jz8
-  #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-  #     API_MOCKS: 'true'
-  #     NODE_OPTIONS: --max-old-space-size=4096
-  #     E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-  #   strategy:
-  #     fail-fast: false
-  #     matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-  #   steps:
-  #     - uses: actions/checkout@v4
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
 
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: 'package.json'
+      - name: Gather branch info
+        id: build_info
+        run: |
+          export BASE=${{ env.NX_BASE }}
+          export HEAD=${{ env.NX_HEAD }}
 
-  #     - name: Setup yarn
-  #       run: corepack enable
+          echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}" >> "$GITHUB_OUTPUT"
+          echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}" >> "$GITHUB_OUTPUT"
+          echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}" >> "$GITHUB_OUTPUT"
+          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$BASE" >> "$GITHUB_OUTPUT"
 
-  #     - name: Get cache
-  #       id: get-cache
-  #       uses: ./.github/actions/get-cache
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-  #         enable-cache: 'node_modules,cypress'
+  tests:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.TEST_CHUNKS
+    runs-on: arc-test
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: Running e2e tests
-  #       run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+      - run: corepack enable
 
-  # build:
-  #   needs:
-  #     - prepare
-  #   runs-on: arc-runners
-  #   timeout-minutes: 35
-  #   env:
-  #     AFFECTED_PROJECTS: ${{ matrix.projects }}
-  #   strategy:
-  #     fail-fast: true
-  #     matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-  #   if: needs.prepare.outputs.BUILD_CHUNKS
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: 'package.json'
-  #     - name: Setup yarn
-  #       run: corepack enable
-  #     - name: Get cache
-  #       id: get-cache
-  #       uses: ./.github/actions/get-cache
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-  #         enable-cache: 'node_modules'
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
-  #     - name: Building
-  #       run: ./scripts/ci/run-in-parallel-native.sh build
+      - run: yarn install --immutable
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  e2e:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.E2E_CHUNKS
+    runs-on: arc-runners
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECT: ${{ matrix.projects }}
+      CYPRESS_PROJECT_ID: 4q7jz8
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      API_MOCKS: 'true'
+      NODE_OPTIONS: --max-old-space-size=4096
+      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: corepack enable
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
+
+      - run: yarn install --immutable
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Running e2e tests
+        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+
+  build:
+    needs:
+      - prepare
+    runs-on: arc-runners
+    timeout-minutes: 35
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: true
+      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+    if: needs.prepare.outputs.BUILD_CHUNKS
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: corepack enable
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
+
+      - run: yarn install --immutable
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Building
+        run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
     runs-on: arc-runners
-    # if: ${{ !cancelled() }}
-    # needs:
-    #   - prepare
-    #   - tests
-    #   - e2e
-    #   - build
+    if: ${{ !cancelled() }}
+    needs:
+      - prepare
+      - tests
+      - e2e
+      - build
     steps:
       - name: Announce success
         run: echo "Build is successful"
-      # - name: Check prepare success
-      #   run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      # - name: Check tests success
-      #   run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      # - name: Check e2e success
-      #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      # - name: Check build success
-      #   run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+      - name: Check e2e success
+        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      - name: Check build success
+        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
