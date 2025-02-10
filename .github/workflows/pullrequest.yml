@@ -103,6 +103,7 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            **/node_modules
             ${{ env.CYPRESS_CACHE_FOLDER }}
           key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
 
