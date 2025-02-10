@@ -1,7 +1,7 @@
 name: Docker Build
 # This workflow builds Docker images for projects in the repository.
 # It can be triggered by:
-# - Labeling a pull request with "docker build"
+# - Labeling a pull request with "ci debug"
 # - Being called from another workflow via `workflow_call`
 # - Manual dispatch using `workflow_dispatch`
 # The workflow uses matrix builds to parallelize the process and leverages caching
@@ -18,11 +18,10 @@ on:
         description: 'Comma-separated list of project names to build.'
         type: string
         required: true
-      runners:
-        description: 'The runners to run the jobs on.'
+      build-args:
+        description: 'Additional build-args (newline separated)'
         type: string
         required: false
-        default: 'arc-runners'
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
@@ -33,18 +32,17 @@ on:
         description: 'Comma-separated list of project names to build.'
         type: string
         required: true
-      runners:
-        description: 'The runners to run the jobs on.'
-        required: false
+      build-args:
+        description: 'Additional build-args (newline separated)'
         type: string
-        default: 'arc-runners'
+        required: false
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
         required: false
 
 concurrency:
-  group: container-build-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}-${{ github.event_name }}
   cancel-in-progress: true
 
 defaults:
@@ -56,22 +54,26 @@ env:
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
   AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
   NODE_IMAGE_VERSION: 20
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  # Registry without trailing `/docker`
+  ECR_PULLTHROUGH_CACHE: ${{ vars.ECR_PULLTHROUGH_CACHE || 'public.ecr.aws' }}
+  AWS_REGION: ${{ vars.AWS_REGION || 'eu-west-1' }}
 
 jobs:
   prepare:
     name: Prepare
-    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'docker build') }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
+    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+    runs-on: 'arc-runners'
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-      node-image-version: ${{ steps.build-args.outputs.node-image-version }}
-      playwright-image-tag: ${{ steps.build-args.outputs.playwright-image-tag }}
-      container-registry: ${{ steps.build-args.outputs.container-registry }}
+      node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
+      playwright-image-tag: ${{ steps.args-prep.outputs.playwright-image-tag }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Build arg prep
-        id: build-args
+        id: args-prep
         run: |
           node_image_version="$NODE_IMAGE_VERSION"
           echo node-image-version="$node_image_version" >>"$GITHUB_OUTPUT"
@@ -82,8 +84,9 @@ jobs:
         env:
           localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
+          is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
         run: |
-          if [[ ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }} ]]; then
+          if [[ "$is_debug" == true ]] && [[ -z "$projects" ]]; then
             echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
@@ -108,10 +111,145 @@ jobs:
               ]
             }')" | tee -a "$GITHUB_OUTPUT"
 
+  deps:
+    name: Build dependencies
+    runs-on: arc-runners
+    needs: prepare
+
+    permissions:
+      id-token: write # This is required for requesting the JWT for AWS/ECR login
+      contents: read # This is required for actions/checkout
+
+    outputs:
+      meta: ${{ toJson(steps.meta.outputs) }}
+      common: ${{ toJson(steps.common.outputs) }}
+      ecr-login: ${{ toJson(steps.ecr-login.outputs) }}
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Prepare arguments
+        if: ${{ !github.event.localrun }}
+        id: args
+        env:
+          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+        run: |
+          echo build-cache-to="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache,mode=max" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-from="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Common config
+        id: common
+        env:
+          build_args: |
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
+          image_repository: ${{ steps.args.outputs.image-repository }}
+          cache_from: |
+            ${{ steps.args.outputs.build-cache-from }}
+          cache_to: |
+            ${{ steps.args.outputs.build-cache-to }}
+          localrun: ${{ !!github.event.localrun }}
+        run: |
+          echo | jq -rsc \
+            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
+          '{
+            file: "scripts/ci/Dockerfile",
+            push: false,
+            "build-args": $build_args,
+            "image-repository": $image_repository,
+            "cache-from": $cache_from,
+            "cache-to": $cache_to,
+          }
+            | to_entries
+            | .[]
+            # Use GitHub multi-line outputs, but cheekily done inline here 🤭
+            | "\(.key)<<EOF\n\(.value)\nEOF"
+          ' | tee -a "$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials
+        if: ${{ !github.event.localrun }}
+        id: aws-creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # aws-region: eu-west-1
+      - name: Log in to Amazon ECR
+        if: ${{ steps.aws-creds.conclusion == 'success' }}
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Log in Docker
+        if: ${{ steps.ecr-login.conclusion == 'success' }}
+        id: docker-login
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ steps.aws-creds.outputs.registry }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          # We get rate-limited if using docker.io's image for buildkit.
+          driver-opts: |
+            image=${{ env.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
+          install: true
+          use: true
+
+      # Build stable layers; only difference between these steps should be the `target`
+      - name: Docker build/cache dependencies (base)
+        uses: docker/build-push-action@v6
+        with:
+          target: base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies (deps)
+        uses: docker/build-push-action@v6
+        with:
+          target: deps
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies (output-base)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies (output-base-with-pg)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base-with-pg
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
-    needs: prepare
+    runs-on: arc-runners
+    needs:
+      - prepare
+      - deps
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
@@ -121,37 +259,27 @@ jobs:
       contents: read # This is required for actions/checkout
 
     steps:
-      - name: Prepare arguments
-        id: args
-        env:
-          # We don't use a repository prefix (e.g. <registry>/island.is/<project>), just the raw project
-          image_repository: ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
-          localrun: ${{ github.event.localrun }}
-        run: |
-          echo image-repository="$image_repository" >>"$GITHUB_OUTPUT"
-          echo build-cache-local="type=local,src=/tmp,dest=/tmp,mode=max,enabled=${{ !!github.event.localrun }}" >>"$GITHUB_OUTPUT"
-          echo build-cache="type=registry,image-manifest=true,oci-mediatypes=true,ref=$image_repository:cache,enabled=${{ !github.event.localrun }}" >>"$GITHUB_OUTPUT"
-
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         if: ${{ !github.event.localrun }}
         id: aws-creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-session-name: container-build
-          aws-region: ${{ vars.AWS_REGION }}
-          # Identical to usage in push.yml
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # TODO: Use this instead of aws-{access,secret}, but needs proper roles & policies
-          # role-to-assume: ${{ vars.AWS_ECR_ROLE }}
-
+          aws-region: ${{ env.AWS_REGION }}
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
+      - name: Log in Docker
+        if: ${{ steps.ecr-login.conclusion == 'success' }}
+        id: docker-login
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ fromJson(needs.deps.outputs.ecr-login).registry }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -188,62 +316,32 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
-      - name: Godegen if needed
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'docker build') }}
+      - name: Debug inputs
+        env:
+          common: ${{ needs.deps.outputs.common }}
+          build_args: ${{ inputs.build-args }}
+          meta: ${{ steps.meta.outputs }}
+          dependencies: ${{ needs.deps.outputs.registry }}
         run: |
-          # In PRs we don't have the generated files context from when being called.
-          corepack enable && yarn install --immutable && yarn codegen
-
-      - name: Docker build/cache dependencies
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: scripts/ci/Dockerfile
-          push: false
-          target: deps
-          build-args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-          cache-from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=max
-            ${{ steps.args.outputs.build-cache }},mode=max
-
-      - name: Docker build/cache output base
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: scripts/ci/Dockerfile
-          push: false
-          target: output-base
-          build-args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-          cache-from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: |
-            ${{ steps.args.outputs.build-cache-local }},mode=max
-            ${{ steps.args.outputs.build-cache }},mode=max
+          echo "common=$common"
+          echo "build-args=$build_args"
+          echo "meta=$meta"
+          echo "dependencies=$(echo "$dependencies" | jq -n || echo "|$dependencies|")"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
+          target: output-${{ matrix.docker }}
           context: .
-          file: scripts/ci/Dockerfile
+          file: ${{ fromJson(needs.deps.outputs.common).file }}
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
-          target: output-${{ matrix.docker }}
+          secrets: |
+            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            APP=${{ matrix.project }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            ${{ fromJson(needs.deps.outputs.common).build-args }}
+            ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
-          cache-from: |
-            ${{ steps.args.outputs.build-cache-local }}
-            ${{ steps.args.outputs.build-cache }}
-          cache-to: |
-            ${{ steps.args.outputs.build-cache }},mode=min
+          cache-from: ${{ fromJson(needs.deps.outputs.common).cache-from }}
+          cache-to: ${{ fromJson(needs.deps.outputs.common).cache-to }},mode=min
