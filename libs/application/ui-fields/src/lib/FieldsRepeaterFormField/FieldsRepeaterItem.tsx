@@ -232,11 +232,9 @@ export const Item = ({
       backgroundColor: backgroundColor,
       isSearchable: item.isSearchable,
       isMulti: item.isMulti,
-      // marginTop: 2,
-      // marginBottom: 2,
       loadOptions: item.loadOptions,
       clearOnChange: item.clearOnChange,
-      updateOnSelect: item.updateOnSelect,
+      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
     }
   }
 

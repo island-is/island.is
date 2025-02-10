@@ -19,7 +19,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
           id: 'fieldsRepeaterDescription',
           title: '',
           description:
-            'FieldsRepeater works similarly to tableRepeater, in that it contains a set of fields to fill out and this set can be repeated as many times as needed. The difference is that in tableRepeater, the values go into a table, while in fieldsRepeater, all fields created are always visible.',
+            'FieldsRepeater works similarly to tableRepeater, in that it contains a set of fields to fill out and this set can be repeated as many times as needed. The difference is that in tableRepeater, the values go into a table, while in fieldsRepeater, all fields created are always visible. As with tableRepeater the async select fields can be set to update based on selections in other fields in the same form instance.',
         }),
         buildFieldsRepeaterField({
           id: 'fieldsRepeater',
@@ -76,7 +76,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
             },
             selectAsyncPrimary: {
               component: 'selectAsync',
-              label: 'Select Async',
+              label: 'Primary Select Async',
               loadOptions: async ({ apolloClient, selectedValue }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
@@ -93,7 +93,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
             },
             selectAsyncReliant: {
               component: 'selectAsync',
-              label: 'Select Async',
+              label: 'Reliant Select Async',
               updateOnSelect: 'selectAsyncPrimary',
               loadOptions: async ({ apolloClient, selectedValue }) => {
                 const { data } =
