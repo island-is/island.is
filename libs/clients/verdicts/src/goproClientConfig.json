@@ -1,0 +1,3101 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "GoPro External Integration REST Services - API version 1.0"
+  },
+  "host": "foris.gopro.net",
+  "basePath": "/domssm/services",
+  "schemes": ["https"],
+  "paths": {
+    "/Case/GetCaseContacts": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Retrieve contacts associated with a specific case",
+        "operationId": "GetCaseContacts",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetCaseContactsRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCaseContactsResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/GetCaseContacts": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Retrieve contacts associated with a specific case",
+        "operationId": "GetCaseContacts",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetCaseContactsRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCaseContactsResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/CreateCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Create a new case in GoPro with linked contacts and documents attached.\r\nAPI: 1.0",
+        "operationId": "CreateCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/CreateCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Create a new case in GoPro with linked contacts and documents attached.\r\nAPI: 1.0",
+        "operationId": "CreateCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/CreateQuickCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Create a new case in GoPro",
+        "operationId": "CreateQuickCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateQuickCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/CreateQuickCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Create a new case in GoPro",
+        "operationId": "CreateQuickCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateQuickCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/GetCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Retrieve basic info for specified GoPro case",
+        "operationId": "GetCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCaseResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/GetCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Retrieve basic info for specified GoPro case",
+        "operationId": "GetCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCaseResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/UpdateCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Update a case by case number or record ID",
+        "operationId": "UpdateCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UpdateCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/UpdateCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Update a case by case number or record ID",
+        "operationId": "UpdateCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UpdateCaseRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/GetUpdates": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Returns a list of cases that had been updated since startingDate argument.\r\nAPI: 1.0",
+        "operationId": "GetUpdates",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/StartingTimeRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/CasesResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/GetUpdates": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Returns a list of cases that had been updated since startingDate argument.\r\nAPI: 1.0",
+        "operationId": "GetUpdates",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/StartingTimeRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/CasesResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/SearchCases": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Search cases by case template (optional) and contact. If template is not specified, search is not filtered by case type. Contact must be specified",
+        "operationId": "SearchCases",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TemplateAndContactFilterRequest"
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/CasesResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/SearchCases": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Search cases by case template (optional) and contact. If template is not specified, search is not filtered by case type. Contact must be specified",
+        "operationId": "SearchCases",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TemplateAndContactFilterRequest"
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/CasesResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/LinkContactToCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Associate an individual or company contact with a case",
+        "operationId": "LinkContactToCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/LinkContactRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/LinkContactToCase": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Associate an individual or company contact with a case",
+        "operationId": "LinkContactToCase",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/LinkContactRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/GetFolder": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Returns information about a folder by specified folder name and parent ID",
+        "operationId": "GetFolder",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetFolderRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetFolderResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/GetFolder": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Returns information about a folder by specified folder name and parent ID",
+        "operationId": "GetFolder",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetFolderRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetFolderResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/GetDefaultStatus": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Returns default status for a list",
+        "operationId": "GetDefaultStatus",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/NamedReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/GetDefaultStatus": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Returns default status for a list",
+        "operationId": "GetDefaultStatus",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/NamedReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Case/CreateFolder": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Creates a folder under specified case",
+        "operationId": "CreateFolder",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateFolderRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Cases/CreateFolder": {
+      "post": {
+        "tags": ["Case"],
+        "summary": "Creates a folder under specified case",
+        "operationId": "CreateFolder",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateFolderRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Clients/CreateCompany": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create a new company partner in GoPro",
+        "operationId": "CreateCompany",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Company" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Clients/CreateCompany": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create a new company partner in GoPro",
+        "operationId": "CreateCompany",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Company" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Clients/CreateIndividual": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create a new person (individual) partner in GoPro",
+        "operationId": "CreateIndividual",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Individual" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Clients/CreateIndividual": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create a new person (individual) partner in GoPro",
+        "operationId": "CreateIndividual",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Individual" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Clients/CreateContact": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create a new partner contact in GoPro",
+        "operationId": "CreateContact",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Contact" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Clients/CreateContact": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Create a new partner contact in GoPro",
+        "operationId": "CreateContact",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Contact" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Clients/GetCompany": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Retrieve company info from GoPro",
+        "operationId": "GetCompany",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetClientRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCompanyResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Clients/GetCompany": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Retrieve company info from GoPro",
+        "operationId": "GetCompany",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetClientRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCompanyResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Clients/GetIndividual": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Retrieve person (individual) parter info from GoPro",
+        "operationId": "GetIndividual",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetClientRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetIndividualResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Clients/GetIndividual": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Retrieve person (individual) parter info from GoPro",
+        "operationId": "GetIndividual",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetClientRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetIndividualResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Clients/GetContact": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Retrieve contact info from GoPro",
+        "operationId": "GetContact",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetContactRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetContactResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Clients/GetContact": {
+      "post": {
+        "tags": ["Clients"],
+        "summary": "Retrieve contact info from GoPro",
+        "operationId": "GetContact",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetContactRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetContactResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Documents/CreateDocument": {
+      "post": {
+        "tags": ["Document"],
+        "summary": "Create a new file document in GoPro",
+        "operationId": "CreateDocument",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateDocumentRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Documents/CreateDocument": {
+      "post": {
+        "tags": ["Document"],
+        "summary": "Create a new file document in GoPro",
+        "operationId": "CreateDocument",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateDocumentRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Forms/CreateForm": {
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Create a new custom form (custom GoPro object type)\r\nAPI: 1.0",
+        "operationId": "CreateForm",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Forms/CreateForm": {
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Create a new custom form (custom GoPro object type)\r\nAPI: 1.0",
+        "operationId": "CreateForm",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Forms/UpdateForm": {
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Update an existing custom Gopro object / form\r\nAPI: 1.0",
+        "operationId": "UpdateForm",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UpdateFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Forms/UpdateForm": {
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Update an existing custom Gopro object / form\r\nAPI: 1.0",
+        "operationId": "UpdateForm",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/UpdateFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Forms/GetForm": {
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Retrieve a custom Gopro object / form\r\nAPI: 1.0",
+        "operationId": "GetForm",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetFormResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Forms/GetForm": {
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Retrieve a custom Gopro object / form\r\nAPI: 1.0",
+        "operationId": "GetForm",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetFormRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetFormResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Memos/CreateMemo": {
+      "post": {
+        "tags": ["Memo"],
+        "summary": "Create a new GoPro memo",
+        "operationId": "CreateMemo",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateMemoRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/v1/Memos/CreateMemo": {
+      "post": {
+        "tags": ["Memo"],
+        "summary": "Create a new GoPro memo",
+        "operationId": "CreateMemo",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/CreateMemoRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Authenticate": {
+      "get": {
+        "tags": ["Security"],
+        "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods. API: 1.0",
+        "operationId": "Authenticate",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "The username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK", "schema": { "type": "string" } }
+        }
+      }
+    },
+    "/v1/Authenticate": {
+      "get": {
+        "tags": ["Security"],
+        "summary": "Authenticate with username and password. Returns authenticationToken that is used when calling other API methods. API: 1.0",
+        "operationId": "Authenticate",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "The username",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": { "description": "OK", "schema": { "type": "string" } }
+        }
+      }
+    },
+    "/Verdict/getVerdicts": {
+      "post": {
+        "tags": ["Verdict"],
+        "summary": "Search verdicts.\r\nUsing advanced key search and multiple criteria parameters.\r\nUse \"orderBy\" expression parameter. Syntax: sort_field [ ASC | DESC ] [ , ...n ]\r\nSupported fields for sort_field: { Court | Casetype | CaseNumber | Category | Title | VerdictDate | PublishDate }\r\nSamples: \"Court ASC\", \"Court, VerdictDate DESC\"",
+        "operationId": "GetVerdicts",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/GetVerdictsRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetVerdictsResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Verdict/{id}": {
+      "get": {
+        "tags": ["Verdict"],
+        "summary": "Get a detailed verdict data specified by unique ID",
+        "operationId": "GetVerdict",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique ID of the published verdict",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetVerdictResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Verdict/publishVerdict": {
+      "post": {
+        "tags": ["Verdict"],
+        "summary": "Register or update a verdict in public registry by court, external case id and number, title and announcement date.\r\nIf case by specified court and external id is already published then it is updated",
+        "operationId": "PublishVerdict",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/PublishVerdictRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Verdict/addVerdictDocument": {
+      "post": {
+        "tags": ["Verdict"],
+        "summary": "Upload a PDF representation of the verdict.\r\nUnique id of the published verdict: verdictID\r\nBase64 encoded content of the PDF document: content",
+        "operationId": "AddVerdictDocument",
+        "consumes": ["application/json", "text/json"],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "requestData",
+            "in": "body",
+            "description": "",
+            "required": true,
+            "schema": { "$ref": "#/definitions/AddVerdictDocumentRequest" }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/ReferenceResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Verdict/getCaseTypes": {
+      "post": {
+        "tags": ["Verdict"],
+        "summary": "Get list of case templates in use",
+        "operationId": "GetCaseTypes",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCaseTypesResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Verdict/getCaseCategories": {
+      "post": {
+        "tags": ["Verdict"],
+        "summary": "Get list of case categories in use",
+        "operationId": "GetCaseCategories",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetCaseCategoriesResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    },
+    "/Verdict/getKeywords": {
+      "post": {
+        "tags": ["Verdict"],
+        "summary": "Get list of keywords",
+        "operationId": "GetKeywords",
+        "consumes": [],
+        "produces": ["application/json", "text/json"],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "description": "Token returned by Authenticate method.",
+            "required": false,
+            "type": "string",
+            "default": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/GetKeywordsResponse" }
+          }
+        },
+        "security": [{ "basic": [] }]
+      }
+    }
+  },
+  "definitions": {
+    "GetCaseContactsRequest": {
+      "description": "GetCaseContacts method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID",
+          "type": "string"
+        }
+      }
+    },
+    "GetCaseContactsResponse": {
+      "description": "General case contacts response collection",
+      "type": "object",
+      "properties": {
+        "contacts": {
+          "description": "A collection of contact structures",
+          "type": "array",
+          "items": { "$ref": "#/definitions/CaseContact" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CaseContact": {
+      "description": "GoPro case contact data model",
+      "type": "object",
+      "properties": {
+        "contactID": { "description": "Contact ID", "type": "string" },
+        "role": { "description": "This contact's role", "type": "string" },
+        "primary": {
+          "description": "Indicates if this is the primary contact for a case",
+          "type": "string"
+        },
+        "name": { "description": "This contact's name", "type": "string" },
+        "idnumber": {
+          "description": "This contact's ID number",
+          "type": "string"
+        },
+        "type": { "description": "The type of contact", "type": "string" },
+        "address": { "description": "", "type": "string" },
+        "email": { "description": "This contact's address", "type": "string" },
+        "webPage": {
+          "description": "This contact's web page",
+          "type": "string"
+        },
+        "phone": { "description": "This contact's phone", "type": "string" },
+        "postalCode": {
+          "description": "This contact's postal code",
+          "type": "string"
+        },
+        "city": { "description": "This contact's city", "type": "string" },
+        "caseContactID": { "description": "Case Contact ID", "type": "string" }
+      }
+    },
+    "CreateCaseRequest": {
+      "description": "CreateCase method request structure",
+      "required": ["template", "subject"],
+      "type": "object",
+      "properties": {
+        "template": { "description": "Case template name", "type": "string" },
+        "subject": {
+          "description": "Subject (name) of the case",
+          "type": "string"
+        },
+        "category": { "description": "Case category name", "type": "string" },
+        "organization": {
+          "description": "Name path or ID of organization to search for the case template.\r\nUse special word \"all\" (lower case only) to look in all organizations.\r\nSkip parameter or pass empty to assume current user organization",
+          "type": "string"
+        },
+        "deadline": { "description": "Deadline date", "type": "string" },
+        "keywords": {
+          "description": "Keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "journalKeys": {
+          "description": "Optional collection of related journal keys",
+          "type": "array",
+          "items": { "$ref": "#/definitions/JournalKey" }
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        },
+        "physicalLocation": {
+          "description": "Physical location (if existing and specified)",
+          "type": "string"
+        },
+        "contacts": {
+          "description": "List of clients (individuals or companies) who will be linked to the case by different roles. If client is not registered (missing from system) - they will be created first",
+          "type": "array",
+          "items": { "$ref": "#/definitions/LinkedRoleContact" }
+        },
+        "searchInactiveContacts": {
+          "description": "Optional. When true then searches for both active and inactive contacts. Default: false",
+          "type": "boolean"
+        },
+        "documents": {
+          "description": "List of document attached under case",
+          "type": "array",
+          "items": { "$ref": "#/definitions/DocumentInfo" }
+        },
+        "ignoreDefaultEmployees": {
+          "description": "When false then default employees for the case template are ignored and not assigned to the case on creation.\r\nWhen true default workers are added. Note that this flag has no effect on handling the ResponsibleEmployees list.\r\nThese are always assigned to the case.",
+          "type": "boolean"
+        },
+        "responsibleEmployees": {
+          "description": "List of users that will be assigned as responsible workers for the case. The case template (see <seealso cref=\"P:GoPro.EIR.Requests.CreateQuickCaseRequest.Template\" /> property) specifies default set of responsibles which may or may not be added to the case. See <seealso cref=\"P:GoPro.EIR.Requests.CreateCaseRequest.IgnoreDefaultEmployees\" />",
+          "type": "array",
+          "items": { "$ref": "#/definitions/ResponsibleWorker" }
+        }
+      }
+    },
+    "JournalKey": {
+      "description": "Journal key category",
+      "type": "object",
+      "properties": {
+        "journalKeyID": {
+          "format": "uuid",
+          "description": "Journal key ID",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "isPrimary": {
+          "description": "Gets or sets binary flag for the journal key being a primary for the target",
+          "type": "boolean"
+        }
+      }
+    },
+    "Metadata": {
+      "description": "Metadata value with definition reference",
+      "type": "object",
+      "properties": {
+        "definitionID": {
+          "description": "Metadata definition ID",
+          "type": "string"
+        },
+        "name": { "description": "Name of the metadata", "type": "string" },
+        "value": {
+          "description": "String representation of metadata value",
+          "type": "string"
+        },
+        "valueType": {
+          "format": "int32",
+          "description": "Data type of the metadata (0: String (default), 1: Guid; 2: Integer; 3: DateTime; 4: Boolean; 5: Decimal (currency))",
+          "type": "integer"
+        }
+      }
+    },
+    "LinkedRoleContact": {
+      "description": "Contact information. Used in relation with cases\r\nwhere multiple contacts can be linked by specific role and priority",
+      "required": ["name", "idnumber"],
+      "type": "object",
+      "properties": {
+        "role": {
+          "description": "Role for this contact relation",
+          "type": "string"
+        },
+        "primary": {
+          "description": "Flag that shows whether contact is primary for the case (main involved party). Can be either false/true or 0/1 or nei/já or no/yes",
+          "type": "string"
+        },
+        "id": {
+          "description": "Unique record ID (a GUID) of an existing contact",
+          "type": "string"
+        },
+        "name": {
+          "description": "Full name of the person or company",
+          "type": "string"
+        },
+        "idnumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of client. Possible values: Individual, Company, Contact",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "webPage": {
+          "description": "Web address, home page",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Main (default) phone number for contact",
+          "type": "string"
+        },
+        "postalCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City name", "type": "string" }
+      }
+    },
+    "DocumentInfo": {
+      "description": "GoPro document",
+      "type": "object",
+      "properties": {
+        "subject": {
+          "description": "Subject (title) of the document",
+          "type": "string"
+        },
+        "type": {
+          "description": "Document class name. One of the values in \"Document classes\" GoPro list",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "File name of the document content uploaded",
+          "type": "string"
+        },
+        "content": {
+          "description": "Binary content represented as Base64 encoded string",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        }
+      }
+    },
+    "ResponsibleWorker": {
+      "description": "Represents a GoPro user. Used for denoting a case responsible worker",
+      "type": "object",
+      "properties": {
+        "userId": { "description": "Record ID of the user", "type": "string" },
+        "primary": {
+          "description": "Flag that shows whether this user is the primary responsible for the case. Can be either false/true or 0/1 or nei/já or no/yes",
+          "type": "boolean"
+        }
+      }
+    },
+    "ReferenceResponse": {
+      "description": "General GoPro reference response",
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "description": "GoPro target record id",
+          "type": "string"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CreateQuickCaseRequest": {
+      "description": "CreateQuickCase method request structure",
+      "required": ["template", "subject"],
+      "type": "object",
+      "properties": {
+        "template": { "description": "Case template name", "type": "string" },
+        "subject": {
+          "description": "Subject (name) of the case",
+          "type": "string"
+        },
+        "category": { "description": "Case category name", "type": "string" },
+        "organization": {
+          "description": "Name path or ID of organization to search for the case template.\r\nUse special word \"all\" (lower case only) to look in all organizations.\r\nSkip parameter or pass empty to assume current user organization",
+          "type": "string"
+        },
+        "deadline": { "description": "Deadline date", "type": "string" },
+        "keywords": {
+          "description": "Keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "journalKeys": {
+          "description": "Optional collection of related journal keys",
+          "type": "array",
+          "items": { "$ref": "#/definitions/JournalKey" }
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        }
+      }
+    },
+    "GetCaseRequest": {
+      "description": "GetCase method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID",
+          "type": "string"
+        },
+        "caseName": { "description": "Subject of the case", "type": "string" },
+        "caseTemplate": {
+          "description": "Case template name",
+          "type": "string"
+        }
+      }
+    },
+    "GetCaseResponse": {
+      "description": "General single case response structure",
+      "type": "object",
+      "properties": {
+        "case": {
+          "$ref": "#/definitions/Case",
+          "description": "Case structure"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "Case": {
+      "description": "GoPro case data model",
+      "type": "object",
+      "properties": {
+        "subject": { "description": "Case subject (name)", "type": "string" },
+        "archiveNumber": { "description": "Archive number", "type": "string" },
+        "templateName": {
+          "description": "Name of case template",
+          "type": "string"
+        },
+        "categoryName": { "description": "Case category", "type": "string" },
+        "responsibleEmployeeName": {
+          "description": "User names of main responsible worker for the case",
+          "type": "string"
+        },
+        "responsibleEmployeeID": {
+          "description": "Record ID of main responsible worker for the case",
+          "type": "string"
+        },
+        "coResponsibleEmployees": {
+          "description": "List of other responsible workers for the case",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "priorityName": { "description": "Priority", "type": "string" },
+        "personalSensitive": {
+          "description": "GDPR protection applied",
+          "type": "boolean"
+        },
+        "confidential": { "description": "Confidentiality", "type": "boolean" },
+        "body": { "description": "General comments", "type": "string" },
+        "statusName": { "description": "Status", "type": "string" },
+        "keywords": {
+          "description": "List of associated keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "publishTo": {
+          "description": "Publish targets. A combination of one or more values:\r\nShowGeneral, ShowCitizen, HiddenIndividual, Teams",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "creationDate": {
+          "format": "date-time",
+          "description": "Date and time of case creation",
+          "type": "string"
+        },
+        "createdByName": {
+          "description": "Name of the user who created the case",
+          "type": "string"
+        },
+        "modifiedDate": {
+          "format": "date-time",
+          "description": "Date and time of latest edition",
+          "type": "string"
+        },
+        "modifiedByName": {
+          "description": "Name of the user who last edited the case",
+          "type": "string"
+        },
+        "closingDate": {
+          "format": "date-time",
+          "description": "Date and time when the case was closed.",
+          "type": "string"
+        },
+        "metaDataEntries": {
+          "description": "List of related metadata with values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/MetaValue" }
+        },
+        "id": {
+          "description": "Unique record ID (a GUID) of the case in GoPro system",
+          "type": "string"
+        },
+        "caseNumber": { "description": "Case number", "type": "string" }
+      }
+    },
+    "MetaValue": {
+      "description": "Metadata value",
+      "type": "object",
+      "properties": {
+        "name": { "description": "Name of the metadata", "type": "string" },
+        "value": {
+          "description": "String representation of metadata value",
+          "type": "string"
+        },
+        "valueType": {
+          "format": "int32",
+          "description": "Data type of the metadata (0: String (default), 1: Guid; 2: Integer; 3: DateTime; 4: Boolean; 5: Decimal (currency))",
+          "type": "integer"
+        }
+      }
+    },
+    "UpdateCaseRequest": {
+      "description": "UpdateCase method request structure",
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "description": "Record id or case number of target case",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Subject (name) of the case",
+          "type": "string"
+        },
+        "status": { "description": "Status name", "type": "string" },
+        "metadata": {
+          "description": "Collection of associated metadata values with definitions",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        },
+        "overwrite": {
+          "description": "Flag to control full overwriting of properties\r\nWhen true - all properties are cleared and reset with the new value. Missing properties will be cleared to empty/default value(s). Object should be retrieved first before updating\r\nWhen false - only passed arguments will be updated.",
+          "type": "boolean"
+        }
+      }
+    },
+    "StartingTimeRequest": {
+      "description": "GetUpdates method request structure",
+      "type": "object",
+      "properties": {
+        "startingDate": {
+          "description": "Starting date limiter",
+          "type": "string"
+        }
+      }
+    },
+    "CasesResponse": {
+      "description": "General case response collection",
+      "type": "object",
+      "properties": {
+        "cases": {
+          "description": "A collection of case structures",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Case" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "TemplateAndContactFilterRequest": {
+      "description": "SearchCases method request structure",
+      "required": ["contactIdNumber"],
+      "type": "object",
+      "properties": {
+        "contactIdNumber": {
+          "description": "National identification number or GoPro record ID of target client that is expected to be linked to cases",
+          "type": "string"
+        },
+        "caseTemplate": {
+          "description": "Name of case template to filter results. Optional. If not specified, cases of all types are searched.",
+          "type": "string"
+        }
+      }
+    },
+    "LinkContactRequest": {
+      "description": "LinkContactToCase method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record id (GUID) of the target case",
+          "type": "string"
+        },
+        "customerID": {
+          "description": "Record ID of the contact (individual/company) who needs to be linked",
+          "type": "string"
+        },
+        "role": {
+          "description": "Role name for this contact relation. See \"Roles\" list in GoPro system for predefined roles",
+          "type": "string"
+        }
+      }
+    },
+    "GetFolderRequest": {
+      "description": "GetFolder method request structure",
+      "type": "object",
+      "properties": {
+        "name": { "description": "Folder name", "type": "string" },
+        "parentID": {
+          "description": "Record id of parent object to search under",
+          "type": "string"
+        }
+      }
+    },
+    "GetFolderResponse": {
+      "description": "GetFolder method response structure",
+      "type": "object",
+      "properties": {
+        "folder": {
+          "$ref": "#/definitions/Folder",
+          "description": "Folder object"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "Folder": {
+      "description": "GoPro folder data model",
+      "type": "object",
+      "properties": {
+        "name": { "description": "Name of folder", "type": "string" },
+        "journalkey": { "description": "Journal key", "type": "string" },
+        "keywords": {
+          "description": "List of associated keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "statusName": { "description": "Folder status", "type": "string" },
+        "body": { "description": "Notes and comments", "type": "string" }
+      }
+    },
+    "GetFormRequest": {
+      "description": "GetForm method request structure",
+      "type": "object",
+      "properties": {
+        "id": { "description": "Record ID of custom form", "type": "string" }
+      }
+    },
+    "NamedReferenceResponse": {
+      "description": "General GoPro reference response with name",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name (subject) of the record",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "GoPro target record id",
+          "type": "string"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CreateFolderRequest": {
+      "description": "CreateFolder method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID of the parent case",
+          "type": "string"
+        },
+        "parentID": {
+          "description": "Record ID of the immediate parent under which will be placed this folder. When this is not the top case then <seealso cref=\"P:GoPro.EIR.Requests.CreateFolderRequest.CaseNumber\" /> is required",
+          "type": "string"
+        },
+        "subject": { "description": "Folder name", "type": "string" },
+        "body": { "description": "Description / comments", "type": "string" }
+      }
+    },
+    "Company": {
+      "description": "A company partner",
+      "type": "object",
+      "properties": {
+        "name": { "description": "Company name", "type": "string" },
+        "clientNumber": { "description": "Client number", "type": "string" },
+        "webPage": {
+          "description": "Web address, home page",
+          "type": "string"
+        },
+        "isatNumber": { "description": "ISAT Number", "type": "string" },
+        "isatName": { "description": "ISAT Name", "type": "string" },
+        "id": {
+          "description": "Unique record ID (a GUID) of the client",
+          "type": "string"
+        },
+        "idNumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "postCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City", "type": "string" },
+        "country": { "description": "Country name", "type": "string" },
+        "language": {
+          "description": "Primary language used",
+          "type": "string"
+        },
+        "mobilePhone": {
+          "description": "Mobile phone number",
+          "type": "string"
+        },
+        "homePhone": { "description": "Home phone number", "type": "string" },
+        "workPhone": { "description": "Work phone number", "type": "string" },
+        "faxNumber": { "description": "Fax number", "type": "string" },
+        "email": { "description": "Email address", "type": "string" },
+        "statusName": {
+          "description": "GoPro status of the client",
+          "type": "string"
+        }
+      }
+    },
+    "Individual": {
+      "description": "Data model for GoPro person (individual) partner",
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "description": "First name of the person",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "Middle name of the person",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Surname of the person",
+          "type": "string"
+        },
+        "jobTitle": { "description": "Job title", "type": "string" },
+        "id": {
+          "description": "Unique record ID (a GUID) of the client",
+          "type": "string"
+        },
+        "idNumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "postCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City", "type": "string" },
+        "country": { "description": "Country name", "type": "string" },
+        "language": {
+          "description": "Primary language used",
+          "type": "string"
+        },
+        "mobilePhone": {
+          "description": "Mobile phone number",
+          "type": "string"
+        },
+        "homePhone": { "description": "Home phone number", "type": "string" },
+        "workPhone": { "description": "Work phone number", "type": "string" },
+        "faxNumber": { "description": "Fax number", "type": "string" },
+        "email": { "description": "Email address", "type": "string" },
+        "statusName": {
+          "description": "GoPro status of the client",
+          "type": "string"
+        }
+      }
+    },
+    "Contact": {
+      "description": "Contact data model",
+      "type": "object",
+      "properties": {
+        "companyID": {
+          "description": "GoPro record ID of the company represented by this person",
+          "type": "string"
+        },
+        "contactRole": {
+          "description": "Role of this contact relation",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First name of contact person",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "Middle name of contact person",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Surname of contact person",
+          "type": "string"
+        },
+        "jobTitle": { "description": "Job title", "type": "string" },
+        "id": {
+          "description": "Unique record ID (a GUID) of the client",
+          "type": "string"
+        },
+        "idNumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "postCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City", "type": "string" },
+        "country": { "description": "Country name", "type": "string" },
+        "language": {
+          "description": "Primary language used",
+          "type": "string"
+        },
+        "mobilePhone": {
+          "description": "Mobile phone number",
+          "type": "string"
+        },
+        "homePhone": { "description": "Home phone number", "type": "string" },
+        "workPhone": { "description": "Work phone number", "type": "string" },
+        "faxNumber": { "description": "Fax number", "type": "string" },
+        "email": { "description": "Email address", "type": "string" },
+        "statusName": {
+          "description": "GoPro status of the client",
+          "type": "string"
+        }
+      }
+    },
+    "GetClientRequest": {
+      "description": "Request for a single client (individual or company)",
+      "required": ["identifier"],
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "description": "Identity number (SSN) or unique record ID (GUID) of the client",
+          "type": "string"
+        },
+        "searchInactive": {
+          "description": "Optional. When true then search for inactive clients as well. Default is false.",
+          "type": "boolean"
+        }
+      }
+    },
+    "GetCompanyResponse": {
+      "description": "GetCompany method response structure",
+      "type": "object",
+      "properties": {
+        "company": {
+          "$ref": "#/definitions/Company",
+          "description": "Company structure"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GetIndividualResponse": {
+      "description": "GetIndividual method response structure",
+      "type": "object",
+      "properties": {
+        "individual": {
+          "$ref": "#/definitions/Individual",
+          "description": "Person (individual) object"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "GetContactRequest": {
+      "description": "GetContact method request structure",
+      "required": ["contactId"],
+      "type": "object",
+      "properties": {
+        "contactId": {
+          "description": "Unique record ID (GUID) of the contact or identity number (SSN) of the related individual",
+          "type": "string"
+        },
+        "companyId": {
+          "description": "Identity number (SSN) or unique record ID (GUID) of the company which is represented by the individual",
+          "type": "string"
+        },
+        "searchInactive": {
+          "description": "Optional. When true then search for inactive contact/company as well. Default is false.",
+          "type": "boolean"
+        }
+      }
+    },
+    "GetContactResponse": {
+      "description": "GetContact method response structure",
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/Contact",
+          "description": "Contact structure"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CreateDocumentRequest": {
+      "description": "CreateDocument method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID of the parent case",
+          "type": "string"
+        },
+        "parentID": {
+          "description": "Record ID of the immediate parent under which resides the document. When this is not the case itself then CaseNumber is required",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Subject/title of the new document",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "File name of the document",
+          "type": "string"
+        },
+        "content": {
+          "description": "Binary content that will be uploaed. Represented as Base64 encoded string",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        }
+      }
+    },
+    "CreateFormRequest": {
+      "description": "CreateForm method request structure",
+      "type": "object",
+      "properties": {
+        "caseNumber": {
+          "description": "Case number or record ID of the top parent case",
+          "type": "string"
+        },
+        "parentID": {
+          "description": "Record ID of the immediate parent under which will be placed the form. When this is not the top case then <seealso cref=\"P:GoPro.EIR.Requests.CreateFormRequest.CaseNumber\" /> is required",
+          "type": "string"
+        },
+        "template": {
+          "description": "Form template specified by name",
+          "type": "string"
+        },
+        "name": { "description": "Name of custom form", "type": "string" },
+        "contact": {
+          "$ref": "#/definitions/LinkedContact",
+          "description": "Client (individual or company) who will be linked to the form. If client is not registered (missing from system) - they will be created first"
+        },
+        "keywords": {
+          "description": "Keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metadata": {
+          "description": "List of metadata values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        }
+      }
+    },
+    "LinkedContact": {
+      "description": "Single contact information. Used in relation with forms, documents, etc.\r\nwhere only a single contact can be assigned",
+      "required": ["name", "idnumber"],
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique record ID (a GUID) of an existing contact",
+          "type": "string"
+        },
+        "name": {
+          "description": "Full name of the person or company",
+          "type": "string"
+        },
+        "idnumber": {
+          "description": "National identification number",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of client. Possible values: Individual, Company, Contact",
+          "type": "string"
+        },
+        "address": {
+          "description": "Street address of the client",
+          "type": "string"
+        },
+        "email": { "description": "Email address", "type": "string" },
+        "webPage": {
+          "description": "Web address, home page",
+          "type": "string"
+        },
+        "phone": {
+          "description": "Main (default) phone number for contact",
+          "type": "string"
+        },
+        "postalCode": { "description": "Postal code", "type": "string" },
+        "city": { "description": "City name", "type": "string" }
+      }
+    },
+    "UpdateFormRequest": {
+      "description": "UpdateForm method request structure",
+      "type": "object",
+      "properties": {
+        "formID": {
+          "description": "Record id of target form",
+          "type": "string"
+        },
+        "name": { "description": "Form name", "type": "string" },
+        "contact": {
+          "$ref": "#/definitions/LinkedContact",
+          "description": "Linked contact"
+        },
+        "keywords": {
+          "description": "List of keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metadata": {
+          "description": "Collection of associated metadata values with definitions",
+          "type": "array",
+          "items": { "$ref": "#/definitions/Metadata" }
+        },
+        "overwrite": {
+          "description": "Flag to control full overwriting of properties\r\nWhen true - all properties are cleared and reset with the new value. Missing properties will be cleared to empty/default value(s). Object should be retrieved first before updating\r\nWhen false - only passed arguments will be updated.",
+          "type": "boolean"
+        }
+      }
+    },
+    "GetFormResponse": {
+      "description": "GetForm method response structure",
+      "type": "object",
+      "properties": {
+        "form": {
+          "$ref": "#/definitions/CustomForm",
+          "description": "Form object"
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CustomForm": {
+      "description": "GoPro custom form data model",
+      "type": "object",
+      "properties": {
+        "id": { "description": "Record id of this form", "type": "string" },
+        "subject": {
+          "description": "Subject (title/name) of custom form",
+          "type": "string"
+        },
+        "templateName": { "description": "Form template", "type": "string" },
+        "personalSensitive": {
+          "description": "GDPR protection applied",
+          "type": "boolean"
+        },
+        "statusName": { "description": "Form status", "type": "string" },
+        "keywords": {
+          "description": "List of associated keywords",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "creationDate": {
+          "format": "date-time",
+          "description": "Date and time of form creation",
+          "type": "string"
+        },
+        "createdByName": {
+          "description": "Name of the user who created the form",
+          "type": "string"
+        },
+        "modifiedDate": {
+          "format": "date-time",
+          "description": "Date and time of latest edition",
+          "type": "string"
+        },
+        "modifiedByName": {
+          "description": "Name of the user who last edited the form",
+          "type": "string"
+        },
+        "metaDataEntries": {
+          "description": "List of related metadata with values",
+          "type": "array",
+          "items": { "$ref": "#/definitions/MetaValue" }
+        },
+        "parent": {
+          "$ref": "#/definitions/CaseReference",
+          "description": "Parent case"
+        }
+      }
+    },
+    "CaseReference": {
+      "description": "Base case reference data model",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique record ID (a GUID) of the case in GoPro system",
+          "type": "string"
+        },
+        "caseNumber": { "description": "Case number", "type": "string" }
+      }
+    },
+    "CreateMemoRequest": {
+      "description": "CreateMemo method request structure",
+      "type": "object",
+      "properties": {
+        "subject": {
+          "description": "Subject (title) of the memo",
+          "type": "string"
+        },
+        "body": {
+          "description": "The content (body text) of the memo",
+          "type": "string"
+        },
+        "caseNumber": {
+          "description": "Top parent case number or record ID.",
+          "type": "string"
+        },
+        "parentID": {
+          "description": "Record ID of the immediate parent under which memo resides. When this is not the case itself then CaseNumber is required",
+          "type": "string"
+        }
+      }
+    },
+    "GetVerdictsRequest": {
+      "type": "object",
+      "properties": {
+        "searchTerm": { "type": "string" },
+        "courtLevel": { "type": "string" },
+        "caseCategories": { "type": "array", "items": { "type": "string" } },
+        "caseTypes": { "type": "array", "items": { "type": "string" } },
+        "caseNumber": { "type": "string" },
+        "title": { "type": "string" },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "laws": { "type": "array", "items": { "type": "string" } },
+        "dateFrom": { "type": "string" },
+        "dateTo": { "type": "string" },
+        "orderBy": { "type": "string" },
+        "pageNumber": { "format": "int32", "type": "integer" },
+        "itemsPerPage": { "format": "int32", "type": "integer" }
+      }
+    },
+    "GetVerdictsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DetailedVerdictData" }
+        },
+        "total": { "format": "int32", "type": "integer" },
+        "currentPage": { "format": "int32", "type": "integer" },
+        "itemsPerPage": { "format": "int32", "type": "integer" },
+        "identifier": { "type": "string" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "DetailedVerdictData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "court": { "type": "string" },
+        "caseId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseCategory": { "type": "string" },
+        "title": { "type": "string" },
+        "verdict": { "type": "string" },
+        "docContent": { "type": "string" },
+        "verdictHtml": { "type": "string" },
+        "presentings": { "type": "string" },
+        "presentingsHtml": { "type": "string" },
+        "verdictDate": { "format": "date-time", "type": "string" },
+        "publishDate": { "format": "date-time", "type": "string" },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/JuryJudge" }
+        },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "lawCitations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/CaseLaw" }
+        }
+      }
+    },
+    "JuryJudge": {
+      "type": "object",
+      "properties": {
+        "isPresident": { "type": "boolean" },
+        "name": { "type": "string" },
+        "title": { "type": "string" }
+      }
+    },
+    "CaseLaw": {
+      "type": "object",
+      "properties": {
+        "position": { "format": "int32", "type": "integer" },
+        "citation": { "type": "string" }
+      }
+    },
+    "GetVerdictResponse": {
+      "type": "object",
+      "properties": {
+        "item": { "$ref": "#/definitions/DetailedVerdictData" },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "PublishVerdictRequest": {
+      "type": "object",
+      "properties": {
+        "court": { "type": "string" },
+        "caseId": {
+          "format": "uuid",
+          "type": "string",
+          "example": "00000000-0000-0000-0000-000000000000"
+        },
+        "caseNumber": { "type": "string" },
+        "caseType": { "type": "string" },
+        "caseCategory": { "type": "string" },
+        "title": { "type": "string" },
+        "verdict": { "type": "string" },
+        "verdictHtml": { "type": "string" },
+        "presentings": { "type": "string" },
+        "presentingsHtml": { "type": "string" },
+        "verdictDate": { "type": "string" },
+        "publishDate": { "type": "string" },
+        "judges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/JuryJudge" }
+        },
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "lawCitations": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/CaseLaw" }
+        }
+      }
+    },
+    "AddVerdictDocumentRequest": {
+      "type": "object",
+      "properties": {
+        "verdictID": {
+          "description": "Record ID of the immediate parent.\r\nMatches both container case in GoPro and verdict ID from the custom table.",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Subject/title of the new document",
+          "type": "string"
+        },
+        "fileName": {
+          "description": "File name of the document",
+          "type": "string"
+        },
+        "content": {
+          "description": "Binary content that will be uploaed. Represented as Base64 encoded string",
+          "type": "string"
+        }
+      }
+    },
+    "GetCaseTypesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/CaseTypeInfo" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CaseTypeInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" }
+      }
+    },
+    "GetCaseCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/CaseCategoryInfo" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "CaseCategoryInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" }
+      }
+    },
+    "GetKeywordsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/KeywordInfo" }
+        },
+        "succeeded": {
+          "description": "General success indicator",
+          "type": "boolean"
+        },
+        "returnCode": {
+          "format": "int32",
+          "description": "HTTP response status code",
+          "type": "integer"
+        },
+        "message": {
+          "description": "Additional message containing information or error message",
+          "type": "string"
+        }
+      }
+    },
+    "KeywordInfo": {
+      "type": "object",
+      "properties": {
+        "id": { "format": "int32", "type": "integer" },
+        "label": { "type": "string" }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basic": { "type": "basic", "description": "Basic HTTP Authentication" }
+  }
+}
