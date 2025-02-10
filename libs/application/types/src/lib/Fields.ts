@@ -16,7 +16,7 @@ import {
   StaticText,
 } from './Form'
 import { ApolloClient } from '@apollo/client'
-import { Application, FormValue } from './Application'
+import { Application, ExternalData, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
@@ -85,7 +85,12 @@ type TableRepeaterOptions =
   | ((
       application: Application,
       activeField?: Record<string, string>,
+      locale?: Locale,
     ) => RepeaterOption[] | [])
+
+type MaybeWithApplicationAndActiveField<T> =
+  | T
+  | ((application: Application, activeField?: Record<string, string>) => T)
 
 export type RepeaterItem = {
   component: RepeaterFields
@@ -98,13 +103,15 @@ export type RepeaterItem = {
   emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
+  filterOptions?: (
+    options: RepeaterOption[],
+    answers: FormValue,
+    index: number,
+  ) => RepeaterOption[]
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
-  required?: boolean
-  condition?: (
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => boolean
+  required?: MaybeWithApplicationAndActiveField<boolean>
+  condition?: MaybeWithApplicationAndActiveField<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -112,18 +119,10 @@ export type RepeaterItem = {
   emailRequired?: boolean
   searchCompanies?: boolean
   searchPersons?: boolean
-  readonly?:
-    | boolean
-    | ((
-        application: Application,
-        activeField?: Record<string, string>,
-      ) => boolean)
-  disabled?:
-    | boolean
-    | ((
-        application: Application,
-        activeField?: Record<string, string>,
-      ) => boolean)
+  readonly?: MaybeWithApplicationAndActiveField<boolean>
+  disabled?: MaybeWithApplicationAndActiveField<boolean>
+  isClearable?: MaybeWithApplicationAndActiveField<boolean>
+  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
   updateValueObj?: {
     valueModifier: (
       application: Application,
@@ -136,10 +135,10 @@ export type RepeaterItem = {
           activeField?: Record<string, string>,
         ) => string | string[] | undefined)
   }
-  defaultValue?: (
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => unknown
+  clearOnChangeByIndex?: string[]
+  setOnChangeByIndex?:
+    | { key: string; value: any }[]
+    | ((option: any, application: Application) => { key: string; value: any }[])
 } & (
   | {
       component: 'input'
@@ -680,7 +679,7 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: StaticText
+  formTitle?: StaticText | ((index: number) => StaticText)
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
@@ -691,8 +690,12 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: number
-  maxRows?: number
+  minRows?:
+    | number
+    | ((formValue: FormValue, externalData: ExternalData) => number)
+  maxRows?:
+    | number
+    | ((formValue: FormValue, externalData: ExternalData) => number)
 }
 
 export type AccordionItem = {

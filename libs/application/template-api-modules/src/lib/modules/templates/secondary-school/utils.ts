@@ -116,11 +116,7 @@ export const getCleanSchoolSelection = (
       SecondarySchoolAnswers['selection'][0]
     >(application.answers, `selection.${index}`)
 
-    if (
-      (selectionItem?.include || index === 0) &&
-      selectionItem?.school?.id &&
-      selectionItem?.firstProgram?.id
-    ) {
+    if (selectionItem?.school?.id && selectionItem?.firstProgram?.id) {
       result.push({
         priority: schoolPriority++,
         schoolId: selectionItem.school.id,

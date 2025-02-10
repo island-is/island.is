@@ -13,7 +13,7 @@ export const formatKennitala = (nationalId: string | undefined): string => {
 }
 
 export const getTranslatedProgram = (
-  lang: string,
+  lang?: string,
   program?: {
     nameIs?: string
     nameEn?: string
