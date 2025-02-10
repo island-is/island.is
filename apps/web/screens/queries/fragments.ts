@@ -1017,7 +1017,10 @@ export const slices = gql`
     __typename
     id
     title
+    pageLinkVariant
     pageLinks {
+      id
+      intro
       label
       href
       thumbnailImageHref

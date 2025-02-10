@@ -16,6 +16,9 @@ registerEnumType(Variant, {
 
 @ObjectType('OrganizationParentSubpageListPageLink')
 class PageLink {
+  @Field(() => ID)
+  id!: string
+
   @Field()
   label!: string
 
@@ -24,6 +27,9 @@ class PageLink {
 
   @Field(() => String, { nullable: true })
   thumbnailImageHref?: string | null
+
+  @Field()
+  intro!: string
 }
 
 @ObjectType()
@@ -35,7 +41,7 @@ export class OrganizationParentSubpageList {
   title!: string
 
   @CacheField(() => Variant)
-  variant!: Variant
+  pageLinkVariant!: Variant
 
   @CacheField(() => [PageLink])
   pageLinks!: PageLink[]
@@ -52,7 +58,7 @@ export const mapOrganizationParentSubpageList = ({
     typename: 'OrganizationParentSubpageList',
     id: sys.id,
     title: fields.displayedTitle ?? '',
-    variant:
+    pageLinkVariant:
       fields.variant === 'Profile Card - Title Above'
         ? Variant.ProfileCardWithTitleAbove
         : Variant.ServiceCard,
@@ -64,11 +70,13 @@ export const mapOrganizationParentSubpageList = ({
           Boolean(page?.fields?.title),
       )
       .map((page) => ({
+        id: page.sys.id,
         label: page.fields.title ?? '',
         href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${
           page.fields.organizationPage.fields.slug
         }/${page.fields.slug}`,
         thumbnailImageHref: page.fields.thumbnailImage?.fields?.file?.url,
+        intro: page.fields.pages?.[0]?.fields?.intro ?? '',
       })),
     seeMoreLink: fields.seeMoreLink ? mapLink(fields.seeMoreLink) : null,
   }
