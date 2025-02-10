@@ -322,13 +322,20 @@ export default function PaymentPage({
 
     popup.document.write(generatePopupLoadingHtml())
 
-    const verifyCardResponse = await verifyCard({
-      amount: productInformation.amount,
-      cardNumber: cardInfo.number,
-      expiryMonth: cardInfo.expiryMonth,
-      expiryYear: cardInfo.expiryYear,
-      paymentFlowId: paymentFlow.id,
-    })
+    let verifyCardResponse
+
+    try {
+      verifyCardResponse = await verifyCard({
+        amount: productInformation.amount,
+        cardNumber: cardInfo.number,
+        expiryMonth: cardInfo.expiryMonth,
+        expiryYear: cardInfo.expiryYear,
+        paymentFlowId: paymentFlow.id,
+      })
+    } catch (e) {
+      popup.close()
+      throw e
+    }
 
     popup.document.write(
       generatePopupHtml(
