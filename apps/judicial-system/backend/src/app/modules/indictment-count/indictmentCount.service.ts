@@ -66,9 +66,9 @@ export class IndictmentCountService {
   }
 
   async delete(caseId: string, indictmentCountId: string): Promise<boolean> {
-    this.sequelize.transaction(async (transaction) => {
+    return this.sequelize.transaction(async (transaction) => {
       await this.offenseModel.destroy({
-        where: { id: indictmentCountId },
+        where: { indictmentCountId },
         transaction,
       })
 
@@ -87,9 +87,8 @@ export class IndictmentCountService {
           `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
         )
       }
+      return true
     })
-
-    return true
   }
 
   async createOffense(
