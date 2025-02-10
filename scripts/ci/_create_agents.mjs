@@ -30,7 +30,15 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
   const normalAgentCount = Math.ceil(normalProjects.length / JOBS_PER_AGENT)
   const problematicAgentCount = problematicProjects.length
   const shouldRun = normalAgentCount + problematicAgentCount > 0
+
+  const distributeRuleRunners = Array.from(new Set([
+    ...problematicProjects.map((project) => project.replace(':', '-'))
+      .flat()
+  ])).map((e) => `1 ${e}`).join(' ');
   const rules = {
+    'distribute-on': {
+      "default": `${normalAgentCount} default-runner ${distributeRuleRunners}`
+    },
     'assignment-rules': [
       ...problematicProjects.map((project) => {
         return {
@@ -45,7 +53,7 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
       },
     ],
   }
-
+  
   const targets = [..._TARGETS, ..._PROBLEMATIC_TARGETS];
 
   const defaultRunners = Array(normalAgentCount)
