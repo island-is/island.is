@@ -38,7 +38,7 @@ export const OverviewFormField = ({
             {formatTextWithLocale(
               field.title,
               application,
-              locale as Locale,
+              locale,
               formatMessage,
             )}
           </Text>
@@ -48,7 +48,7 @@ export const OverviewFormField = ({
             {formatTextWithLocale(
               field.description,
               application,
-              locale as Locale,
+              locale,
               formatMessage,
             )}
           </Text>
@@ -84,7 +84,7 @@ export const OverviewFormField = ({
                     {formatTextWithLocale(
                       item?.keyText ?? '',
                       application,
-                      locale as Locale,
+                      locale,
                       formatMessage,
                     )}
                   </Text>
@@ -94,7 +94,7 @@ export const OverviewFormField = ({
                     {formatTextWithLocale(
                       item?.valueText ?? '',
                       application,
-                      locale as Locale,
+                      locale,
                       formatMessage,
                     )}
                   </Text>
@@ -117,19 +117,19 @@ export const OverviewFormField = ({
                   fileName={formatTextWithLocale(
                     attachment.fileName,
                     application,
-                    locale as Locale,
+                    locale,
                     formatMessage,
                   )}
                   fileSize={formatTextWithLocale(
                     attachment.fileSize ?? '',
                     application,
-                    locale as Locale,
+                    locale,
                     formatMessage,
                   )}
                   fileType={formatTextWithLocale(
                     attachment.fileType ?? '',
                     application,
-                    locale as Locale,
+                    locale,
                     formatMessage,
                   )}
                 />
