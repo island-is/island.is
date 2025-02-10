@@ -338,17 +338,17 @@ export const IndictmentCount: FC<Props> = ({
       ? workingCase.crimeScenes[policeCaseNumber]
       : undefined
 
-    const incidentDescription = getIncidentDescription(
-      {
+    const incidentDescription = getIncidentDescription({
+      indictmentCount: {
         ...indictmentCount,
         ...update,
         ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
       },
       formatMessage,
       crimeScene,
-      workingCase.indictmentSubtypes,
+      subtypesRecord: workingCase.indictmentSubtypes,
       isOffenseEndpointEnabled,
-    )
+    })
 
     onChange(
       indictmentCount.id,

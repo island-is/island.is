@@ -63,13 +63,19 @@ const getIncidentDescriptionProps = ({
   return { reason, isSpeeding }
 }
 
-export const getIncidentDescription = (
-  indictmentCount: TempIndictmentCount,
-  formatMessage: IntlShape['formatMessage'],
-  crimeScene?: CrimeScene,
-  subtypesRecord?: Record<string, IndictmentSubtype[]>,
-  isOffenseEndpointEnabled?: boolean,
-) => {
+export const getIncidentDescription = ({
+  indictmentCount,
+  formatMessage,
+  crimeScene,
+  subtypesRecord,
+  isOffenseEndpointEnabled,
+}: {
+  indictmentCount: TempIndictmentCount
+  formatMessage: IntlShape['formatMessage']
+  crimeScene?: CrimeScene
+  subtypesRecord?: Record<string, IndictmentSubtype[]>
+  isOffenseEndpointEnabled?: boolean
+}) => {
   const {
     offenses,
     deprecatedOffenses,
@@ -104,18 +110,18 @@ export const getIncidentDescription = (
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
-    const incidentDecriptionProps = isOffenseEndpointEnabled
+    const incidentDescriptionProps = isOffenseEndpointEnabled
       ? getIncidentDescriptionProps({ offenses, formatMessage })
       : getDeprecatedIncidentDescriptionProps({
           deprecatedOffenses,
           formatMessage,
           substances,
         })
-    if (!incidentDecriptionProps) {
+    if (!incidentDescriptionProps) {
       return ''
     }
 
-    const { reason, isSpeeding } = incidentDecriptionProps
+    const { reason, isSpeeding } = incidentDescriptionProps
     const recordedSpeed = indictmentCount.recordedSpeed ?? '[Mældur hraði]'
     const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
 
