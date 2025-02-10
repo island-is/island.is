@@ -18,6 +18,7 @@ import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -32,6 +33,7 @@ const signListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   initialQueryParameter: 'candidate',
   featureFlag: Features.ParliamentaryElectionApplication,
