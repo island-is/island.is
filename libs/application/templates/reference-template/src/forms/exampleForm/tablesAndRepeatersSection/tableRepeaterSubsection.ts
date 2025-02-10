@@ -125,8 +125,8 @@ export const tableRepeaterSubsection = buildSubSection({
 
                 return (
                   data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name} ${selectedValue || ''}`,
-                    label: `${municipality.name} ${selectedValue || ''}`,
+                    value: `${municipality.name}`,
+                    label: `${municipality.name}`,
                   })) ?? []
                 )
               },
