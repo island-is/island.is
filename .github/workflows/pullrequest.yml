@@ -211,6 +211,36 @@ jobs:
         run: echo "Nothing to do" && exit 0
       - uses: actions/checkout@v4
         if: ${{ env.should-run == 'true' }}
+        with:
+          fetch-depth: 0
+
+      - if: ${{ env.should-run == 'true' }}
+        run: |
+          corepack enable
+
+      - name: Get Yarn Cache Directory Path
+        if: ${{ env.should-run == 'true' }}
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Restore Dependencies Cache
+        if: ${{ env.should-run == 'true' }}
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+      - if: ${{ env.should-run == 'true' }}
+        run: |
+          yarn install --immutable
+      - name: Prepare generated files
+        if: ${{ env.should-run == 'true' }}
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
       - name: Debug
         if: ${{ env.should-run == 'true' }}
         run: |
@@ -223,13 +253,55 @@ jobs:
     if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     runs-on: arc-runners
     env:
+      should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
       NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      NX_AGENT_FULL_NAME: ${{ matrix.agents }}
     strategy:
       matrix:
         agents: ${{ fromJson(needs.prepare.outputs.NX_RUNNERS) }}
     steps:
-      - name: "Run on agent ${{ matrix.agents }}"
+      - name: Set agent name
+        run: |
+          NX_AGENT_LAUNCH_TEMPLATE="${NX_AGENT_FULL_NAME-*}"
+          NX_AGENT_NAME="${NX_AGENT_FULL_NAME##*-}"
+          echo "NX_AGENT_LAUNCH_TEMPLATE="$NX_AGENT_LAUNCH_TEMPLATE" >> $GITHUB_ENV
+          echo "NX_AGENT_NAME="$NX_AGENT_NAME" >> $GITHUB_ENV
+          echo "Running ${NX_AGENT_NAME} on ${NX_AGENT_LAUNCH_TEMPLATE}"
+      - uses: actions/checkout@v4
+        if: ${{ env.should-run == 'true' }}
+        with:
+          fetch-depth: 0
+
+      - if: ${{ env.should-run == 'true' }}
+        run: |
+          corepack enable
+
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        if: ${{ env.should-run == 'true' }}
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        if: ${{ env.should-run == 'true' }}
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+      - if: ${{ env.should-run == 'true' }}
+        run: |
+          yarn install --immutable
+      - name: Prepare generated files
+        if: ${{ env.should-run == 'true' }}
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: "Running agent"
+        if: ${{ env.should-run == 'true' }}
         run: |
           echo "Running on agent ${{ matrix.agents }}"
           
