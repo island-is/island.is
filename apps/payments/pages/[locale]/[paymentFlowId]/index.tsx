@@ -45,6 +45,7 @@ import {
 } from '../../../graphql/queries.graphql.generated'
 import { PaymentReceipt } from '../../../components/PaymentReceipt/PaymentReceipt'
 import { generatePopupHtml, generatePopupLoadingHtml } from '../../../utils/3ds'
+import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 
 interface PaymentPageProps {
   locale: string
@@ -310,46 +311,18 @@ export default function PaymentPage({
       cvc: Number(cardCVC),
     }
 
+    const verifyCardResponse = await verifyCard({
+      amount: productInformation.amount,
+      cardNumber: cardInfo.number,
+      expiryMonth: cardInfo.expiryMonth,
+      expiryYear: cardInfo.expiryYear,
+      paymentFlowId: paymentFlow.id,
+    })
+
     setIsVerifyingCard(true)
-    // setThreeDSecureData(verifyCardResponse)
-
-    const popup = window.open('', '3ds', 'width=600,height=400,resizable=yes')
-
-    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-      alert('⚠️ Popup was blocked! Please allow popups.')
-      throw new Error('Popup was blocked')
-    }
-
-    popup.document.write(generatePopupLoadingHtml())
-
-    let verifyCardResponse
-
-    try {
-      verifyCardResponse = await verifyCard({
-        amount: productInformation.amount,
-        cardNumber: cardInfo.number,
-        expiryMonth: cardInfo.expiryMonth,
-        expiryYear: cardInfo.expiryYear,
-        paymentFlowId: paymentFlow.id,
-      })
-    } catch (e) {
-      popup.close()
-      throw e
-    }
-
-    popup.document.write(
-      generatePopupHtml(
-        verifyCardResponse.postUrl,
-        verifyCardResponse.scriptPath,
-        verifyCardResponse.verificationFields,
-      ),
-    )
-
-    popup.document.close()
+    setThreeDSecureData(verifyCardResponse)
 
     const isCardVerified = await waitForCardVerification()
-
-    popup.close()
 
     if (!isCardVerified) {
       throw new Error(CardErrorCode.VerificationDeadlineExceeded)
@@ -364,9 +337,11 @@ export default function PaymentPage({
       paymentFlowId: paymentFlow.id,
     })
 
-    if (chargeCardResponse.isSuccess) {
-      router.reload()
+    if (!chargeCardResponse.isSuccess) {
+      throw new Error(chargeCardResponse.responseCode)
     }
+
+    router.reload()
   }
 
   const onSubmit: SubmitHandler<Record<string, unknown>> = async (data) => {
@@ -518,7 +493,7 @@ export default function PaymentPage({
           )
         }
       />
-      {/* <ModalBase
+      <ModalBase
         baseId="3ds"
         isVisible={isVerifyingCard}
         hideOnClickOutside={false}
@@ -556,7 +531,7 @@ export default function PaymentPage({
             </Box>
           </Box>
         </Box>
-      </ModalBase> */}
+      </ModalBase>
     </>
   )
 }

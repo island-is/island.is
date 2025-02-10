@@ -9,9 +9,8 @@ export default function ThreeDSecureSuccessPage() {
 
   return (
     <div>
-      <h1>3D Secure Success</h1>
-      <p>Your payment was successful</p>
-      <button onClick={() => window.close()}>Close</button>
+      <h1>3DSecure tókst</h1>
+      <p>Búið er að auðkenna kortið</p>
     </div>
   )
 }

@@ -1,6 +1,8 @@
-import { Button } from '@island.is/island-ui/core'
 import React, { useEffect, useRef } from 'react'
-import { generateFormHtml } from './ThreeDSecure.utils'
+
+import { Button } from '@island.is/island-ui/core'
+
+import { generateFormHtml } from '../../utils/3ds'
 
 interface ThreeDSecureProps {
   isActive: boolean
