@@ -12,6 +12,8 @@ import {
   VehicleRadioFormField,
   VehicleSelectFormField,
 } from '@island.is/application/ui-fields'
+import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
+import { ApolloQueryResult } from '@apollo/client'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -19,6 +21,19 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { application } = props
   const currentVehicleList = application.externalData.currentVehicleList
     .data as CurrentVehiclesAndRecords
+
+  const getVehicleDetails = useLazyVehicleDetails()
+  const createGetVehicleDetailsWrapper = (
+    getVehicleDetailsFunction: (variables: {
+      permno: string
+    }) => Promise<ApolloQueryResult<any>>,
+  ) => {
+    return async (plate: string) => {
+      const variables = { permno: plate }
+      const result = await getVehicleDetailsFunction(variables)
+      return result.data.vehicleBasicInfoByPermno // Adjust based on your query
+    }
+  }
 
   return (
     <Box paddingTop={2}>
@@ -33,7 +48,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             type: FieldTypes.FIND_VEHICLE,
             component: FieldComponents.FIND_VEHICLE,
             children: undefined,
-            //TODOx remove
             // getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
             additionalErrors: false,
             findPlatePlaceholder:
