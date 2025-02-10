@@ -10,11 +10,15 @@ import { EmailService } from '@island.is/email-service'
 import { join } from 'path'
 import { IdentityConfirmationApiConfig } from './config'
 import type { ConfigType } from '@island.is/nest/config'
+import { IdentityConfirmationDTO } from './dto/IdentityConfirmationDTO.dto'
 
+const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
 const ZENDESK_CUSTOM_FIELDS = {
   Email: 1,
   Phone: 2,
   Chat: 3,
+  Title: 4,
+  Description: 5,
   NationalId: 24433675203218,
   IdentityConfirmed: 24434086186130,
 }
@@ -144,7 +148,16 @@ export class IdentityConfirmationService {
 
   private getCustomField = (
     ticket: Ticket,
-  ): { phone: string; email: string; chat: string } => {
+  ): {
+    phone: string
+    email: string
+    chat: string
+    title: string
+    description: string
+  } => {
+    if (!ticket.custom_fields) {
+      throw new Error('Custom fields not found')
+    }
     const phone = ticket.custom_fields.find(
       (field) => field.id === ZENDESK_CUSTOM_FIELDS.Phone,
     )
@@ -157,10 +170,20 @@ export class IdentityConfirmationService {
       (field) => field.id === ZENDESK_CUSTOM_FIELDS.Chat,
     )
 
+    const title = ticket.custom_fields.find(
+      (field) => field.id === ZENDESK_CUSTOM_FIELDS.Title,
+    )
+
+    const description = ticket.custom_fields.find(
+      (field) => field.id === ZENDESK_CUSTOM_FIELDS.Description,
+    )
+
     return {
       phone: phone?.value ?? '',
       email: email?.value ?? '',
       chat: chat?.value ?? '',
+      title: title?.value ?? '',
+      description: description?.value ?? '',
     }
   }
 
@@ -173,6 +196,14 @@ export class IdentityConfirmationService {
 
     if (!identityConfirmation) {
       throw new Error('Identity confirmation not found')
+    }
+
+    // Throw error if identity is older than 2 days
+    if (
+      new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+      Date.now()
+    ) {
+      throw new Error('Identity confirmation expired')
     }
 
     const updated = this.zendeskService.updateTicket(id, {
@@ -189,5 +220,34 @@ export class IdentityConfirmationService {
     await identityConfirmation.destroy()
 
     return 'Identity confirmed'
+  }
+
+  async getIdentityConfirmation(id: string): Promise<IdentityConfirmationDTO> {
+    const identityConfirmation = await this.identityConfirmationModel.findOne({
+      where: {
+        ticketId: id,
+      },
+    })
+
+    if (!identityConfirmation) {
+      throw new Error('Identity confirmation not found')
+    }
+
+    const zendeskTicket = await this.zendeskService.getTicket(
+      identityConfirmation.ticketId,
+    )
+
+    const { title, description } = this.getCustomField(zendeskTicket)
+
+    return {
+      id: identityConfirmation.id,
+      type: identityConfirmation.type,
+      title,
+      description,
+      // Check if time now is 2 days older than created at time
+      isExpired:
+        new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+        Date.now(),
+    }
   }
 }

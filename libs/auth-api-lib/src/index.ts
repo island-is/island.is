@@ -164,6 +164,7 @@ export * from './lib/identity-confirmation/identity-confirmation.module'
 export * from './lib/identity-confirmation/identity-confirmation.service'
 export * from './lib/identity-confirmation/dto/IdentityConfirmationInput.dto'
 export * from './lib/identity-confirmation/dto/ConfirmIdentityInput.dto'
+export * from './lib/identity-confirmation/dto/IdentityConfirmationDTO.dto'
 export * from './lib/identity-confirmation/models/Identity-Confirmation.model'
 export * from './lib/identity-confirmation/types/identity-confirmation-type'
 
