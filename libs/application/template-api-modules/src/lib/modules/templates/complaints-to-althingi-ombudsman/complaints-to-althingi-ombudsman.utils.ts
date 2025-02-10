@@ -41,10 +41,9 @@ export const applicationToCaseRequest = async (
 const getContactInfo = (
   answers: ComplaintsToAlthingiOmbudsmanAnswers,
 ): ComplainerContactInfo => {
-  //let contact: typeof answers.applicant & { gender?: GenderAnswerOptions }
-  let contact: typeof answers.applicant
+  let contact: typeof answers.applicant & { gender?: GenderAnswerOptions }
   if (answers.complainedFor.decision == ComplainedForTypes.SOMEONEELSE) {
-    contact = answers.complainedForInformation as typeof answers.applicant// & { gender?: GenderAnswerOptions }
+    contact = answers.complainedForInformation as typeof answers.applicant & { gender?: GenderAnswerOptions }
   } else {
     contact = answers.applicant
   }
@@ -58,7 +57,7 @@ const getContactInfo = (
     phone: contact.phoneNumber ?? '',
     postalCode: contact.postalCode,
     city: contact.city,
-    //gender: contact.gender
+    gender: contact.gender
   }
 }
 
@@ -79,7 +78,7 @@ export const gatherContacts = (
     role: ContactRole.COMPLAINTANT,
     primary: 'true',
     webPage: '',
-    //gender: contact.gender
+    gender: contact.gender
   }
 
   return [complaintant]
