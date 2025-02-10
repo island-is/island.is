@@ -46,14 +46,11 @@ export const mapStatus = (
           //this shouldn't happen, but just return in_review since the service provider says it is
           return 'in_review'
         }
-        case SocialInsuranceIncomePlanStatus.CANCELLED:
         case SocialInsuranceIncomePlanStatus.ACCEPTED: {
           return checkCompletedIsEligible(status, eligibleForChange)
         }
         default: {
-          // Something went wrong. Application system reports the application being done
-          //  but the service provider has no data
-          return 'error'
+          return 'no_data'
         }
       }
     }
@@ -63,7 +60,6 @@ export const mapStatus = (
         case SocialInsuranceIncomePlanStatus.IN_PROGRESS: {
           return 'in_review'
         }
-        case SocialInsuranceIncomePlanStatus.CANCELLED:
         case SocialInsuranceIncomePlanStatus.ACCEPTED: {
           return checkCompletedIsEligible(status, eligibleForChange)
         }
