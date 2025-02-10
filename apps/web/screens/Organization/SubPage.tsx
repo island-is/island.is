@@ -258,6 +258,50 @@ export const getSubpageNavList = (
   return items
 }
 
+export const SubPageBottomSlices = ({
+  organizationPage,
+  subpage,
+  namespace,
+}: Pick<SubPageProps, 'organizationPage' | 'subpage' | 'namespace'>) => {
+  return (
+    !!organizationPage && (
+      <Stack
+        space={
+          subpage?.bottomSlices && subpage.bottomSlices.length > 0
+            ? SLICE_SPACING
+            : 0
+        }
+      >
+        {subpage?.bottomSlices?.map((slice) => {
+          if (
+            (organizationPage.slug === 'stafraent-island' ||
+              organizationPage.slug === 'digital-iceland') &&
+            slice.__typename === 'LatestNewsSlice'
+          ) {
+            return (
+              <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={organizationPage.slug}
+                />
+              </Box>
+            )
+          }
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={organizationPage.slug}
+              fullWidth={true}
+            />
+          )
+        })}
+      </Stack>
+    )
+  )
+}
+
 type SubPageScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
 }
@@ -343,41 +387,11 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
         )
       }
     >
-      {!!organizationPage && (
-        <Stack
-          space={
-            subpage?.bottomSlices && subpage.bottomSlices.length > 0
-              ? SLICE_SPACING
-              : 0
-          }
-        >
-          {subpage?.bottomSlices?.map((slice) => {
-            if (
-              (organizationPage.slug === 'stafraent-island' ||
-                organizationPage.slug === 'digital-iceland') &&
-              slice.__typename === 'LatestNewsSlice'
-            ) {
-              return (
-                <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
-                  <DigitalIcelandLatestNewsSlice
-                    slice={slice}
-                    slug={organizationPage.slug}
-                  />
-                </Box>
-              )
-            }
-            return (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-                slug={organizationPage.slug}
-                fullWidth={true}
-              />
-            )
-          })}
-        </Stack>
-      )}
+      <SubPageBottomSlices
+        namespace={namespace}
+        organizationPage={organizationPage}
+        subpage={subpage}
+      />
     </OrganizationWrapper>
   )
 }
