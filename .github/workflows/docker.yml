@@ -187,9 +187,6 @@ jobs:
           password: ${{ steps.ecr-login.outputs[ format('docker_password_{0}',env.IMAGE_REGISTRY) ] }}
           conclusion: ${{ steps.ecr-login.conclusion }}
         run: |
-          echo "Debugging creds (json): ${{ toJson(steps.ecr-login.outputs) }}"
-          echo "Debugging creds: ${{ steps.ecr-login.outputs }}"
-
           echo registry="$registry" | tee -a "$GITHUB_OUTPUT"
           echo username="$username" | tee -a "$GITHUB_OUTPUT"
           echo password="$password" | tee -a "$GITHUB_OUTPUT"
