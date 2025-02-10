@@ -4,6 +4,8 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
+import { FriggSchoolsByMunicipality } from '../../../utils/types'
+import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
 
 export const fieldsRepeaterSubsection = buildSubSection({
   id: 'fieldsRepeaterSubsection',
@@ -71,7 +73,41 @@ export const fieldsRepeaterSubsection = buildSubSection({
             phone: {
               component: 'phone',
               label: 'Phone',
-              width: 'half',
+            },
+            selectAsyncPrimary: {
+              component: 'selectAsync',
+              label: 'Select Async',
+              loadOptions: async ({ apolloClient, selectedValue }) => {
+                const { data } =
+                  await apolloClient.query<FriggSchoolsByMunicipality>({
+                    query: friggSchoolsByMunicipalityQuery,
+                  })
+
+                return (
+                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                    value: `${municipality.name} ${selectedValue || ''}`,
+                    label: `${municipality.name} ${selectedValue || ''}`,
+                  })) ?? []
+                )
+              },
+            },
+            selectAsyncReliant: {
+              component: 'selectAsync',
+              label: 'Select Async',
+              updateOnSelect: 'selectAsyncPrimary',
+              loadOptions: async ({ apolloClient, selectedValue }) => {
+                const { data } =
+                  await apolloClient.query<FriggSchoolsByMunicipality>({
+                    query: friggSchoolsByMunicipalityQuery,
+                  })
+
+                return (
+                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                    value: `${municipality.name} ${selectedValue || ''}`,
+                    label: `${municipality.name} ${selectedValue || ''}`,
+                  })) ?? []
+                )
+              },
             },
           },
         }),
