@@ -105,29 +105,28 @@ const OrganizationParentSubpage: Screen<
                           <Stack space={1}>
                             {tableOfContentHeadings.map(
                               ({ headingTitle, headingId, href }) => (
-                                <Box
+                                <LinkV2
                                   key={headingId}
+                                  href={href}
                                   className={styles.fitContentWidth}
                                 >
-                                  <LinkV2 href={href}>
-                                    <Text
-                                      fontWeight={
-                                        headingId === selectedHeadingId
-                                          ? 'semiBold'
-                                          : 'regular'
-                                      }
-                                      variant="small"
-                                      color={
-                                        selectedHeadingId &&
-                                        headingId === selectedHeadingId
-                                          ? 'blue400'
-                                          : 'blue600'
-                                      }
-                                    >
-                                      {headingTitle}
-                                    </Text>
-                                  </LinkV2>
-                                </Box>
+                                  <Text
+                                    fontWeight={
+                                      headingId === selectedHeadingId
+                                        ? 'semiBold'
+                                        : 'regular'
+                                    }
+                                    variant="small"
+                                    color={
+                                      selectedHeadingId &&
+                                      headingId === selectedHeadingId
+                                        ? 'blue400'
+                                        : 'blue600'
+                                    }
+                                  >
+                                    {headingTitle}
+                                  </Text>
+                                </LinkV2>
                               ),
                             )}
                           </Stack>
