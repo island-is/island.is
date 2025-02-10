@@ -31,6 +31,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   prepare:
@@ -82,8 +83,11 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
@@ -94,7 +98,8 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
 
       - name: Prepare generated files
         run: |
@@ -251,29 +256,20 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -334,19 +330,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -389,19 +380,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -465,19 +451,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -530,19 +511,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -591,19 +567,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
