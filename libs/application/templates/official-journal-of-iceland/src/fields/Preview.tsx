@@ -7,8 +7,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { HTMLText } from '@island.is/regulations-tools/types'
@@ -28,6 +26,7 @@ import {
 import { ZodCustomIssue } from 'zod'
 import { usePdf } from '../hooks/usePdf'
 import { useState } from 'react'
+import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { application: currentApplication } = useApplication({
@@ -96,21 +95,6 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
     signatures: currentApplication.answers.signatures,
     type: currentApplication.answers.misc?.signatureType as SignatureTypes,
   })
-
-  const advertMarkup = getAdvertMarkup({
-    type: currentApplication.answers.advert?.type?.title,
-    title: currentApplication.answers.advert?.title,
-    html: currentApplication.answers.advert?.html,
-  })
-
-  const hasMarkup =
-    !!currentApplication.answers.advert?.html ||
-    currentApplication.answers.advert?.type?.title ||
-    currentApplication.answers.advert?.title
-
-  const combinedHtml = hasMarkup
-    ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
-    : (`${signatureMarkup}` as HTMLText)
 
   const hasError = !(
     advertValidationCheck.success &&
@@ -219,12 +203,10 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         </Stack>
       </Box>
       <Box border="standard" borderRadius="large">
-        <HTMLEditor
-          name="preview.document"
-          config={signatureConfig}
-          readOnly={true}
-          hideWarnings={true}
-          value={combinedHtml}
+        <AdvertPreview
+          advertSubject={currentApplication.answers.advert?.title}
+          advertType={currentApplication.answers.advert?.type?.title}
+          advertText={currentApplication.answers.advert?.html + signatureMarkup}
         />
       </Box>
     </Stack>

@@ -16,12 +16,12 @@ import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { getSignaturesMarkup } from '../lib/utils'
 import { useLastSignature } from '../hooks/useLastSignature'
 import { useFormContext } from 'react-hook-form'
 import { OfficialJournalOfIcelandApplicationSignatureMember } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
+import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -159,15 +159,11 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
         />
       </FormGroup>
       <FormGroup title={f(signatures.headings.preview)}>
-        <HTMLEditor
-          name="signaturePreview"
-          config={{ toolbar: false }}
-          key={selectedTab}
-          value={getSignaturesMarkup({
+        <AdvertPreview
+          advertText={getSignaturesMarkup({
             signatures: currentApplication.answers.signatures,
             type: selectedTab as SignatureTypes,
           })}
-          readOnly={true}
         />
       </FormGroup>
     </Stack>

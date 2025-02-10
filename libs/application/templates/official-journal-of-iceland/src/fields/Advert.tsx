@@ -17,6 +17,7 @@ import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
 import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
 import { useMemo, useState } from 'react'
 import { uuid } from 'uuidv4'
+import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
@@ -68,11 +69,6 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       label: d.title,
       value: d,
     })) ?? []
-
-  const titlePreview = getAdvertMarkup({
-    type: currentApplication.answers.advert?.type?.title,
-    title: currentApplication.answers.advert?.title,
-  })
 
   const templateOptions = useMemo(
     () =>
@@ -150,12 +146,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             maxLength={600}
           />
 
-          <HTMLEditor
-            key={`${currentApplication.answers.advert?.type?.title}-${currentApplication.answers.advert?.title}`}
-            name="preview.title"
-            config={{ toolbar: false }}
-            readOnly={true}
-            value={titlePreview}
+          <AdvertPreview
+            advertType={currentApplication.answers.advert?.type?.title}
+            advertSubject={currentApplication.answers.advert?.title}
           />
         </Stack>
       </FormGroup>
