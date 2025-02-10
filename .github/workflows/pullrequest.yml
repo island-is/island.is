@@ -192,8 +192,6 @@ jobs:
         id: prepare-nx
         run: |
           node scripts/ci/_create_agents.mjs
-      - name: Start nx
-        uses: ./.github/actions/nx
   nx-base:
     needs:
       - prepare
