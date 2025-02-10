@@ -1,15 +1,16 @@
+import React from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import { FormattedMessage } from 'react-intl'
 import { Image } from 'react-native'
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 
 import inboxReadIcon from '../../../assets/icons/inbox-read.png'
 import starIcon from '../../../assets/icons/star.png'
 import archiveIcon from '../../../assets/icons/tray.png'
 import { screenWidth } from '../../../utils/dimensions'
 import { Loader, Typography } from '../../../ui'
-import React from 'react'
 
-const Wrapper = styled.View`
+const Wrapper = styled(Animated.View)`
   height: 52px;
   position: absolute;
   bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -50,7 +51,11 @@ export const ActionBar = ({
 }) => {
   const theme = useTheme()
   return (
-    <Wrapper style={{ width: screenWidth - theme.spacing[4] }}>
+    <Wrapper
+      style={{ width: screenWidth - theme.spacing[4] }}
+      entering={FadeInDown}
+      exiting={FadeOutDown}
+    >
       {loading ? (
         <LoaderWrapper>
           <Loader />
@@ -60,7 +65,11 @@ export const ActionBar = ({
           <ActionBarItem onPress={onClickStar}>
             <Image
               source={starIcon}
-              style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
+              style={{
+                width: 16,
+                height: 16,
+                tintColor: theme.color.blue400,
+              }}
               resizeMode="contain"
             />
             <Typography variant="body3">

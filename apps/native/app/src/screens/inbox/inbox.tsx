@@ -818,20 +818,8 @@ export const InboxScreen: NavigationFunctionComponent<{
               },
             })
             if (result.data?.postMailActionV2?.success) {
-              console.log('selectedItems', selectedItems)
-              selectedItems.forEach((id) => {
-                client.cache.modify({
-                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
-                  fields: {
-                    documentsV2: (existingDocumentRefs, { readField }) => {
-                      return existingDocumentRefs.filter(
-                        (ref: any) => id !== readField('id', ref),
-                      )
-                    },
-                  },
-                })
-              })
               resetSelectState()
+              res.refetch()
             }
           }}
           onClickMarkAsRead={async () => {
