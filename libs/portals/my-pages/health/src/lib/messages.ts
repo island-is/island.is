@@ -1323,4 +1323,8 @@ export const messages = defineMessages({
     id: 'sp.health:vaccine-unregistered',
     defaultMessage: 'Óskráð',
   },
+  vaccinationStatusDesc: {
+    id: 'sp.health:vaccination-status-desc',
+    defaultMessage: 'Útskýring á stöðu bólusetninga',
+  },
 })

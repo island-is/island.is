@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Inline,
   SkeletonLoader,
   Tabs,
@@ -12,6 +13,7 @@ import {
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkButton,
+  Modal,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -19,6 +21,8 @@ import { messages as m } from '../../lib/messages'
 import { SECTION_GAP } from '../../utils/constants'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
+import { useState } from 'react'
+import StatusModal from './StatusModal'
 
 export const VaccinationsWrapper = () => {
   useNamespaces('sp.health')
@@ -29,6 +33,7 @@ export const VaccinationsWrapper = () => {
     },
   })
 
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
   const vaccinations = data?.healthDirectorateVaccinations.vaccinations
 
   const general = vaccinations?.filter((x) => x.isFeatured)
@@ -66,6 +71,14 @@ export const VaccinationsWrapper = () => {
           variant="utility"
           text={formatMessage(m.makeVaccinationAppointment)}
         />,
+        <Button
+          icon="informationCircle"
+          variant="utility"
+          iconType="outline"
+          onClick={() => setIsStatusModalOpen(true)}
+        >
+          {formatMessage(m.vaccinationStatusDesc)}
+        </Button>,
       ]}
     >
       <Box>
@@ -137,6 +150,12 @@ export const VaccinationsWrapper = () => {
           />
         </Box>
       )}
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        onClose={() => {
+          setIsStatusModalOpen(false)
+        }}
+      />
     </IntroWrapper>
   )
 }
