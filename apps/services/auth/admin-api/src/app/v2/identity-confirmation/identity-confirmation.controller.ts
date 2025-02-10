@@ -8,7 +8,7 @@ import {
 import { Documentation } from '@island.is/nest/swagger'
 import { AuditService } from '@island.is/nest/audit'
 
-import env from '../environments/environment'
+import env from '../../../environments/environment'
 import {
   IdentityConfirmationInputDto,
   IdentityConfirmationService,

@@ -8,7 +8,7 @@ import {
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 
-import { environment } from '../environments'
+import { environment } from '../../../environments'
 import { IdentityConfirmationController } from './identity-confirmation.controller'
 
 @Module({
@@ -22,4 +22,4 @@ import { IdentityConfirmationController } from './identity-confirmation.controll
   ],
   controllers: [IdentityConfirmationController],
 })
-export class AppModule {}
+export class IdentityConfirmationApiModule {}
