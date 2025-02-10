@@ -1,9 +1,9 @@
 import {
   buildAlertMessageField,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildRadioField,
   buildSubSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { information, shared } from '../../../lib/messages'
@@ -40,26 +40,15 @@ export const projectPurchaseSection = buildSubSection({
               label: shared.options.no,
             },
           ],
+          clearOnChange: ['projectPurchase.contractor.name', 'projectPurchase.contractor.nationalId'],
         }),
-        buildTextField({
-          id: 'projectPurchase.nationalId',
-          title: information.labels.company.nationalId,
-          backgroundColor: 'blue',
-          width: 'half',
+        buildNationalIdWithNameField({
+          id: 'projectPurchase.contractor',
+          width: 'full',
           required: true,
-          format: '######-####',
-          doesNotRequireAnswer: true,
-          condition: (answer: FormValue) =>
-            getValueViaPath(answer, 'projectPurchase.radio') === YES,
-        }),
-        buildTextField({
-          id: 'projectPurchase.name',
-          title: information.labels.projectPurchase.name,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          doesNotRequireAnswer: true,
-          condition: (answer: FormValue) =>
+          searchCompanies: true,
+          searchPersons: false,
+            condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),
       ],

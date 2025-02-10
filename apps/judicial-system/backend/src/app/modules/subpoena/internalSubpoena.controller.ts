@@ -67,9 +67,45 @@ export class InternalSubpoenaController {
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers a subpoena to the police',
+    description: 'Delivers a subpoena to the police centralized file service',
   })
   deliverSubpoenaToPolice(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering subpoena ${subpoenaId} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverSubpoenaToPolice(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a subpoena to the police',
+  })
+  deliverSubpoenaFileToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -82,7 +118,7 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaToPolice(
+    return this.subpoenaService.deliverSubpoenaFileToPolice(
       theCase,
       defendant,
       subpoena,
@@ -177,7 +213,7 @@ export class InternalSubpoenaController {
     type: DeliverResponse,
     description: 'Delivers subpoena revocation to police',
   })
-  deliverSubpoenaRevokedToPolice(
+  deliverSubpoenaRevocationToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -189,7 +225,7 @@ export class InternalSubpoenaController {
       `Delivering subpoena revocation of ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaRevokedToPolice(
+    return this.subpoenaService.deliverSubpoenaRevocationToPolice(
       theCase,
       subpoena,
       deliverDto.user,
