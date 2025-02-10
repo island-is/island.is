@@ -6,6 +6,7 @@ export type Status =
   | 'accepted_no_changes' // done
   | 'rejected' // done
   | 'rejected_no_changes' // done
+  | 'modify_accepted'
   | 'error'
   | 'loading'
 

@@ -30,6 +30,8 @@ export const mapStatus = (
           // Not allowed to draft an application if the service provider is reviewing one already
           // ignore the application system if so
           return 'in_review'
+        case SocialInsuranceIncomePlanStatus.ACCEPTED:
+          return 'modify_accepted'
         default:
           // The application is being worked on, doesn't matter what the service provider responds with
           return 'in_progress'

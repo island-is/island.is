@@ -1,4 +1,3 @@
-import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
 import { FormatMessage, useLocale } from '@island.is/localization'
 import {
   ActionCard,
@@ -23,12 +22,10 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
     formatMessage: FormatMessage,
   ) => {
     switch (status) {
+      case 'modify_accepted':
       case 'accepted':
       case 'accepted_no_changes':
         return `${formatMessage(coreMessages.approved)}: ${formatDate(date)}`
-      case 'rejected':
-      case 'rejected_no_changes':
-        return `${formatMessage(coreMessages.rejected)}: ${formatDate(date)}`
       default:
         return
     }
@@ -60,8 +57,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
         />
       )
     }
-    case 'rejected_no_changes':
-    case 'rejected':
+    case 'modify_accepted':
     case 'accepted_no_changes':
     case 'accepted': {
       return (

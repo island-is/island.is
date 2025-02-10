@@ -30,6 +30,7 @@ const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
   'accepted_no_changes',
   'rejected',
   'rejected_no_changes',
+  'modify_accepted',
 ]
 
 const IncomePlan = () => {
@@ -111,14 +112,18 @@ const IncomePlan = () => {
           to={`${document.location.origin}/${formatMessage(
             m.incomePlanModifyLink,
           )}`}
-          text={formatMessage(m.modifyIncomePlan)}
+          text={formatMessage(
+            status === 'modify_accepted'
+              ? m.continueApplication
+              : m.modifyIncomePlan,
+          )}
           disabled={
             status === 'accepted_no_changes' ||
             status === 'rejected_no_changes' ||
             status === 'in_review'
           }
           icon="open"
-          variant="primary"
+          variant="utility"
           size="small"
         />
       )
