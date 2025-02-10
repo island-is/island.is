@@ -138,7 +138,6 @@ jobs:
           echo "$context" | jq
 
       - name: Prepare arguments
-        if: ${{ !!github.event.localrun }}
         id: args
         env:
           s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
