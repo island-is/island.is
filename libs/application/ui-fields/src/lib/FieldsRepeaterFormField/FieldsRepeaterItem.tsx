@@ -3,7 +3,15 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, RepeaterItem } from '@island.is/application/types'
+import {
+  FieldComponents,
+  Application,
+  AsyncSelectContext,
+  RepeaterItem,
+  Option,
+  FieldTypes,
+  AsyncSelectField,
+} from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useRef } from 'react'
@@ -18,6 +26,7 @@ import {
   PhoneInputController,
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
+import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -26,6 +35,9 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
+  loadOptions?: (c: AsyncSelectContext) => Promise<Option[]>
+  clearOnChange?: boolean
+  updateOnSelect?: string
 }
 
 const componentMapper = {
@@ -82,7 +94,14 @@ export const Item = ({
   } = item
 
   const span = getSpan(component, width)
-  const Component = componentMapper[component]
+  let Component: React.ComponentType<any>
+
+  if (component === 'selectAsync') {
+    Component = AsyncSelectFormField
+  } else {
+    Component = componentMapper[component]
+  }
+
   const id = `${dataId}[${index}].${itemId}`
   const activeValues = index >= 0 && values ? values[index] : undefined
 
@@ -167,8 +186,8 @@ export const Item = ({
       })) ?? []
   }
 
-  if (props.filterOptions && typeof props.filterOptions === 'function') {
-    translatedOptions = props.filterOptions(
+  if (item.filterOptions && typeof item.filterOptions === 'function') {
+    translatedOptions = item.filterOptions(
       translatedOptions,
       getValues(),
       index,
@@ -228,6 +247,51 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
+  const mapKeyWithIndex = (key: string) => {
+    return `${dataId}[${index}].${key}`
+  }
+
+  const ClearOnChange = item.clearOnChangeByIndex?.map((key) =>
+    mapKeyWithIndex(key),
+  )
+
+  const SetOnChange =
+    item.setOnChangeByIndex &&
+    ((option: any) => {
+      if (typeof item.setOnChangeByIndex === 'function') {
+        return item
+          .setOnChangeByIndex(option, application)
+          .map(({ key, value }) => ({
+            key: mapKeyWithIndex(key),
+            value,
+          }))
+      } else {
+        return (
+          item.setOnChangeByIndex?.map(({ key, value }) => ({
+            key: mapKeyWithIndex(key),
+            value,
+          })) || []
+        )
+      }
+    })
+
+  let selectAsyncProps: AsyncSelectField | undefined
+  if (component === 'selectAsync') {
+    selectAsyncProps = {
+      id: id,
+      title: label,
+      type: FieldTypes.ASYNC_SELECT,
+      component: FieldComponents.ASYNC_SELECT,
+      children: undefined,
+      backgroundColor: backgroundColor,
+      isSearchable: item.isSearchable,
+      isMulti: item.isMulti,
+      loadOptions: item.loadOptions,
+      clearOnChange: item.clearOnChange,
+      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -236,34 +300,6 @@ export const Item = ({
     return null
   }
 
-  const mapKeyWithIndex = (key: string) => {
-    return `${dataId}[${index}].${key}`
-  }
-
-  const ClearOnChange = props.clearOnChangeByIndex?.map((key) =>
-    mapKeyWithIndex(key),
-  )
-
-  const SetOnChange =
-    props.setOnChangeByIndex &&
-    ((option: any) => {
-      if (typeof props.setOnChangeByIndex === 'function') {
-        return props
-          .setOnChangeByIndex(option, application)
-          .map(({ key, value }) => ({
-            key: mapKeyWithIndex(key),
-            value,
-          }))
-      } else {
-        return (
-          props.setOnChangeByIndex?.map(({ key, value }) => ({
-            key: mapKeyWithIndex(key),
-            value,
-          })) || []
-        )
-      }
-    })
-
   return (
     <GridColumn span={['1/1', '1/1', '1/1', span]}>
       {component === 'radio' && label && (
@@ -271,32 +307,42 @@ export const Item = ({
           {formatText(label, application, formatMessage)}
         </Text>
       )}
-      <Component
-        id={id}
-        name={id}
-        label={formatText(label, application, formatMessage)}
-        options={translatedOptions}
-        placeholder={formatText(placeholder, application, formatMessage)}
-        split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
-        error={getFieldError(itemId)}
-        control={control}
-        readOnly={Readonly}
-        disabled={Disabled}
-        required={Required}
-        isClearable={IsClearable}
-        backgroundColor={backgroundColor}
-        onChange={() => {
-          if (error) {
-            clearErrors(id)
-          }
-        }}
-        application={application}
-        defaultValue={DefaultValue}
-        large={true}
-        clearOnChange={ClearOnChange}
-        setOnChange={SetOnChange}
-        {...props}
-      />
+      {component === 'selectAsync' && selectAsyncProps && (
+        <AsyncSelectFormField
+          application={application}
+          error={getFieldError(itemId)}
+          field={{
+            ...selectAsyncProps,
+          }}
+        />
+      )}
+      {!(component === 'selectAsync' && selectAsyncProps) && (
+        <Component
+          id={id}
+          name={id}
+          label={formatText(label, application, formatMessage)}
+          options={translatedOptions}
+          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+          error={getFieldError(itemId)}
+          control={control}
+          readOnly={Readonly}
+          disabled={Disabled}
+          required={Required}
+          isClearable={IsClearable}
+          backgroundColor={backgroundColor}
+          onChange={() => {
+            if (error) {
+              clearErrors(id)
+            }
+          }}
+          application={application}
+          defaultValue={DefaultValue}
+          large={true}
+          clearOnChange={ClearOnChange}
+          setOnChange={SetOnChange}
+          {...props}
+        />
+      )}
     </GridColumn>
   )
 }

@@ -3,6 +3,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
+import { Offense } from './offense.model'
 
 @Table({
   tableName: 'indictment_count',
@@ -52,6 +54,10 @@ export class IndictmentCount extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   vehicleRegistrationNumber?: string
+
+  @HasMany(() => Offense, 'indictmentCountId')
+  @ApiPropertyOptional({ type: () => Offense, isArray: true })
+  offenses?: Offense[]
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })

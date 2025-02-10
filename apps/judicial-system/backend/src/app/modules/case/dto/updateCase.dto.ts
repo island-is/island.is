@@ -546,4 +546,9 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly hasCivilClaims?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isCompletedWithoutRuling?: boolean
 }

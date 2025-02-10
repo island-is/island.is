@@ -84,10 +84,12 @@ export const FieldsRepeaterFormField = ({
     })
   }, [stableApplication, stableAnswers])
 
-  const items = Object.keys(rawItems).map((key) => ({
-    id: key,
-    ...rawItems[key],
-  }))
+  const items = Object.keys(rawItems).map((key) => {
+    return {
+      id: key,
+      ...rawItems[key],
+    }
+  })
 
   const { formatMessage, lang: locale } = useLocale()
 
