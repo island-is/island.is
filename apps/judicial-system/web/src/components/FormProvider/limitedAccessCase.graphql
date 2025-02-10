@@ -265,5 +265,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
     }
+    isCompletedWithoutRuling
   }
 }
