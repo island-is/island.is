@@ -77,6 +77,12 @@ export const custodianSubSection = buildSubSection({
 
         // Main other contact
         buildHiddenInput({
+          id: 'mainOtherContact.applicantNationalId',
+          defaultValue: (application: Application) => {
+            return application.applicant
+          },
+        }),
+        buildHiddenInput({
           id: 'mainOtherContact.required',
           defaultValue: (application: Application) => {
             return !checkHasAnyCustodians(application.externalData)
