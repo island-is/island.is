@@ -76,6 +76,7 @@ export type RepeaterFields =
   | 'date'
   | 'nationalIdWithName'
   | 'phone'
+  | 'selectAsync'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -186,6 +187,15 @@ export type RepeaterItem = {
   | {
       component: 'phone'
       format: string
+    }
+  | {
+      component: 'selectAsync'
+      label: StaticText
+      isMulti?: boolean
+      isSearchable?: boolean
+      loadOptions(c: AsyncSelectContext): Promise<Option[]>
+      clearOnChange?: string[]
+      updateOnSelect?: string
     }
 )
 
