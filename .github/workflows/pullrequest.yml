@@ -397,6 +397,7 @@ jobs:
     needs:
       - prepare
       - linting-workspace
+      - nx-base
       - run-shellcheck
     steps:
       - name: Check prepare success
@@ -411,12 +412,8 @@ jobs:
           else
             echo "::notice::Deploy-feature flag is not enabled. Proceeding with the workflow."
           fi
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check linting success
-        run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
+      - name: Check NX success
+        run: '[[ ${{ needs.nx-base.result }} != "failure" ]] || exit 1'
       - name: Check run-shellcheck success
         run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
       - name: Announce success
