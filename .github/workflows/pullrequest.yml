@@ -18,12 +18,13 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_VERBOSE_LOGGING: 'true'
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '4'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
@@ -35,7 +36,8 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: arc-test
     timeout-minutes: 35
 
     env:
@@ -47,16 +49,18 @@ jobs:
       SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
 
     outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      SHOULD_RUN_NX: ${{steps.prepare-nx.outputs.SHOULD_RUN_NX}}
+      NX_RUN_ALL: ${{steps.prepare-nx.outputs.NX_RUN_ALL}}
+      NX_RUNNERS: ${{ steps.prepare-nx.outputs.NX_RUNNERS }}
+      NX_ASSIGNMENT_RULES: ${{ steps.prepare-nx.outputs.NX_ASSIGNMENT_RULES }}
+      NX_TARGETS: ${{ steps.prepare-nx.outputs.NX_TARGETS }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
+        if: ${{ github.event.localrun }}
         run: |
           echo "docker version: $(docker --version)"
           echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
@@ -75,21 +79,18 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+            node_modules
+            apps/native/app/node_modules
+            .yarn/install-state.gz
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+            sx-${{ runner.os }}-node_modules
+            sx-${{ runner.os }}-
 
       - run: |
           yarn install --immutable
@@ -99,10 +100,11 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-
+            node_modules
+            apps/native/app/node_modules
+            .yarn/install-state.gz
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          
       - name: Prepare generated files
         run: |
           echo "generated files: ${{ env.GENERATED_FILES }}"
@@ -146,6 +148,7 @@ jobs:
           HEAD_SHA=${{ env.NX_HEAD }}
           echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
           echo "NX_BASE=$BASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -182,50 +185,11 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Prepare lint targets
-        id: lint_projects
-        env:
-          # Linting is easy, no need to split/chunk it
-          DISABLE_CHUNKS: 'true'
-          DISABLE_GROUPING: 'true'
-          DISABLE_PROBLEMATIC: 'true'
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare e2e targets
-        id: e2e_projects
-        env:
-          CHUNK_SIZE: 1
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare build targets
-        id: build_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Formatting
+        id: format-and-linter
+        uses: ./.github/actions/format-and-linter
+        with:
+          push-changes: 'true'
       - name: Check release-manager approval
         id: check-release-manager-approval
         if: ${{ contains(github.event.pull_request.head.ref, '/pre-release/') }}
@@ -234,45 +198,49 @@ jobs:
         run: |
           set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
-
-  tests:
+      - name: Prepare nx
+        id: prepare-nx
+        run: |
+          node scripts/ci/_create_agents.mjs
+  nx-base:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
-    timeout-minutes: 45
+    if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    runs-on: arc-test
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
+      runners: ${{ needs.prepare.outputs.NX_RUNNERS }}
+      assignmentrules: ${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      NX_TARGETS: ${{ needs.prepare.outputs.NX_TARGETS }}
+      NX_RUN_ALL: ${{ needs.prepare.outputs.NX_RUN_ALL }} 
     steps:
+      - name: Nothing to do?
+        if: ${{ env.should-run == 'false' }}
+        run: echo "Nothing to do" && exit 0
       - uses: actions/checkout@v4
+        if: ${{ env.should-run == 'true' }}
+        with:
+          fetch-depth: 0
 
-      - run: |
+      - if: ${{ env.should-run == 'true' }}
+        run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Restore Dependencies Cache
+        if: ${{ env.should-run == 'true' }}
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
+            node_modules
+            apps/native/app/node_modules
+            .yarn/install-state.gz
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+      - if: ${{ env.should-run == 'true' }}
+        run: |
           yarn install --immutable
-
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
         id: restore-generated-files-cache
@@ -280,67 +248,70 @@ jobs:
           path: |
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
-
       - name: Extract generated files
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-
-  e2e:
+      - name: Debug
+        if: ${{ env.should-run == 'true' }}
+        run: |
+            echo "Runners: $runners"
+            echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment-rules.yml
+            cat .github/assignment-rules.yml
+            yarn nx-cloud start-ci-run --distribute-on="manual" --assignment-rules=".github/assignment-rules.yml" --stop-agents-on-failure=true
+            # Run NX
+            if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
+              yarn nx run-many --target=${{ env.NX_TARGETS }} --all
+            else
+              yarn nx affected --target=${{ env.NX_TARGETS }} --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
+            fi
+  nx-runners:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
-    timeout-minutes: 45
+    if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    runs-on: arc-test
     env:
-      AFFECTED_PROJECT: ${{ matrix.projects }}
-      CYPRESS_PROJECT_ID: 4q7jz8
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      API_MOCKS: 'true'
-      NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      NX_AGENT_FULL_NAME: ${{ matrix.agents }}
     strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+      matrix:
+        agents: ${{ fromJson(needs.prepare.outputs.NX_RUNNERS) }}
     steps:
+      - name: Set agent name
+        run: |
+          NX_AGENT_LAUNCH_TEMPLATE="${NX_AGENT_FULL_NAME%-*}"
+          NX_AGENT_NAME="${NX_AGENT_FULL_NAME##*-}"
+          echo "NX_AGENT_LAUNCH_TEMPLATE="$NX_AGENT_LAUNCH_TEMPLATE" >> $GITHUB_ENV
+          echo "NX_AGENT_NAME="$NX_AGENT_NAME" >> $GITHUB_ENV
+          echo "Running ${NX_AGENT_NAME} on ${NX_AGENT_LAUNCH_TEMPLATE}"
       - uses: actions/checkout@v4
-
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+        if: ${{ env.should-run == 'true' }}
         with:
-          node-version-file: 'package.json'
+          fetch-depth: 0
+
+      - if: ${{ env.should-run == 'true' }}
+        run: |
+          corepack enable
 
       - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
+        if: ${{ env.should-run == 'true' }}
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
+        if: ${{ env.should-run == 'true' }}
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
+            node_modules
+            apps/native/app/node_modules
+            .yarn/install-state.gz
+          key: sx-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+      - if: ${{ env.should-run == 'true' }}
+        run: |
           yarn install --immutable
-
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
         id: restore-generated-files-cache
@@ -348,18 +319,21 @@ jobs:
           path: |
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
-
       - name: Extract generated files
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
-
+      - name: "Running agent"
+        if: ${{ env.should-run == 'true' }}
+        run: |
+          echo "Running on agent ${{ matrix.agents }}"
+          echo "Running on agent ${{ env.NX_AGENT_NAME }}"
+          echo "Running on agent ${{ env.NX_AGENT_LAUNCH_TEMPLATE }}"
+          # yarn nx-cloud start-agent
+          
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -419,211 +393,34 @@ jobs:
           reporter: github-pr-review
           fail-level: info
           exclude: >-
-            */node_modules/*
-
-  formatting:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 5
-    env:
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    steps:
-      - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
-
-      # - name: NX format:write
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: |
-      #     ./scripts/ci/20_check-formatting.sh "write"
-      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
-
-  linting:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
-
-  build:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 35
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-test
     if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace
-      - tests
-      - linting
+      - nx-base
       - run-shellcheck
-      - formatting
-      - e2e
-      - build
     steps:
+      - name: Check if push workflow run was successful
+        run: |
+         ${{ github.event.workflow_run.conclusion == 'success' }} || (echo "Push build needs to be succesful" && exit 1)
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check linting-workspace success
+        run: '[[ ${{ needs.linting-workspace.result }} != "failure" ]] || exit 1'
       - name: Check if deploy-feature is enabled
-        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
-          exit 1
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check linting success
-        run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
+          if [ "$DEPLOY_FEATURE" == "true" ]; then
+            echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+            exit 1
+          else
+            echo "::notice::Deploy-feature flag is not enabled. Proceeding with the workflow."
+          fi
+      - name: Check NX success
+        run: '[[ ${{ needs.nx-base.result }} != "failure" ]] || exit 1'
       - name: Check run-shellcheck success
         run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
-      - name: Check formatting success
-        run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"

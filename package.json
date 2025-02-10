@@ -316,6 +316,7 @@
     "zod-form-data": "2.0.2"
   },
   "devDependencies": {
+    "@actions/core": "1.11.1",
     "@anatine/esbuild-decorators": "0.2.4",
     "@anatine/esbuildnx": "0.2.0",
     "@anev/ts-mountebank": "^1.6.0",

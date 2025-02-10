@@ -25,6 +25,7 @@
           "lint",
           "test",
           "e2e",
+          "build-custom-server",
           "codegen/backend-client",
           "codegen/backend-schema",
           "codegen/frontend-client",
