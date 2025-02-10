@@ -201,6 +201,7 @@ jobs:
           password: ${{ steps.creds.outputs.password }}
 
       - name: Set up Docker Buildx
+        id: buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver: docker-container
@@ -210,17 +211,13 @@ jobs:
           install: true
           use: true
 
-      - name: Create and use a new builder instance
-        run: |
-          docker buildx create --name mybuilder --use
-
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (base-deps)
         uses: docker/build-push-action@v6
         with:
           target: base-deps
           context: .
-          builder: mybuilder
+          builder: ${{ steps.buildx.outputs.name }}
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -233,7 +230,7 @@ jobs:
         with:
           target: deps
           context: .
-          builder: mybuilder
+          builder: ${{ steps.buildx.outputs.name }}
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -244,7 +241,7 @@ jobs:
         with:
           target: output-base
           context: .
-          builder: mybuilder
+          builder: ${{ steps.buildx.outputs.name }}
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
@@ -255,7 +252,7 @@ jobs:
         with:
           target: base-node-with-pg
           context: .
-          builder: mybuilder
+          builder: ${{ steps.buildx.outputs.name }}
           file: ${{ steps.common.outputs.file }}
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
