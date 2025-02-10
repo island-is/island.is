@@ -177,13 +177,16 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     )
 
     // Validate that user has the necessary categories
+    const today = new Date()
     if (
       params?.validCategories &&
       (!drivingLicense?.categories ||
-        !drivingLicense.categories.some((x) =>
-          params.validCategories?.includes(
-            params?.useLegacyVersion ? x.name : x.nr || '',
-          ),
+        !drivingLicense.categories.some(
+          (x) =>
+            (!x.expires || x.expires >= today) &&
+            params.validCategories?.includes(
+              params?.useLegacyVersion ? x.name : x.nr || '',
+            ),
         ))
     ) {
       throw new TemplateApiError(
