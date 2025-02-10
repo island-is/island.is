@@ -1,6 +1,7 @@
 // @ts-check
-import { mkdirSync, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import { getAffectedProjectsMultipleTargetArray } from './_get_affected_projects.mjs'
+import { setOutput } from '@actions/core'
 import json2yaml from 'js-yaml'
 const _TARGETS = ['test', 'build']
 const _PROBLEMATIC_TARGETS = ['e2e']
@@ -45,85 +46,33 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
       },
     ],
   }
+
   const defaultRunners = Array(normalAgentCount)
     .fill(0)
     .map((_e, i) => `default-runner-${i + 1}`)
-  const runners = Array.from(
+  const problematicRunners = Array.from(
     new Set([
       ...rules['assignment-rules']
-        .map((rule) => rule['runs-on'])
+        .map((rule) => `${rule['runs-on']}-1`)
         .flat()
-        .filter((e) => e !== 'default-runner'),
-      ...defaultRunners,
+        .filter((e) => !e.startsWith('default-runner')),
     ]),
   )
+  const runners = [...defaultRunners, ...problematicRunners.map((e) => `${e}`)]
   const assignmentRules = json2yaml.dump(rules)
-  const workflowJson = !shouldRun
-    ? {
-        jobs: {
-          success: {
-            name: 'Nothing to do',
-            'runs-on': agent,
-            steps: ['ecoh nothing to do. Exiting...'],
-          },
-        },
-      }
-    : {
-        jobs: {
-          nxtasks: {
-            name: 'NX Tasks',
-            'runs-on': agent,
-            steps: ['echo hehe'],
-          },
-          ...runners.reduce((acc, item) => {
-            const isDefaultRunner = item.startsWith('default-runner')
-            acc[`runner-${item}`] = {
-              name: item,
-              'runs-on': agent,
-              steps: [
-                {
-                  uses: 'actions/checkout@v4',
-                  with: {
-                    'fetch-depth': 0,
-                  },
-                },
-                // TODO: Add steps needed hehe
-                {
-                  name: `${agent}`,
-                  run: `yarn nx-cloud start-agent`,
-                  env: {
-                    NX_AGENT_NAME: isDefaultRunner
-                      ? item.split('default-runner-')[1]
-                      : '1',
-                    NX_AGENT_LAUNCH_TEMPLATE: isDefaultRunner
-                      ? 'default-runner'
-                      : item,
-                  },
-                },
-              ],
-            }
-            return acc
-          }, {}),
-        },
-      }
-  const workflow = json2yaml
-    .dump(workflowJson)
-    .replaceAll(/agents:\s*'\[.*?\]'/g, (match) => match.replace(/'/g, ''))
-  if (!process.env.WORKFLOW_FILE) {
-    console.error(`Workflow file env not defined`)
-    process.exit(1)
-  }
-  mkdirSync(process.env.WORKFLOW_FILE, { recursive: true })
-  writeFileSync(`${process.env.WORKFLOW_FILE}/action.yaml`, workflow)
-  if (shouldRun) {
-    writeFileSync('.github/assignment-rules.yml', assignmentRules)
-  }
   console.log({
     defaultAgentCount: normalAgentCount,
     problematicAgentCount,
     runners,
     shouldRun,
   })
+  if (shouldRun) {
+    setOutput('SHOULD_RUN_NX', 'true')
+    setOutput('NX_RUNNERS', runners.join(','))
+    setOutput('NX_ASSIGNMENT_RULES', assignmentRules)
+  } else {
+    setOutput('SHOULD_RUN_NX', 'false')
+  }
 }
 
 createAgents()
