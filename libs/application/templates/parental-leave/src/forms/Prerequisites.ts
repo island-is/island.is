@@ -383,6 +383,12 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     parentalLeaveFormMessages.shared.salaryInformationSubTitle,
                 }),
+                buildDataProviderPermissionItem({
+                  id: 'taxInfo',
+                  title: parentalLeaveFormMessages.shared.taxInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.taxInformationSubTitle,
+                }),
               ],
             }),
           ],
