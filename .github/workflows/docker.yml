@@ -134,7 +134,7 @@ jobs:
         env:
           s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
         run: |
-          echo build-cache-to="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache,mode=max" | tee -a "$GITHUB_OUTPUT"
+          echo build-cache-to="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache" | tee -a "$GITHUB_OUTPUT"
           echo build-cache-from="type=s3,region=$AWS_REGION,bucket=$s3_cache,name=docker-cache" | tee -a "$GITHUB_OUTPUT"
 
       - name: Common config
@@ -218,7 +218,7 @@ jobs:
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
-          cache-to: ${{ steps.common.outputs.cache-to }}
+          cache-to: ${{ steps.common.outputs.cache-to }},mode=max
       - run: |
           exit 1
       - name: Docker build/cache dependencies (deps)
@@ -231,7 +231,7 @@ jobs:
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
-          cache-to: ${{ steps.common.outputs.cache-to }}
+          cache-to: ${{ steps.common.outputs.cache-to }},mode=max
       - name: Docker build/cache dependencies (output-base)
         uses: docker/build-push-action@v6
         with:
@@ -242,7 +242,7 @@ jobs:
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
-          cache-to: ${{ steps.common.outputs.cache-to }}
+          cache-to: ${{ steps.common.outputs.cache-to }},mode=max
       - name: Docker build/cache dependencies (output-base-with-pg)
         uses: docker/build-push-action@v6
         with:
@@ -253,7 +253,7 @@ jobs:
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
-          cache-to: ${{ steps.common.outputs.cache-to }}
+          cache-to: ${{ steps.common.outputs.cache-to }},mode=max
 
   build:
     name: Build ${{ matrix.project }}
