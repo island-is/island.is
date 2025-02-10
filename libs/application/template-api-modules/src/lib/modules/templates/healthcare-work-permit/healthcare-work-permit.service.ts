@@ -26,6 +26,7 @@ import {
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
+import { InnaClientService } from '@island.is/clients/inna'
 
 const getFoundationProgram = (
   professionId: string,
@@ -51,6 +52,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
     private readonly universityCareersClientService: UniversityCareersClientService,
+    private readonly innaService: InnaClientService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
   }
@@ -81,23 +83,47 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async processPermits({
     auth,
   }: TemplateApiModuleActionProps): Promise<PermitProgram[]> {
-    const [licenses, programs, careerProgramsUNAK, careerProgramsHI] =
-      await Promise.all([
-        this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
-          auth,
-        ),
-        this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
-          auth,
-        ),
-        this.universityCareersClientService.getStudentTrackHistory(
-          auth,
-          UniversityId.UNIVERSITY_OF_AKUREYRI,
-        ),
-        this.universityCareersClientService.getStudentTrackHistory(
-          auth,
-          UniversityId.UNIVERSITY_OF_ICELAND,
-        ),
-      ])
+    const [
+      licenses,
+      programs,
+      careerProgramsUNAK,
+      careerProgramsHI,
+      innaDiplomas,
+    ] = await Promise.all([
+      this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
+        auth,
+      ),
+      this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+        auth,
+      ),
+      this.universityCareersClientService.getStudentTrackHistory(
+        auth,
+        UniversityId.UNIVERSITY_OF_AKUREYRI,
+      ),
+      this.universityCareersClientService.getStudentTrackHistory(
+        auth,
+        UniversityId.UNIVERSITY_OF_ICELAND,
+      ),
+      this.innaService.getDiplomas(auth),
+    ])
+
+    if(!innaDiplomas) {
+      const mappedDiplomas = []
+    } else {
+      const mappedDiplomas = innaDiplomas?.items?.map((diploma) => {
+        const { diplomaDate, diplomaCode, diplomaName, organisation } = diploma
+        return {
+          studyProgram: diplomaName,
+          programId: diplomaCode,
+          graduationDate: diplomaDate,
+          institution: {
+            displayName: organisation
+          }
+        }
+      }) || []
+    }
+
+    console.log('diplomas', innaDiplomas)
 
     if (!programs) {
       throw new TemplateApiError(
@@ -142,7 +168,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       return program.dataOrder === 1 && program.noOfData === 2
     })
 
-    // Splitting up programs from Embætti Landlæknis into those that give permits and those that server as foundation
+    // Splitting up programs from Embætti Landlæknis into those that give permits and those that serve as foundation
     // for other permits. For easy lookup
     const validPermitIds = new Set(
       permitValidPrograms?.map((item) => item.shortId),
