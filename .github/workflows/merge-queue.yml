@@ -24,6 +24,7 @@ env:
   MAX_JOBS: ${{ vars.MAX_JOBS || 2 }}
   NX_PARALLEL: ${{ vars.NX_PARALLEL || 2 }}
   NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 4 }}
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
 
 jobs:
   prepare:
@@ -40,6 +41,8 @@ jobs:
       E2E_CHUNKS: ${{ steps.build_info.outputs.E2E_CHUNKS }}
       E2E_BUILD_ID: ${{ steps.build_info.outputs.BUILD_ID }}
       BUILD_CHUNKS: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
+      NX_BASE: ${{ steps.build_info.outputs.NX_BASE }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,13 +56,49 @@ jobs:
       - name: Setup yarn
         run: corepack enable
 
-      - name: Get cache
-        id: get_cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress'
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install --immutable
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Prepare generated files
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          yarn --version
+          ls -l "$(which node)"
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
@@ -73,6 +112,7 @@ jobs:
           echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}" >> "$GITHUB_OUTPUT"
           echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}" >> "$GITHUB_OUTPUT"
           echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$BASE" >> "$GITHUB_OUTPUT"
 
   tests:
     needs:
@@ -156,6 +196,7 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     strategy:
       fail-fast: true
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
@@ -167,14 +208,45 @@ jobs:
           node-version-file: 'package.json'
       - name: Setup yarn
         run: corepack enable
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
 
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install --immutable
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Building
+        run: ./scripts/ci/run-in-parallel-native.sh build
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
