@@ -14,8 +14,6 @@ import { ApplicationAttachmentProvider } from './attachments/providers/applicati
 import { applicationToCaseRequest } from './complaints-to-althingi-ombudsman.utils'
 import { generateComplaintPdf } from './pdfGenerators'
 import { SharedTemplateApiService } from '../../shared'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateApiService {
@@ -26,8 +24,6 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     private readonly tokenMiddleware: TokenMiddleware,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {
     super(ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN)
   }
