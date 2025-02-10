@@ -140,7 +140,11 @@ export const SortableTable = (props: SortableTableProps) => {
                     return {
                       title: valueItem ?? '',
                       content: (
-                        <Tag variant={tag} outlined={props.tagOutlined}>
+                        <Tag
+                          variant={tag}
+                          outlined={props.tagOutlined}
+                          disabled
+                        >
                           {valueItem}
                         </Tag>
                       ),

@@ -1,10 +1,19 @@
-import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Inline,
+  SkeletonLoader,
+  Tabs,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkButton,
+  Modal,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
@@ -12,6 +21,8 @@ import { messages as m } from '../../lib/messages'
 import { SECTION_GAP } from '../../utils/constants'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
+import { useState } from 'react'
+import StatusModal from './StatusModal'
 
 export const VaccinationsWrapper = () => {
   useNamespaces('sp.health')
@@ -22,6 +33,7 @@ export const VaccinationsWrapper = () => {
     },
   })
 
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
   const vaccinations = data?.healthDirectorateVaccinations.vaccinations
 
   const general = vaccinations?.filter((x) => x.isFeatured)
@@ -59,6 +71,14 @@ export const VaccinationsWrapper = () => {
           variant="utility"
           text={formatMessage(m.makeVaccinationAppointment)}
         />,
+        <Button
+          icon="informationCircle"
+          variant="utility"
+          iconType="outline"
+          onClick={() => setIsStatusModalOpen(true)}
+        >
+          {formatMessage(m.vaccinationStatusDesc)}
+        </Button>,
       ]}
     >
       <Box>
@@ -79,6 +99,48 @@ export const VaccinationsWrapper = () => {
       {/* Tabs content */}
       {!loading && !error && (
         <Box paddingY={SECTION_GAP}>
+          <Box display="flex" flexWrap="wrap" marginBottom={3}>
+            <Box width="half">
+              <Inline>
+                <Tag variant="blue" outlined disabled>
+                  {formatMessage(m.vaccineUnfinished)}
+                </Tag>
+                <Text fontWeight="medium" variant="medium">
+                  'bleblebleb'
+                </Text>
+              </Inline>
+            </Box>
+            <Box width="half">
+              <Text fontWeight="medium" variant="medium">
+                {formatMessage(m.vaccineExpired) + ': '}
+              </Text>
+            </Box>
+            <Box width="half">
+              <Text fontWeight="medium" variant="medium">
+                {formatMessage(m.vaccineUnvaccined) + ': '}
+              </Text>
+            </Box>
+            <Box width="half">
+              <Text fontWeight="medium" variant="medium">
+                {formatMessage(m.vaccineValid) + ': '}
+              </Text>
+            </Box>
+            <Box width="half">
+              <Text fontWeight="medium" variant="medium">
+                {formatMessage(m.vaccineFinished) + ': '}
+              </Text>
+            </Box>
+            <Box width="half">
+              <Text fontWeight="medium" variant="medium">
+                {formatMessage(m.vaccineUncertain) + ': '}
+              </Text>
+            </Box>
+            <Box width="half">
+              <Text fontWeight="medium" variant="medium">
+                {formatMessage(m.vaccineUnregistered) + ': '}
+              </Text>
+            </Box>
+          </Box>
           <Tabs
             label={''}
             tabs={tabs}
@@ -88,6 +150,12 @@ export const VaccinationsWrapper = () => {
           />
         </Box>
       )}
+      <StatusModal
+        isOpen={isStatusModalOpen}
+        onClose={() => {
+          setIsStatusModalOpen(false)
+        }}
+      />
     </IntroWrapper>
   )
 }
