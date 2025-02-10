@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
-import { Tag as CaseStateTag, TagVariant } from '@island.is/island-ui/core'
+import { Tag, TagVariant } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isIndictmentCase,
@@ -150,9 +150,9 @@ const TagCaseState: FC<Props> = (props) => {
   if (!tagVariant) return null
 
   return (
-    <CaseStateTag variant={tagVariant?.color} outlined disabled truncate>
+    <Tag variant={tagVariant?.color} outlined disabled truncate>
       {tagVariant.text}
-    </CaseStateTag>
+    </Tag>
   )
 }
 
