@@ -38,12 +38,13 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, ISK, RatioType, YES } from './constants'
+import { INCOME, RatioType, YES } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
+  defaultIncomeTypes,
 } from './incomePlanUtils'
 import {
   historyMessages,
@@ -295,9 +296,13 @@ const IncomePlanTemplate: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
+        const { latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
+
+        if (!latestIncomePlan) {
+          set(answers, 'incomePlanTable', defaultIncomeTypes)
+        }
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
