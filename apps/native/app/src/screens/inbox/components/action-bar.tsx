@@ -18,14 +18,20 @@ const Wrapper = styled(Animated.View)`
   border: 1px solid ${({ theme }) => theme.color.blue200};
   background-color: ${({ theme }) => theme.color.blue100};
   border-radius: ${({ theme }) => theme.border.radius.standard};
-  padding-vertical: ${({ theme }) => theme.spacing[2]}px;
-  padding-horizontal: ${({ theme }) => theme.spacing.p2}px;
+  padding-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
+  padding-horizontal: ${({ theme }) => theme.spacing.smallGutter}px;
   flex-direction: row;
   justify-content: space-between;
 `
 
-const ActionBarItem = styled.Pressable`
-  flex-direction: row;
+const ActionBarItem = styled.TouchableHighlight`
+  border-radius: ${({ theme }) => theme.border.radius.standard};
+  padding-vertical: ${({ theme }) => theme.spacing.p2}px;
+  padding-horizontal: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const ItemWrapper = styled.View<{ wrapItem?: boolean }>`
+  flex-direction: ${({ wrapItem }) => (wrapItem ? 'column' : 'row')};
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -50,6 +56,7 @@ export const ActionBar = ({
   loading?: boolean
 }) => {
   const theme = useTheme()
+  const shouldWrapItems = screenWidth < 400
   return (
     <Wrapper
       style={{ width: screenWidth - theme.spacing[4] }}
@@ -62,48 +69,71 @@ export const ActionBar = ({
         </LoaderWrapper>
       ) : (
         <>
-          <ActionBarItem onPress={onClickStar}>
-            <Image
-              source={starIcon}
-              style={{
-                width: 16,
-                height: 16,
-                tintColor: theme.color.blue400,
-              }}
-              resizeMode="contain"
-            />
-            <Typography variant="body3">
-              <FormattedMessage
-                id="inbox.bulkSelectActionStar"
-                defaultMessage="Stjörnumerkja"
+          <ActionBarItem
+            onPress={onClickStar}
+            underlayColor={theme.shade.shade400}
+          >
+            <ItemWrapper wrapItem={shouldWrapItems}>
+              <Image
+                source={starIcon}
+                style={{
+                  width: 16,
+                  height: 16,
+                  tintColor: theme.color.blue400,
+                }}
+                resizeMode="contain"
               />
-            </Typography>
+              <Typography variant="body3">
+                <FormattedMessage
+                  id="inbox.bulkSelectActionStar"
+                  defaultMessage="Stjörnumerkja"
+                />
+              </Typography>
+            </ItemWrapper>
           </ActionBarItem>
-          <ActionBarItem onPress={onClickArchive}>
-            <Image
-              source={archiveIcon}
-              style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
-              resizeMode="contain"
-            />
-            <Typography variant="body3">
-              <FormattedMessage
-                id="inbox.bulkSelectActionArchive"
-                defaultMessage="Geymsla"
+          <ActionBarItem
+            onPress={onClickArchive}
+            underlayColor={theme.shade.shade400}
+          >
+            <ItemWrapper wrapItem={shouldWrapItems}>
+              <Image
+                source={archiveIcon}
+                style={{
+                  width: 16,
+                  height: 16,
+                  tintColor: theme.color.blue400,
+                }}
+                resizeMode="contain"
               />
-            </Typography>
+              <Typography variant="body3">
+                <FormattedMessage
+                  id="inbox.bulkSelectActionArchive"
+                  defaultMessage="Geymsla"
+                />
+              </Typography>
+            </ItemWrapper>
           </ActionBarItem>
-          <ActionBarItem onPress={onClickMarkAsRead}>
-            <Image
-              source={inboxReadIcon}
-              style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
-              resizeMode="contain"
-            />
-            <Typography variant="body3">
-              <FormattedMessage
-                id="inbox.bulkSelectActionRead"
-                defaultMessage="Merkja lesið"
+          <ActionBarItem
+            onPress={onClickMarkAsRead}
+            underlayColor={theme.shade.shade400}
+          >
+            <ItemWrapper wrapItem={shouldWrapItems}>
+              <Image
+                source={inboxReadIcon}
+                style={{
+                  width: 16,
+                  height: 16,
+                  tintColor: theme.color.blue400,
+                }}
+                resizeMode="contain"
               />
-            </Typography>
+              <Typography variant="body3">
+                <FormattedMessage
+                  id="inbox.bulkSelectActionRead"
+                  defaultMessage="Merkja lesið"
+                />
+              </Typography>
+            </ItemWrapper>
           </ActionBarItem>
         </>
       )}
