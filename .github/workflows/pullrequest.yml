@@ -608,10 +608,12 @@ jobs:
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check if deploy-feature is enabled
-        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+      - name: Notify about deploy-feature label
+        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE }}
         run: |
-          echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+          echo "### ⚠️ PR has the \`deploy-feature\` ###" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔄 PR will not be added to merge queue" >> $GITHUB_STEP_SUMMARY
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
