@@ -28,6 +28,7 @@ export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFo
 export { FieldsRepeaterFormField } from './FieldsRepeaterFormField/FieldsRepeaterFormField'
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
 export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormField'
+export { VehicleSelectFormField } from './VehicleSelectFormField/VehicleSelectFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
 export { SliderFormField } from './SliderFormField/SliderFormField'
 export { DisplayFormField } from './DisplayFormField/DisplayFormField'
