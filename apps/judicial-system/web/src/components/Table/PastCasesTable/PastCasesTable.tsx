@@ -123,14 +123,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
                       text={formatMessage(indictmentCaseStateTag.text)}
                     />
                   ) : (
-                    <TagCaseState
-                      caseState={row.state}
-                      caseType={row.type}
-                      isCourtRole={isDistrictCourtUser(user)}
-                      isValidToDateInThePast={row.isValidToDateInThePast}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
-                      indictmentDecision={row.indictmentDecision}
-                    />
+                    <TagCaseState theCase={row} />
                   )}
                   {row.appealState && (
                     <TagAppealState
