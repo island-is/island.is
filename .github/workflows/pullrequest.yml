@@ -22,10 +22,15 @@ env:
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
-  MAX_JOBS: '1'
+  MAX_JOBS: '3'
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
+  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
 
 jobs:
   prepare:
@@ -35,7 +40,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       SERVERSIDE_FEATURES_ON: ''
-      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
       DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
 
     outputs:
@@ -44,6 +49,7 @@ jobs:
       NX_ASSIGNMENT_RULES: ${{ steps.prepare-nx.outputs.NX_ASSIGNMENT_RULES }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
@@ -58,12 +64,50 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install --immutable
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Prepare generated files
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
 
       - name: Check node version
         run: |
@@ -112,13 +156,6 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress'
-
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
@@ -160,6 +197,7 @@ jobs:
   nx-base:
     needs:
       - prepare
+    if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     runs-on: arc-runners
     env:
       should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
@@ -174,8 +212,8 @@ jobs:
       - name: Debug
         if: ${{ env.should-run == 'true' }}
         run: |
-          echo "Runners: $runners"
-          echo "Assignment rules: $assignment-rules"
+            echo "Runners: $runners"
+            echo "Assignment rules: $assignment-rules"
   linting-workspace:
     needs:
       - prepare
@@ -183,20 +221,49 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - run: |
+          corepack enable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
 
-      - name: Setup yarn
-        run: corepack enable
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-
+
+      - run: |
+          yarn install --immutable
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -214,7 +281,7 @@ jobs:
           reporter: github-pr-review
           fail-level: info
           exclude: >-
-            */node_modules/*
+            */node_modules/*  
   success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
@@ -227,6 +294,20 @@ jobs:
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check linting-workspace success
         run: '[[ ${{ needs.linting-workspace.result }} != "failure" ]] || exit 1'
+      - name: Check if deploy-feature is enabled
+        run: |
+          if [ "$DEPLOY_FEATURE" == "true" ]; then
+            echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+            exit 1
+          else
+            echo "::notice::Deploy-feature flag is not enabled. Proceeding with the workflow."
+          fi
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+      - name: Check e2e success
+        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      - name: Check linting success
+        run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
       - name: Check run-shellcheck success
         run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
       - name: Announce success

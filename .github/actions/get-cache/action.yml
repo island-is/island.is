@@ -48,9 +48,3 @@ runs:
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
-
-    # NOTE: Will restore NX cloud cache or generate new cache
-    - name: Codegen
-      id: codegen
-      shell: bash
-      run: yarn codegen
