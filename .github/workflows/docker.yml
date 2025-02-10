@@ -208,6 +208,12 @@ jobs:
           install: true
           use: true
 
+      - name: Create and use a new builder instance
+        id: buildx
+        run: |
+          docker buildx create --name mybuilder --use
+          echo name="mybuilder" >>"$GITHUB_OUTPUT"
+
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (base)
         uses: docker/build-push-action@v6
