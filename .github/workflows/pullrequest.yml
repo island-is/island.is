@@ -55,6 +55,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
@@ -79,6 +80,11 @@ jobs:
           yarn --version
           ls -l "$(which node)"
 
+      - name: Set cache key
+        id: set-cache-key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+
       - name: Get Yarn Cache Directory Path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
@@ -90,10 +96,7 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -105,7 +108,7 @@ jobs:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
       - name: Prepare generated files
         run: |
@@ -257,10 +260,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -271,7 +271,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - name: Extract generated files
         run: |
@@ -316,10 +316,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -330,7 +327,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
       - name: Extract generated files
         run: |
@@ -357,10 +354,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -419,10 +413,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -470,10 +461,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -517,10 +505,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
