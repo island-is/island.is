@@ -25,4 +25,16 @@ export const conclusion = {
       description: 'Conclusion seller accordion text',
     },
   }),
+  pdfOverview: defineMessages({
+    download: {
+      id: 'aosh.wan.application:conclusion.pdfOverview.download',
+      defaultMessage: 'Hlaða niður',
+      description: 'Conclusion pdf download button text',
+    },
+    pdfName: {
+      id: 'aosh.wan.application:conclusion.pdfOverview.pdfName',
+      defaultMessage: 'Tilkynning um vinnuslys',
+      description: 'Conclusion pdf name',
+    },
+  }),
 }
