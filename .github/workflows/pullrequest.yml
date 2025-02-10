@@ -254,7 +254,7 @@ jobs:
             echo "Runners: $runners"
             echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment-rules.yml
             cat .github/assignment-rules.yml
-            yarn nx-cloud start-ci-run --distribute-on=".github/assignment-rules.yml" --stop-agents-on-failure=true
+            yarn nx-cloud start-ci-run --distribute-on="manual" --assignment-rules=".github/assignment-rules.yml" --stop-agents-on-failure=true
             # Run NX
             if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
               yarn nx run-many --target=${{ env.NX_TARGETS }} --all
