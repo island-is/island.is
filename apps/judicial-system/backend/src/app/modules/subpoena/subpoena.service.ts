@@ -20,6 +20,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -33,6 +34,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
+import { FileService } from '../file/file.service'
 import { PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
@@ -84,6 +86,8 @@ export class SubpoenaService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly pdfService: PdfService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
@@ -294,13 +298,24 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
+      let civilClaimPdf = undefined
+      const civilClaim = theCase.caseFiles?.find(
+        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+      )
+
+      if (civilClaim) {
+        civilClaimPdf = await this.fileService.getCaseFileFromS3(
+          theCase,
+          civilClaim,
+        )
+      }
+
+      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
       const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
         theCase,
         defendant,
         subpoena,
       )
-
-      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
@@ -308,6 +323,9 @@ export class SubpoenaService {
         Base64.btoa(subpoenaPdf.toString('binary')),
         Base64.btoa(indictmentPdf.toString('binary')),
         user,
+        civilClaimPdf
+          ? Base64.btoa(civilClaimPdf.toString('binary'))
+          : undefined,
       )
 
       if (!createdSubpoena) {
@@ -387,7 +405,7 @@ export class SubpoenaService {
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena,
+      subpoena.id,
       user,
     )
 

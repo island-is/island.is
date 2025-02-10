@@ -30,6 +30,7 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
+  CaseDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -70,6 +71,7 @@ import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -317,6 +319,15 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -945,7 +956,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages = [
+    const messages: Message[] = [
       {
         type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
         user,
@@ -982,6 +993,16 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
         caseId: theCase.id,
+      })
+    }
+
+    // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
+    if (theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING) {
+      messages.push({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.RULING },
       })
     }
 
@@ -1086,11 +1107,14 @@ export class CaseService {
       })
     }
 
+    // TODO: Use subpoenas already included in theCase.defendants
+    // - no need to call the subpoena service
+    // - then add to transition tests
     const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
       theCase.id,
     )
 
-    if (subpoenasToRevoke?.length > 0) {
+    if (theCase.origin === CaseOrigin.LOKE && subpoenasToRevoke?.length > 0) {
       messages.push(
         ...subpoenasToRevoke.map((subpoena) => ({
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
@@ -1337,15 +1361,19 @@ export class CaseService {
           )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
       )
       .map((updatedDefendant) => [
-        {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        },
+        ...(updatedCase.origin === CaseOrigin.LOKE
+          ? [
+              {
+                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+                user,
+                caseId: theCase.id,
+                elementId: [
+                  updatedDefendant.id,
+                  updatedDefendant.subpoenas?.[0].id ?? '',
+                ],
+              },
+            ]
+          : []),
         {
           type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,

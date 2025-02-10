@@ -22,7 +22,6 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
-  FormText,
 } from '@island.is/application/types'
 import {
   Box,
@@ -54,7 +53,6 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
-import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
 
 type ScreenProps = {
