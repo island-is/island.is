@@ -6,10 +6,12 @@ import {
   capitalize,
   formatDate,
   formatDOB,
+  formatNationalId,
   getWordByGender,
   Word,
 } from '@island.is/judicial-system/formatters'
 import {
+  DefenderChoice,
   ServiceStatus,
   SubpoenaType,
   UserRole,
@@ -21,8 +23,7 @@ import { Defendant } from '../modules/defendant'
 import { Subpoena } from '../modules/subpoena'
 import {
   addEmptyLines,
-  addFooter,
-  addHugeHeading,
+  addLargeHeading,
   addMediumCenteredText,
   addNormalCenteredText,
   addNormalText,
@@ -61,7 +62,7 @@ export const createServiceCertificate = (
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
-      top: 40,
+      top: 80,
       bottom: 60,
       left: 50,
       right: 50,
@@ -75,7 +76,7 @@ export const createServiceCertificate = (
 
   setTitle(doc, formatMessage(strings.title))
 
-  addHugeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
+  addLargeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
   addMediumCenteredText(
     doc,
     `Mál nr. ${theCase.courtCaseNumber || ''}`,
@@ -83,17 +84,17 @@ export const createServiceCertificate = (
   )
   addNormalCenteredText(doc, theCase.court?.name || '', 'Times-Bold')
 
-  addEmptyLines(doc, 2)
+  addEmptyLines(doc, 3)
 
   addMediumCenteredText(
     doc,
     `Birting tókst ${
-      subpoena.serviceDate ? formatDate(subpoena.serviceDate, 'PPp') : ''
+      subpoena.serviceDate ? formatDate(subpoena.serviceDate, 'PPPp') : ''
     }`,
     'Times-Bold',
   )
 
-  addEmptyLines(doc)
+  addEmptyLines(doc, 2)
 
   addNormalText(doc, 'Birtingaraðili: ', 'Times-Bold', true)
   addNormalText(
@@ -103,6 +104,8 @@ export const createServiceCertificate = (
       : subpoena.servedBy || '',
     'Times-Roman',
   )
+
+  addEmptyLines(doc)
 
   if (subpoena.serviceStatus !== ServiceStatus.ELECTRONICALLY) {
     addNormalText(doc, 'Athugasemd: ', 'Times-Bold', true)
@@ -117,26 +120,34 @@ export const createServiceCertificate = (
     )
   }
 
-  addEmptyLines(doc, 2)
+  addEmptyLines(doc, 3)
 
-  addNormalText(
-    doc,
-    `${capitalize(getWordByGender(Word.AKAERDI, defendant.gender))}: `,
-    'Times-Bold',
-    true,
+  const defendantText = capitalize(
+    getWordByGender(Word.AKAERDI, defendant.gender),
   )
+  const defendantLabel = `${defendantText}: `
+
+  addNormalText(doc, defendantLabel, 'Times-Bold', true)
   addNormalText(
     doc,
-    defendant.name && defendant.nationalId && defendant.address
+    defendant.name && defendant.nationalId
       ? `${defendant.name}, ${formatDOB(
           defendant.nationalId,
           defendant.noNationalId,
-        )}, ${defendant.address}`
+        )}`
       : 'Ekki skráður',
     'Times-Roman',
   )
 
-  addEmptyLines(doc, 2)
+  // Consider adding indentation to helper functions
+  doc.text(
+    ` ${defendant.address ?? 'Ekki skráð'}`,
+    50 + doc.widthOfString(defendantLabel),
+    doc.y + 5,
+  )
+  doc.text('', 50)
+
+  addEmptyLines(doc, 3)
 
   addNormalText(doc, 'Ákærandi: ', 'Times-Bold', true)
   addNormalText(
@@ -147,6 +158,8 @@ export const createServiceCertificate = (
     'Times-Roman',
   )
 
+  addEmptyLines(doc)
+
   addNormalText(doc, `${getRole(theCase.judge?.role)}: `, 'Times-Bold', true)
   addNormalText(
     doc,
@@ -154,7 +167,7 @@ export const createServiceCertificate = (
     'Times-Roman',
   )
 
-  addEmptyLines(doc)
+  addEmptyLines(doc, 3)
 
   addNormalText(doc, 'Þingfesting: ', 'Times-Bold', true)
   addNormalText(
@@ -166,13 +179,59 @@ export const createServiceCertificate = (
     'Times-Roman',
   )
 
+  addEmptyLines(doc)
+
   addNormalText(doc, 'Staður: ', 'Times-Bold', true)
-  addNormalText(doc, subpoena.location || 'Ekki skráður', 'Times-Roman')
+  addNormalText(
+    doc,
+    `Dómsalur ${subpoena.location}` || 'ekki skráður',
+    'Times-Roman',
+  )
+
+  addEmptyLines(doc)
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
   addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
 
-  addFooter(doc)
+  addEmptyLines(doc, 3)
+
+  let defenderChoiceText = ''
+
+  switch (defendant.requestedDefenderChoice) {
+    case DefenderChoice.CHOOSE:
+      defenderChoiceText =
+        'Ég óska þess að valinn lögmaður verði skipaður verjandi minn.'
+      break
+    case DefenderChoice.WAIVE:
+      defenderChoiceText = 'Ég óska ekki eftir verjanda.'
+      break
+    case DefenderChoice.DELEGATE:
+      defenderChoiceText =
+        'Ég fel dómara málsins að tilnefna og skipa mér verjanda.'
+      break
+    case DefenderChoice.DELAY:
+    default:
+      defenderChoiceText =
+        'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.'
+  }
+
+  addNormalText(doc, 'Afstaða til verjanda: ', 'Times-Bold', true)
+  addNormalText(doc, defenderChoiceText, 'Times-Roman')
+
+  if (defendant.requestedDefenderChoice === DefenderChoice.CHOOSE) {
+    addEmptyLines(doc)
+
+    addNormalText(
+      doc,
+      defendant.requestedDefenderName && defendant.requestedDefenderNationalId
+        ? `${defendant.requestedDefenderName}, kt. ${formatNationalId(
+            defendant.requestedDefenderNationalId,
+          )}`
+        : 'Ekki skráður',
+      'Times-Roman',
+    )
+  }
+
   doc.end()
 
   return new Promise<Buffer>((resolve) =>
