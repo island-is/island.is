@@ -12,6 +12,10 @@ export \
 if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
   echo "$CHUNKS_DEBUG" | jq -cM '. | map("\(.|tostring)")'
   exit 0
+elif [[ "${SKIP_TESTS:-}" == true ]]; then
+  #Skipping tests
+  echo "[]"
+  exit 0
 fi
 
 chunks='[]'
