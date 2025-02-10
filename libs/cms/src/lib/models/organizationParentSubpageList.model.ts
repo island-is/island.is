@@ -29,7 +29,7 @@ class PageLink {
   thumbnailImageHref?: string | null
 
   @Field()
-  intro!: string
+  pageLinkIntro!: string
 }
 
 @ObjectType()
@@ -76,7 +76,7 @@ export const mapOrganizationParentSubpageList = ({
           page.fields.organizationPage.fields.slug
         }/${page.fields.slug}`,
         thumbnailImageHref: page.fields.thumbnailImage?.fields?.file?.url,
-        intro: page.fields.pages?.[0]?.fields?.intro ?? '',
+        pageLinkIntro: page.fields.pages?.[0]?.fields?.intro ?? '',
       })),
     seeMoreLink: fields.seeMoreLink ? mapLink(fields.seeMoreLink) : null,
   }

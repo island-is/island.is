@@ -55,6 +55,7 @@ export const OrganizationParentSubpageListSlice = ({
                   text: activeLocale === 'is' ? 'Sjá nánar' : 'See more',
                   url: page.href,
                 }}
+                description={page.pageLinkIntro}
                 image={page.thumbnailImageHref ?? ''}
               />
             </LinkV2>

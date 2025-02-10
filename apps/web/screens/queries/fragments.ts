@@ -1020,7 +1020,7 @@ export const slices = gql`
     pageLinkVariant
     pageLinks {
       id
-      intro
+      pageLinkIntro
       label
       href
       thumbnailImageHref
