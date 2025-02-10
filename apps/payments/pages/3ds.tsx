@@ -1,4 +1,12 @@
+import { useEffect } from 'react'
+
 export default function ThreeDSecureSuccessPage() {
+  useEffect(() => {
+    setTimeout(() => {
+      window.close()
+    }, 5000)
+  })
+
   return (
     <div>
       <h1>3D Secure Success</h1>

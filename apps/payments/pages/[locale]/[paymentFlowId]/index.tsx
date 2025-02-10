@@ -479,9 +479,14 @@ export default function PaymentPage({
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
-                    <Button variant="text">
-                      {formatMessage(generic.buttonCancel)}
-                    </Button>
+                    <Link
+                      href={paymentFlow.returnUrl ?? 'https://island.is'}
+                      aria-disabled={isSubmitting}
+                    >
+                      <Button variant="text" disabled={isSubmitting}>
+                        {formatMessage(generic.buttonCancel)}
+                      </Button>
+                    </Link>
                   </Box>
                 </Box>
               </form>
