@@ -247,6 +247,7 @@ jobs:
             echo "Runners: $runners"
             echo "${{ needs.prepare.outputs.NX_ASSIGNMENT_RULES }}" > .github/assignment-rules.yml
             cat .github/assignment-rules.yml
+            yarn nx-cloud start-ci-run --distribute-on="manual" --assignment-rules=".github/assignment-rules.yml"
   nx-runners:
     needs:
       - prepare
@@ -263,7 +264,7 @@ jobs:
     steps:
       - name: Set agent name
         run: |
-          NX_AGENT_LAUNCH_TEMPLATE="${NX_AGENT_FULL_NAME-*}"
+          NX_AGENT_LAUNCH_TEMPLATE="${NX_AGENT_FULL_NAME%-*}"
           NX_AGENT_NAME="${NX_AGENT_FULL_NAME##*-}"
           echo "NX_AGENT_LAUNCH_TEMPLATE="$NX_AGENT_LAUNCH_TEMPLATE" >> $GITHUB_ENV
           echo "NX_AGENT_NAME="$NX_AGENT_NAME" >> $GITHUB_ENV
@@ -304,6 +305,7 @@ jobs:
         if: ${{ env.should-run == 'true' }}
         run: |
           echo "Running on agent ${{ matrix.agents }}"
+          yarn nx-cloud start-agent
           
   linting-workspace:
     needs:
