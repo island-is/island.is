@@ -203,6 +203,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
+      offenses {
+        id
+        indictmentCountId
+        created
+        modified
+        offense
+        substances
+      }
       deprecatedOffenses
       substances
       lawsBroken
