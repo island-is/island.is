@@ -75,21 +75,17 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+            node_modules
+            .yarn/install-state.gz
+          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+            ss-${{ runner.os }}-node_modules
+            ss-${{ runner.os }}-
 
       - run: |
           yarn install --immutable
@@ -99,10 +95,10 @@ jobs:
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-
+            node_modules
+            .yarn/install-state.gz
+          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          
       - name: Prepare generated files
         run: |
           echo "generated files: ${{ env.GENERATED_FILES }}"
@@ -226,19 +222,18 @@ jobs:
         run: |
           corepack enable
 
-      - name: Get Yarn Cache Directory Path
-        if: ${{ env.should-run == 'true' }}
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - name: Restore Dependencies Cache
         if: ${{ env.should-run == 'true' }}
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            node_modules
+            .yarn/install-state.gz
+          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ss-${{ runner.os }}-node_modules
+            ss-${{ runner.os }}-
       - if: ${{ env.should-run == 'true' }}
         run: |
           yarn install --immutable
@@ -306,9 +301,12 @@ jobs:
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            node_modules
+            .yarn/install-state.gz
+          key: ss-${{ runner.os }}-node_modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ss-${{ runner.os }}-node_modules
+            ss-${{ runner.os }}-
       - if: ${{ env.should-run == 'true' }}
         run: |
           yarn install --immutable
@@ -391,7 +389,7 @@ jobs:
           reporter: github-pr-review
           fail-level: info
           exclude: >-
-            
+
   success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
