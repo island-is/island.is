@@ -37,7 +37,7 @@ const CaseTitleInfoAndTags: FC = () => {
           {titleForCase(formatMessage, workingCase)}
         </PageTitle>
         {workingCase.rulingDate &&
-          (workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING ? (
+          (workingCase.isCompletedWithoutRuling ? (
             <DateLabel
               date={workingCase.rulingDate}
               text={formatMessage(strings.caseCompletedDatePrefix)}

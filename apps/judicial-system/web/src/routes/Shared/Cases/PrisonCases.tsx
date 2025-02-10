@@ -137,10 +137,7 @@ export const PrisonCases: FC = () => {
             {
               cell: (row) => (
                 <TagContainer>
-                  <TagCaseState
-                    caseState={row.state}
-                    isValidToDateInThePast={row.isValidToDateInThePast}
-                  />
+                  <TagCaseState theCase={row} />
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}

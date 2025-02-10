@@ -422,11 +422,5 @@ export const sections = {
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið',
     },
-    completedWithoutRuling: {
-      id: 'judicial.system.core:sections.case_results.completed_without_ruling',
-      defaultMessage: 'Máli er lokið án úrskurðar',
-      description:
-        'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið án úrskurðar',
-    },
   }),
 }
