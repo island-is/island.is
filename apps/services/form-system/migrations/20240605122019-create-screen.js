@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -30,7 +28,7 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          is_hidden: {
+          is_completed: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
