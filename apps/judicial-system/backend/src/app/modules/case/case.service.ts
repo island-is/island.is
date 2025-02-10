@@ -71,6 +71,7 @@ import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -176,6 +177,7 @@ export interface UpdateCase
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
+    | 'isCompletedWithoutRuling'
   > {
   type?: CaseType
   state?: CaseState
@@ -318,6 +320,15 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -987,7 +998,7 @@ export class CaseService {
     }
 
     // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
-    if (theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING) {
+    if (theCase.isCompletedWithoutRuling) {
       messages.push({
         type: MessageType.NOTIFICATION,
         user,
@@ -1364,6 +1375,15 @@ export class CaseService {
               },
             ]
           : []),
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [
+            updatedDefendant.id,
+            updatedDefendant.subpoenas?.[0].id ?? '',
+          ],
+        },
         {
           type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,

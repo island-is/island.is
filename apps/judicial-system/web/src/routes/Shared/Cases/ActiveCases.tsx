@@ -94,17 +94,7 @@ const ActiveCases: FC<Props> = (props) => {
           cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
         },
         {
-          cell: (row) => (
-            <TagCaseState
-              caseState={row.state}
-              caseType={row.type}
-              isValidToDateInThePast={row.isValidToDateInThePast}
-              courtDate={row.courtDate}
-              indictmentDecision={row.indictmentDecision}
-              indictmentRulingDecision={row.indictmentRulingDecision}
-              defendants={row.defendants}
-            />
-          ),
+          cell: (row) => <TagCaseState theCase={row} />,
         },
         {
           cell: (row) => (

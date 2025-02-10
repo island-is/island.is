@@ -31,6 +31,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   prepare:
@@ -42,6 +43,8 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
       DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
       DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+      CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+      SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
@@ -82,8 +85,11 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
@@ -94,7 +100,8 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
 
       - name: Prepare generated files
         run: |
@@ -251,29 +258,20 @@ jobs:
         with:
           node-version-file: 'package.json'
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
         id: restore-cache
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -334,19 +332,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -370,6 +363,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+
       - run: |
           corepack enable
 
@@ -388,19 +382,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -445,8 +434,7 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/checkout@v4
-        if: ${{ github.ref == 'ref/heads/main' }}
+
       - run: |
           corepack enable
 
@@ -464,20 +452,15 @@ jobs:
         id: restore-cache
         with:
           path: |
-            .yarn/cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -487,13 +470,10 @@ jobs:
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
 
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
+
       # - name: NX format:write
       #   if: ${{ github.event_name == 'pull_request' }}
       #   run: |
@@ -533,19 +513,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -594,19 +569,14 @@ jobs:
         with:
           path: |
             ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-cypress-
+            ${{ runner.os }}-
 
       - run: |
           yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -638,6 +608,11 @@ jobs:
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check if deploy-feature is enabled
+        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+        run: |
+          echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+          exit 1
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
