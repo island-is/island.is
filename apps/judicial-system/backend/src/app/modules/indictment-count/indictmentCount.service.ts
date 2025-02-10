@@ -66,9 +66,9 @@ export class IndictmentCountService {
   }
 
   async delete(caseId: string, indictmentCountId: string): Promise<boolean> {
-    this.sequelize.transaction(async (transaction) => {
+    return this.sequelize.transaction(async (transaction) => {
       await this.offenseModel.destroy({
-        where: { id: indictmentCountId },
+        where: { indictmentCountId },
         transaction,
       })
 
@@ -87,65 +87,8 @@ export class IndictmentCountService {
           `Could not delete indictment count ${indictmentCountId} of case ${caseId}`,
         )
       }
+      return true
     })
-
-    return true
-  }
-
-  async createOffense(
-    indictmentCountId: string,
-    offense: IndictmentCountOffense,
-  ): Promise<Offense> {
-    return this.offenseModel.create({ indictmentCountId, offense })
-  }
-
-  async updateOffense(
-    indictmentCountId: string,
-    offenseId: string,
-    update: UpdateOffenseDto,
-  ): Promise<Offense> {
-    const [numberOfAffectedRows, offenses] = await this.offenseModel.update(
-      update,
-      {
-        where: { id: offenseId, indictmentCountId },
-        returning: true,
-      },
-    )
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating offense ${offenseId} for indictment count ${indictmentCountId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update offense ${offenseId} for indictment count ${indictmentCountId}`,
-      )
-    }
-
-    return offenses[0]
-  }
-
-  async deleteOffense(
-    indictmentCountId: string,
-    offenseId: string,
-  ): Promise<boolean> {
-    const numberOfAffectedRows = await this.offenseModel.destroy({
-      where: { id: offenseId, indictmentCountId },
-    })
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting offense ${offenseId} for indictment count ${indictmentCountId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not delete offense ${offenseId} for indictment count ${indictmentCountId}`,
-      )
-    }
-
-    return true
   }
 
   async createOffense(
