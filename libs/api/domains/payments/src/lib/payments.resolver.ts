@@ -20,6 +20,7 @@ import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.in
 import { ApolloError } from '@apollo/client'
 import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
 import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
+import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 
 @UseGuards(ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -74,11 +75,13 @@ export class PaymentsResolver {
     }
   }
 
-  @Mutation(() => Boolean, { name: 'paymentsVerificationCallback' })
+  @Mutation(() => CardVerificationResponse, {
+    name: 'paymentsVerificationCallback',
+  })
   async verificationCallback(
     @Args('input', { type: () => CardVerificationCallbackInput })
     input: CardVerificationCallbackInput,
-  ): Promise<boolean> {
+  ): Promise<CardVerificationResponse> {
     try {
       return this.paymentsService.verifyCardCallback(input)
     } catch (e) {

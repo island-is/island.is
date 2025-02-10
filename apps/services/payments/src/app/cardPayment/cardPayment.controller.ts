@@ -26,6 +26,7 @@ import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -85,9 +86,12 @@ export class CardPaymentController {
   }
 
   @Post('/verify-callback')
+  @ApiOkResponse({
+    type: VerificationCallbackResponse,
+  })
   async verificationCallback(
     @Body() cardVerificationCallbackInput: VerificationCallbackInput,
-  ) {
+  ): Promise<VerificationCallbackResponse> {
     const mdPayload = this.cardPaymentService.getMdPayload(
       cardVerificationCallbackInput.md,
     )
@@ -109,15 +113,7 @@ export class CardPaymentController {
         })
 
       if (!success) {
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId,
-          type: 'update',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'other',
-          message: 'Card verification callback failed',
-        })
-        return
+        throw new BadRequestException(PaymentServiceCode.CouldNotVerifyCallback)
       }
 
       await this.paymentFlowService.logPaymentFlowUpdate({
@@ -128,6 +124,10 @@ export class CardPaymentController {
         reason: 'other',
         message: 'Card verification callback completed',
       })
+
+      return {
+        paymentFlowId,
+      }
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId,
@@ -166,7 +166,6 @@ export class CardPaymentController {
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
     try {
-      // Will fail if already paid
       const {
         paymentFlow,
         paymentDetails: { catalogItems, totalPrice },

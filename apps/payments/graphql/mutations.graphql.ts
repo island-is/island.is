@@ -24,7 +24,9 @@ export const VerificationCallbackMutation = gql`
   mutation verificationCallback(
     $input: PaymentsCardVerificationCallbackInput!
   ) {
-    paymentsVerificationCallback(input: $input)
+    paymentsVerificationCallback(input: $input) {
+      paymentFlowId
+    }
   }
 `
 

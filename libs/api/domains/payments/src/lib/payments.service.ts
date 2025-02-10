@@ -18,6 +18,7 @@ import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.in
 import { PaymentsApiModuleConfig } from './payments.config'
 import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
 import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
+import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 
 @Injectable()
 export class PaymentsService {
@@ -56,7 +57,7 @@ export class PaymentsService {
 
   async verifyCardCallback(
     cardVerificationInput: CardVerificationCallbackInput,
-  ): Promise<boolean> {
+  ): Promise<CardVerificationResponse> {
     const { verificationToken } = cardVerificationInput
 
     let decoded: null | VerificationCallbackInput = null
@@ -80,7 +81,7 @@ export class PaymentsService {
       throw new Error('Invalid verification token contents')
     }
 
-    await this.paymentsApi.cardPaymentControllerVerificationCallback({
+    return this.paymentsApi.cardPaymentControllerVerificationCallback({
       verificationCallbackInput: {
         cavv,
         xid,
@@ -89,8 +90,6 @@ export class PaymentsService {
         dsTransId,
       },
     })
-
-    return true
   }
 
   async chargeCard(

@@ -23,7 +23,6 @@ import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePaymen
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import { card, cardSuccess, generic, invoice } from '../../../messages'
-import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import {
   getErrorTitleAndMessage,
   PaymentError,
@@ -45,6 +44,7 @@ import {
   useGetVerificationStatusLazyQuery,
 } from '../../../graphql/queries.graphql.generated'
 import { PaymentReceipt } from '../../../components/PaymentReceipt/PaymentReceipt'
+import { generatePopupHtml, generatePopupLoadingHtml } from '../../../utils/3ds'
 
 interface PaymentPageProps {
   locale: string
@@ -310,6 +310,18 @@ export default function PaymentPage({
       cvc: Number(cardCVC),
     }
 
+    setIsVerifyingCard(true)
+    // setThreeDSecureData(verifyCardResponse)
+
+    const popup = window.open('', '3ds', 'width=600,height=400,resizable=yes')
+
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      alert('⚠️ Popup was blocked! Please allow popups.')
+      throw new Error('Popup was blocked')
+    }
+
+    popup.document.write(generatePopupLoadingHtml())
+
     const verifyCardResponse = await verifyCard({
       amount: productInformation.amount,
       cardNumber: cardInfo.number,
@@ -318,8 +330,15 @@ export default function PaymentPage({
       paymentFlowId: paymentFlow.id,
     })
 
-    setIsVerifyingCard(true)
-    setThreeDSecureData(verifyCardResponse)
+    popup.document.write(
+      generatePopupHtml(
+        verifyCardResponse.postUrl,
+        verifyCardResponse.scriptPath,
+        verifyCardResponse.verificationFields,
+      ),
+    )
+
+    popup.document.close()
 
     const isCardVerified = await waitForCardVerification()
 
@@ -485,7 +504,7 @@ export default function PaymentPage({
           )
         }
       />
-      <ModalBase
+      {/* <ModalBase
         baseId="3ds"
         isVisible={isVerifyingCard}
         hideOnClickOutside={false}
@@ -523,7 +542,7 @@ export default function PaymentPage({
             </Box>
           </Box>
         </Box>
-      </ModalBase>
+      </ModalBase> */}
     </>
   )
 }

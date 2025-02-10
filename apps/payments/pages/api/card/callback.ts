@@ -56,7 +56,7 @@ export default async function cardVerificationCallbackHandler(
   )
 
   try {
-    await client.mutate<
+    const { data, errors } = await client.mutate<
       VerificationCallbackMutation,
       VerificationCallbackMutationVariables
     >({
@@ -68,7 +68,11 @@ export default async function cardVerificationCallbackHandler(
       },
     })
 
-    return res.status(200).json({})
+    if (errors) {
+      return res.status(503).json({ error: 'Unknown error occured' })
+    }
+
+    return res.redirect(307, `/greida/3ds`)
   } catch (e) {
     const problem = findProblemInApolloError(e)
 
