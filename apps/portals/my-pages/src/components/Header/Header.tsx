@@ -58,6 +58,9 @@ export const Header = ({ position }: Props) => {
       }
 
       const goingDown = currPos.y < prevPos.y
+      // Using both canShow and canHide because of animation triggers.
+      // If trying to use only one, the header will flicker and transform down when it shouldnt.
+
       const canShow = px > currPos.y
       const canHide = currPos.y < -SERVICE_PORTAL_HEADER_HEIGHT_SM
 
