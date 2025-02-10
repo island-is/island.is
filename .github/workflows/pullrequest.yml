@@ -639,7 +639,7 @@ jobs:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check if deploy-feature is enabled
-        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE }}" == 'true'
+        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
           echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
           exit 1
