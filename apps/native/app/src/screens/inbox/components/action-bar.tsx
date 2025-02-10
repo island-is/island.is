@@ -17,7 +17,7 @@ const Wrapper = styled(Animated.View)`
   right: ${({ theme }) => theme.spacing[2]}px;
   border: 1px solid ${({ theme }) => theme.color.blue200};
   background-color: ${({ theme }) => theme.color.blue100};
-  border-radius: ${({ theme }) => theme.border.radius.standard};
+  border-radius: ${({ theme }) => theme.border.radius.large};
   padding-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
   padding-horizontal: ${({ theme }) => theme.spacing.smallGutter}px;
   flex-direction: row;

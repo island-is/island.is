@@ -53,6 +53,7 @@ import { isAndroid } from '../../utils/devices'
 import { useApolloClient } from '@apollo/client'
 import { isIos } from '../../utils/devices'
 import { ActionBar } from './components/action-bar'
+import { Toast, ToastVariant } from './components/toast'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -229,6 +230,17 @@ export const InboxScreen: NavigationFunctionComponent<{
   const queryString = useThrottleState(query)
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
+
+  const [toastInfo, setToastInfo] = useState<{
+    variant: ToastVariant
+    title: string
+    message?: string
+  }>({
+    variant: 'success',
+    title: '',
+  })
+  const [toastVisible, setToastVisible] = useState(false)
+
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const isFilterApplied =
@@ -446,6 +458,23 @@ export const InboxScreen: NavigationFunctionComponent<{
       // TODO handle error
     }
     setLoadingMore(false)
+  }
+
+  const showToastForBulkSelectAction = ({
+    variant,
+    title,
+    message,
+  }: {
+    variant: ToastVariant
+    title: string
+    message?: string
+  }) => {
+    setToastInfo({
+      variant: variant,
+      title: title,
+      message: message ?? undefined,
+    })
+    setToastVisible(true)
   }
 
   useEffect(() => {
@@ -804,12 +833,30 @@ export const InboxScreen: NavigationFunctionComponent<{
         <ActionBar
           loading={bulkSelectActionLoading}
           onClickStar={async () => {
-            await bulkSelectActionMutation({
+            const result = await bulkSelectActionMutation({
               variables: {
                 input: { action: 'bookmark', documentIds: selectedItems },
               },
             })
-            resetSelectState()
+            if (result.data?.postMailActionV2?.success) {
+              resetSelectState()
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.starSuccess',
+                }),
+              })
+            } else {
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.starError',
+                }),
+                message: intl.formatMessage({
+                  id: 'inbox.bulkSelect.pleaseTryAgain',
+                }),
+              })
+            }
           }}
           onClickArchive={async () => {
             const result = await bulkSelectActionMutation({
@@ -820,6 +867,22 @@ export const InboxScreen: NavigationFunctionComponent<{
             if (result.data?.postMailActionV2?.success) {
               resetSelectState()
               res.refetch()
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.archiveSuccess',
+                }),
+              })
+            } else {
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.archiveError',
+                }),
+                message: intl.formatMessage({
+                  id: 'inbox.bulkSelect.pleaseTryAgain',
+                }),
+              })
             }
           }}
           onClickMarkAsRead={async () => {
@@ -839,10 +902,31 @@ export const InboxScreen: NavigationFunctionComponent<{
                 })
               })
               resetSelectState()
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.markAsReadSuccess',
+                }),
+              })
+            } else {
+              showToastForBulkSelectAction({
+                variant: 'success',
+                title: intl.formatMessage({
+                  id: 'inbox.bulkSelect.markAsReadError',
+                }),
+                message: intl.formatMessage({
+                  id: 'inbox.bulkSelect.pleaseTryAgain',
+                }),
+              })
             }
           }}
         />
       ) : null}
+      <Toast
+        {...toastInfo}
+        visible={toastVisible}
+        onHide={() => setToastVisible(false)}
+      />
       <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>
