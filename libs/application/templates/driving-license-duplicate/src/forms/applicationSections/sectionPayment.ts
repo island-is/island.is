@@ -19,7 +19,6 @@ export const sectionPayment = buildSection({
           id: 'paymentCharge',
           title: '',
           component: 'PaymentCharge',
-          doesNotRequireAnswer: true,
         }),
         buildSubmitField({
           id: 'payment',
