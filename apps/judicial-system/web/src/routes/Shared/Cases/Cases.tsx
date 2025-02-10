@@ -173,8 +173,7 @@ export const Cases: FC = () => {
         } else {
           return !(
             isCompletedCase(c.state) &&
-            (c.rulingSignatureDate ||
-              c.decision === CaseDecision.COMPLETED_WITHOUT_RULING)
+            (c.rulingSignatureDate || c.isCompletedWithoutRuling)
           )
         }
       }
