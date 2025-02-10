@@ -129,6 +129,14 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      - name: Debug
+        env:
+          localrun: ${{ !!github.event.localrun }}
+          context: ${{ toJson(github.context) }}
+        run: |
+          echo "$localrun"
+          echo "$context" | jq
+
       - name: Prepare arguments
         if: ${{ !!github.event.localrun }}
         id: args
