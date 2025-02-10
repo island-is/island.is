@@ -211,21 +211,6 @@ jobs:
           install: true
           use: true
 
-      # Available outputs:
-      # base
-      # deps
-      # src
-      # builder
-      # output-base
-      # output-base-with-pg
-      # output-express
-      # output-next
-      # output-static
-      # output-jest
-      # playwright-base
-      # output-playwright
-      # output-native
-
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (base)
         uses: docker/build-push-action@v6
