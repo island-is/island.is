@@ -6,10 +6,11 @@ import inboxReadIcon from '../../../assets/icons/inbox-read.png'
 import starIcon from '../../../assets/icons/star.png'
 import archiveIcon from '../../../assets/icons/tray.png'
 import { screenWidth } from '../../../utils/dimensions'
-import { Typography } from '../../../ui'
+import { Loader, Typography } from '../../../ui'
+import React from 'react'
 
 const Wrapper = styled.View`
-  height: 48px;
+  height: 52px;
   position: absolute;
   bottom: ${({ theme }) => theme.spacing[2]}px;
   right: ${({ theme }) => theme.spacing[2]}px;
@@ -20,7 +21,6 @@ const Wrapper = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing.p2}px;
   flex-direction: row;
   justify-content: space-between;
-  flex-wrap: wrap;
 `
 
 const ActionBarItem = styled.Pressable`
@@ -29,60 +29,75 @@ const ActionBarItem = styled.Pressable`
   justify-content: center;
   align-items: center;
   gap: 6px;
-  min-width: 100px;
+`
+
+const LoaderWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 `
 
 export const ActionBar = ({
   onClickStar,
   onClickArchive,
   onClickMarkAsRead,
+  loading = false,
 }: {
   onClickStar: () => void
   onClickArchive: () => void
   onClickMarkAsRead: () => void
+  loading?: boolean
 }) => {
   const theme = useTheme()
   return (
     <Wrapper style={{ width: screenWidth - theme.spacing[4] }}>
-      <ActionBarItem onPress={onClickStar}>
-        <Image
-          source={starIcon}
-          style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
-          resizeMode="contain"
-        />
-        <Typography variant="body3">
-          <FormattedMessage
-            id="inbox.bulkSelectActionStar"
-            defaultMessage="Stjörnumerkja"
-          />
-        </Typography>
-      </ActionBarItem>
-      <ActionBarItem onPress={onClickArchive}>
-        <Image
-          source={archiveIcon}
-          style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
-          resizeMode="contain"
-        />
-        <Typography variant="body3">
-          <FormattedMessage
-            id="inbox.bulkSelectActionArchive"
-            defaultMessage="Geymsla"
-          />
-        </Typography>
-      </ActionBarItem>
-      <ActionBarItem onPress={onClickMarkAsRead}>
-        <Image
-          source={inboxReadIcon}
-          style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
-          resizeMode="contain"
-        />
-        <Typography variant="body3">
-          <FormattedMessage
-            id="inbox.bulkSelectActionRead"
-            defaultMessage="Merkja lesið"
-          />
-        </Typography>
-      </ActionBarItem>
+      {loading ? (
+        <LoaderWrapper>
+          <Loader />
+        </LoaderWrapper>
+      ) : (
+        <>
+          <ActionBarItem onPress={onClickStar}>
+            <Image
+              source={starIcon}
+              style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
+              resizeMode="contain"
+            />
+            <Typography variant="body3">
+              <FormattedMessage
+                id="inbox.bulkSelectActionStar"
+                defaultMessage="Stjörnumerkja"
+              />
+            </Typography>
+          </ActionBarItem>
+          <ActionBarItem onPress={onClickArchive}>
+            <Image
+              source={archiveIcon}
+              style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
+              resizeMode="contain"
+            />
+            <Typography variant="body3">
+              <FormattedMessage
+                id="inbox.bulkSelectActionArchive"
+                defaultMessage="Geymsla"
+              />
+            </Typography>
+          </ActionBarItem>
+          <ActionBarItem onPress={onClickMarkAsRead}>
+            <Image
+              source={inboxReadIcon}
+              style={{ width: 16, height: 16, tintColor: theme.color.blue400 }}
+              resizeMode="contain"
+            />
+            <Typography variant="body3">
+              <FormattedMessage
+                id="inbox.bulkSelectActionRead"
+                defaultMessage="Merkja lesið"
+              />
+            </Typography>
+          </ActionBarItem>
+        </>
+      )}
     </Wrapper>
   )
 }

@@ -295,7 +295,8 @@ export const InboxScreen: NavigationFunctionComponent<{
     },
   })
 
-  const [bulkSelectActionMutation] = usePostMailActionMutationMutation()
+  const [bulkSelectActionMutation, { loading: bulkSelectActionLoading }] =
+    usePostMailActionMutationMutation()
 
   const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
 
@@ -801,6 +802,7 @@ export const InboxScreen: NavigationFunctionComponent<{
       />
       {selectState && selectedItems.length ? (
         <ActionBar
+          loading={bulkSelectActionLoading}
           onClickStar={async () => {
             await bulkSelectActionMutation({
               variables: {
@@ -816,21 +818,40 @@ export const InboxScreen: NavigationFunctionComponent<{
               },
             })
             if (result.data?.postMailActionV2?.success) {
+              console.log('selectedItems', selectedItems)
+              selectedItems.forEach((id) => {
+                client.cache.modify({
+                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
+                  fields: {
+                    documentsV2: (existingDocumentRefs, { readField }) => {
+                      return existingDocumentRefs.filter(
+                        (ref: any) => id !== readField('id', ref),
+                      )
+                    },
+                  },
+                })
+              })
               resetSelectState()
-              // TODO: update cache instead of refetching?
-              res.refetch()
             }
           }}
           onClickMarkAsRead={async () => {
-            await bulkSelectActionMutation({
+            const result = await bulkSelectActionMutation({
               variables: {
                 input: { action: 'read', documentIds: selectedItems },
               },
             })
-            // TODO add loading indicator somewhere? Skip await? Add onPress look?
-            // Add toast when successful
-            // Two lines below to a function? + success
-            resetSelectState()
+            // If success, update selected documents to be marked as read in the cache
+            if (result.data?.postMailActionV2?.success) {
+              selectedItems.forEach((id) => {
+                client.cache.modify({
+                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
+                  fields: {
+                    opened: () => true,
+                  },
+                })
+              })
+              resetSelectState()
+            }
           }}
         />
       ) : null}
