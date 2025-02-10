@@ -24,6 +24,14 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
     ),
     ...getAffectedProjectsMultipleTargetArray(_PROBLEMATIC_TARGETS),
   ]
+  const normalProjectsAndTargets = allAffectedTargets.filter((project) => !_PROBLEMATIC_PROJECTS.includes(project.split(':')[0]))
+    .map(
+      (project) => {
+        return {
+          project: project.split(':')[0],
+          target: project.split(':')[1],
+        }
+      });
   const normalProjects = allAffectedTargets.filter(
     (project) => !_PROBLEMATIC_PROJECTS.includes(project.split(':')[0]),
   )
@@ -44,16 +52,21 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
         return {
           project: project.split(':')[0],
           target: project.split(':')[1],
+          configuration: 'production',
           'runs-on': [project.replace(':', '-')],
         }
       }),
-      {
-        configuration: 'production',
-        'runs-on': ['default-runner'],
-      },
+      ...normalProjectsAndTargets.map(({ project, target }) => {
+        return {
+          project: project,
+          target: target,
+          configuration: 'production',
+          'runs-on': ['default-runner'],
+        }
+      }),
     ],
   }
-  
+
   const targets = [..._TARGETS, ..._PROBLEMATIC_TARGETS];
 
   const defaultRunners = Array(normalAgentCount)

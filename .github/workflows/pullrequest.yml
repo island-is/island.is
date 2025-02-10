@@ -1,9 +1,10 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request: {}
-  workflow_dispatch: {}
-
+  workflow_run:
+    workflows: ["Monorepo pipeline - build and deploy"]
+    types:
+      - completed
 defaults:
   run:
     shell: bash
@@ -23,7 +24,7 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '4'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
@@ -35,7 +36,8 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: arc-test
     timeout-minutes: 35
 
     env:
@@ -200,7 +202,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     env:
       should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       runners: ${{ needs.prepare.outputs.NX_RUNNERS }}
@@ -264,7 +266,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     env:
       should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -329,7 +331,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -391,7 +393,7 @@ jobs:
           exclude: >-
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-test
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -399,6 +401,9 @@ jobs:
       - nx-base
       - run-shellcheck
     steps:
+      - name: Check if push workflow run was successful
+        run: |
+         ${{ github.event.workflow_run.conclusion == 'success' }} || (echo "Push build needs to be succesful" && exit 1)
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check linting-workspace success
