@@ -260,7 +260,7 @@ jobs:
           path: |
             ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
@@ -271,7 +271,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
+          key: generated-files-${{ github.sha }}
 
       - name: Extract generated files
         run: |
@@ -327,7 +327,7 @@ jobs:
         with:
           path: |
             ${{ env.GENERATED_FILES }}
-          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          key: generated-files-${{ github.sha }}
 
       - name: Extract generated files
         run: |
