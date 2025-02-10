@@ -68,7 +68,6 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
       as false, we need to handle that case explicitly
     */
     if (response.succeeded !== true) {
-      this.logger.error('External endpoint returned non-success')
       throw new HttpException(
         response.message ?? 'Request returned an Error',
         response.returnCode ?? 500,
