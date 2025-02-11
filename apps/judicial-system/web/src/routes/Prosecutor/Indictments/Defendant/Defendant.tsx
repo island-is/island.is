@@ -117,6 +117,8 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+  const [isProsecutorSelected, setIsProsecutorSelected] =
+    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -452,7 +454,9 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = isDefendantStepValidIndictments(workingCase)
+  const stepIsValid =
+    isDefendantStepValidIndictments(workingCase) &&
+    Boolean(workingCase.id || isProsecutorSelected)
 
   return (
     <PageLayout
@@ -467,7 +471,11 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
-        <ProsecutorSection />
+        <ProsecutorSection
+          handleChange={
+            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
+          }
+        />
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
