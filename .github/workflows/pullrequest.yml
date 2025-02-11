@@ -36,7 +36,7 @@ env:
 jobs:
   prepare:
     if: ${{ github.event_name == 'pull_request' }}
-    runs-on: arc-test
+    runs-on: arc-docker
     timeout-minutes: 35
 
     env:
@@ -207,7 +207,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-test
+    runs-on: arc-docker
     env:
       should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       runners: ${{ needs.prepare.outputs.NX_RUNNERS }}
@@ -280,7 +280,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-test
+    runs-on: arc-docker
     env:
       should-run: ${{ needs.prepare.outputs.SHOULD_RUN_NX }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -356,8 +356,8 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-test
-    timeout-minutes: 5
+    runs-on: arc-docker
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -410,7 +410,7 @@ jobs:
           exclude: >-
 
   success:
-    runs-on: arc-test
+    runs-on: arc-docker
     if: ${{ !cancelled() }}
     needs:
       - prepare
