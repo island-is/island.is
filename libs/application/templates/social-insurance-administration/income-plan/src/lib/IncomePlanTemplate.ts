@@ -52,6 +52,7 @@ import {
   statesMessages,
 } from './messages'
 import { CodeOwners } from '@island.is/shared/constants'
+import isEmpty from 'lodash/isEmpty'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -300,7 +301,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           application.externalData,
         )
 
-        if (!latestIncomePlan) {
+        if (isEmpty(latestIncomePlan)) {
           set(answers, 'incomePlanTable', defaultIncomeTypes)
         }
 
