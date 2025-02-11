@@ -94,6 +94,7 @@ export const extraInformationSection = buildSection({
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader: extraInformation.supportingDocuments.fileUploadHeader,
           uploadDescription:
             extraInformation.supportingDocuments.fileUploadDescription,
