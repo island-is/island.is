@@ -180,8 +180,6 @@ jobs:
         if: ${{ !github.event.localrun }}
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          mask-password: false
       - name: Prepare creds
         id: creds
         env:
