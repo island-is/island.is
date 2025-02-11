@@ -136,6 +136,18 @@ jobs:
           echo cache-to="$common,mode=max" | tee -a "$GITHUB_OUTPUT"
           echo cache-from="$common" | tee -a "$GITHUB_OUTPUT"
 
+          # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
+          # name=<manifest>: specify name of the manifest to use (default: buildkit)
+          #     Multiple manifest names can be specified at the same time, separated by ;.
+          #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
+          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
+          echo cache-prefix="$cache_prefix" | tee -a "$GITHUB_OUTPUT"
+          echo cache-from-common="
+            $cache_prefix,name=$GITHUB_SHA
+            $cache_prefix,name=$GITHUB_REF
+          " | tee -a "$GITHUB_OUTPUT"
+          echo cache-to-common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF" | tee -a "$GITHUB_OUTPUT"
+
       - name: Common config
         id: common
         env:
@@ -200,7 +212,7 @@ jobs:
           use: true
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (output-base-with-pg)
+      - name: Docker build/cache dependencies (base)
         uses: docker/build-push-action@v6
         with:
           target: base
@@ -210,10 +222,40 @@ jobs:
           push: ${{ steps.common.outputs.push }}
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: |
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
+            ${{ steps.common.outputs.cache-from-common }}
+            ${{ steps.common.outputs.cache-prefix }},name=target-base
           cache-to: |
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }},mode=max
+            ${{ steps.common.outputs.cache-prefix }},name=target-base;${{ github.sha }};${{ github.ref }}
+
+      - name: Docker build/cache dependencies (deps)
+        uses: docker/build-push-action@v6
+        with:
+          target: deps
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: |
+            ${{ steps.common.outputs.cache-from-common }}
+            ${{ steps.common.outputs.cache-prefix }},name=target-deps
+          cache-to: |
+            ${{ steps.common.outputs.cache-prefix }},name=target-deps;${{ github.sha }};${{ github.ref }}
+
+      - name: Docker build/cache dependencies (output-base-with-pg)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base-with-pg
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: |
+            ${{ steps.common.outputs.cache-from-common }}
+            ${{ steps.common.outputs.cache-prefix }},name=target-output-base-with-pg
+          cache-to: |
+            ${{ steps.common.outputs.cache-prefix }},name=target-output-base-with-pg;${{ github.sha }};${{ github.ref }}
 
   build:
     name: Build ${{ matrix.project }}
@@ -295,8 +337,8 @@ jobs:
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=output-${{ matrix.docker }}
+            ${{ fromJson(needs.deps.outputs.common).cache-from-common }}
+            ${{ fromJson(needs.deps.outputs.common).cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
           cache-to:
-            type=s3,region=${{ env.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }};output-${{ matrix.docker }}
+            ${{ fromJson(needs.deps.outputs.common).cache-to-common }}
+            ${{ fromJson(needs.deps.outputs.common).cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
