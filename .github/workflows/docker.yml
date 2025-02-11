@@ -177,11 +177,8 @@ jobs:
           echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
 
       - name: Debug AWS user/login
-        env:
-          aws_output: ${{ toJson(steps.aws-creds.outputs) }}
         run: |
           echo "DEBUG AWS user/login"
-          echo "aws-creds.outputs: $aws_output"
           aws sts get-caller-identity | xargs echo "STS caller identity:"
       - name: Log in to Amazon ECR
         if: ${{ !github.event.localrun }}
