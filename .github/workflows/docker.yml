@@ -133,7 +133,7 @@ jobs:
             NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
             DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
-          image_repository: ${{ steps.args.outputs.image-repository }}
+          image_repository: ${{ env.IMAGE_REGISTRY }}
           s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
         run: |
           # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
@@ -290,7 +290,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ fromJson(needs.deps.outputs.common).image_repository }}
+            ${{ fromJson(needs.deps.outputs.common).image-repository }}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
