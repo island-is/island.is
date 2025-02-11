@@ -8,7 +8,7 @@ import {
 
 import { getRelevantSubstances } from '../IndictmentCount'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
-import { substanceEnum } from '../Substances/SubstancesEnum.strings'
+import { indictmentCountSubstanceEnum as substanceStrings } from '../IndictmentCountSubstanceEnum.strings'
 
 export const getDeprecatedIncidentDescriptionReason = (
   deprecatedOffenses: IndictmentCountOffense[],
@@ -77,7 +77,7 @@ export const getDeprecatedIncidentDescriptionReason = (
     } else {
       acc += ', '
     }
-    acc += formatMessage(substanceEnum[substance[0] as Substance], {
+    acc += formatMessage(substanceStrings[substance[0] as Substance], {
       amount: substance[1],
     })
     if (index === relevantSubstances.length - 1) {
