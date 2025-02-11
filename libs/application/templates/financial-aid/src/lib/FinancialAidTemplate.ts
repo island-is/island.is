@@ -144,7 +144,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/PrerequisitesSpouse').then((module) =>
+                import('../forms/prerequisitesSpouse').then((module) =>
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
