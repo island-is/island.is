@@ -48,6 +48,9 @@ jobs:
       YARN_CACHE_FOLDER: ${{ steps.build_info.outputs.dir }}
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: ./github/actions/prep-deps
         id: build_info
@@ -68,7 +71,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-
+      - uses: actions/checkout@v4
       - uses: ./github/actions/load-deps
         with:
           yarn_cache_folder: ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
@@ -102,6 +105,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
+      - uses: actions/checkout@v4
       - uses: ./github/actions/load-deps
         with:
           yarn_cache_folder: ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
@@ -125,6 +129,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
+      - uses: actions/checkout@v4
       - uses: ./github/actions/load-deps
         with:
           yarn_cache_folder: ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
