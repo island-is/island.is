@@ -288,10 +288,7 @@ jobs:
       NX_AGENT_FULL_NAME: ${{ matrix.agents }}
       dd-api-key: 
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DD_API_KEY: '${{ secrets.DD_API_KEY }}'
-      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
     strategy:
       matrix:
         agents: ${{ fromJson(needs.prepare.outputs.NX_RUNNERS) }}
@@ -315,6 +312,10 @@ jobs:
         run: |
           corepack enable
       - name: Docker login to ECR repo
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
         run: ./scripts/ci/docker-login-ecr.sh
 
       - name: Get Yarn Cache Directory Path
