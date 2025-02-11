@@ -87,6 +87,13 @@ jobs:
       #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+  e2e-debug:
+    needs:
+      - prepare
+    if: needs.prepare.outputs.E2E_CHUNKS
+    runs-on: arc-runners
+    steps:
+      - run: echo "${{ needs.prepare.outputs.E2E_CHUNKS }}"
 
   e2e:
     needs:
