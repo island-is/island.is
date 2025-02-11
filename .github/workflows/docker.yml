@@ -120,7 +120,6 @@ jobs:
       contents: read # This is required for actions/checkout
 
     outputs:
-      meta: ${{ toJson(steps.meta.outputs) }}
       common: ${{ toJson(steps.common.outputs) }}
 
     steps:
