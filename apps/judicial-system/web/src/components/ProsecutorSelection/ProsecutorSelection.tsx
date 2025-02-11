@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 
 import { Option, Select } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
@@ -16,6 +19,7 @@ interface Props {
 const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
+  const { user: currentUser } = useContext(UserContext)
 
   const selectedProsecutor = useMemo(() => {
     return workingCase.prosecutor
@@ -40,13 +44,21 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       .filter(
         (user) =>
           user.role === UserRole.PROSECUTOR &&
-          user.institution?.id === workingCase.prosecutorsOffice?.id,
+          user.institution?.id ===
+            (workingCase.id
+              ? workingCase.prosecutorsOffice?.id
+              : currentUser?.institution?.id),
       )
       .map(({ id, name }) => ({
         label: name ?? '',
         value: id,
       }))
-  }, [data?.users, workingCase.prosecutorsOffice])
+  }, [
+    currentUser?.institution?.id,
+    data?.users,
+    workingCase.id,
+    workingCase.prosecutorsOffice?.id,
+  ])
 
   return (
     <Select

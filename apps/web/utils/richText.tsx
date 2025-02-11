@@ -72,6 +72,7 @@ import {
   GrantCardsList as GrantCardsListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
+  OrganizationParentSubpageList,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
   SectionWithImage as SectionWithImageSchema,
@@ -98,6 +99,7 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
@@ -312,6 +314,9 @@ const defaultRenderComponent = {
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
     <GrantCardsList slice={slice} />
+  ),
+  OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
+    <OrganizationParentSubpageListSlice slice={slice} />
   ),
 }
 

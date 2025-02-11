@@ -1,4 +1,4 @@
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,7 +6,7 @@ import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { getTranslatedProgram, Routes, checkIsEditable } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,

@@ -88,13 +88,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
                   ),
                 },
                 {
-                  cell: (row) => (
-                    <TagCaseState
-                      caseState={row.state}
-                      isCourtRole={true}
-                      indictmentDecision={row.indictmentDecision}
-                    />
-                  ),
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
               ]}
             />

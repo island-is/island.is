@@ -22,6 +22,7 @@ import {
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
+import { OrganizationParentSubpageListSlice } from './OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -227,6 +228,8 @@ export const renderSlice = (
     }
     case 'FeaturedLinks':
       return <FeaturedLinksSlice slice={slice} />
+    case 'OrganizationParentSubpageList':
+      return <OrganizationParentSubpageListSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

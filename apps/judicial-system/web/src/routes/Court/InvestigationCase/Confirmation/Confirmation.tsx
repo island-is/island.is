@@ -122,10 +122,9 @@ const Confirmation: FC = () => {
       return
     }
 
-    const action =
-      workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
-        ? 'noSignature'
-        : 'signature'
+    const action = workingCase.isCompletedWithoutRuling
+      ? 'noSignature'
+      : 'signature'
 
     await completeCaseWith(action)
   }
@@ -171,9 +170,7 @@ const Confirmation: FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
-            disabled={
-              workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
-            }
+            disabled={Boolean(workingCase.isCompletedWithoutRuling)}
           />
         </Box>
         <Box marginBottom={15}>
@@ -190,10 +187,10 @@ const Confirmation: FC = () => {
           nextUrl={constants.CASES_ROUTE}
           nextIsLoading={isTransitioningCase || isRequestingRulingSignature}
           nextButtonText={formatMessage(
-            workingCase.decision === CaseDecision.ACCEPTING
-              ? strings.continueButtonTextAccepting
-              : workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
+            workingCase.isCompletedWithoutRuling
               ? strings.continueButtonTextCompletedWithoutRuling
+              : workingCase.decision === CaseDecision.ACCEPTING
+              ? strings.continueButtonTextAccepting
               : workingCase.decision === CaseDecision.REJECTING
               ? strings.continueButtonTextRejecting
               : workingCase.decision === CaseDecision.DISMISSING
@@ -201,12 +198,14 @@ const Confirmation: FC = () => {
               : strings.continueButtonTextAcceptingPartially,
           )}
           nextButtonIcon={
-            isAcceptingCaseDecision(workingCase.decision)
+            isAcceptingCaseDecision(workingCase.decision) ||
+            workingCase.isCompletedWithoutRuling
               ? 'checkmark'
               : 'close'
           }
           nextButtonColorScheme={
-            isAcceptingCaseDecision(workingCase.decision)
+            isAcceptingCaseDecision(workingCase.decision) ||
+            workingCase.isCompletedWithoutRuling
               ? 'default'
               : 'destructive'
           }

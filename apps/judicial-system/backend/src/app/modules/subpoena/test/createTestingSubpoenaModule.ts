@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { CaseService, PdfService } from '../../case'
+import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
 import { Defendant, DefendantService } from '../../defendant'
 import { EventService } from '../../event'
@@ -34,6 +34,7 @@ jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
+jest.mock('../../case/internalCase.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -54,6 +55,7 @@ export const createTestingSubpoenaModule = async () => {
       EventService,
       DefendantService,
       CourtService,
+      InternalCaseService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -99,6 +101,9 @@ export const createTestingSubpoenaModule = async () => {
 
   const courtService = subpoenaModule.get<CourtService>(CourtService)
 
+  const internalCaseService =
+    subpoenaModule.get<InternalCaseService>(InternalCaseService)
+
   const subpoenaModel = await subpoenaModule.resolve<typeof Subpoena>(
     getModelToken(Subpoena),
   )
@@ -124,6 +129,7 @@ export const createTestingSubpoenaModule = async () => {
     fileService,
     policeService,
     courtService,
+    internalCaseService,
     subpoenaModel,
     subpoenaService,
     subpoenaController,

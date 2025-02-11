@@ -115,6 +115,7 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewDecision',
   'indictmentReviewerId',
   'hasCivilClaims',
+  'isCompletedWithoutRuling',
 ]
 
 export interface LimitedAccessUpdateCase
