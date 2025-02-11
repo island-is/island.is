@@ -52,8 +52,10 @@ runs:
           ${{ inputs.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
-
-    - run: yarn install --immutable
+    - name: Yarn
+      shell: bash
+      run: |
+        yarn install --immutable
 
     - name: Cache Dependencies
       uses: runs-on/cache/save@v4
