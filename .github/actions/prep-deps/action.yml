@@ -24,22 +24,23 @@ outputs:
   yarn_cache_folder:
     value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
 
-defaults:
-  run:
-    shell: bash -euxo pipefail {0}
 
 runs:
   using: 'composite'
   steps:
-    - run: corepack enable
+    - name: Corepack
+      shell: bash
+      run: corepack enable
 
     - name: Set cache key
       id: set-cache-key
+      shell: bash
       run: |
         echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Get Yarn Cache Directory Path
       id: yarn-cache-dir-path
+      shell: bash
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
     - name: Restore Dependencies Cache
@@ -64,6 +65,7 @@ runs:
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     - name: Prepare generated files
+      shell: bash
       run: |
         echo "generated files: ${{ inputs.generated_files }}"
         node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
@@ -81,6 +83,7 @@ runs:
 
     - name: Gather branch info
       id: build_info
+      shell: bash
       run: |
         export BASE=${{ env.NX_BASE }}
         export HEAD=${{ env.NX_HEAD }}
