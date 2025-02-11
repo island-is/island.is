@@ -392,6 +392,13 @@ export const InboxScreen: NavigationFunctionComponent<{
   }, [incomingFilters, filters])
 
   useEffect(() => {
+    // Make sure to reset select state when switching tabs
+    if (ui.selectedTab !== 0 && selectState) {
+      resetSelectState()
+    }
+  }, [ui.selectedTab, selectState])
+
+  useEffect(() => {
     Navigation.mergeOptions(componentId, {
       topBar: {
         leftButtons: selectState
