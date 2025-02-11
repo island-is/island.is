@@ -169,14 +169,6 @@ jobs:
             | "\(.key)<<EOF\n\(.value)\nEOF"
           ' | tee -a "$GITHUB_OUTPUT"
 
-      - name: Configure AWS credentials
-        if: ${{ !github.event.localrun }}
-        id: aws-creds
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
       - name: Debug AWS user/login
         env:
           aws_output: ${{ toJson(steps.aws-creds.outputs) }}
@@ -185,7 +177,7 @@ jobs:
           echo "aws-creds.outputs: $aws_output"
           aws sts get-caller-identity | xargs echo "STS caller identity:"
       - name: Log in to Amazon ECR
-        if: ${{ steps.aws-creds.conclusion == 'success' }}
+        if: ${{ !github.event.localrun }}
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
         with:
