@@ -6,6 +6,7 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
+      - '!feature/test-in-mergequeue'
     paths-ignore:
       - '**/*.md'
     tags:
