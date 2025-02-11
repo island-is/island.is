@@ -183,6 +183,7 @@ jobs:
       - name: Log in Docker
         if: ${{ steps.ecr-login.conclusion == 'success' }}
         id: docker-login
+        continue-on-error: true
         uses: docker/login-action@v3
         with:
           registry: ${{ steps.aws-creds.outputs.registry }}
@@ -277,6 +278,7 @@ jobs:
       - name: Log in Docker
         if: ${{ steps.ecr-login.conclusion == 'success' }}
         id: docker-login
+        continue-on-error: true
         uses: docker/login-action@v3
         with:
           registry: ${{ fromJson(needs.deps.outputs.ecr-login).registry }}
