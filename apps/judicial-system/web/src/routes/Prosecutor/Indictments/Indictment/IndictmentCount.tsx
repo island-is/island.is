@@ -176,7 +176,6 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
-// ATTENTION: TO BE REMOVED -> use in migration
 export const getRelevantSubstances = (
   deprecatedOffenses: IndictmentCountOffense[],
   substances: SubstanceMap,
@@ -314,7 +313,7 @@ export const IndictmentCount: FC<Props> = ({
       : update.substances
     if (hasUpdatedOffenses || hasUpdatedDeprecatedSubstances) {
       const offenses = isOffenseEndpointEnabled
-        ? updatedOffenses?.map((o) => o.offense).filter((offense) => !!offense)
+        ? updatedOffenses?.map((o) => o.offense)
         : update.deprecatedOffenses || indictmentCount.deprecatedOffenses
       const substances = isOffenseEndpointEnabled
         ? updatedOffenses?.reduce(
@@ -902,7 +901,6 @@ export const IndictmentCount: FC<Props> = ({
           )}
         </>
       )}
-
       <Box component="section" marginBottom={3}>
         <SectionHeading
           heading="h4"

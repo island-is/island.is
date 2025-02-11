@@ -259,7 +259,7 @@ export const Offenses = ({
                 updatedOffense,
               )
 
-              // only update state, not server
+              // only update state since server changes are handled on blur
               updateIndictmentCountState(
                 indictmentCount.id,
                 {},
@@ -280,7 +280,7 @@ export const Offenses = ({
                 alcoholValue,
                 setBloodAlcoholContentErrorMessage,
               )
-              // update offense on server, and update indictment count state and fields offense effects
+              // update offense and indictment count related fields server side
               await handleAlcoholSubstanceUpdate(
                 drunkDrivingOffense,
                 alcoholValue,

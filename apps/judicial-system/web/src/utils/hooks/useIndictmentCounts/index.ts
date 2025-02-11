@@ -101,7 +101,6 @@ const useIndictmentCounts = () => {
     [updateIndictmentCountMutation, formatMessage],
   )
 
-  // TODO: pass in updated offenses here? and update them on indictment counts
   const updateIndictmentCountState = useCallback(
     (
       indictmentCountId: string,
