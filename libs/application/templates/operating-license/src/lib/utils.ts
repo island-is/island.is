@@ -2,10 +2,9 @@ import {
   APPLICATION_TYPES,
   Operation,
   OPERATION_CATEGORY,
-  YES,
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
