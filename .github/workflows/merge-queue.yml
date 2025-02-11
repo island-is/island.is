@@ -53,11 +53,11 @@ jobs:
   #       with:
   #         fetch-depth: 0
 
-  #     - uses: ./.github/actions/prep-deps
-  #       id: build_info
-  #       with:
-  #         cypress_cache_folder: ${{ env.CYPRESS_CACHE_FOLDER }}
-  #         generated_files: ${{ env.GENERATED_FILES }}
+      - uses: ./.github/actions/prep-deps
+        id: build_info
+        with:
+          cypress_cache_folder: ${{ env.CYPRESS_CACHE_FOLDER }}
+          generated_files: ${{ env.GENERATED_FILES }}
 
   # tests:
   #   needs:
@@ -142,7 +142,8 @@ jobs:
   #       run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    # runs-on: arc-runners
+    runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
     needs:
       - prepare
