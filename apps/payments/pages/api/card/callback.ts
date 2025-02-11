@@ -17,7 +17,7 @@ const VerificationCallbackSchema = z.object({
   mdStatus: z.string().min(1, 'mdStatus status is required'),
   MD: z.string().min(1, 'MD is required'),
   cavv: z.string().min(1, 'cavv is required'),
-  TDS2_dsTransID: z.string().min(1, 'TDS2_dsTransID is required'),
+  ['TDS2.dsTransID']: z.string().min(1, 'TDS2.dsTransID is required'),
 })
 
 export default async function cardVerificationCallbackHandler(
@@ -34,8 +34,10 @@ export default async function cardVerificationCallbackHandler(
     return res.status(400).json({ error: 'Invalid content-type' })
   }
 
-  const { xid, mdStatus, MD, cavv, TDS2_dsTransID } =
-    VerificationCallbackSchema.parse(req.body)
+  const parsed = VerificationCallbackSchema.parse(req.body)
+
+  const { xid, mdStatus, MD, cavv } = parsed
+  const dsTransId = parsed['TDS2.dsTransID']
 
   const client = initApollo()
 
@@ -50,7 +52,7 @@ export default async function cardVerificationCallbackHandler(
       mdStatus,
       md: MD,
       cavv,
-      dsTransId: TDS2_dsTransID,
+      dsTransId,
     },
     verificationCallbackSigningSecret,
   )
