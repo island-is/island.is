@@ -203,6 +203,8 @@ jobs:
 
       # Build stable layers; only difference between these steps should be the `target`
       - name: Docker build/cache dependencies (base)
+        env:
+          AWS_BUCKET: ${{ env.AWS_BUCKET }}
         uses: docker/build-push-action@v6
         with:
           target: base
