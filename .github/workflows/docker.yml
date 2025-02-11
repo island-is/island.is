@@ -217,3 +217,36 @@ jobs:
           build-args: ${{ steps.common.outputs.build-args }}
           cache-from: ${{ steps.common.outputs.cache-from }}
           cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies (deps)
+        uses: docker/build-push-action@v6
+        with:
+          target: deps
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies (output-base)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
+      - name: Docker build/cache dependencies (output-base-with-pg)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base-with-pg
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: ${{ steps.common.outputs.cache-from }}
+          cache-to: ${{ steps.common.outputs.cache-to }}
