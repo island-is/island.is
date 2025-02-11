@@ -34,6 +34,7 @@ import {
   CaseListEntry,
   CaseState,
   CaseTransition,
+  EventType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -169,7 +170,12 @@ export const Cases: FC = () => {
 
       if (isDistrictCourtUser(user)) {
         if (isIndictmentCase(c.type)) {
-          return !isCompletedCase(c.state)
+          const sentToPublicProsecutor = c.eventLogs?.some(
+            (log) =>
+              log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          )
+
+          return !isCompletedCase(c.state) || !sentToPublicProsecutor
         } else {
           return !(
             isCompletedCase(c.state) &&
