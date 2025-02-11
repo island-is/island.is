@@ -18,7 +18,8 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   NX_VERBOSE_LOGGING: 'true'
-
+  NX_CI_EXECUTION_ENV: 'main'
+  NX_CLOUD_NO_TIMEOUTS: 'true'
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
@@ -252,6 +253,7 @@ jobs:
       - name: Extract generated files
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
+      - uses: nrwl/nx-set-shas@v4
       - name: Start NX 
         if: ${{ env.should-run == 'true' }}
         run: |
@@ -275,9 +277,9 @@ jobs:
                 yarn nx run-many --target=test --all --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
             else
-              yarn nx affected --target="$NX_TARGETS" --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
+              yarn nx affected --target="$NX_TARGETS""
               if [ "$HAS_TEST" == "true" ]; then
-                yarn nx affected --target=test --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}" --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
+                yarn nx affected --target=test --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
             fi
   nx-runners:
