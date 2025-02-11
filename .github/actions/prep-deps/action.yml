@@ -9,20 +9,20 @@ outputs:
   random-number:
     description: "Random number"
     value: ${{ steps.random-number-generator.outputs.random-number }}
-    test_chunks:
-      value: ${{ steps.build_info.outputs.TEST_CHUNKS }}
-    e2e_chunks:
-      value: ${{ steps.build_info.outputs.E2E_CHUNKS }}
-    e2e_build_id:
-      value: ${{ steps.build_info.outputs.BUILD_ID }}
-    build_chunks:
-      value: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
-    nx_base:
-      value: ${{ steps.build_info.outputs.NX_BASE }}
-    cache_key:
-      value: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-    yarn_cache_folder:
-      value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+  test_chunks:
+    value: ${{ steps.build_info.outputs.TEST_CHUNKS }}
+  e2e_chunks:
+    value: ${{ steps.build_info.outputs.E2E_CHUNKS }}
+  e2e_build_id:
+    value: ${{ steps.build_info.outputs.BUILD_ID }}
+  build_chunks:
+    value: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
+  nx_base:
+    value: ${{ steps.build_info.outputs.NX_BASE }}
+  cache_key:
+    value: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+  yarn_cache_folder:
+    value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
 
 runs:
   using: 'composite'
