@@ -95,7 +95,7 @@ jobs:
     # runs-on: arc-runners
     runs-on: ubuntu-latest
     steps:
-      - run: echo "${{ needs.prepare.outputs.E2E_CHUNKS }}"
+      - run: echo "${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}"
 
   e2e:
     needs:
