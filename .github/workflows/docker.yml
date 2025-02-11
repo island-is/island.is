@@ -122,7 +122,6 @@ jobs:
     outputs:
       meta: ${{ toJson(steps.meta.outputs) }}
       common: ${{ toJson(steps.common.outputs) }}
-      ecr-login: ${{ toJson(steps.ecr-login.outputs) }}
 
     steps:
       - name: Check out repo
