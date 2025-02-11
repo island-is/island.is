@@ -1024,6 +1024,7 @@ export const slices = gql`
       label
       href
       thumbnailImageHref
+      tinyThumbnailImageHref
     }
     seeMoreLink {
       text
