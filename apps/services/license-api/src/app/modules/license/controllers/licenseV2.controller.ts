@@ -26,7 +26,7 @@ import { LicenseTypeScopesGuard } from '../guards/licenseTypeScope.guard'
 import { LicenseApiScope } from '@island.is/auth/scopes'
 import { NationalId } from '@island.is/nest/core'
 import { environment } from '../../../../environments'
-import { LicenseServiceV2 } from '../licenseV2.service'
+import { LicenseServiceV2 } from '../services/licenseV2.service'
 
 const namespace = `${environment.audit.defaultNamespace}`
 
