@@ -268,12 +268,12 @@ jobs:
             echo NX_TARGETS $NX_TARGETS
             # Run NX
             if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
-              yarn nx run-many --target=${{ env.NX_TARGETS }} --all
+              yarn nx run-many --target="$NX_TARGETS" --all
               if [ "$HAS_TEST" == "true" ]; then
                 yarn nx run-many --target=test --all --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
             else
-              yarn nx affected --target=${{ env.NX_TARGETS }} --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
+              yarn nx affected --target="$NX_TARGETS" --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
               if [ "$HAS_TEST" == "true" ]; then
                 yarn nx affected --target=test --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}" --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
