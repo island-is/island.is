@@ -201,8 +201,6 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ steps.creds.outputs.registry }}
-          username: ${{ steps.creds.outputs.username }}
-          password: ${{ steps.creds.outputs.password }}
 
       - name: Set up Docker Buildx
         id: buildx
