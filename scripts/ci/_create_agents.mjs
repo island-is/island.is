@@ -90,7 +90,7 @@ export const createAgents = ({ JOBS_PER_AGENT = 10 } = {}) => {
     setOutput('NX_RUNNERS', JSON.stringify(runners))
     setOutput('NX_ASSIGNMENT_RULES', assignmentRules)
     setOutput('NX_DISTRIBUTE_ON', distributeOn)
-    setOutput('NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT', `${normalAgentCount + problematicAgentCount}`);
+    setOutput('NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT', normalAgentCount);
     setOutput('NX_TARGETS', targets.join(','));
     setOutput('NX_RUN_ALL', getShowAllProjects() ? 'true' : 'false');
     setOutput('NX_BASE', process.env.NX_BASE ?? 'main');
