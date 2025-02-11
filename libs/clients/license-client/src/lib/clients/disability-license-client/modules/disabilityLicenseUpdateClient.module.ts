@@ -4,8 +4,8 @@ import { ConfigType } from '@island.is/nest/config'
 import { DisabilityDigitalLicenseClientConfig } from '../disabilityLicenseClient.config'
 import { DisabilityLicenseUpdateClient } from '../services/disabilityLicenseUpdateClient.service'
 import { DisabilityLicenseUpdateClientV2 } from '../services/disabilityLicenseUpdateClientV2.service'
-import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
 import { SmartSolutionsModule } from '@island.is/clients/smart-solutions-v2'
+import { PkPassService } from '../../../helpers/pk-pass-service/pkPass.service'
 
 @Module({
   imports: [

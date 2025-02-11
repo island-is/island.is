@@ -22,8 +22,8 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
-import { PkPassService } from '../../helpers/pkPassService/pkPass.service'
 import compareAsc from 'date-fns/compareAsc'
+import { PkPassService } from '../../helpers/pk-pass-service/pkPass.service'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'

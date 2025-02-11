@@ -5,8 +5,8 @@ import { DrivingLicenseUpdateClient } from '../services/drivingLicenseUpdateClie
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { DrivingLicenseUpdateClientV2 } from '../services/drivingLicenseUpdateClientV2.service'
-import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
 import { SmartSolutionsModule } from '@island.is/clients/smart-solutions-v2'
+import { PkPassService } from '../../../helpers/pk-pass-service/pkPass.service'
 
 @Module({
   imports: [

@@ -13,10 +13,10 @@ import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { createPkPassDataInput, mapNationalId } from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
-import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { VerifyInputDataDto } from '../../base/baseLicenseUpdateClient.types'
+import { PkPassService } from '../../../helpers/pk-pass-service/pkPass.service'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
