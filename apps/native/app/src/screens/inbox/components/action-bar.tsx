@@ -56,7 +56,8 @@ export const ActionBar = ({
   loading?: boolean
 }) => {
   const theme = useTheme()
-  const shouldWrapItems = screenWidth < 400
+  console.log(screenWidth)
+  const shouldWrapItems = screenWidth < 380
   return (
     <Wrapper
       style={{ width: screenWidth - theme.spacing[4] }}
