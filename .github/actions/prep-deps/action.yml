@@ -24,6 +24,10 @@ outputs:
   yarn_cache_folder:
     value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
 
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
 runs:
   using: 'composite'
   steps:
