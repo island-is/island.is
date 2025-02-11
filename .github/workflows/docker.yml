@@ -300,8 +300,7 @@ jobs:
 
       - name: Debug common
         env:
-          common: |
-            ${{ fromJson(needs.deps.outputs.common).image-repository }}
+          common: ${{ needs.deps.outputs.common }}
         run: |
           set -x
           echo "$common"
