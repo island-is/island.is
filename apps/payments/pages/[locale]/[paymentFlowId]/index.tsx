@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
@@ -44,7 +44,6 @@ import {
   useGetVerificationStatusLazyQuery,
 } from '../../../graphql/queries.graphql.generated'
 import { PaymentReceipt } from '../../../components/PaymentReceipt/PaymentReceipt'
-import { generatePopupHtml, generatePopupLoadingHtml } from '../../../utils/3ds'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 
 interface PaymentPageProps {
@@ -186,6 +185,9 @@ export default function PaymentPage({
   const [threeDSecureData, setThreeDSecureData] = useState(null)
   const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
 
+  // To break the verification loop
+  const isVerifyingRef = useRef(false)
+
   const invalidFlowSetup =
     !organization ||
     !productInformation ||
@@ -199,6 +201,10 @@ export default function PaymentPage({
     const interval = 5000
 
     while (remainingWaitTimeInMilliSeconds > 0) {
+      if (!isVerifyingRef.current) {
+        throw new Error(CardErrorCode.VerificationCancelledByUser)
+      }
+
       const { data } = await getVerificationStatusQuery({
         variables: {
           input: {
@@ -319,7 +325,7 @@ export default function PaymentPage({
       paymentFlowId: paymentFlow.id,
     })
 
-    setIsVerifyingCard(true)
+    setVerificationStatus(true)
     setThreeDSecureData(verifyCardResponse)
 
     const isCardVerified = await waitForCardVerification()
@@ -357,15 +363,22 @@ export default function PaymentPage({
       }
     } catch (e) {
       setIsProcessingPayment(false)
-      setIsVerifyingCard(false)
+      setVerificationStatus(false)
 
-      setPaymentError({
-        code: e.message as CardErrorCode,
-      })
-      console.warn('Error occured while submitting payment', e)
+      if (e.message !== CardErrorCode.VerificationCancelledByUser) {
+        setPaymentError({
+          code: e.message as CardErrorCode,
+        })
+      }
+      console.warn('payment.onSubmit error:', e)
     }
 
     setIsSubmitting(false)
+  }
+
+  const setVerificationStatus = (value: boolean) => {
+    setIsVerifyingCard(value)
+    isVerifyingRef.current = value
   }
 
   const changePaymentMethod = (paymentMethod: string) => {
@@ -522,7 +535,10 @@ export default function PaymentPage({
               {threeDSecureData && (
                 <ThreeDSecure
                   isActive={isVerifyingCard}
-                  onClose={() => setIsVerifyingCard(false)}
+                  onClose={() => {
+                    setVerificationStatus(false)
+                    setIsSubmitting(false)
+                  }}
                   postUrl={threeDSecureData.postUrl}
                   scriptPath={threeDSecureData.scriptPath}
                   verificationFields={threeDSecureData.verificationFields}
