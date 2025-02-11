@@ -32,7 +32,7 @@ env:
 jobs:
   prepare:
     # runs-on: arc-runners
-    runs-on: ubunutu-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
