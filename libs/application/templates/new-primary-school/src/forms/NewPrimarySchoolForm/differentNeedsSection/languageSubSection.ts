@@ -27,9 +27,10 @@ export const languageSubSection = buildSubSection({
       description: newPrimarySchoolMessages.differentNeeds.languageDescription,
       children: [
         buildDescriptionField({
-          id: 'languages.sub.title',
+          id: 'languages.languageEnvironment.title',
           title: newPrimarySchoolMessages.differentNeeds.languageSubTitle,
           titleVariant: 'h4',
+          space: 0,
         }),
         buildCustomField(
           {
@@ -47,20 +48,19 @@ export const languageSubSection = buildSubSection({
           },
         ),
         buildDescriptionField({
-          id: 'languages.languages.title',
+          id: 'languages.selectedLanguages.title',
           title:
             newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
           description:
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
-          marginTop: 'gutter',
+          space: 4,
           condition: (answers) => {
             return hasForeignLanguages(answers)
           },
         }),
         buildFieldsRepeaterField({
           id: 'languages.selectedLanguages',
-          title: '',
           formTitleNumbering: 'none',
           addItemButtonText:
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
@@ -68,6 +68,7 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
           minRows: 1,
           maxRows: 4,
+          marginTop: 0,
           condition: (answers) => {
             return hasForeignLanguages(answers)
           },
@@ -106,10 +107,10 @@ export const languageSubSection = buildSubSection({
           },
         }),
         buildDescriptionField({
-          id: 'languages.child.language.title',
+          id: 'languages.childLanguage.title',
           title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
           titleVariant: 'h4',
-          marginTop: 'gutter',
+          space: 4,
           condition: (answers) => {
             return showChildLangagueFields(answers)
           },

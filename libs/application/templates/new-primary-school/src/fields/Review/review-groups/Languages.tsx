@@ -30,10 +30,7 @@ export const Languages = ({
   const {
     interpreter,
     languageEnvironment,
-    language1,
-    language2,
-    language3,
-    language4,
+    selectedLanguages,
     childLanguage,
     signLanguage,
   } = getApplicationAnswers(application.answers)
@@ -73,10 +70,9 @@ export const Languages = ({
               />
             </GridColumn>
           </GridRow>
-
           {languageEnvironment === LanguageEnvironmentOptions.ONLY_ICELANDIC ? (
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+              <GridColumn span={['12/12']}>
                 <RadioValue
                   label={formatMessage(
                     newPrimarySchoolMessages.differentNeeds.signLanguage,
@@ -87,59 +83,23 @@ export const Languages = ({
             </GridRow>
           ) : (
             <>
-              <GridRow>
-                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds
-                        .languageSelectionTitle,
-                      { no: `${1}` },
-                    )}
-                    value={getLanguageByCode(language1)?.name}
-                  />
-                </GridColumn>
-                {language2 && (
-                  <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
+              <GridRow rowGap={2}>
+                {selectedLanguages?.map(({ code }, index) => (
+                  <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
                         newPrimarySchoolMessages.differentNeeds
                           .languageSelectionTitle,
-                        { no: `${2}` },
+                        { no: `${index + 1}` },
                       )}
-                      value={getLanguageByCode(language2)?.name}
+                      value={getLanguageByCode(code)?.name}
                     />
                   </GridColumn>
-                )}
-              </GridRow>
-              <GridRow>
-                {language3 && (
-                  <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.differentNeeds
-                          .languageSelectionTitle,
-                        { no: `${3}` },
-                      )}
-                      value={getLanguageByCode(language3)?.name}
-                    />
-                  </GridColumn>
-                )}
-                {language4 && (
-                  <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.differentNeeds
-                          .languageSelectionTitle,
-                        { no: `${4}` },
-                      )}
-                      value={getLanguageByCode(language4)?.name}
-                    />
-                  </GridColumn>
-                )}
+                ))}
               </GridRow>
               {childLanguage && (
                 <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                  <GridColumn span="12/12">
                     <DataValue
                       label={formatMessage(
                         newPrimarySchoolMessages.overview.childLanguage,
@@ -149,22 +109,21 @@ export const Languages = ({
                   </GridColumn>
                 </GridRow>
               )}
-              <GridRow>
-                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                  <RadioValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds.interpreter,
-                    )}
-                    value={interpreter}
-                  />
-                </GridColumn>
-
-                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
+              <GridRow rowGap={2}>
+                <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
                   <RadioValue
                     label={formatMessage(
                       newPrimarySchoolMessages.differentNeeds.signLanguage,
                     )}
                     value={signLanguage}
+                  />
+                </GridColumn>
+                <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+                  <RadioValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.differentNeeds.interpreter,
+                    )}
+                    value={interpreter}
                   />
                 </GridColumn>
               </GridRow>
