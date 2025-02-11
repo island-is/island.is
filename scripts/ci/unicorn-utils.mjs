@@ -15,6 +15,3 @@ try {
   console.error(e.message)
   process.exit(1)
 }
-
-
-// DUMMY
