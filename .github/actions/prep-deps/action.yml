@@ -20,7 +20,7 @@ outputs:
   nx_base:
     value: ${{ steps.build_info.outputs.NX_BASE }}
   cache_key:
-    value: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+    value: ${{ steps.set-cache-key.outputs.cache_key }}
   yarn_cache_folder:
     value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
 
@@ -36,7 +36,7 @@ runs:
       id: set-cache-key
       shell: bash
       run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+        echo "cache_key=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Get Yarn Cache Directory Path
       id: yarn-cache-dir-path
@@ -49,8 +49,8 @@ runs:
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ inputs.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          ${{ inputs.cypress_cache_folder }}
+        key: ${{ steps.set-cache-key.outputs.cache_key }}
 
     - name: Yarn
       shell: bash
@@ -63,8 +63,8 @@ runs:
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ inputs.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          ${{ inputs.cypress_cache_folder }}
+        key: ${{ steps.set-cache-key.outputs.cache_key }}
 
     - name: Prepare generated files
       shell: bash
