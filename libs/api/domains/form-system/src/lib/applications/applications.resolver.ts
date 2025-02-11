@@ -21,7 +21,6 @@ import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) { }
 

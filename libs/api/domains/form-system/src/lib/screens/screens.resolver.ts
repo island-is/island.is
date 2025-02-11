@@ -20,9 +20,8 @@ import { Screen } from '../../models/screen.model'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) {}
+  constructor(private readonly screensService: ScreensService) { }
 
   @Mutation(() => Screen, {
     name: 'formSystemCreateScreen',

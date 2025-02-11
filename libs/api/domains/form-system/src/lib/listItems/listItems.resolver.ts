@@ -20,9 +20,8 @@ import { ListItem } from '../../models/listItem.model'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ListItemsResolver {
-  constructor(private readonly listItemsService: ListItemsService) {}
+  constructor(private readonly listItemsService: ListItemsService) { }
 
   @Mutation(() => ListItem, {
     name: 'formSystemCreateListItem',

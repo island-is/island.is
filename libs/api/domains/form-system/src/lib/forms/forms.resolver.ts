@@ -21,9 +21,8 @@ import { FormResponse } from '../../models/form.model'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) {}
+  constructor(private readonly formsService: FormsService) { }
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',

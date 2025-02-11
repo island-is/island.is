@@ -15,9 +15,8 @@ import { GetTranslationInput } from '../../dto/service.input'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ServicesResolver {
-  constructor(private readonly formSystemServices: ServicesService) {}
+  constructor(private readonly formSystemServices: ServicesService) { }
 
   @Mutation(() => Translation, {
     name: 'formSystemGetTranslation',

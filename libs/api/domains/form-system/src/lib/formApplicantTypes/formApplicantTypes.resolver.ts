@@ -15,7 +15,6 @@ import { FormApplicantTypeCreateInput, FormApplicantTypeDeleteInput, FormApplica
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class FormApplicantTypesResolver {
   constructor(private readonly formApplicantTypesService: FormApplicantTypesService) { }
 

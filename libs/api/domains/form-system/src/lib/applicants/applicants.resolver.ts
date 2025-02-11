@@ -19,9 +19,8 @@ import {
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ApplicantsResolver {
-  constructor(private readonly applicantsService: ApplicantsService) {}
+  constructor(private readonly applicantsService: ApplicantsService) { }
 
   @Mutation(() => Applicant, {
     name: 'formSystemCreateApplicant',
