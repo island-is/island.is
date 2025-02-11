@@ -85,7 +85,10 @@ export const Languages = ({
             <>
               <GridRow rowGap={2}>
                 {selectedLanguages?.map(({ code }, index) => (
-                  <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+                  <GridColumn
+                    key={`${code}-${index}`}
+                    span={['12/12', '5/12', '5/12', '5/12']}
+                  >
                     <DataValue
                       label={formatMessage(
                         newPrimarySchoolMessages.differentNeeds
