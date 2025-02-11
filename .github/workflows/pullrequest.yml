@@ -254,7 +254,7 @@ jobs:
         if: ${{ env.should-run == 'true' }}
         run: |
             echo "Runners: $runners"
-            yarn nx-cloud start-ci-run --distribute-on="manual" --stop-agents-on-failure=true  --stop-agents-after=${{ env.NX_TARGETS }}
+            yarn nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after=${{ env.NX_TARGETS }}
             # Run NX
             if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
               yarn nx run-many --target=${{ env.NX_TARGETS }} --all
