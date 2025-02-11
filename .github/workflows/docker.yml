@@ -160,6 +160,12 @@ jobs:
             ${{ steps.args.outputs.cache-from }}
           cache_to: |
             ${{ steps.args.outputs.build-cache-to }}
+          cache_from_common: |
+            ${{ steps.args.outputs.cache-from-common }}
+          cache_to_common: |
+            ${{ steps.args.outputs.cache-to-common }}
+          cache_prefix: |
+            ${{ steps.args.outputs.cache-prefix }}
         run: |
           echo | jq -rsc \
             --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
