@@ -13,22 +13,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Corepack
-      shell: bash
-      run: corepack enable
-
-    - name: Restore Dependencies Cache
-      uses: runs-on/cache/restore@v4
-      id: restore-cache
-      with:
-        path: |
-          ${{ inputs.yarn_cache_folder }}
-          ${{ inputs.cypress_cache_folder }}
-        key: ${{ inputs.cache_key }}
-    - name: Yarn
-      shell: bash
-      run: yarn install --immutable
-
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-generated-files-cache
