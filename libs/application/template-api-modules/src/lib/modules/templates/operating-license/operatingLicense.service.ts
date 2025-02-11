@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
 import {
   SyslumennService,
   Person,
@@ -20,7 +20,6 @@ import {
   ApplicationTypes,
   ApplicationWithAttachments,
   InstitutionNationalIds,
-  YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
 import { getExtraData } from './utils'
