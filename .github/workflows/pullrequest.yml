@@ -277,7 +277,7 @@ jobs:
                 yarn nx run-many --target=test --all --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
             else
-              yarn nx affected --target="$NX_TARGETS""
+              yarn nx affected --target="$NX_TARGETS"
               if [ "$HAS_TEST" == "true" ]; then
                 yarn nx affected --target=test --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
