@@ -187,6 +187,8 @@ jobs:
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: false
       - name: Log in Docker
         if: ${{ steps.ecr-login.conclusion == 'success' }}
         id: docker-login
