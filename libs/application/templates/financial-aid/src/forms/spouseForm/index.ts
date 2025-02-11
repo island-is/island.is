@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/types'
 
 import * as m from '../../lib/messages'
-import { ApproveOptions, ExternalData } from '../../lib/types'
+import { ApproveOptions } from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
@@ -50,11 +50,19 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      condition: (_, externalData) =>
-        (externalData as unknown as ExternalData)?.taxDataSpouse?.data
-          ?.municipalitiesDirectTaxPayments?.success === false ||
-        (externalData as unknown as ExternalData)?.taxDataSpouse?.data
-          ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
+      condition: (_, externalData) => {
+        const municipalitiesDirectTaxPayments = getValueViaPath<boolean>(
+          externalData,
+          'taxDataSpouse.data.municipalitiesDirectTaxPayments.success',
+        )
+        const personalTaxReturn = getValueViaPath(
+          externalData,
+          'taxDataSpouse.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
+        )
+        return (
+          municipalitiesDirectTaxPayments === false || personalTaxReturn == null
+        )
+      },
       id: Routes.SPOUSETAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,
       children: [
