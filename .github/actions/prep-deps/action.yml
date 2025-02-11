@@ -36,7 +36,8 @@ runs:
       run: |
         corepack enable && \
         corepack prepare --activate && \
-        yarn --version
+        yarn --version && \
+        yarn install --immutable
     - name: Prepare generated files
       shell: bash
       run: |
