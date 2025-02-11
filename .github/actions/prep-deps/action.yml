@@ -7,7 +7,7 @@ inputs:
     required: true
 outputs:
   random-number:
-    description: "Random number"
+    description: 'Random number'
     value: ${{ steps.random-number-generator.outputs.random-number }}
   test_chunks:
     value: ${{ steps.build_info.outputs.TEST_CHUNKS }}
@@ -24,52 +24,13 @@ outputs:
   # yarn_cache_folder:
   #   value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
   cache_key:
-    value: "cool"
+    value: 'cool'
   yarn_cache_folder:
-    value: "beans"
-
+    value: 'beans'
 
 runs:
   using: 'composite'
   steps:
-    - name: Corepack
-      shell: bash
-      run: corepack enable
-
-    - name: Set cache key
-      id: set-cache-key
-      shell: bash
-      run: |
-        echo "cache_key=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
-
-    - name: Get Yarn Cache Directory Path
-      id: yarn-cache-dir-path
-      shell: bash
-      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-    - name: Restore Dependencies Cache
-      uses: runs-on/cache/restore@v4
-      id: restore-cache
-      with:
-        path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ inputs.cypress_cache_folder }}
-        key: ${{ steps.set-cache-key.outputs.cache_key }}
-
-    - name: Yarn
-      shell: bash
-      run: |
-        yarn install --immutable
-
-    - name: Cache Dependencies
-      uses: runs-on/cache/save@v4
-      if: steps.restore-cache.outputs.cache-hit != 'true'
-      with:
-        path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ inputs.cypress_cache_folder }}
-        key: ${{ steps.set-cache-key.outputs.cache_key }}
-
     - name: Prepare generated files
       shell: bash
       run: |

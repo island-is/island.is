@@ -28,7 +28,6 @@ env:
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
-
 jobs:
   prepare:
     runs-on: arc-test
