@@ -2,24 +2,11 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.addColumn('client', 'sso', {
-      type: Sequelize.ENUM('allow', 'client', 'disabled'),
+    return queryInterface.addColumn('client', 'sso', {
+      type: Sequelize.ENUM('enabled', 'disabled'),
       allowNull: false,
       defaultValue: 'disabled',
     })
-
-    const [clientDelegationTypes] = await queryInterface.sequelize.query(`
-      select distinct on(client_id) *
-      from client_delegation_types
-    `)
-
-    const clientIds = clientDelegationTypes?.map((client) => client.client_id) || []
-
-    if (!clientIds.length) {
-      return
-    }
-
-    await queryInterface.bulkUpdate('client', { sso: 'client' }, { client_id: clientIds })
   },
 
   async down (queryInterface, Sequelize) {

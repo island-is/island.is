@@ -169,8 +169,7 @@ export const schema = {
       supportTokenExchange: booleanCheckbox,
       requireConsent: booleanCheckbox,
       singleSession: booleanCheckbox,
-      allowSso: booleanCheckbox,
-      allowSsoClient: booleanCheckbox,
+      sso: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
@@ -190,13 +189,11 @@ export const schema = {
     })
     .merge(defaultEnvironmentSchema)
     .transform((data) => {
-      const { allowSso, allowSsoClient, ...rest } = data
+      const { sso, ...rest } = data
 
       return {
         ...rest,
-        sso: allowSsoClient
-          ? AuthAdminClientSso.client
-          : allowSso
+        sso: sso
           ? AuthAdminClientSso.enabled
           : AuthAdminClientSso.disabled,
       }

@@ -23,7 +23,6 @@ export enum ClientType {
 export enum ClientSso {
   Disabled = 'disabled',
   Enabled = 'enabled',
-  Client = 'client',
 }
 
 export enum RefreshTokenExpiration {

@@ -57,11 +57,9 @@ export const AdvancedSettings = ({
     accessTokenLifetime,
     singleSession,
     customClaims: customClaimsString,
-    allowSso: sso === AuthAdminClientSso.enabled || sso === AuthAdminClientSso.client,
-    allowSsoClient: sso === AuthAdminClientSso.client,
+    sso: sso,
   })
 
-  console.log('inputValues', inputValues)
   const { formatErrorMessage } = useErrorFormatMessage()
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
@@ -224,42 +222,18 @@ export const AdvancedSettings = ({
             backgroundColor="blue"
             large
             disabled={!isSuperAdmin}
-            defaultChecked={inputValues.allowSso || inputValues.allowSsoClient}
-            checked={inputValues.allowSso || inputValues.allowSsoClient}
-            name="allowSso"
+            defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
+            checked={inputValues.sso  === AuthAdminClientSso.enabled}
+            name="sso"
             value="true"
             onChange={(e) => {
               setInputValues({
                 ...inputValues,
-                allowSso: e.target.checked,
-                allowSsoClient: e.target.checked ? inputValues.allowSsoClient : false,
+                sso: e.target.checked ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
               })
             }}
             subLabel={formatMessage(m.allowSSODescription)}
-          >
-            <Box padding={3}>
-            {sso !== AuthAdminClientSso.disabled && (
-              <Checkbox
-                label={formatMessage(m.allowClientSSO)}
-                backgroundColor="blue"
-                large
-                disabled={!isSuperAdmin}
-                defaultChecked={inputValues.allowSsoClient}
-                checked={inputValues.allowSsoClient}
-                name="allowSsoClient"
-                value="true"
-                onChange={(e) => {
-                  setInputValues({
-                    ...inputValues,
-                    allowSsoClient: e.target.checked,
-                    allowSso: e.target.checked ? true : inputValues.allowSso,
-                  })
-                }}
-                subLabel={formatMessage(m.allowClientSSODescription)}
-              />)
-            }
-            </Box>
-          </Checkbox>
+          />
         </Stack>
       </Stack>
     </FormCard>
