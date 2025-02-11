@@ -67,7 +67,12 @@ export const OrganizationParentSubpageListSlice = ({
       {!!slice.seeMoreLink?.text && !!slice.seeMoreLink?.url && (
         <Box display="flex" justifyContent="flexEnd">
           <LinkV2 href={slice.seeMoreLink.url}>
-            <Button variant="text" unfocusable={true}>
+            <Button
+              variant="text"
+              as="span"
+              unfocusable={true}
+              icon="arrowForward"
+            >
               {slice.seeMoreLink.text}
             </Button>
           </LinkV2>
