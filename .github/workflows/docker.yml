@@ -169,8 +169,9 @@ jobs:
           common: ${{ toJson(steps.common.outputs) }}
         run: |
           echo "DEBUG common"
-          compacted="$(echo "$common" | jq -c)"
-          echo "common=$compacted" | tee -a "$GITHUB_OUTPUT"
+          # Shadow with compacted version
+          common="$(echo "$common" | jq -c)"
+          echo "common=$common" | tee -a "$GITHUB_OUTPUT"
           echo "docker build arguments:"
           echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
 
