@@ -56,7 +56,6 @@ export const ActionBar = ({
   loading?: boolean
 }) => {
   const theme = useTheme()
-  console.log(screenWidth)
   const shouldWrapItems = screenWidth < 380
   return (
     <Wrapper
