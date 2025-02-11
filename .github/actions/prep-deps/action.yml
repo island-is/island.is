@@ -50,8 +50,19 @@ runs:
     - name: Verify dependency setup
       shell: bash
       run: |
-        yarn why react  # Replace 'react' with a package you know is in your dependencies
-        yarn list --depth=0
+        yarn why react
+
+    - name: Debug information
+      shell: bash
+      run: |
+        echo "Contents of current directory:"
+        ls -la
+        echo "Contents of .yarn directory:"
+        ls -la .yarn
+        echo "Contents of node_modules:"
+        ls -la node_modules
+        echo "Yarn config:"
+        yarn config list
 
     - name: Prepare generated files
       shell: bash
