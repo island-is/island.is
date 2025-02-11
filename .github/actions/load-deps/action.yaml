@@ -13,7 +13,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: corepack enable
+    - name: Corepack
+      shell: bash
+      run: corepack enable
 
     - name: Restore Dependencies Cache
       uses: runs-on/cache/restore@v4
@@ -23,8 +25,9 @@ runs:
           ${{ inputs.yarn_cache_folder }}
           ${{ inputs.cypress_cache_folder }}
         key: ${{ inputs.cache_key }}
-
-    - run: yarn install --immutable
+    - name: Yarn
+      shell: bash
+      run: yarn install --immutable
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
@@ -35,5 +38,6 @@ runs:
         key: generated-files-${{ github.sha }}
 
     - name: Extract generated files
+      shell: bash
       run: |
         tar -xzvf ${{ inputs.generated_files }}
