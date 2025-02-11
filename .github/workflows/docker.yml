@@ -22,7 +22,7 @@ on:
         description: 'The runners to run the jobs on.'
         type: string
         required: false
-        default: 'arc-runners'
+        default: 'arc-test'
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
@@ -37,7 +37,7 @@ on:
         description: 'The runners to run the jobs on.'
         required: false
         type: string
-        default: 'arc-runners'
+        default: 'arc-test'
       version:
         description: 'The version to tag the image with (previously DOCKER_TAG)'
         type: string
@@ -61,7 +61,7 @@ jobs:
   prepare:
     name: Prepare
     if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'docker build') }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
+    runs-on: ${{ inputs.runners || 'arc-test' }}
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.build-args.outputs.node-image-version }}
@@ -110,7 +110,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.project }}
-    runs-on: ${{ inputs.runners || 'arc-runners' }}
+    runs-on: ${{ inputs.runners || 'arc-test' }}
     needs: prepare
     strategy:
       fail-fast: false

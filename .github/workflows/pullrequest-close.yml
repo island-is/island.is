@@ -12,7 +12,7 @@ jobs:
   check-unicorn:
     name: Is this a unicorn PR
     if: github.event.pull_request.merged == true
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 10
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
@@ -95,7 +95,7 @@ jobs:
 
   cleanup:
     name: Clean up feature deployment
-    runs-on: arc-runners
+    runs-on: arc-test
     steps:
       - name: Get git branch
         run: |
