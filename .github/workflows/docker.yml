@@ -189,6 +189,18 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
           mask-password: false
+      - name: Prepare creds
+        id: creds
+        env:
+          registry: ${{ steps.ecr-login.outputs.registry }}
+          username: ${{ steps.ecr-login.outputs[ format('docker_username_{0}',env.IMAGE_REGISTRY) ] }}
+          password: ${{ steps.ecr-login.outputs[ format('docker_password_{0}',env.IMAGE_REGISTRY) ] }}
+          conclusion: ${{ steps.ecr-login.conclusion }}
+        run: |
+          echo registry="$registry" | tee -a "$GITHUB_OUTPUT"
+          echo username="$username" | tee -a "$GITHUB_OUTPUT"
+          echo password="$password" | tee -a "$GITHUB_OUTPUT"
+          echo conclusion="$conclusion" | tee -a "$GITHUB_OUTPUT"
       - name: Log in Docker
         if: ${{ steps.ecr-login.conclusion == 'success' }}
         id: docker-login
