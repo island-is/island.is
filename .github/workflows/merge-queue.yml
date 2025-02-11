@@ -97,7 +97,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
+    if: needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.E2E_CHUNKS != '{projects:[]}'
     runs-on: arc-runners
     timeout-minutes: 45
     env:
