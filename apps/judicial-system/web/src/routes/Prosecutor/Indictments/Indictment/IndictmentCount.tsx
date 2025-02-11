@@ -317,7 +317,7 @@ export const IndictmentCount: FC<Props> = ({
         : update.deprecatedOffenses || indictmentCount.deprecatedOffenses
       const substances = isOffenseEndpointEnabled
         ? updatedOffenses?.reduce(
-            (res, offense) => ({ ...res, ...offense.substances }),
+            (res, offense) => Object.assign(res, offense.substances),
             {} as SubstanceMap,
           )
         : update.substances || indictmentCount.substances
