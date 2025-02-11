@@ -17,11 +17,13 @@ interface InboxCardProps {
   selectable?: boolean
   selected?: boolean
   onPress(id: string): void
+  onPressIcon?(id: string): void
 }
 
 export function InboxCard({
   id,
   onPress,
+  onPressIcon,
   subject,
   publicationDate,
   icon,
@@ -48,6 +50,7 @@ export function InboxCard({
         icon={icon}
         selectable={selectable}
         selected={selected}
+        onPressIcon={onPressIcon ? () => onPressIcon(id) : undefined}
       />
     </PressableHighlight>
   )

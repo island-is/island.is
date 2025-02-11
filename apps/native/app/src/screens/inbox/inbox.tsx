@@ -127,12 +127,14 @@ const PressableListItem = React.memo(
     selectable,
     selectedItems,
     setSelectedItems,
+    setSelectedState,
   }: {
     item: DocumentV2
     listParams: any
     selectable: boolean
     selectedItems: string[]
     setSelectedItems: (items: string[]) => void
+    setSelectedState: (state: boolean) => void
   }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const isSelected = selectable && selectedItems.includes(item.id)
@@ -149,6 +151,10 @@ const PressableListItem = React.memo(
         bookmarked={item.bookmarked}
         selectable={selectable}
         selected={isSelected}
+        onPressIcon={() => {
+          setSelectedState(true)
+          setSelectedItems([...selectedItems, item.id])
+        }}
         onPress={() =>
           selectable
             ? isSelected
@@ -571,6 +577,7 @@ export const InboxScreen: NavigationFunctionComponent<{
           selectable={selectState}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
+          setSelectedState={setSelectedState}
           listParams={{
             ...filters,
           }}

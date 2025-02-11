@@ -1,6 +1,6 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType } from 'react-native'
+import { Image, ImageSourcePropType, Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
 import { Typography } from '../typography/typography'
@@ -8,7 +8,6 @@ import { Label } from '../label/label'
 import { dynamicColor } from '../../utils'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
 import starFilledIcon from '../../../assets/icons/star-filled.png'
-import starIcon from '../../../assets/icons/star.png'
 
 const Host = styled.SafeAreaView<{ unread?: boolean }>`
   flex-direction: row;
@@ -96,6 +95,7 @@ interface ListItemProps {
   urgent?: boolean
   selectable?: boolean
   selected?: boolean
+  onPressIcon?: () => void
 }
 
 export function ListItem({
@@ -108,6 +108,7 @@ export function ListItem({
   starred = false,
   selectable = false,
   selected = false,
+  onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
   return (
@@ -118,10 +119,12 @@ export function ListItem({
         ) : icon ? (
           <Icon unread={unread} selectable={selectable} selected={selected}>
             {!selectable && !selected && (
-              <Image
-                source={icon as ImageSourcePropType}
-                style={{ width: 24, height: 24 }}
-              />
+              <Pressable hitSlop={24} onPress={onPressIcon}>
+                <Image
+                  source={icon as ImageSourcePropType}
+                  style={{ width: 24, height: 24 }}
+                />
+              </Pressable>
             )}
             {selectable && selected && (
               <Image source={checkmarkIcon} style={{ width: 50, height: 50 }} />
