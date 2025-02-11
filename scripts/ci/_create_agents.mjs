@@ -2,7 +2,7 @@
 import { getAffectedProjectsMultipleTargetArray, getShowAllProjects } from './_get_affected_projects.mjs'
 import { setOutput } from '@actions/core'
 import json2yaml from 'js-yaml'
-const _TARGETS = ['test', 'build']
+const _TARGETS = ['test', 'build', 'lint']
 const _PROBLEMATIC_TARGETS = [];
 
 const _PROBLEMATIC_PROJECTS = [

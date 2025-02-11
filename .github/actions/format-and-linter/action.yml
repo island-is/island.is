@@ -17,10 +17,4 @@ runs:
         else
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
         fi
-    - name: Lint
-      id: get-linter-jobs
-      shell: bash
-      env:
-        BRANCH: ${{ github.head_ref}}
-      run: |
-        node scripts/ci/_get_affected_projects.mjs
+    
