@@ -176,6 +176,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - name: Debug AWS user/login
+        env:
+          aws_output: ${{ toJson(steps.aws-creds.outputs) }}
+        run: |
+          echo "DEBUG AWS user/login"
+          echo "aws-creds.outputs: $aws_output"
+          aws sts get-caller-identity | xargs echo "STS caller identity:"
       - name: Log in to Amazon ECR
         if: ${{ steps.aws-creds.conclusion == 'success' }}
         id: ecr-login
