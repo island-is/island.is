@@ -167,6 +167,14 @@ jobs:
             # Use GitHub multi-line outputs, but cheekily done inline here 🤭
             | "\(.key)<<EOF\n\(.value)\nEOF"
           ' | tee -a "$GITHUB_OUTPUT"
+      - name: Debug common config
+        env:
+          common: ${{ toJson(steps.common.outputs) }}
+        run: |
+          echo "DEBUG common"
+          echo "common: $common"
+          echo "docker build arguments:"
+          echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
 
       - name: Debug AWS user/login
         env:
