@@ -100,7 +100,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.E2E_CHUNKS != '{projects:[]}'
+    if: needs.prepare.outputs.E2E_CHUNKS && ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS)}} != '[]'
     # runs-on: arc-runners
     runs-on: ubuntu-latest
     timeout-minutes: 45
