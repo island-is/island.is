@@ -300,6 +300,8 @@ export class PaymentFlowService {
       this.logger.error('Failed to create payment charge', e)
       throw new BadRequestException(
         PaymentServiceCode.FailedToSavePaymentInformation,
+      )
+    }
   }
 
   async deletePaymentFlow(id: string) {
