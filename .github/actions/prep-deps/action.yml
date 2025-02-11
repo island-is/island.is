@@ -61,8 +61,6 @@ runs:
         ls -la .yarn
         echo "Contents of node_modules:"
         ls -la node_modules
-        echo "Yarn config:"
-        yarn config list
 
     - name: Prepare generated files
       shell: bash
