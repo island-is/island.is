@@ -31,6 +31,12 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Corepack
+      shell: bash
+      run: |
+        corepack enable && \
+        corepack prepare --activate && \
+        yarn --version
     - name: Prepare generated files
       shell: bash
       run: |
