@@ -111,7 +111,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicationForm').then((module) =>
+                import('../forms/applicationForm').then((module) =>
                   Promise.resolve(module.ApplicationForm),
                 ),
               read: 'all',
@@ -144,7 +144,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/prerequisitesSpouse').then((module) =>
+                import('../forms/prerequisitesSpouseForm').then((module) =>
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
@@ -184,7 +184,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Spouse').then((module) =>
+                import('../forms/spouseForm').then((module) =>
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',
