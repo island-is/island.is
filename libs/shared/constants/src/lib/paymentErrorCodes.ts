@@ -12,6 +12,7 @@ export enum PaymentServiceCode {
   PaymentFlowNotFound = 'payment-service_payment_flow_not_found',
   PaymentFlowAlreadyPaid = 'payment-service_payment_flow_already_paid',
   CouldNotVerifyCallback = 'payment-service_could_not_verify_callback',
+  FailedToSavePaymentInformation = 'payment-service_failed_to_save_payment_information',
 }
 
 export enum CardErrorCode {
