@@ -239,31 +239,20 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
-  const mapKeyWithIndex = (key: string) => {
-    return `${dataId}[${activeIndex}].${key}`
+  let ClearOnChange: string[] | undefined
+  if (typeof item.clearOnChange === 'function') {
+    ClearOnChange = item.clearOnChange(activeIndex)
+  } else {
+    ClearOnChange = item.clearOnChange
   }
 
-  const ClearOnChange = item.clearOnChangeByIndex?.map((key) =>
-    mapKeyWithIndex(key),
-  )
-
   const SetOnChange =
-    item.setOnChangeByIndex &&
+    item.setOnChange &&
     ((option: any) => {
-      if (typeof item.setOnChangeByIndex === 'function') {
-        return item
-          .setOnChangeByIndex(option, application)
-          .map(({ key, value }) => ({
-            key: mapKeyWithIndex(key),
-            value,
-          }))
+      if (typeof item.setOnChange === 'function') {
+        return item.setOnChange(activeIndex, option, application)
       } else {
-        return (
-          item.setOnChangeByIndex?.map(({ key, value }) => ({
-            key: mapKeyWithIndex(key),
-            value,
-          })) || []
-        )
+        return item.setOnChange || []
       }
     })
 
@@ -279,7 +268,6 @@ export const Item = ({
       isSearchable: item.isSearchable,
       isMulti: item.isMulti,
       loadOptions: item.loadOptions,
-      clearOnChange: item.clearOnChange,
       updateOnSelect: `${dataId}[${activeIndex}].${item.updateOnSelect}`,
     }
   }
@@ -303,12 +291,15 @@ export const Item = ({
         <AsyncSelectFormField
           application={application}
           error={getFieldError(itemId)}
+          // required={Required}
+          clearOnChange={ClearOnChange}
+          // setOnChange={SetOnChange}
           field={{
             ...selectAsyncProps,
           }}
         />
       )}
-      {component !== 'selectAsync' && (
+      {!(component === 'selectAsync' && selectAsyncProps) && (
         <Component
           id={id}
           name={id}
@@ -322,6 +313,7 @@ export const Item = ({
           disabled={Disabled}
           required={Required}
           isClearable={IsClearable}
+          defaultValue={DefaultValue}
           backgroundColor={backgroundColor}
           onChange={() => {
             if (error) {
@@ -329,7 +321,6 @@ export const Item = ({
             }
           }}
           application={application}
-          defaultValue={DefaultValue}
           large={true}
           clearOnChange={ClearOnChange}
           setOnChange={SetOnChange}

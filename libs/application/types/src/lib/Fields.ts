@@ -135,10 +135,14 @@ export type RepeaterItem = {
           activeField?: Record<string, string>,
         ) => string | string[] | undefined)
   }
-  clearOnChangeByIndex?: string[]
-  setOnChangeByIndex?:
+  clearOnChange?: string[] | ((index: number) => string[])
+  setOnChange?:
     | { key: string; value: any }[]
-    | ((option: any, application: Application) => { key: string; value: any }[])
+    | ((
+        index: number,
+        option: any,
+        application: Application,
+      ) => { key: string; value: any }[])
 } & (
   | {
       component: 'input'
@@ -193,7 +197,6 @@ export type RepeaterItem = {
       isMulti?: boolean
       isSearchable?: boolean
       loadOptions(c: AsyncSelectContext): Promise<Option[]>
-      clearOnChange?: string[]
       updateOnSelect?: string
     }
 )

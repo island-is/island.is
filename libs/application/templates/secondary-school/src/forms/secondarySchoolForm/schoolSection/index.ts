@@ -75,13 +75,15 @@ export const schoolSection = buildSection({
                 const otherSchoolIds = getOtherSchoolIds(answers, index)
                 return options.filter((x) => !otherSchoolIds.includes(x.value))
               },
-              clearOnChangeByIndex: [
-                'firstProgram.id',
-                'secondProgram.id',
-                'thirdLanguage.code',
-                'nordicLanguage.code',
-              ],
-              setOnChangeByIndex: (option, application) => {
+              clearOnChange: (index) => {
+                return [
+                  `selection.${index}.firstProgram.id`,
+                  `selection.${index}.secondProgram.id`,
+                  `selection.${index}.thirdLanguage.code`,
+                  `selection.${index}.nordicLanguage.code`,
+                ]
+              },
+              setOnChange: (index, option, application) => {
                 const schoolOptions = getValueViaPath<SecondarySchool[]>(
                   application.externalData,
                   'schools.data',
@@ -91,10 +93,13 @@ export const schoolSection = buildSection({
                 )
 
                 return [
-                  { key: 'school.name', value: selectedSchool?.name },
-                  { key: 'requestDormitory', value: [] },
                   {
-                    key: 'secondProgram.include',
+                    key: `selection.${index}.school.name`,
+                    value: selectedSchool?.name,
+                  },
+                  { key: `selection.${index}.requestDormitory`, value: [] },
+                  {
+                    key: `selection.${index}.secondProgram.include`,
                     // value: programOptions.length > 1, // TODOx get from graphql
                     value: true,
                   },
@@ -141,21 +146,21 @@ export const schoolSection = buildSection({
                 return options.filter((x) => x.value !== secondProgramId)
               },
               // TODOx set isLoading+isDisabled when loading graphql
-              setOnChangeByIndex: (option, application) => {
+              setOnChange: (index, _, application) => {
                 const firstProgramIsSpecialNeedsProgram = false // TODOx get from graphql
                 return [
-                  { key: 'firstProgram.nameIs', value: 'x' }, // TODOx get from graphql
-                  { key: 'firstProgram.nameEn', value: 'x' }, // TODOx get from graphql
+                  { key: `selection.${index}.firstProgram.nameIs`, value: 'x' }, // TODOx get from graphql
+                  { key: `selection.${index}.firstProgram.nameEn`, value: 'x' }, // TODOx get from graphql
                   {
-                    key: 'firstProgram.registrationEndDate',
+                    key: `selection.${index}.firstProgram.registrationEndDate`,
                     value: new Date().toISOString(), // TODOx get from graphql
                   },
                   {
-                    key: 'firstProgram.isSpecialNeedsProgram',
+                    key: `selection.${index}.firstProgram.isSpecialNeedsProgram`,
                     value: firstProgramIsSpecialNeedsProgram,
                   },
                   {
-                    key: 'secondProgram.require',
+                    key: `selection.${index}.secondProgram.require`,
                     value:
                       checkIsFreshman(application.answers) &&
                       !firstProgramIsSpecialNeedsProgram,
@@ -232,12 +237,18 @@ export const schoolSection = buildSection({
                 return options.filter((x) => x.value !== firstProgramId)
               },
               // TODOx set isLoading+isDisabled when loading graphql
-              setOnChangeByIndex: () => {
+              setOnChange: (index) => {
                 return [
-                  { key: 'secondProgram.nameIs', value: 'x' }, // TODOx get from graphql
-                  { key: 'secondProgram.nameEn', value: 'x' }, // TODOx get from graphql
                   {
-                    key: 'secondProgram.registrationEndDate',
+                    key: `selection.${index}.secondProgram.nameIs`,
+                    value: 'x',
+                  }, // TODOx get from graphql
+                  {
+                    key: `selection.${index}.secondProgram.nameEn`,
+                    value: 'x',
+                  }, // TODOx get from graphql
+                  {
+                    key: `selection.${index}.secondProgram.registrationEndDate`,
                     value: new Date().toISOString(), // TODOx get from graphql
                   },
                 ]
@@ -253,9 +264,9 @@ export const schoolSection = buildSection({
                 { label: 'Franska', value: 'FR' },
               ],
               // TODOx set isLoading+isDisabled when loading graphql
-              setOnChangeByIndex: () => {
+              setOnChange: (index) => {
                 return [
-                  { key: 'thirdLanguage.name', value: 'x' }, // TODOx get from graphql
+                  { key: `selection.${index}.thirdLanguage.name`, value: 'x' }, // TODOx get from graphql
                 ]
               },
             },
@@ -269,9 +280,9 @@ export const schoolSection = buildSection({
                 { label: 'Norska', value: 'NO' },
               ],
               // TODOx set isLoading+isDisabled when loading graphql
-              setOnChangeByIndex: () => {
+              setOnChange: (index) => {
                 return [
-                  { key: 'nordicLanguage.name', value: 'x' }, // TODOx get from graphql
+                  { key: `selection.${index}.nordicLanguage.name`, value: 'x' }, // TODOx get from graphql
                 ]
               },
             },
