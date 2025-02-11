@@ -284,18 +284,22 @@ export class PaymentFlowService {
   }
 
   async createPaymentCharge(paymentFlowId: string, chargePayload: Charge) {
-    const chargeConfirmation = await this.chargeFjsV2ClientService.createCharge(
-      chargePayload,
-    )
+    try {
+      const chargeConfirmation =
+        await this.chargeFjsV2ClientService.createCharge(chargePayload)
 
-    const newChargeConfirmation =
-      await this.paymentFlowFjsChargeConfirmationModel.create({
-        paymentFlowId,
-        receptionId: chargeConfirmation.receptionID,
-        user4: chargeConfirmation.user4,
-      })
+      const newChargeConfirmation =
+        await this.paymentFlowFjsChargeConfirmationModel.create({
+          paymentFlowId,
+          receptionId: chargeConfirmation.receptionID,
+          user4: chargeConfirmation.user4,
+        })
 
-    return newChargeConfirmation
+      return newChargeConfirmation
+    } catch (e) {
+      this.logger.error('Failed to create payment charge', e)
+      throw new BadRequestException(
+        PaymentServiceCode.FailedToSavePaymentInformation,
   }
 
   async deletePaymentFlow(id: string) {
