@@ -3,6 +3,7 @@ import getConfig from 'next/config'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
+import { logger } from '@island.is/logging'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import initApollo from '../../../graphql/client'
@@ -33,6 +34,11 @@ export default async function cardVerificationCallbackHandler(
   if (contentType !== 'application/x-www-form-urlencoded') {
     return res.status(400).json({ error: 'Invalid content-type' })
   }
+
+  // TODO remove
+  const keys = Object.keys(req.body)
+  logger.info('api.card.callback keys:')
+  logger.info({ keys })
 
   const parsed = VerificationCallbackSchema.parse(req.body)
 
