@@ -49,7 +49,7 @@ jobs:
       YARN_CACHE_FOLDER: ${{ steps.build_info.outputs.dir }}
 
     steps:
-      # - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       #   with:
       #     fetch-depth: 0
 
@@ -63,7 +63,8 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: arc-test
+    # runs-on: arc-test
+    runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -91,7 +92,8 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: arc-runners
+    # runs-on: arc-runners
+    runs-on: ubuntu-latest
     steps:
       - run: echo "${{ needs.prepare.outputs.E2E_CHUNKS }}"
 
@@ -99,7 +101,8 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.E2E_CHUNKS != '{projects:[]}'
-    runs-on: arc-runners
+    # runs-on: arc-runners
+    runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -127,7 +130,8 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    # runs-on: arc-runners
+    runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -149,7 +153,8 @@ jobs:
       #   run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    # runs-on: arc-runners
+    runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
     needs:
       - prepare
