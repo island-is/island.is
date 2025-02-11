@@ -16,7 +16,7 @@ const _PROBLEMATIC_PROJECTS = [
 
 const agent = 'arc-runners'
 
-export const createAgents = ({ JOBS_PER_AGENT = 10 } = {}) => {
+export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
   const allAffectedTargets = getAffectedProjectsMultipleTargetArray(_TARGETS)
   const problematicProjects = [
     ...allAffectedTargets.filter((project) =>
