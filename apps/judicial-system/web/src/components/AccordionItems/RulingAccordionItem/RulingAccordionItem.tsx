@@ -28,7 +28,7 @@ const RulingAccordionItem: FC<Props> = ({
       startExpanded={startExpanded}
     >
       <Box component="section">
-        {workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING ? (
+        {workingCase.isCompletedWithoutRuling ? (
           <SectionHeading
             title={formatMessage(m.sections.noRuling.title)}
             heading="h4"

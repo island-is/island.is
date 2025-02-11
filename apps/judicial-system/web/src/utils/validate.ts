@@ -211,6 +211,7 @@ export const isDefendantStepValidIC = (
 
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
+    workingCase.prosecutor &&
     workingCase.policeCaseNumbers &&
       workingCase.policeCaseNumbers.length > 0 &&
       !workingCase.policeCaseNumbers.some(
@@ -282,8 +283,7 @@ export const isProcessingStepValidIndictments = (
     : true
 
   return Boolean(
-    workingCase.prosecutor &&
-      workingCase.court &&
+    workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
       defendantsAreValid,
