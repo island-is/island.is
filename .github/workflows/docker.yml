@@ -120,7 +120,7 @@ jobs:
       contents: read # This is required for actions/checkout
 
     outputs:
-      common: ${{ steps.debug.outputs }}
+      common: ${{ steps.debug.outputs.common }}
 
     steps:
       - name: Check out repo
