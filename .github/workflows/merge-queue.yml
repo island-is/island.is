@@ -6,7 +6,7 @@ on:
 
   push:
     branches:
-      - feature/test-in-mergequeu
+      - feature/test-in-mergequeue
 
 defaults:
   run:
