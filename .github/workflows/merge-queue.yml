@@ -169,7 +169,6 @@ jobs:
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
-        if: needs.e2e.result
         run: |
           echo ${{ needs.e2e.result }}
           '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
@@ -179,7 +178,8 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-runners
+    # runs-on: arc-runners
+    runs-on: ubuntu-latest
     env:
       CHECK: 'false'
     steps:
