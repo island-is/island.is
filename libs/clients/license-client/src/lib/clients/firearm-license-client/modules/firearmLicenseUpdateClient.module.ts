@@ -4,14 +4,12 @@ import { SmartSolutionsFirearmModule } from './smartSolutionsFirearm.module'
 import { FirearmLicenseUpdateClientV2 } from '../services/firearmLicenseUpdateClientV2.service'
 import { FirearmLicenseUpdateClient } from '../services/firearmLicenseUpdateClient.service'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { SmartSolutionsModule } from '@island.is/clients/smart-solutions-v2'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
 import { ConfigType } from '@nestjs/config'
 
 @Module({
   imports: [
-    FeatureFlagModule,
     FirearmLicenseUpdateClientModule,
     SmartSolutionsFirearmModule,
     SmartSolutionsModule.registerAsync({

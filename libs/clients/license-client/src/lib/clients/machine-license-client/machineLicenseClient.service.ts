@@ -166,6 +166,7 @@ export class MachineLicenseClient
   async getPkPass(
     user: User,
     locale: Locale = 'is',
+    version?: 'v1' | 'v2',
   ): Promise<Result<PassData>> {
     const license = await this.fetchLicense(user)
     if (!license.ok || !license.data) {
@@ -210,14 +211,18 @@ export class MachineLicenseClient
       payload,
       undefined,
       undefined,
-      user,
+      version,
     )
 
     return pass
   }
 
-  async getPkPassQRCode(user: User, locale?: Locale): Promise<Result<string>> {
-    const res = await this.getPkPass(user, locale)
+  async getPkPassQRCode(
+    user: User,
+    locale?: Locale,
+    version?: 'v1' | 'v2',
+  ): Promise<Result<string>> {
+    const res = await this.getPkPass(user, locale, version)
 
     if (!res.ok) {
       return res
@@ -244,8 +249,12 @@ export class MachineLicenseClient
     }
   }
 
-  async getPkPassUrl(user: User, locale?: Locale): Promise<Result<string>> {
-    const res = await this.getPkPass(user, locale)
+  async getPkPassUrl(
+    user: User,
+    locale?: Locale,
+    version?: 'v1' | 'v2',
+  ): Promise<Result<string>> {
+    const res = await this.getPkPass(user, locale, version)
 
     if (!res.ok) {
       return res

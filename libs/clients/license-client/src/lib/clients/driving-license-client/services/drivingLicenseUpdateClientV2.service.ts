@@ -10,11 +10,7 @@ import {
   Result,
 } from '../../../licenseClient.type'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
-import {
-  createPkPassDataInput,
-  mapNationalId,
-  nationalIdIndex,
-} from '../drivingLicenseMapper'
+import { createPkPassDataInput, mapNationalId } from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
 import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
 import { PkPassService } from '../../../helpers/pkPassService/pkPass.service'
@@ -59,7 +55,6 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         passTemplateId: this.config.passTemplateId,
       },
       requestId,
-      undefined,
       apiVersion,
     )
   }
@@ -141,12 +136,7 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         : undefined,
     }
 
-    return this.passService.updatePkPass(
-      payload,
-      requestId,
-      undefined,
-      apiVersion,
-    )
+    return this.passService.updatePkPass(payload, requestId, apiVersion)
   }
 
   revoke(
@@ -161,7 +151,6 @@ export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
       passTemplateId,
       payload,
       requestId,
-      undefined,
       apiVersion,
     )
   }

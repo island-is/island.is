@@ -27,7 +27,7 @@ export class DisabilityLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
     inputData: PassDataInput,
     nationalId: string,
   ): Promise<Result<PassData | undefined>> {
-    return this.passService.updatePkPass(inputData, nationalId, undefined, 'v2')
+    return this.passService.updatePkPass(inputData, nationalId, 'v2')
   }
 
   async pullUpdate(): Promise<Result<PassData>> {

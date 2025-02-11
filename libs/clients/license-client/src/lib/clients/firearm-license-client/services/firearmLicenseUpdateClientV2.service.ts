@@ -56,7 +56,6 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         passTemplateId: this.config.passTemplateId,
       },
       requestId,
-      undefined,
       'v2',
     )
   }
@@ -140,7 +139,7 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
         : undefined,
     }
 
-    return this.passService.updatePkPass(payload, requestId, undefined, 'v2')
+    return this.passService.updatePkPass(payload, requestId, 'v2')
   }
 
   revoke(
@@ -155,7 +154,6 @@ export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
       passTemplateId,
       payload,
       requestId,
-      undefined,
       'v2',
     )
   }
