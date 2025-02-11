@@ -260,7 +260,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
-    userNotificationBirthdayWorkerService
+    userNotificationBirthdayWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
