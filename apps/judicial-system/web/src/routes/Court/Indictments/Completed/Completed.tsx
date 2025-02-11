@@ -15,7 +15,6 @@ import {
   BlueBox,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
-  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -36,8 +35,6 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  formatDateForServer,
-  useCase,
   useDefendants,
   useS3Upload,
   useUploadFiles,
@@ -55,7 +52,6 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
-  const { setAndSendCaseToServer } = useCase()
 
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
@@ -110,24 +106,6 @@ const Completed: FC = () => {
       })
     },
     [addUploadFiles],
-  )
-
-  const handleCourtEndTimeChange = useCallback(
-    (date: Date | undefined | null, valid = true) => {
-      if (date && valid) {
-        setAndSendCaseToServer(
-          [
-            {
-              courtEndTime: formatDateForServer(date),
-              force: true,
-            },
-          ],
-          workingCase,
-          setWorkingCase,
-        )
-      }
-    },
-    [setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleNavigationTo = useCallback(
@@ -323,18 +301,6 @@ const Completed: FC = () => {
             ))}
           </Box>
         )}
-        <Box marginBottom={5} component="section">
-          <SectionHeading title="Dagsetning lykta" />
-          <DateTime
-            name="courtEndDate"
-            selectedDate={workingCase.courtEndTime || workingCase.rulingDate}
-            onChange={handleCourtEndTimeChange}
-            blueBox={true}
-            datepickerLabel="Dagsetning lykta"
-            dateOnly
-            required
-          />
-        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

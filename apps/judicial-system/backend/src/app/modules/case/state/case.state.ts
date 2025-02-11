@@ -126,10 +126,10 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.WAITING_FOR_CANCELLATION,
         IndictmentCaseState.RECEIVED,
       ],
-      transition: (update: UpdateCase) => ({
+      transition: (update: UpdateCase, theCase: Case) => ({
         ...update,
+        rulingDate: theCase.courtEndTime,
         state: CaseState.COMPLETED,
-        rulingDate: nowFactory(),
       }),
     },
   ],
