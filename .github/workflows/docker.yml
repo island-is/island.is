@@ -82,7 +82,6 @@ jobs:
       - name: Create matrix from input
         id: set-matrix
         env:
-          localrun: ${{ !!github.event.localrun }}
           projects: ${{ inputs.projects }}
           is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
         run: |
@@ -150,7 +149,6 @@ jobs:
             ${{ steps.args.outputs.cache-from }}
           cache_to: |
             ${{ steps.args.outputs.build-cache-to }}
-          localrun: ${{ !!github.event.localrun }}
         run: |
           echo | jq -rsc \
             --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
