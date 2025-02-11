@@ -2,7 +2,6 @@ import { sign, verify, Algorithm } from 'jsonwebtoken'
 import { z } from 'zod'
 
 import {
-  CatalogItem,
   Charge,
   PayInfoPaymentMeansEnum,
 } from '@island.is/clients/charge-fjs-v2'
@@ -20,6 +19,8 @@ import {
 
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
+import { generateChargeFJSPayload } from '../../utils/fjsCharge'
+import { CatalogItemWithQuantity } from '../../types/charges'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),
@@ -177,34 +178,25 @@ export function mapToCardErrorCode(originalCode: string): CardErrorCode {
 }
 
 export const generateCardChargeFJSPayload = ({
+  id,
   paymentFlow,
   charges,
   chargeResponse,
-  paymentApiConfig,
   totalPrice,
+  systemId,
 }: {
+  id: string
   paymentFlow: PaymentFlowAttributes
-  charges: CatalogItem[]
+  charges: CatalogItemWithQuantity[]
   chargeResponse: ChargeResponse
-  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   totalPrice: number
+  systemId: string
 }): Charge => {
-  return {
-    chargeItemSubject: paymentFlow.productTitle ?? charges[0].chargeItemName,
-    chargeType: charges[0].chargeType,
-    charges: charges.map((charge) => ({
-      amount: charge.priceAmount,
-      chargeItemCode: charge.chargeItemCode,
-      priceAmount: charge.priceAmount,
-      quantity: charge.quantity ?? 1,
-      reference: charge.chargeItemName,
-    })),
-    immediateProcess: true,
-    payeeNationalID: paymentFlow.payerNationalId,
-    performerNationalID: paymentFlow.payerNationalId,
-    performingOrgID: paymentFlow.organisationId,
-    requestID: paymentFlow.id,
-    systemID: paymentApiConfig.systemCalling,
+  return generateChargeFJSPayload({
+    id,
+    paymentFlow,
+    charges,
+    systemId,
     payInfo: {
       PAN: chargeResponse.maskedCardNumber,
       RRN: chargeResponse.acquirerReferenceNumber,
@@ -217,6 +209,6 @@ export const generateCardChargeFJSPayload = ({
         ? PayInfoPaymentMeansEnum.Debetkort
         : PayInfoPaymentMeansEnum.Kreditkort,
     },
-    returnUrl: '',
-  }
+    totalPrice,
+  })
 }

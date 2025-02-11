@@ -1,5 +1,6 @@
 export enum FjsErrorCode {
   AlreadyPaid = 'fjs_already_paid',
+  FailedToCreateCharge = 'fjs_failed_to_create_charge',
 }
 
 export enum PaymentServiceCode {
@@ -12,7 +13,6 @@ export enum PaymentServiceCode {
   PaymentFlowNotFound = 'payment-service_payment_flow_not_found',
   PaymentFlowAlreadyPaid = 'payment-service_payment_flow_already_paid',
   CouldNotVerifyCallback = 'payment-service_could_not_verify_callback',
-  FailedToSavePaymentInformation = 'payment-service_failed_to_save_payment_information',
 }
 
 export enum CardErrorCode {
@@ -43,4 +43,10 @@ export enum CardErrorCode {
   VerificationDeadlineExceeded = 'card_verification_deadline_exceeded',
   VerificationCancelledByUser = 'card_verification_cancelled_by_user',
   Unknown = 'card_unknown',
+}
+
+export enum InvoiceErrorCode {
+  FailedToCreateInvoice = 'invoice_failed_to_create_invoice',
+  InvoiceAlreadyExists = 'invoice_invoice_already_exists',
+  Unknown = 'invoice_unknown',
 }

@@ -9,5 +9,9 @@ export default {
   paymentsWeb: {
     origin: process.env.PAYMENTS_WEB_URL,
   },
+  chargeFjs: {
+    systemId: 'ISL',
+    returnUrl: process.env.INVOICE_RETURN_URL,
+  },
   port: process.env.PORT ? Number(process.env.PORT) : 3333,
 }

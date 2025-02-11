@@ -25,7 +25,11 @@ import { VerificationStatusResponse } from './dtos/verificationStatus.response.d
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  FjsErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 
 @UseGuards(FeatureFlagGuard)
@@ -188,6 +192,7 @@ export class CardPaymentController {
         // Send charge confirmation to FJS
         const fjsChargePayload =
           this.cardPaymentService.createCardPaymentChargePayload({
+            id: paymentFlow.id,
             paymentFlow,
             charges: catalogItems,
             chargeResponse: result,
@@ -210,6 +215,10 @@ export class CardPaymentController {
         // Error code = 400 and message = "Búið að taka á móti álagningu XXX ..."
         // (there is a 24 hour limit on buying certain items)
         // Then we should refund the payment
+        if (e.message === FjsErrorCode.AlreadyPaid) {
+          // Refund the payment
+        }
+
         throw e
       }
 

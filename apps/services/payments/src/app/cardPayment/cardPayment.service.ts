@@ -6,7 +6,8 @@ import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { CatalogItem } from '@island.is/clients/charge-fjs-v2'
+import { PaymentServiceCode } from '@island.is/shared/constants'
+
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import {
   CachePaymentFlowStatus,
@@ -28,7 +29,8 @@ import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { CatalogItemWithQuantity } from '../../types/charges'
+import { environment } from '../../environments'
 
 @Injectable()
 export class CardPaymentService {
@@ -296,16 +298,18 @@ export class CardPaymentService {
     totalPrice,
   }: {
     paymentFlow: PaymentFlowAttributes
-    charges: CatalogItem[]
+    charges: CatalogItemWithQuantity[]
     chargeResponse: ChargeResponse
     totalPrice: number
   }) {
     return generateCardChargeFJSPayload({
+      id,
       paymentFlow,
       charges,
       chargeResponse,
       paymentApiConfig: this.config.paymentGateway,
       totalPrice,
+      systemId: environment.chargeFjs.systemId,
     })
   }
 }

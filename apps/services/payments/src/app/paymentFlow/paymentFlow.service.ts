@@ -6,7 +6,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ChargeFjsV2ClientService,
-  CatalogItem,
   Charge,
 } from '@island.is/clients/charge-fjs-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -23,6 +22,8 @@ import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
 import { PaymentServiceCode } from '@island.is/shared/constants'
+import { CatalogItemWithQuantity } from '../../types/charges'
+import { fjsErrorMessageToCode } from '../../utils/fjsCharge'
 
 @Injectable()
 export class PaymentFlowService {
@@ -81,7 +82,7 @@ export class PaymentFlowService {
         organisationId,
       )
 
-    const filteredChargeInformation: CatalogItem[] = []
+    const filteredChargeInformation: CatalogItemWithQuantity[] = []
 
     for (const product of item) {
       const matchingCharge = charges.find(
@@ -97,6 +98,7 @@ export class PaymentFlowService {
       filteredChargeInformation.push({
         ...product,
         priceAmount: price * matchingCharge.quantity,
+        quantity: matchingCharge.quantity,
       })
     }
 
@@ -298,9 +300,11 @@ export class PaymentFlowService {
       return newChargeConfirmation
     } catch (e) {
       this.logger.error('Failed to create payment charge', e)
-      throw new BadRequestException(
-        PaymentServiceCode.FailedToSavePaymentInformation,
-      )
+
+      const message = e?.body?.error?.message ?? e.message ?? 'Unknown error'
+      const mappedCode = fjsErrorMessageToCode(message)
+
+      throw new BadRequestException(mappedCode)
     }
   }
 
