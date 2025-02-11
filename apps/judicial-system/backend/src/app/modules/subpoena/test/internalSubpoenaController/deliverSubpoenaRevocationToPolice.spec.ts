@@ -34,7 +34,7 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
     mockSubpoenaService = subpoenaService
 
     const deliverSubpoenaRevokedToPoliceMock = jest.fn()
-    mockSubpoenaService.deliverSubpoenaRevokedToPolice =
+    mockSubpoenaService.deliverSubpoenaRevocationToPolice =
       deliverSubpoenaRevokedToPoliceMock
 
     deliverSubpoenaRevokedToPoliceMock.mockResolvedValueOnce(delivered)
@@ -43,7 +43,7 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
       const then = {} as Then
 
       try {
-        await internalSubpoenaController.deliverSubpoenaRevokedToPolice(
+        await internalSubpoenaController.deliverSubpoenaRevocationToPolice(
           caseId,
           defendantId,
           subpoenaId,
@@ -66,7 +66,7 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
 
     it('should call deliverSubpoenaRevokedToPolice', () => {
       expect(
-        mockSubpoenaService.deliverSubpoenaRevokedToPolice,
+        mockSubpoenaService.deliverSubpoenaRevocationToPolice,
       ).toHaveBeenCalledWith(theCase, subpoena, user.user)
     })
   })

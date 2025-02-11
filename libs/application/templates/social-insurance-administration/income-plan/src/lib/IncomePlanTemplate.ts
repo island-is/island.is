@@ -45,6 +45,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
+  defaultIncomeTypes,
 } from './incomePlanUtils'
 import {
   historyMessages,
@@ -52,6 +53,7 @@ import {
   statesMessages,
 } from './messages'
 import { CodeOwners } from '@island.is/shared/constants'
+import isEmpty from 'lodash/isEmpty'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -296,9 +298,13 @@ const IncomePlanTemplate: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
+        const { latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
+
+        if (isEmpty(latestIncomePlan)) {
+          set(answers, 'incomePlanTable', defaultIncomeTypes)
+        }
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
