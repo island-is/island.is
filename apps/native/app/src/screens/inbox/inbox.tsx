@@ -146,6 +146,7 @@ const PressableListItem = React.memo(
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         isUrgent={item.isUrgent}
+        bookmarked={item.bookmarked}
         selectable={selectable}
         selected={isSelected}
         onPress={() =>

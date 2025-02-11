@@ -7,6 +7,8 @@ import { Typography } from '../typography/typography'
 import { Label } from '../label/label'
 import { dynamicColor } from '../../utils'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
+import starFilledIcon from '../../../assets/icons/star-filled.png'
+import starIcon from '../../../assets/icons/star.png'
 
 const Host = styled.SafeAreaView<{ unread?: boolean }>`
   flex-direction: row;
@@ -68,6 +70,15 @@ const Title = styled.View`
 
 const Cell = styled.View``
 
+const StarImage = styled.Image<{ active?: boolean }>`
+  tint-color: ${dynamicColor(({ active, theme }) => ({
+    dark: active ? theme.color.blue400 : theme.color.dark300,
+    light: active ? theme.color.blue400 : theme.color.dark300,
+  }))};
+  width: 16px;
+  height: 16px;
+`
+
 interface ListItemAction {
   id: string
   text: string
@@ -81,6 +92,7 @@ interface ListItemProps {
   unread?: boolean
   actions?: ListItemAction[]
   icon?: ImageSourcePropType | React.ReactNode
+  starred?: boolean
   urgent?: boolean
   selectable?: boolean
   selected?: boolean
@@ -93,6 +105,7 @@ export function ListItem({
   icon,
   unread = false,
   urgent = false,
+  starred = false,
   selectable = false,
   selected = false,
 }: ListItemProps) {
@@ -145,6 +158,10 @@ export function ListItem({
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}
+            <StarImage
+              source={starred ? starFilledIcon : starIcon}
+              active={starred}
+            />
           </Row>
         </Content>
       </Host>
