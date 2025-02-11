@@ -106,8 +106,8 @@ runs:
         export BASE=${{ env.NX_BASE }}
         export HEAD=${{ env.NX_HEAD }}
 
-        echo "TEST_CHUNKS={\"projects\":["unicorn-app"]}" >> "$GITHUB_OUTPUT"
-        echo "BUILD_CHUNKS={\"projects\":["unicorn-app"]}" >> "$GITHUB_OUTPUT"
+        echo "TEST_CHUNKS={\"projects\":[\"unicorn-app\"]}" >> "$GITHUB_OUTPUT"
+        echo "BUILD_CHUNKS={\"projects\":[\"unicorn-app\"]}" >> "$GITHUB_OUTPUT"
         echo "E2E_CHUNKS={\"projects\":[]]}" >> "$GITHUB_OUTPUT"
         echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
         echo "NX_BASE=ae5d1ca81d2cb780b25f9dce5acfa1b46a943695d09a9e73a709381fb59f8046" >> "$GITHUB_OUTPUT"
