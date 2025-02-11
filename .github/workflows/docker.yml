@@ -120,7 +120,7 @@ jobs:
       contents: read # This is required for actions/checkout
 
     outputs:
-      common: ${{ toJson(steps.common.outputs) }}
+      common: ${{ steps.debug.outputs }}
 
     steps:
       - name: Check out repo
@@ -164,11 +164,13 @@ jobs:
             | "\(.key)<<EOF\n\(.value)\nEOF"
           ' | tee -a "$GITHUB_OUTPUT"
       - name: Debug common config
+        id: debug
         env:
           common: ${{ toJson(steps.common.outputs) }}
         run: |
           echo "DEBUG common"
-          echo "common: $common"
+          compacted="$(echo "$common" | jq -c)"
+          echo "common=$compacted" | tee -a "$GITHUB_OUTPUT"
           echo "docker build arguments:"
           echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
 
