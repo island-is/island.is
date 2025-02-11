@@ -1,21 +1,13 @@
 import { z } from 'zod'
 import { error } from './messages'
-import { AnswerOption, SignatureTypes } from './constants'
+import { AnswerOption } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+
 const isValidEmail = (value?: string) =>
   value ? emailRegex.test(value) : false
-export const memberItemSchema = z
-  .object({
-    name: z.string().optional(),
-    before: z.string().optional(),
-    below: z.string().optional(),
-    above: z.string().optional(),
-    after: z.string().optional(),
-  })
-  .partial()
 
 export const additionSchema = z.array(
   z
@@ -28,7 +20,31 @@ export const additionSchema = z.array(
     .partial(),
 )
 
+export const memberItemSchema = z
+  .object({
+    name: z.string().optional(),
+    before: z.string().optional(),
+    below: z.string().optional(),
+    above: z.string().optional(),
+    after: z.string().optional(),
+  })
+  .partial()
+
 export const membersSchema = z.array(memberItemSchema).optional()
+
+const signatureRecordSchema = z.object({
+  institution: z.string().optional(),
+  signatureDate: z.string().optional(),
+  chairman: memberItemSchema.optional(),
+  members: membersSchema.optional(),
+  additional: z.string().optional(),
+})
+
+const signatureSchema = z.object({
+  institution: z.string().optional(),
+  signatureDate: z.string().optional(),
+  records: z.array(signatureRecordSchema).optional(),
+})
 
 export const regularSignatureItemSchema = z
   .object({
@@ -39,23 +55,11 @@ export const regularSignatureItemSchema = z
   })
   .partial()
 
-export const regularSignatureSchema = z
-  .array(regularSignatureItemSchema)
-  .optional()
-
 export const baseEntitySchema = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
 })
-
-export const signatureInstitutionSchema = z.enum(['institution', 'date'])
-
-export const committeeSignatureSchema = regularSignatureItemSchema
-  .extend({
-    chairman: memberItemSchema.optional(),
-  })
-  .partial()
 
 export const channelSchema = z
   .object({
@@ -102,19 +106,7 @@ export const partialSchema = z.object({
       path: ['approveExternalData'],
     }),
   advert: advertSchema.optional(),
-  signatures: z
-    .object({
-      additionalSignature: z
-        .object({
-          committee: z.string().optional(),
-          regular: z.string().optional(),
-        })
-        .optional(),
-      regular: z.array(regularSignatureItemSchema).optional(),
-      committee: committeeSignatureSchema.optional(),
-    })
-    .partial()
-    .optional(),
+  signature: signatureSchema.optional(),
   misc: miscSchema.optional(),
 })
 
@@ -226,51 +218,58 @@ export const publishingValidationSchema = z.object({
 
 export const signatureValidationSchema = z
   .object({
-    signatures: z.object({
-      additionalSignature: z
-        .object({
-          committee: z.string().optional(),
-          regular: z.string().optional(),
-        })
-        .optional(),
-      regular: z.array(regularSignatureItemSchema).optional(),
-      committee: committeeSignatureSchema.optional(),
+    signature: z.object({
+      signatureDate: z.string().optional(),
+      records: z.array(signatureRecordSchema).optional(),
     }),
-    misc: miscSchema.optional(),
   })
   .superRefine((schema, context) => {
-    const signatureType = schema.misc?.signatureType
+    let validInstitutionAndDate = true
+    let validMembers = true
 
-    if (!signatureType) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        params: error.missingSignatureType,
-        path: ['misc', 'signatureType'],
-      })
-    }
-
-    let hasRegularIssues = false
-    let hasCommitteeIssues = false
-
-    if (signatureType === SignatureTypes.REGULAR) {
-      hasRegularIssues = validateRegularSignature(
-        schema.signatures.regular,
+    schema.signature.records?.forEach((record) => {
+      const isValidInstitutionAndDate = validateInstitutionAndDate(
+        record?.institution,
+        record?.signatureDate,
         context,
       )
-    }
 
-    if (signatureType === SignatureTypes.COMMITTEE) {
-      hasCommitteeIssues = validateCommitteeSignature(
-        schema.signatures.committee as z.infer<typeof committeeSignatureSchema>,
-        context,
-      )
-    }
+      if (!isValidInstitutionAndDate) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.signaturesValidationError,
+        })
+        validInstitutionAndDate = false
+      }
 
-    if (!hasRegularIssues && !hasCommitteeIssues) {
-      return false
-    }
+      if (record?.chairman) {
+        const isValidChairman = validateMember(
+          record.chairman,
+          context,
+          error.missingChairmanName,
+        )
 
-    return true
+        if (!isValidChairman) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: error.missingChairmanName,
+          })
+
+          validMembers = false
+        }
+      }
+
+      if (!record?.members || record.members.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.missingSignatureMember,
+        })
+
+        validMembers = false
+      }
+    })
+
+    return validInstitutionAndDate && validMembers
   })
 
 const validateMember = (
@@ -317,111 +316,10 @@ const validateInstitutionAndDate = (
   return success
 }
 
-const validateRegularSignature = (
-  schema: z.infer<typeof regularSignatureSchema>,
-  context: z.RefinementCtx,
-) => {
-  if (!schema || (Array.isArray(schema) && schema.length === 0)) {
-    context.addIssue({
-      code: z.ZodIssueCode.custom,
-      params: error.signaturesValidationError,
-    })
-
-    return false
-  }
-
-  const validSignatures = schema
-    ?.map((signature) => {
-      // institution and date are required
-      let hasValidInstitutionAndDate = true
-      let hasValidMembers = true
-
-      hasValidInstitutionAndDate = validateInstitutionAndDate(
-        signature.institution,
-        signature.date,
-        context,
-      )
-
-      if (!signature.members && !Array.isArray(signature.members)) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          params: error.noSignatureMembers,
-        })
-      }
-
-      hasValidMembers =
-        signature.members
-          ?.map((member) => validateMember(member, context))
-          .every((isValid) => isValid) ?? false
-
-      return hasValidInstitutionAndDate && hasValidMembers
-    })
-    .every((isValid) => isValid)
-
-  return validSignatures
-}
-
-const validateCommitteeSignature = (
-  schema: z.infer<typeof committeeSignatureSchema>,
-  context: z.RefinementCtx,
-) => {
-  if (!schema) {
-    context.addIssue({
-      code: z.ZodIssueCode.custom,
-      params: error.signaturesValidationError,
-    })
-  }
-
-  let hasValidInstitutionAndDate = true
-  let hasValidChairman = true
-  let hasValidMembers = true
-
-  hasValidInstitutionAndDate = validateInstitutionAndDate(
-    schema.institution,
-    schema.date,
-    context,
-  )
-
-  hasValidChairman = validateMember(
-    schema.chairman as z.infer<typeof memberItemSchema>,
-    context,
-    error.missingChairmanName,
-  )
-
-  hasValidMembers =
-    schema.members
-      ?.map((member) =>
-        validateMember(member, context, error.missingCommitteeMemberName),
-      )
-      .every((isValid) => isValid) ?? false
-
-  return hasValidInstitutionAndDate && hasValidChairman && hasValidMembers
-}
-
 const validateChannel = (channel: z.infer<typeof channelSchema>) => {
   const validEmail = isValidEmail(channel.email)
 
   return validEmail
 }
 
-type Flatten<T> = T extends any[] ? T[number] : T
-
-type MapProps<T> = {
-  [K in keyof T]: T[K]
-}
-
 export type partialSchema = z.infer<typeof partialSchema>
-
-export type partialRegularSignatureSchema = Flatten<
-  z.infer<typeof regularSignatureItemSchema>
->
-
-export type partialCommitteeSignatureSchema = MapProps<
-  z.infer<typeof committeeSignatureSchema>
->
-
-export type validationSchema = z.infer<typeof advertValidationSchema>
-
-export const signatureProperties = committeeSignatureSchema.keyof()
-
-export const sharedSignatureProperties = signatureProperties
