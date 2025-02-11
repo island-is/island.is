@@ -298,6 +298,13 @@ jobs:
           install: true
           use: true
 
+      - name: Debug common
+        env:
+          common: |
+            ${{ fromJson(needs.deps.outputs.common).image-repository }}
+        run: |
+          set -x
+          echo "$common"
       - name: Generate image metadata
         id: meta
         # This step requires a valid GitHub token to query the API for e.g. description of repository
