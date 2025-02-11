@@ -245,7 +245,6 @@ jobs:
             ${{ steps.common.outputs.cache-prefix }},name=target-output-base-with-pg;${{ github.sha }};${{ github.ref }}
 
   build:
-    if: false
     name: Build ${{ matrix.project }}
     runs-on: arc-runners
     needs:
