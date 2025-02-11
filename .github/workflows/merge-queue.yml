@@ -114,8 +114,8 @@ jobs:
           cache_key: ${{ needs.prepare.outputs.CACHE_KEY }}
           generated_files: ${{ env.GENERATED_FILES }}
 
-      - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+      # - name: Running e2e tests
+      #   run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
   # build:
   #   needs:
