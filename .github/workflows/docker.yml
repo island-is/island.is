@@ -162,7 +162,7 @@ jobs:
             ${{ steps.args.outputs.build-cache-to }}
         run: |
           echo | jq -rsc \
-            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" \
+            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
           '{
             file: "scripts/ci/Dockerfile",
             push: false,
@@ -170,6 +170,9 @@ jobs:
             "image-repository": $image_repository,
             "cache-from": $cache_from,
             "cache-to": $cache_to,
+            "cache-from-common": $cache_from_common,
+            "cache-to-common": $cache_to_common,
+            "cache-prefix": $cache_prefix
           }
             | to_entries
             | .[]
