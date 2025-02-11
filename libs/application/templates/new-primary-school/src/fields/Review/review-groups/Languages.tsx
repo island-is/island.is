@@ -28,10 +28,10 @@ export const Languages = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const {
-    interpreter,
+    guardianRequiresInterpreter,
     languageEnvironment,
     selectedLanguages,
-    childLanguage,
+    preferredLanguage,
     signLanguage,
   } = getApplicationAnswers(application.answers)
 
@@ -97,14 +97,14 @@ export const Languages = ({
                   </GridColumn>
                 ))}
               </GridRow>
-              {childLanguage && (
+              {preferredLanguage && (
                 <GridRow>
                   <GridColumn span="12/12">
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.overview.childLanguage,
+                        newPrimarySchoolMessages.overview.preferredLanguage,
                       )}
-                      value={getLanguageByCode(childLanguage)?.name}
+                      value={getLanguageByCode(preferredLanguage)?.name}
                     />
                   </GridColumn>
                 </GridRow>
@@ -123,7 +123,7 @@ export const Languages = ({
                     label={formatMessage(
                       newPrimarySchoolMessages.differentNeeds.interpreter,
                     )}
-                    value={interpreter}
+                    value={guardianRequiresInterpreter}
                   />
                 </GridColumn>
               </GridRow>

@@ -107,8 +107,8 @@ export const languageSubSection = buildSubSection({
           },
         }),
         buildDescriptionField({
-          id: 'languages.childLanguage.title',
-          title: newPrimarySchoolMessages.differentNeeds.childLanguageTitle,
+          id: 'languages.preferredLanguage.title',
+          title: newPrimarySchoolMessages.differentNeeds.preferredLanguageTitle,
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => {
@@ -116,8 +116,8 @@ export const languageSubSection = buildSubSection({
           },
         }),
         buildSelectField({
-          id: 'languages.childLanguage',
-          dataTestId: 'languages-child-language',
+          id: 'languages.preferredLanguage',
+          dataTestId: 'languages-preferred-language',
           title:
             newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
           placeholder:
@@ -169,7 +169,7 @@ export const languageSubSection = buildSubSection({
           },
         }),
         buildRadioField({
-          id: 'languages.interpreter',
+          id: 'languages.guardianRequiresInterpreter',
           title: newPrimarySchoolMessages.differentNeeds.interpreter,
           width: 'half',
           required: true,
@@ -177,12 +177,12 @@ export const languageSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'interpreter',
+              dataTestId: 'guardianRequiresInterpreter',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-interpreter',
+              dataTestId: 'no-guardianRequiresInterpreter',
               value: NO,
             },
           ],

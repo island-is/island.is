@@ -609,8 +609,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu tungumál',
       description: 'Choose language',
     },
-    childLanguageTitle: {
-      id: 'nps.application:different.needs.child.language.title',
+    preferredLanguageTitle: {
+      id: 'nps.application:different.needs.preferred.language.title',
       defaultMessage:
         'Á hvaða tungumáli sem þú hefur valið, finnst barninu sjálfu best að tjá sig á?',
       description:
@@ -904,8 +904,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Tungumálaumhverfi',
       description: 'Language environment',
     },
-    childLanguage: {
-      id: 'nps.application:overview.child.language',
+    preferredLanguage: {
+      id: 'nps.application:overview.preferred.language',
       defaultMessage: 'Tungumálið sem barninu finnst best að tjá sig á',
       description: 'The language the child prefers to express themselves in',
     },

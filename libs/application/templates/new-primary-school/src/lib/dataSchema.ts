@@ -132,12 +132,12 @@ export const dataSchema = z.object({
     .object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
-      interpreter: z.string().optional(),
+      guardianRequiresInterpreter: z.string().optional(),
       selectedLanguages: z.array(z.object({ code: z.string() })).optional(),
-      childLanguage: z.string().optional().nullable(),
+      preferredLanguage: z.string().optional().nullable(),
     })
     .refine(
-      ({ languageEnvironment, selectedLanguages, childLanguage }) => {
+      ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
         if (
           (languageEnvironment ===
             LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
@@ -148,24 +148,24 @@ export const dataSchema = z.object({
             !!selectedLanguages &&
             selectedLanguages?.length >= 2)
         ) {
-          return !!childLanguage
+          return !!preferredLanguage
         }
 
         return true
       },
       {
-        path: ['childLanguage'],
+        path: ['preferredLanguage'],
         params: errorMessages.languageRequired,
       },
     )
     .refine(
-      ({ languageEnvironment, interpreter }) => {
+      ({ languageEnvironment, guardianRequiresInterpreter }) => {
         return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-          ? !!interpreter
+          ? !!guardianRequiresInterpreter
           : true
       },
       {
-        path: ['interpreter'],
+        path: ['guardianRequiresInterpreter'],
       },
     ),
   freeSchoolMeal: z

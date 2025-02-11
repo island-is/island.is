@@ -70,31 +70,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     code: string
   }>
 
-  let language1 = ''
-  let language2 = ''
-  let language3 = ''
-  let language4 = ''
-
-  if (selectedLanguages) {
-    language1 = selectedLanguages[0]?.code
-    language2 = selectedLanguages[1]?.code
-    language3 = selectedLanguages[2]?.code
-    language4 = selectedLanguages[3]?.code
-  }
-
   const signLanguage = getValueViaPath(
     answers,
     'languages.signLanguage',
   ) as YesOrNo
 
-  const childLanguage = getValueViaPath(
+  const preferredLanguage = getValueViaPath(
     answers,
-    'languages.childLanguage',
+    'languages.preferredLanguage',
   ) as string
 
-  const interpreter = getValueViaPath(
+  const guardianRequiresInterpreter = getValueViaPath(
     answers,
-    'languages.interpreter',
+    'languages.guardianRequiresInterpreter',
   ) as YesOrNo
 
   const acceptFreeSchoolLunch = getValueViaPath(
@@ -219,13 +207,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     siblings,
     languageEnvironment,
     selectedLanguages,
-    language1,
-    language2,
-    language3,
-    language4,
-    childLanguage,
+    preferredLanguage,
     signLanguage,
-    interpreter,
+    guardianRequiresInterpreter,
     acceptFreeSchoolLunch,
     hasSpecialNeeds,
     specialNeedsType,
