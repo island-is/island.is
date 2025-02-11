@@ -126,28 +126,6 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Prepare arguments
-        if: ${{ !github.event.localrun }}
-        id: args
-        env:
-          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-        run: |
-          common="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/,name=$GITHUB_SHA;$GITHUB_REF"
-          echo cache-to="$common,mode=max" | tee -a "$GITHUB_OUTPUT"
-          echo cache-from="$common" | tee -a "$GITHUB_OUTPUT"
-
-          # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
-          # name=<manifest>: specify name of the manifest to use (default: buildkit)
-          #     Multiple manifest names can be specified at the same time, separated by ;.
-          #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
-          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
-          echo cache-prefix="$cache_prefix" | tee -a "$GITHUB_OUTPUT"
-          echo cache-from-common="
-            $cache_prefix,name=$GITHUB_SHA
-            $cache_prefix,name=$GITHUB_REF
-          " | tee -a "$GITHUB_OUTPUT"
-          echo cache-to-common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF" | tee -a "$GITHUB_OUTPUT"
-
       - name: Common config
         id: common
         env:
@@ -156,26 +134,26 @@ jobs:
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
             DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
           image_repository: ${{ steps.args.outputs.image-repository }}
-          cache_from: |
-            ${{ steps.args.outputs.cache-from }}
-          cache_to: |
-            ${{ steps.args.outputs.build-cache-to }}
-          cache_from_common: |
-            ${{ steps.args.outputs.cache-from-common }}
-          cache_to_common: |
-            ${{ steps.args.outputs.cache-to-common }}
-          cache_prefix: |
-            ${{ steps.args.outputs.cache-prefix }}
+          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
         run: |
+          # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
+          # name=<manifest>: specify name of the manifest to use (default: buildkit)
+          #     Multiple manifest names can be specified at the same time, separated by ;.
+          #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
+          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
+          cache_from_common="
+            $cache_prefix,name=$GITHUB_SHA
+            $cache_prefix,name=$GITHUB_REF
+          "
+          cache_to_common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF"
+
           echo | jq -rsc \
-            --arg build_args "$build_args"  --arg image_repository "$image_repository"  --arg cache_from "$cache_from"  --arg cache_to "$cache_to" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
+            --arg build_args "$build_args"  --arg image_repository "$image_repository" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
           '{
             file: "scripts/ci/Dockerfile",
             push: false,
             "build-args": $build_args,
             "image-repository": $image_repository,
-            "cache-from": $cache_from,
-            "cache-to": $cache_to,
             "cache-from-common": $cache_from_common,
             "cache-to-common": $cache_to_common,
             "cache-prefix": $cache_prefix
@@ -312,7 +290,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ steps.args.outputs.image-repository }}
+            ${{ fromJson(needs.deps.outputs.common).image_repository }}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
