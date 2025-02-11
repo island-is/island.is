@@ -121,10 +121,10 @@ jobs:
       contents: read # This is required for actions/checkout
 
     outputs:
+      creds: ${{ toJson(steps.creds.outputs) }}
       meta: ${{ toJson(steps.meta.outputs) }}
       common: ${{ toJson(steps.common.outputs) }}
       ecr-login: ${{ toJson(steps.ecr-login.outputs) }}
-      creds: ${{ toJson(steps.creds.outputs) }}
 
     steps:
       - name: Check out repo
