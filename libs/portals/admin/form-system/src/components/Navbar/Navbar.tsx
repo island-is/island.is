@@ -1,12 +1,7 @@
 import {
-  useSensors,
-  useSensor,
-  PointerSensor,
   DndContext,
   DragOverlay,
-  UniqueIdentifier,
-  DragStartEvent,
-  DragOverEvent,
+  UniqueIdentifier
 } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
 import { useContext, useMemo } from 'react'
@@ -31,13 +26,8 @@ import {
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { m, SectionTypes } from '@island.is/form-system/ui'
+import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 
-type DndAction =
-  | 'SECTION_OVER_SECTION'
-  | 'SCREEN_OVER_SECTION'
-  | 'SCREEN_OVER_SCREEN'
-  | 'FIELD_OVER_SCREEN'
-  | 'FIELD_OVER_FIELD'
 
 export const Navbar = () => {
   const { control, controlDispatch, setInSettings, inSettings, updateDnD } =
@@ -69,13 +59,6 @@ export const Navbar = () => {
     [fields],
   )
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 10,
-      },
-    }),
-  )
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
 
@@ -127,13 +110,13 @@ export const Navbar = () => {
     const data =
       type === 'Section'
         ? sections?.find(
-            (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
-          )
+          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+        )
         : type === 'Screen'
-        ? screens?.find(
+          ? screens?.find(
             (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-        : fields?.find(
+          : fields?.find(
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
     if (id === baseSettingsStep.id) {
@@ -159,66 +142,7 @@ export const Navbar = () => {
     }
   }
 
-  const onDragStart = (event: DragStartEvent) => {
-    controlDispatch({
-      type: 'SET_ACTIVE_ITEM',
-      payload: {
-        activeItem: {
-          type: event.active.data.current?.type,
-          data: event.active.data.current?.data ?? null,
-        },
-      },
-    })
-  }
-
-  const onDragOver = (event: DragOverEvent) => {
-    const { active, over } = event
-
-    if (!over) return
-
-    const activeId = active.id
-    const overId = over.id
-
-    if (activeId === overId) return
-    const activeSection = active.data?.current?.type === 'Section'
-    const activeScreen = active.data?.current?.type === 'Screen'
-    const activeField = active.data?.current?.type === 'Field'
-    const overSection = over.data?.current?.type === 'Section'
-    const overScreen = over.data?.current?.type === 'Screen'
-    const overField = over.data?.current?.type === 'Field'
-
-    const dispatchDragAction = (type: DndAction) =>
-      controlDispatch({ type, payload: { activeId: activeId, overId: overId } })
-
-    //Dragging section
-    if (activeSection && overSection) {
-      dispatchDragAction('SECTION_OVER_SECTION')
-    }
-
-    // // Dragging screen
-    if (activeScreen) {
-      if (overSection) {
-        dispatchDragAction('SCREEN_OVER_SECTION')
-      }
-      if (overScreen) {
-        dispatchDragAction('SCREEN_OVER_SCREEN')
-      }
-    }
-
-    // // Dragging field
-    if (activeField) {
-      if (overScreen) {
-        dispatchDragAction('FIELD_OVER_SCREEN')
-      }
-      if (overField) {
-        dispatchDragAction('FIELD_OVER_FIELD')
-      }
-    }
-  }
-
-  const onDragEnd = () => {
-    updateDnD(activeItem.type)
-  }
+  const { sensors, onDragStart, onDragOver, onDragEnd } = useNavbarDnD()
 
   if (inSettings) {
     return (
@@ -359,9 +283,9 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                      | FormSystemScreen
-                      | FormSystemSection
-                      | FormSystemField
+                    | FormSystemScreen
+                    | FormSystemSection
+                    | FormSystemField
                   }
                   active={activeItem.data?.id === activeItem.data?.id}
                   focusComponent={focusComponent}
