@@ -9,7 +9,6 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
-import { LicenseService } from './license.service'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 import {
@@ -19,14 +18,15 @@ import {
   RevokeLicenseRequest,
   VerifyLicenseRequest,
   VerifyLicenseResponse,
-} from './dto'
+} from '../dto'
 import { ApiHeader, ApiTags } from '@nestjs/swagger'
-import { LicenseId } from './license.types'
+import { LicenseId } from '../license.types'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { LicenseTypeScopesGuard } from './guards/licenseTypeScope.guard'
+import { LicenseTypeScopesGuard } from '../guards/licenseTypeScope.guard'
 import { LicenseApiScope } from '@island.is/auth/scopes'
 import { NationalId } from '@island.is/nest/core'
-import { environment } from '../../../environments'
+import { environment } from '../../../../environments'
+import { LicenseServiceV2 } from '../licenseV2.service'
 
 const namespace = `${environment.audit.defaultNamespace}`
 
@@ -34,12 +34,12 @@ const namespace = `${environment.audit.defaultNamespace}`
   name: 'X-Param-NationalId',
   description: "The user's national id",
 })
-@Controller({ version: ['1'], path: 'users/.nationalId/licenses/' })
+@Controller({ version: '2', path: 'users/.nationalId/licenses/' })
 @UseGuards(IdsAuthGuard, LicenseTypeScopesGuard)
 @ApiTags('users-licenses')
 @Audit({ namespace: `${namespace}/users-licenses` })
-export class UserLicensesController {
-  constructor(private readonly licenseService: LicenseService) {}
+export class UserLicensesControllerV2 {
+  constructor(private readonly licenseService: LicenseServiceV2) {}
 
   @Documentation({
     description: `The endpoint updates a single user's license. The method of update is according to the LicenseUpdateType parameter
@@ -118,13 +118,13 @@ export class UserLicensesController {
   }
 }
 
-@Controller({ version: ['1'], path: 'licenses/' })
+@Controller({ version: '2', path: 'licenses/' })
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(LicenseApiScope.licensesVerify)
 @ApiTags('licenses')
 @Audit({ namespace: `${namespace}/licenses` })
-export class LicensesController {
-  constructor(private readonly licenseService: LicenseService) {}
+export class LicensesControllerV2 {
+  constructor(private readonly licenseService: LicenseServiceV2) {}
   @Documentation({
     description: `This endpoint verifies a user's license. Which means that the digital license and the actual license held by the
     relevant institution are compared. If everything adds up, the license is verified.`,

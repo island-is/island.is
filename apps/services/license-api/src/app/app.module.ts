@@ -9,7 +9,6 @@ import {
   DrivingDigitalLicenseClientConfig,
   HuntingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
-import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 import { LoggingModule } from '@island.is/logging'
 
@@ -41,7 +40,6 @@ import { LicenseModule } from './modules/license/license.module'
         MachineDigitalLicenseClientConfig,
         HuntingDigitalLicenseClientConfig,
         LicenseConfig,
-        FeatureFlagConfig,
       ],
     }),
     LicenseModule,

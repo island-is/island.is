@@ -1,11 +1,9 @@
 import {
-  BaseLicenseUpdateClientV2,
+  BaseLicenseUpdateClient,
   LicenseType,
   LicenseUpdateClientService,
-  PassData,
-  PassDataInput,
-  Result,
 } from '@island.is/clients/license-client'
+import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -27,14 +25,14 @@ import {
   UpdateLicenseResponse,
   VerifyLicenseRequest,
   VerifyLicenseResponse,
-} from './dto'
-import { ErrorType, LicenseId } from './license.types'
-import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
+} from '../dto'
+import { ErrorType, LicenseId } from '../license.types'
+import { mapLicenseIdToLicenseType } from '../utils/mapLicenseId'
 
 const LOG_CATEGORY = 'license-api'
 
 @Injectable()
-export class LicenseServiceV2 {
+export class LicenseServiceV1 {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly clientService: LicenseUpdateClientService,
@@ -55,7 +53,7 @@ export class LicenseServiceV2 {
     type: LicenseType,
     requestId?: string,
   ) => {
-    return this.clientService.getLicenseUpdateClientV2ByType(
+    return this.clientService.getLicenseUpdateClientByType(
       type as LicenseType,
       requestId,
     )
@@ -64,7 +62,7 @@ export class LicenseServiceV2 {
     passTemplateId: string,
     requestId?: string,
   ) => {
-    return this.clientService.getLicenseUpdateClientV2ByPassTemplateId(
+    return this.clientService.getLicenseUpdateClientByPassTemplateId(
       passTemplateId,
       requestId,
     )
@@ -157,22 +155,23 @@ export class LicenseServiceV2 {
     identifier: LicenseId | string,
     type: 'licenseId' | 'passTemplateId',
     requestId?: string,
-  ): Promise<BaseLicenseUpdateClientV2> {
+  ): Promise<BaseLicenseUpdateClient> {
     return type === 'licenseId'
       ? this.getClientByLicenseType(identifier as LicenseId, requestId)
       : this.getClientByPassTemplateId(identifier, requestId)
   }
 
   private async pushUpdateLicense(
-    service: BaseLicenseUpdateClientV2,
+    service: BaseLicenseUpdateClient,
     expirationDate: string,
     nationalId: string,
     payload?: string,
     requestId?: string,
-  ): Promise<Result<PassData | undefined>> {
+  ): Promise<Result<Pass | undefined>> {
     let updatePayload: PassDataInput = {
       expirationDate,
     }
+
     if (payload) {
       let parsedInputPayload
       try {
@@ -197,17 +196,17 @@ export class LicenseServiceV2 {
     this.logger.debug('Update input parse successful, executing update', {
       category: LOG_CATEGORY,
       updateType: 'push',
-      version: requestId,
+      requestId,
     })
 
     return await service.pushUpdate(updatePayload, nationalId, requestId)
   }
 
   private async pullUpdateLicense(
-    service: BaseLicenseUpdateClientV2,
+    service: BaseLicenseUpdateClient,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<PassData | undefined>> {
+  ): Promise<Result<Pass | undefined>> {
     /** PULL - Update electronic license with pulled data from service
      * 1. Fetch data from provider
      * 2. Parse and validate license data
@@ -238,7 +237,7 @@ export class LicenseServiceV2 {
       updateType: inputData.licenseUpdateType,
     })
 
-    let updateRes: Result<PassData | undefined>
+    let updateRes: Result<Pass | undefined>
     if (inputData.licenseUpdateType === 'push') {
       const { expiryDate, payload } = inputData
 
@@ -317,10 +316,10 @@ export class LicenseServiceV2 {
       requestId,
       error: revokeRes.error,
     })
-    throw this.getException(this.getErrorTypeByCode(revokeRes.error.code), {
-      error: revokeRes.error,
-      requestId,
-    })
+    throw this.getException(
+      this.getErrorTypeByCode(revokeRes.error.code),
+      revokeRes.error.message,
+    )
   }
 
   async getDataFromToken(
@@ -396,7 +395,11 @@ export class LicenseServiceV2 {
       throw this.getException('BadRequest', 'Missing pass template id')
     }
 
-    const service = await this.getClient(passTemplateId, 'passTemplateId')
+    const service = await this.getClient(
+      passTemplateId,
+      'passTemplateId',
+      requestId,
+    )
 
     const verifyRes = await service.verify(inputData.barcodeData, requestId)
 
