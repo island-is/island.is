@@ -2056,7 +2056,8 @@
         },
         "required": [
           "id",
-          "order"
+          "order",
+          "events"
         ]
       },
       "FieldDto": {
@@ -2520,6 +2521,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FormDto"
+            }
+          },
+          "organizationNationalIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           }
         }

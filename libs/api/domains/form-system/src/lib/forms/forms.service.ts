@@ -79,7 +79,6 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindAll()
       .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
-
     if (!response || response instanceof ApolloError) {
       return {}
     }
