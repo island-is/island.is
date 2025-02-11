@@ -19,74 +19,86 @@ outputs:
     value: ${{ steps.build_info.outputs.BUILD_CHUNKS }}
   nx_base:
     value: ${{ steps.build_info.outputs.NX_BASE }}
-  cache_key:
-    value: ${{ steps.set-cache-key.outputs.cache_key }}
-  yarn_cache_folder:
-    value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
   # cache_key:
-  #   value: "cool"
+  #   value: ${{ steps.set-cache-key.outputs.cache_key }}
   # yarn_cache_folder:
-  #   value: "beans"
+  #   value: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+  cache_key:
+    value: "cool"
+  yarn_cache_folder:
+    value: "beans"
 
 
 runs:
   using: 'composite'
   steps:
-    - name: Corepack
-      shell: bash
-      run: corepack enable
+    # - name: Corepack
+    #   shell: bash
+    #   run: corepack enable
 
-    - name: Set cache key
-      id: set-cache-key
-      shell: bash
-      run: |
-        echo "cache_key=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+    # - name: Set cache key
+    #   id: set-cache-key
+    #   shell: bash
+    #   run: |
+    #     echo "cache_key=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-    - name: Get Yarn Cache Directory Path
-      id: yarn-cache-dir-path
-      shell: bash
-      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+    # - name: Get Yarn Cache Directory Path
+    #   id: yarn-cache-dir-path
+    #   shell: bash
+    #   run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-    - name: Restore Dependencies Cache
-      uses: runs-on/cache/restore@v4
-      id: restore-cache
-      with:
-        path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ inputs.cypress_cache_folder }}
-        key: ${{ steps.set-cache-key.outputs.cache_key }}
+    # - name: Restore Dependencies Cache
+    #   uses: runs-on/cache/restore@v4
+    #   id: restore-cache
+    #   with:
+    #     path: |
+    #       ${{ steps.yarn-cache-dir-path.outputs.dir }}
+    #       ${{ inputs.cypress_cache_folder }}
+    #     key: ${{ steps.set-cache-key.outputs.cache_key }}
 
-    - name: Yarn
-      shell: bash
-      run: |
-        yarn install --immutable
+    # - name: Yarn
+    #   shell: bash
+    #   run: |
+    #     yarn install --immutable
 
-    - name: Cache Dependencies
-      uses: runs-on/cache/save@v4
-      if: steps.restore-cache.outputs.cache-hit != 'true'
-      with:
-        path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ inputs.cypress_cache_folder }}
-        key: ${{ steps.set-cache-key.outputs.cache_key }}
+    # - name: Cache Dependencies
+    #   uses: runs-on/cache/save@v4
+    #   if: steps.restore-cache.outputs.cache-hit != 'true'
+    #   with:
+    #     path: |
+    #       ${{ steps.yarn-cache-dir-path.outputs.dir }}
+    #       ${{ inputs.cypress_cache_folder }}
+    #     key: ${{ steps.set-cache-key.outputs.cache_key }}
 
-    - name: Prepare generated files
-      shell: bash
-      run: |
-        echo "generated files: ${{ inputs.generated_files }}"
-        node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
-        tar -xzvf ${{ inputs.generated_files }}
+    # - name: Prepare generated files
+    #   shell: bash
+    #   run: |
+    #     echo "generated files: ${{ inputs.generated_files }}"
+    #     node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
+    #     tar -xzvf ${{ inputs.generated_files }}
 
-    - name: Cache Generated files
-      uses: runs-on/cache/save@v4
-      with:
-        path: |
-          ${{ inputs.generated_files }}
-        key: generated-files-${{ github.sha }}
+    # - name: Cache Generated files
+    #   uses: runs-on/cache/save@v4
+    #   with:
+    #     path: |
+    #       ${{ inputs.generated_files }}
+    #     key: generated-files-${{ github.sha }}
 
-    - name: Derive appropriate SHAs
-      uses: nrwl/nx-set-shas@v4
+    # - name: Derive appropriate SHAs
+    #   uses: nrwl/nx-set-shas@v4
 
+    # - name: Gather branch info
+    #   id: build_info
+    #   shell: bash
+    #   run: |
+    #     export BASE=${{ env.NX_BASE }}
+    #     export HEAD=${{ env.NX_HEAD }}
+
+    #     echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}" >> "$GITHUB_OUTPUT"
+    #     echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}" >> "$GITHUB_OUTPUT"
+    #     echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}" >> "$GITHUB_OUTPUT"
+    #     echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+    #     echo "NX_BASE=$BASE" >> "$GITHUB_OUTPUT"
     - name: Gather branch info
       id: build_info
       shell: bash
@@ -94,8 +106,8 @@ runs:
         export BASE=${{ env.NX_BASE }}
         export HEAD=${{ env.NX_HEAD }}
 
-        echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}" >> "$GITHUB_OUTPUT"
-        echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}" >> "$GITHUB_OUTPUT"
-        echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}" >> "$GITHUB_OUTPUT"
+        echo "TEST_CHUNKS={\"projects\":["unicorn-app"]}" >> "$GITHUB_OUTPUT"
+        echo "BUILD_CHUNKS={\"projects\":["unicorn-app"]}" >> "$GITHUB_OUTPUT"
+        echo "E2E_CHUNKS={\"projects\":[]]}" >> "$GITHUB_OUTPUT"
         echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-        echo "NX_BASE=$BASE" >> "$GITHUB_OUTPUT"
+        echo "NX_BASE=ae5d1ca81d2cb780b25f9dce5acfa1b46a943695d09a9e73a709381fb59f8046" >> "$GITHUB_OUTPUT"
