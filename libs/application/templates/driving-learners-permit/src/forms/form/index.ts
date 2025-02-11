@@ -129,7 +129,6 @@ export const getForm = ({ allowFakeData = false }): Form => {
               }),
               buildSubmitField({
                 id: 'overview.submit',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {

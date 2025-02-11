@@ -46,7 +46,6 @@ export const Confirmation: Form = buildForm({
     buildCustomField({
       component: 'CustomFormConclusionSectionField',
       id: 'custom.conclusionSection',
-      title: '',
       description: '',
     }),
   ],

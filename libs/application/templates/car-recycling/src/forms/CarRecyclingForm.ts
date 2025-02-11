@@ -53,7 +53,6 @@ export const CarRecyclingForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'confirmation',
-              title: '',
               description: '',
               children: [
                 buildCustomField(

@@ -41,7 +41,6 @@ export const Done: Form = buildForm({
           children: [
             buildAlertMessageField({
               id: 'doneAlertMessage',
-              title: '',
               message: (application: Application) => ({
                 ...m.listSignedDescription,
                 values: {
@@ -52,26 +51,22 @@ export const Done: Form = buildForm({
             }),
             buildImageField({
               id: 'doneImage',
-              title: '',
               image: ManOnBenchIllustration,
               imageWidth: '50%',
               imagePosition: 'center',
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               space: 'containerGutter',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              title: '',
               url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
             }),
             buildDescriptionField({
               id: 'space1',
-              title: '',
               space: 'containerGutter',
             }),
           ],

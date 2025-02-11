@@ -30,7 +30,6 @@ export const NoApplicants: Form = buildForm({
   children: [
     buildMultiField({
       id: 'noApplicantsMultifield',
-      title: '',
       description: '',
       children: [
         buildCheckboxField({
@@ -71,7 +70,6 @@ export const NoApplicants: Form = buildForm({
 
         buildDescriptionField({
           id: 'break3',
-          title: '',
           titleVariant: 'h3',
           marginBottom: 'gutter',
           space: 'gutter',

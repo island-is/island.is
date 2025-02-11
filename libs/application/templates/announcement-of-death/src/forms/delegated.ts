@@ -23,7 +23,6 @@ export const delegated: Form = buildForm({
       children: [
         buildImageField({
           id: 'completeStepImage',
-          title: '',
           image: AOD,
           imagePosition: 'center',
         }),

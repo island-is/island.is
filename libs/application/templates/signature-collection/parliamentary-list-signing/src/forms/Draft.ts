@@ -53,7 +53,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              title: '',
               defaultValue: '',
               required: true,
               options: ({

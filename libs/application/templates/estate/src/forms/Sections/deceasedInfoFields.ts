@@ -38,8 +38,7 @@ export const deceasedInfoFields = [
   buildDescriptionField({
     id: 'spaceDeceased',
     space: 'gutter',
-    title: '',
-  }),
+    }),
   buildKeyValueField({
     label: m.address,
     value: (application) => {

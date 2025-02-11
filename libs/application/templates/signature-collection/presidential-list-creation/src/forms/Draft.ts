@@ -155,7 +155,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               space: 'gutter',
             }),
             buildKeyValueField({
@@ -174,7 +173,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space1',
-              title: '',
               space: 'gutter',
             }),
             buildDividerField({}),
@@ -187,7 +185,6 @@ export const Draft: Form = buildForm({
             }),
             buildCustomField({
               id: 'createdLists',
-              title: '',
               component: 'ListsInOverview',
             }),
             buildSubmitField({

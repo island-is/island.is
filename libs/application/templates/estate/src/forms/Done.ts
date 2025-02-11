@@ -36,7 +36,6 @@ export const done: Form = buildForm({
       children: [
         buildImageField({
           id: 'doneImage',
-          title: '',
           image: Grieving,
           marginBottom: 3,
           imageWidth: 'auto',
@@ -44,7 +43,6 @@ export const done: Form = buildForm({
         }),
         buildMessageWithLinkButtonField({
           id: 'goToServicePortal',
-          title: '',
           url: '/minarsidur/umsoknir',
           buttonTitle: m.openServicePortalTitle,
           message: m.openServicePortalMessage,

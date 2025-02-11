@@ -23,8 +23,7 @@ export const cardDeliverySubSection = buildSubSection({
         buildCustomField({
           id: 'pickDeliveryMethod',
           component: 'PickDeliveryMethod',
-          title: '',
-        }),
+          }),
       ],
     }),
   ],

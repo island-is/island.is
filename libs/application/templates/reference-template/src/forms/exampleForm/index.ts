@@ -44,7 +44,6 @@ export const ExampleForm: Form = buildForm({
       title: 'Staðfesta',
       children: [
         buildMultiField({
-          title: '',
           children: [
             buildSubmitField({
               id: 'submit',
@@ -64,8 +63,7 @@ export const ExampleForm: Form = buildForm({
         }),
         buildRedirectToServicePortalField({
           id: 'redirect',
-          title: '',
-        }),
+          }),
         buildDescriptionField({
           id: 'final',
           title: 'Takk',

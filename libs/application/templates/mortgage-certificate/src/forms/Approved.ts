@@ -53,7 +53,6 @@ export const Approved: Form = buildForm({
             }),
             buildPdfLinkButtonField({
               id: 'confirmationPdfLinkButtonField',
-              title: '',
               verificationDescription: '',
               verificationLinkTitle: '',
               verificationLinkUrl: '',
@@ -91,12 +90,10 @@ export const Approved: Form = buildForm({
             buildCustomField({
               component: 'ConfirmationField',
               id: 'confirmationField',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'uiForms.conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

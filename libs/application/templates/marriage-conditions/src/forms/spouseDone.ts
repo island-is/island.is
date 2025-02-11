@@ -24,7 +24,6 @@ export const spouseDone: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'spouseNextStepsBullets',
-          title: '',
           description: m.spouseNextSteps,
           space: 'gutter',
         }),

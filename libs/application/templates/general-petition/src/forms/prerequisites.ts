@@ -23,7 +23,6 @@ export const prerequisites: Form = buildForm({
           children: [
             buildSubmitField({
               id: 'prereqs.submit',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

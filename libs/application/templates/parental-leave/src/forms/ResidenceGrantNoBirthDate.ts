@@ -46,7 +46,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrantApplicationNoBirthDate.reject',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

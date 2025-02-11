@@ -40,7 +40,6 @@ export const NoDebtCertificateForm: Form = buildForm({
         buildCustomField({
           component: 'ConfirmationPendingField',
           id: 'confirmationPendingField',
-          title: '',
           description: '',
         }),
       ],

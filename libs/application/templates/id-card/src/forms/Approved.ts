@@ -39,7 +39,6 @@ export const Approved: Form = buildForm({
     }),
     buildAlertMessageField({
       id: 'uiForms.conclusionAlertInfo1',
-      title: '',
       alertType: 'info',
       message: reviewConfirmation.general.infoMessageText1,
       marginBottom: 0,
@@ -64,7 +63,6 @@ export const Approved: Form = buildForm({
     }),
     buildAlertMessageField({
       id: 'uiForms.conclusionAlertInfo2',
-      title: '',
       alertType: 'info',
       message: reviewConfirmation.general.infoMessageText2,
       condition: (formValue, externalData) => {

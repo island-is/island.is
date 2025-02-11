@@ -53,7 +53,6 @@ export const personalSubSection = buildSubSection({
           space: 3,
         }),
         buildRadioField({
-          title: '',
           id: 'applicationType.value',
           condition: (_, externalData) => {
             const isFreshmanExternalData = getValueViaPath<Student>(
@@ -90,7 +89,6 @@ export const personalSubSection = buildSubSection({
         buildAlertMessageField({
           id: 'applicationTypeValueAlertMessage',
           alertType: 'warning',
-          title: '',
           message: userInformation.applicationType.alertMessage,
           condition: (answers, externalData) => {
             const isFreshmanExternalData = getValueViaPath<Student>(

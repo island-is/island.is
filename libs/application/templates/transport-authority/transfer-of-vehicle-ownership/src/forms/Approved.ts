@@ -40,7 +40,6 @@ export const Approved: Form = buildForm({
         buildCustomField({
           component: 'Review',
           id: 'review',
-          title: '',
           description: '',
         }),
       ],

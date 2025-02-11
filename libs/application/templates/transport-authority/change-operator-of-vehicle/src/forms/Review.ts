@@ -46,7 +46,6 @@ export const ReviewForm: Form = buildForm({
         buildCustomField({
           component: 'Review',
           id: 'review',
-          title: '',
           description: '',
         }),
       ],

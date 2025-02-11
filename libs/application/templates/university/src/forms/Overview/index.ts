@@ -23,7 +23,6 @@ export const OverviewForm: Form = buildForm({
         buildCustomField({
           component: 'Overview',
           id: 'overview',
-          title: '',
           description: '',
         }),
       ],

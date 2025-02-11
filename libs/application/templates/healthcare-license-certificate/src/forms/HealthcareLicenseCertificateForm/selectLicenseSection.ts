@@ -17,8 +17,7 @@ export const SelectLicenseSection = buildSection({
         buildCustomField({
           id: 'selectLicence',
           component: 'SelectLicenseField',
-          title: '',
-        }),
+          }),
       ],
     }),
   ],

@@ -50,7 +50,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              title: '',
               backgroundColor: 'white',
               defaultValue: '',
               required: true,
@@ -123,7 +122,6 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'spaceDivider',
-              title: '',
               space: 'gutter',
             }),
             buildDescriptionField({

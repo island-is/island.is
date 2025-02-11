@@ -25,7 +25,6 @@ export const Approved: Form = buildForm({
         buildCustomField({
           component: 'ConfirmationField',
           id: 'confirmationField',
-          title: '',
           description: '',
         }),
       ],

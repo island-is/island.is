@@ -26,7 +26,6 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
         // Only to have submit button visible
         buildTextField({
           id: 'tmp',
-          title: '',
           description: '',
         }),
       ],

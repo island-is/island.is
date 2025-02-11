@@ -33,7 +33,6 @@ export const Done: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'nextStepsDescription',
-          title: '',
           description: (application: Application) =>
             (application.answers.passport as Passport)?.userPassport !== ''
               ? m.applicationCompleteNextStepsDescriptionPersonalApplication

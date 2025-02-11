@@ -49,7 +49,6 @@ export const Done: Form = buildForm({
             //Set up separately for even spacing
             buildDescriptionField({
               id: 'nextStepsDescription',
-              title: '',
               description: m.nextStepsDescription,
               titleVariant: 'h3',
               marginBottom: 5,
@@ -61,19 +60,16 @@ export const Done: Form = buildForm({
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              title: '',
               url: '/minarsidur/min-gogn/listar/medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               space: 'containerGutter',
             }),
             buildDescriptionField({
               id: 'space1',
-              title: '',
               space: 'containerGutter',
             }),
           ],

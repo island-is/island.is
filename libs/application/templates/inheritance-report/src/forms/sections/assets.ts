@@ -55,12 +55,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.realEstate.total',
-              title: '',
-            }),
+              }),
             buildDescriptionField({
               id: 'assets.realEstate.hasModified',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -191,12 +189,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.vehicles.total',
-              title: '',
-            }),
+              }),
             buildDescriptionField({
               id: 'assets.vehicles.hasModified',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -258,12 +254,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.guns.total',
-              title: '',
-            }),
+              }),
             buildDescriptionField({
               id: 'modifiers.guns.hasModified',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -320,12 +314,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.bankAccounts.total',
-              title: '',
-            }),
+              }),
             buildDescriptionField({
               id: 'modifiers.bankAccounts.hasModified',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -405,8 +397,7 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.claims.total',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -473,8 +464,7 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.stocks.total',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -651,8 +641,7 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.otherAssets.total',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -693,24 +682,20 @@ export const assets = buildSection({
           description: m.assetOverviewDescription,
           children: [
             buildCustomField({
-              title: '',
               id: 'overviewAssets',
               doesNotRequireAnswer: true,
               component: 'OverviewAssets',
             }),
             buildCustomField({
-              title: '',
               id: 'assets.assetsTotal',
               component: 'SetTotalAssets',
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               marginBottom: 'containerGutter',
             }),
             buildCheckboxField({
               id: 'assetsConfirmation',
-              title: '',
               large: false,
               backgroundColor: 'white',
               options: ({ answers }) => [
@@ -724,7 +709,6 @@ export const assets = buildSection({
               ],
             }),
             buildCustomField({
-              title: '',
               id: 'overviewPrint',
               doesNotRequireAnswer: true,
               component: 'PrintScreen',

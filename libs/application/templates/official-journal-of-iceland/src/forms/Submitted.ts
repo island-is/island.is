@@ -55,11 +55,9 @@ export const Submitted: Form = buildForm({
       title: submitted.general.section,
       children: [
         buildMultiField({
-          title: '',
           children: [
             buildCustomField({
               id: 'submitted',
-              title: '',
               component: 'SubmittedScreen',
             }),
           ],

@@ -25,8 +25,7 @@ export const prePaidHeirs = buildSection({
           children: [
             buildDescriptionField({
               id: 'heirs.total',
-              title: '',
-            }),
+              }),
             buildCustomField(
               {
                 title: '',
@@ -88,7 +87,6 @@ export const prePaidHeirs = buildSection({
           children: [
             buildTextField({
               id: 'heirsAdditionalInfo',
-              title: '',
               placeholder: m.infoPlaceholder,
               variant: 'textarea',
               rows: 4,
@@ -103,14 +101,12 @@ export const prePaidHeirs = buildSection({
             }),
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsDescription',
-              title: '',
               description: m.fileUploadOtherDocumentsPrePaidUserGuidelines,
             }),
             buildFileUploadField({
               id: 'heirsAdditionalInfoFilesOtherDocuments',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
               uploadDescription: m.fileUploadOtherDocumentsPrePaidDescription,
-              title: '',
               uploadHeader: '',
               uploadMultiple: true,
             }),

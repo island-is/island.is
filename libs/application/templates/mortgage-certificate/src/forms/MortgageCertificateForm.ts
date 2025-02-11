@@ -50,7 +50,6 @@ export const MortgageCertificateForm = (
                   buildCustomField(
                     {
                       id: 'selectedProperties',
-                      title: '',
                       component: 'SelectProperty',
                     },
                     {
@@ -72,7 +71,6 @@ export const MortgageCertificateForm = (
                 children: [
                   buildCustomField({
                     id: 'propertiesOverview',
-                    title: '',
                     component: 'PropertiesOverview',
                   }),
                 ],

@@ -51,13 +51,11 @@ export const Edit: Form = buildForm({
             buildCustomField({
               component: 'Overview',
               id: 'overview',
-              title: '',
               description: '',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: (event) => {
                 return event === DefaultEvents.ABORT
               },
@@ -77,7 +75,6 @@ export const Edit: Form = buildForm({
             buildCustomField({
               component: 'HandleBeforeSubmitInEdit',
               id: 'handleBeforeSubmitInEdit',
-              title: '',
               description: '',
             }),
           ],

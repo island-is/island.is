@@ -44,7 +44,6 @@ export const Spouse: Form = buildForm({
           children: [
             buildRadioField({
               id: Routes.SPOUSEINCOME,
-              title: '',
               width: 'half',
               options: incomeOptions,
               marginBottom: 2,
@@ -66,7 +65,6 @@ export const Spouse: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'incomeBulletList',
-              title: '',
               description: m.incomeForm.bulletList.bullets,
             }),
           ],
@@ -117,7 +115,6 @@ export const Spouse: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'contactInfoDescription',
-              title: '',
               description: m.contactInfo.general.description,
             }),
             buildTextField({
@@ -162,7 +159,6 @@ export const Spouse: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submitApplication',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

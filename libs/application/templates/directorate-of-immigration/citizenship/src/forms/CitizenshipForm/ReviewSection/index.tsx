@@ -18,8 +18,7 @@ export const ReviewSection = buildSection({
         buildCustomField({
           id: 'review',
           component: 'Review',
-          title: '',
-        }),
+          }),
       ],
     }),
   ],

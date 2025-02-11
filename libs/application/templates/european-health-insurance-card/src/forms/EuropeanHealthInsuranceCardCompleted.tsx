@@ -55,7 +55,6 @@ export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
           children: [
             buildCustomField({
               id: 'completedScreen',
-              title: '',
               component: 'CompletedScreen',
             }),
           ],

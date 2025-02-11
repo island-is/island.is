@@ -49,14 +49,12 @@ export const Done: Form = buildForm({
             //Set up separately for even spacing
             buildDescriptionField({
               id: 'nextStepsDescription',
-              title: '',
               description: m.nextStepsDescription,
               titleVariant: 'h4',
               marginBottom: 5,
             }),
             buildCustomField({
               id: 'copyLink',
-              title: '',
               component: 'CopyLink',
             }),
             buildMessageWithLinkButtonField({

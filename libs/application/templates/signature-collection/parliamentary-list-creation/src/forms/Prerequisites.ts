@@ -42,8 +42,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'introText',
-              title: '',
-            }),
+              }),
           ],
         }),
       ],
@@ -60,7 +59,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

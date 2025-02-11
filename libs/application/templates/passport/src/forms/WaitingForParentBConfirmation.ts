@@ -37,7 +37,6 @@ export const WaitingForParentBConfirmation: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'nextStepsDescription',
-          title: '',
           description: m.applicationCompleteNextStepsDescriptionParentA,
           space: 'smallGutter',
         }),
