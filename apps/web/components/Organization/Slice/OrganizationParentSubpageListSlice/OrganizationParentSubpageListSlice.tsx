@@ -33,7 +33,7 @@ export const OrganizationParentSubpageListSlice = ({
               key={page.id}
               heading={page.label}
               href={page.href}
-              imgSrc={page.thumbnailImageHref ?? ''}
+              imgSrc={page.tinyThumbnailImageHref ?? ''}
               alt=""
             />
           ))}
