@@ -31,13 +31,41 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Corepack
+    # - name: Corepack
+    #   shell: bash
+    #   run: |
+    #     corepack enable && \
+    #     corepack prepare --activate && \
+    #     yarn --version && \
+    #     yarn install --immutable
+
+    # - name: Link pre-installed dependencies
+    #   shell: bash
+    #   run: |
+    #     ln -s /home/runner/dependencies/node_modules $GITHUB_WORKSPACE/node_modules
+    #     echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+
+    # - name: Configure Yarn
+    #   shell: bash
+    #   run: |
+    #     echo "nodeLinker: node-modules" >> .yarnrc.yml
+    #     echo "enableGlobalCache: false" >> .yarnrc.yml
+    #     yarn config set cacheFolder /home/runner/dependencies/.yarn/cache
+
+    - name: Link pre-installed dependencies
       shell: bash
       run: |
-        corepack enable && \
-        corepack prepare --activate && \
-        yarn --version && \
-        yarn install --immutable
+        mkdir -p node_modules .yarn
+        ln -sfn /home/runner/dependencies/node_modules/* node_modules/
+        ln -sfn /home/runner/dependencies/.yarn .yarn
+        echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+
+    - name: Verify dependency setup
+      shell: bash
+      run: |
+        yarn --version
+        yarn why react  # Replace 'react' with a package you know is in your dependencies
+
     - name: Prepare generated files
       shell: bash
       run: |
