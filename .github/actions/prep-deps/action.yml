@@ -99,5 +99,5 @@ runs:
       id: build_info
       shell: bash
       run: |
-        echo "E2E_CHUNKS={\"projects\":[\"unicorn-app\"]}" >> "$GITHUB_OUTPUT"
+        echo "E2E_CHUNKS={\"projects\":[\"\"]}" >> "$GITHUB_OUTPUT"
 
