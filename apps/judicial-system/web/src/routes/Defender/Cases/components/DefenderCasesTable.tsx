@@ -105,15 +105,7 @@ export const DefenderCasesTable: FC<Props> = ({
           {
             cell: (row) => (
               <TagContainer>
-                <TagCaseState
-                  caseState={row.state}
-                  caseType={row.type}
-                  isValidToDateInThePast={row.isValidToDateInThePast}
-                  courtDate={row.courtDate}
-                  indictmentDecision={row.indictmentDecision}
-                  indictmentRulingDecision={row.indictmentRulingDecision}
-                  defendants={row.defendants}
-                />
+                <TagCaseState theCase={row} />
                 {row.appealState && (
                   <TagAppealState
                     appealState={row.appealState}

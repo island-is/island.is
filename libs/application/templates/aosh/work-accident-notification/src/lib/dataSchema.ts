@@ -195,18 +195,18 @@ const companyLaborProtectionSchema = z.object({
 const projectPurchaseSchema = z
   .object({
     radio: z.string(),
-    nationalId: z.string().optional(),
-    name: z.string().optional(),
-  })
-  .refine((data) => data.radio !== YES || (data.name && data.name.length > 0), {
-    path: ['name'],
+    contractor: z.object({
+      nationalId: z.string(),
+      name: z.string(),
+    }),
   })
   .refine(
-    (data) =>
-      data.radio !== YES ||
-      (data.nationalId && kennitala.isValid(data.nationalId)),
+    (data) => {
+     return data.radio !== YES ||
+      (data.contractor.nationalId && data.contractor.name && kennitala.isCompany(data.contractor.nationalId))
+    },
     {
-      path: ['nationalId'],
+      path: [''],
     },
   )
 
