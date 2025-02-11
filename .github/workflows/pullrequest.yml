@@ -58,6 +58,9 @@ jobs:
       NX_BASE: ${{ steps.prepare-nx.outputs.NX_BASE }}
       NX_HEAD: ${{ steps.prepare-nx.outputs.NX_HEAD }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+      YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+
     steps:
       # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
       - name: Debug home etc.
@@ -75,10 +78,17 @@ jobs:
       - run: |
           corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          yarn --version
+          ls -l "$(which node)"
+
+      - name: Set cache key
+        id: set-cache-key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
       - name: Restore Dependencies Cache
         uses: runs-on/cache/restore@v4
@@ -116,13 +126,6 @@ jobs:
           path: |
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          yarn --version
-          ls -l "$(which node)"
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
@@ -348,12 +351,9 @@ jobs:
         id: restore-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
             ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
 
       - run: |
           yarn install --immutable
