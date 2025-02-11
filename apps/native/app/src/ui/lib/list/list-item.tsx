@@ -158,10 +158,7 @@ export function ListItem({
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}
-            <StarImage
-              source={starred ? starFilledIcon : starIcon}
-              active={starred}
-            />
+            {starred && <StarImage source={starFilledIcon} active={starred} />}
           </Row>
         </Content>
       </Host>

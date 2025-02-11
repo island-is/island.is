@@ -840,6 +840,15 @@ export const InboxScreen: NavigationFunctionComponent<{
               },
             })
             if (result.data?.postMailActionV2?.success) {
+              // If success, update selected documents to be starred in the cache
+              selectedItems.forEach((id) => {
+                client.cache.modify({
+                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
+                  fields: {
+                    bookmarked: () => true,
+                  },
+                })
+              })
               resetSelectState()
               showToastForBulkSelectAction({
                 variant: 'success',
@@ -892,8 +901,8 @@ export const InboxScreen: NavigationFunctionComponent<{
                 input: { action: 'read', documentIds: selectedItems },
               },
             })
-            // If success, update selected documents to be marked as read in the cache
             if (result.data?.postMailActionV2?.success) {
+              // If success, update selected documents to be marked as read in the cache
               selectedItems.forEach((id) => {
                 client.cache.modify({
                   id: client.cache.identify({ __typename: 'DocumentV2', id }),
