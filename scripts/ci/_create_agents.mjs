@@ -35,7 +35,7 @@ export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
   const normalProjects = allAffectedTargets.filter(
     (project) => !_PROBLEMATIC_PROJECTS.includes(project.split(':')[0]),
   )
-  const normalAgentCount = Math.min(Math.ceil(normalProjects.filter((e) => e.split(':') !== 'lint').length / JOBS_PER_AGENT), 30);
+  const normalAgentCount = Math.min(Math.ceil(normalProjects.filter((e) => e.split(':') !== 'lint').length / JOBS_PER_AGENT), 5);
   const problematicAgentCount = problematicProjects.length
   const shouldRun = normalAgentCount + problematicAgentCount > 0
 
