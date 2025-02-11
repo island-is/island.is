@@ -264,16 +264,18 @@ jobs:
 
             NX_TARGETS=${NX_TARGETS//,test/}
             NX_TARGETS=${NX_TARGETS//test,/}
+            echo HAS TEST $HAS_TEST
+            echo NX_TARGETS $NX_TARGETS
             # Run NX
             if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
               yarn nx run-many --target=${{ env.NX_TARGETS }} --all
               if [ "$HAS_TEST" == "true" ]; then
-                yarn nx run-many --target=test --all --no-watchman --ci --detectLeaks=false --passWithNoTests
+                yarn nx run-many --target=test --all --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
             else
               yarn nx affected --target=${{ env.NX_TARGETS }} --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
               if [ "$HAS_TEST" == "true" ]; then
-                yarn nx affected --target=test --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}" --no-watchman --ci --detectLeaks=false --passWithNoTests
+                yarn nx affected --target=test --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}" --no-watchman --ci --detectLeaks=false --passWithNoTests --verbose --parallel=1
               fi
             fi
   nx-runners:
