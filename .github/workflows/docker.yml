@@ -229,6 +229,21 @@ jobs:
           cache-to: |
             ${{ steps.common.outputs.cache-prefix }},name=target-deps;${{ github.sha }};${{ github.ref }}
 
+      - name: Docker build/cache dependencies (output-base)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ steps.common.outputs.file }}
+          push: ${{ steps.common.outputs.push }}
+          build-args: ${{ steps.common.outputs.build-args }}
+          cache-from: |
+            ${{ steps.common.outputs.cache-from-common }}
+            ${{ steps.common.outputs.cache-prefix }},name=target-output-base
+          cache-to: |
+            ${{ steps.common.outputs.cache-prefix }},name=target-output-base;${{ github.sha }};${{ github.ref }}
+
       - name: Docker build/cache dependencies (output-base-with-pg)
         uses: docker/build-push-action@v6
         with:
