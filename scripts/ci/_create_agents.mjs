@@ -3,20 +3,20 @@ import { getAffectedProjectsMultipleTargetArray, getShowAllProjects } from './_g
 import { setOutput } from '@actions/core'
 import json2yaml from 'js-yaml'
 const _TARGETS = ['test', 'build']
-const _PROBLEMATIC_TARGETS = ['e2e']
+const _PROBLEMATIC_TARGETS = [];
 
 const _PROBLEMATIC_PROJECTS = [
-  'judicial-system-backend',
+  /* 'judicial-system-backend',
   'application-system-api',
   'services-auth-delegation-api',
   'services-auth-personal-representative',
   'services-auth-admin-api',
-  'skilavottord-web',
+  'skilavottord-web', */
 ]
 
 const agent = 'arc-runners'
 
-export const createAgents = ({ JOBS_PER_AGENT = 20 } = {}) => {
+export const createAgents = ({ JOBS_PER_AGENT = 10 } = {}) => {
   const allAffectedTargets = getAffectedProjectsMultipleTargetArray(_TARGETS)
   const problematicProjects = [
     ...allAffectedTargets.filter((project) =>
