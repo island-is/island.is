@@ -31,8 +31,6 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  NODE_PATH: /home/runner/dependencies/node_modules
-  YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
 
 jobs:
   prepare:

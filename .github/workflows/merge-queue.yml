@@ -26,8 +26,6 @@ env:
   NX_PARALLEL: ${{ vars.NX_PARALLEL || 2 }}
   NX_MAX_PARALLEL: ${{ vars.NX_MAX_PARALLEL || 4 }}
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  NODE_PATH: /home/runner/dependencies/node_modules
-  YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
 
 jobs:
   prepare:
