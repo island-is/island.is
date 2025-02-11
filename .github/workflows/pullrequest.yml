@@ -255,11 +255,26 @@ jobs:
         run: |
             echo "Runners: $runners"
             yarn nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after=${{ env.NX_TARGETS }}
+            
+            if [[ "$NX_TARGETS" == *test* ]]; then
+              HAS_TEST=true
+            else
+              HAS_TEST=false
+            fi
+
+            NX_TARGETS=${NX_TARGETS//,test/}
+            NX_TARGETS=${NX_TARGETS//test,/}
             # Run NX
             if [ "${{ env.NX_RUN_ALL }}" == "true" ]; then
               yarn nx run-many --target=${{ env.NX_TARGETS }} --all
+              if [ "$HAS_TEST" == "true" ]; then
+                yarn nx run-many --target=test --all --no-watchman --ci --detectLeaks=false --passWithNoTests
+              fi
             else
               yarn nx affected --target=${{ env.NX_TARGETS }} --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}"
+              if [ "$HAS_TEST" == "true" ]; then
+                yarn nx affected --target=test --base="${{ env.NX_BASE }}" --head="${{ env.NX_HEAD }}" --no-watchman --ci --detectLeaks=false --passWithNoTests
+              fi
             fi
   nx-runners:
     needs:
@@ -271,10 +286,21 @@ jobs:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
       NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
       NX_AGENT_FULL_NAME: ${{ matrix.agents }}
+      dd-api-key: 
+      codecov-token: ${{ secrets.CODECOV_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEYy: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DD_API_KEY: '${{ secrets.DD_API_KEY }}'
+      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
     strategy:
       matrix:
         agents: ${{ fromJson(needs.prepare.outputs.NX_RUNNERS) }}
     steps:
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+      - name: Set Codeconv version numner
+        run: |
+          echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
       - name: Set agent name
         run: |
           NX_AGENT_LAUNCH_TEMPLATE="${NX_AGENT_FULL_NAME%-*}"
