@@ -5,13 +5,13 @@ import {
   buildKeyValueField,
   buildCustomField,
   hasYes,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
   APPLICATION_TYPES,
   Operation,
   OpeningHours,
-  YES,
 } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { displayOpeningHours, get24HFormatTime } from '../../lib/utils'

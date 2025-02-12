@@ -1,4 +1,5 @@
 import {
+  YES,
   buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
@@ -35,7 +36,6 @@ import {
   FormModes,
   FormValue,
   NationalRegistrySpouse,
-  YES,
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
