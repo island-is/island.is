@@ -59,19 +59,18 @@ env:
   # Registry without trailing `/docker`
   ECR_PULLTHROUGH_CACHE: ${{ vars.ECR_PULLTHROUGH_CACHE || 'public.ecr.aws' }}
   AWS_REGION: ${{ vars.AWS_REGION }}
-  AWS_S3_CACHE_BUCKET: ${{ secrets.AWS_S3_CACHE_BUCKET }}
   # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
   # name=<manifest>: specify name of the manifest to use (default: buildkit)
   #     Multiple manifest names can be specified at the same time, separated by ;.
   #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
   AWS_CACHE_PREFIX: >-
-    type=s3,mode=max,region=${{ vars.AWS_REGION }},bucket=${{ secrets.AWS_S3_CACHE_BUCKET }},prefix=docker-cache/
+    type=s3,mode=max,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/
   # mode=... has no effect in cache-from, but keeps the columns here the same for clarity
   AWS_CACHE_FROM_COMMON: |
-    type=s3,mode=min,region=${{ vars.AWS_REGION }},bucket=${{ secrets.AWS_S3_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
-    type=s3,mode=min,region=${{ vars.AWS_REGION }},bucket=${{ secrets.AWS_S3_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
+    type=s3,mode=min,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
+    type=s3,mode=min,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
   AWS_CACHE_TO_COMMON: |
-    type=s3,mode=max,region=${{ vars.AWS_REGION }},bucket=${{ secrets.AWS_S3_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }}
+    type=s3,mode=max,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }}
   DOCKERFILE: ./scripts/ci/Dockerfile
 
 jobs:
