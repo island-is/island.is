@@ -81,7 +81,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
-      playwright-image-tag: ${{ steps.args-prep.outputs.playwright-image-tag }}
+      playwright-image-version: ${{ steps.args-prep.outputs.playwright-image-version }}
       build-args: ${{ steps.args-prep.outputs.build-args }}
     steps:
       - uses: actions/checkout@v4
@@ -91,14 +91,14 @@ jobs:
         run: |
           # Setters
           node_image_version="$NODE_IMAGE_VERSION"
-          playwright_image_tag="$(yarn info --json @playwright/test | jq -r '.children.Version | "v\(.)-focal"')"
+          playwright_image_version="$(yarn info --json @playwright/test | jq -r '.children.Version | "v\(.)-focal"')"
           # Outputters
           echo node-image-version="$node_image_version" | tee -a "$GITHUB_OUTPUT"
-          echo playwright-image-tag="$playwright_image_tag" | tee -a "$GITHUB_OUTPUT"
+          echo playwright-image-version="$playwright_image_version" | tee -a "$GITHUB_OUTPUT"
           # Multi-line build-args (End-Of-Multiline)
           echo build-args"<<EOF" | tee -a "$GITHUB_OUTPUT"
           echo NODE_IMAGE_VERSION="$node_image_version" | tee -a "$GITHUB_OUTPUT"
-          echo PLAYWRIGHT_IMAGE_TAG="$playwright_image_tag" | tee -a "$GITHUB_OUTPUT"
+          echo PLAYWRIGHT_IMAGE_VERSION="$playwright_image_version" | tee -a "$GITHUB_OUTPUT"
           echo DOCKER_IMAGE_REGISTRY="$ECR_PULLTHROUGH_CACHE" | tee -a "$GITHUB_OUTPUT"
           echo EOF | tee -a "$GITHUB_OUTPUT"
 
