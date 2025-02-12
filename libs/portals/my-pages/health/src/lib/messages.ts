@@ -1329,7 +1329,7 @@ export const messages = defineMessages({
   vaccineUnfinishedDesc: {
     id: 'sp.health:vaccine-unfinished-desc',
     defaultMessage:
-      'Einstaklingur hefur hafið bólusetningarferlið en ekki lokið við allar nauðsynlegar skammta.',
+      'Einstaklingur hefur hafið bólusetningarferlið en ekki lokið við allar nauðsynlega skammta.',
   },
   vaccineExpired: {
     id: 'sp.health:vaccine-expired',
