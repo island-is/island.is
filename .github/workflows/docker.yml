@@ -183,7 +183,7 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ${{ env.DOCKERFILE }}
-          push: ${{ !github.event.localrun }}
+          push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
             ${{ env.AWS_CACHE_FROM_COMMON }}
