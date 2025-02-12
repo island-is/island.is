@@ -61,13 +61,41 @@ jobs:
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
+      - name: Set base/head sha output
+        id: export-sha
+        shell: bash
+        run: |
+          echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
+          echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
+
+          echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
+          echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+
+      - name: Git bot config
+        id: git-bot-config
+        run: |
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+      # This is to increase the retention days for our GitHub Actions run events
+      # See this for more information:
+      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
+      - name: Keep PR run event
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+
+        # Don't run this step locally
+        if: ${{ !github.event.localrun }}
+        with:
+          name: pr-event
+          path: event.json
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+
       - name: Gather branch info
         id: build_info
         shell: bash
         run: |
-          export BASE=${{ env.NX_BASE }}
-          export HEAD=${{ env.NX_HEAD }}
-
           echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}"
           if [[ "$TEST_CHUNKS" != "[]" ]]; then
             echo TEST_CHUNKS="{\"projects\":$TEST_CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -84,4 +112,3 @@ jobs:
             echo E2E_CHUNKS="{\"projects\":$E2E_CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
           echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-          echo "NX_BASE=$BASE" >> "$GITHUB_OUTPUT"
