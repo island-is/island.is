@@ -92,29 +92,8 @@ const offenseSubstancesMap = {
   SPEEDING: [],
 }
 
-// export const getRelevantSubstances = (
-//   offenses,
-//   substances, // substances per indictment count
-// ) => {
-//   const allowedSubstances = offenses.map((offense) => ({
-//     offense,
-//     substances: offenseSubstances[offense],
-//   }))
-
-//   return allowedSubstances
-//     .map((allowedSubstance) => ({
-//       offense: allowedSubstance['offense'],
-//       offenseSubstances: Object.entries(substances).filter((substance) =>
-//         allowedSubstance['substances'].includes(substance[0]),
-//       ),
-//     }))
-//     .flat()
-// }
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // TODO: Fetch all indictments, for each indictment we get the offenses and substances
-    // for each offense we map the substances and create the relevant offense
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize
         .query(
@@ -125,6 +104,9 @@ module.exports = {
           Promise.all(
             res[0].map((indictment_count) => {
               const offenses = indictment_count.deprecated_offenses
+              if (!offenses || offenses.length === 0) {
+                return 
+              }
               const substances = indictment_count.substances || {}
 
               const offenseSubstances = offenses.map((offense) => ({
@@ -132,30 +114,43 @@ module.exports = {
                 availableSubstances: offenseSubstancesMap[offense],
               }))
 
-              const substancesPerOffense = offenseSubstances
-                .map((os) => {
-                  const selectedSubstances = Object.entries(substances).filter(
-                    (substance) =>
-                      os['availableSubstances'].includes(substance[0]),
-                  ).reduce((res, substance) => {
+              // Logic from getRelevantSubstances in apps/judicial-system/web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.tsx 
+              const offensesToMigrate = offenseSubstances.map((os) => {
+                const selectedSubstances = Object.entries(substances)
+                  .filter((substance) =>
+                    os['availableSubstances'].includes(substance[0]),
+                  )
+                  .reduce((res, substance) => {
                     const substanceName = substance[0]
                     const measurement = substance[1]
-                    return {...res, [substanceName]: measurement}}, {})
-                  console.log(`Writing offense and selected substances: (${os['offense']}, ${JSON.stringify(selectedSubstances)})`)
-                  return { offense: os['offense'], selectedSubstances }
-                })
-            }),
+                    return { ...res, [substanceName]: measurement }
+                  }, {})
+                return {
+                  indictment_count_id: indictment_count.id,
+                  offense: os['offense'],
+                  substances: selectedSubstances,
+                }
+              })
+              console.log(`- Migrating indictment_count fields { offenses: ${offenses}, substances: ${JSON.stringify(substances)} } as ${offensesToMigrate.length} rows: ${JSON.stringify(offensesToMigrate)}`)
+     
+              offensesToMigrate.forEach((o) =>
+                queryInterface.sequelize.query(
+                  `INSERT INTO "offense" (id, indictment_count_id, offense, substances) VALUES (md5(random()::text || clock_timestamp()::text)::uuid, '${indictment_count.id}', '${o.offense}', '${JSON.stringify(o.substances)}');`,
+                  {
+                    transaction: t,
+                  },
+                ),
+              )
+            
+            }, ),
           ),
         ),
     )
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    return queryInterface.sequelize.query(`
+        DELETE FROM offense
+    `)
   },
 }
