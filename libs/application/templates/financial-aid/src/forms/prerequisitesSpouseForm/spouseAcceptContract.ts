@@ -64,7 +64,6 @@ export const spouseAcceptContract = buildSection({
         }),
         buildSubmitField({
           id: 'toDraft',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
