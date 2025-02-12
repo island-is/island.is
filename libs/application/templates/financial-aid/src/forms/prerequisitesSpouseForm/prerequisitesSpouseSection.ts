@@ -24,7 +24,6 @@ export const prerequisitesSpouseSection = buildSection({
         }),
         buildDataProviderItem({
           provider: CurrentApplicationApi,
-          title: '',
           subTitle: '',
         }),
         buildDataProviderItem({
