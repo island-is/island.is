@@ -59,7 +59,6 @@ env:
   # Registry without trailing `/docker`
   ECR_PULLTHROUGH_CACHE: ${{ vars.ECR_PULLTHROUGH_CACHE || 'public.ecr.aws' }}
   AWS_REGION: ${{ vars.AWS_REGION || 'eu-west-1' }}
-  AWS_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
 jobs:
   prepare:
@@ -135,12 +134,13 @@ jobs:
             PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
             DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
           image_repository: ${{ env.IMAGE_REGISTRY }}
+          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
         run: |
           # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
           # name=<manifest>: specify name of the manifest to use (default: buildkit)
           #     Multiple manifest names can be specified at the same time, separated by ;.
           #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
-          cache_prefix="type=s3,region=$AWS_REGION,prefix=docker-cache/"
+          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
           cache_from_common="
             $cache_prefix,name=$GITHUB_SHA
             $cache_prefix,name=$GITHUB_REF
