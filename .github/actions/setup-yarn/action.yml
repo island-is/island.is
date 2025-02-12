@@ -6,10 +6,14 @@ runs:
   steps:
     - name: Compare package.json files
       shell: bash
-      id: check_package
+      id: compare_package
       run: |
-        skip_install=${{ hashFiles('package.json') == hashFiles('/home/runner/dependencies/package.json') }}
+        current=${{ hashFiles('package.json') }}
+        bundled=${{ hashFiles('/home/runner/dependencies/package.json') }}
+        skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
         echo "Will skip running 'yarn install' step: $skip_install"
+        echo "current: $current"
+        echo "bundled: $current"
         echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
 
     - name: Setup Yarn
