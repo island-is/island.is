@@ -1,3 +1,5 @@
+import { usePathname } from 'next/navigation'
+
 import { Box, LinkV2, Logo } from '@island.is/island-ui/core'
 
 import * as styles from './PageCard.css'
@@ -10,12 +12,18 @@ type PageCardWrapperProps = {
   bodySlot: React.ReactNode
 }
 
-export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
-  const { locale, formatMessage, changeLanguage } = useLocale()
-
-  const handleLanguageChange = () => {
-    changeLanguage(locale === 'is' ? 'en' : 'is')
+const getPath = (currentLocale: string, currentPath: string) => {
+  if (currentLocale === 'is') {
+    return currentPath.replace('/is/', '/en/')
+  } else {
+    return currentPath.replace('/en/', '/is/')
   }
+}
+
+export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
+  const { locale, formatMessage } = useLocale()
+
+  const path = usePathname()
 
   return (
     <PageCenter verticalCenter>
@@ -47,11 +55,22 @@ export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
             alignItems="center"
             marginX={[2, 0]}
           >
-            <LinkV2 href="https://island.is/skilmalar-island-is" skipTab>
+            <LinkV2
+              href={
+                locale === 'en'
+                  ? 'https://island.is/en/skilmalar-island-is'
+                  : 'https://island.is/skilmalar-island-is'
+              }
+              skipTab
+            >
               <Logo width={87} />
             </LinkV2>
             <Box display="flex" columnGap={2}>
-              <LinkV2 href="#" color="blue400" className={styles.link}>
+              <LinkV2
+                href={getPath(locale, path)}
+                color="blue400"
+                className={styles.link}
+              >
                 {formatMessage(
                   locale === 'en'
                     ? generic.footerLocaleIS
@@ -60,7 +79,11 @@ export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
               </LinkV2>
               <span className={styles.linkSeparator} />
               <LinkV2
-                href="https://island.is/adstod"
+                href={
+                  locale === 'en'
+                    ? 'https://island.is/en/help'
+                    : 'https://island.is/adstod'
+                }
                 color="blue400"
                 className={styles.link}
               >

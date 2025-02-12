@@ -16,7 +16,10 @@ class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
 
-    return { ...initialProps, lang: ctx?.query?.lang ?? defaultLanguage }
+    const langMatch = ctx.asPath.match(/^\/(is|en)(\/|$)/)
+    const lang = langMatch ? langMatch[1] : defaultLanguage
+
+    return { ...initialProps, lang }
   }
 
   render() {

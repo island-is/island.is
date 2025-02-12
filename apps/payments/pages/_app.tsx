@@ -21,10 +21,10 @@ const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
 }
 
-const PaymentsApp: any = ({ Component, pageProps }: any) => {
+const PaymentsApp = ({ Component, pageProps }: any) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <LocaleProvider locale={'is'}>
+      <LocaleProvider locale={pageProps.locale}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
