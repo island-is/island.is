@@ -1,4 +1,4 @@
-import { formatText } from '@island.is/application/core'
+import { formatText, NO, YES } from '@island.is/application/core'
 import {
   Box,
   Bullet,
@@ -14,7 +14,6 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { NO, YES } from '../../utils/constants'
 
 interface Props extends ReviewFieldProps {
   additionalInfo: AdditionalInfoType

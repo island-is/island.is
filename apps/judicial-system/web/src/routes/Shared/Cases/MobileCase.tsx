@@ -58,14 +58,12 @@ export const CategoryCard: FC<PropsWithChildren<CategoryCardProps>> = ({
 interface Props {
   theCase: CaseListEntry
   onClick: () => void
-  isCourtRole: boolean
   isLoading?: boolean
 }
 
 const MobileCase: FC<PropsWithChildren<Props>> = ({
   theCase,
   onClick,
-  isCourtRole,
   children,
   isLoading = false,
 }) => {
@@ -76,19 +74,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
     <CategoryCard
       heading={displayCaseType(formatMessage, theCase.type, theCase.decision)}
       onClick={onClick}
-      tags={[
-        <TagCaseState
-          key={theCase.id}
-          caseState={theCase.state}
-          caseType={theCase.type}
-          isCourtRole={isCourtRole}
-          isValidToDateInThePast={theCase.isValidToDateInThePast}
-          courtDate={theCase.courtDate}
-          indictmentRulingDecision={theCase.indictmentRulingDecision}
-          indictmentDecision={theCase.indictmentDecision}
-          defendants={theCase.defendants}
-        />,
-      ]}
+      tags={[<TagCaseState key={theCase.id} theCase={theCase} />]}
       isLoading={isLoading}
     >
       <Text title={theCase.policeCaseNumbers?.join(', ')}>
