@@ -96,13 +96,11 @@ jobs:
           echo node-image-version="$node_image_version" | tee -a "$GITHUB_OUTPUT"
           echo playwright-image-tag="$playwright_image_tag" | tee -a "$GITHUB_OUTPUT"
           # Multi-line build-args (End-Of-Multiline)
-          cat <<EOM | tee -a "$GITHUB_OUTPUT"
-          build-args<<EOF
-            NODE_IMAGE_VERSION=$node_image_version
-            PLAYWRIGHT_IMAGE_TAG=$playwright_image_tag
-            DOCKER_IMAGE_REGISTRY=$ECR_PULLTHROUGH_CACHE
-          EOF
-          EOM
+          echo build-args"<<EOF" | tee -a "$GITHUB_OUTPUT"
+          echo NODE_IMAGE_VERSION="$node_image_version" | tee -a "$GITHUB_OUTPUT"
+          echo PLAYWRIGHT_IMAGE_TAG="$playwright_image_tag" | tee -a "$GITHUB_OUTPUT"
+          echo DOCKER_IMAGE_REGISTRY="$ECR_PULLTHROUGH_CACHE" | tee -a "$GITHUB_OUTPUT"
+          echo EOF | tee -a "$GITHUB_OUTPUT"
 
       - name: Create matrix from input
         id: set-matrix
