@@ -8,6 +8,7 @@ runs:
       shell: bash
       id: compare_lock
       run: |
+        ls -al /home/runner/dependencies
         current=${{ hashFiles('yarn.lock') }}
         bundled=${{ hashFiles('/home/runner/dependencies/yarn.lock') }}
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
