@@ -8,10 +8,10 @@ import {
   buildCheckboxField,
   buildLinkField,
   buildTitleField,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { AnswerOptions } from '../lib/types'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
@@ -43,7 +43,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'termsOfAgreement.userTerms',
               title: '',
               options: [
-                { value: AnswerOptions.YES, label: m.userAgreementOptionLabel },
+                { value: YesOrNoEnum.YES, label: m.userAgreementOptionLabel },
               ],
             }),
           ],

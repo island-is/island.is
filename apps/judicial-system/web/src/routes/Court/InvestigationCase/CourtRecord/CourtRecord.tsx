@@ -513,15 +513,20 @@ const CourtRecord: FC = () => {
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={
-            !workingCase.decision ||
-            !workingCase.conclusion ||
-            !workingCase.ruling
+            !workingCase.isCompletedWithoutRuling
+              ? !workingCase.decision ||
+                !workingCase.conclusion ||
+                !workingCase.ruling
+              : !workingCase.decision
           }
           infoBoxText={
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
-              ? formatMessage(m.sections.nextButtonInfo.text)
+              ? formatMessage(m.sections.nextButtonInfo.text, {
+                  isCompletedWithoutRuling:
+                    workingCase.isCompletedWithoutRuling,
+                })
               : ''
           }
         />

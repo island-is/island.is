@@ -28,13 +28,12 @@ env:
   NX_TASKS_RUNNER: ci
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
 
     env:
@@ -42,6 +41,8 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
       DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
       DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+      CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+      SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
 
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
@@ -51,50 +52,20 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-    steps:
-      # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
+      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
+    steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - run: |
-          corepack enable
+      - name: Set cache key
+        id: set-cache-key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Prepare generated files
         run: |
@@ -108,13 +79,6 @@ jobs:
           path: |
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          yarn --version
-          ls -l "$(which node)"
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
@@ -232,7 +196,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -243,37 +207,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -300,7 +235,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -316,37 +251,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -366,41 +272,13 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -435,7 +313,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 5
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -445,39 +323,9 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/checkout@v4
-        if: ${{ github.ref == 'ref/heads/main' }}
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            .yarn/cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -487,13 +335,10 @@ jobs:
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
 
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
+
       # - name: NX format:write
       #   if: ${{ github.event_name == 'pull_request' }}
       #   run: |
@@ -503,7 +348,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -515,37 +360,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -565,7 +382,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -576,37 +393,9 @@ jobs:
     if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -624,7 +413,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-test
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -638,10 +427,10 @@ jobs:
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check if deploy-feature is enabled
-        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+      - name: Notify about deploy-feature label
+        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'

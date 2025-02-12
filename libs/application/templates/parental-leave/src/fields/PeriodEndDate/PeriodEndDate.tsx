@@ -3,6 +3,7 @@ import { FieldErrors, FieldValues } from 'react-hook-form/dist/types'
 
 import {
   NO_ANSWER,
+  YES,
   extractRepeaterIndexFromField,
   getErrorViaPath,
   getValueViaPath,
@@ -23,7 +24,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, StartDateOptions } from '../../constants'
+import { StartDateOptions } from '../../constants'
 
 type FieldPeriodEndDateProps = {
   field: {
