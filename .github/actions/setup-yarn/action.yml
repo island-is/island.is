@@ -4,18 +4,38 @@ description: 'Yarn setup and install dependencies'
 runs:
   using: 'composite'
   steps:
-    - name: Compare yarn.lock
+    - name: Debug file access
       shell: bash
-      id: compare_lock
       run: |
-        ls -al /home/runner/dependencies
-        hashFiles('/home/runner/dependencies/yarn.lock')
-        current="${{ hashFiles('yarn.lock') }}"
-        bundled="${{ hashFiles('/home/runner/dependencies/yarn.lock') }}"
+        echo "Current directory contents:"
+        ls -la
+        echo "------------------------"
+        echo "Dependencies directory contents:"
+        ls -la /home/runner/dependencies
+        echo "------------------------"
+        echo "Current yarn.lock hash:"
+        sha256sum yarn.lock
+        echo "------------------------"
+        echo "Dependencies yarn.lock hash:"
+        sha256sum /home/runner/dependencies/yarn.lock
+        echo "------------------------"
+        echo "Current user and groups:"
+        id
+        echo "------------------------"
+        echo "File permissions:"
+        stat yarn.lock
+        stat /home/runner/dependencies/yarn.lock
+
+    - name: Compare yarn.lock files
+      shell: bash
+      id: compare_yarn_lock
+      run: |
+        current=$(sha256sum yarn.lock | awk '{print $1}')
+        bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
+        echo "Current hash: $current"
+        echo "Bundled hash: $bundled"
         echo "Will skip running 'yarn install' step: $skip_install"
-        echo "current: $current"
-        echo "bundled: $bundled"
         echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
 
     - name: Setup Yarn
