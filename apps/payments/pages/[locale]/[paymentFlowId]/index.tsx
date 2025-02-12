@@ -357,6 +357,7 @@ export default function PaymentPage({
       if (selectedPaymentMethod === 'card') {
         setIsProcessingPayment(true)
         await payWithCard(data)
+        return // No need to set isSubmitting to false
       } else {
         router.push(`${router.asPath}/krafa-stofnud`)
         return
