@@ -1,0 +1,30 @@
+name: 'Checkout for features'
+description: 'Checkout refs for feature deployments'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set envs for features
+      shell: bash
+      id: git_nx_base
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HTML_URL: ${{ github.event.pull_request.html_url }}
+        ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+      run: |
+        set -euo pipefail
+        export HEAD_REF="$GITHUB_HEAD_REF"
+        export BASE_REF="$GITHUB_BASE_REF"
+        export GIT_BASE_BRANCH="$GITHUB_BASE_REF"
+
+        export PR_REF="$GITHUB_SHA"
+        export WORKFLOW_ID=push
+        export SHELL=/usr/bin/bash
+        source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
+        git checkout "$GITHUB_SHA"
+        echo BASE="$BASE" >> "$GITHUB_ENV"
+        echo LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
+        echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+        echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
+        echo "Base branch is '${GIT_BASE_BRANCH}'"
+        echo "Branch is '${GIT_BRANCH}'"
