@@ -13,9 +13,4 @@ export class RevokeLicenseRequest {
   @ApiProperty({ description: 'Optional request id for logging purposes' })
   @IsString()
   readonly requestId?: string
-
-  @ApiPropertyOptional({ enum: LicenseApiVersion })
-  @IsOptional()
-  @IsEnum(LicenseApiVersion)
-  readonly apiVersion?: LicenseApiVersion
 }
