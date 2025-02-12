@@ -72,35 +72,47 @@ export class UserProfileService extends BaseTemplateApiService {
     }
 
     const isActor = !!auth.actor?.nationalId
-
-    if (
+    const emailIsInvalid =
       (params?.validateEmail ||
         (params?.validateEmailIfNotActor && !isActor)) &&
       !email
-    ) {
+    const phoneIsInvalid =
+      (params?.validatePhoneNumber ||
+        (params?.validatePhoneNumberIfNotActor && !isActor)) &&
+      (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
+
+    if (emailIsInvalid && phoneIsInvalid) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.invalidEmailOrPhone,
+          summary: {
+            ...coreErrorMessages.invalidEmailOrPhoneDescription,
+            values: {
+              link: this.getIDSLink(application, { email: true, phone: true }),
+            },
+          },
+        },
+        500,
+      )
+    } else if (emailIsInvalid) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.noEmailFound,
           summary: {
             ...coreErrorMessages.noEmailFoundDescription,
-            values: { link: this.getIDSLink(application) },
+            values: { link: this.getIDSLink(application, { email: true }) },
           },
         },
         500,
       )
-    }
-
-    if (
-      params?.validatePhoneNumber ||
-      (params?.validatePhoneNumberIfNotActor && !isActor)
-    ) {
+    } else if (phoneIsInvalid) {
       if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
         throw new TemplateApiError(
           {
-            title: coreErrorMessages.invalidPhoneNumber,
+            title: coreErrorMessages.invalidPhone,
             summary: {
-              ...coreErrorMessages.invalidPhoneNumberDescription,
-              values: { link: '/minarsidur' },
+              ...coreErrorMessages.invalidPhoneDescription,
+              values: { link: this.getIDSLink(application, { phone: true }) },
             },
           },
           500,
@@ -137,13 +149,29 @@ export class UserProfileService extends BaseTemplateApiService {
       })
   }
 
-  private getIDSLink(application: ApplicationWithAttachments) {
+  private getIDSLink(
+    application: ApplicationWithAttachments,
+    include: { email?: boolean, phone?: boolean },
+  ) {
+    let idsUserProfileLink = ''
+    if (include.email && include.phone) {
+      idsUserProfileLink = '/app/user-profile/'
+    } else if (include.email) {
+      idsUserProfileLink = '/app/user-profile/email'
+    } else if (include.phone) {
+      idsUserProfileLink = '/app/user-profile/phone'
+    }
+
+    if (!idsUserProfileLink) {
+      throw new Error('Missing user profile link type')
+    }
+
     const slug = getSlugFromType(application.typeId)
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',
     ) as string
 
-    return `${this.idsClientConfig.issuer}/app/user-profile/email?state=update&returnUrl=${clientLocationOrigin}/${slug}/${application.id}`
+    return `${this.idsClientConfig.issuer}${idsUserProfileLink}?state=update&returnUrl=${clientLocationOrigin}/${slug}/${application.id}`
   }
 }
