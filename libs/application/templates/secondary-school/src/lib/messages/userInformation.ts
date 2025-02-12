@@ -50,7 +50,7 @@ export const userInformation = {
     alertMessage: {
       id: 'ss.application:userInformation.applicationType.alertMessage',
       defaultMessage:
-        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is',
+        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is eða í síma 514-7500',
       description: 'Application type alert message',
     },
   }),

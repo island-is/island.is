@@ -39,7 +39,7 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
-import { CaseFile } from '../../file'
+import { CaseFile } from '../../file/models/file.model'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
@@ -1089,4 +1089,12 @@ export class Case extends Model {
   @HasMany(() => CivilClaimant, 'caseId')
   @ApiPropertyOptional({ type: () => CivilClaimant, isArray: true })
   civilClaimants?: CivilClaimant[]
+
+  /**********
+   * Indicates whether an investigation case was completed without a ruling -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isCompletedWithoutRuling?: boolean
 }

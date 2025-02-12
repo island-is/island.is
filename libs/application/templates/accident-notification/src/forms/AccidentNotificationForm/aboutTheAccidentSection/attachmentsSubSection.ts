@@ -5,6 +5,8 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   addDocuments,
@@ -19,7 +21,6 @@ import { isRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 import { AttachmentsEnum } from '../../../types'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
 import { isReportingOnBehalfOfInjured } from '../../../utils/reportingUtils'
-import { NO, YES } from '@island.is/application/types'
 import { isFatalAccident } from '../../../utils/accidentUtils'
 
 // Injury certificate and fatal accident section

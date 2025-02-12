@@ -129,6 +129,7 @@ export class FileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
+  // TODO: Add tests for this endpoint
   @UseGuards(
     RolesGuard,
     CaseExistsGuard,
@@ -160,6 +161,7 @@ export class FileController {
     )
   }
 
+  // TODO: Add tests for this endpoint
   @UseGuards(
     RolesGuard,
     CaseExistsGuard,
@@ -263,7 +265,11 @@ export class FileController {
     CaseReceivedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,

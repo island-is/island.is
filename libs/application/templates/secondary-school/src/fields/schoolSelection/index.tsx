@@ -6,7 +6,7 @@ import { school } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { SelectionItem } from './SelectionItem'
-import { ApplicationType, hasDuplicates, SecondarySchool } from '../../utils'
+import { checkIsFreshman, hasDuplicates, SecondarySchool } from '../../utils'
 import { SecondarySchoolAnswers } from '../..'
 
 export const SchoolSelection: FC<FieldBaseProps> = (props) => {
@@ -18,11 +18,7 @@ export const SchoolSelection: FC<FieldBaseProps> = (props) => {
     `${props.field.id}[0].firstProgram.isSpecialNeedsProgram`,
   )
 
-  const isFreshman =
-    getValueViaPath<ApplicationType>(
-      application.answers,
-      'applicationType.value',
-    ) === ApplicationType.FRESHMAN
+  const isFreshman = checkIsFreshman(application.answers)
 
   const schools = getValueViaPath<SecondarySchool[]>(
     application.externalData,

@@ -79,8 +79,7 @@ const CaseDocuments: FC<Props> = ({
 
   const { user } = useContext(UserContext)
 
-  const isRulingRequired =
-    workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING
+  const isRulingRequired = !workingCase.isCompletedWithoutRuling
 
   return (
     <Box marginBottom={10}>

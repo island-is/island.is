@@ -76,6 +76,7 @@ export type RepeaterFields =
   | 'date'
   | 'nationalIdWithName'
   | 'phone'
+  | 'selectAsync'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -187,6 +188,15 @@ export type RepeaterItem = {
       component: 'phone'
       format: string
     }
+  | {
+      component: 'selectAsync'
+      label: StaticText
+      isMulti?: boolean
+      isSearchable?: boolean
+      loadOptions(c: AsyncSelectContext): Promise<Option[]>
+      clearOnChange?: string[]
+      updateOnSelect?: string
+    }
 )
 
 export type AlertMessageLink = {
@@ -273,6 +283,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   VEHICLE_RADIO = 'VEHICLE_RADIO',
+  VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
   SLIDER = 'SLIDER',
   DISPLAY = 'DISPLAY',
@@ -311,6 +322,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   VEHICLE_RADIO = 'VehicleRadioFormField',
+  VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
   SLIDER = 'SliderFormField',
   DISPLAY = 'DisplayFormField',
@@ -728,8 +740,29 @@ export interface VehicleRadioField extends InputField {
   component: FieldComponents.VEHICLE_RADIO
   itemType: 'VEHICLE' | 'PLATE'
   itemList: unknown[]
+  shouldValidateErrorMessages?: boolean
   shouldValidateDebtStatus?: boolean
   shouldValidateRenewal?: boolean
+  alertMessageErrorTitle?: FormText
+  validationErrorMessages?: Record<string, FormText>
+  validationErrorFallbackMessage?: FormText
+  inputErrorMessage: FormText
+  debtStatusErrorMessage?: FormText
+  renewalExpiresAtTag?: StaticText
+  validateRenewal?: (item: unknown) => boolean
+}
+
+export interface VehicleSelectField extends InputField {
+  readonly type: FieldTypes.VEHICLE_SELECT
+  component: FieldComponents.VEHICLE_SELECT
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  getDetails?: (value: string) => Promise<unknown>
+  shouldValidateErrorMessages?: boolean
+  shouldValidateDebtStatus?: boolean
+  shouldValidateRenewal?: boolean
+  inputLabelText?: FormText
+  inputPlaceholderText?: FormText
   alertMessageErrorTitle?: FormText
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
@@ -848,6 +881,7 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | VehicleRadioField
+  | VehicleSelectField
   | StaticTableField
   | SliderField
   | DisplayField
