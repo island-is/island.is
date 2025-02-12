@@ -18,8 +18,8 @@ SKIP_TESTS_ON_BRANCH=${SKIP_TESTS_ON_BRANCH:-}
 if [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]] || [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "[]"
-elif [[ "${CI_DEBUG:-}" == true ]]; then
-  echo '["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web","license-api","system-e2e","island-ui-storybook"]'
+if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
+  echo "$CHUNKS_DEBUG"
 else
   PROJECTS=$("$PROJECT_ROOT"/scripts/ci/_nx-affected-targets.sh "$1")
   >&2 echo "Projects: ${PROJECTS}"
