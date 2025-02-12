@@ -71,6 +71,7 @@ env:
     type=s3,mode=min,region=${{ vars.AWS_REGION }},bucket=${{ secrets.AWS_S3_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
   AWS_CACHE_TO_COMMON: |
     type=s3,mode=max,region=${{ vars.AWS_REGION }},bucket=${{ secrets.AWS_S3_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }}
+  DOCKERFILE: ./scripts/ci/Dockerfile
 
 jobs:
   prepare:
@@ -81,15 +82,27 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
       playwright-image-tag: ${{ steps.args-prep.outputs.playwright-image-tag }}
+      build-args: ${{ steps.args-prep.outputs.build-args }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Build arg prep
         id: args-prep
         run: |
+          # Setters
           node_image_version="$NODE_IMAGE_VERSION"
-          echo node-image-version="$node_image_version" >>"$GITHUB_OUTPUT"
-          yarn info --json @playwright/test | jq -r '.children.Version | "playwright-image-tag=v\(.)-focal"' >>"$GITHUB_OUTPUT"
+          playwright_image_tag="$(yarn info --json @playwright/test | jq -r '.children.Version | "v\(.)-focal"')"
+          # Outputters
+          echo node-image-version="$node_image_version" | tee -a "$GITHUB_OUTPUT"
+          echo playwright-image-tag="$playwright_image_tag" | tee -a "$GITHUB_OUTPUT"
+          # Multi-line build-args (End-Of-Multiline)
+          cat <<EOM | tee -a "$GITHUB_OUTPUT"
+          build-args<<EOF
+            NODE_IMAGE_VERSION=$node_image_version
+            PLAYWRIGHT_IMAGE_TAG=$playwright_image_tag
+            DOCKER_IMAGE_REGISTRY=$ECR_PULLTHROUGH_CACHE
+          EOF
+          EOM
 
       - name: Create matrix from input
         id: set-matrix
@@ -131,58 +144,9 @@ jobs:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
       contents: read # This is required for actions/checkout
 
-    outputs:
-      common: ${{ steps.debug.outputs.common }}
-
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
-
-      - name: Common config
-        id: common
-        env:
-          build_args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
-          image_repository: ${{ env.IMAGE_REGISTRY }}
-          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-        run: |
-          args=(
-            --arg build_args "$build_args"
-            --arg image_repository "$IMAGE_REGISTRY"
-            --arg cache_from_common "$AWS_CACHE_FROM_COMMON"
-            --arg cache_to_common "$AWS_CACHE_TO_COMMON"
-            --arg cache_prefix "$AWS_CACHE_PREFIX"
-          )
-          echo | jq -rsc \
-            "${args[@]}" \
-            '{
-              file: "scripts/ci/Dockerfile",
-              push: false,
-              "build-args": $build_args,
-              "image-repository": $image_repository,
-              "cache-from-common": $cache_from_common,
-              "cache-to-common": $cache_to_common,
-              "cache-prefix": $cache_prefix
-            }
-              | to_entries
-              | .[]
-              # Use GitHub multi-line outputs, but cheekily done inline here 🤭
-              | "\(.key)<<EOF\n\(.value)\nEOF"
-            ' | tee -a "$GITHUB_OUTPUT"
-
-      - name: Debug common config
-        id: debug
-        env:
-          common: ${{ toJson(steps.common.outputs) }}
-        run: |
-          echo "DEBUG common"
-          # Shadow with compacted version
-          common="$(echo "$common" | jq -c)"
-          echo "common=$common" | tee -a "$GITHUB_OUTPUT"
-          echo "docker build arguments:"
-          echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
 
       - name: Debug AWS user/login
         run: |
@@ -211,65 +175,20 @@ jobs:
           use: true
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (base)
-        uses: docker/build-push-action@v6
-        with:
-          target: base
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ steps.common.outputs.file }}
-          push: ${{ steps.common.outputs.push }}
-          build-args: ${{ steps.common.outputs.build-args }}
-          cache-from: |
-            ${{ steps.common.outputs.cache-from-common }}
-            ${{ steps.common.outputs.cache-prefix }},name=target-base
-          cache-to: |
-            ${{ steps.common.outputs.cache-prefix }},name=target-base;${{ github.sha }};${{ github.ref }}
-
-      - name: Docker build/cache dependencies (deps)
-        uses: docker/build-push-action@v6
-        with:
-          target: deps
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ steps.common.outputs.file }}
-          push: ${{ steps.common.outputs.push }}
-          build-args: ${{ steps.common.outputs.build-args }}
-          cache-from: |
-            ${{ steps.common.outputs.cache-from-common }}
-            ${{ steps.common.outputs.cache-prefix }},name=target-deps
-          cache-to: |
-            ${{ steps.common.outputs.cache-prefix }},name=target-deps;${{ github.sha }};${{ github.ref }}
-
-      - name: Docker build/cache dependencies (output-base)
-        uses: docker/build-push-action@v6
-        with:
-          target: output-base
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ steps.common.outputs.file }}
-          push: ${{ steps.common.outputs.push }}
-          build-args: ${{ steps.common.outputs.build-args }}
-          cache-from: |
-            ${{ steps.common.outputs.cache-from-common }}
-            ${{ steps.common.outputs.cache-prefix }},name=target-output-base
-          cache-to: |
-            ${{ steps.common.outputs.cache-prefix }},name=target-output-base;${{ github.sha }};${{ github.ref }}
-
       - name: Docker build/cache dependencies (output-base-with-pg)
         uses: docker/build-push-action@v6
         with:
           target: output-base-with-pg
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ steps.common.outputs.file }}
-          push: ${{ steps.common.outputs.push }}
-          build-args: ${{ steps.common.outputs.build-args }}
+          file: ${{ env.DOCKERFILE }}
+          push: ${{ !github.event.localrun }}
+          build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
-            ${{ steps.common.outputs.cache-from-common }}
-            ${{ steps.common.outputs.cache-prefix }},name=target-output-base-with-pg
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base-with-pg
           cache-to: |
-            ${{ steps.common.outputs.cache-prefix }},name=target-output-base-with-pg;${{ github.sha }};${{ github.ref }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base-with-pg;${{ github.sha }};${{ github.ref }}
 
   build:
     name: Build ${{ matrix.project }}
@@ -288,53 +207,6 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
-
-      # Outputs can't contain secrets, or GitHub will remove the entire output (very annoying here because the output is a JSON object)
-      # Thus, we have to duplicate. See above for more docs
-      - name: Common config
-        id: common
-        env:
-          build_args: |
-            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
-            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
-            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
-          image_repository: ${{ env.IMAGE_REGISTRY }}
-          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-        run: |
-          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
-          cache_from_common="
-            $cache_prefix,name=$GITHUB_SHA
-            $cache_prefix,name=$GITHUB_REF
-          "
-          cache_to_common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF"
-          echo | jq -rsc \
-            --arg build_args "$build_args"  --arg image_repository "$image_repository" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
-          '{
-            file: "scripts/ci/Dockerfile",
-            push: false,
-            "build-args": $build_args,
-            "image-repository": $image_repository,
-            "cache-from-common": $cache_from_common,
-            "cache-to-common": $cache_to_common,
-            "cache-prefix": $cache_prefix
-          }
-            | to_entries
-            | .[]
-            # Use GitHub multi-line outputs, but cheekily done inline here 🤭
-            | "\(.key)<<EOF\n\(.value)\nEOF"
-          ' | tee -a "$GITHUB_OUTPUT"
-
-      - name: Debug common config
-        id: debug
-        env:
-          common: ${{ toJson(steps.common.outputs) }}
-        run: |
-          echo "DEBUG common"
-          # Shadow with compacted version
-          common="$(echo "$common" | jq -c)"
-          echo "common=$common" | tee -a "$GITHUB_OUTPUT"
-          echo "docker build arguments:"
-          echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
 
       - name: Log in to Amazon ECR
         if: ${{ !github.event.localrun }}
@@ -364,7 +236,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ steps.common.outputs.image-repository }}
+            ${{ env.IMAGE_REGISTRY }}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
@@ -387,19 +259,18 @@ jobs:
         with:
           target: output-${{ matrix.docker }}
           context: .
-          file: ${{ steps.common.outputs.file }}
+          file: ${{ env.DOCKERFILE }}
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           secrets: |
             nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
-            ${{ steps.common.outputs.build-args }}
+            ${{ needs.prepare.outputs.build-args }}
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
-            ${{ steps.common.outputs.cache-from-common }}
-            ${{ steps.common.outputs.cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
-          cache-to:
-            ${{ steps.common.outputs.cache-to-common }}
-            ${{ steps.common.outputs.cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-output-${{ matrix.docker }},mode=min
+          cache-to: |
+            ${{ env.AWS_CACHE_PREFIX }},name=target-output-${{ matrix.docker }};${{ github.sha }};${{ github.ref }},mode=min
