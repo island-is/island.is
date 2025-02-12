@@ -89,7 +89,6 @@ export const Spouse: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submitApplication',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
