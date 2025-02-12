@@ -12,12 +12,12 @@ runs:
     - name: Prepare generated files
       shell: bash
       run: |
-        echo "generated files: ${{ input.generated_files }}"
-        node ./scripts/ci/generate-files.mjs ${{ input.generated_files }}
+        echo "generated files: ${{ inputs.generated_files }}"
+        node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
 
     - name: Cache Generated files
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ input.generated_files }}
+          ${{ inputs.generated_files }}
         key: generated-files-${{ github.sha }}
