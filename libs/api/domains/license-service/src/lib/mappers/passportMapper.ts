@@ -252,7 +252,7 @@ export class PassportMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(document),
       metadata: {
         links,
-        licenseNumber: document.number?.toString() ?? '',
+        licenseNumber: document.numberWithType?.toString() ?? '',
         licenseId: document.number?.toString(),
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
