@@ -35,7 +35,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
 
     env:
@@ -58,57 +58,17 @@ jobs:
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
-      # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - run: |
-          corepack enable
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          yarn --version
-          ls -l "$(which node)"
 
       - name: Set cache key
         id: set-cache-key
         run: |
           echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Prepare generated files
         run: |
@@ -239,7 +199,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -250,20 +210,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -290,7 +238,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -306,20 +254,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -339,25 +275,13 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -392,7 +316,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 5
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -403,20 +327,8 @@ jobs:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - run: |
-          corepack enable
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -439,7 +351,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -451,20 +363,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -484,7 +385,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -495,20 +396,9 @@ jobs:
     if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -526,7 +416,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-test
     if: ${{ !cancelled() }}
     needs:
       - prepare
