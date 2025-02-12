@@ -5,9 +5,11 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { information, shared } from '../../../lib/messages'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 export const projectPurchaseSection = buildSubSection({
   id: 'projectPurchaseSection',

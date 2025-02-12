@@ -105,28 +105,29 @@ const OrganizationParentSubpage: Screen<
                           <Stack space={1}>
                             {tableOfContentHeadings.map(
                               ({ headingTitle, headingId, href }) => (
-                                <LinkV2
+                                <Box
                                   key={headingId}
-                                  href={href}
                                   className={styles.fitContentWidth}
                                 >
-                                  <Text
-                                    fontWeight={
-                                      headingId === selectedHeadingId
-                                        ? 'semiBold'
-                                        : 'regular'
-                                    }
-                                    variant="small"
-                                    color={
-                                      selectedHeadingId &&
-                                      headingId === selectedHeadingId
-                                        ? 'blue400'
-                                        : 'blue600'
-                                    }
-                                  >
-                                    {headingTitle}
-                                  </Text>
-                                </LinkV2>
+                                  <LinkV2 href={href}>
+                                    <Text
+                                      fontWeight={
+                                        headingId === selectedHeadingId
+                                          ? 'semiBold'
+                                          : 'regular'
+                                      }
+                                      variant="small"
+                                      color={
+                                        selectedHeadingId &&
+                                        headingId === selectedHeadingId
+                                          ? 'blue400'
+                                          : 'blue600'
+                                      }
+                                    >
+                                      {headingTitle}
+                                    </Text>
+                                  </LinkV2>
+                                </Box>
                               ),
                             )}
                           </Stack>
