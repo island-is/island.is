@@ -138,6 +138,8 @@ export const languageSubSection = buildSubSection({
               application.answers,
             )
 
+            if (!selectedLanguages?.length) return []
+
             return getAllLanguageCodes()
               .filter((language) => {
                 return selectedLanguages.some(
