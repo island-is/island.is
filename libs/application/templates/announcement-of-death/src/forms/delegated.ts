@@ -10,7 +10,6 @@ import AOD from '../assets/AOD'
 
 export const delegated: Form = buildForm({
   id: 'delegated',
-  title: '',
   mode: FormModes.IN_PROGRESS,
   logo: CoatOfArms,
   renderLastScreenButton: true,

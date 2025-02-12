@@ -11,7 +11,6 @@ import { NoDebtCertificateApi } from '../dataProviders'
 
 export const NoDebtCertificateForm: Form = buildForm({
   id: 'NoDebtCertificateFormDraft',
-  title: '',
   mode: FormModes.DRAFT,
   children: [
     buildSection({

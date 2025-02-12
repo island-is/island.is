@@ -13,7 +13,6 @@ import Grieving from '../components/assets/Grieving'
 
 export const done: Form = buildForm({
   id: 'divisionOfEstateDone',
-  title: '',
   mode: FormModes.COMPLETED,
   renderLastScreenButton: true,
   children: [

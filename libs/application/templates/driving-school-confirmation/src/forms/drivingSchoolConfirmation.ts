@@ -19,7 +19,6 @@ import { m } from '../lib/messages'
 export const getDrivingSchoolConfirmation = (): Form => {
   return buildForm({
     id: 'getDrivingSchoolConfirmation',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

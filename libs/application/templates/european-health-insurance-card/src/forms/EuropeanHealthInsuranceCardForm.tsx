@@ -33,7 +33,6 @@ import { useLocale } from '@island.is/localization'
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
-  title: '',
   logo: Sjukra,
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,

@@ -18,7 +18,6 @@ import Logo from '../assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenBackButton: true,

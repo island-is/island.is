@@ -23,7 +23,6 @@ export const MortgageCertificateForm = (
 ): Form => {
   return buildForm({
     id: 'MortgageCertificateFormDraft',
-    title: '',
     logo: Logo,
     mode: FormModes.DRAFT,
     renderLastScreenBackButton: true,

@@ -16,7 +16,6 @@ import { Logo } from '../assets/Logo'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.REJECTED,
   children: [

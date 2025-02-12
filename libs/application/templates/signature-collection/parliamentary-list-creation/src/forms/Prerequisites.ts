@@ -25,7 +25,6 @@ import {
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

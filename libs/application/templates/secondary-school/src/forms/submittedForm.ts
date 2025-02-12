@@ -15,7 +15,6 @@ import { checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
   id: 'SubmittedForm',
-  title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,

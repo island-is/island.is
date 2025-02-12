@@ -17,7 +17,6 @@ import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,

@@ -10,7 +10,6 @@ import { getChosenApplicant, hasSecondGuardian } from '../utils'
 
 export const Approved: Form = buildForm({
   id: 'Approved',
-  title: '',
   mode: FormModes.APPROVED,
   children: [
     buildFormConclusionSection({

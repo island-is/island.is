@@ -20,7 +20,6 @@ import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
   id: 'PresidentialListCreationDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

@@ -15,7 +15,6 @@ export const getForm = ({
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     children: [

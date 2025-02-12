@@ -16,7 +16,6 @@ import { SelectedProperty } from '../shared'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

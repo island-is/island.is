@@ -20,7 +20,6 @@ export const EditsRequireAction: Form = buildForm({
   children: [
     buildSection({
       id: 'EditsRequireAction.section',
-      title: '',
       children: [
         buildMultiField({
           id: 'editsRequireAction.multiField',

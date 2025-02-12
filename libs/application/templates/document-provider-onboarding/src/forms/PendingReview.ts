@@ -10,7 +10,6 @@ import { m } from '../lib/messages'
 
 export const PendingReview: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
-  title: '',
   mode: FormModes.IN_PROGRESS,
   children: [
     buildMultiField({

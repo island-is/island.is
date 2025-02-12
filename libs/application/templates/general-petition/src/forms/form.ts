@@ -32,7 +32,6 @@ import addMonths from 'date-fns/addMonths'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

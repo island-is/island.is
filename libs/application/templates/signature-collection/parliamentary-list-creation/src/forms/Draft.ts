@@ -24,7 +24,6 @@ import { Signee } from '@island.is/clients/signature-collection'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

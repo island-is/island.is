@@ -12,7 +12,6 @@ import { Logo } from '../assets/Logo'
 
 export const InReview: Form = buildForm({
   id: 'InReviewForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

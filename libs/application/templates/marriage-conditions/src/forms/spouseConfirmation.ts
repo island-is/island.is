@@ -35,7 +35,6 @@ import DigitalServices from '../assets/DigitalServices'
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
     id: 'spouseConfirmation',
-    title: '',
     mode: FormModes.IN_PROGRESS,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

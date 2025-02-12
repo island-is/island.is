@@ -16,7 +16,6 @@ type Answers = zinfer<typeof dataSchema>
 
 export const Done: Form = buildForm({
   id: 'done',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     /* Sections for the stepper */

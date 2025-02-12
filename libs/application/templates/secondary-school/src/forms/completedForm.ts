@@ -12,7 +12,6 @@ import { Logo } from '../assets/Logo'
 
 export const Completed: Form = buildForm({
   id: 'CompletedForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

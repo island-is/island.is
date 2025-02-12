@@ -30,7 +30,6 @@ export const done: Form = buildForm({
   children: [
     buildSection({
       id: 'done',
-      title: '',
       children: [
         buildMultiField({
           id: 'done',

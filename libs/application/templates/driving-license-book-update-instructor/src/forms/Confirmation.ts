@@ -8,7 +8,6 @@ import { information, externalData, confirmation } from '../lib/messages'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildSection({

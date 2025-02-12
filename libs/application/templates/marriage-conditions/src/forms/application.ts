@@ -46,7 +46,6 @@ import DigitalServices from '../assets/DigitalServices'
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

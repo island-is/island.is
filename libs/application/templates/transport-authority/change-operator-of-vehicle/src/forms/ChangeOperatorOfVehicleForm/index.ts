@@ -12,7 +12,6 @@ import { Logo } from '../../assets/Logo'
 
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [

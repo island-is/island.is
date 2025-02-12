@@ -34,7 +34,6 @@ import { fakeDataSection } from './fakeDataSection'
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'OperatingLicenseApplicationDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

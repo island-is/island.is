@@ -12,7 +12,6 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 
 export const Done: Form = buildForm({
   id: 'done',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     /* Sections for the stepper */

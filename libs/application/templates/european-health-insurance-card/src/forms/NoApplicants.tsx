@@ -24,7 +24,6 @@ import { useLocale } from '@island.is/localization'
 
 export const NoApplicants: Form = buildForm({
   id: 'NoApplicants',
-  title: '',
   mode: FormModes.COMPLETED,
 
   children: [
