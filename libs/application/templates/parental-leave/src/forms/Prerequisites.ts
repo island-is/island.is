@@ -1,4 +1,6 @@
 import {
+  NO,
+  YES,
   buildAlertMessageField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
@@ -27,11 +29,9 @@ import Logo from '../assets/Logo'
 import { defaultMultipleBirthsMonths } from '../config'
 import {
   ADOPTION,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
-  YES,
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
@@ -382,6 +382,12 @@ export const PrerequisitesForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.salaryInformationTitle,
                   subTitle:
                     parentalLeaveFormMessages.shared.salaryInformationSubTitle,
+                }),
+                buildDataProviderPermissionItem({
+                  id: 'taxInfo',
+                  title: parentalLeaveFormMessages.shared.taxInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.taxInformationSubTitle,
                 }),
               ],
             }),

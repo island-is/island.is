@@ -28,15 +28,13 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
+import { shortenText } from '@island.is/web/utils/shortenText'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import {
-  shortenText,
-  VACANCY_INTRO_MAX_LENGTH,
-} from './IcelandicGovernmentInstitutionVacanciesList'
+import { VACANCY_INTRO_MAX_LENGTH } from './IcelandicGovernmentInstitutionVacanciesList'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 

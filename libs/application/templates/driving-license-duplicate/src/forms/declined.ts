@@ -6,13 +6,14 @@ import {
   getValueViaPath,
   buildAlertMessageField,
   buildKeyValueField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
 import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
 import { allowFakeCondition, requirementsMet } from '../lib/utils'
-import { NO, YES } from '../lib/constants'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 

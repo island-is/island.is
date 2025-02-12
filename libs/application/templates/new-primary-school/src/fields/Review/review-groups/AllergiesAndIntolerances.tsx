@@ -1,5 +1,4 @@
-import { coreErrorMessages } from '@island.is/application/core'
-import { YES } from '@island.is/application/types'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import {
   DataValue,
   RadioValue,
@@ -41,13 +40,13 @@ export const AllergiesAndIntolerances = ({
     options: foodAllergiesOrIntolerancesOptions,
     loading: foodAllergiesOrIntolerancesLoading,
     error: foodAllergiesOrIntolerancesError,
-  } = useFriggOptions(OptionsType.INTOLERANCE) // TODO: Update when Júní has updated key-options
+  } = useFriggOptions(OptionsType.FOOD_ALLERGY_AND_INTOLERANCE)
 
   const {
     options: otherAllergiesOptions,
     loading: otherAllergiesLoading,
     error: otherAllergiesError,
-  } = useFriggOptions(OptionsType.ALLERGY) // TODO: Update when Júní has updated key-options
+  } = useFriggOptions(OptionsType.ALLERGY)
 
   return (
     <ReviewGroup

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -61,20 +61,25 @@ export const FieldsRepeaterFormField = ({
     Math.max(numberOfItemsInAnswers ?? 0, minRows),
   )
   const [updatedApplication, setUpdatedApplication] = useState(application)
+  const stableApplication = useMemo(() => application, [application])
+  const stableAnswers = useMemo(() => answers, [answers])
 
   useEffect(() => {
-    if (!isEqual(application, updatedApplication)) {
-      setUpdatedApplication({
-        ...application,
-        answers: { ...answers },
-      })
-    }
-  }, [answers])
+    setUpdatedApplication((prev) => {
+      if (isEqual(prev, { ...stableApplication, answers: stableAnswers })) {
+        return prev
+      }
 
-  const items = Object.keys(rawItems).map((key) => ({
-    id: key,
-    ...rawItems[key],
-  }))
+      return { ...stableApplication, answers: stableAnswers }
+    })
+  }, [stableApplication, stableAnswers])
+
+  const items = Object.keys(rawItems).map((key) => {
+    return {
+      id: key,
+      ...rawItems[key],
+    }
+  })
 
   const { formatMessage, lang: locale } = useLocale()
 
@@ -90,17 +95,19 @@ export const FieldsRepeaterFormField = ({
   }
 
   const handleRemoveItem = () => {
+    const items = getValueViaPath<Array<unknown>>(answers, id)
+
     if (numberOfItems > (numberOfItemsInAnswers || 0)) {
       setNumberOfItems(numberOfItems - 1)
     } else if (numberOfItems === numberOfItemsInAnswers) {
-      setValue(id, answers[id].slice(0, -1))
+      setValue(id, items?.slice(0, -1))
       setNumberOfItems(numberOfItems - 1)
     } else if (
       numberOfItemsInAnswers &&
       numberOfItems < numberOfItemsInAnswers
     ) {
       const difference = numberOfItems - numberOfItemsInAnswers
-      setValue(id, answers[id].slice(0, difference))
+      setValue(id, items?.slice(0, difference))
       setNumberOfItems(numberOfItems)
     }
 

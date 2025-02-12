@@ -25,6 +25,7 @@ import {
 import { m } from './messages'
 import { dataSchema } from './dataSchema'
 import { truthyFeatureFromClient } from './utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_LEARNERS_PERMIT]
@@ -35,6 +36,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LEARNERS_PERMIT,
   name: m.name,
+  codeOwner: CodeOwners.Juni,
   institution: m.institutionName,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],

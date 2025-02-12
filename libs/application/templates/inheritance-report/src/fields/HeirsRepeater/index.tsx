@@ -39,6 +39,10 @@ import {
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import ShareInput from '../../components/ShareInput'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
+import {
+  integerPercentageSplit,
+  isEqualWithTolerance,
+} from '../../lib/utils/integerSplit'
 
 export const HeirsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & HeirsRepeaterProps>
@@ -165,7 +169,11 @@ export const HeirsRepeater: FC<
 
       return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
     }, 0)
-    total = parseFloat(total.toFixed(6))
+    if (isEqualWithTolerance(total, 100)) {
+      total = 100
+    } else {
+      total = parseFloat(total.toFixed(6))
+    }
 
     const addTotal = id.replace('data', 'total')
 
@@ -213,7 +221,25 @@ export const HeirsRepeater: FC<
         ? getPrePaidTotalValueFromApplication(application)
         : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
 
-      const inheritanceValue = netPropertyForExchange * percentage
+      const heirPercentages = heirs.map((h) => {
+        return parseFloat(h.heirsPercentage ?? '0')
+      })
+
+      let inheritanceValue
+      const roughlySumsTo100 = isEqualWithTolerance(
+        heirPercentages.reduceRight((p, c) => p + c),
+        100,
+      )
+      if (roughlySumsTo100) {
+        const netPropertySplit = integerPercentageSplit(
+          netPropertyForExchange,
+          heirPercentages,
+        )
+        inheritanceValue = netPropertySplit[index ?? 0]
+      } else {
+        inheritanceValue = netPropertyForExchange * percentage
+      }
+
       const customSpouseSharePercentage = getValueViaPath<string>(
         answers,
         'customShare.customSpouseSharePercentage',
@@ -221,11 +247,30 @@ export const HeirsRepeater: FC<
       const withCustomPercentage =
         (100 - Number(customSpouseSharePercentage)) * 2
 
-      const taxFreeInheritanceValue = isSpouse
-        ? inheritanceValue
-        : customSpouseSharePercentage
-        ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
-        : inheritanceTaxFreeLimit * percentage
+      // This is a complicated calculation that's difficult to reason about.
+      // It's been confirmed to work to DC's standards and thus it remains
+      // functionally unaltered when calculating the augmented percentageSplit
+      // for heir percentages that finally add up to 100 (during user input)
+      let taxFreeInheritanceValue
+      if (roughlySumsTo100) {
+        const taxablePropertySplit = integerPercentageSplit(
+          inheritanceTaxFreeLimit,
+          heirPercentages,
+        )
+        const heirSplit = taxablePropertySplit[index ?? 0]
+        taxFreeInheritanceValue = isSpouse
+          ? inheritanceValue
+          : customSpouseSharePercentage
+          ? (withCustomPercentage / 100) * heirSplit
+          : heirSplit
+      } else {
+        taxFreeInheritanceValue = isSpouse
+          ? inheritanceValue
+          : customSpouseSharePercentage
+          ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
+          : inheritanceTaxFreeLimit * percentage
+      }
+
       const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
 
       const inheritanceTaxValue = isSpouse ? 0 : taxableInheritanceValue * 0.1
