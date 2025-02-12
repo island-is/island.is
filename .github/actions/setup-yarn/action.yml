@@ -4,28 +4,6 @@ description: 'Yarn setup and install dependencies'
 runs:
   using: 'composite'
   steps:
-    - name: Debug file access
-      shell: bash
-      run: |
-        echo "Current directory contents:"
-        ls -la
-        echo "------------------------"
-        echo "Dependencies directory contents:"
-        ls -la /home/runner/dependencies
-        echo "------------------------"
-        echo "Current yarn.lock hash:"
-        sha256sum yarn.lock
-        echo "------------------------"
-        echo "Dependencies yarn.lock hash:"
-        sha256sum /home/runner/dependencies/yarn.lock
-        echo "------------------------"
-        echo "Current user and groups:"
-        id
-        echo "------------------------"
-        echo "File permissions:"
-        stat yarn.lock
-        stat /home/runner/dependencies/yarn.lock
-
     - name: Compare yarn.lock files
       shell: bash
       id: compare_yarn_lock
@@ -47,12 +25,12 @@ runs:
 
     - name: Run yarn install if yarn.lock changed
       shell: bash
-      if: steps.compare_lock.outputs.skip_install == 'false'
+      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
       run: |
         yarn install --immutable
 
     - name: Link pre-installed dependencies
-      if: steps.compare_lock.outputs.skip_install == 'true'
+      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
       shell: bash
       run: |
         rm -rf node_modules
