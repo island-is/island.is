@@ -99,6 +99,7 @@ jobs:
           echo build-args"<<EOF" | tee -a "$GITHUB_OUTPUT"
           echo NODE_IMAGE_VERSION="$node_image_version" | tee -a "$GITHUB_OUTPUT"
           echo PLAYWRIGHT_IMAGE_VERSION="$playwright_image_version" | tee -a "$GITHUB_OUTPUT"
+          echo PLAYWRIGHT_VERSION="$playwright_image_version" | tee -a "$GITHUB_OUTPUT" # Duplicate for compatability
           echo DOCKER_IMAGE_REGISTRY="$ECR_PULLTHROUGH_CACHE" | tee -a "$GITHUB_OUTPUT"
           echo EOF | tee -a "$GITHUB_OUTPUT"
 
