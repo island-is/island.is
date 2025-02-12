@@ -206,6 +206,7 @@ export const m = defineMessages({
     defaultMessage:
       'The file overview can have width "full" or "half". The file name is the only required property.',
     description: 'Overview description for the file section',
+  },
   overviewDescription: {
     id: 'example.application:overviewDescription',
     defaultMessage:

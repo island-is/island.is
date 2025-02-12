@@ -1,5 +1,6 @@
+import React from 'react'
 import { formatTextWithLocale } from '@island.is/application/core'
-import { FieldBaseProps, OverviewField } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   Box,
@@ -9,9 +10,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Locale } from '@island.is/shared/types'
 import { FileItem } from './FileItem'
-
+import { OverviewField } from '@island.is/application/types'
 interface Props extends FieldBaseProps {
   field: OverviewField
 }
@@ -76,7 +76,7 @@ export const OverviewFormField = ({
                 <Box paddingBottom={3}>
                   {item.lineAboveKeyText && (
                     <Box paddingBottom={2}>
-                      <Divider weight="thick" />
+                      <Divider weight="black" thickness="thick" />
                     </Box>
                   )}
 
