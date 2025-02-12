@@ -4,6 +4,14 @@ description: 'Yarn setup and install dependencies'
 runs:
   using: 'composite'
   steps:
+    - name: Compare package.json files
+      shell: bash
+      id: check_package
+      run: |
+        skip_install=${{ hashFiles('package.json') == hashFiles('/home/runner/dependencies/package.json') }}
+        echo "Will skip running 'yarn install' step: $skip_install"
+        echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
+
     - name: Setup Yarn
       shell: bash
       run: |
@@ -11,7 +19,14 @@ runs:
         corepack prepare --activate
         yarn --version
 
+    - name: Run yarn install if package.json changed
+      shell: bash
+      if: steps.check_package.outputs.skip_install == 'false'
+      run: |
+        yarn install --immutable
+
     - name: Link pre-installed dependencies
+      if: steps.check_package.outputs.skip_install == 'true'
       shell: bash
       run: |
         rm -rf node_modules
