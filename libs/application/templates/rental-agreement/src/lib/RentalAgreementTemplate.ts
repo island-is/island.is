@@ -17,6 +17,7 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -26,6 +27,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
+  codeOwner: CodeOwners.KolibriKotid,
   name: 'Leigusamningur',
   institution: 'Húsnæðis- og mannvirkjastofnun',
   translationNamespaces: [
