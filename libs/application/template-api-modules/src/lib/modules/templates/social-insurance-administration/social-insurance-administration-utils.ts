@@ -400,7 +400,7 @@ export const transformApplicationToIncomePlanDTO = (
     applicationId: application.id,
     incomePlan: {
       incomeYear: incomePlanConditions.incomePlanYear,
-      distributeIncomeByMonth: shouldDistributeIncomeByMonth(application),   
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(application),
       incomeTypes: getIncomeTypes(application),
     },
   }
@@ -464,16 +464,22 @@ export const getIncomeTypes = (application: Application): IncomeTypes[] => {
   }))
 }
 
-export const shouldDistributeIncomeByMonth = (application: Application): boolean => {
+export const shouldDistributeIncomeByMonth = (
+  application: Application,
+): boolean => {
   // Let TR know if there is any case where income is uneven during the year
   const { incomePlan } = getIPApplicationAnswers(application.answers)
 
-  if (incomePlan.find((i) => i?.unevenIncomePerYear?.[0] === YES && 
-    i?.incomeCategory === INCOME)) {
+  if (
+    incomePlan.find(
+      (i) =>
+        i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
+    )
+  ) {
     return true
   }
   return false
-}  
+}
 
 export const getMonthNumber = (monthName: string): number => {
   // Parse the month name and get the month number (0-based)
