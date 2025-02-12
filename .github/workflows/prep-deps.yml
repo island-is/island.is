@@ -27,7 +27,7 @@ env:
   GENERATED_FILES: ${{ github.sha }}.tar.gz
 
 jobs:
-  prepare:
+  install:
     outputs:
       TEST_CHUNKS: ${{ steps.build_info.outputs.test_chunks }}
       E2E_CHUNKS: ${{ steps.build_info.outputs.e2e_chunks }}
@@ -56,19 +56,7 @@ jobs:
           ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
           echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
 
-      - name: Prepare generated files
-        shell: bash
-        run: |
-          echo "generated files: ${{ env.GENERATED_FILES }}"
-          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Cache Generated files
-        uses: runs-on/cache/save@v4
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
+      - uses: ./.github/actions/prep-deps
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4

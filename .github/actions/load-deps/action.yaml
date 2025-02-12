@@ -1,14 +1,10 @@
 name: 'Load Dependencies'
 description: 'Prerequisite is that the prepare step has already been run'
 inputs:
-  yarn_cache_folder:
-    required: true
-  cypress_cache_folder:
-    required: true
-  cache_key:
-    required: true
   generated_files:
-    required: true
+    required: false
+    description: 'name of the generated files archive to fetch from cache'
+    default: ${{ github.sha }}.tar.gz
 
 runs:
   using: 'composite'
