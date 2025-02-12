@@ -60,34 +60,20 @@ export const FieldsRepeaterFormField = ({
     id,
   )?.length
 
-  const computeMinRows = (
-    maybeMinRows: MaybeWithApplicationAndField<number>,
-    memoApplication: Application,
-    memoField: FieldsRepeaterField,
-  ) => {
-    if (typeof maybeMinRows === 'function') {
-      return maybeMinRows(memoApplication, memoField)
-    }
-
-    return maybeMinRows
-  }
-
-  const finalMinRows = useMemo(
-    () =>
-      computeMinRows(
-        minRows as MaybeWithApplicationAndField<number>,
-        application,
-        data,
-      ),
-    [minRows, application, data],
-  )
-
-  const [numberOfItems, setNumberOfItems] = useState(
-    Math.max(numberOfItemsInAnswers ?? 0, finalMinRows),
-  )
   const [updatedApplication, setUpdatedApplication] = useState(application)
   const stableApplication = useMemo(() => application, [application])
   const stableAnswers = useMemo(() => answers, [answers])
+
+  let computeMinRows: number
+  if (typeof minRows === 'function') {
+    computeMinRows = minRows(updatedApplication, data) // Use updated application
+  } else {
+    computeMinRows = minRows
+  }
+
+  const [numberOfItems, setNumberOfItems] = useState(
+    Math.max(numberOfItemsInAnswers ?? 0, computeMinRows),
+  )
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
@@ -199,7 +185,7 @@ export const FieldsRepeaterFormField = ({
             ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > finalMinRows && (
+            {numberOfItems > computeMinRows && (
               <Box marginRight={2}>
                 <Button
                   variant="ghost"

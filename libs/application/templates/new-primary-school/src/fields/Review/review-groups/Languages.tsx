@@ -70,18 +70,8 @@ export const Languages = ({
               />
             </GridColumn>
           </GridRow>
-          {languageEnvironment === LanguageEnvironmentOptions.ONLY_ICELANDIC ? (
-            <GridRow>
-              <GridColumn span={['12/12']}>
-                <RadioValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds.signLanguage,
-                  )}
-                  value={signLanguage}
-                />
-              </GridColumn>
-            </GridRow>
-          ) : (
+          {languageEnvironment !==
+            LanguageEnvironmentOptions.ONLY_ICELANDIC && (
             <>
               <GridRow rowGap={2}>
                 {selectedLanguages?.map(({ code }, index) => (
@@ -112,26 +102,31 @@ export const Languages = ({
                   </GridColumn>
                 </GridRow>
               )}
-              <GridRow rowGap={2}>
-                <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
-                  <RadioValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds.signLanguage,
-                    )}
-                    value={signLanguage}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
-                  <RadioValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds.interpreter,
-                    )}
-                    value={guardianRequiresInterpreter}
-                  />
-                </GridColumn>
-              </GridRow>
             </>
           )}
+
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  newPrimarySchoolMessages.differentNeeds.signLanguage,
+                )}
+                value={signLanguage}
+              />
+            </GridColumn>
+
+            {languageEnvironment !==
+              LanguageEnvironmentOptions.ONLY_ICELANDIC && (
+              <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+                <RadioValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.differentNeeds.interpreter,
+                  )}
+                  value={guardianRequiresInterpreter}
+                />
+              </GridColumn>
+            )}
+          </GridRow>
         </Stack>
       )}
     </ReviewGroup>
