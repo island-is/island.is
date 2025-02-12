@@ -91,7 +91,6 @@ export const TableRepeaterFormField: FC<Props> = ({
     })
 
     if (isValid) {
-      // methods.setValue(`${data.id}[${index}]`, values[index])
       setActiveIndex(-1)
     }
     setIsEditing(false)
