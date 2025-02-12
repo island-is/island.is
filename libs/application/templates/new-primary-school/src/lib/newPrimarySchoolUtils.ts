@@ -394,7 +394,7 @@ export const hasForeignLanguages = (answers: FormValue) => {
   return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
 }
 
-export const showChildLangagueFields = (answers: FormValue) => {
+export const showChildLanguageFields = (answers: FormValue) => {
   const { languageEnvironment, selectedLanguages } =
     getApplicationAnswers(answers)
 

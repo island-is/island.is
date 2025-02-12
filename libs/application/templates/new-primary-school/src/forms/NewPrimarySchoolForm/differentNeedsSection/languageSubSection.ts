@@ -15,7 +15,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   hasForeignLanguages,
-  showChildLangagueFields,
+  showChildLanguageFields,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
@@ -67,7 +67,7 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
           removeItemButtonText:
             newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
-          minRows: (application: Application) => {
+          minRows: (application) => {
             const { languageEnvironment } = getApplicationAnswers(
               application.answers,
             )
@@ -91,7 +91,7 @@ export const languageSubSection = buildSubSection({
                 newPrimarySchoolMessages.differentNeeds
                   .languageSelectionPlaceholder,
               width: 'full',
-              options: (application: Application) => {
+              options: (application) => {
                 const { languageEnvironment } = getApplicationAnswers(
                   application.answers,
                 )
@@ -122,7 +122,7 @@ export const languageSubSection = buildSubSection({
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => {
-            return showChildLangagueFields(answers)
+            return showChildLanguageFields(answers)
           },
         }),
         buildSelectField({
@@ -152,7 +152,7 @@ export const languageSubSection = buildSubSection({
               })
           },
           condition: (answers) => {
-            return showChildLangagueFields(answers)
+            return showChildLanguageFields(answers)
           },
         }),
         buildRadioField({
