@@ -176,7 +176,7 @@ export const dataSchema = z.object({
     .object({
       acceptFreeSchoolLunch: z.enum([YES, NO]),
       hasSpecialNeeds: z.string().optional(),
-      specialNeedsType: z.string().optional(),
+      specialNeedsType: z.string().optional().nullable(),
     })
     .refine(
       ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
@@ -199,9 +199,9 @@ export const dataSchema = z.object({
   allergiesAndIntolerances: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),
-      foodAllergiesOrIntolerances: z.array(z.string()).optional(),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional().nullable(),
       hasOtherAllergies: z.array(z.string()),
-      otherAllergies: z.array(z.string()).optional(),
+      otherAllergies: z.array(z.string()).optional().nullable(),
       usesEpiPen: z.string().optional(),
       hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
       requestMedicationAssistance: z.enum([YES, NO]),
