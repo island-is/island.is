@@ -211,6 +211,7 @@ export const isDefendantStepValidIC = (
 
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
+    workingCase.prosecutor &&
     workingCase.policeCaseNumbers &&
       workingCase.policeCaseNumbers.length > 0 &&
       !workingCase.policeCaseNumbers.some(
@@ -282,8 +283,7 @@ export const isProcessingStepValidIndictments = (
     : true
 
   return Boolean(
-    workingCase.prosecutor &&
-      workingCase.court &&
+    workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
       defendantsAreValid,
@@ -301,14 +301,19 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
   }
 
   const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) =>
-    indictmentCount.offenses?.includes(IndictmentCountOffense.SPEEDING)
+    indictmentCount.deprecatedOffenses?.includes(
+      IndictmentCountOffense.SPEEDING,
+    )
       ? Boolean(indictmentCount.recordedSpeed) &&
         Boolean(indictmentCount.speedLimit)
       : true
 
   const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.policeCaseNumber) &&
-    Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
+    Boolean(
+      indictmentCount.deprecatedOffenses &&
+        indictmentCount.deprecatedOffenses?.length > 0,
+    ) &&
     Boolean(indictmentCount.vehicleRegistrationNumber) &&
     Boolean(indictmentCount.lawsBroken) &&
     Boolean(indictmentCount.incidentDescription) &&

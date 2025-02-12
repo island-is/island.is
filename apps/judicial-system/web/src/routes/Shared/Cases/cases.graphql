@@ -111,5 +111,6 @@ query Cases {
     indictmentCompletedDate
     courtSessionType
     caseSentToCourtDate
+    isCompletedWithoutRuling
   }
 }

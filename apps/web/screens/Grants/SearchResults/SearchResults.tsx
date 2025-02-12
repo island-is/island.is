@@ -351,13 +351,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 backgroundColor={'white'}
               />
             </Box>
-            <Box
-              marginY={2}
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              <Text>{hitsMessage}</Text>
+            <Box marginY={2}>
               <GrantsSearchResultsFilter
                 searchState={{
                   category: categories ?? undefined,
@@ -372,6 +366,9 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 variant={'dialog'}
                 hits={totalHits}
               />
+            </Box>
+            <Box marginY={3}>
+              <Text>{hitsMessage}</Text>
             </Box>
 
             <SearchResultsContent grants={grants} locale={locale} />

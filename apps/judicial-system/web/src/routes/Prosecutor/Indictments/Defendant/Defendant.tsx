@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { DefendantInfo } from '../../components'
+import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
 import { getIncidentDescription } from '../Indictment/IndictmentCount'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
@@ -467,6 +467,7 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
+        <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
