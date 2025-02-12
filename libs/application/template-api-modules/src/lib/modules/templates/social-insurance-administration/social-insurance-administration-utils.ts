@@ -475,6 +475,7 @@ export const shouldDistributeIncomeByMonth = (
       i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
   )
   return hasUnevenIncome
+}
 
 export const getMonthNumber = (monthName: string): number => {
   // Parse the month name and get the month number (0-based)
