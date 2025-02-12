@@ -66,7 +66,7 @@ env:
   #     Multiple manifest names can be specified at the same time, separated by ;.
   #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
   AWS_CACHE_PREFIX: >-
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/
+    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,mode=max
   AWS_CACHE_FROM_COMMON: |
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
