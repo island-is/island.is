@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { Image } from 'react-native'
+import { Image, View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 
 import warningIcon from '../../../ui/assets/icons/warning.png'
@@ -62,8 +62,6 @@ const Content = styled.View`
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Text = styled.View``
-
 export const Toast = ({
   visible,
   duration = 2000,
@@ -92,7 +90,9 @@ export const Toast = ({
     }
   }, [visible])
 
-  if (!visible) return null
+  if (!visible) {
+    return null
+  }
 
   return (
     <Host
@@ -112,10 +112,10 @@ export const Toast = ({
           }}
           resizeMode="contain"
         />
-        <Text>
+        <View>
           {title && <Typography variant={'eyebrow'}>{title}</Typography>}
           {message && <Typography variant={'body3'}>{message}</Typography>}
-        </Text>
+        </View>
       </Content>
     </Host>
   )
