@@ -6505,6 +6505,7 @@
             "nullable": true
           },
           "gildi": {
+            "type": "string",
             "nullable": true
           }
         }
@@ -6635,6 +6636,7 @@
             "nullable": true
           },
           "gildi": {
+            "type": "string",
             "nullable": true
           }
         }
