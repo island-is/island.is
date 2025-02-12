@@ -46,7 +46,7 @@ export const ParentB: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'preInformation.parentB',
-              }),
+            }),
           ],
         }),
       ],

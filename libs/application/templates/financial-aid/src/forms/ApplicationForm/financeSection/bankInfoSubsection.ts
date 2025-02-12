@@ -22,7 +22,7 @@ export const bankInfoSubsection = buildSubSection({
         }),
         buildBankAccountField({
           id: Routes.BANKINFO,
-          }),
+        }),
         buildDescriptionField({
           id: 'bankInfoDescription2',
           title: m.bankInfoForm.general.descriptionTitle,

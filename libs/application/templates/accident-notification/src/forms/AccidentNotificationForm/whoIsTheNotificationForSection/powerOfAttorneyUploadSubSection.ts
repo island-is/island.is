@@ -22,7 +22,7 @@ export const powerOfAttorneyUploadSubSection = buildSubSection({
           id: 'attachments.powerOfAttorney.fileLink',
           component: 'ProxyDocument',
           doesNotRequireAnswer: true,
-          }),
+        }),
         buildFileUploadField({
           id: 'attachments.powerOfAttorneyFile.file',
           introduction: '',

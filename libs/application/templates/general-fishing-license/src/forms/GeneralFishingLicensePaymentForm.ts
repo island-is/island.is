@@ -53,7 +53,7 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
         buildCustomField({
           component: 'PaymentPendingScreen',
           id: 'paymentPendingField',
-          }),
+        }),
       ],
     }),
     buildFormConclusionSection({

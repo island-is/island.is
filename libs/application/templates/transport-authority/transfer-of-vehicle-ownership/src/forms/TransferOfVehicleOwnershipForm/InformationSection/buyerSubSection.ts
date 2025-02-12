@@ -17,11 +17,11 @@ export const buyerSubSection = buildSubSection({
         buildCustomField({
           id: 'buyer',
           component: 'Buyer',
-          }),
+        }),
         buildCustomField({
           id: 'buyerCoOwnerAndOperator',
           component: 'BuyerCoOwnerAndOperatorRepeater',
-          }),
+        }),
       ],
     }),
   ],

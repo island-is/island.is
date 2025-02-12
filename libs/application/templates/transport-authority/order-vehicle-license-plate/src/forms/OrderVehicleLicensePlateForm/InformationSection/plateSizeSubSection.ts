@@ -54,7 +54,7 @@ export const plateSizeSubSection = buildSubSection({
         buildCustomField({
           id: 'plateSize',
           component: 'PickPlateSize',
-          }),
+        }),
       ],
     }),
   ],

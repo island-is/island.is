@@ -257,7 +257,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                   buildDescriptionField({
                     id: 'space',
                     space: 'containerGutter',
-                    }),
+                  }),
                 ],
               }),
             ],

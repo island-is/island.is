@@ -148,7 +148,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
           id: 'healthDeclarationValidForBELicense',
-          }),
+        }),
         buildAlertMessageField({
           id: 'healthDeclaration.BE',
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,

@@ -20,7 +20,7 @@ export const ReviewSection = buildSection({
         buildCustomField({
           id: 'review',
           component: 'Review',
-          }),
+        }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',

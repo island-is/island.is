@@ -22,7 +22,7 @@ export const spouseOfTheDeceased = buildSection({
         buildDescriptionField({
           id: 'spaceSpouseO',
           space: 'containerGutter',
-          }),
+        }),
         buildRadioField({
           id: 'deceasedWithUndividedEstate.selection',
           title: m.isDeceasedWithUndividedEstate,

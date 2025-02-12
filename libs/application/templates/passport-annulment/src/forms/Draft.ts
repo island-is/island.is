@@ -64,13 +64,13 @@ export const Draft: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'passportNumber',
-              }),
+            }),
             buildDescriptionField({
               id: 'passportName',
-              }),
+            }),
             buildDescriptionField({
               id: 'productionRequestID',
-              }),
+            }),
           ],
         }),
       ],

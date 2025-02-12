@@ -39,25 +39,25 @@ export const heirs = buildSection({
           children: [
             buildDescriptionField({
               id: 'total',
-              }),
+            }),
             buildDescriptionField({
               id: 'debtsTotal',
-              }),
+            }),
             buildDescriptionField({
               id: 'shareTotal',
-              }),
+            }),
             buildDescriptionField({
               id: 'netTotal',
-              }),
+            }),
             buildDescriptionField({
               id: 'spouseTotal',
-              }),
+            }),
             buildDescriptionField({
               id: 'estateTotal',
-              }),
+            }),
             buildDescriptionField({
               id: 'netPropertyForExchange',
-              }),
+            }),
             buildCustomField({
               id: 'share',
               doesNotRequireAnswer: true,
@@ -81,10 +81,10 @@ export const heirs = buildSection({
           children: [
             buildDescriptionField({
               id: 'heirs.total',
-              }),
+            }),
             buildDescriptionField({
               id: 'heirs.hasModified',
-              }),
+            }),
             buildAlertMessageField({
               id: 'reminderToFillInSpouse',
               message: m.heirsReminderToFillInSpouse,

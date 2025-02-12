@@ -19,7 +19,7 @@ export const payment: Form = buildForm({
         buildCustomField({
           component: 'PaymentPending',
           id: 'paymentPendingField',
-          }),
+        }),
       ],
     }),
   ],

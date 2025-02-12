@@ -25,7 +25,7 @@ export const prePaidHeirs = buildSection({
           children: [
             buildDescriptionField({
               id: 'heirs.total',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',

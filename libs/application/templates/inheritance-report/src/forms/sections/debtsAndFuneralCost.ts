@@ -31,7 +31,7 @@ export const debtsAndFuneralCost = buildSection({
             }),
             buildDescriptionField({
               id: 'debts.domesticAndForeignDebts.total',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',

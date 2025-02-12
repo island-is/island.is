@@ -38,7 +38,7 @@ export const clientInfoSection = buildSection({
         }),
         buildDescriptionField({
           id: 'about.description',
-          }),
+        }),
         buildTextField({
           id: 'about.nationalId',
           title: m.clientNationalId,

@@ -63,7 +63,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             children: [
               buildDescriptionField({
                 id: 'introSpace',
-                }),
+              }),
             ],
           }),
         ],
@@ -253,7 +253,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   buildDescriptionField({
                     id: 'statusSpace',
                     space: 'containerGutter',
-                    }),
+                  }),
                 ],
               }),
             ],
@@ -329,11 +329,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   buildDescriptionField({
                     id: 'dateSpace',
                     space: 'gutter',
-                    }),
+                  }),
                   buildDescriptionField({
                     id: 'dateSpace1',
                     space: 'gutter',
-                    }),
+                  }),
                   buildRadioField({
                     id: 'ceremony.place.ceremonyPlace',
                     title: m.ceremonyPlace,

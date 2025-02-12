@@ -42,7 +42,7 @@ export const deceased = buildSection({
         buildDescriptionField({
           id: 'space1',
           space: 'gutter',
-          }),
+        }),
         buildKeyValueField({
           label: m.address,
           value: (application) =>
@@ -66,7 +66,7 @@ export const deceased = buildSection({
         buildDescriptionField({
           id: 'space2',
           space: 'containerGutter',
-          }),
+        }),
         buildRadioField({
           id: 'customShare.deceasedWasMarried',
           title: m.wasInCohabitation,
@@ -83,7 +83,7 @@ export const deceased = buildSection({
         buildDescriptionField({
           id: 'space3',
           space: 'containerGutter',
-          }),
+        }),
         buildRadioField({
           id: 'customShare.hasCustomSpouseSharePercentage',
           title: m.hasCustomSpouseSharePercentage,
@@ -121,7 +121,7 @@ export const deceased = buildSection({
         buildDescriptionField({
           id: 'space4',
           space: 'containerGutter',
-          }),
+        }),
         buildRadioField({
           id: 'customShare.deceasedHadAssets',
           title: m.hadSeparateProperty,

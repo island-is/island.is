@@ -31,7 +31,7 @@ export const application: Form = buildForm({
               {
                 id: 'applicant.institutionSubtitle',
                 component: 'FieldDescription',
-                },
+              },
               {
                 subTitle: m.applicant.institutionSubtitle,
               },

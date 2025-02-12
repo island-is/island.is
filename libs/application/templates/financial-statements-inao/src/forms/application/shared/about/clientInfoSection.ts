@@ -31,7 +31,7 @@ export const clientInfoSection = buildSection({
       children: [
         buildDescriptionField({
           id: ABOUTIDS.operatingYear,
-          }),
+        }),
         buildCustomField({
           id: 'OperatingYear',
           childInputIds: [ABOUTIDS.operatingYear],
@@ -78,7 +78,7 @@ export const clientInfoSection = buildSection({
         }),
         buildDescriptionField({
           id: ABOUTIDS.powerOfAttorneyName,
-          }),
+        }),
         buildCustomField({
           id: 'powerOfAttorney',
           description: '',
@@ -114,7 +114,7 @@ export const clientInfoSection = buildSection({
         buildCustomField({
           id: 'delegation check',
           component: 'DelegationCheck',
-          }),
+        }),
       ],
     }),
   ],

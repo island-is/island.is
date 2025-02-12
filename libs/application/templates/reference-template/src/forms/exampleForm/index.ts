@@ -63,7 +63,7 @@ export const ExampleForm: Form = buildForm({
         }),
         buildRedirectToServicePortalField({
           id: 'redirect',
-          }),
+        }),
         buildDescriptionField({
           id: 'final',
           title: 'Takk',

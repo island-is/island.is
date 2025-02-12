@@ -55,10 +55,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.realEstate.total',
-              }),
+            }),
             buildDescriptionField({
               id: 'assets.realEstate.hasModified',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',
@@ -189,10 +189,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.vehicles.total',
-              }),
+            }),
             buildDescriptionField({
               id: 'assets.vehicles.hasModified',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',
@@ -254,10 +254,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.guns.total',
-              }),
+            }),
             buildDescriptionField({
               id: 'modifiers.guns.hasModified',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',
@@ -314,10 +314,10 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.bankAccounts.total',
-              }),
+            }),
             buildDescriptionField({
               id: 'modifiers.bankAccounts.hasModified',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',
@@ -397,7 +397,7 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.claims.total',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',
@@ -464,7 +464,7 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.stocks.total',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',
@@ -641,7 +641,7 @@ export const assets = buildSection({
             }),
             buildDescriptionField({
               id: 'assets.otherAssets.total',
-              }),
+            }),
             buildCustomField(
               {
                 title: '',

@@ -42,7 +42,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'introText',
-              }),
+            }),
           ],
         }),
       ],
