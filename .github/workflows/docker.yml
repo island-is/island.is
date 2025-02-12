@@ -280,6 +280,53 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      # Outputs can't contain secrets, or GitHub will remove the entire output (very annoying here because the output is a JSON object)
+      # Thus, we have to duplicate. See above for more docs
+      - name: Common config
+        id: common
+        env:
+          build_args: |
+            NODE_IMAGE_VERSION=${{ needs.prepare.outputs.node-image-version }}
+            PLAYWRIGHT_IMAGE_TAG=${{ needs.prepare.outputs.playwright-image-tag }}
+            DOCKER_IMAGE_REGISTRY=${{ env.ECR_PULLTHROUGH_CACHE }}
+          image_repository: ${{ env.IMAGE_REGISTRY }}
+          s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+        run: |
+          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
+          cache_from_common="
+            $cache_prefix,name=$GITHUB_SHA
+            $cache_prefix,name=$GITHUB_REF
+          "
+          cache_to_common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF"
+          echo | jq -rsc \
+            --arg build_args "$build_args"  --arg image_repository "$image_repository" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
+          '{
+            file: "scripts/ci/Dockerfile",
+            push: false,
+            "build-args": $build_args,
+            "image-repository": $image_repository,
+            "cache-from-common": $cache_from_common,
+            "cache-to-common": $cache_to_common,
+            "cache-prefix": $cache_prefix
+          }
+            | to_entries
+            | .[]
+            # Use GitHub multi-line outputs, but cheekily done inline here 🤭
+            | "\(.key)<<EOF\n\(.value)\nEOF"
+          ' | tee -a "$GITHUB_OUTPUT"
+
+      - name: Debug common config
+        id: debug
+        env:
+          common: ${{ toJson(steps.common.outputs) }}
+        run: |
+          echo "DEBUG common"
+          # Shadow with compacted version
+          common="$(echo "$common" | jq -c)"
+          echo "common=$common" | tee -a "$GITHUB_OUTPUT"
+          echo "docker build arguments:"
+          echo "  $(echo "${{ steps.common.outputs.build-args }}" | jq -rsc)"
+
       - name: Log in to Amazon ECR
         if: ${{ !github.event.localrun }}
         id: ecr-login
@@ -301,12 +348,6 @@ jobs:
           install: true
           use: true
 
-      - name: Debug common
-        env:
-          common: ${{ needs.deps.outputs.common }}
-        run: |
-          set -x
-          echo "$common"
       - name: Generate image metadata
         id: meta
         # This step requires a valid GitHub token to query the API for e.g. description of repository
@@ -314,7 +355,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ fromJson(needs.deps.outputs.common).image-repository }}
+            ${{ steps.common.outputs.image-repository }}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
@@ -337,19 +378,19 @@ jobs:
         with:
           target: output-${{ matrix.docker }}
           context: .
-          file: ${{ fromJson(needs.deps.outputs.common).file }}
+          file: ${{ steps.common.outputs.file }}
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           secrets: |
             nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
-            ${{ fromJson(needs.deps.outputs.common).build-args }}
+            ${{ steps.common.outputs.build-args }}
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
-            ${{ fromJson(needs.deps.outputs.common).cache-from-common }}
-            ${{ fromJson(needs.deps.outputs.common).cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
+            ${{ steps.common.outputs.cache-from-common }}
+            ${{ steps.common.outputs.cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
           cache-to:
-            ${{ fromJson(needs.deps.outputs.common).cache-to-common }}
-            ${{ fromJson(needs.deps.outputs.common).cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
+            ${{ steps.common.outputs.cache-to-common }}
+            ${{ steps.common.outputs.cache-prefix }},name=target-output-${{ matrix.docker }},mode=min
