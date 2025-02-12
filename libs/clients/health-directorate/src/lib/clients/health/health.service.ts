@@ -47,7 +47,9 @@ export class HealthDirectorateHealthService {
     atcCode: string,
   ): Promise<Array<DispensationDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
-      .meDispensationControllerGetDispensationsForAtcCodeV1({ atcCode })
+      .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
+        atcCode,
+      })
       .catch(handle404)
 
     if (!dispensations) {
@@ -67,7 +69,7 @@ export class HealthDirectorateHealthService {
     auth: Auth,
   ): Promise<Array<DispensationDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
-      .meDispensationControllerGetGroupedDispensationsV1()
+      .mePrescriptionDispensationControllerGetGroupedDispensationsV1()
       .catch(handle404)
 
     if (!dispensations) {

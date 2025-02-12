@@ -186,17 +186,17 @@
         "tags": ["Prescriptions"]
       }
     },
-    "/v1/me/dispensations/grouped": {
+    "/v1/me/prescriptions/dispensations": {
       "get": {
-        "operationId": "MeDispensationController_getGroupedDispensations_v1",
+        "operationId": "MePrescriptionDispensationController_getGroupedDispensations_v1",
         "parameters": [],
         "responses": { "200": { "description": "" } },
         "tags": ["Prescriptions"]
       }
     },
-    "/v1/me/dispensations/{atcCode}": {
+    "/v1/me/prescriptions/dispensations/{atcCode}": {
       "get": {
-        "operationId": "MeDispensationController_getDispensationsForAtcCode_v1",
+        "operationId": "MePrescriptionDispensationController_getDispensationsForAtcCode_v1",
         "parameters": [
           {
             "name": "atcCode",
@@ -321,7 +321,7 @@
     },
     "/system/ready": {
       "get": {
-        "operationId": "SystemController_check",
+        "operationId": "SystemController_ready",
         "parameters": [],
         "responses": {
           "200": {
