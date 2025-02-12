@@ -474,6 +474,35 @@ const useSections = (
             {
               name: capitalize(
                 formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFiles,
+                ),
+              ),
+              href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
+              isActive: substepsShouldBeHidden
+                ? false
+                : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
+              onClick:
+                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_PROCESSING_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: capitalize(
+                formatMessage(
                   sections.indictmentCaseProsecutorSection.processing,
                 ),
               ),
@@ -519,35 +548,6 @@ const useSections = (
                   ? async () =>
                       await onNavigationTo(
                         constants.INDICTMENTS_INDICTMENT_ROUTE,
-                      )
-                  : undefined,
-            },
-            {
-              name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.caseFiles,
-                ),
-              ),
-              href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-              isActive: substepsShouldBeHidden
-                ? false
-                : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
-              onClick:
-                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
-                validateFormStepper(
-                  isValid,
-                  [
-                    constants.INDICTMENTS_DEFENDANT_ROUTE,
-                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
-                    constants.INDICTMENTS_CASE_FILE_ROUTE,
-                    constants.INDICTMENTS_PROCESSING_ROUTE,
-                  ],
-                  workingCase,
-                ) &&
-                onNavigationTo
-                  ? async () =>
-                      await onNavigationTo(
-                        constants.INDICTMENTS_CASE_FILES_ROUTE,
                       )
                   : undefined,
             },
