@@ -5,8 +5,6 @@ import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelp
 
 import { getIncidentDescription } from './getIncidentDescription'
 
-const IS_OFFENSE_ENDPOINT_ENABLED = true
-
 describe('getIncidentDescription', () => {
   test('should return an empty string if there are no offenses in traffic violations', () => {
     const result = getIncidentDescription({
@@ -18,7 +16,6 @@ describe('getIncidentDescription', () => {
       formatMessage,
       crimeScene: {},
       subtypesRecord: { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
-      isOffenseEndpointEnabled: IS_OFFENSE_ENDPOINT_ENABLED,
     })
 
     expect(result).toBe('')
@@ -47,7 +44,6 @@ describe('getIncidentDescription', () => {
       formatMessage,
       crimeScene: {},
       subtypesRecord: { '123-123-123': [IndictmentSubtype.TRAFFIC_VIOLATION] },
-      isOffenseEndpointEnabled: IS_OFFENSE_ENDPOINT_ENABLED,
     })
 
     expect(result).toBe(
@@ -87,7 +83,6 @@ describe('getIncidentDescription', () => {
           IndictmentSubtype.TRAFFIC_VIOLATION,
         ],
       },
-      isOffenseEndpointEnabled: IS_OFFENSE_ENDPOINT_ENABLED,
     })
 
     expect(result).toBe(
@@ -116,7 +111,6 @@ describe('getIncidentDescription', () => {
           IndictmentSubtype.THEFT,
         ],
       },
-      isOffenseEndpointEnabled: IS_OFFENSE_ENDPOINT_ENABLED,
     })
 
     expect(result).toBe(
@@ -145,7 +139,6 @@ describe('getIncidentDescription', () => {
           IndictmentSubtype.TRAFFIC_VIOLATION,
         ],
       },
-      isOffenseEndpointEnabled: IS_OFFENSE_ENDPOINT_ENABLED,
     })
 
     expect(result).toBe(

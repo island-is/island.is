@@ -68,13 +68,11 @@ export const getIncidentDescription = ({
   formatMessage,
   crimeScene,
   subtypesRecord,
-  isOffenseEndpointEnabled,
 }: {
   indictmentCount: TempIndictmentCount
   formatMessage: IntlShape['formatMessage']
   crimeScene?: CrimeScene
   subtypesRecord?: Record<string, IndictmentSubtype[]>
-  isOffenseEndpointEnabled?: boolean
 }) => {
   const {
     offenses,
@@ -110,13 +108,10 @@ export const getIncidentDescription = ({
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
-    const incidentDescriptionProps = isOffenseEndpointEnabled
-      ? getIncidentDescriptionProps({ offenses, formatMessage })
-      : getDeprecatedIncidentDescriptionProps({
-          deprecatedOffenses,
-          formatMessage,
-          substances,
-        })
+    const incidentDescriptionProps = getIncidentDescriptionProps({
+      offenses,
+      formatMessage,
+    })
     if (!incidentDescriptionProps) {
       return ''
     }

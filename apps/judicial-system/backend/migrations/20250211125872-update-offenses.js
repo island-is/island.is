@@ -105,7 +105,7 @@ module.exports = {
             res[0].map((indictment_count) => {
               const offenses = indictment_count.deprecated_offenses
               if (!offenses || offenses.length === 0) {
-                return 
+                return
               }
               const substances = indictment_count.substances || {}
 
@@ -114,7 +114,7 @@ module.exports = {
                 availableSubstances: offenseSubstancesMap[offense],
               }))
 
-              // Logic from getRelevantSubstances in apps/judicial-system/web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.tsx 
+              // Logic from getRelevantSubstances in apps/judicial-system/web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.tsx
               const offensesToMigrate = offenseSubstances.map((os) => {
                 const selectedSubstances = Object.entries(substances)
                   .filter((substance) =>
@@ -131,18 +131,25 @@ module.exports = {
                   substances: selectedSubstances,
                 }
               })
-              console.log(`- Migrating indictment_count fields { offenses: ${offenses}, substances: ${JSON.stringify(substances)} } as ${offensesToMigrate.length} rows: ${JSON.stringify(offensesToMigrate)}`)
-     
+              console.log(
+                `- Migrating indictment_count fields { offenses: ${offenses}, substances: ${JSON.stringify(
+                  substances,
+                )} } as ${offensesToMigrate.length} rows: ${JSON.stringify(
+                  offensesToMigrate,
+                )}`,
+              )
+
               offensesToMigrate.forEach((o) =>
                 queryInterface.sequelize.query(
-                  `INSERT INTO "offense" (id, indictment_count_id, offense, substances) VALUES (md5(random()::text || clock_timestamp()::text)::uuid, '${indictment_count.id}', '${o.offense}', '${JSON.stringify(o.substances)}');`,
+                  `INSERT INTO "offense" (id, indictment_count_id, offense, substances) VALUES (md5(random()::text || clock_timestamp()::text)::uuid, '${
+                    indictment_count.id
+                  }', '${o.offense}', '${JSON.stringify(o.substances)}');`,
                   {
                     transaction: t,
                   },
                 ),
               )
-            
-            }, ),
+            }),
           ),
         ),
     )

@@ -1,12 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
-import InputMask from 'react-input-mask'
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import {
@@ -23,7 +15,6 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   IndictmentSubtype,
   isTrafficViolationCase,
   offenseSubstances,
@@ -32,7 +23,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
-  FeatureContext,
   IndictmentInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -57,7 +47,6 @@ import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffen
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
-import { DeprecatedSubstances as SubstanceChoices } from './Substances/DeprecatedSubstances'
 import { indictmentCount as strings } from './IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import * as styles from './IndictmentCount.css'
@@ -248,9 +237,6 @@ export const IndictmentCount: FC<Props> = ({
   updateIndictmentCountState,
   setWorkingCase,
 }) => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
   const { deleteOffense } = useOffenses()
@@ -305,22 +291,12 @@ export const IndictmentCount: FC<Props> = ({
   ) => {
     let lawsBroken
 
-    const hasUpdatedOffenses = isOffenseEndpointEnabled
-      ? updatedOffenses
-      : update.deprecatedOffenses
-    const hasUpdatedDeprecatedSubstances = isOffenseEndpointEnabled
-      ? false
-      : update.substances
-    if (hasUpdatedOffenses || hasUpdatedDeprecatedSubstances) {
-      const offenses = isOffenseEndpointEnabled
-        ? updatedOffenses?.map((o) => o.offense)
-        : update.deprecatedOffenses || indictmentCount.deprecatedOffenses
-      const substances = isOffenseEndpointEnabled
-        ? updatedOffenses?.reduce(
-            (res, offense) => Object.assign(res, offense.substances),
-            {} as SubstanceMap,
-          )
-        : update.substances || indictmentCount.substances
+    if (updatedOffenses) {
+      const offenses = updatedOffenses?.map((o) => o.offense)
+      const substances = updatedOffenses?.reduce(
+        (res, offense) => Object.assign(res, offense.substances),
+        {} as SubstanceMap,
+      )
 
       lawsBroken = getLawsBroken(offenses, substances)
     }
@@ -346,7 +322,6 @@ export const IndictmentCount: FC<Props> = ({
       formatMessage,
       crimeScene,
       subtypesRecord: workingCase.indictmentSubtypes,
-      isOffenseEndpointEnabled,
     })
 
     onChange(
@@ -561,277 +536,15 @@ export const IndictmentCount: FC<Props> = ({
               required
             />
           </Box>
-          {isOffenseEndpointEnabled ? (
-            <Offenses
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              indictmentCount={indictmentCount}
-              updateIndictmentCountState={updateIndictmentCountState}
-              handleIndictmentCountChanges={handleIndictmentCountChanges}
-            />
-          ) : (
-            <>
-              <Box marginBottom={2}>
-                <SectionHeading
-                  heading="h4"
-                  title={formatMessage(strings.incidentTitle)}
-                  marginBottom={2}
-                />
-                <Select
-                  name="deprecatedOffenses"
-                  options={offensesOptions}
-                  label={formatMessage(strings.incidentLabel)}
-                  placeholder={formatMessage(strings.incidentPlaceholder)}
-                  onChange={(so) => {
-                    const selectedOffense = so?.value as IndictmentCountOffense
-                    const deprecatedOffenses = [
-                      ...(indictmentCount.deprecatedOffenses ?? []),
-                      selectedOffense,
-                    ].sort(offensesCompare)
 
-                    handleIndictmentCountChanges({
-                      deprecatedOffenses,
-                    })
-                  }}
-                  value={null}
-                  required
-                />
-              </Box>
-              {indictmentCount.deprecatedOffenses &&
-                indictmentCount.deprecatedOffenses.length > 0 && (
-                  <Box marginBottom={2}>
-                    {indictmentCount.deprecatedOffenses.map((offense) => (
-                      <Box
-                        display="inlineBlock"
-                        key={`${indictmentCount.id}-${offense}`}
-                        component="span"
-                        marginBottom={1}
-                        marginRight={1}
-                      >
-                        <Tag
-                          variant="darkerBlue"
-                          onClick={() => {
-                            const deprecatedOffenses = (
-                              indictmentCount.deprecatedOffenses ?? []
-                            ).filter((o) => o !== offense)
+          <Offenses
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            indictmentCount={indictmentCount}
+            updateIndictmentCountState={updateIndictmentCountState}
+            handleIndictmentCountChanges={handleIndictmentCountChanges}
+          />
 
-                            offenseSubstances[offense].forEach((e) => {
-                              if (indictmentCount.substances) {
-                                delete indictmentCount.substances[e]
-                              }
-                            })
-
-                            handleIndictmentCountChanges({
-                              deprecatedOffenses,
-                              substances: indictmentCount.substances,
-                              ...(offense ===
-                                IndictmentCountOffense.SPEEDING && {
-                                recordedSpeed: null,
-                                speedLimit: null,
-                              }),
-                            })
-                          }}
-                        >
-                          <Box display="flex" alignItems="center">
-                            {formatMessage(enumStrings[offense])}
-                            <Icon icon="close" size="small" />
-                          </Box>
-                        </Tag>
-                      </Box>
-                    ))}
-                  </Box>
-                )}
-              {indictmentCount.deprecatedOffenses?.includes(
-                IndictmentCountOffense.DRUNK_DRIVING,
-              ) && (
-                <Box marginBottom={2}>
-                  <SectionHeading
-                    title={formatMessage(strings.bloodAlcoholContentTitle)}
-                    heading="h4"
-                    marginBottom={2}
-                  />
-                  <InputMask
-                    mask={'9,99'}
-                    maskPlaceholder={null}
-                    value={indictmentCount.substances?.ALCOHOL ?? ''}
-                    onChange={(event) => {
-                      removeErrorMessageIfValid(
-                        ['empty'],
-                        event.target.value,
-                        bloodAlcoholContentErrorMessage,
-                        setBloodAlcoholContentErrorMessage,
-                      )
-
-                      updateIndictmentCountState(
-                        indictmentCount.id,
-                        {
-                          substances: {
-                            ...indictmentCount.substances,
-                            ALCOHOL: event.target.value,
-                          },
-                        },
-                        setWorkingCase,
-                      )
-                    }}
-                    onBlur={(event) => {
-                      const value =
-                        event.target.value.length > 0
-                          ? `${event.target.value}${'0,00'.slice(
-                              event.target.value.length,
-                            )}`
-                          : event.target.value
-
-                      validateAndSetErrorMessage(
-                        ['empty'],
-                        value,
-                        setBloodAlcoholContentErrorMessage,
-                      )
-
-                      const substances = {
-                        ...indictmentCount.substances,
-                        ALCOHOL: value,
-                      }
-
-                      handleIndictmentCountChanges({
-                        substances,
-                      })
-                    }}
-                  >
-                    <Input
-                      name="alcohol"
-                      autoComplete="off"
-                      label={formatMessage(strings.bloodAlcoholContentLabel)}
-                      placeholder={formatMessage(
-                        strings.bloodAlcoholContentPlaceholder,
-                      )}
-                      errorMessage={bloodAlcoholContentErrorMessage}
-                      hasError={bloodAlcoholContentErrorMessage !== ''}
-                      required
-                    />
-                  </InputMask>
-                </Box>
-              )}
-              {indictmentCount.deprecatedOffenses?.includes(
-                IndictmentCountOffense.SPEEDING,
-              ) && (
-                <Box marginBottom={2}>
-                  <SectionHeading
-                    title={formatMessage(strings.speedingTitle)}
-                    heading="h4"
-                    marginBottom={2}
-                  />
-                  <Box marginBottom={1}>
-                    <InputMask
-                      mask={'999'}
-                      maskPlaceholder={null}
-                      value={indictmentCount.recordedSpeed?.toString() ?? ''}
-                      onChange={(event) => {
-                        const recordedSpeed = parseInt(event.target.value)
-
-                        removeErrorMessageIfValid(
-                          ['empty'],
-                          event.target.value,
-                          recordedSpeedErrorMessage,
-                          setRecordedSpeedErrorMessage,
-                        )
-
-                        updateIndictmentCountState(
-                          indictmentCount.id,
-                          { recordedSpeed },
-                          setWorkingCase,
-                        )
-                      }}
-                      onBlur={(event) => {
-                        const recordedSpeed = parseInt(event.target.value)
-
-                        if (Number.isNaN(recordedSpeed)) {
-                          setRecordedSpeedErrorMessage(
-                            'Reitur má ekki vera tómur',
-                          )
-                          return
-                        }
-
-                        handleIndictmentCountChanges({
-                          recordedSpeed,
-                        })
-                      }}
-                    >
-                      <Input
-                        name="recordedSpeed"
-                        autoComplete="off"
-                        label={formatMessage(strings.recordedSpeedLabel)}
-                        placeholder="0"
-                        required
-                        errorMessage={recordedSpeedErrorMessage}
-                        hasError={recordedSpeedErrorMessage !== ''}
-                      />
-                    </InputMask>
-                  </Box>
-                  <InputMask
-                    mask={'999'}
-                    maskPlaceholder={null}
-                    value={indictmentCount.speedLimit?.toString() ?? ''}
-                    onChange={(event) => {
-                      const speedLimit = parseInt(event.target.value)
-
-                      removeErrorMessageIfValid(
-                        ['empty'],
-                        event.target.value,
-                        speedLimitErrorMessage,
-                        setSpeedLimitErrorMessage,
-                      )
-
-                      updateIndictmentCountState(
-                        indictmentCount.id,
-                        { speedLimit },
-                        setWorkingCase,
-                      )
-                    }}
-                    onBlur={(event) => {
-                      const speedLimit = parseInt(event.target.value)
-
-                      if (Number.isNaN(speedLimit)) {
-                        setSpeedLimitErrorMessage('Reitur má ekki vera tómur')
-                        return
-                      }
-
-                      handleIndictmentCountChanges({
-                        speedLimit,
-                      })
-                    }}
-                  >
-                    <Input
-                      name="speedLimit"
-                      autoComplete="off"
-                      label={formatMessage(strings.speedLimitLabel)}
-                      placeholder="0"
-                      required
-                      errorMessage={speedLimitErrorMessage}
-                      hasError={speedLimitErrorMessage !== ''}
-                    />
-                  </InputMask>
-                </Box>
-              )}
-
-              {indictmentCount.deprecatedOffenses
-                ?.filter(
-                  (offenseType) =>
-                    offenseType ===
-                      IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||
-                    offenseType ===
-                      IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-                )
-                .map((offenseType) => (
-                  <Box key={`${indictmentCount.id}-${offenseType}-substances`}>
-                    <SubstanceChoices
-                      indictmentCount={indictmentCount}
-                      indictmentCountOffenseType={offenseType}
-                      onChange={handleIndictmentCountChanges}
-                    />
-                  </Box>
-                ))}
-            </>
-          )}
           <Box marginBottom={2}>
             <SectionHeading
               heading="h4"
