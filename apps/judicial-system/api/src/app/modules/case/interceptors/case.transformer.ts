@@ -57,6 +57,7 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
     appealReceivedByCourtDate,
+    isCompletedWithoutRuling,
   } = theCase
 
   const appealInfo: AppealInfo = {}
@@ -91,18 +92,19 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
 
   appealInfo.canBeAppealed = Boolean(
     !hasBeenAppealed &&
+      !isCompletedWithoutRuling &&
       (isAppealableDecision(accusedAppealDecision) ||
         isAppealableDecision(prosecutorAppealDecision)),
   )
 
-  const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = getAppealDeadlineDate(theRulingDate).toISOString()
-
   appealInfo.canProsecutorAppeal =
-    !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
+    appealInfo.canBeAppealed && isAppealableDecision(prosecutorAppealDecision)
 
   appealInfo.canDefenderAppeal =
-    !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
+    appealInfo.canBeAppealed && isAppealableDecision(accusedAppealDecision)
+
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = getAppealDeadlineDate(theRulingDate).toISOString()
 
   if (appealReceivedByCourtDate) {
     appealInfo.statementDeadline = getStatementDeadline(

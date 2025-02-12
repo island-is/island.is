@@ -471,4 +471,7 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly hasCivilClaims?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isCompletedWithoutRuling?: boolean
 }

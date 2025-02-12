@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   FormValue,
   ApplicationContext,
@@ -14,9 +14,7 @@ import {
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
   DrivingLicenseApplicationFor,
-  NO,
   Pickup,
-  YES,
 } from '../constants'
 
 export const allowFakeCondition =

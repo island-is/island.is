@@ -1,7 +1,5 @@
 import { z } from 'zod'
 import {
-  YES,
-  NO,
   B_FULL_RENEWAL_65,
   BE,
   B_TEMP,
@@ -11,6 +9,7 @@ import {
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Pickup } from './types'
+import { NO, YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

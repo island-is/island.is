@@ -8,6 +8,8 @@ import {
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
+import { Offense } from './offense.model'
+
 registerEnumType(IndictmentCountOffense, { name: 'IndictmentCountOffense' })
 registerEnumType(IndictmentSubtype, { name: 'IndictmentSubtype' })
 
@@ -31,8 +33,11 @@ export class IndictmentCount {
   @Field(() => String, { nullable: true })
   readonly vehicleRegistrationNumber?: string
 
+  @Field(() => [Offense], { nullable: true })
+  readonly offenses?: Offense[]
+
   @Field(() => [IndictmentCountOffense], { nullable: true })
-  readonly offenses?: IndictmentCountOffense[]
+  readonly deprecatedOffenses?: IndictmentCountOffense[]
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly substances?: SubstanceMap
