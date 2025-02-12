@@ -59,6 +59,7 @@ ENV NODE_ENV=production \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
   APP=${APP}
 
+ENV NX_VERBOSE_LOGGING=true
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn codegen
 RUN --mount=type=secret,id=nx_cloud_access_token \
