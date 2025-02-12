@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
   FileType,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -15,7 +14,6 @@ import {
   SINGLE,
   States,
   UnEmployedBenefitTypes,
-  YES,
   calculateDaysUsedByPeriods,
   calculatePeriodLength,
   getAdditionalSingleParentRightsInDays,

@@ -4,6 +4,8 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   accidentLocation,
@@ -28,7 +30,6 @@ import {
   isProfessionalAthleteAccident,
   isSportAccidentAndEmployee,
 } from '../../../utils/occupationUtils'
-import { NO, YES } from '@island.is/application/types'
 import {
   isHomeActivitiesAccident,
   isRescueWorkAccident,
