@@ -3,15 +3,19 @@ on:
   workflow_call:
     outputs:
       TEST_CHUNKS:
-        value: ${{ jobs.prepare.outputs.test_chunks }}
+        value: ${{ jobs.prepare.outputs.TEST_CHUNKS }}
       E2E_CHUNKS:
-        value: ${{ jobs.prepare.outputs.e2e_chunks }}
+        value: ${{ jobs.prepare.outputs.E2E_CHUNKS }}
       E2E_BUILD_ID:
-        value: ${{ jobs.prepare.outputs.build_iD }}
+        value: ${{ jobs.prepare.outputs.BUILD_ID }}
       BUILD_CHUNKS:
-        value: ${{ jobs.prepare.outputs.build_chunks }}
+        value: ${{ jobs.prepare.outputs.BUILD_CHUNKS }}
+      LINT_CHUNKS:
+        value: ${{ jobs.prepare.outputs.LINT_CHUNKS }}
+      NX_HEAD:
+        value: ${{ jobs.prepare.outputs.NX_HEAD }}
       NX_BASE:
-        value: ${{ jobs.prepare.outputs.nx_base }}
+        value: ${{ jobs.prepare.outputs.NX_BASE }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 3 }}
@@ -29,11 +33,13 @@ env:
 jobs:
   install:
     outputs:
-      TEST_CHUNKS: ${{ steps.build_info.outputs.test_chunks }}
-      E2E_CHUNKS: ${{ steps.build_info.outputs.e2e_chunks }}
-      E2E_BUILD_ID: ${{ steps.build_info.outputs.build_iD }}
-      BUILD_CHUNKS: ${{ steps.build_info.outputs.build_chunks }}
-      NX_BASE: ${{ steps.build_info.outputs.nx_base }}
+      LINT_CHUNKS: ${{ steps.lint_projects.outputs.LINT_CHUNKS }}
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.TEST_CHUNKS }}
+      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.E2E_CHUNKS }}
+      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
+      BUILD_CHUNKS: ${{ steps.build_projects.outputs.BUILD_CHUNKS }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
     runs-on: arc-test
     steps:
       - uses: actions/checkout@v4
@@ -92,23 +98,66 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
-      - name: Gather branch info
-        id: build_info
-        shell: bash
+      - name: Prepare lint targets
+        id: lint_projects
+        env:
+          # Linting is easy, no need to split/chunk it
+          DISABLE_CHUNKS: 'true'
+          DISABLE_GROUPING: 'true'
+          DISABLE_PROBLEMATIC: 'true'
         run: |
-          echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}"
-          if [[ "$TEST_CHUNKS" != "[]" ]]; then
-            echo TEST_CHUNKS="{\"projects\":$TEST_CHUNKS}" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
-          if [[ "$BUILD_CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS="{\"projects\":$BUILD_CHUNKS}" >> "$GITHUB_OUTPUT"
+      - name: Prepare test targets
+        id: test_projects
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
-
-          echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}"
-          if [[ "$E2E_CHUNKS" != "[]" ]]; then
-            echo E2E_CHUNKS="{\"projects\":$E2E_CHUNKS}" >> "$GITHUB_OUTPUT"
+      - name: Prepare e2e targets
+        id: e2e_projects
+        env:
+          CHUNK_SIZE: 1
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
           echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare build targets
+        id: build_projects
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: License audit Node modules
+        run: ./scripts/ci/20_license-audit.sh
+
+      - name: Check user permissions
+        uses: actions-cool/check-user-permission@v2
+        id: check-permission
+        # This fails locally without a token, and only prevents "admin" label usage
+        if: ${{ !github.event.localrun }}
+
+      - name: Set magic env if test-everything label is set
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success' && steps.check-permission.outputs['user-permission'] == 'admin' }}
+        run: |
+          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
+
+      - name: Warn if user does not have the required permissions
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success'&& steps.check-permission.outputs['user-permission'] != 'admin' }}
+        run: |
+          echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
+          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
