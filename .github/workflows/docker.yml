@@ -175,6 +175,62 @@ jobs:
           use: true
 
       # Build stable layers; only difference between these steps should be the `target`
+      - name: Docker build/cache dependencies (base)
+        uses: docker/build-push-action@v6
+        with:
+          target: base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ env.DOCKERFILE }}
+          push: false
+          build-args: ${{ needs.prepare.outputs.build-args }}
+          cache-from: |
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-base
+          cache-to: |
+            ${{ env.AWS_CACHE_PREFIX }},name=target-base;${{ github.sha }};${{ github.ref }}
+      - name: Docker build/cache dependencies (deps)
+        uses: docker/build-push-action@v6
+        with:
+          target: deps
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ env.DOCKERFILE }}
+          push: false
+          build-args: ${{ needs.prepare.outputs.build-args }}
+          cache-from: |
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-deps
+          cache-to: |
+            ${{ env.AWS_CACHE_PREFIX }},name=target-deps;${{ github.sha }};${{ github.ref }}
+      - name: Docker build/cache dependencies (output-base)
+        uses: docker/build-push-action@v6
+        with:
+          target: output-base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ env.DOCKERFILE }}
+          push: false
+          build-args: ${{ needs.prepare.outputs.build-args }}
+          cache-from: |
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base
+          cache-to: |
+            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base;${{ github.sha }};${{ github.ref }}
+      - name: Docker build/cache dependencies (static-base)
+        uses: docker/build-push-action@v6
+        with:
+          target: static-base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ env.DOCKERFILE }}
+          push: false
+          build-args: ${{ needs.prepare.outputs.build-args }}
+          cache-from: |
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-static-base
+          cache-to: |
+            ${{ env.AWS_CACHE_PREFIX }},name=target-static-base;${{ github.sha }};${{ github.ref }}
       - name: Docker build/cache dependencies (output-base-with-pg)
         uses: docker/build-push-action@v6
         with:
@@ -189,6 +245,20 @@ jobs:
             ${{ env.AWS_CACHE_PREFIX }},name=target-output-base-with-pg
           cache-to: |
             ${{ env.AWS_CACHE_PREFIX }},name=target-output-base-with-pg;${{ github.sha }};${{ github.ref }}
+      - name: Docker build/cache dependencies (playwright-base)
+        uses: docker/build-push-action@v6
+        with:
+          target: playwright-base
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ${{ env.DOCKERFILE }}
+          push: false
+          build-args: ${{ needs.prepare.outputs.build-args }}
+          cache-from: |
+            ${{ env.AWS_CACHE_FROM_COMMON }}
+            ${{ env.AWS_CACHE_PREFIX }},name=target-playwright-base
+          cache-to: |
+            ${{ env.AWS_CACHE_PREFIX }},name=target-playwright-base;${{ github.sha }};${{ github.ref }}
 
   build:
     name: Build ${{ matrix.project }}
