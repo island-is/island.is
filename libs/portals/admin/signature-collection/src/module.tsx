@@ -6,12 +6,12 @@ import { listsLoader } from './loaders/AllLists.loader'
 import { listLoader } from './loaders/List.loader'
 import { allowedScopes } from './lib/utils'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-
-/* municipal */
-const LandAreas = lazy(() => import('./screens-municipal/LandAreas'))
+import { Navigate } from 'react-router-dom'
 
 /* parliamentary */
-const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
+const ParliamentaryRoot = lazy(() =>
+  import('./screens-parliamentary/Constituency'),
+)
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
@@ -20,6 +20,10 @@ const ParliamentaryList = lazy(() => import('./screens-parliamentary/List'))
 /* presidential */
 const AllLists = lazy(() => import('./screens-presidential/AllLists'))
 const List = lazy(() => import('./screens-presidential/List'))
+
+/* municipal */
+const LandAreas = lazy(() => import('./screens-municipal/LandAreas'))
+const Municipality = lazy(() => import('./screens-municipal/MunicipalityView'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollection,
@@ -94,51 +98,61 @@ export const signatureCollectionModule: PortalModule = {
     /* ------ Municipal ------ */
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaHofudborgarsvaedi,
+      path: SignatureCollectionPaths.MunicipalRoot,
+      element: (
+        <Navigate to={SignatureCollectionPaths.LandAreaHofudborgarsvaedi} />
+      ),
+      loader: listsLoader(props),
+    },
+    // side bar navigation (land areas)
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.LandAreaHofudborgarsvaedi,
       element: <LandAreas />,
       loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaSudurnes,
+      path: SignatureCollectionPaths.LandAreaSudurnes,
       element: <LandAreas />,
       loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaVesturland,
+      path: SignatureCollectionPaths.LandAreaVesturland,
       element: <LandAreas />,
-      loader: listLoader(props),
+      loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaVestfirdir,
+      path: SignatureCollectionPaths.LandAreaNordurlandVestra,
       element: <LandAreas />,
-      loader: listLoader(props),
+      loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaNordurlandVestra,
+      path: SignatureCollectionPaths.LandAreaNordurlandEystra,
       element: <LandAreas />,
-      loader: listLoader(props),
+      loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaNordurlandEystra,
+      path: SignatureCollectionPaths.LandAreaAusturland,
       element: <LandAreas />,
-      loader: listLoader(props),
+      loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaAusturland,
+      path: SignatureCollectionPaths.LandAreaSudurland,
       element: <LandAreas />,
-      loader: listLoader(props),
+      loader: listsLoader(props),
     },
+    // ----------------------------------------------------- //
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaSudurland,
-      element: <LandAreas />,
-      loader: listLoader(props),
+      path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+      element: <Municipality />,
+      loader: listsLoader(props),
     },
   ],
 }

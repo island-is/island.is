@@ -10,25 +10,22 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from './../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from './lib/messages'
 import { PortalNavigation } from '@island.is/portals/core'
-import { signatureCollectionNavigation } from '../../lib/navigation'
-import ScreenHeader from '../../shared-components/screenHeader'
-import { useLoaderData, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import { SignatureCollectionPaths } from '../../lib/paths'
-import { replaceParams } from '@island.is/react-spa/shared'
+import { signatureCollectionNavigation } from './lib/navigation'
+import ScreenHeader from './shared-components/screenHeader'
+import { useLoaderData } from 'react-router-dom'
+import { ListsLoaderReturn } from './loaders/AllLists.loader'
 
-const LandAreas = () => {
+const CollectionPage = () => {
+  // Spurning hvort sé hægt að stilla þetta út frá því sem kemur í collection
+  // til að sleppa við duplicate kóða fyrir layoutið og fleira?
+  // Spurning þá að samnýta components betur sem supporta allar 3 tengundir af kosningum
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
-  const params = useParams()
-
-  console.log(params)
-
   return (
     <GridContainer>
       <GridRow direction="row">
@@ -52,26 +49,24 @@ const LandAreas = () => {
             intro={formatMessage(m.municipalCollectionIntro)}
             image={nationalRegistryLogo}
           />
+          {collection.isPresidential && (
+            <Text variant="h4" marginBottom={3}>
+              Collection type: Presidential
+            </Text>
+          )}
           <Stack space={3}>
             {allLists.map((list) => (
               <ActionCard
-                key={'test'}
+                key={list.id}
                 eyebrow={'Höfuðborgarsvæði (3000)'}
-                heading={'Reykjavík'}
+                heading={'YOOOOOO'}
                 text={'Fjöldi framboða: 12'}
                 cta={{
                   label: 'Skoða sveitarfélag',
                   variant: 'text',
+                  icon: 'arrowForward',
                   onClick: () => {
-                    navigate(
-                      replaceParams({
-                        href: SignatureCollectionPaths.LandAreaSingleMunicipality,
-                        params: {
-                          landAreaName: 'hofudborgarsvaedi',
-                          municipalityName: 'reykjavik',
-                        },
-                      }),
-                    )
+                    console.log('hæjjaaa')
                   },
                 }}
                 tag={{
@@ -111,4 +106,4 @@ const LandAreas = () => {
   )
 }
 
-export default LandAreas
+export default CollectionPage

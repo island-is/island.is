@@ -1,4 +1,4 @@
-import { Text, Box} from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import EmptyImageSmall from './EmptyImgSmall'
 
 export const EmptyState = ({
