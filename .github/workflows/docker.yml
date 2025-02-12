@@ -58,6 +58,7 @@ env:
   NX_TASKS_RUNNER: ci
   # Registry without trailing `/docker`
   ECR_PULLTHROUGH_CACHE: ${{ vars.ECR_PULLTHROUGH_CACHE || 'public.ecr.aws' }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_S3_CACHE_BUCKET: ${{ secrets.AWS_S3_CACHE_BUCKET }}
   # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
   # name=<manifest>: specify name of the manifest to use (default: buildkit)
