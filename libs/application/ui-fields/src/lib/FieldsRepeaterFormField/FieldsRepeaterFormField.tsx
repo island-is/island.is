@@ -6,8 +6,10 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import {
+  Application,
   FieldBaseProps,
   FieldsRepeaterField,
+  MaybeWithApplicationAndField,
 } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -57,8 +59,31 @@ export const FieldsRepeaterFormField = ({
     answers,
     id,
   )?.length
+
+  const computeMinRows = (
+    maybeMinRows: MaybeWithApplicationAndField<number>,
+    memoApplication: Application,
+    memoField: FieldsRepeaterField,
+  ) => {
+    if (typeof maybeMinRows === 'function') {
+      return maybeMinRows(memoApplication, memoField)
+    }
+
+    return maybeMinRows
+  }
+
+  const finalMinRows = useMemo(
+    () =>
+      computeMinRows(
+        minRows as MaybeWithApplicationAndField<number>,
+        application,
+        data,
+      ),
+    [minRows, application, data],
+  )
+
   const [numberOfItems, setNumberOfItems] = useState(
-    Math.max(numberOfItemsInAnswers ?? 0, minRows),
+    Math.max(numberOfItemsInAnswers ?? 0, finalMinRows),
   )
   const [updatedApplication, setUpdatedApplication] = useState(application)
   const stableApplication = useMemo(() => application, [application])
@@ -174,7 +199,7 @@ export const FieldsRepeaterFormField = ({
             ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > minRows && (
+            {numberOfItems > finalMinRows && (
               <Box marginRight={2}>
                 <Button
                   variant="ghost"

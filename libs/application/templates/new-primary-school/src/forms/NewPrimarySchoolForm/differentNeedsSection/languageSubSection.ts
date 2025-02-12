@@ -66,7 +66,16 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
           removeItemButtonText:
             newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
-          minRows: 1,
+          minRows: (application: Application) => {
+            const { languageEnvironment } = getApplicationAnswers(
+              application.answers,
+            )
+
+            return languageEnvironment ===
+              LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+              ? 1
+              : 2
+          },
           maxRows: 4,
           marginTop: 0,
           condition: (answers) => {

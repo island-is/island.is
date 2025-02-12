@@ -691,7 +691,7 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: number
+  minRows?: MaybeWithApplicationAndField<number>
   maxRows?: number
 }
 

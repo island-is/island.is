@@ -133,8 +133,41 @@ export const dataSchema = z.object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
       guardianRequiresInterpreter: z.string().optional(),
-      selectedLanguages: z.array(z.object({ code: z.string() })).optional(),
+      selectedLanguages: z
+        .array(z.object({ code: z.string().optional().nullable() }))
+        .optional(),
       preferredLanguage: z.string().optional().nullable(),
+    })
+    .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {
+      const checkAndAddIssue = (index: number) => {
+        // If required 2 languages but the second language field is still hidden
+        // else check if applicant has selected a languages
+        if (index === 1 && selectedLanguages?.length === 1) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.twoLanguagesRequired,
+            path: ['selectedLanguages'],
+          })
+        } else if (!selectedLanguages?.[index]?.code) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.languageRequired,
+            path: ['selectedLanguages', index, 'code'],
+          })
+        }
+      }
+
+      if (
+        languageEnvironment ===
+        LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+      ) {
+        checkAndAddIssue(0)
+      } else if (
+        languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+      ) {
+        checkAndAddIssue(0)
+        checkAndAddIssue(1)
+      }
     })
     .refine(
       ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
