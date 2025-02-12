@@ -131,16 +131,17 @@ CMD ["node", "main.js"]
 # ------------------------------------------------
 # Static output (NGINX)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS output-static
+FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS static-base
+RUN apk update && apk upgrade && apk add --no-cache bash nodejs
+RUN mkdir -p /etc/nginx/templates
+
+FROM static-base AS output-static
 
 ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
-
-RUN apk update && apk upgrade && apk add --no-cache bash nodejs
-RUN mkdir -p /etc/nginx/templates
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.* /docker-entrypoint.d/
