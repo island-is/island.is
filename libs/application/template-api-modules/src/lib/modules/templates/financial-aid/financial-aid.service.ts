@@ -16,6 +16,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
+  CreateApplicationDto,
   MunicipalityApi,
   MunicipalityModel,
   PersonalTaxReturnApi,
@@ -159,7 +160,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
       .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
 
-    const newApplication = {
+    const newApplication: CreateApplicationDto = {
       name: externalData.nationalRegistry.data.fullName,
       nationalId: externalData.nationalRegistry.data.nationalId,
       phoneNumber: answers.contactInfo.phone,
