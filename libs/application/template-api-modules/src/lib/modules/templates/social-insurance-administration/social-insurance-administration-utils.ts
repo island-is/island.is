@@ -464,15 +464,12 @@ export const getIncomeTypes = (application: Application): IncomeTypes[] => {
   }))
 }
 
-export const shouldDistributeIncomeByMonth = (
-  application: Application,
-): boolean => {
+export const shouldDistributeIncomeByMonth = (application: Application) => {
   // Let TR know if there is any case where income is uneven during the year
   const { incomePlan } = getIPApplicationAnswers(application.answers)
 
- const hasUnevenIncome = incomePlan.some(
-    (i) =>
-      i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
+  const hasUnevenIncome = incomePlan.some(
+    (i) => i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
   )
   return hasUnevenIncome
 }
