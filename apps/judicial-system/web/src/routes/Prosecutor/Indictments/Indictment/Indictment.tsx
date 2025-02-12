@@ -122,10 +122,7 @@ const Indictment = () => {
     },
   })
 
-  const stepIsValid = isIndictmentStepValid(
-    workingCase,
-    isOffenseEndpointEnabled,
-  )
+  const stepIsValid = isIndictmentStepValid(workingCase, isOffenseEndpointEnabled)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
