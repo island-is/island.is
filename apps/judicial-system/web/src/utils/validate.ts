@@ -282,18 +282,14 @@ export const isProcessingStepValidIndictments = (
     : true
 
   return Boolean(
-    workingCase.prosecutor &&
-      workingCase.court &&
+    workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
       defendantsAreValid,
   )
 }
 
-export const isIndictmentStepValid = (
-  workingCase: Case,
-  isOffenseEndpointEnabled: boolean,
-): boolean => {
+export const isIndictmentStepValid = (workingCase: Case, isOffenseEndpointEnabled?: boolean): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
@@ -321,11 +317,7 @@ export const isIndictmentStepValid = (
   }
 
   const hasOffenses = (indictmentCount: IndictmentCount) => {
-    if (!isOffenseEndpointEnabled) {
-      return true
-    }
-
-    if (indictmentCount.offenses) {
+    if (isOffenseEndpointEnabled) {
       return Boolean(
         indictmentCount.offenses && indictmentCount.offenses?.length > 0,
       )
