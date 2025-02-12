@@ -133,6 +133,16 @@ jobs:
               ]
             }')" | tee -a "$GITHUB_OUTPUT"
 
+      - name: Debug outputs
+        env:
+          args_prep: ${{ toJson(steps.args-prep.outputs) }}
+          set_matrix: ${{ toJson(steps.set-matrix.outputs) }}
+        run: |
+          echo "---"
+          echo "${args_prep}" | jq
+          echo "${set_matrix}" | jq
+          echo "---"
+
   deps:
     name: Build dependencies
     runs-on: arc-runners
