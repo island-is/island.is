@@ -146,7 +146,6 @@ jobs:
             $cache_prefix,name=$GITHUB_REF
           "
           cache_to_common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF"
-
           echo | jq -rsc \
             --arg build_args "$build_args"  --arg image_repository "$image_repository" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
           '{
@@ -163,6 +162,7 @@ jobs:
             # Use GitHub multi-line outputs, but cheekily done inline here 🤭
             | "\(.key)<<EOF\n\(.value)\nEOF"
           ' | tee -a "$GITHUB_OUTPUT"
+
       - name: Debug common config
         id: debug
         env:
