@@ -3,6 +3,11 @@
 # Known ignores
 /.github/
 /.git/
+# Don't ignore branc/refs for Datadog source code integration
+# https://docs.datadoghq.com/integrations/guide/source-code-integration/?tab=nodejs#build-inside-a-docker-container
+!.git/HEAD
+!.git/config
+!.git/refs
 /scripts/ci/
 /.env.*
 /.envrc*
