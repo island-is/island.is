@@ -1,5 +1,3 @@
-import { application } from "express"
-
 # Add new projects here. Project folders are usually owned by the team assigned.
 
 # Order is important; the last matching pattern takes the most precedence.
