@@ -7,8 +7,8 @@ import {
   ReasonForApplicationOptions,
 } from './constants'
 
-import { errorMessages } from './messages'
 import { NO, YES } from '@island.is/application/core'
+import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
   const phoneNumber = parsePhoneNumberFromString(value, 'IS')

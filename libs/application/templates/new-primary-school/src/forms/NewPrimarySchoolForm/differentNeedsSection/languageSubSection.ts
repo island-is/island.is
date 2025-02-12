@@ -15,7 +15,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   hasForeignLanguages,
-  showChildLanguageFields,
+  showPreferredLanguageFields,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
@@ -122,7 +122,7 @@ export const languageSubSection = buildSubSection({
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => {
-            return showChildLanguageFields(answers)
+            return showPreferredLanguageFields(answers)
           },
         }),
         buildSelectField({
@@ -154,7 +154,7 @@ export const languageSubSection = buildSubSection({
               })
           },
           condition: (answers) => {
-            return showChildLanguageFields(answers)
+            return showPreferredLanguageFields(answers)
           },
         }),
         buildRadioField({

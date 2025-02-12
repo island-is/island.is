@@ -226,7 +226,7 @@ export const FieldsRepeaterFormField = ({
             </Button>
           </Box>
         </Stack>
-        {error && typeof error === 'string' && fields.length === 0 && (
+        {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
           </Box>

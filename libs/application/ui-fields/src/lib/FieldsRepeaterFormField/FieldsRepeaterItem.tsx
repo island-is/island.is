@@ -280,6 +280,7 @@ export const Item = ({
           application={application}
           defaultValue={DefaultValue}
           large={true}
+          placeholder={formatText(placeholder, application, formatMessage)}
           {...props}
         />
       )}
