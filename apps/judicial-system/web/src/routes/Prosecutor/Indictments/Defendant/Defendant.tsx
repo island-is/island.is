@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { DefendantInfo } from '../../components'
+import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
 import { getIncidentDescription } from '../Indictment/IndictmentCount'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
@@ -117,6 +117,8 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+  const [isProsecutorSelected, setIsProsecutorSelected] =
+    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -452,7 +454,16 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = isDefendantStepValidIndictments(workingCase)
+  /**
+   * This condition can be a little hard to read. The point is that if the
+   * case exists, i.e. if `workingCase.id` is truthy, then the user has
+   * selected a prosecutor. If the case does not exist, i.e. if
+   * `workingCase.id` is falsy, then the user has not selected a prosecutor
+   * and must do so before proceeding.
+   */
+  const stepIsValid =
+    isDefendantStepValidIndictments(workingCase) &&
+    Boolean(workingCase.id || isProsecutorSelected)
 
   return (
     <PageLayout
@@ -467,6 +478,11 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
+        <ProsecutorSection
+          handleChange={
+            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
+          }
+        />
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
