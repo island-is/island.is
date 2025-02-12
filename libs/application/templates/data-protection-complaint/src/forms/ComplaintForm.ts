@@ -13,6 +13,8 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -41,8 +43,6 @@ import { confirmation } from '../lib/messages/confirmation'
 import { externalData } from '../lib/messages/externalData'
 import {
   FILE_SIZE_LIMIT,
-  NO,
-  YES,
   SubjectOfComplaint,
   SubmittedApplicationData,
 } from '../shared'

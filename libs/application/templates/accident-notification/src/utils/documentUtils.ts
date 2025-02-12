@@ -1,4 +1,4 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { AccidentNotification } from '../lib/dataSchema'
 import {
   AttachmentsEnum,
@@ -12,7 +12,6 @@ import { FormValue } from '@island.is/application/types'
 import {
   AccidentNotificationAttachmentStatus,
   AccidentNotifTypes,
-  YesOrNo,
 } from '../types'
 import {
   isReportingOnBehalfOfEmployee,

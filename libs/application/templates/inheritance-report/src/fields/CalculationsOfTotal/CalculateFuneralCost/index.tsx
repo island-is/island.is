@@ -1,5 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useMemo } from 'react'
