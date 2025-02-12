@@ -29,7 +29,6 @@ export const prerequisitesSpouseSection = buildSection({
         buildDataProviderItem({
           id: 'moreTaxInfo',
           type: undefined,
-          title: '',
           subTitle: m.externalData.taxData.process,
         }),
       ],
