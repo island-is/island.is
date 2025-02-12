@@ -489,7 +489,6 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
-                    constants.INDICTMENTS_PROCESSING_ROUTE,
                   ],
                   workingCase,
                 ) &&
@@ -516,6 +515,7 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_CASE_FILES_ROUTE,
                   ],
                   workingCase,
                 ) &&
@@ -540,6 +540,7 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_PROCESSING_ROUTE,
                   ],
                   workingCase,
@@ -567,8 +568,9 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
-                    constants.INDICTMENTS_PROCESSING_ROUTE,
                     constants.INDICTMENTS_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                    constants.INDICTMENTS_INDICTMENT_ROUTE,
                   ],
                   workingCase,
                 ) &&
