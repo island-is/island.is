@@ -4,10 +4,8 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
 import {
-  ApplicationListDto,
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
-  ApplicationsControllerFindAllRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerSubmitScreenRequest,
@@ -16,7 +14,6 @@ import {
 import {
   CreateApplicationInput,
   GetApplicationInput,
-  GetApplicationsByOrganizationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
 import { Application } from '../../models/applications.model'
@@ -128,19 +125,4 @@ export class ApplicationsService {
     return response
   }
 
-  async getAllApplicationsByOrganization(
-    auth: User,
-    input: GetApplicationsByOrganizationInput
-  ): Promise<ApplicationListDto> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAll(
-        input as ApplicationsControllerFindAllRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get applications by organization'))
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response
-  }
 }

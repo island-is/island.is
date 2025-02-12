@@ -5,18 +5,13 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
 import {
-  CreateFormDto,
   FormsApi,
   FormsControllerDeleteRequest,
-  FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
-  FormUrlsApi,
 } from '@island.is/clients/form-system'
 import {
-  CreateFormInput,
   DeleteFormInput,
-  GetAllFormsInput,
   GetFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
@@ -45,11 +40,9 @@ export class FormsService {
     return this.formsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
+  async createForm(auth: User): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerCreate({
-        createFormDto: input as CreateFormDto,
-      })
+      .formsControllerCreate()
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
     if (!response || response instanceof ApolloError) {
       return {}
@@ -72,7 +65,6 @@ export class FormsService {
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
-      .catch((e) => console.error(e))
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
     if (!response || response instanceof ApolloError) {
       return {}
@@ -82,12 +74,11 @@ export class FormsService {
   }
 
   async getAllForms(
-    auth: User,
-    input: GetAllFormsInput,
+    auth: User
   ): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll(input as FormsControllerFindAllRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+      .formsControllerFindAll()
+    // .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
 
     if (!response || response instanceof ApolloError) {
       return {}

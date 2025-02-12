@@ -7,7 +7,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { ApplicantsService } from './applicants.service'
 import { Applicant } from '../../models/applicant.model'
 import {

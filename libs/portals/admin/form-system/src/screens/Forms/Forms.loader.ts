@@ -14,12 +14,7 @@ export interface FormsLoaderResponse {
 export const formsLoader: WrappedLoaderFn = ({ client }) => {
   return async (): Promise<FormsLoaderResponse> => {
     const { data, error } = await client.query<FormsLoaderQueryResponse>({
-      query: GET_FORMS,
-      variables: {
-        input: {
-          organizationId: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39',
-        },
-      },
+      query: GET_FORMS
     })
     if (error) {
       throw error

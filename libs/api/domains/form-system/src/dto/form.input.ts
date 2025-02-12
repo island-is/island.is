@@ -23,12 +23,6 @@ export class DependencyInput {
   isSelected?: boolean
 }
 
-@InputType('FormSystemCreateFormInput')
-export class CreateFormInput {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
-}
-
 @InputType('FormSystemDeleteFormInput')
 export class DeleteFormInput {
   @Field(() => String, { nullable: true })
@@ -41,11 +35,6 @@ export class GetFormInput {
   id?: string
 }
 
-@InputType('FormSystemGetAllFormsInput')
-export class GetAllFormsInput {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
-}
 
 @InputType('FormSystemFormUrlInput')
 export class FormUrlInput {
