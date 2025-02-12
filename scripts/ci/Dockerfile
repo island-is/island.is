@@ -52,6 +52,7 @@ ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
 
 ENV NODE_ENV=production \
+  CI=true \
   NODE_OPTIONS="--max-old-space-size=8192" \
   NX_PARALLEL=${NX_PARALLEL} \
   NX_MAX_PARALLEL=${NX_MAX_PARALLEL} \
