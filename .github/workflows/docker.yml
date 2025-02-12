@@ -91,7 +91,7 @@ jobs:
         run: |
           # Setters
           node_image_version="$NODE_IMAGE_VERSION"
-          playwright_image_version="$(yarn info --json @playwright/test | jq -r '.children.Version | "v\(.)-focal"')"
+          playwright_image_version="$(yarn info --json @playwright/test | jq -r '.children.Version')"
           # Outputters
           echo node-image-version="$node_image_version" | tee -a "$GITHUB_OUTPUT"
           echo playwright-image-version="$playwright_image_version" | tee -a "$GITHUB_OUTPUT"
