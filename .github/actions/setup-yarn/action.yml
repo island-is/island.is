@@ -13,7 +13,7 @@ runs:
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
         echo "Will skip running 'yarn install' step: $skip_install"
         echo "current: $current"
-        echo "bundled: $current"
+        echo "bundled: $bundled"
         echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
 
     - name: Setup Yarn
