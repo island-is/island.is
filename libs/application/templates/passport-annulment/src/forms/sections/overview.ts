@@ -5,8 +5,9 @@ import {
   buildKeyValueField,
   buildMultiField,
   buildSubmitField,
+  YES,
 } from '@island.is/application/core'
-import { Application, DefaultEvents, YES } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { PassportStatus } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
