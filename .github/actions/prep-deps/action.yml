@@ -47,21 +47,6 @@ runs:
         ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
         echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
 
-    - name: Verify dependency setup
-      shell: bash
-      run: |
-        yarn why react
-
-    - name: Debug information
-      shell: bash
-      run: |
-        echo "Contents of current directory:"
-        ls -la
-        echo "Contents of .yarn directory:"
-        ls -la .yarn
-        echo "Contents of node_modules:"
-        ls -la node_modules
-
     - name: Prepare generated files
       shell: bash
       run: |

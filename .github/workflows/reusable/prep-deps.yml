@@ -1,0 +1,85 @@
+name: 'Prep Dependencies'
+on:
+  workflow_call:
+    outputs:
+      TEST_CHUNKS:
+        value: ${{ jobs.prepare.outputs.test_chunks }}
+      E2E_CHUNKS:
+        value: ${{ jobs.prepare.outputs.e2e_chunks }}
+      E2E_BUILD_ID:
+        value: ${{ jobs.prepare.outputs.build_iD }}
+      BUILD_CHUNKS:
+        value: ${{ jobs.prepare.outputs.build_chunks }}
+      NX_BASE:
+        value: ${{ jobs.prepare.outputs.nx_base }}
+jobs:
+  prepare:
+    outputs:
+      TEST_CHUNKS: ${{ steps.build_info.outputs.test_chunks }}
+      E2E_CHUNKS: ${{ steps.build_info.outputs.e2e_chunks }}
+      E2E_BUILD_ID: ${{ steps.build_info.outputs.build_iD }}
+      BUILD_CHUNKS: ${{ steps.build_info.outputs.build_chunks }}
+      NX_BASE: ${{ steps.build_info.outputs.nx_base }}
+    runs-on: arc-test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Yarn
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare --activate
+          yarn --version
+
+      - name: Link pre-installed dependencies
+        shell: bash
+        run: |
+          rm -rf node_modules
+          ln -s /home/runner/dependencies/node_modules .
+          ln -s /home/runner/dependencies/.yarn/cache .yarn/
+          ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
+          echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+
+      - name: Prepare generated files
+        shell: bash
+        run: |
+          echo "generated files: ${{ inputs.generated_files }}"
+          node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
+          tar -xzvf ${{ inputs.generated_files }}
+
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            ${{ inputs.generated_files }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Gather branch info
+        id: build_info
+        shell: bash
+        run: |
+          export BASE=${{ env.NX_BASE }}
+          export HEAD=${{ env.NX_HEAD }}
+
+          echo "TEST_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh test)}"
+          if [[ "$TEST_CHUNKS" != "[]" ]]; then
+            echo TEST_CHUNKS="{\"projects\":$TEST_CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "BUILD_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh build)}"
+          if [[ "$BUILD_CHUNKS" != "[]" ]]; then
+            echo BUILD_CHUNKS="{\"projects\":$BUILD_CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+
+
+          echo "E2E_CHUNKS={\"projects\":$(./scripts/ci/generate-chunks.sh e2e-ci)}"
+          if [[ "$E2E_CHUNKS" != "[]" ]]; then
+            echo E2E_CHUNKS="{\"projects\":$E2E_CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$BASE" >> "$GITHUB_OUTPUT"
