@@ -4,9 +4,11 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { B_TEMP, NO, YES } from '../../lib/constants'
+import { B_TEMP } from '../../lib/constants'
 
 import { isApplicationForCondition } from '../../lib/utils'
 

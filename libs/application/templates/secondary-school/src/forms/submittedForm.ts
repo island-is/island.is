@@ -7,12 +7,11 @@ import {
   buildSection,
   buildSubmitField,
   coreMessages,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { conclusion, overview } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { ApplicationType } from '../utils'
+import { checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
   id: 'SubmittedForm',
@@ -36,12 +35,7 @@ export const Submitted: Form = buildForm({
               title: conclusion.overview.alertTitle,
               message: conclusion.overview.alertMessageFreshman,
               condition: (answers) => {
-                return (
-                  getValueViaPath<ApplicationType>(
-                    answers,
-                    'applicationType.value',
-                  ) === ApplicationType.FRESHMAN
-                )
+                return checkIsFreshman(answers)
               },
             }),
             buildAlertMessageField({
@@ -50,12 +44,7 @@ export const Submitted: Form = buildForm({
               title: conclusion.overview.alertTitle,
               message: conclusion.overview.alertMessageGeneral,
               condition: (answers) => {
-                return (
-                  getValueViaPath<ApplicationType>(
-                    answers,
-                    'applicationType.value',
-                  ) !== ApplicationType.FRESHMAN
-                )
+                return !checkIsFreshman(answers)
               },
             }),
             buildCustomField({

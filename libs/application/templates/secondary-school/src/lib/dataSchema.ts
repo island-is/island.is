@@ -1,7 +1,8 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { ApplicationType } from '../utils'
-import { YES } from '@island.is/application/types'
+import { YES } from '@island.is/application/core'
+import { error } from './messages'
 
 const FileDocumentSchema = z.object({
   name: z.string(),
@@ -11,7 +12,7 @@ const FileDocumentSchema = z.object({
 const CustodianSchema = z.object({
   person: z.object({
     nationalId: z.string().min(1),
-    name: z.string(),
+    name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
   }),
@@ -24,6 +25,7 @@ const CustodianSchema = z.object({
 
 const MainOtherContactSchema = z
   .object({
+    applicantNationalId: z.string(),
     required: z.boolean(),
     person: z
       .object({
@@ -39,27 +41,41 @@ const MainOtherContactSchema = z
       if (!required) return true
       return !!person?.nationalId
     },
-    { path: ['person.nationalId'] },
+    { path: ['person', 'nationalId'] },
+  )
+  .refine(
+    ({ required, person }) => {
+      if (!required) return true
+      return !!person?.name
+    },
+    { path: ['person', 'name'] },
   )
   .refine(
     ({ required, person }) => {
       if (!required) return true
       return !!person?.email
     },
-    { path: ['person.email'] },
+    { path: ['person', 'email'] },
   )
   .refine(
     ({ required, person }) => {
       if (!required) return true
       return !!person?.phone
     },
-    { path: ['person.phone'] },
+    { path: ['person', 'phone'] },
+  )
+  .refine(
+    ({ person, applicantNationalId }) => {
+      if (person?.nationalId === applicantNationalId) return false
+      return true
+    },
+    { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
   )
 
 const OtherContactSchema = z.object({
   person: z.object({
     nationalId: z.string().min(1),
-    name: z.string(),
+    name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
   }),
@@ -88,7 +104,7 @@ const SelectionSchema = z
         // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
         include: z.boolean().optional(),
         require: z.boolean().optional(),
-        id: z.string().optional(),
+        id: z.string().optional().nullable(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
@@ -96,13 +112,13 @@ const SelectionSchema = z
       .optional(),
     thirdLanguage: z
       .object({
-        code: z.string().optional(),
+        code: z.string().optional().nullable(),
         name: z.string().optional(),
       })
       .optional(),
     nordicLanguage: z
       .object({
-        code: z.string().optional(),
+        code: z.string().optional().nullable(),
         name: z.string().optional(),
       })
       .optional(),
@@ -113,14 +129,14 @@ const SelectionSchema = z
       if (!include) return true
       return !!school?.id
     },
-    { path: ['school.id'] },
+    { path: ['school', 'id'] },
   )
   .refine(
     ({ include, firstProgram }) => {
       if (!include) return true
       return !!firstProgram?.id
     },
-    { path: ['firstProgram.id'] },
+    { path: ['firstProgram', 'id'] },
   )
   .refine(
     ({ include, secondProgram }) => {
@@ -128,7 +144,7 @@ const SelectionSchema = z
       if (!secondProgram?.include || !secondProgram?.require) return true
       return !!secondProgram?.id
     },
-    { path: ['secondProgram.id'] },
+    { path: ['secondProgram', 'id'] },
   )
 
 export const SecondarySchoolSchema = z.object({

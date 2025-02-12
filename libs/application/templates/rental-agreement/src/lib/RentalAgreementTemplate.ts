@@ -3,6 +3,7 @@ import { assign } from 'xstate'
 import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 import {
   Application,
   ApplicationTemplate,
@@ -14,7 +15,7 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
 } from '@island.is/application/types'
-import { Events, States, Roles } from './constants'
+import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   NationalRegistryUserApi,
@@ -22,12 +23,15 @@ import {
 } from '../dataProviders'
 import { getNationalIdListOfAssignees } from './getLandlordsNationalId'
 
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
+
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
+  codeOwner: CodeOwners.KolibriKotid,
   name: 'Leigusamningur',
   institution: 'Húsnæðis- og mannvirkjastofnun',
   translationNamespaces: [

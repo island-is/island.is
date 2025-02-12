@@ -276,6 +276,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         ...AllSlices
         ${nestedFields}
       }
+      bottomSlices {
+        ...AllSlices
+      }
       showTableOfContents
       sliceCustomRenderer
       sliceExtraText

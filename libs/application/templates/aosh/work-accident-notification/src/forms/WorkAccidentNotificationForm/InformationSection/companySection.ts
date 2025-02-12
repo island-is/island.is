@@ -95,14 +95,20 @@ export const companySection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const postalCode = getValueViaPath<string>(
+            let postalCode = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.postalCode',
             )
-            const city = getValueViaPath<string>(
+            let city = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.city',
             )
+
+            if (!postalCode) {
+              postalCode = '999'
+              city = 'Óskráð/Útlönd'
+            }
+            if (!city) city = 'Óskráð/Útlönd'
 
             return `${postalCode} - ${city}`
           },
@@ -199,6 +205,7 @@ export const companySection = buildSubSection({
           width: 'half',
           doesNotRequireAnswer: true,
           condition: (_, externalData) => isCompany(externalData),
+          isClearable: true,
           options: (application) => {
             const postCodes =
               getValueViaPath<PostCodeDto[]>(

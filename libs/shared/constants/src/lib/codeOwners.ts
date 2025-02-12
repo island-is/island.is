@@ -16,4 +16,5 @@ export enum CodeOwners {
   Origo = 'origo',
   Programm = 'programm',
   Stefna = 'stefna',
+  Fuglar = 'fuglar',
 }
