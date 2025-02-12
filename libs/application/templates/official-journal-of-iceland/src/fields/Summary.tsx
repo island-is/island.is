@@ -50,7 +50,7 @@ export const Summary = ({
   )
 
   const signatureValidationCheck = signatureValidationSchema.safeParse({
-    signatures: currentApplication.answers.signatures,
+    signatures: currentApplication.answers.signature,
     misc: currentApplication.answers.misc,
   })
 

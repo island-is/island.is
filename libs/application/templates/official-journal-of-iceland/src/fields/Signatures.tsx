@@ -1,26 +1,16 @@
 import { useLocale } from '@island.is/localization'
 import { FormGroup } from '../components/form/FormGroup'
-import {
-  InputFields,
-  OJOIFieldBaseProps,
-  Signature,
-  SignatureItem,
-  SignatureItemWithChairman,
-  SignatureMember,
-} from '../lib/types'
+import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { signatures } from '../lib/messages/signatures'
 import { useState } from 'react'
 import { Box, Button, Stack, Tabs } from '@island.is/island-ui/core'
-import { CommitteeSignature } from '../components/signatures/Committee'
-import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import { useLastSignature } from '../hooks/useLastSignature'
 import { useFormContext } from 'react-hook-form'
-import { OfficialJournalOfIcelandApplicationSignatureMember } from '@island.is/api/schema'
-import { isDefined } from '@island.is/shared/utils'
+import { SignaturesTab } from '../components/signatures/SignaturesTab'
 
-export const Signatures = ({ application }: OJOIFieldBaseProps) => {
+export const SignaturesField = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
   const {
@@ -32,7 +22,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   })
 
   const [selectedTab, setSelectedTab] = useState(
-    application.answers?.misc?.signatureType,
+    application.answers?.misc?.signatureType ?? 'regular',
   )
 
   const { lastSignature } = useLastSignature({
@@ -43,12 +33,12 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     {
       id: 'regular',
       label: f(signatures.tabs.regular),
-      content: <RegularSignature applicationId={application.id} />,
+      content: <SignaturesTab />,
     },
     {
       id: 'committee',
       label: f(signatures.tabs.committee),
-      content: <CommitteeSignature applicationId={application.id} />,
+      content: <SignaturesTab />,
     },
   ]
 

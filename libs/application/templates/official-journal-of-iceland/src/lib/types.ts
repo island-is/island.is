@@ -5,7 +5,6 @@ import {
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
 import {
-  committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
   regularSignatureItemSchema,
@@ -84,7 +83,6 @@ export type Answers = OJOIApplication['answers']
 
 export type Signature = z.infer<typeof signatureValidationSchema>
 export type SignatureItem = z.infer<typeof regularSignatureItemSchema>
-export type SignatureItemWithChairman = z.infer<typeof committeeSignatureSchema>
 export type SignatureMember = z.infer<typeof memberItemSchema>
 
 export type OJOIFieldBaseProps = Override<

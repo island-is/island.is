@@ -28,7 +28,6 @@ import {
   OJOI_INPUT_HEIGHT,
 } from '../lib/constants'
 import set from 'lodash/set'
-import { getCommitteeSignature, getRegularSignature } from '../lib/utils'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { useApplicationCase } from '../hooks/useApplicationCase'
@@ -69,16 +68,16 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
       AnswerOption.YES,
     )
 
-    currentAnswers = set(currentAnswers, InputFields.signature.regular, [
-      ...getRegularSignature(
-        DEFAULT_REGULAR_SIGNATURE_COUNT,
-        DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-      ),
-    ])
+    // currentAnswers = set(currentAnswers, InputFields.signature.regular, [
+    //   ...getRegularSignature(
+    //     DEFAULT_REGULAR_SIGNATURE_COUNT,
+    //     DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
+    //   ),
+    // ])
 
-    currentAnswers = set(currentAnswers, InputFields.signature.committee, {
-      ...getCommitteeSignature(DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT),
-    })
+    // currentAnswers = set(currentAnswers, InputFields.signature.committee, {
+    //   ...getCommitteeSignature(DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT),
+    // })
 
     updateApplicationMutation({
       variables: {

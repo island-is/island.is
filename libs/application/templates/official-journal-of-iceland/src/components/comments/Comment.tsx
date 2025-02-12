@@ -8,7 +8,7 @@ export type Props = OjoiaComment
 export const Comment = ({
   id,
   age,
-  title,
+  action,
   direction,
   creator,
   receiver,
@@ -35,7 +35,7 @@ export const Comment = ({
       <Box className={styles.contentColumn}>
         <Text>
           <strong>{creator ? creator : f(comments.unknownUser.name)}</strong>{' '}
-          {title && `${title}`}
+          {action && `${action}`}
           {receiver && ` ${receiver}`}
         </Text>
         <Text>{comment}</Text>

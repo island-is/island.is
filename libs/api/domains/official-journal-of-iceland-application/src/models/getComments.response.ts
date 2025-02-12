@@ -21,13 +21,13 @@ export class CaseComment {
   direction!: CommentDirection
 
   @Field()
-  title!: string
+  action!: string
 
   @Field(() => String, { nullable: true })
   comment!: string | null
 
-  @Field(() => String, { nullable: true })
-  creator!: string | null
+  @Field(() => String)
+  creator!: string
 
   @Field(() => String, { nullable: true })
   receiver!: string | null

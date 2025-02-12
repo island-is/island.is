@@ -9,14 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { HTMLText } from '@island.is/regulations-tools/types'
-import {
-  base64ToBlob,
-  getAdvertMarkup,
-  getSignaturesMarkup,
-  parseZodIssue,
-} from '../lib/utils'
-import { Routes, SignatureTypes } from '../lib/constants'
+import { base64ToBlob, parseZodIssue } from '../lib/utils'
+import { Routes } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { advert, error, preview, signatures } from '../lib/messages'
 import {
@@ -87,14 +81,16 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   )
 
   const signatureValidationCheck = signatureValidationSchema.safeParse({
-    signatures: currentApplication.answers.signatures,
+    signatures: currentApplication.answers.signature,
     misc: currentApplication.answers.misc,
   })
 
-  const signatureMarkup = getSignaturesMarkup({
-    signatures: currentApplication.answers.signatures,
-    type: currentApplication.answers.misc?.signatureType as SignatureTypes,
-  })
+  const signatureMarkup = '<div></div>'
+
+  // getSignaturesMarkup({
+  //   signatures: currentApplication.answers.signatures,
+  //   type: currentApplication.answers.misc?.signatureType as SignatureTypes,
+  // })
 
   const hasError = !(
     advertValidationCheck.success &&

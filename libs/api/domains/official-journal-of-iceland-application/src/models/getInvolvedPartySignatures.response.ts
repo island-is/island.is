@@ -1,4 +1,4 @@
-import { Field, ID, InterfaceType, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { InvolvededParty } from './getUserInvolvedParties.response'
 
 @ObjectType('OfficialJournalOfIcelandApplicationInstitution')
@@ -22,57 +22,23 @@ export class SignatureMember {
   after?: string
 }
 
-@InterfaceType('OfficialJournalOfIcelandApplicationInvolvedPartySignatures', {
-  resolveType(res) {
-    if (res.chairman) {
-      return InvolvedPartySignaturesCommittee
-    }
-    return InvolvedPartySignaturesRegular
-  },
-})
-export abstract class InvolvedPartySignatures {
-  @Field(() => ID)
-  id!: string
-
+@ObjectType('OfficialJournalOfIcelandApplicationInvolvedPartySignature')
+export class InvolvedPartySignatures {
   @Field()
   institution!: string
 
   @Field()
-  date!: string
-
-  @Field(() => Institution, { nullable: true })
-  involvedParty?: Institution
+  signatureDate!: string
 
   @Field(() => [SignatureMember])
   members!: Array<SignatureMember>
 
   @Field({ nullable: true })
   additionalSignature?: string
-
-  @Field({ nullable: true })
-  html?: string
 }
 
-@ObjectType(
-  'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular',
-  {
-    implements: () => InvolvedPartySignatures,
-  },
-)
-export class InvolvedPartySignaturesRegular
-  extends InvolvedPartySignatures
-  implements InvolvedPartySignatures {}
-
-@ObjectType(
-  'OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee',
-  {
-    implements: () => InvolvedPartySignatures,
-  },
-)
-export class InvolvedPartySignaturesCommittee
-  extends InvolvedPartySignatures
-  implements InvolvedPartySignatures
-{
-  @Field(() => SignatureMember)
-  chairman!: SignatureMember
+@ObjectType('OfficialJournalOfIcelandApplicationInvolvedPartySignatureResponse')
+export class GetInvolvedPartySignature {
+  @Field(() => [InvolvedPartySignatures])
+  records!: InvolvedPartySignatures[]
 }

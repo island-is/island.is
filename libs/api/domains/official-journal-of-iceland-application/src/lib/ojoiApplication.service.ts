@@ -1,5 +1,5 @@
 import {
-  GetAdvertTemplateResponseTypeEnum,
+  CaseActionEnum,
   OfficialJournalOfIcelandApplicationClientService,
 } from '@island.is/clients/official-journal-of-iceland/application'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -15,7 +15,6 @@ import {
   mapPresignedUrlType,
   mapTemplateTypeEnumToLiteral,
   mapTemplateTypeLiteralToEnum,
-  safeEnumMapper,
 } from './mappers'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
@@ -33,13 +32,12 @@ import { GetPdfResponse } from '../models/getPdf.response'
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
-import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
-import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 import {
-  OJOIApplicationAdvertTemplateResponse,
-  TemplateType,
-} from '../models/applicationAdvertTemplate.response'
-import { isDefined } from '@island.is/shared/utils'
+  GetInvolvedPartySignature,
+  InvolvedPartySignatures,
+} from '../models/getInvolvedPartySignatures.response'
+import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
+import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -61,18 +59,19 @@ export class OfficialJournalOfIcelandApplicationService {
     )
 
     const mapped = incomingComments.comments.map((c) => {
-      const directonEnum =
-        safeEnumMapper(c.direction, CommentDirection) ??
-        CommentDirection.RECEIVED
+      const direction =
+        c.action === CaseActionEnum.EXTERNALCOMMENT
+          ? CommentDirection.RECEIVED
+          : CommentDirection.SENT
 
       return {
         id: c.id,
-        age: c.age,
-        direction: directonEnum,
-        title: c.title,
+        age: c.created,
+        direction: direction,
+        action: c.action,
         comment: c.comment,
-        creator: c.creator,
-        receiver: c.receiver,
+        creator: c.creator.title,
+        receiver: c.receiver?.title ?? null,
       }
     })
 
@@ -320,7 +319,7 @@ export class OfficialJournalOfIcelandApplicationService {
   async getInvolvedPartySignatures(
     input: GetInvolvedPartySignaturesInput,
     user: User,
-  ): Promise<InvolvedPartySignatures> {
+  ): Promise<GetInvolvedPartySignature> {
     try {
       const data =
         await this.ojoiApplicationService.getSignaturesForInvolvedParty(
@@ -328,24 +327,33 @@ export class OfficialJournalOfIcelandApplicationService {
           user,
         )
 
-      return {
-        ...data,
-        members: data.members.map((member) => ({
-          name: member.text ?? undefined,
-          above: member.textAbove ?? undefined,
-          before: member.textBefore ?? undefined,
-          below: member.textBelow ?? undefined,
-          after: member.textAfter ?? undefined,
-        })),
-        ...(data?.chairman && {
-          chairman: {
-            name: data.chairman.text ?? undefined,
-            above: data.chairman.textAbove ?? undefined,
-            before: data.chairman.textBefore ?? undefined,
-            below: data.chairman.textBelow ?? undefined,
-            after: data.chairman.textAfter ?? undefined,
-          },
+      const records: InvolvedPartySignatures[] = data.signature.records.map(
+        (record) => ({
+          id: record.id,
+          signatureDate: record.signatureDate,
+          institution: record.institution,
+          additionalSignature: record.additional ?? '',
+          members: record.members.map((member) => ({
+            name: member.name,
+            above: member.textAbove ?? '',
+            below: member.textBelow ?? '',
+            after: member.textAfter ?? '',
+            before: member.textBefore ?? '',
+          })),
+          chairman: record.chairman
+            ? {
+                name: record.chairman.name,
+                above: record.chairman.textAbove ?? '',
+                below: record.chairman.textBelow ?? '',
+                after: record.chairman.textAfter ?? '',
+                before: record.chairman.textBefore ?? '',
+              }
+            : undefined,
         }),
+      )
+
+      return {
+        records: records,
       }
     } catch (error) {
       this.logger.error('Failed to get signatures for involved party', {

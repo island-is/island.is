@@ -1,18 +1,12 @@
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { INVOLVED_PARTY_SIGNATURES_QUERY } from '../graphql/queries'
-import {
-  OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee,
-  OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular,
-} from '@island.is/api/schema'
-
+import { OfficialJournalOfIcelandApplicationInvolvedPartySignature } from '@island.is/api/schema'
 type Props = {
   involvedPartyId?: string
 }
 
 type LastSignatureResponse = {
-  officialJournalOfIcelandApplicationInvolvedPartySignatures:
-    | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesRegular
-    | OfficialJournalOfIcelandApplicationInvolvedPartySignaturesCommittee
+  officialJournalOfIcelandApplicationInvolvedPartySignatures: OfficialJournalOfIcelandApplicationInvolvedPartySignature
 }
 
 export const useLastSignature = ({ involvedPartyId }: Props) => {
