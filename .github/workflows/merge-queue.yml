@@ -32,7 +32,7 @@ env:
 
 jobs:
   prepare:
-    uses: ./.github/workflows/reusable/prep-deps.yml
+    uses: ./.github/workflows/prep-deps.yml
     secrets: inherit
 
   tests:
