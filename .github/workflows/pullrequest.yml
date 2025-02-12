@@ -17,7 +17,6 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -26,6 +25,7 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   YARN_ENABLE_HARDENED_MODE: '0'
