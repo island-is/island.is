@@ -192,6 +192,7 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
+  caseSentToCourtDate?: string
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -823,6 +824,7 @@ export class CaseService {
       CaseFileCategory.CASE_FILE,
       CaseFileCategory.PROSECUTOR_CASE_FILE,
       CaseFileCategory.DEFENDANT_CASE_FILE,
+      CaseFileCategory.CIVIL_CLAIM,
     ]
 
     const deliverCaseFileToCourtMessages =
@@ -1824,6 +1826,21 @@ export class CaseService {
       if (update.indictmentReviewDecision) {
         const eventLogDTO = this.constructEventLogDTO(
           EventType.INDICTMENT_REVIEWED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+    }
+
+    if (isRequestCase(theCase.type)) {
+      if (
+        update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.DRAFT
+      ) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.CASE_SENT_TO_COURT,
           theCase,
           user,
         )

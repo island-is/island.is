@@ -73,12 +73,4 @@ export class Application {
   applicantTypes?: FormApplicantTypeDto[]
 }
 
-@ObjectType('FormSystemApplicationListDto')
-export class ApplicationListDto {
-  @Field(() => [Application], { nullable: 'itemsAndList' })
-  applications?: Application[]
-
-  @Field(() => Int, { nullable: true })
-  total?: number
-}
 

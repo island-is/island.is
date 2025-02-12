@@ -73,6 +73,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Information title',
   },
+  applicantTitle: {
+    id: 'dld.application:information.applicantTitle',
+    defaultMessage: 'Umsækjandi',
+    description: 'Information title',
+  },
   validTag: {
     id: 'dld.application:information.validTag',
     defaultMessage: 'Gildir til ',

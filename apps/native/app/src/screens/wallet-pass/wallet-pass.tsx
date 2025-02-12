@@ -149,6 +149,10 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const isAddToWalletButtonEnabled = useFeatureFlag(
+    'isAddToWalletButtonEnabled',
+    true,
+  )
   const fadeInAnim = useRef(new Animated.Value(0)).current
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
@@ -183,7 +187,19 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const informationTopSpacing =
     (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
     ((!isConnected || res.error) && isBarcodeEnabled)
-      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP + theme.spacing[4]
+      : theme.spacing[2]
+
+  // Calculate bottom inset based on the content
+  const bottomInset =
+    informationTopSpacing || (!isConnected && isBarcodeEnabled)
+      ? isTablet
+        ? 340
+        : !allowLicenseBarcode
+        ? 80 // less spacing needed if no barcode available (expired or not available)
+        : isAddToWalletButtonEnabled
+        ? 182
+        : 192 // Extra spacing needed at bottom if no button is shown
       : 0
 
   const [key, setKey] = useState(0)
@@ -191,7 +207,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     // Used to rerender ScrollView to have correct ContentInset based on barcode/no barcode
     // Remove once barcodes are live
     setKey((prev) => prev + 1)
-  }, [isBarcodeEnabled])
+  }, [isBarcodeEnabled, isAddToWalletButtonEnabled])
 
   const fadeIn = () => {
     Animated.timing(fadeInAnim, {
@@ -401,7 +417,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           type={licenseType}
           title={data?.payload?.metadata?.name ?? undefined}
           loading={res.loading}
-          error={!!res.error}
+          error={res.error}
           logo={
             isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
@@ -425,12 +441,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       </LicenseCardWrapper>
       <Information
         contentInset={{
-          bottom:
-            informationTopSpacing || (!isConnected && isBarcodeEnabled)
-              ? isTablet
-                ? 340
-                : 162
-              : 0,
+          bottom: bottomInset,
         }}
         key={key}
         topSpacing={informationTopSpacing}
@@ -481,7 +492,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           )}
         </SafeAreaView>
 
-        {pkPassAllowed && isBarcodeEnabled && (
+        {isAddToWalletButtonEnabled && pkPassAllowed && isBarcodeEnabled && (
           <ButtonWrapper>{renderButtons()}</ButtonWrapper>
         )}
         {isAndroid && <Spacer />}
@@ -491,7 +502,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           The reason for the animation is to avoid rendering flicker.
           The component will on first render the isBarcodeEnabled flag to be false and then set it to true after Configcat has fetched the flag.
        */}
-      {pkPassAllowed && !isBarcodeEnabled && (
+      {isAddToWalletButtonEnabled && pkPassAllowed && !isBarcodeEnabled && (
         <ButtonWrapper floating>
           <Animated.View style={{ opacity: fadeInAnim }}>
             {renderButtons()}

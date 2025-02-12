@@ -82,6 +82,12 @@ const offensesCompare = (
   return 0
 }
 
+/**
+ * Indicates what laws are broken for each offence. The first number is
+ * the paragraph and the second is the article, i.e. [49, 2] means paragraph
+ * 49, article 2. If article is set to 0, that means that an article is
+ * not specified.
+ */
 const offenseLawsMap: Record<
   IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
   [number, number][]
@@ -98,6 +104,7 @@ const offenseLawsMap: Record<
     [48, 1],
     [48, 2],
   ],
+  [IndictmentCountOffense.SPEEDING]: [[37, 0]],
 }
 
 const generalLaws: [number, number][] = [[95, 1]]
@@ -178,47 +185,49 @@ export const getIncidentDescriptionReason = (
   substances: SubstanceMap,
   formatMessage: IntlShape['formatMessage'],
 ) => {
-  let reason = offenses.reduce((acc, offense, index) => {
-    if (
-      (offenses.length > 1 && index === offenses.length - 1) ||
-      (offenses.length > 2 &&
-        index === offenses.length - 2 &&
-        offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
-    ) {
-      acc += ' og '
-    } else if (index > 0) {
-      acc += ', '
-    }
-    switch (offense) {
-      case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
-        acc += formatMessage(
-          strings.incidentDescriptionDrivingWithoutLicenceAutofill,
-        )
-        break
-      case IndictmentCountOffense.DRUNK_DRIVING:
-        acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
-        break
-      case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-        acc += `${formatMessage(
-          strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-        )} ${formatMessage(
-          strings.incidentDescriptionIllegalDrugsDrivingAutofill,
-        )}`
-        break
-      case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
-        acc +=
-          (offenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
-            ? ''
-            : `${formatMessage(
-                strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-              )} `) +
-          formatMessage(
-            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+  let reason = offenses
+    .filter((offense) => offense !== IndictmentCountOffense.SPEEDING)
+    .reduce((acc, offense, index) => {
+      if (
+        (offenses.length > 1 && index === offenses.length - 1) ||
+        (offenses.length > 2 &&
+          index === offenses.length - 2 &&
+          offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
+      ) {
+        acc += ' og '
+      } else if (index > 0) {
+        acc += ', '
+      }
+      switch (offense) {
+        case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
+          acc += formatMessage(
+            strings.incidentDescriptionDrivingWithoutLicenceAutofill,
           )
-        break
-    }
-    return acc
-  }, '')
+          break
+        case IndictmentCountOffense.DRUNK_DRIVING:
+          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
+          break
+        case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
+          acc += `${formatMessage(
+            strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+          )} ${formatMessage(
+            strings.incidentDescriptionIllegalDrugsDrivingAutofill,
+          )}`
+          break
+        case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
+          acc +=
+            (offenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
+              ? ''
+              : `${formatMessage(
+                  strings.incidentDescriptionDrugsDrivingPrefixAutofill,
+                )} `) +
+            formatMessage(
+              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+            )
+          break
+      }
+      return acc
+    }, '')
 
   const relevantSubstances = getRelevantSubstances(offenses, substances)
 
@@ -266,12 +275,17 @@ export const getLegalArguments = (
     }
   }
 
-  let articles = `${lawsBroken[0][1]}.`
+  // handle the subarticle of the first laws tuple
+  let articles = lawsBroken[0][1] === 0 ? '' : `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
     let useSbr = true
+    const hasNoArticle = lawsBroken[i - 1][1] === 0
+
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
-      articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+      articles = `${articles}${hasNoArticle ? '' : ` mgr. `}${
+        lawsBroken[i - 1][0]
+      }. gr.`
       useSbr = i > andIndex
     }
 
@@ -334,11 +348,21 @@ export const getIncidentDescription = (
       formatMessage,
     )
 
+    const isSpeeding = indictmentCount.offenses?.includes(
+      IndictmentCountOffense.SPEEDING,
+    )
+
+    const recordedSpeed = indictmentCount.recordedSpeed ?? '[Mældur hraði]'
+    const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
+
     return formatMessage(strings.incidentDescriptionAutofill, {
       incidentDate,
       vehicleRegistrationNumber: vehicleRegistration,
       reason,
       incidentLocation,
+      isSpeeding,
+      recordedSpeed,
+      speedLimit,
     })
   }
 
@@ -379,6 +403,10 @@ export const IndictmentCount: FC<Props> = ({
   const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
     useState<string>('')
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
+    useState<string>('')
+  const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =
     useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
@@ -543,48 +571,46 @@ export const IndictmentCount: FC<Props> = ({
         />
       </Box>
       <Box marginBottom={2}>
+        <Box marginBottom={3}>
+          <IndictmentInfo
+            policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
+            subtypes={workingCase.indictmentSubtypes}
+            crimeScenes={workingCase.crimeScenes}
+          />
+        </Box>
         {subtypes?.length > 1 && (
-          <>
-            <Box marginBottom={3}>
-              <IndictmentInfo
-                policeCaseNumber={indictmentCount.policeCaseNumber ?? ''}
-                subtypes={workingCase.indictmentSubtypes}
-                crimeScenes={workingCase.crimeScenes}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <SectionHeading
-                title={formatMessage(strings.selectIndictmentSubtype)}
-                heading="h4"
-                marginBottom={2}
-              />
-              <div className={styles.indictmentSubtypesContainter}>
-                {subtypes.map((subtype: IndictmentSubtype) => (
-                  <div
-                    className={styles.indictmentSubtypesItem}
-                    key={`${subtype}-${indictmentCount.id}`}
-                  >
-                    <Checkbox
-                      name={`${subtype}-${indictmentCount.id}`}
-                      value={subtype}
-                      label={capitalize(indictmentSubtypes[subtype])}
-                      checked={
-                        indictmentCount.indictmentCountSubtypes?.includes(
-                          subtype,
-                        ) ?? false
-                      }
-                      onChange={(evt) => {
-                        handleSubtypeChange(subtype, evt.target.checked)
-                      }}
-                      backgroundColor="white"
-                      large
-                      filled
-                    />
-                  </div>
-                ))}
-              </div>
-            </Box>
-          </>
+          <Box marginBottom={2}>
+            <SectionHeading
+              title={formatMessage(strings.selectIndictmentSubtype)}
+              heading="h4"
+              marginBottom={2}
+            />
+            <div className={styles.indictmentSubtypesContainter}>
+              {subtypes.map((subtype: IndictmentSubtype) => (
+                <div
+                  className={styles.indictmentSubtypesItem}
+                  key={`${subtype}-${indictmentCount.id}`}
+                >
+                  <Checkbox
+                    name={`${subtype}-${indictmentCount.id}`}
+                    value={subtype}
+                    label={capitalize(indictmentSubtypes[subtype])}
+                    checked={
+                      indictmentCount.indictmentCountSubtypes?.includes(
+                        subtype,
+                      ) ?? false
+                    }
+                    onChange={(evt) => {
+                      handleSubtypeChange(subtype, evt.target.checked)
+                    }}
+                    backgroundColor="white"
+                    large
+                    filled
+                  />
+                </div>
+              ))}
+            </div>
+          </Box>
         )}
       </Box>
       {shouldShowTrafficViolationFields() && (
@@ -687,6 +713,10 @@ export const IndictmentCount: FC<Props> = ({
                       handleIndictmentCountChanges({
                         offenses,
                         substances: indictmentCount.substances,
+                        ...(offense === IndictmentCountOffense.SPEEDING && {
+                          recordedSpeed: null,
+                          speedLimit: null,
+                        }),
                       })
                     }}
                   >
@@ -765,6 +795,105 @@ export const IndictmentCount: FC<Props> = ({
                   errorMessage={bloodAlcoholContentErrorMessage}
                   hasError={bloodAlcoholContentErrorMessage !== ''}
                   required
+                />
+              </InputMask>
+            </Box>
+          )}
+          {indictmentCount.offenses?.includes(
+            IndictmentCountOffense.SPEEDING,
+          ) && (
+            <Box marginBottom={2}>
+              <SectionHeading
+                title={formatMessage(strings.speedingTitle)}
+                heading="h4"
+                marginBottom={2}
+              />
+              <Box marginBottom={1}>
+                <InputMask
+                  mask={'999'}
+                  maskPlaceholder={null}
+                  value={indictmentCount.recordedSpeed?.toString() ?? ''}
+                  onChange={(event) => {
+                    const recordedSpeed = parseInt(event.target.value)
+
+                    removeErrorMessageIfValid(
+                      ['empty'],
+                      event.target.value,
+                      recordedSpeedErrorMessage,
+                      setRecordedSpeedErrorMessage,
+                    )
+
+                    updateIndictmentCountState(
+                      indictmentCount.id,
+                      { recordedSpeed },
+                      setWorkingCase,
+                    )
+                  }}
+                  onBlur={(event) => {
+                    const recordedSpeed = parseInt(event.target.value)
+
+                    if (Number.isNaN(recordedSpeed)) {
+                      setRecordedSpeedErrorMessage('Reitur má ekki vera tómur')
+                      return
+                    }
+
+                    handleIndictmentCountChanges({
+                      recordedSpeed,
+                    })
+                  }}
+                >
+                  <Input
+                    name="recordedSpeed"
+                    autoComplete="off"
+                    label={formatMessage(strings.recordedSpeedLabel)}
+                    placeholder="0"
+                    required
+                    errorMessage={recordedSpeedErrorMessage}
+                    hasError={recordedSpeedErrorMessage !== ''}
+                  />
+                </InputMask>
+              </Box>
+              <InputMask
+                mask={'999'}
+                maskPlaceholder={null}
+                value={indictmentCount.speedLimit?.toString() ?? ''}
+                onChange={(event) => {
+                  const speedLimit = parseInt(event.target.value)
+
+                  removeErrorMessageIfValid(
+                    ['empty'],
+                    event.target.value,
+                    speedLimitErrorMessage,
+                    setSpeedLimitErrorMessage,
+                  )
+
+                  updateIndictmentCountState(
+                    indictmentCount.id,
+                    { speedLimit },
+                    setWorkingCase,
+                  )
+                }}
+                onBlur={(event) => {
+                  const speedLimit = parseInt(event.target.value)
+
+                  if (Number.isNaN(speedLimit)) {
+                    setSpeedLimitErrorMessage('Reitur má ekki vera tómur')
+                    return
+                  }
+
+                  handleIndictmentCountChanges({
+                    speedLimit,
+                  })
+                }}
+              >
+                <Input
+                  name="speedLimit"
+                  autoComplete="off"
+                  label={formatMessage(strings.speedLimitLabel)}
+                  placeholder="0"
+                  required
+                  errorMessage={speedLimitErrorMessage}
+                  hasError={speedLimitErrorMessage !== ''}
                 />
               </InputMask>
             </Box>

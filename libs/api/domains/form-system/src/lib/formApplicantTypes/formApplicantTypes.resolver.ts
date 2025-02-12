@@ -7,7 +7,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
 import { FormApplicantType } from '../../models/formApplicantTypes.model'
 import { FormApplicantTypeCreateInput, FormApplicantTypeDeleteInput, FormApplicantTypeUpdateInput } from '../../dto/formApplicantType.input'
@@ -15,7 +14,6 @@ import { FormApplicantTypeCreateInput, FormApplicantTypeDeleteInput, FormApplica
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class FormApplicantTypesResolver {
   constructor(private readonly formApplicantTypesService: FormApplicantTypesService) { }
 

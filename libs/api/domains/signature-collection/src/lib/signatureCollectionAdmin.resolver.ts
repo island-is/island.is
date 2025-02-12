@@ -46,7 +46,7 @@ export class SignatureCollectionAdminResolver {
   constructor(
     private signatureCollectionService: SignatureCollectionAdminService,
     private signatureCollectionManagerService: SignatureCollectionManagerService,
-  ) { }
+  ) {}
 
   @Query(() => SignatureCollectionSuccess)
   async signatureCollectionAdminCanSignInfo(

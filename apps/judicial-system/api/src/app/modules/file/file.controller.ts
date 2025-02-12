@@ -31,7 +31,7 @@ export class FileController {
     private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   @Get('request')
   @Header('Content-Type', 'application/pdf')
@@ -191,7 +191,8 @@ export class FileController {
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting subpoena ${subpoenaId ?? 'draft'
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
       } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 

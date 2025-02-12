@@ -31,21 +31,6 @@ export class SubmitScreenInput {
   screenId?: string
 }
 
-@InputType('FormSystemGetApplicationsByOrganizationInput')
-export class GetApplicationsByOrganizationInput {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
-
-  @Field(() => Int, { nullable: true })
-  page?: number
-
-  @Field(() => Int, { nullable: true })
-  limit?: number
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-}
-
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })

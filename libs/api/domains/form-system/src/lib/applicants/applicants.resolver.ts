@@ -7,7 +7,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { ApplicantsService } from './applicants.service'
 import { Applicant } from '../../models/applicant.model'
 import {
@@ -19,9 +18,8 @@ import {
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ApplicantsResolver {
-  constructor(private readonly applicantsService: ApplicantsService) {}
+  constructor(private readonly applicantsService: ApplicantsService) { }
 
   @Mutation(() => Applicant, {
     name: 'formSystemCreateApplicant',

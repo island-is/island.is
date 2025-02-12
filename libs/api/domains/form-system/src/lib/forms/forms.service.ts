@@ -9,7 +9,6 @@ import {
   FormsControllerDeleteRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
-  FormUrlsApi,
 } from '@island.is/clients/form-system'
 import {
   DeleteFormInput,
@@ -66,7 +65,6 @@ export class FormsService {
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
-      .catch((e) => console.error(e))
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
     if (!response || response instanceof ApolloError) {
       return {}
@@ -75,10 +73,13 @@ export class FormsService {
     return response as Form
   }
 
-  async getAllForms(auth: User): Promise<FormResponse> {
+  async getAllForms(
+    auth: User
+  ): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindAll()
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+    // .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+
     if (!response || response instanceof ApolloError) {
       return {}
     }

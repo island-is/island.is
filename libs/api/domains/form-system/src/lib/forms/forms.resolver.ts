@@ -3,7 +3,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
@@ -19,14 +18,15 @@ import { FormResponse } from '../../models/form.model'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) {}
+  constructor(private readonly formsService: FormsService) { }
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',
   })
-  async createForm(@CurrentUser() user: User): Promise<FormResponse> {
+  async createForm(
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
     return this.formsService.createForm(user)
   }
 
@@ -54,7 +54,9 @@ export class FormsResolver {
   @Query(() => FormResponse, {
     name: 'formSystemGetAllForms',
   })
-  async getAllForms(@CurrentUser() user: User): Promise<FormResponse> {
+  async getAllForms(
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
     return this.formsService.getAllForms(user)
   }
 

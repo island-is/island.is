@@ -8,16 +8,14 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ServicesService } from './services.service'
 import { Translation } from '../../models/services.model'
-import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { GetTranslationInput } from '../../dto/service.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class ServicesResolver {
-  constructor(private readonly formSystemServices: ServicesService) {}
+  constructor(private readonly formSystemServices: ServicesService) { }
 
   @Mutation(() => Translation, {
     name: 'formSystemGetTranslation',

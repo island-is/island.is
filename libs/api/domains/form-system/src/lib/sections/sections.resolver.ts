@@ -7,7 +7,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { SectionsService } from './sections.service'
 import {
   CreateSectionInput,
@@ -20,9 +19,8 @@ import { Section } from '../../models/section.model'
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
-@Audit({ namespace: '@island.is/api/form-system' })
 export class SectionsResolver {
-  constructor(private readonly sectionsService: SectionsService) {}
+  constructor(private readonly sectionsService: SectionsService) { }
 
   @Mutation(() => Section, {
     name: 'formSystemCreateSection',

@@ -46,8 +46,8 @@ export const RelevantParties = () => {
     typesArray: string[],
     checked: boolean,
   ) => {
-    if (checked) {
-      try {
+    try {
+      if (checked) {
         const newApplicants = await Promise.all(
           typesArray.map(async (applicantTypeId) => {
             const newApplicant = await createApplicant({
@@ -64,11 +64,7 @@ export const RelevantParties = () => {
           }),
         )
         setFormApplicants([...formApplicants, ...newApplicants])
-      } catch (e) {
-        console.error(e)
-      }
-    } else {
-      try {
+      } else {
         await Promise.all(
           typesArray.map(async (applicantType) => {
             const applicant = formApplicants.find(
@@ -89,9 +85,10 @@ export const RelevantParties = () => {
               !typesArray.includes(applicant.applicantTypeId),
           ),
         )
-      } catch (e) {
-        console.error(e)
       }
+    } catch (e) {
+      console.error(e)
+
     }
   }
 

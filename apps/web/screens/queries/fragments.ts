@@ -294,6 +294,7 @@ export const slices = gql`
       }
     }
     showSearchInput
+    teamMemberOrder
   }
 
   fragment ContactUsFields on ContactUs {
@@ -808,6 +809,8 @@ export const slices = gql`
     title
     displayTitle
     namespace
+    maxNumberOfCards
+    sorting
     resolvedGrantsList {
       total
       items {

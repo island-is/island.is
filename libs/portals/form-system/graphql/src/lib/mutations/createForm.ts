@@ -3,7 +3,7 @@ import { FormResponseFragment } from '../fragments/formResponse'
 
 export const CREATE_FORM = gql`
   mutation FormSystemCreateForm {
-    formSystemCreateForm{
+    formSystemCreateForm {
       ...FormResponse
     }
   }

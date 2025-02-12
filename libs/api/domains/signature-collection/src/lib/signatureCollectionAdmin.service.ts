@@ -35,7 +35,7 @@ export class SignatureCollectionAdminService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionAdminClientService,
     private signatureCollectionBasicService: SignatureCollectionClientService,
-  ) { }
+  ) {}
 
   async currentCollection(user: User): Promise<SignatureCollection> {
     return await this.signatureCollectionClientService.currentCollection(user)

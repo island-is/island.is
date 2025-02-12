@@ -29,6 +29,7 @@ import {
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -56,6 +57,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.childrenResidenceChangeV2,
