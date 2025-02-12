@@ -1,9 +1,11 @@
+import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
 import { DeleteResponse } from '../models/delete.response'
 import { IndictmentCount } from '../models/indictmentCount.model'
+import { Offense } from '../models/offense.model'
 
 interface Then {
   result: DeleteResponse
@@ -17,13 +19,27 @@ type GivenWhenThen = (
 
 describe('IndictmentCountController - Delete', () => {
   let mockIndictmentCountModel: typeof IndictmentCount
+  let mockOffenseModel: typeof Offense
+
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { indictmentCountModel, indictmentCountController } =
-      await createTestingIndictmentCountModule()
+    const {
+      indictmentCountModel,
+      offenseModel,
+      indictmentCountController,
+      sequelize,
+    } = await createTestingIndictmentCountModule()
 
     mockIndictmentCountModel = indictmentCountModel
+    mockOffenseModel = offenseModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (caseId: string, indictmentCountId: string) => {
       const then = {} as Then
@@ -53,8 +69,13 @@ describe('IndictmentCountController - Delete', () => {
       then = await givenWhenThen(caseId, indictmentCountId)
     })
 
-    it('should delete the indictment count', () => {
+    it('should delete the indictment count and related offenses', () => {
+      expect(mockOffenseModel.destroy).toHaveBeenCalledWith({
+        transaction,
+        where: { indictmentCountId },
+      })
       expect(mockIndictmentCountModel.destroy).toHaveBeenCalledWith({
+        transaction,
         where: { id: indictmentCountId, caseId },
       })
       expect(then.result).toEqual({ deleted: true })

@@ -107,6 +107,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'courtSessionType',
   'mergeCaseId',
   'mergeCaseNumber',
+  'isCompletedWithoutRuling',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [

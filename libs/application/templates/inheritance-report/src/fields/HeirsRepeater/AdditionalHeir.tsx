@@ -18,8 +18,8 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import intervalToDuration from 'date-fns/intervalToDuration'
-import { GenericFormField, YES } from '@island.is/application/types'
-import { hasYes } from '@island.is/application/core'
+import { GenericFormField } from '@island.is/application/types'
+import { hasYes, YES } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember } from '../../types'
 import {

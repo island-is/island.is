@@ -217,7 +217,6 @@ export enum CaseDecision {
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
   ACCEPTING_PARTIALLY = 'ACCEPTING_PARTIALLY',
   DISMISSING = 'DISMISSING',
-  COMPLETED_WITHOUT_RULING = 'COMPLETED_WITHOUT_RULING',
 }
 
 export enum IndictmentDecision {
@@ -339,7 +338,6 @@ export const isRequestCase = (type?: CaseType | null): boolean => {
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
-  CaseDecision.COMPLETED_WITHOUT_RULING,
 ]
 
 export const isAcceptingCaseDecision = (
