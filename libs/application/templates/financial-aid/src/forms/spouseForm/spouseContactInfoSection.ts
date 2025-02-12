@@ -19,7 +19,6 @@ export const spouseContactInfoSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'contactInfoDescription',
-          title: '',
           description: m.contactInfo.general.description,
         }),
         buildTextField({
