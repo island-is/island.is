@@ -50,6 +50,7 @@ defaults:
     shell: bash -euo pipefail {0}
 
 env:
+  DOCKER_BUILD_EXPORT_BUILD_IMAGE: public.ecr.aws/docker/library/busybox:unstable-uclibc
   # Regsitry to for build images and cache
   IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY || 'localhost' }}
   AWS_ECR_REPO_BASE: ${{ vars.AWS_ECR_REPO_BASE || 'docker.io' }}
