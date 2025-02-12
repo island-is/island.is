@@ -454,6 +454,13 @@ const Defendant = () => {
     }))
   }
 
+  /**
+   * This condition can be a little hard to read. The point is that if the
+   * case exists, i.e. if `workingCase.id` is truthy, then the user has
+   * selected a prosecutor. If the case does not exist, i.e. if
+   * `workingCase.id` is falsy, then the user has not selected a prosecutor
+   * and must do so before proceeding.
+   */
   const stepIsValid =
     isDefendantStepValidIndictments(workingCase) &&
     Boolean(workingCase.id || isProsecutorSelected)
