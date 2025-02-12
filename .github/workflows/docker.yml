@@ -148,32 +148,29 @@ jobs:
           image_repository: ${{ env.IMAGE_REGISTRY }}
           s3_cache: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
         run: |
-          # From [docs](https://github.com/moby/buildkit#s3-cache-experimental):
-          # name=<manifest>: specify name of the manifest to use (default: buildkit)
-          #     Multiple manifest names can be specified at the same time, separated by ;.
-          #     The standard use case is to use the git sha1 as name, and the branch name as duplicate, and load both with 2 import-cache commands.
-          cache_prefix="type=s3,region=$AWS_REGION,bucket=$s3_cache,prefix=docker-cache/"
-          cache_from_common="
-            $cache_prefix,name=$GITHUB_SHA
-            $cache_prefix,name=$GITHUB_REF
-          "
-          cache_to_common="$cache_prefix,mode=max,name=$GITHUB_SHA;name=$GITHUB_REF"
+          args=(
+            --arg build_args "$build_args"
+            --arg image_repository "$IMAGE_REGISTRY"
+            --arg cache_from_common "$AWS_CACHE_FROM_COMMON"
+            --arg cache_to_common "$AWS_CACHE_TO_COMMON"
+            --arg cache_prefix "$AWS_CACHE_PREFIX"
+          )
           echo | jq -rsc \
-            --arg build_args "$build_args"  --arg image_repository "$image_repository" --arg cache_from_common "$cache_from_common" --arg cache_to_common "$cache_to_common" --arg cache_prefix "$cache_prefix" \
-          '{
-            file: "scripts/ci/Dockerfile",
-            push: false,
-            "build-args": $build_args,
-            "image-repository": $image_repository,
-            "cache-from-common": $cache_from_common,
-            "cache-to-common": $cache_to_common,
-            "cache-prefix": $cache_prefix
-          }
-            | to_entries
-            | .[]
-            # Use GitHub multi-line outputs, but cheekily done inline here 🤭
-            | "\(.key)<<EOF\n\(.value)\nEOF"
-          ' | tee -a "$GITHUB_OUTPUT"
+            "${args[@]}" \
+            '{
+              file: "scripts/ci/Dockerfile",
+              push: false,
+              "build-args": $build_args,
+              "image-repository": $image_repository,
+              "cache-from-common": $cache_from_common,
+              "cache-to-common": $cache_to_common,
+              "cache-prefix": $cache_prefix
+            }
+              | to_entries
+              | .[]
+              # Use GitHub multi-line outputs, but cheekily done inline here 🤭
+              | "\(.key)<<EOF\n\(.value)\nEOF"
+            ' | tee -a "$GITHUB_OUTPUT"
 
       - name: Debug common config
         id: debug
