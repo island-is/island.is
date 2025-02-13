@@ -44,7 +44,7 @@ runs:
 
     # NOTE: Will restore NX cloud cache or generate new cache
     - name: Codegen
-      if: ${{ !github.event.localrun && contains(inputs.enable-cache, 'generated-files') }}
+      if: ${{ !github.event.localrun && !contains(inputs.enable-cache, 'generated-files') }}
       id: codegen
       shell: bash
       env:
