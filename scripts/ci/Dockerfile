@@ -60,6 +60,7 @@ ENV NODE_ENV=production \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
   APP=${APP}
 
+RUN yarn codegen
 RUN --mount=type=secret,id=nx_cloud_access_token \
   bash -c ' \
   export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
