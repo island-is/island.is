@@ -27,6 +27,7 @@ import {
   UniversityId,
 } from '@island.is/clients/university-careers'
 import { InnaClientService } from '@island.is/clients/inna'
+import { mapSecondarySchoolStudentTrack, mapUniversityStudentTracks, StudentGraduations } from './healthcare-Work-permit.utils'
 
 const getFoundationProgram = (
   professionId: string,
@@ -39,8 +40,8 @@ const getFoundationProgram = (
 
 const getCareerFoundationProgram = (
   foundationProgram: NamsUpplysingar,
-  relevantCareerFoundationPrograms: StudentTrackDto[],
-): StudentTrackDto | undefined => {
+  relevantCareerFoundationPrograms: StudentGraduations[],
+): StudentGraduations | undefined => {
   return relevantCareerFoundationPrograms.find(
     (program) => program.programId === foundationProgram?.shortId,
   )
@@ -86,8 +87,8 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     const [
       licenses,
       programs,
-      careerProgramsUNAK,
-      careerProgramsHI,
+      careerProgramsUNAKRaw,
+      careerProgramsHIRaw,
       innaDiplomas,
     ] = await Promise.all([
       this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
@@ -106,22 +107,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       ),
       this.innaService.getDiplomas(auth),
     ])
-
-    if(!innaDiplomas) {
-      const mappedDiplomas = []
-    } else {
-      const mappedDiplomas = innaDiplomas?.items?.map((diploma) => {
-        const { diplomaDate, diplomaCode, diplomaName, organisation } = diploma
-        return {
-          studyProgram: diplomaName,
-          programId: diplomaCode,
-          graduationDate: diplomaDate,
-          institution: {
-            displayName: organisation
-          }
-        }
-      }) || []
-    }
 
     console.log('diplomas', innaDiplomas)
 
@@ -144,7 +129,11 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const careerPrograms = careerProgramsHI?.concat(careerProgramsUNAK ?? [])
+    const secondarySchoolCareerPrograms = mapSecondarySchoolStudentTrack(innaDiplomas)
+    const careerProgramsHI = mapUniversityStudentTracks(careerProgramsHIRaw)
+    const careerProgramsUNAK = mapUniversityStudentTracks(careerProgramsUNAKRaw)
+
+    const careerPrograms = careerProgramsHI?.concat(careerProgramsUNAK ?? []).concat(secondarySchoolCareerPrograms ?? [])
     if (!careerPrograms || careerPrograms?.length < 1) {
       throw new TemplateApiError(
         {
@@ -188,7 +177,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
     const programsToBeDisplayed =
       relevantCareerPermitPrograms?.map((program) => {
-        const { programId, studyProgram, graduationDate, institution } = program
+        const { programId, studyProgram, graduationDate, schoolName } = program
 
         // Find the education program for this career program
         const currentPermitProgram = permitValidPrograms?.find(
@@ -208,7 +197,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
           error: true,
           mainProgram: {
             educationId: currentPermitProgram?.educationId,
-            school: institution?.displayName,
+            school: schoolName,
             graduationDate,
           },
         }
@@ -239,7 +228,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
             ...base,
             foundationProgram: {
               educationId: currentFoundationProgram?.educationId,
-              school: currentFoundationCareerProgram?.institution?.displayName,
+              school: currentFoundationCareerProgram?.schoolName,
               graduationDate: currentFoundationCareerProgram?.graduationDate,
             },
           }
