@@ -284,13 +284,8 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: prep-deps
+        uses: ./.github/actions/prep-deps
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test

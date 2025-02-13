@@ -5,10 +5,18 @@ inputs:
     required: false
     description: 'name of the generated files archive to cache'
     default: ${{ github.sha }}.tar.gz
+  skip_checkout:
+    description: 'skip the checkout step'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
   steps:
+    - name: checkout
+      if: ${{ inputs.skip_checkout != 'false' }}
+      uses: actions/checkout@v4
+
     - name: Prepare generated files
       shell: bash
       run: |
