@@ -13,7 +13,6 @@ import {
 import {
   CaseType,
   isCompletedCase,
-  isDistrictCourtUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -25,22 +24,16 @@ import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
-import { UserContext } from '../UserProvider/UserProvider'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
-interface Sortable {
-  isSortable: boolean
-  key: sortableTableColumn
-}
-
 interface TableProps {
   thead: {
     title: string
-    sortable?: Sortable
+    sortBy?: sortableTableColumn
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -98,7 +91,6 @@ const Table: FC<TableProps> = (props) => {
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
   const { isTransitioningCase } = useCase()
   const { width } = useViewport()
-  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
   const handleCaseClick = (theCase: CaseListEntry) => {
@@ -213,7 +205,6 @@ const Table: FC<TableProps> = (props) => {
           <MobileCase
             onClick={() => handleCaseClick(theCase)}
             theCase={theCase}
-            isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {renderProsecutorText(theCase.state, theCase.prosecutor?.name)}
@@ -239,14 +230,14 @@ const Table: FC<TableProps> = (props) => {
         <tr>
           {thead.map((th) => (
             <th key={`${th}-${thead.indexOf(th)}`} className={styles.th}>
-              {th.sortable ? (
+              {th.sortBy ? (
                 <SortButton
                   title={th.title}
-                  onClick={() => th.sortable && requestSort(th.sortable.key)}
-                  sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
-                  sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
-                  isActive={sortConfig?.column === th.sortable.key}
-                  dataTestid={`${th.sortable.key}SortButton`}
+                  onClick={() => th.sortBy && requestSort(th.sortBy)}
+                  sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
+                  sortDes={getClassNamesFor(th.sortBy) === 'descending'}
+                  isActive={sortConfig?.column === th.sortBy}
+                  dataTestid={`${th.sortBy}SortButton`}
                 />
               ) : (
                 <Text as="span" fontWeight="regular">

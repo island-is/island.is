@@ -9,8 +9,11 @@ import {
   buildTextField,
   buildSubSection,
   buildExternalDataProvider,
+  buildPhoneField,
+  buildImageField,
+  buildAlertMessageField,
+  YES,
 } from '@island.is/application/core'
-import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
@@ -27,6 +30,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { dataCollection } from './sharedSections/dataCollection'
+import DigitalServices from '../assets/DigitalServices'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -48,9 +52,9 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               values: {
                 applicantsName: (application.answers.applicant as Individual)
                   ?.person.name,
-                // application was created the day spouse1 completed payment
+                // application was created the day spouse1 submitted it
                 applicationDate: format(
-                  new Date(application.externalData.createCharge.date),
+                  new Date(application.created),
                   'dd. MMMM, yyyy',
                   { locale: is },
                 ).toLowerCase(),
@@ -81,6 +85,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: dataCollection,
+            enableMockPayment: true,
           }),
         ],
       }),
@@ -95,8 +100,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               buildMultiField({
                 id: 'sides',
                 title: m.informationTitle,
-                description:
-                  'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
+                description: m.informationDescription,
                 children: [
                   buildDescriptionField({
                     id: 'header1',
@@ -126,13 +130,12 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
-                  buildTextField({
+                  buildPhoneField({
                     id: 'applicant.phone',
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
                     readOnly: true,
-                    format: '###-####',
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -156,7 +159,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     id: 'header2',
                     title: m.informationSpouse2,
                     titleVariant: 'h4',
-                    space: 'gutter',
+                    space: 'containerGutter',
                   }),
                   buildTextField({
                     id: 'spouse.person.nationalId',
@@ -181,12 +184,12 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                       return info?.person.name ?? ''
                     },
                   }),
-                  buildTextField({
+                  buildPhoneField({
                     id: 'spouse.phone',
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
-                    format: '###-####',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return removeCountryCode(info?.phone ?? '')
@@ -198,6 +201,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return info?.email ?? ''
@@ -263,6 +267,57 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
         ],
       }),
       buildSection({
+        condition: (_, externalData) => {
+          const data = (
+            externalData?.birthCertificate?.data as {
+              hasBirthCertificate?: boolean
+            }
+          )?.hasBirthCertificate
+          return !data
+        },
+        id: 'missingInformation',
+        title: m.missingInformation,
+        children: [
+          buildMultiField({
+            id: 'missingInfo',
+            title: m.missingInformationTitle,
+            description: m.missingInformationDescription,
+            children: [
+              buildImageField({
+                id: 'image',
+                title: '',
+                image: DigitalServices,
+                imageWidth: '50%',
+                imagePosition: 'center',
+              }),
+              buildDescriptionField({
+                id: 'space',
+                title: '',
+                space: 'gutter',
+              }),
+              buildAlertMessageField({
+                id: 'missingInfoAlert',
+                title: m.missingInformation,
+                message: m.missingInformationAlertDescription,
+                alertType: 'warning',
+              }),
+              buildCheckboxField({
+                id: 'spouseConfirmMissingInfo',
+                title: '',
+                large: true,
+                defaultValue: [],
+                options: [
+                  {
+                    value: YES,
+                    label: m.applicantConfirmMissingInformation,
+                  },
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
         id: 'spouseConfirmationOverview',
         title: m.overview,
         children: [
@@ -275,15 +330,37 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 title: '',
                 component: 'ApplicationOverview',
               }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'paymentTotal',
+        title: m.payment,
+        children: [
+          buildMultiField({
+            id: 'payment',
+            title: '',
+            children: [
+              buildCustomField(
+                {
+                  id: 'payment',
+                  title: '',
+                  component: 'PaymentInfo',
+                },
+                {
+                  allowFakeData,
+                },
+              ),
               buildSubmitField({
-                id: 'submitApplication',
+                id: 'submitPayment',
                 title: '',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
-                    event: DefaultEvents.SUBMIT,
-                    name: m.submitApplication,
+                    event: DefaultEvents.PAYMENT,
+                    name: m.proceedToPayment,
                     type: 'primary',
                   },
                 ],

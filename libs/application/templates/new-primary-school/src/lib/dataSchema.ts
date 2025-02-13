@@ -1,12 +1,14 @@
-import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
-  SiblingRelationOptions,
 } from './constants'
+
 import { errorMessages } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const validatePhoneNumber = (value: string) => {
   const phoneNumber = parsePhoneNumberFromString(value, 'IS')
@@ -20,6 +22,10 @@ const phoneNumberSchema = z
   })
 
 export const dataSchema = z.object({
+  applicationType: z.enum([
+    ApplicationType.NEW_PRIMARY_SCHOOL,
+    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
   childInfo: z
@@ -48,19 +54,13 @@ export const dataSchema = z.object({
           : true,
       { path: ['placeOfResidence', 'postalCode'] },
     ),
-  parents: z.object({
-    parent1: z.object({
+  guardians: z.array(
+    z.object({
       email: z.string().email(),
       phoneNumber: phoneNumberSchema,
     }),
-    parent2: z
-      .object({
-        email: z.string().email(),
-        phoneNumber: phoneNumberSchema,
-      })
-      .optional(),
-  }),
-  relatives: z
+  ),
+  contacts: z
     .array(
       z.object({
         fullName: z.string().min(1),
@@ -72,16 +72,15 @@ export const dataSchema = z.object({
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.relativesRequired,
+      params: errorMessages.contactsRequired,
     }),
+  currentNursery: z.object({
+    municipality: z.string(),
+    nursery: z.string(),
+  }),
   reasonForApplication: z
     .object({
-      reason: z.nativeEnum(ReasonForApplicationOptions),
-      movingAbroad: z
-        .object({
-          country: z.string().optional(),
-        })
-        .optional(),
+      reason: z.string(),
       transferOfLegalDomicile: z
         .object({
           streetAddress: z.string(),
@@ -90,17 +89,8 @@ export const dataSchema = z.object({
         .optional(),
     })
     .refine(
-      ({ reason, movingAbroad }) =>
-        reason === ReasonForApplicationOptions.MOVING_ABROAD
-          ? movingAbroad && !!movingAbroad.country
-          : true,
-      {
-        path: ['movingAbroad', 'country'],
-      },
-    )
-    .refine(
       ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
           ? transferOfLegalDomicile &&
             transferOfLegalDomicile.streetAddress.length > 0
           : true,
@@ -110,7 +100,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
-        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
           ? transferOfLegalDomicile &&
             transferOfLegalDomicile.postalCode.length > 0
           : true,
@@ -118,11 +108,12 @@ export const dataSchema = z.object({
         path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
-  schools: z.object({
-    newSchool: z.object({
-      municipality: z.string(),
-      school: z.string(),
-    }),
+  newSchool: z.object({
+    municipality: z.string(),
+    school: z.string(),
+  }),
+  school: z.object({
+    applyForNeighbourhoodSchool: z.enum([YES, NO]),
   }),
   siblings: z
     .array(
@@ -131,7 +122,6 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(SiblingRelationOptions),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -140,25 +130,177 @@ export const dataSchema = z.object({
   startDate: z.string(),
   languages: z
     .object({
-      nativeLanguage: z.string(),
-      otherLanguagesSpokenDaily: z.enum([YES, NO]),
-      otherLanguages: z.array(z.string()).optional(),
+      languageEnvironment: z.string(),
+      signLanguage: z.enum([YES, NO]),
+      interpreter: z.string().optional(),
+      language1: z.string().optional().nullable(),
+      language2: z.string().optional().nullable(),
+      childLanguage: z.string().optional().nullable(),
     })
     .refine(
-      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
-        otherLanguagesSpokenDaily === YES
-          ? !!otherLanguages && otherLanguages.length > 0
-          : true,
+      ({ languageEnvironment, language1 }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!language1
+          : true
+      },
       {
-        path: ['otherLanguages'],
+        path: ['language1'],
         params: errorMessages.languagesRequired,
       },
+    )
+    .refine(
+      ({ languageEnvironment, language1, language2, childLanguage }) => {
+        return languageEnvironment !==
+          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
+          !!language1 &&
+          !!language2
+          ? !!childLanguage
+          : true
+      },
+      {
+        path: ['childLanguage'],
+        params: errorMessages.languageRequired,
+      },
+    )
+    .refine(
+      ({ languageEnvironment, interpreter }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!interpreter
+          : true
+      },
+      {
+        path: ['interpreter'],
+      },
     ),
-  support: z.object({
-    developmentalAssessment: z.enum([YES, NO]),
-    specialSupport: z.enum([YES, NO]),
-    requestMeeting: z.array(z.enum([YES, NO])).optional(),
-  }),
+  freeSchoolMeal: z
+    .object({
+      acceptFreeSchoolLunch: z.enum([YES, NO]),
+      hasSpecialNeeds: z.string().optional(),
+      specialNeedsType: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
+        acceptFreeSchoolLunch === YES
+          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
+          : true,
+      {
+        path: ['hasSpecialNeeds'],
+      },
+    )
+    .refine(
+      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
+        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
+          ? !!specialNeedsType && specialNeedsType.length > 0
+          : true,
+      {
+        path: ['specialNeedsType'],
+      },
+    ),
+  allergiesAndIntolerances: z
+    .object({
+      hasFoodAllergiesOrIntolerances: z.array(z.string()),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional().nullable(),
+      hasOtherAllergies: z.array(z.string()),
+      otherAllergies: z.array(z.string()).optional().nullable(),
+      usesEpiPen: z.string().optional(),
+      hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
+      requestMedicationAssistance: z.enum([YES, NO]),
+    })
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES)
+          ? !!foodAllergiesOrIntolerances &&
+            foodAllergiesOrIntolerances.length > 0
+          : true,
+      {
+        path: ['foodAllergiesOrIntolerances'],
+        params: errorMessages.foodAllergiesOrIntolerancesRequired,
+      },
+    )
+    .refine(
+      ({ hasOtherAllergies, otherAllergies }) =>
+        hasOtherAllergies.includes(YES)
+          ? !!otherAllergies && otherAllergies.length > 0
+          : true,
+      {
+        path: ['otherAllergies'],
+        params: errorMessages.otherAllergiesRequired,
+      },
+    )
+    .refine(
+      ({ hasFoodAllergiesOrIntolerances, hasOtherAllergies, usesEpiPen }) =>
+        hasFoodAllergiesOrIntolerances.includes(YES) ||
+        hasOtherAllergies.includes(YES)
+          ? !!usesEpiPen
+          : true,
+      { path: ['usesEpiPen'] },
+    ),
+  support: z
+    .object({
+      developmentalAssessment: z.enum([YES, NO]),
+      specialSupport: z.enum([YES, NO]),
+      hasIntegratedServices: z.string().optional(),
+      hasCaseManager: z.string().optional(),
+      caseManager: z
+        .object({
+          name: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+      requestMeeting: z.array(z.enum([YES, NO])).optional(),
+    })
+    .refine(
+      ({ developmentalAssessment, specialSupport, hasIntegratedServices }) =>
+        developmentalAssessment === YES || specialSupport === YES
+          ? !!hasIntegratedServices
+          : true,
+      { path: ['hasIntegratedServices'] },
+    )
+    .refine(
+      ({
+        developmentalAssessment,
+        specialSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+      }) =>
+        (developmentalAssessment === YES || specialSupport === YES) &&
+        hasIntegratedServices === YES
+          ? !!hasCaseManager
+          : true,
+      { path: ['hasCaseManager'] },
+    )
+    .refine(
+      ({
+        developmentalAssessment,
+        specialSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+        caseManager,
+      }) =>
+        (developmentalAssessment === YES || specialSupport === YES) &&
+        hasIntegratedServices === YES &&
+        hasCaseManager === YES
+          ? caseManager && caseManager.name.length > 0
+          : true,
+      { path: ['caseManager', 'name'] },
+    )
+    .refine(
+      ({
+        developmentalAssessment,
+        specialSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+        caseManager,
+      }) =>
+        (developmentalAssessment === YES || specialSupport === YES) &&
+        hasIntegratedServices === YES &&
+        hasCaseManager === YES
+          ? caseManager && caseManager.email && caseManager.email.length > 0
+          : true,
+      {
+        path: ['caseManager', 'email'],
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

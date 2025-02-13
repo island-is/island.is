@@ -178,21 +178,13 @@ export class DelegationsIncomingService {
 
     // If procuration holder is enabled, we need to get the general mandate delegations
     if (types?.includes(AuthDelegationType.ProcurationHolder)) {
-      const isGeneralMandateDelegationEnabled =
-        await this.featureFlagService.getValue(
-          Features.isGeneralMandateDelegationEnabled,
-          false,
+      delegationPromises.push(
+        this.delegationsIncomingCustomService.findCompanyGeneralMandate(
           user,
-        )
-      if (isGeneralMandateDelegationEnabled) {
-        delegationPromises.push(
-          this.delegationsIncomingCustomService.findCompanyGeneralMandate(
-            user,
-            clientAllowedApiScopes,
-            client.requireApiScopes,
-          ),
-        )
-      }
+          clientAllowedApiScopes,
+          client.requireApiScopes,
+        ),
+      )
     }
 
     if (providers.includes(AuthDelegationProvider.CompanyRegistry)) {
@@ -220,21 +212,13 @@ export class DelegationsIncomingService {
     }
 
     if (types?.includes(AuthDelegationType.GeneralMandate)) {
-      const isGeneralMandateDelegationEnabled =
-        await this.featureFlagService.getValue(
-          Features.isGeneralMandateDelegationEnabled,
-          false,
+      delegationPromises.push(
+        this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
           user,
-        )
-      if (isGeneralMandateDelegationEnabled) {
-        delegationPromises.push(
-          this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
-            user,
-            clientAllowedApiScopes,
-            client.requireApiScopes,
-          ),
-        )
-      }
+          clientAllowedApiScopes,
+          client.requireApiScopes,
+        ),
+      )
     }
 
     if (
@@ -260,22 +244,14 @@ export class DelegationsIncomingService {
     if (
       providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
     ) {
-      const isLegalRepresentativeDelegationEnabled =
-        await this.featureFlagService.getValue(
-          Features.isLegalRepresentativeDelegationEnabled,
-          false,
+      delegationPromises.push(
+        this.getAvailableDistrictCommissionersRegistryDelegations(
           user,
-        )
-      if (isLegalRepresentativeDelegationEnabled) {
-        delegationPromises.push(
-          this.getAvailableDistrictCommissionersRegistryDelegations(
-            user,
-            types,
-            clientAllowedApiScopes,
-            client.requireApiScopes,
-          ),
-        )
-      }
+          types,
+          clientAllowedApiScopes,
+          client.requireApiScopes,
+        ),
+      )
     }
 
     const delegationSets = await Promise.all(delegationPromises)

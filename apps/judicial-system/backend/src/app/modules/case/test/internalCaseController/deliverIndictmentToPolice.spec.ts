@@ -2,7 +2,6 @@ import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import {
-  CaseFileCategory,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -72,70 +71,6 @@ describe('InternalCaseController - Deliver indictment to police', () => {
 
       return then
     }
-  })
-
-  describe('deliver indictment case files to police', () => {
-    const caseId = uuid()
-    const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.WAITING_FOR_CONFIRMATION
-    const policeCaseNumber = uuid()
-    const courtCaseNumber = uuid()
-    const defendantNationalId = '0123456789'
-    const indictmentKey = uuid()
-    const indictmentPdf = 'test indictment'
-    const caseFile = {
-      id: uuid(),
-      key: indictmentKey,
-      category: CaseFileCategory.INDICTMENT,
-    }
-    const theCase = {
-      id: caseId,
-      origin: CaseOrigin.LOKE,
-      type: caseType,
-      state: caseState,
-      policeCaseNumbers: [policeCaseNumber],
-      courtCaseNumber,
-      defendants: [{ nationalId: defendantNationalId }],
-      caseFiles: [caseFile],
-    } as Case
-
-    let then: Then
-
-    beforeEach(async () => {
-      const mockGetCaseFileFromS3 =
-        mockFileService.getCaseFileFromS3 as jest.Mock
-      mockGetCaseFileFromS3.mockResolvedValueOnce(indictmentPdf)
-      const mockUpdatePoliceCase =
-        mockPoliceService.updatePoliceCase as jest.Mock
-      mockUpdatePoliceCase.mockResolvedValueOnce(true)
-
-      then = await givenWhenThen(caseId, theCase)
-    })
-
-    it('should update the police case', async () => {
-      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
-        theCase,
-        caseFile,
-      )
-      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
-        user,
-        caseId,
-        caseType,
-        caseState,
-        policeCaseNumber,
-        courtCaseNumber,
-        defendantNationalId,
-        date,
-        '',
-        [
-          {
-            type: PoliceDocumentType.RVAS,
-            courtDocument: Base64.btoa(indictmentPdf),
-          },
-        ],
-      )
-      expect(then.result.delivered).toEqual(true)
-    })
   })
 
   describe('deliver generated indictment pdf to police', () => {

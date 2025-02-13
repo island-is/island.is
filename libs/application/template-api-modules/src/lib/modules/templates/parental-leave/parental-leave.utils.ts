@@ -7,13 +7,11 @@ import {
   Period as AnswerPeriod,
   ChildInformation,
   Languages,
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
-  YES,
   applicantIsMale,
   formatBankInfo,
   getActionName,
@@ -39,6 +37,7 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
+import { NO, YES } from '@island.is/application/core'
 
 // Check whether phoneNumber is GSM
 export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {
@@ -550,9 +549,9 @@ export const getFromDate = (
     : period.startDate
 }
 
-export const isPreBirthRight = (right: string | undefined) => {
+export const isFixedRight = (right: string | undefined) => {
   if (!right) {
     return false
   }
-  return ['VEIKMEÐG', 'ÖRYGGI-L'].includes(right)
+  return ['VEIKMEÐG', 'ÖRYGGI-L', 'DVALSTYRK', 'DVAL.FJÖL'].includes(right)
 }

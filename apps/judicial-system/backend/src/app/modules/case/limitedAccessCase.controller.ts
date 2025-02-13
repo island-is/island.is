@@ -30,7 +30,6 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
-  DefendantEventType,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -39,7 +38,6 @@ import {
 
 import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
-import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { User } from '../user'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -398,7 +396,11 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseReadGuard,
     CaseCompletedGuard,
   )

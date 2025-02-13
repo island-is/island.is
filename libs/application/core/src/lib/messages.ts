@@ -285,13 +285,13 @@ export const coreMessages = defineMessages({
   openServicePortalMessageText: {
     id: 'application.system:openServicePortal.messageText',
     defaultMessage:
-      'Upplýsingar í mínum síðum og í appi hefur þú aðgang að margvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl.',
+      'Á Mínum síðum Ísland.is getur þú nálgast stöðu umsóknarinnar ásamt öðrum upplýsingum.',
     description:
       'Text for form builder component left side of button to go to the service portal',
   },
   openServicePortalButtonTitle: {
     id: 'application.system:openServicePortal.buttonTitle',
-    defaultMessage: 'Áfram',
+    defaultMessage: 'Opna Mínar síður',
     description: 'Button text for form builder component, go to service portal',
   },
   copyLinkSuccessToast: {
@@ -457,7 +457,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Message indicating submission after payment failed',
   },
   paymentSubmitFailedDescription: {
-    id: 'application.system:core.payment.submitTitle',
+    id: 'application.system:core.payment.paymentSubmitFailedDescription',
     defaultMessage:
       'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
@@ -704,22 +704,22 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
+  invalidEmailOrPhone: {
+    id: 'application.system:core.fetch.data.invalidEmailOrPhone',
+    defaultMessage: 'Ekkert netfang né símanúmer skráð',
+    description: 'No email address or phone number registered',
+  },
+  invalidEmailOrPhoneDescription: {
+    id: 'application.system:core.fetch.data.noEmailError.invalidEmailOrPhoneDescription#markdown',
+    defaultMessage:
+      'Þú ert hvorki með skráð netfang né símanúmer hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}).',
+    description:
+      'You neither have a registered email address nor phone number at Ísland.is. Please register an email address and phone number here .',
+  },
   noEmailFound: {
     id: 'application.system:core.fetch.data.noEmailError',
     defaultMessage: 'Ekkert netfang skráð',
     description: 'No email address registered',
-  },
-  invalidPhoneNumber: {
-    id: 'application.system:core.fetch.data.invalidPhoneNumber',
-    defaultMessage: 'Ógilt símanúmer',
-    description: 'Invalid phone number',
-  },
-  invalidPhoneNumberDescription: {
-    id: 'application.system:core.fetch.data.invalidPhoneNumberDescription#markdown',
-    defaultMessage:
-      'Skráð símanúmer hjá Ísland.is er ekki gilt. Vinsamlegast skráðu það á [mínum síðum]({link}).',
-    description:
-      'You do not have a valid phone number registered at Ísland.is. Please register a phone number on mínar síður',
   },
   noEmailFoundDescription: {
     id: 'application.system:core.fetch.data.noEmailError.description#markdown',
@@ -727,6 +727,18 @@ export const coreErrorMessages = defineMessages({
       'Þú ert ekki með skráð netfang hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}).',
     description:
       'You do not have a registered email address at Ísland.is. Please register an email address here .',
+  },
+  invalidPhone: {
+    id: 'application.system:core.fetch.data.invalidPhone',
+    defaultMessage: 'Ekkert símanúmer skráð',
+    description: 'Invalid phone number',
+  },
+  invalidPhoneDescription: {
+    id: 'application.system:core.fetch.data.invalidPhoneDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð símanúmer hjá Ísland.is. Vinsamlegast skráðu það á [hér]({link}).',
+    description:
+      'You not have a registered phone number at Ísland.is. Please register a phone number here .',
   },
   machinesEmptyListDefault: {
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',

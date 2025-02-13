@@ -7,13 +7,14 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
 } from '../../lib/utils/helpers'
-import { Application, FormValue, YES } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import {
   ESTATE_INHERITANCE,
   PREPAID_INHERITANCE,
@@ -712,7 +713,15 @@ export const assets = buildSection({
               title: '',
               large: false,
               backgroundColor: 'white',
-              options: [{ value: YES, label: m.assetsOverviewConfirmation }],
+              options: ({ answers }) => [
+                {
+                  value: YES,
+                  label:
+                    answers.applicationFor === PREPAID_INHERITANCE
+                      ? m.assetsOverviewConfirmationPrePaid
+                      : m.assetsOverviewConfirmation,
+                },
+              ],
             }),
             buildCustomField({
               title: '',

@@ -6,10 +6,13 @@ export const modal = style({
   maxWidth: `calc(100% - ${theme.spacing['6']}px)`,
   maxHeight: `calc(100% - ${theme.spacing['6']}px)`,
   borderRadius: theme.border.radius.large,
+<<<<<<< HEAD
   top: '40%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   overflowY: 'auto',
+=======
+>>>>>>> main
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   ...themeUtils.responsiveStyle({
     md: {
@@ -18,7 +21,7 @@ export const modal = style({
       width: '90%',
     },
     lg: {
-      width: 828,
+      width: 880,
     },
   }),
 })

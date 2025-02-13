@@ -30,8 +30,13 @@ const getCacheManager = (
 const fetchFactory = async (
   config: ConfigType<typeof UltravioletRadiationClientConfig>,
   ttl: number,
+  staleWhileRevalidate: number,
+  staleWhileError: number,
 ) => {
-  const maxAgeInSeconds = ttl / 1000 // Convert milliseconds to seconds
+  // Convert milliseconds to seconds
+  const maxAgeInSeconds = ttl / 1000
+  const staleWhileRevalidateInSeconds = staleWhileRevalidate / 1000
+  const staleWhileErrorInSeconds = staleWhileError / 1000
 
   return new Configuration({
     headers: {
@@ -47,8 +52,8 @@ const fetchFactory = async (
           buildCacheControl({
             maxAge: maxAgeInSeconds,
             sharedMaxAge: maxAgeInSeconds,
-            staleWhileRevalidate: 3600 * 24 * 14, // 14 days
-            staleIfError: 3600 * 24 * 30, // 1 month
+            staleWhileRevalidate: staleWhileRevalidateInSeconds,
+            staleIfError: staleWhileErrorInSeconds,
             public: true,
           }),
       },
@@ -59,22 +64,20 @@ const fetchFactory = async (
 export const HourlyApiConfig = {
   provide: 'UltravioletRadiationClientLatestMeasurementConfig',
   scope: LazyDuringDevScope,
-  useFactory: (config: ConfigType<typeof UltravioletRadiationClientConfig>) =>
-    fetchFactory(
-      config,
-      10 * 60 * 1000, // 10 minutes
-    ),
+  useFactory: (config: ConfigType<typeof UltravioletRadiationClientConfig>) => {
+    const ttl = 7 * 60 * 1000 // 7 minutes in milliseconds
+    return fetchFactory(config, ttl, ttl * 2, ttl * 10)
+  },
   inject: [UltravioletRadiationClientConfig.KEY],
 }
 
 export const DailyApiConfig = {
   provide: 'UltravioletRadiationClientMeasurementSeriesConfig',
   scope: LazyDuringDevScope,
-  useFactory: (config: ConfigType<typeof UltravioletRadiationClientConfig>) =>
-    fetchFactory(
-      config,
-      16 * 60 * 60 * 1000, // 16 hours
-    ),
+  useFactory: (config: ConfigType<typeof UltravioletRadiationClientConfig>) => {
+    const ttl = 12 * 60 * 60 * 1000 // 12 hours in milliseconds
+    return fetchFactory(config, ttl, ttl * 2, ttl * 10)
+  },
   inject: [UltravioletRadiationClientConfig.KEY],
 }
 

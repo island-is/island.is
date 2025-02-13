@@ -1,27 +1,15 @@
-import React, { FC } from 'react'
+import gql from 'graphql-tag'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import React, { FC } from 'react'
 
 import {
   Box,
-  Stack,
-  Text,
   BreadcrumbsDeprecated as Breadcrumbs,
-  SkeletonLoader,
-  Button,
 } from '@island.is/island-ui/core'
 
-import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'
+import { PageLayout } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { Query } from '@island.is/skilavottord-web/graphql/schema'
-
-import { filterCarsByStatus } from '@island.is/skilavottord-web/utils'
-import { BASE_PATH } from '@island.is/skilavottord/consts'
-
-import { ActionCardContainer, ProgressCardContainer } from './components'
-import { RecycleActionTypes } from './types'
 
 const SkilavottordVehiclesQuery = gql`
   query skilavottordVehiclesQuery {

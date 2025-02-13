@@ -7,18 +7,13 @@ import {
   buildDescriptionField,
   getValueViaPath,
   buildCheckboxField,
+  YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import format from 'date-fns/format'
-import { allowFakeCondition } from '../../lib/utils'
-import { IGNORE, YES } from '../../lib/constants'
-import {
-  DriversLicense,
-  Jurisdiction,
-} from '@island.is/clients/driving-license'
+import { Jurisdiction } from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -30,14 +25,6 @@ export const sectionOverview = buildSection({
       space: 1,
       description: m.overviewSectionDescription,
       children: [
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overview.informationTitle',
-          title: m.informationTitle,
-          titleVariant: 'h3',
-          description: '',
-          space: 'gutter',
-        }),
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
@@ -50,82 +37,16 @@ export const sectionOverview = buildSection({
           value: (application: Application) =>
             formatNationalId(application.applicant),
         }),
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overview.currentLicenseTitle',
-          titleVariant: 'h3',
-          title: m.rights,
-          space: 'gutter',
+        buildCustomField({
+          id: 'overview.currentLicense',
+          title: '',
+          component: 'CurrentLicense',
         }),
-        buildCustomField(
-          {
-            title: '',
-            id: 'currentLicenseCards',
-            component: 'Cards',
-            doesNotRequireAnswer: true,
-            condition: (answers) => {
-              return !allowFakeCondition(YES)(answers)
-            },
-          },
-          {
-            cards: ({ externalData }: Application) =>
-              (
-                externalData.currentLicense.data as DriversLicense
-              ).categories.map((category) => {
-                const isTemporary = category.validToCode === 8
-                return {
-                  title: `${category.nr} - ${
-                    isTemporary
-                      ? m.temporaryLicense.defaultMessage
-                      : m.generalLicense.defaultMessage
-                  }`,
-                  description: [
-                    category.name,
-                    category.expires
-                      ? format(new Date(category.expires), 'dd.MM.yyyy')
-                      : '',
-                  ],
-                }
-              }) ?? [],
-          },
-        ),
-        buildCustomField(
-          {
-            id: 'currentLicenseFake',
-            title: '',
-            component: 'Cards',
-            doesNotRequireAnswer: true,
-            condition: allowFakeCondition(YES),
-          },
-          {
-            cards: ({ answers }: Application) => {
-              const licenseCategory = getValueViaPath<string>(
-                answers,
-                'fakeData.currentLicense',
-              )
-              if (licenseCategory === 'B-full') {
-                return [
-                  {
-                    title: 'B - Almenn Ökuréttindi',
-                    description: ['Fólksbifreið / Sendibifreið', '04.04.2065'],
-                  },
-                ]
-              } else if (licenseCategory === 'B-temp') {
-                return [
-                  {
-                    title: 'B - Bráðabirgðaskírteini',
-                    description: ['Fólksbifreið / Sendibifreið', '04.04.2022'],
-                  },
-                ]
-              }
-            },
-          },
-        ),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overview.signatureTitle',
           title: m.signature,
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           description: '',
           space: 'gutter',
         }),
@@ -138,7 +59,7 @@ export const sectionOverview = buildSection({
         buildDescriptionField({
           id: 'overview.imageTitle',
           title: m.image,
-          titleVariant: 'h3',
+          titleVariant: 'h4',
           description: '',
           space: 'gutter',
         }),
@@ -151,13 +72,8 @@ export const sectionOverview = buildSection({
         buildDescriptionField({
           id: 'overview.deliveryTitle',
           title: m.deliveryMethodSectionTitle,
-          titleVariant: 'h3',
-          description: '',
-          space: 'gutter',
-        }),
-        buildKeyValueField({
-          label: '',
-          value: ({ answers: { district }, externalData }) => {
+          titleVariant: 'h4',
+          description: ({ answers: { district }, externalData }) => {
             const districts = getValueViaPath(
               externalData,
               'jurisdictions.data',
@@ -170,6 +86,7 @@ export const sectionOverview = buildSection({
             }${selectedDistrict?.name ?? ''}`
             return districtPlace
           },
+          space: 'gutter',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -177,8 +94,7 @@ export const sectionOverview = buildSection({
           space: 'gutter',
           title: m.confirmTitle,
           description: m.confirmDescription,
-          titleVariant: 'h3',
-          marginBottom: 2,
+          titleVariant: 'h4',
         }),
         buildCheckboxField({
           id: 'overview.confirmationCheckbox',

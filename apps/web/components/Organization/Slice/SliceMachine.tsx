@@ -22,6 +22,7 @@ import {
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
+import { OrganizationParentSubpageListSlice } from './OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -105,6 +106,10 @@ const ChartNumberBox = dynamic(() =>
 
 const LatestGenericListItems = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestGenericListItems),
+)
+
+const FeaturedLinksSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.FeaturedLinksSlice),
 )
 
 interface SliceMachineProps {
@@ -203,6 +208,8 @@ export const renderSlice = (
           }
           itemType={(slice as GenericListSchema).itemType}
           filterTags={(slice as GenericListSchema).filterTags}
+          defaultOrder={(slice as GenericListSchema).defaultOrder}
+          showSearchInput={(slice as GenericListSchema).showSearchInput ?? true}
         />
       )
     case 'TeamList':
@@ -219,6 +226,10 @@ export const renderSlice = (
     case 'LatestGenericListItems': {
       return <LatestGenericListItems slice={slice} />
     }
+    case 'FeaturedLinks':
+      return <FeaturedLinksSlice slice={slice} />
+    case 'OrganizationParentSubpageList':
+      return <OrganizationParentSubpageListSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

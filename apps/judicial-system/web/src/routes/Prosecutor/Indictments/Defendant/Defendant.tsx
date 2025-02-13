@@ -30,14 +30,13 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  UpdateIndictmentCount,
   useCase,
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { DefendantInfo } from '../../components'
+import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
 import { getIncidentDescription } from '../Indictment/IndictmentCount'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
@@ -115,9 +114,11 @@ const Defendant = () => {
   } = useDefendants()
   const router = useRouter()
 
-  const { updateIndictmentCount } = useIndictmentCounts()
+  const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+  const [isProsecutorSelected, setIsProsecutorSelected] =
+    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -249,6 +250,12 @@ const Defendant = () => {
       workingCase,
       setWorkingCase,
     )
+
+    const indictmentCountId = workingCase.indictmentCounts?.[index]?.id
+
+    if (indictmentCountId) {
+      deleteIndictmentCount(workingCase.id, indictmentCountId)
+    }
   }
 
   const handleUpdatePoliceCase = (
@@ -279,20 +286,32 @@ const Defendant = () => {
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => {
     if (workingCase.indictmentCounts) {
       workingCase.indictmentCounts
-        .filter((ic) => ic.policeCaseNumber === policeCaseNumber)
-        .forEach((ic) => {
+        .filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === policeCaseNumber,
+        )
+        .forEach((indictmentCount) => {
+          const updatedIndictmentCount = {
+            ...indictmentCount,
+            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+          }
           const incidentDescription = getIncidentDescription(
-            ic,
+            updatedIndictmentCount,
             formatMessage,
             crimeScene,
+            subtypes,
           )
 
-          updateIndictmentCount(workingCase.id, ic.id, {
+          updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-          } as UpdateIndictmentCount)
+            ...(subtypes && {
+              indictmentCountSubtypes: subtypes[policeCaseNumber],
+            }),
+          })
         })
     }
   }
@@ -435,7 +454,16 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = isDefendantStepValidIndictments(workingCase)
+  /**
+   * This condition can be a little hard to read. The point is that if the
+   * case exists, i.e. if `workingCase.id` is truthy, then the user has
+   * selected a prosecutor. If the case does not exist, i.e. if
+   * `workingCase.id` is falsy, then the user has not selected a prosecutor
+   * and must do so before proceeding.
+   */
+  const stepIsValid =
+    isDefendantStepValidIndictments(workingCase) &&
+    Boolean(workingCase.id || isProsecutorSelected)
 
   return (
     <PageLayout
@@ -450,6 +478,11 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
+        <ProsecutorSection
+          handleChange={
+            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
+          }
+        />
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
@@ -506,6 +539,11 @@ const Defendant = () => {
                         workingCase.origin === CaseOrigin.LOKE && index === 0
                       }
                       updateIndictmentCount={handleUpdateIndictmentCount}
+                      indictmentCount={workingCase.indictmentCounts?.find(
+                        (indictmentCount) =>
+                          indictmentCount.policeCaseNumber ===
+                          workingCase.policeCaseNumbers?.[index],
+                      )}
                     />
                   )}
                 </Box>

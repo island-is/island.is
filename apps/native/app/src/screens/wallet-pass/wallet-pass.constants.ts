@@ -1,0 +1,2 @@
+export const INFORMATION_BASE_TOP_SPACING = 32
+export const BARCODE_MAX_WIDTH = 500

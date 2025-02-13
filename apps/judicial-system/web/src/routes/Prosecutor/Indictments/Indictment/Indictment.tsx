@@ -40,7 +40,7 @@ import {
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
+import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
@@ -115,7 +115,7 @@ const Indictment = () => {
     },
   })
 
-  const stepIsValid = isTrafficViolationStepValidIndictments(workingCase)
+  const stepIsValid = isIndictmentStepValid(workingCase)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -130,7 +130,7 @@ const Indictment = () => {
       // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
       const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.offenses?.some((offense) =>
+        count.deprecatedOffenses?.some((offense) =>
           [
             IndictmentCountOffense.DRUNK_DRIVING,
             IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,

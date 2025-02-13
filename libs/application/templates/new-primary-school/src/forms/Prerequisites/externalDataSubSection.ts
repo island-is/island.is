@@ -28,13 +28,16 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: ChildrenApi,
-          title: '',
           subTitle: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
           title: newPrimarySchoolMessages.pre.userProfileInformationTitle,
           subTitle: newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
+        }),
+        buildDataProviderItem({
+          title: newPrimarySchoolMessages.pre.childInformationTitle,
+          subTitle: newPrimarySchoolMessages.pre.childInformationSubTitle,
         }),
       ],
     }),

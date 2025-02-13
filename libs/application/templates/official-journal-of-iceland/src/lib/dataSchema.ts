@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { error } from './messages'
-import { AnswerOption, SignatureTypes } from './constants'
+import { SignatureTypes } from './constants'
 import { MessageDescriptor } from 'react-intl'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -73,6 +74,7 @@ const advertSchema = z
       .extend({ types: z.array(baseEntitySchema).optional() })
       .optional(),
     title: z.string().optional(),
+    involvedPartyId: z.string().optional(),
     html: z.string().optional(),
     requestedDate: z.string().optional(),
     categories: z.array(baseEntitySchema).optional(),
@@ -96,17 +98,19 @@ export const partialSchema = z.object({
     .object({
       approveExternalData: z.string(),
     })
-    .refine((schema) => schema.approveExternalData === AnswerOption.YES, {
+    .refine((schema) => schema.approveExternalData === YesOrNoEnum.YES, {
       params: error.dataGathering,
       path: ['approveExternalData'],
     }),
   advert: advertSchema.optional(),
   signatures: z
     .object({
-      additionalSignature: z.object({
-        committee: z.string().optional(),
-        regular: z.string().optional(),
-      }),
+      additionalSignature: z
+        .object({
+          committee: z.string().optional(),
+          regular: z.string().optional(),
+        })
+        .optional(),
       regular: z.array(regularSignatureItemSchema).optional(),
       committee: committeeSignatureSchema.optional(),
     })

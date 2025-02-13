@@ -73,6 +73,9 @@ export const BoostChatPanel: React.FC<
           'wa_lid',
         )
         if (queryParam && ['t10', 't11'].includes(queryParam)) {
+          window.boost.chatPanel.setStartLanguage(
+            activeLocale === 'en' ? 'en-US' : 'is-IS',
+          )
           window.boost.chatPanel.show()
         }
       })
@@ -81,7 +84,11 @@ export const BoostChatPanel: React.FC<
       el.id = 'boost-script'
       document.body.appendChild(el)
     }
-  }, [endpoint])
+
+    return () => {
+      window.boost?.chatPanel?.minimize()
+    }
+  }, [activeLocale, endpoint])
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
     variables: {
@@ -102,7 +109,12 @@ export const BoostChatPanel: React.FC<
   return (
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      onClick={() => window.boost.chatPanel.show()}
+      onClick={() => {
+        window.boost.chatPanel.setStartLanguage(
+          activeLocale === 'en' ? 'en-US' : 'is-IS',
+        )
+        window.boost.chatPanel.show()
+      }}
       isVisible={showButton}
       pushUp={pushUp}
     />

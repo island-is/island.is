@@ -33,7 +33,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     required,
     placeholder,
@@ -47,6 +47,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     readOnly,
     marginTop,
     marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang } = useLocale()
 
@@ -155,6 +156,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           error={error}
           onChange={onChange}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

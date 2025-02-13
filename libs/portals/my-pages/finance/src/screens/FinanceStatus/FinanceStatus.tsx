@@ -36,18 +36,19 @@ import {
 } from './FinanceStatusData.types'
 import * as styles from './Table.css'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import FinanceIntro from '../../components/FinanceIntro'
 import {
   useGetDebtStatusQuery,
   useGetFinanceStatusQuery,
 } from './FinanceStatus.generated'
 import { m as messages } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
+import { useFinanceSwapHook } from '../../utils/financeSwapHook'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
+  useFinanceSwapHook()
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
@@ -167,8 +168,7 @@ const FinanceStatus = () => {
                         }),
                         onClick: () =>
                           formSubmit(
-                            `${financeStatusData.downloadServiceURL}${previousYear}`,
-                            true,
+                            `${financeStatusData.downloadServiceURL}${previousYear}?action=annualDoc`,
                           ),
                       },
                       {
@@ -177,8 +177,7 @@ const FinanceStatus = () => {
                         }),
                         onClick: () =>
                           formSubmit(
-                            `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
-                            true,
+                            `${financeStatusData.downloadServiceURL}${twoYearsAgo}?action=annualDoc`,
                           ),
                       },
                     ]}

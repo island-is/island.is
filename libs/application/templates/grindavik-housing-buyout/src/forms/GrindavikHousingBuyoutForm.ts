@@ -13,13 +13,13 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
   coreMessages,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Comparators,
   Form,
   FormModes,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
