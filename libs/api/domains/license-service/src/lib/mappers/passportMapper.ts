@@ -1,6 +1,6 @@
 import { Locale } from '@island.is/shared/types'
 import { LICENSE_NAMESPACE } from '../licenseService.constants'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import {
   type IdentityDocument,
