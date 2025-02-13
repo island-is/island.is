@@ -211,12 +211,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { application } = context
 
         if (!hasForeignLanguages(application.answers)) {
-          unset(application.answers, 'languages.language1')
-          unset(application.answers, 'languages.language2')
-          unset(application.answers, 'languages.language3')
-          unset(application.answers, 'languages.language4')
-          unset(application.answers, 'languages.childLanguage')
-          unset(application.answers, 'languages.interpreter')
+          unset(application.answers, 'languages.selectedLanguages')
+          unset(application.answers, 'languages.preferredLanguage')
+          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),
