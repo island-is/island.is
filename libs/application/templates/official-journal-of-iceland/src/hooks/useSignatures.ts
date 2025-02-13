@@ -1,0 +1,177 @@
+import { getValueViaPath } from '@island.is/application/core'
+import { useApplication } from './useUpdateApplication'
+import { useCallback, useState } from 'react'
+import {
+  getEmptyRecord,
+  getEmptySignature,
+  getEmptySignatureMember,
+  signatureTemplate,
+} from '../components/signatures/utils'
+import {
+  SignatureInstitutionKey,
+  SignatureMemberKey,
+  SignatureSchema,
+} from '../lib/dataSchema'
+import { InputFields } from '../lib/types'
+import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
+
+export const useSignatures = (applicationId: string) => {
+  const { application, updateApplicationV2 } = useApplication({
+    applicationId: applicationId,
+  })
+
+  const applicationSignature = getValueViaPath(application, 'answers.signature')
+
+  const [signatureState, setSignatureState] = useState<SignatureSchema>(
+    applicationSignature ? applicationSignature : getEmptySignature(),
+  )
+
+  const html = signatureTemplate(signatureState)
+
+  const updateSignature = (
+    key: SignatureInstitutionKey,
+    value: string,
+    recordIndex: number,
+  ) => {
+    const updatedRecords = signatureState.records?.map((record, index) => {
+      if (index === recordIndex) {
+        return {
+          ...record,
+          [key]: value,
+        }
+      }
+      return record
+    })
+
+    updateApplicationV2({
+      path: InputFields.signature.records,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
+  const updateMember = (
+    key: SignatureMemberKey,
+    value: string,
+    recordIndex: number,
+    memberIndex: number,
+  ) => {
+    const updatedRecords = signatureState.records?.map((record, index) => {
+      if (index === recordIndex) {
+        return {
+          ...record,
+          members: record.members?.map((member, mi) => {
+            if (memberIndex === mi) {
+              return {
+                ...member,
+                [key]: value,
+              }
+            }
+            return member
+          }),
+        }
+      }
+      return record
+    })
+
+    updateApplicationV2({
+      path: InputFields.signature.records,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
+  const addMember = (recordIndex: number) => {
+    const newMember = getEmptySignatureMember()
+
+    const updatedRecords = signatureState.records?.map((record, index) => {
+      if (index === recordIndex) {
+        return {
+          ...record,
+          members: [...(record.members || []), newMember],
+        }
+      }
+      return record
+    })
+
+    updateApplicationV2({
+      path: InputFields.signature.records,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
+  const removeMember = (recordIndex: number, memberIndex: number) => {
+    const updatedRecords = signatureState.records?.map((record, index) => {
+      if (index === recordIndex) {
+        return {
+          ...record,
+          members: record.members?.filter((_, i) => i !== memberIndex),
+        }
+      }
+      return record
+    })
+
+    updateApplicationV2({
+      path: InputFields.signature.records,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
+  const addRecord = () => {
+    const updatedRecords = [...(signatureState.records || []), getEmptyRecord()]
+
+    updateApplicationV2({
+      path: InputFields.signature.records,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
+  const handleUpdateSignature = useCallback(debounce(updateSignature, 500), [
+    updateSignature,
+  ])
+  const handleUpdateMember = useCallback(debounce(updateMember, 500), [
+    updateMember,
+  ])
+  const handleAddRecord = throttle(addRecord, 500)
+  const handleRemoveMember = throttle(removeMember, 500)
+  const handleAddMember = throttle(addMember, 500)
+
+  return {
+    signature: signatureState,
+    signatureHtml: html,
+    handleAddRecord,
+    handleUpdateSignature,
+    handleUpdateMember,
+    handleRemoveMember,
+    handleAddMember,
+  }
+}

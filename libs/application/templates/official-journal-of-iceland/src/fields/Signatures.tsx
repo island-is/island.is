@@ -33,69 +33,14 @@ export const SignaturesField = ({ application }: OJOIFieldBaseProps) => {
     {
       id: 'regular',
       label: f(signatures.tabs.regular),
-      content: <SignaturesTab />,
+      content: <SignaturesTab application={application} variant="regular" />,
     },
     {
       id: 'committee',
       label: f(signatures.tabs.committee),
-      content: <SignaturesTab />,
+      content: <SignaturesTab application={application} variant="committee" />,
     },
   ]
-
-  // const onCopyLastSignatureClick = () => {
-  //   if (!lastSignature) {
-  //     return
-  //   }
-
-  //   const mapSignatureMember = (
-  //     member?: OfficialJournalOfIcelandApplicationSignatureMember,
-  //   ): SignatureMember | undefined => {
-  //     if (!member) {
-  //       return undefined
-  //     }
-  //     return {
-  //       name: member.name,
-  //       above: member.above ?? '',
-  //       below: member.below ?? '',
-  //       after: member.after ?? '',
-  //       before: member.before ?? '',
-  //     }
-  //   }
-
-  //   const signatureToSet: SignatureItem | SignatureItemWithChairman = {
-  //     date: lastSignature.date,
-  //     institution: lastSignature.institution,
-  //     members: lastSignature?.members
-  //       .map((m) => mapSignatureMember(m))
-  //       .filter(isDefined),
-  //     html: lastSignature.html ?? undefined,
-  //   }
-
-  //   const signature: Signature = {
-  //     signatures: {
-  //       ...(isCommitteeSignature
-  //         ? {
-  //             committee: {
-  //               ...signatureToSet,
-  //               chairman: mapSignatureMember(
-  //                 lastSignature?.chairman ?? undefined,
-  //               ),
-  //             },
-  //           }
-  //         : { regular: [signatureToSet] }),
-  //     },
-  //   }
-
-  //   setValue(
-  //     isCommitteeSignature
-  //       ? InputFields.signature.committee
-  //       : InputFields.signature.regular,
-  //     signature,
-  //   )
-  //   updateApplication(signature, () => {
-  //     refetchApplication()
-  //   })
-  // }
 
   const onTabChangeHandler = (tabId: string) => {
     setSelectedTab(tabId)
@@ -135,14 +80,6 @@ export const SignaturesField = ({ application }: OJOIFieldBaseProps) => {
           contentBackground="white"
           onChange={onTabChangeHandler}
         />
-      </FormGroup>
-      <FormGroup title={f(signatures.headings.preview)}>
-        {/* <AdvertPreview
-          advertText={getSignaturesMarkup({
-            signatures: currentApplication.answers.signatures,
-            type: selectedTab as SignatureTypes,
-          })}
-        /> */}
       </FormGroup>
     </Stack>
   )

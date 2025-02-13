@@ -41,10 +41,19 @@ const signatureRecordSchema = z.object({
 })
 
 const signatureSchema = z.object({
-  institution: z.string().optional(),
-  signatureDate: z.string().optional(),
   records: z.array(signatureRecordSchema).optional(),
 })
+
+export type SignatureMemberKey = keyof z.infer<typeof memberItemSchema>
+export type SignatureInstitutionKey = keyof Pick<
+  z.infer<typeof signatureRecordSchema>,
+  'institution' | 'signatureDate' | 'additional'
+>
+
+export type SignatureRecordSchema = z.infer<typeof signatureRecordSchema>
+
+export type SignatureMemberSchema = z.infer<typeof memberItemSchema>
+export type SignatureSchema = z.infer<typeof signatureSchema>
 
 export const regularSignatureItemSchema = z
   .object({
