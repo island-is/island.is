@@ -102,11 +102,11 @@ jobs:
           #  GIT_BASE_BRANCH=main
           # fi
           # NOTE: we are always on push
-          GIT_BASE_BRANCH=main
-          echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
-          echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
-          echo "Base branch is '${GIT_BASE_BRANCH}'"
-          echo "Branch is '${GIT_BRANCH}'"
+          # GIT_BASE_BRANCH=main
+          # echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+          # echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
+          # echo "Base branch is '${GIT_BASE_BRANCH}'"
+          # echo "Branch is '${GIT_BRANCH}'"
 
       - name: feature-checkout
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
@@ -119,6 +119,7 @@ jobs:
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
+        # NOTE: checkout features
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
@@ -136,6 +137,7 @@ jobs:
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
+      # NOTE: checkout main
       - name: Checking out relevant branches for a branch build
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
