@@ -21,8 +21,11 @@ import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FetchError } from '@island.is/clients/middlewares'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @Injectable()
+@CodeOwner(CodeOwners.NordaApplications)
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: V2MeApi,
@@ -92,7 +95,7 @@ export class UserProfileService extends BaseTemplateApiService {
             },
           },
         },
-        500,
+        400,
       )
     } else if (emailIsInvalid) {
       throw new TemplateApiError(
@@ -103,7 +106,7 @@ export class UserProfileService extends BaseTemplateApiService {
             values: { link: this.getIDSLink(application, { email: true }) },
           },
         },
-        500,
+        400,
       )
     } else if (phoneIsInvalid) {
       if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
@@ -115,7 +118,7 @@ export class UserProfileService extends BaseTemplateApiService {
               values: { link: this.getIDSLink(application, { phone: true }) },
             },
           },
-          500,
+          400,
         )
     }
 
