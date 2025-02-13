@@ -68,12 +68,6 @@ const WaitlistsDetail: React.FC = () => {
           content={
             waitlist?.organization ?? formatMessage(messages.noDataRegistered)
           }
-          button={{
-            type: 'link',
-            label: formatMessage(messages.organizationWebsite),
-            to: '/',
-            icon: 'open',
-          }}
         />
         <InfoLine
           label={formatMessage(messages.registeredToList)}
