@@ -47,4 +47,9 @@ runs:
       if: ${{ !github.event.localrun && contains(inputs.enable-cache, 'generated-files') }}
       id: codegen
       shell: bash
-      run: yarn codegen
+      env:
+        enable_cache: ${{ inputs.enable-cache }}
+      run: |
+        set -x
+        echo "Running codegen (enable-cache=$enable_cache)"
+        yarn codegen
