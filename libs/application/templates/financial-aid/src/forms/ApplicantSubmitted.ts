@@ -50,7 +50,6 @@ export const ApplicantSubmitted: Form = buildForm({
         ),
         buildSubmitField({
           id: 'missingFilesSubmit',
-          title: '',
           actions: [
             {
               event: DefaultEvents.EDIT,
