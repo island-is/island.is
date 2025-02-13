@@ -262,7 +262,9 @@ export const Item = ({
         <Component
           id={id}
           name={id}
-          label={formatText(label, application, formatMessage)}
+          label={formatMessage(label, {
+            index: index + 1,
+          })}
           options={translatedOptions}
           split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
           error={getFieldError(itemId)}
@@ -278,6 +280,7 @@ export const Item = ({
           application={application}
           defaultValue={DefaultValue}
           large={true}
+          placeholder={formatText(placeholder, application, formatMessage)}
           {...props}
         />
       )}
