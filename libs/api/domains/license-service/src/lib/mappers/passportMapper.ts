@@ -24,7 +24,6 @@ import {
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 const isChildPassport = (
   passport: IdentityDocument | IdentityDocumentChild,
@@ -34,10 +33,7 @@ const isChildPassport = (
 
 @Injectable()
 export class PassportMapper implements GenericLicenseMapper {
-  constructor(
-    private readonly intlService: IntlService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor(private readonly intlService: IntlService) {}
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
