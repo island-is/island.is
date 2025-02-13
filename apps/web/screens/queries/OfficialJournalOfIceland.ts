@@ -75,6 +75,36 @@ export const ADVERT_QUERY = gql`
   }
 `
 
+export const ADVERT_SIMILAR_QUERY = gql`
+  query AdvertSimilar($params: OfficialJournalOfIcelandAdvertSimilarParams!) {
+    officialJournalOfIcelandAdvertsSimilar(params: $params) {
+      adverts {
+        id
+        department {
+          title
+          slug
+        }
+        subject
+        title
+        publicationNumber {
+          full
+          year
+          number
+        }
+        publicationDate
+        categories {
+          title
+          slug
+        }
+        involvedParty {
+          title
+          slug
+        }
+      }
+    }
+  }
+`
+
 export const TYPES_QUERY = gql`
   query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
     officialJournalOfIcelandTypes(params: $params) {
@@ -102,6 +132,7 @@ export const DEPARTMENTS_QUERY = gql`
       departments {
         title
         slug
+        id
       }
       paging {
         page
@@ -174,6 +205,7 @@ export const MAIN_CATEGORIES_QUERY = gql`
         title
         slug
         description
+        departmentId
         categories {
           id
           title
