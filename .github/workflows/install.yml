@@ -52,21 +52,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Setup Yarn
-        shell: bash
-        run: |
-          corepack enable
-          corepack prepare --activate
-          yarn --version
-
-      - name: Link pre-installed dependencies
-        shell: bash
-        run: |
-          rm -rf node_modules
-          ln -s /home/runner/dependencies/node_modules .
-          ln -s /home/runner/dependencies/.yarn/cache .yarn/
-          ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
-          echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: prep-deps
         uses: ./.github/actions/prep-deps
