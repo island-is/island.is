@@ -28,10 +28,8 @@ env:
   NX_TASKS_RUNNER: ci
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   prepare:
@@ -54,54 +52,20 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-    steps:
-      # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
+      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
+    steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - run: |
-          corepack enable
+      - name: Set cache key
+        id: set-cache-key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Prepare generated files
         run: |
@@ -115,13 +79,6 @@ jobs:
           path: |
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          yarn --version
-          ls -l "$(which node)"
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
@@ -250,28 +207,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -314,32 +251,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -364,32 +277,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -435,32 +324,8 @@ jobs:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -495,32 +360,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -551,32 +393,9 @@ jobs:
     if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-cypress-
-            ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -608,10 +427,10 @@ jobs:
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check if deploy-feature is enabled
-        if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+      - name: Notify about deploy-feature label
+        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'

@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils/dataSchema'
 import { error } from './messages/index'
 import { z } from 'zod'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 enum Duration {
   Permanent = 'permanent',
@@ -14,11 +15,6 @@ enum Duration {
 enum ChildSupportPayment {
   Agreement = 'agreement',
   ChildSupport = 'childSupport',
-}
-
-export enum ApproveContract {
-  Yes = 'yes',
-  No = 'no',
 }
 
 const { counterParty, invalidEmail, invalidPhoneNumber, approveTerms } =
@@ -69,7 +65,7 @@ export const dataSchema = z.object({
     .refine((v) => v, { params: error.validation.childSupportPayment }),
   confirmContractParentB: validateTerms(approveTerms),
   acceptContract: z
-    .enum([ApproveContract.Yes, ApproveContract.No])
+    .enum([YesOrNoEnum.YES, YesOrNoEnum.NO])
     .refine((v) => v, {
       params: error.validation.acceptContract,
     }),

@@ -1,4 +1,4 @@
-import { Answer, NO, YES, YesOrNo } from '@island.is/application/types'
+import { Answer } from '@island.is/application/types'
 import { shared } from './lib/messages'
 import {
   ComplainedForTypes,
@@ -7,6 +7,7 @@ import {
 } from './shared/constants'
 import { complainedFor } from './lib/messages'
 import format from 'date-fns/format'
+import { NO, YES, YesOrNo } from '@island.is/application/core'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (
