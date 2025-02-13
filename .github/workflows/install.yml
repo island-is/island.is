@@ -42,7 +42,7 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.BUILD_CHUNKS }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-    runs-on: arc-test
+    runs-on: arc-runners
     steps:
       - uses: actions/checkout@v4
         with:

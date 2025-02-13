@@ -47,7 +47,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-test
+    runs-on: arc-runners
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -72,7 +72,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-test
+    runs-on: arc-runners
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -95,7 +95,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-test
+    runs-on: arc-runners
     timeout-minutes: 5
     steps:
       - name: load-deps
@@ -122,7 +122,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: arc-test
+    runs-on: arc-runners
     timeout-minutes: 5
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -151,7 +151,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: arc-test
+    runs-on: arc-runners
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -171,7 +171,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: arc-test
+    runs-on: arc-runners
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -188,7 +188,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-test
+    runs-on: arc-runners
     if: ${{ !cancelled() }}
     needs:
       - prepare
