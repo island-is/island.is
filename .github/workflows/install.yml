@@ -3,19 +3,19 @@ on:
   workflow_call:
     outputs:
       TEST_CHUNKS:
-        value: ${{ jobs.prepare.outputs.TEST_CHUNKS }}
+        value: ${{ jobs.install.outputs.TEST_CHUNKS }}
       E2E_CHUNKS:
-        value: ${{ jobs.prepare.outputs.E2E_CHUNKS }}
+        value: ${{ jobs.install.outputs.E2E_CHUNKS }}
       E2E_BUILD_ID:
-        value: ${{ jobs.prepare.outputs.BUILD_ID }}
+        value: ${{ jobs.install.outputs.BUILD_ID }}
       BUILD_CHUNKS:
-        value: ${{ jobs.prepare.outputs.BUILD_CHUNKS }}
+        value: ${{ jobs.install.outputs.BUILD_CHUNKS }}
       LINT_CHUNKS:
-        value: ${{ jobs.prepare.outputs.LINT_CHUNKS }}
+        value: ${{ jobs.install.outputs.LINT_CHUNKS }}
       NX_HEAD:
-        value: ${{ jobs.prepare.outputs.NX_HEAD }}
+        value: ${{ jobs.install.outputs.NX_HEAD }}
       NX_BASE:
-        value: ${{ jobs.prepare.outputs.NX_BASE }}
+        value: ${{ jobs.install.outputs.NX_BASE }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 3 }}
