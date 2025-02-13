@@ -93,14 +93,16 @@ jobs:
         id: git_refs
         run: |
           set -euo pipefail
-          if [[ -n "$GITHUB_BASE_REF" ]]
-          then
-           # a PR
-           GIT_BASE_BRANCH="$GITHUB_BASE_REF"
-          else
-           # on main
-           GIT_BASE_BRANCH=main
-          fi
+          # if [[ -n "$GITHUB_BASE_REF" ]]
+          # then
+          #  # a PR
+          #  GIT_BASE_BRANCH="$GITHUB_BASE_REF"
+          # else
+          #  # on main
+          #  GIT_BASE_BRANCH=main
+          # fi
+          # NOTE: we are always on push
+          GIT_BASE_BRANCH=main
           echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
           echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
           echo "Base branch is '${GIT_BASE_BRANCH}'"
