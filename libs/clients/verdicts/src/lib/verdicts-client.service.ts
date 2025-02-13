@@ -42,7 +42,7 @@ export class VerdictsClientService {
       this.supremeCourtApi.apiV2VerdictGetVerdictsGet({
         page: input.pageNumber,
         limit: ITEMS_PER_PAGE,
-        orderBy: 'verdictDate DESC',
+        orderBy: 'publishDate DESC',
       }),
     ])
 
@@ -103,48 +103,46 @@ export class VerdictsClientService {
       }
     }
 
+    items.sort((a, b) => {
+      if (!a.verdictDate && !b.verdictDate) return 0
+      if (!b.verdictDate) return -1
+      return (
+        new Date(b.verdictDate).getTime() - new Date(a.verdictDate).getTime()
+      )
+    })
+
     return {
-      total: (supremeCourtResponse.total ?? 0) + (goproResponse.total ?? 0),
+      total:
+        Number(supremeCourtResponse.total ?? 0) +
+        Number(goproResponse.total ?? 0),
       items,
     }
   }
 
   async getSingleVerdictById(id: string) {
-    const isGoproVerdict = id.startsWith(GOPRO_ID_PREFIX)
-    const isSupremeCourtVerdict = id.startsWith(SUPREME_COURT_ID_PREFIX)
-
-    const [goproResponse, supremeCourtResponse] = await Promise.all([
-      !isSupremeCourtVerdict
-        ? this.goproApi.getVerdict({
-            id: isGoproVerdict ? id.slice(GOPRO_ID_PREFIX.length) : id,
-          })
-        : null,
-      !isGoproVerdict
-        ? this.supremeCourtApi.apiV2VerdictIdGet({
-            id: isSupremeCourtVerdict
-              ? id.slice(SUPREME_COURT_ID_PREFIX.length)
-              : id,
-          })
-        : null,
-    ])
-
-    if (goproResponse?.item?.docContent) {
-      return {
-        item: {
-          pdfString: goproResponse.item.docContent,
-        },
-      }
-    }
-
-    if (supremeCourtResponse?.item?.verdictHtml) {
-      return {
-        item: {
-          richText: await convertHtmlToContentfulRichText(
-            supremeCourtResponse.item.verdictHtml,
-            'verdictHtml',
-          ),
-        },
-      }
+    if (id.startsWith(GOPRO_ID_PREFIX)) {
+      const response = await this.goproApi.getVerdict({
+        id: id.slice(GOPRO_ID_PREFIX.length),
+      })
+      if (response.item?.docContent)
+        return {
+          item: {
+            pdfString: response.item.docContent,
+          },
+        }
+    } else if (id.startsWith(SUPREME_COURT_ID_PREFIX)) {
+      const response = await this.goproApi.getVerdict({
+        id: id.slice(SUPREME_COURT_ID_PREFIX.length),
+      })
+      if (response.item?.verdictHtml)
+        return {
+          item: {
+            richText: await convertHtmlToContentfulRichText(
+              response.item.verdictHtml,
+              'verdictHtml',
+            ),
+          },
+        }
     }
 
     return null

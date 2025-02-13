@@ -1,22 +1,17 @@
-import { useMemo } from 'react'
-import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsString,
-  useQueryState,
-} from 'next-usequerystate'
+import { useState } from 'react'
+import { useDebounce } from 'react-use'
+import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
 
 import {
   Box,
   Breadcrumbs,
+  Button,
   Divider,
   FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Input,
-  Pagination,
-  Select,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -29,9 +24,6 @@ import type {
   GetVerdictKeywordsQueryVariables,
   GetVerdictsQuery,
   GetVerdictsQueryVariables,
-  WebVerdictCaseCategory,
-  WebVerdictCaseType,
-  WebVerdictKeyword,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -45,99 +37,68 @@ import {
 } from '../queries/Verdicts'
 
 const ITEMS_PER_PAGE = 10
+const DEBOUNCE_TIME = 300
 
 interface VerdictsListProps {
-  items: GetVerdictsQuery['webVerdicts']['items']
-  totalItems: number
-  caseTypes: WebVerdictCaseType[]
-  caseCategories: WebVerdictCaseCategory[]
-  keywords: WebVerdictKeyword[]
+  initialData: {
+    visibleVerdicts: GetVerdictsQuery['webVerdicts']['items']
+    invisibleVerdicts: GetVerdictsQuery['webVerdicts']['items']
+    total: number
+  }
 }
 
-const VerdictsList: Screen<VerdictsListProps> = ({
-  items,
-  caseTypes,
-  caseCategories,
-  keywords,
-  totalItems,
-}) => {
-  const { format } = useDateUtils()
-  const [searchTerm, setSearchTerm] = useQueryState(
-    'q',
-    parseAsString
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      })
-      .withDefault(''),
-  )
-  const [page, setPage] = useQueryState(
-    'page',
-    parseAsInteger
-      .withDefault(1)
-      .withOptions({ clearOnDefault: true, shallow: true, scroll: true }),
-  )
-  const [selectedCaseTypes, setSelectedCaseTypes] = useQueryState(
-    'caseTypes',
-    parseAsArrayOf(
-      parseAsString.withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      }),
-    )
-      .withDefault([])
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      }),
-  )
-  const [selectedCaseCategories, setSelectedCaseCategories] = useQueryState(
-    'caseCategories',
-    parseAsArrayOf(
-      parseAsString.withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      }),
-    )
-      .withDefault([])
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      }),
-  )
-  const [selectedKeywords, setSelectedKeywords] = useQueryState(
-    'keywords',
-    parseAsArrayOf(
-      parseAsString.withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      }),
-    )
-      .withDefault([])
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      }),
-  )
+const VerdictsList: Screen<VerdictsListProps> = ({ initialData }) => {
+  const [data, setData] = useState(initialData)
+  const [page, setPage] = useState(1)
 
-  const caseTypeOptions = useMemo(() => {
-    return caseTypes.map((type) => ({
-      value: type.label,
-      label: type.label,
-    }))
-  }, [caseTypes])
-  const caseCategoryOptions = useMemo(() => {
-    return caseCategories.map((category) => ({
-      value: category.label,
-      label: category.label,
-    }))
-  }, [caseCategories])
-  const keywordOptions = useMemo(() => {
-    return keywords.map((keyword) => ({
-      value: keyword.label,
-      label: keyword.label,
-    }))
-  }, [keywords])
+  const { format } = useDateUtils()
+
+  const [fetchVerdicts, { loading }] = useLazyQuery<
+    GetVerdictsQuery,
+    GetVerdictsQueryVariables
+  >(GET_VERDICTS_QUERY)
+
+  useDebounce(
+    () => {
+      if (page <= 1) {
+        return
+      }
+
+      fetchVerdicts({
+        variables: {
+          input: {
+            page,
+          },
+        },
+        onCompleted(response) {
+          // TODO: Request response matching? Error handling, ...
+          setData((prevData) => {
+            const verdicts = response.webVerdicts.items.concat(
+              prevData.invisibleVerdicts,
+            )
+            verdicts.sort((a, b) => {
+              if (!a.verdictDate && !b.verdictDate) return 0
+              if (!b.verdictDate) return -1
+              return (
+                new Date(b.verdictDate).getTime() -
+                new Date(a.verdictDate).getTime()
+              )
+            })
+
+            return {
+              visibleVerdicts: prevData.visibleVerdicts.concat(
+                verdicts.slice(0, ITEMS_PER_PAGE),
+              ),
+              invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
+              total: response.webVerdicts.total,
+            }
+          })
+        },
+      })
+    },
+    DEBOUNCE_TIME,
+    [page],
+  )
 
   return (
     <Box paddingBottom={5}>
@@ -148,58 +109,8 @@ const VerdictsList: Screen<VerdictsListProps> = ({
             Dómar og úrskurðir
           </Text>
           <Text>Dómar frá öllum dómstigum á Íslandi</Text>
-          <Input
-            value={searchTerm}
-            onChange={(ev) => {
-              setSearchTerm(ev.target.value)
-              setPage(1)
-            }}
-            name="verdict-search-input"
-            backgroundColor="blue"
-            placeholder="Sláðu inn orð, málsnúmer, málsaðila"
-            icon={{
-              name: 'search',
-              type: 'outline',
-            }}
-            size="sm"
-          />
-          <Stack space={3}>
-            <Select
-              label="Málategundir"
-              placeholder="Veldu tegund"
-              options={caseTypeOptions}
-              isMulti={true}
-              size="sm"
-              onChange={(newValue) => {
-                setSelectedCaseTypes(newValue.map(({ value }) => value))
-                setPage(1)
-              }}
-            />
-            <Select
-              label="Málaflokkar"
-              placeholder="Veldu flokk"
-              options={caseCategoryOptions}
-              isMulti={true}
-              size="sm"
-              onChange={(newValue) => {
-                setSelectedCaseCategories(newValue.map(({ value }) => value))
-                setPage(1)
-              }}
-            />
-            <Select
-              label="Lykilorð"
-              placeholder="Veldu lykilorð"
-              options={keywordOptions}
-              isMulti={true}
-              size="sm"
-              onChange={(newValue) => {
-                setSelectedKeywords(newValue.map(({ value }) => value))
-                setPage(1)
-              }}
-            />
-          </Stack>
           <GridRow rowGap={3}>
-            {items.map((item) => (
+            {data.visibleVerdicts.map((item) => (
               <GridColumn key={item.id} span="1/1">
                 <FocusableBox
                   height="full"
@@ -253,7 +164,6 @@ const VerdictsList: Screen<VerdictsListProps> = ({
                           </Text>
                         </GridColumn>
                       </GridRow>
-
                       {Boolean(item.presentings) && <Divider />}
                       {Boolean(item.presentings) && (
                         <GridRow>
@@ -273,23 +183,22 @@ const VerdictsList: Screen<VerdictsListProps> = ({
               </GridColumn>
             ))}
           </GridRow>
-          {totalItems > ITEMS_PER_PAGE && (
-            <Box paddingTop={6}>
-              <Pagination
-                variant="blue"
-                page={page}
-                itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={totalItems}
-                renderLink={(page, className, children) => (
-                  <button
-                    onClick={() => {
-                      setPage(page)
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </button>
-                )}
-              />
+          {initialData.total > data.visibleVerdicts.length && (
+            <Box
+              key={page}
+              paddingTop={6}
+              display="flex"
+              justifyContent="center"
+            >
+              <Button
+                loading={loading}
+                onClick={() => {
+                  setPage((p) => p + 1)
+                }}
+              >
+                Sjá fleiri dóma (
+                {initialData.total - data.visibleVerdicts.length})
+              </Button>
             </Box>
           )}
         </Stack>
@@ -307,8 +216,6 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
     query.caseTypes,
   )
   const keywords = parseAsArrayOf(parseAsString).parseServerSide(query.keywords)
-  const page = parseAsInteger.withDefault(1).parseServerSide(query.page)
-
   const [
     verdictListResponse,
     caseTypesResponse,
@@ -323,7 +230,7 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
           caseCategories,
           caseTypes,
           keywords,
-          page,
+          page: 1,
         },
       },
     }),
@@ -347,13 +254,18 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
     }),
   ])
 
+  const items = verdictListResponse.data.webVerdicts.items
+
   return {
-    items: verdictListResponse.data.webVerdicts.items,
+    initialData: {
+      visibleVerdicts: items.slice(0, ITEMS_PER_PAGE),
+      invisibleVerdicts: items.slice(ITEMS_PER_PAGE),
+      total: verdictListResponse.data.webVerdicts.total,
+    },
     caseTypes: caseTypesResponse.data.webVerdictCaseTypes.caseTypes,
     caseCategories:
       caseCategoriesResponse.data.webVerdictCaseCategories.caseCategories,
     keywords: keywordsResponse.data.webVerdictKeywords.keywords,
-    totalItems: verdictListResponse.data.webVerdicts.total,
   }
 }
 

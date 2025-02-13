@@ -42,6 +42,10 @@ components:
           type: string
           format: date-time
           nullable: true
+        publishDate:
+          type: string
+          format: date-time
+          nullable: true
         status:
           type: string
           nullable: false
@@ -109,6 +113,48 @@ components:
             $ref: '#/components/schemas/Error'
 
 paths:
+  /api/v2/Verdict/getKeywords:
+    get:
+      summary: Get all keywords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KeywordInfo'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+  /api/v2/Verdict/getCaseTypes:
+    get:
+      summary: Get all case types
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CaseTypeInfo'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
   /api/v2/Verdict/{id}:
     get:
       summary: Get a specific verdict by ID
@@ -147,7 +193,7 @@ paths:
           in: query
           schema:
             type: string
-          description: "Field and order (e.g., 'caseNumber ASC')"
+          description: "Field and order (e.g., 'publishDate ASC')"
         - name: page
           in: query
           schema:
@@ -221,7 +267,7 @@ paths:
           in: query
           schema:
             type: string
-          description: "Field and order (e.g., 'scheduledDate DESC')"
+          description: "Field and order (e.g., 'publishDate DESC')"
         - name: page
           in: query
           schema:
@@ -295,7 +341,7 @@ paths:
           in: query
           schema:
             type: string
-          description: "Field and order (e.g., 'verdictDate DESC')"
+          description: "Field and order (e.g., 'publishDate DESC')"
         - name: page
           in: query
           schema:
