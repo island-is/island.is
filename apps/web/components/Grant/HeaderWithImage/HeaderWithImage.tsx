@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './HeaderWithImage.css'
+import { Webreader } from '../../Webreader'
 
 export type HeaderProps = {
   title: string
@@ -63,7 +64,8 @@ export const HeaderWithImage = (props: HeaderWithImageProps) => {
       <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
         {props.title}
       </Text>
-      {props.description && <Text variant="default">{props.description}</Text>}
+      <Webreader readId={undefined} readClass="rs_read" />
+      {props.description && <Text variant="intro">{props.description}</Text>}
       {props.children}
     </GridColumn>
   )

@@ -93,7 +93,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
 
-  const [getGrants, { error, loading }] = useLazyQuery<
+  const [getGrants] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
   >(GET_GRANTS_QUERY)

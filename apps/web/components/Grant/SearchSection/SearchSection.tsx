@@ -11,6 +11,8 @@ import {
   HeaderWithImage,
   HeaderWithImageProps,
 } from '../HeaderWithImage/HeaderWithImage'
+import SearchInput from '../../SearchInput/SearchInput'
+import { useI18n } from '@island.is/web/i18n'
 
 type QuickLink = {
   title: string
@@ -26,22 +28,22 @@ type SearchSectionProps = HeaderWithImageProps & {
 }
 
 export const SearchSection = (props: SearchSectionProps) => {
+  const { activeLocale } = useI18n()
+
   return (
     <HeaderWithImage {...props}>
       <Box
-        paddingTop={6}
+        marginTop={6}
         component="form"
         aria-label="Search grants"
         action={props.searchUrl}
       >
-        <Input
+        <SearchInput
           id="query"
-          name="query"
           placeholder={props.searchPlaceholder}
-          backgroundColor={['blue']}
+          size="large"
           aria-label="Search input"
-          size="md"
-          icon={{ name: 'search', type: 'outline' }}
+          activeLocale={activeLocale}
         />
       </Box>
 
