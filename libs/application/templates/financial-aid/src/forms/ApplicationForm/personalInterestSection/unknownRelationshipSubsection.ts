@@ -26,12 +26,10 @@ export const unknownRelationshipSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'unknownRelationshipDescriptionIntro',
-          title: '',
           description: m.unknownRelationship.general.intro,
         }),
         buildDescriptionField({
           id: 'unknownRelationshipDescription',
-          title: '',
           description: m.unknownRelationship.general.description,
         }),
         buildDescriptionField({
@@ -41,7 +39,6 @@ export const unknownRelationshipSubsection = buildSubSection({
         }),
         buildRadioField({
           id: 'relationshipStatus.unregisteredCohabitation',
-          title: '',
           marginBottom: 2,
           options: unknownRelationshipOptions,
         }),
@@ -63,7 +60,6 @@ export const unknownRelationshipSubsection = buildSubSection({
         buildCheckboxField({
           condition: isInRelationship,
           id: 'relationshipStatus.spouseApproveTerms',
-          title: '',
           required: true,
           options: unknownRelationshipCheckboxOptions,
         }),
