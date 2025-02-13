@@ -71,6 +71,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     control: methods.control,
     name: data.id,
   })
+  const [isEditing, setIsEditing] = useState(false)
 
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
@@ -92,11 +93,15 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (isValid) {
       setActiveIndex(-1)
     }
+    setIsEditing(false)
   }
 
   const handleCancelItem = (index: number) => {
     setActiveIndex(-1)
-    remove(index)
+    if (!isEditing) {
+      remove(index)
+    }
+    setIsEditing(false)
   }
 
   const handleNewItem = () => {
@@ -113,6 +118,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const handleEditItem = (index: number) => {
     setActiveIndex(index)
+    setIsEditing(true)
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {

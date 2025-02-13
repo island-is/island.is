@@ -9,6 +9,7 @@ import {
   buildSection,
   buildSubmitField,
   buildSubSection,
+  NO,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -16,7 +17,6 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
-  NO,
   UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
