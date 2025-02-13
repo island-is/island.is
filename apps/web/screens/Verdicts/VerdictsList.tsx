@@ -71,7 +71,6 @@ const VerdictsList: Screen<VerdictsListProps> = ({ initialData }) => {
           },
         },
         onCompleted(response) {
-          // TODO: Request response matching? Error handling, ...
           setData((prevData) => {
             const verdicts = response.webVerdicts.items.concat(
               prevData.invisibleVerdicts,
@@ -186,7 +185,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({ initialData }) => {
           {initialData.total > data.visibleVerdicts.length && (
             <Box
               key={page}
-              paddingTop={6}
+              paddingTop={4}
               display="flex"
               justifyContent="center"
             >

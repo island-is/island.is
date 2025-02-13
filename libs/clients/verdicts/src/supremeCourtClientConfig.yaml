@@ -347,4 +347,105 @@ paths:
           schema:
             type: integer
         - name: limit
-          in:
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/v2/Verdict/getAppeal/{id}:
+    get:
+      summary: Get a specific appeal by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v2/Verdict/getAppeals:
+    get:
+      summary: Get all appeals
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'publishDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+        '500':
+          $ref: '#/components/responses/InternalError'

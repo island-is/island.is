@@ -86,14 +86,14 @@ export class VerdictsClientService {
         Boolean(supremeCourtItem.title) &&
         Boolean(supremeCourtItem.court) &&
         Boolean(supremeCourtItem.caseNumber) &&
-        Boolean(supremeCourtItem.verdictDate)
+        Boolean(supremeCourtItem.publishDate)
       ) {
         items.push({
           id: `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`,
           title: supremeCourtItem.title as string,
           court: supremeCourtItem.court as string,
           caseNumber: supremeCourtItem.caseNumber as string,
-          verdictDate: supremeCourtItem.verdictDate as Date,
+          verdictDate: supremeCourtItem.publishDate as Date,
           presidentJudge: supremeCourtItem.judges?.find((judge) =>
             Boolean(judge?.isPresident),
           ),
