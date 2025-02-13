@@ -18,7 +18,6 @@ import {
   CurrentApplication,
   FAApplication,
   OverrideAnswerSchema,
-  SchoolType,
   UploadFileType,
 } from '..'
 import { UploadFile } from '@island.is/island-ui/core'
@@ -34,7 +33,7 @@ export const isValidPhone = (value: string) => {
 }
 export const isValidNationalId = (value: string) => kennitala.isValid(value)
 
-export function hasSpouseCheck(context: ApplicationContext) {
+export const hasSpouseCheck = (context: ApplicationContext) => {
   const { externalData, answers } =
     context.application as unknown as FAApplication
   return hasSpouse(answers, externalData)
@@ -55,7 +54,7 @@ export const hasSpouse = (
   )
 }
 
-export function isMuncipalityNotRegistered(context: ApplicationContext) {
+export const isMuncipalityNotRegistered = (context: ApplicationContext) => {
   const { externalData } = context.application
 
   const municipality = getValueViaPath(
@@ -68,10 +67,10 @@ export function isMuncipalityNotRegistered(context: ApplicationContext) {
 export const encodeFilenames = (filename: string) =>
   filename && encodeURI(filename.normalize().replace(/ +/g, '_'))
 
-export function findFamilyStatus(
+export const findFamilyStatus = (
   answers: FAApplication['answers'],
   externalData: FAApplication['externalData'],
-) {
+) => {
   switch (true) {
     case martialStatusTypeFromMartialCode(
       externalData.nationalRegistrySpouse.data?.maritalStatus,
@@ -87,7 +86,7 @@ export function findFamilyStatus(
   }
 }
 
-export function hasActiveCurrentApplication(context: ApplicationContext) {
+export const hasActiveCurrentApplication = (context: ApplicationContext) => {
   const { externalData } = context.application
   const currentApplication = getValueViaPath(
     externalData,

@@ -359,7 +359,7 @@ export interface DateField extends InputField {
 export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
-  readonly description?: FormText
+  readonly description?: FormTextWithLocale
   tooltip?: FormText
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
@@ -693,7 +693,7 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: number
+  minRows?: MaybeWithApplicationAndField<number>
   maxRows?: number
 }
 
