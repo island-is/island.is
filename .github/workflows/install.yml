@@ -16,6 +16,8 @@ on:
         value: ${{ jobs.install.outputs.NX_HEAD }}
       NX_BASE:
         value: ${{ jobs.install.outputs.NX_BASE }}
+      DEPLOY_FEATURE:
+        value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   CHUNK_SIZE: ${{ vars.CHUNK_SIZE || 3 }}
@@ -32,6 +34,7 @@ env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CHUNKS_DEBUG: '["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web"]'
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
 jobs:
   install:
@@ -43,6 +46,7 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.BUILD_CHUNKS }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     steps:
       - uses: actions/checkout@v4
@@ -167,3 +171,9 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
+          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE" >> $GITHUB_OUTPUTS

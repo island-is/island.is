@@ -43,10 +43,11 @@ jobs:
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
+
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE != 'true' }}
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     runs-on: arc-runners
     timeout-minutes: 45
     env:
@@ -73,7 +74,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     runs-on: arc-test
     timeout-minutes: 45
     env:
@@ -93,7 +94,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -146,10 +146,9 @@ jobs:
         uses: ./.github/actions/load-deps
         with:
           skip-checkout: true
-        
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -195,7 +194,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     steps:
       - name: load-deps
         uses: ./.github/actions/load-deps
