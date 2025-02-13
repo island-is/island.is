@@ -49,6 +49,12 @@ jobs:
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: prep-deps
+        uses: ./.github/actions/prep-deps
+
       - name: Setup Yarn
         shell: bash
         run: |
@@ -64,8 +70,6 @@ jobs:
           ln -s /home/runner/dependencies/.yarn/cache .yarn/
           ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
           echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
-
-      - uses: ./.github/actions/prep-deps
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
