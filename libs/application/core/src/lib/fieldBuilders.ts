@@ -1100,16 +1100,16 @@ export const buildBankAccountField = (
 export const buildOverviewField = (
   data: Omit<OverviewField, 'type' | 'component' | 'children'>,
 ): OverviewField => {
-  const { id, title, description, backId, fieldType, items, attachments } = data
+  const { id, title, description, backId, items, attachments, tableData } = data
   return {
     ...extractCommonFields(data),
     id,
     title,
     description,
     backId,
-    fieldType,
     items,
     attachments,
+    tableData,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,

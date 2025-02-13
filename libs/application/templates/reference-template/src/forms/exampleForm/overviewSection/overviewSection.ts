@@ -26,7 +26,6 @@ export const overviewSection = buildSection({
           id: 'overviewX',
           title: 'Upplýsingar um þig',
           description: m.overviewInfoDescripton,
-          fieldType: 'keyValue',
           backId: 'testBack.id',
           bottomLine: false,
           items: (answers, _externalData) => {
@@ -98,10 +97,9 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'overviewY',
           title: 'Summing up numbers',
-          fieldType: 'keyValue',
           backId: 'testBack.id',
           bottomLine: false,
-          items: (answers, externalData) => {
+          items: (_answers, _externalData) => {
             return [
               {
                 width: 'full',
@@ -129,13 +127,47 @@ export const overviewSection = buildSection({
           },
         }),
         buildOverviewField({
+          id: 'overviewÞ',
+          title: 'Table overview',
+          backId: 'testBack.id',
+          tableData: (_answers, _externalData) => {
+            return {
+              header: [
+                'Table heading 1',
+                'Table heading 2',
+                'Table heading 3',
+                'Table heading 4',
+              ],
+              rows: [
+                [
+                  'Row 1, Column 1',
+                  'Row 1, Column 2',
+                  'Row 1, Column 3',
+                  'Row 1, Column 4',
+                ],
+                [
+                  'Row 2, Column 1',
+                  'Row 2, Column 2',
+                  'Row 2, Column 3',
+                  'Row 2, Column 4',
+                ],
+                [
+                  'Row 3, Column 1',
+                  'Row 3, Column 2',
+                  'Row 3, Column 3',
+                  'Row 3, Column 4',
+                ],
+              ],
+            }
+          },
+        }),
+        buildOverviewField({
           id: 'overviewZ',
           title: 'File overview',
           description: m.overviewFileDescription,
-          fieldType: 'attachments',
           backId: 'testBack.id',
           bottomLine: true,
-          attachments: (answers, externalData) => {
+          attachments: (_answers, _externalData) => {
             return [
               {
                 width: 'full',

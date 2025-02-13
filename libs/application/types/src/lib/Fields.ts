@@ -843,13 +843,17 @@ type AttachmentItem = {
   fileType?: FormText
 }
 
+type TableData = {
+  header: Array<FormTextWithLocale>
+  rows: Array<Array<string>>
+}
+
 export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
   title: FormText
   description?: FormText
   backId?: string
-  fieldType: 'keyValue' | 'attachments'
   bottomLine?: boolean
   items?: (
     answers: FormValue,
@@ -859,6 +863,7 @@ export interface OverviewField extends BaseField {
     answers: FormValue,
     externalData: ExternalData,
   ) => Array<AttachmentItem>
+  tableData?: (answers: FormValue, externalData: ExternalData) => TableData
 }
 
 export type Field =

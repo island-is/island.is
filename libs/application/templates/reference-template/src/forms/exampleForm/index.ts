@@ -32,6 +32,7 @@ export const ExampleForm: Form = buildForm({
   },
   children: [
     introSection,
+    overviewSection,
     commonActionsSection,
     noInputFieldsSection,
     simpleInputsSection,
