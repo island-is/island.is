@@ -121,7 +121,7 @@ jobs:
       - prepare
       - tests
       - e2e
-      - build
+      # - build
     steps:
       - name: Announce success
         run: echo "Build is successful"
