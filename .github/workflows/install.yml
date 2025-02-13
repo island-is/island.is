@@ -49,10 +49,6 @@ jobs:
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Setup Yarn
         shell: bash
         run: |
