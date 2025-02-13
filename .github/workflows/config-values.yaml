@@ -10,12 +10,14 @@ on:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
+      - 'libs/auth/scopes/src/lib/clients/**'
   workflow_dispatch: {}
   pull_request:
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
+      - 'libs/auth/scopes/src/lib/clients/**'
 
 defaults:
   run:
