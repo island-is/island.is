@@ -1,3 +1,4 @@
+import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Breadcrumbs,
@@ -11,6 +12,7 @@ import type {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
 
@@ -28,14 +30,18 @@ const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
             { title: 'Dómar', href: '/domar' },
           ]}
         />
-
-        <Box display="flex" justifyContent="center">
-          <PdfViewer
-            file={`data:application/pdf;base64,${item.content}`}
-            showAllPages={true}
-            scale={1.4}
-          />
-        </Box>
+        {Boolean(item.pdfString) && (
+          <Box display="flex" justifyContent="center">
+            <PdfViewer
+              file={`data:application/pdf;base64,${item.pdfString}`}
+              showAllPages={true}
+              scale={1.4}
+            />
+          </Box>
+        )}
+        {Boolean(item.richText) && (
+          <Box>{webRichText([item.richText] as SliceType[])}</Box>
+        )}
       </GridContainer>
     </Box>
   )
@@ -56,7 +62,7 @@ VerdictDetails.getProps = async ({ apolloClient, query }) => {
 
   const item = verdictResponse?.data?.webVerdictById?.item
 
-  if (!item) {
+  if (!item || (!item?.pdfString && !item?.richText)) {
     throw new CustomNextError(
       404,
       `Verdict with id: ${query.id} could not be found`,

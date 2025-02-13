@@ -28,7 +28,8 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
   query GetVerdictById($input: WebVerdictByIdInput!) {
     webVerdictById(input: $input) {
       item {
-        content
+        pdfString
+        richText
       }
     }
   }

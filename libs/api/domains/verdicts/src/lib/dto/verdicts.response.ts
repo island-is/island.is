@@ -1,6 +1,7 @@
 import { CacheField } from '@island.is/nest/graphql'
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Document } from '@contentful/rich-text-types'
+import graphqlTypeJson from 'graphql-type-json'
 import { VerdictsInput } from './verdicts.input'
 
 type Html = { __typename: string; document?: Document }
@@ -57,8 +58,11 @@ export class VerdictsResponse {
 
 @ObjectType('WebVerdictByIdItem')
 class VerdictByIdItem {
-  @Field()
-  content!: string
+  @Field(() => String, { nullable: true })
+  pdfString?: string
+
+  @CacheField(() => graphqlTypeJson, { nullable: true })
+  richText?: Html | null
 }
 
 @ObjectType('WebVerdictByIdResponse')

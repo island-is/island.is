@@ -28,6 +28,7 @@ export class VerdictsResolver {
   @CacheControl(defaultCache)
   @Query(() => VerdictByIdResponse, {
     name: 'webVerdictById',
+    nullable: true,
   })
   async verdictById(
     @Args('input') input: VerdictByIdInput,

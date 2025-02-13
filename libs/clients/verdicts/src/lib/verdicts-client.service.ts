@@ -1,10 +1,26 @@
 import { Injectable } from '@nestjs/common'
+import sanitizeHtml from 'sanitize-html'
+import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
+import { NodeHtmlMarkdown } from 'node-html-markdown'
 
 import { sortAlpha } from '@island.is/shared/utils'
 import { VerdictApi } from '../../gen/fetch/gopro'
 import { DefaultApi } from '../../gen/fetch/supreme-court'
 
 const ITEMS_PER_PAGE = 10
+const GOPRO_ID_PREFIX = 'g-'
+const SUPREME_COURT_ID_PREFIX = 's-'
+
+const convertHtmlToContentfulRichText = async (html: string, id: string) => {
+  const sanitizedHtml = sanitizeHtml(html)
+  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
+  const richText = await richTextFromMarkdown(markdown)
+  return {
+    __typename: 'Html',
+    document: richText,
+    id,
+  }
+}
 
 @Injectable()
 export class VerdictsClientService {
@@ -14,7 +30,6 @@ export class VerdictsClientService {
   ) {}
 
   async getVerdicts(input: { pageNumber: number; searchTerm: string }) {
-    // TODO: use input
     const [goproResponse, supremeCourtResponse] = await Promise.all([
       this.goproApi.getVerdicts({
         requestData: {
@@ -51,7 +66,7 @@ export class VerdictsClientService {
         Boolean(goproItem.verdictDate)
       ) {
         items.push({
-          id: `g-${goproItem.id}`,
+          id: `${GOPRO_ID_PREFIX}${goproItem.id}`,
           title: goproItem.title as string,
           court: goproItem.court as string,
           caseNumber: goproItem.caseNumber as string,
@@ -74,7 +89,7 @@ export class VerdictsClientService {
         Boolean(supremeCourtItem.verdictDate)
       ) {
         items.push({
-          id: `s-${supremeCourtItem.id}`,
+          id: `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`,
           title: supremeCourtItem.title as string,
           court: supremeCourtItem.court as string,
           caseNumber: supremeCourtItem.caseNumber as string,
@@ -83,53 +98,56 @@ export class VerdictsClientService {
             Boolean(judge?.isPresident),
           ),
           keywords: supremeCourtItem.keywords ?? [],
-          presentings: '', // TODO: Reifun is missing
+          presentings: '',
         })
       }
     }
 
     return {
-      total: supremeCourtResponse.total ?? 0,
+      total: (supremeCourtResponse.total ?? 0) + (goproResponse.total ?? 0),
       items,
     }
   }
 
   async getSingleVerdictById(id: string) {
-    if (id.startsWith('g-')) {
-      const response = await this.goproApi.getVerdict({
-        id,
-      })
+    const isGoproVerdict = id.startsWith(GOPRO_ID_PREFIX)
+    const isSupremeCourtVerdict = id.startsWith(SUPREME_COURT_ID_PREFIX)
 
-      const content = response.item?.docContent
+    const [goproResponse, supremeCourtResponse] = await Promise.all([
+      !isSupremeCourtVerdict
+        ? this.goproApi.getVerdict({
+            id: isGoproVerdict ? id.slice(GOPRO_ID_PREFIX.length) : id,
+          })
+        : null,
+      !isGoproVerdict
+        ? this.supremeCourtApi.apiV2VerdictIdGet({
+            id: isSupremeCourtVerdict
+              ? id.slice(SUPREME_COURT_ID_PREFIX.length)
+              : id,
+          })
+        : null,
+    ])
 
-      if (!content) {
-        return null
-      }
-
+    if (goproResponse?.item?.docContent) {
       return {
         item: {
-          content,
-          type: 'pdf',
+          pdfString: goproResponse.item.docContent,
         },
       }
     }
 
-    const response = await this.supremeCourtApi.apiV2VerdictIdGet({
-      id,
-    })
-
-    const content = response.item?.verdictHtml
-
-    if (!content) {
-      return null
+    if (supremeCourtResponse?.item?.verdictHtml) {
+      return {
+        item: {
+          richText: await convertHtmlToContentfulRichText(
+            supremeCourtResponse.item.verdictHtml,
+            'verdictHtml',
+          ),
+        },
+      }
     }
 
-    return {
-      item: {
-        content,
-        type: 'html',
-      },
-    }
+    return null
   }
 
   async getCaseTypes() {

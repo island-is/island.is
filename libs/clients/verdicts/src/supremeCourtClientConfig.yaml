@@ -7,6 +7,107 @@ servers:
   - url: https://dom-haestirettur.eu.ngrok.io
     description: Development server
 
+components:
+  schemas:
+    Error:
+      title: Generic Error Object
+      type: object
+      readOnly: true
+      properties:
+        messages:
+          type: string
+
+    DetailedVerdictData:
+      type: object
+      properties:
+        id:
+          type: string
+        court:
+          type: string
+        caseId:
+          type: string
+        caseNumber:
+          type: string
+        caseType:
+          type: string
+        title:
+          type: string
+        presentings:
+          type: string
+          nullable: true
+        verdictHtml:
+          type: string
+          nullable: true
+        verdictDate:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          nullable: false
+        closedSession:
+          type: boolean
+        hearingTime:
+          type: string
+        courtroom:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+        lawCitations:
+          type: array
+          items:
+            type: string
+        judges:
+          type: array
+          items:
+            $ref: '#/components/schemas/JuryJudge'
+
+    JuryJudge:
+      type: object
+      properties:
+        isPresident:
+          type: boolean
+        isDeputy:
+          type: boolean
+        name:
+          type: string
+        title:
+          type: string
+
+    KeywordInfo:
+      type: object
+      properties:
+        label:
+          type: string
+
+    CaseTypeInfo:
+      type: object
+      properties:
+        label:
+          type: string
+
+  responses:
+    InputError:
+      description: Input error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Requested resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Unknown internal error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
 paths:
   /api/v2/Verdict/{id}:
     get:
@@ -33,6 +134,10 @@ paths:
                     type: integer
                   message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getVerdicts:
     get:
@@ -75,10 +180,56 @@ paths:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
 
-  /api/v2/Verdict/getKeywords:
+  /api/v2/Verdict/getAgenda/{id}:
     get:
-      summary: Get all keywords
+      summary: Get a specific agenda by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
+                  succeeded:
+                    type: boolean
+                  returnCode:
+                    type: integer
+                  message:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v2/Verdict/getAgendas:
+    get:
+      summary: Get all agendas
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
+            type: string
+          description: "Field and order (e.g., 'scheduledDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful response
@@ -90,17 +241,31 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/KeywordInfo'
+                      $ref: '#/components/schemas/DetailedVerdictData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
                   succeeded:
                     type: boolean
                   returnCode:
                     type: integer
                   message:
                     type: string
+        '500':
+          $ref: '#/components/responses/InternalError'
 
-  /api/v2/Verdict/getCaseTypes:
+  /api/v2/Verdict/getDetermination/{id}:
     get:
-      summary: Get all case types
+      summary: Get a specific determination by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response
@@ -109,70 +274,31 @@ paths:
               schema:
                 type: object
                 properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CaseTypeInfo'
+                  item:
+                    $ref: '#/components/schemas/DetailedVerdictData'
                   succeeded:
                     type: boolean
                   returnCode:
                     type: integer
                   message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
-components:
-  schemas:
-    DetailedVerdictData:
-      type: object
-      properties:
-        id:
-          type: string
-        court:
-          type: string
-        caseId:
-          type: string
-        caseNumber:
-          type: string
-        caseType:
-          type: string
-        title:
-          type: string
-        verdictHtml:
-          type: string
-        verdictDate:
-          type: string
-          format: date-time
-        keywords:
-          type: array
-          items:
+  /api/v2/Verdict/getDeterminations:
+    get:
+      summary: Get all determinations
+      parameters:
+        - name: orderBy
+          in: query
+          schema:
             type: string
-        lawCitations:
-          type: array
-          items:
-            type: string
-        judges:
-          type: array
-          items:
-            $ref: '#/components/schemas/JuryJudge'
-
-    JuryJudge:
-      type: object
-      properties:
-        isPresident:
-          type: boolean
-        name:
-          type: string
-        title:
-          type: string
-
-    KeywordInfo:
-      type: object
-      properties:
-        label:
-          type: string
-
-    CaseTypeInfo:
-      type: object
-      properties:
-        label:
-          type: string
+          description: "Field and order (e.g., 'verdictDate DESC')"
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in:
