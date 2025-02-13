@@ -92,7 +92,7 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
         {
           component: 'Copy',
           context: {
-            copy: `Athugið: Ef upp kemur 404 villa hefur umsækjandi breytt umsókninni og sent nýja, þér ætti að hafa borist nýr póstur.`,
+            copy: `Athugið: Ef upp kemur villa við að tengjast umsókn þá hefur umsækjandinn að öllum líkindum tekið umsóknina aftur til breytinga. Þér mun berast nýr póstur þegar umsækjandi hefur lokið við breytingarnar og sent umsóknina aftur til samþykkis.`,
             small: true,
           },
         },

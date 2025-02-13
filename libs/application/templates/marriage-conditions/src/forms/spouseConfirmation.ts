@@ -12,8 +12,8 @@ import {
   buildPhoneField,
   buildImageField,
   buildAlertMessageField,
+  YES,
 } from '@island.is/application/core'
-import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
