@@ -14,7 +14,7 @@ runs:
   using: 'composite'
   steps:
     - name: checkout
-      if: ${{ inputs.skip_checkout != 'false' }}
+      if: ${{ inputs.skip_checkout != 'true' }}
       uses: actions/checkout@v4
 
     - name: Prepare generated files
