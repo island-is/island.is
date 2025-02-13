@@ -20,4 +20,5 @@ export enum SignatureCollectionPaths {
 
   MunicipalRoot = '/sveitastjornarkosningar/:landAreaName',
   LandAreaSingleMunicipality = '/sveitastjornarkosningar/:landAreaName/:municipalityName',
+  MunicipalList = '/sveitastjornarkosningar/:landAreaName/:municipalityName/:listId',
 }

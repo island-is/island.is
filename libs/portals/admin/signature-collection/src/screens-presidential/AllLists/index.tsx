@@ -133,29 +133,6 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          {collectionStatus !== CollectionStatus.InitialActive && (
-            <ListInfo
-              type={
-                collectionStatus === CollectionStatus.InReview && !hasInReview
-                  ? 'success'
-                  : undefined
-              }
-              message={formatMessage(
-                collectionStatus === CollectionStatus.InInitialReview
-                  ? hasInReview
-                    ? m.signatureCollectionInInitialReview
-                    : m.signatureCollectionProcessing
-                  : collectionStatus === CollectionStatus.Processed
-                  ? m.signatureCollectionProcessed
-                  : collectionStatus === CollectionStatus.Active
-                  ? m.signatureCollectionActive
-                  : collectionStatus === CollectionStatus.InReview &&
-                    hasInReview
-                  ? m.signatureCollectionInReview
-                  : m.signatureCollectionReviewDone,
-              )}
-            />
-          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput

@@ -62,22 +62,6 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
-              <ListInfo
-                message={
-                  listStatus === ListStatus.Extendable
-                    ? formatMessage(m.listStatusExtendableAlert)
-                    : listStatus === ListStatus.InReview
-                    ? formatMessage(m.listStatusInReviewAlert)
-                    : listStatus === ListStatus.Reviewed
-                    ? formatMessage(m.listStatusReviewedStatusAlert)
-                    : listStatus === ListStatus.Inactive
-                    ? formatMessage(m.listStatusReviewedStatusAlert)
-                    : formatMessage(m.listStatusActiveAlert)
-                }
-                type={
-                  listStatus === ListStatus.Reviewed ? 'success' : undefined
-                }
-              />
               {!!list.collectors?.length && (
                 <Box marginBottom={5}>
                   <Text variant="h5">{formatMessage(m.collectors)}</Text>

@@ -31,6 +31,7 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import ScreenHeader from '../../shared-components/screenHeader'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -38,7 +39,6 @@ export const Municipality = () => {
   const { revalidate } = useRevalidator()
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
-  console.log(collection, allLists)
   const { constituencyName } = useParams() as { constituencyName: string }
 
   const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
@@ -145,10 +145,14 @@ export const Municipality = () => {
                       variant: 'text',
                       onClick: () => {
                         navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
+                          replaceParams({
+                            href: SignatureCollectionPaths.MunicipalList,
+                            params: {
+                              landAreaName: 'hofudborgarsvaedi',
+                              municipalityName: 'reykjavik',
+                              listId: '1',
+                            },
+                          }),
                         )
                       },
                     }}

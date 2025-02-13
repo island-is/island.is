@@ -23,7 +23,8 @@ const List = lazy(() => import('./screens-presidential/List'))
 
 /* municipal */
 const LandAreas = lazy(() => import('./screens-municipal/LandAreas'))
-const Municipality = lazy(() => import('./screens-municipal/MunicipalityView'))
+const Municipality = lazy(() => import('./screens-municipal/Municipality'))
+const MunicipalList = lazy(() => import('./screens-municipal/List'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollection,
@@ -152,6 +153,12 @@ export const signatureCollectionModule: PortalModule = {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.LandAreaSingleMunicipality,
       element: <Municipality />,
+      loader: listsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalList,
+      element: <MunicipalList />,
       loader: listsLoader(props),
     },
   ],

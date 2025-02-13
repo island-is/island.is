@@ -117,7 +117,7 @@ export const m = defineMessages({
   },
   createCollection: {
     id: 'admin-portal.signature-collection:createCollection',
-    defaultMessage: 'Stofna nýja meðmælasöfnun',
+    defaultMessage: 'Stofna söfnun',
     description: '',
   },
   createCollectionSuccess: {
@@ -742,7 +742,7 @@ export const m = defineMessages({
   },
   signPaperSigneeButton: {
     id: 'admin-portal.signature-collection:signPaperSigneeButton',
-    defaultMessage: 'Skrá meðmæli á lista',
+    defaultMessage: 'Skrá meðmæli',
     description: '',
   },
   paperSigneeTypoTitle: {

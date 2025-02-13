@@ -55,13 +55,17 @@ const ActionExtendDeadline = ({
 
   return (
     <Box>
-      <Box display="flex" alignItems="flexEnd">
+      <Box display="flex" alignItems="flexEnd" width="full">
         <Input
           name="endTime"
           size="sm"
           label={formatMessage(m.listEndTime)}
           readOnly
-          value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
+          value={
+            endDate
+              ? format(new Date(endDate), 'dd.MM.yyyy HH:mm')
+              : format(new Date(new Date()), 'dd.MM.yyyy HH:mm')
+          }
         />
         <Box marginLeft={3}>
           <Button
@@ -85,7 +89,7 @@ const ActionExtendDeadline = ({
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
-            selected={new Date(endDate)}
+            //selected={new Date(endDate)}
             handleChange={(date) => setEndDate(new Date(date).toISOString())}
             placeholderText=""
             showTimeInput

@@ -8,7 +8,6 @@ import {
   Icon,
   Stack,
   Tag,
-  Text,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
@@ -16,18 +15,21 @@ import { m } from '../../lib/messages'
 import { PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import ScreenHeader from '../../shared-components/screenHeader'
-import { useLoaderData, useLocation, useNavigate, useParams } from 'react-router-dom'
+import {
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { replaceParams } from '@island.is/react-spa/shared'
+import DownloadReports from '../../shared-components/downloadReports'
 
 const LandAreas = () => {
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const params = useParams()
-
-  console.log(params)
 
   return (
     <GridContainer>
@@ -52,6 +54,9 @@ const LandAreas = () => {
             intro={formatMessage(m.municipalCollectionIntro)}
             image={nationalRegistryLogo}
           />
+          <Box marginBottom={5} display="flex" justifyContent="flexEnd">
+            <DownloadReports areas={[]} collectionId={''} />
+          </Box>
           <Stack space={3}>
             {allLists.map((list) => (
               <ActionCard

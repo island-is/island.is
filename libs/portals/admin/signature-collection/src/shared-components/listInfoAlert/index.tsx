@@ -1,17 +1,7 @@
-import { Box, AlertMessage, AlertMessageType } from '@island.is/island-ui/core'
+import { Tag } from '@island.is/island-ui/core'
 
-const ListInfo = ({
-  message,
-  type,
-}: {
-  message: string
-  type?: AlertMessageType
-}) => {
-  return (
-    <Box marginBottom={3}>
-      <AlertMessage message={message} type={type ? type : 'info'} />
-    </Box>
-  )
+const ListInfo = () => {
+  return <Tag variant="blue">Söfnun í gangi</Tag>
 }
 
 export default ListInfo
