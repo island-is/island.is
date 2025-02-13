@@ -74,7 +74,7 @@ env:
   SYSLUMENN_TIMEOUT: '40000'
   TELL_US_A_STORY_EMAIL: 'sogur@island.is'
   UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-  USER_NOTIFICATION_API_URL: 'http://web-user-notification-test.user-notification-test.svc.cluster.local'
+  USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
   USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
   WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
   XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
