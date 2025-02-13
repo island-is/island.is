@@ -4,6 +4,31 @@ description: 'Checkout refs for feature deployments'
 runs:
   using: 'composite'
   steps:
+    - name: Get git branch
+      shell: bash
+      id: git-branch
+      run: |
+        set -euo pipefail
+        GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+        echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
+        echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+
+    - name: Generate deployment branch name
+      shell: bash
+      id: git-branch-deploy
+      run: |
+        set -euo pipefail
+        GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH"
+        # Avoid too long resource names
+        GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+
+        echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+        echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+        echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
+
+    - name: Derive appropriate SHAs
+      uses: nrwl/nx-set-shas@v4
+
     - name: Set envs for features
       shell: bash
       id: git_nx_base
@@ -13,18 +38,9 @@ runs:
         ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
       run: |
         set -euo pipefail
-        export HEAD_REF="$GITHUB_HEAD_REF"
-        export BASE_REF="$GITHUB_BASE_REF"
-        export GIT_BASE_BRANCH="$GITHUB_BASE_REF"
-
-        export PR_REF="$GITHUB_SHA"
-        export WORKFLOW_ID=push
-        export SHELL=/usr/bin/bash
-        source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
-        git checkout "$GITHUB_SHA"
-        echo BASE="$BASE" >> "$GITHUB_ENV"
-        echo LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
-        echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
-        echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
-        echo "Base branch is '${GIT_BASE_BRANCH}'"
-        echo "Branch is '${GIT_BRANCH}'"
+        git config --global user.email "ci@island.is"
+        git config --global user.name "CI Bot"
+        BASE_SHA=${{ env.NX_BASE }}
+        HEAD_SHA=${{ env.NX_HEAD }}
+        echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
+        echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
