@@ -257,7 +257,7 @@ export const Item = ({
     setOnChange &&
     ((option: any) => {
       if (typeof setOnChange === 'function') {
-        return setOnChange(option, index, application, activeValues)
+        return setOnChange(option, application, index, activeValues)
       } else {
         return setOnChange || []
       }
@@ -275,14 +275,17 @@ export const Item = ({
       isSearchable: item.isSearchable,
       isMulti: item.isMulti,
       loadOptions: (c) =>
-        item.loadOptions(c, activeValues, lang, (subKey, value) => {
+        item.loadOptions(c, lang, activeValues, (subKey, value) => {
           setValue(`${dataId}[${index}].${subKey}`, value)
         }),
       updateOnSelect:
         typeof item.updateOnSelect === 'function'
           ? item.updateOnSelect(index)
           : item.updateOnSelect,
+      disabled: Disabled,
       required: Required,
+      isClearable: IsClearable,
+      defaultValue: DefaultValue,
       clearOnChange: ClearOnChange,
       setOnChange: SetOnChange,
     }

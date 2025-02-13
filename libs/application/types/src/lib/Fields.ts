@@ -94,6 +94,10 @@ type MaybeWithApplicationAndActiveField<T> =
 
 type MaybeWithIndex<T> = T | ((index: number) => T)
 
+type MaybeWithAnswersAndExternalData<T> =
+  | T
+  | ((formValue: FormValue, externalData: ExternalData) => T)
+
 export type RepeaterItem = {
   component: RepeaterFields
   /**
@@ -142,8 +146,8 @@ export type RepeaterItem = {
     | { key: string; value: any }[]
     | ((
         newVal: any,
-        index: number,
         application: Application,
+        index: number,
         activeField?: Record<string, string>,
       ) => { key: string; value: any }[])
 } & (
@@ -201,8 +205,8 @@ export type RepeaterItem = {
       isSearchable?: boolean
       loadOptions(
         c: AsyncSelectContext,
+        lang: Locale,
         activeField?: Record<string, string>,
-        lang?: Locale,
         setValueAtIndex?: (key: string, value: any) => void,
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string | string[]>
@@ -419,6 +423,7 @@ export interface AsyncSelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
+  isClearable?: boolean
   updateOnSelect?: string | string[]
 }
 
@@ -693,7 +698,7 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: StaticText | ((index: number) => StaticText)
+  formTitle?: MaybeWithIndex<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
@@ -704,12 +709,8 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?:
-    | number
-    | ((formValue: FormValue, externalData: ExternalData) => number)
-  maxRows?:
-    | number
-    | ((formValue: FormValue, externalData: ExternalData) => number)
+  minRows?: MaybeWithAnswersAndExternalData<number>
+  maxRows?: MaybeWithAnswersAndExternalData<number>
 }
 
 export type AccordionItem = {

@@ -89,7 +89,7 @@ export const schoolSection = buildSection({
                   `selection[${index}].nordicLanguage.code`,
                 ]
               },
-              setOnChange: (option, index, application) => {
+              setOnChange: (option, application, index) => {
                 const schoolOptions = getValueViaPath<SecondarySchool[]>(
                   application.externalData,
                   'schools.data',
@@ -117,8 +117,8 @@ export const schoolSection = buildSection({
               ],
               loadOptions: async (
                 { apolloClient, application },
-                activeField,
                 lang,
+                activeField,
                 setValueAtIndex,
               ) => {
                 const schoolId =
@@ -164,7 +164,7 @@ export const schoolSection = buildSection({
 
                 return []
               },
-              setOnChange: (option, index, application, activeField) => {
+              setOnChange: (option, application, index, activeField) => {
                 const programInfo = getProgramInfo(activeField, option.value)
 
                 return [
@@ -235,8 +235,8 @@ export const schoolSection = buildSection({
               ],
               loadOptions: async (
                 { apolloClient, application },
-                activeField,
                 lang,
+                activeField,
                 setValueAtIndex,
               ) => {
                 const schoolId =
@@ -278,7 +278,7 @@ export const schoolSection = buildSection({
 
                 return []
               },
-              setOnChange: (option, index, _, activeField) => {
+              setOnChange: (option, _, index, activeField) => {
                 const programInfo = getProgramInfo(activeField, option.value)
 
                 return [
@@ -313,7 +313,7 @@ export const schoolSection = buildSection({
                   }
                 })
               },
-              setOnChange: (option, index, application, activeField) => {
+              setOnChange: (option, application, index, activeField) => {
                 const schoolInfo = getSchoolInfo(
                   application.externalData,
                   activeField,
@@ -345,7 +345,7 @@ export const schoolSection = buildSection({
                   }
                 })
               },
-              setOnChange: (option, index, application, activeField) => {
+              setOnChange: (option, application, index, activeField) => {
                 const schoolInfo = getSchoolInfo(
                   application.externalData,
                   activeField,

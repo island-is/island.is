@@ -40,6 +40,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     isSearchable,
     isMulti,
+    isClearable,
     required = false,
     clearOnChange,
     setOnChange,
@@ -154,6 +155,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           isMulti={isMulti}
           clearOnChange={clearOnChange}
           setOnChange={setOnChange}
+          isClearable={isClearable}
         />
       </Box>
     </Box>
