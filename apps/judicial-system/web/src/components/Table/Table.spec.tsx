@@ -13,11 +13,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { sortableTableColumn } from '../../types'
+import TagCaseState from '../Tags/TagCaseState/TagCaseState'
+import DefendantInfo from './DefendantInfo/DefendantInfo'
 import Table from './Table'
 
 import '@testing-library/react'
-import DefendantInfo from './DefendantInfo/DefendantInfo'
-import TagCaseState from '../Tags/TagCaseState/TagCaseState'
 
 jest.mock('next/router', () => ({
   useRouter() {
