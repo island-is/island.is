@@ -150,6 +150,19 @@ jobs:
           echo "${set_matrix}" | jq
           echo "---"
 
+  codegen:
+    name: Codegen
+    runs-on: arc-runners
+    needs: prepare
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: corepack enable
+      - uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ github.token }}
+          enable-cache: generated-files,node_modules
+
   deps:
     name: Build dependencies
     runs-on: arc-runners
@@ -281,6 +294,7 @@ jobs:
     needs:
       - prepare
       - deps
+      - codegen
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
