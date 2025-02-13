@@ -676,6 +676,7 @@ describe('getIndictmentInfo', () => {
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-13T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
@@ -697,6 +698,7 @@ describe('getIndictmentInfo', () => {
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: false,
       indictmentVerdictAppealDeadlineExpired: false,
     })
@@ -720,6 +722,7 @@ describe('getIndictmentInfo', () => {
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
@@ -745,6 +748,7 @@ describe('getIndictmentInfo', () => {
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: expectedIndictmentAppealDeadline.toISOString(),
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: false,
     })
@@ -767,6 +771,7 @@ describe('getIndictmentInfo', () => {
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2024-05-29T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
