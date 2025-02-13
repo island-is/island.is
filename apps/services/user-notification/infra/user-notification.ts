@@ -12,13 +12,13 @@ import {
   RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
 
-const serviceName = 'user-notification-test'
+const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
-const MAIN_QUEUE_NAME = serviceName
-const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
+const MAIN_QUEUE_NAME = `${serviceName}-birthday`
+const DEAD_LETTER_QUEUE_NAME = `${serviceName}-birthday-failure`
 
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
