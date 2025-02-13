@@ -1,4 +1,3 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -6,10 +5,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import {
-  Application,
   FieldBaseProps,
   FieldsRepeaterField,
-  MaybeWithApplicationAndField,
 } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -21,10 +18,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { Item } from './FieldsRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import isEqual from 'lodash/isEqual'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { Item } from './FieldsRepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: FieldsRepeaterField
@@ -66,7 +64,7 @@ export const FieldsRepeaterFormField = ({
 
   let computeMinRows: number
   if (typeof minRows === 'function') {
-    computeMinRows = minRows(updatedApplication, data) // Use updated application
+    computeMinRows = minRows(updatedApplication, data)
   } else {
     computeMinRows = minRows
   }
