@@ -176,4 +176,4 @@ jobs:
         id: set-outputs
         run: |
           echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
-          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE" >> $GITHUB_OUTPUTS
+          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
