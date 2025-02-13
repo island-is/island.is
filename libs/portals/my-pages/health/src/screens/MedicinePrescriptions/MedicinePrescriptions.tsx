@@ -30,6 +30,7 @@ const MedicinePrescriptions = () => {
     variables: { locale: lang },
   })
 
+  console.log('data', data)
   const stringMaxLength = 22
   const filterList = (id: string) => {
     if (activeTag !== id) setActiveTag(id)
