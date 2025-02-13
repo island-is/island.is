@@ -251,26 +251,19 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                               }
                             : undefined
                         }
-                        cta={
-                          (allowedToProcess &&
-                            collectionStatus !==
-                              CollectionStatus.InitialActive) ||
-                          !allowedToProcess
-                            ? {
-                                label: formatMessage(m.viewList),
-                                variant: 'text',
-                                icon: 'arrowForward',
-                                onClick: () => {
-                                  navigate(
-                                    SignatureCollectionPaths.PresidentialList.replace(
-                                      ':listId',
-                                      list.id,
-                                    ),
-                                  )
-                                },
-                              }
-                            : undefined
-                        }
+                        cta={{
+                          label: formatMessage(m.viewList),
+                          variant: 'text',
+                          icon: 'arrowForward',
+                          onClick: () => {
+                            navigate(
+                              SignatureCollectionPaths.PresidentialList.replace(
+                                ':listId',
+                                list.id,
+                              ),
+                            )
+                          },
+                        }}
                       />
                     )
                   })}

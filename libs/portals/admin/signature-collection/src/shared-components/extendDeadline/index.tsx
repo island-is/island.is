@@ -55,7 +55,12 @@ const ActionExtendDeadline = ({
 
   return (
     <Box>
-      <Box display="flex" alignItems="flexEnd" width="full">
+      <Box
+        display="flex"
+        alignItems="flexEnd"
+        width="full"
+        justifyContent={'spaceBetween'}
+      >
         <Input
           name="endTime"
           size="sm"
@@ -72,9 +77,10 @@ const ActionExtendDeadline = ({
             icon="calendar"
             iconType="outline"
             variant="ghost"
-            disabled={!allowedToProcess}
             onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
+          >
+            Breyta lokadegi
+          </Button>
         </Box>
       </Box>
       <Modal

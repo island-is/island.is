@@ -14,13 +14,13 @@ import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import { m } from '../../../lib/messages'
 import {
   useSignatureCollectionAdminCanSignInfoQuery,
   useIdentityQuery,
 } from './identityAndCanSignLookup.generated'
 import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
 import { useRevalidator } from 'react-router-dom'
+import { m } from '../../lib/messages'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
@@ -101,7 +101,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
 
   return (
     <Box marginTop={8}>
-      <Box display={'flex'} justifyContent={'spaceBetween'}>
+      <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4" marginBottom={2}>
           {formatMessage(m.paperSigneesHeader)}
         </Text>
@@ -118,14 +118,14 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
       </Box>
 
       <Box
-        background={'blue100'}
+        background="blue100"
         height="full"
         padding={3}
         border="standard"
         borderRadius="standard"
       >
         <GridContainer>
-          <GridRow marginBottom={3}>
+          <GridRow marginBottom={2}>
             <GridColumn span={['7/12', '8/12']}>
               <InputController
                 control={control}
@@ -140,6 +140,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 }}
                 error={nationalIdTypo ? ' ' : undefined}
                 loading={loading || loadingCanSign}
+                placeholder="Sláið inn"
                 icon={
                   name && canSign?.signatureCollectionAdminCanSignInfo?.success
                     ? 'checkmark'
@@ -155,11 +156,12 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 required
                 label={formatMessage(m.paperNumber)}
                 value={page}
+                placeholder="Sláið inn"
                 onChange={(e) => setPage(e.target.value)}
               />
             </GridColumn>
           </GridRow>
-          <GridRow marginBottom={3}>
+          <GridRow marginBottom={2}>
             <GridColumn span={'12/12'}>
               <Input
                 id="name"

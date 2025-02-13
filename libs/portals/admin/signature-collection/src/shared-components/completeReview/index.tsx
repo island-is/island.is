@@ -6,7 +6,6 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
-import ActionLockList from './lockList'
 
 const ActionReviewComplete = ({
   listId,
@@ -47,18 +46,18 @@ const ActionReviewComplete = ({
   })
 
   return (
-    <Box marginTop={8}>
+    <Box>
       <Box display="flex" justifyContent="spaceBetween">
-        <ActionLockList listId={listId} listStatus={listStatus} />
+        <Box>
+          <Text variant="h5">Úrvinnslu lokið</Text>
+          <Text>Lorem ipsum dolor sit amet</Text>
+        </Box>
         <Button
+          size="default"
           iconType="outline"
           variant="ghost"
           icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
-          disabled={
-            listStatus === ListStatus.Active ||
-            listStatus === ListStatus.Extendable
-          }
         >
           {modalText}
         </Button>

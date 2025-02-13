@@ -159,7 +159,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalList,
       element: <MunicipalList />,
-      loader: listsLoader(props),
+      loader: listLoader(props),
     },
   ],
 }

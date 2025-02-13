@@ -12,7 +12,7 @@ const ScreenHeader = ({
 }) => {
   return (
     <Box>
-      <Box marginBottom={3}>
+      <Box marginBottom={2}>
         <Breadcrumbs
           items={[
             {

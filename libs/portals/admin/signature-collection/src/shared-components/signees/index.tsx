@@ -3,7 +3,6 @@ import {
   Text,
   Table as T,
   Pagination,
-  Icon,
   FilterInput,
   GridRow,
   GridColumn,
@@ -20,6 +19,8 @@ import { m } from '../../lib/messages'
 import EditPage from './editPage'
 import FilterSignees from './filterSignees'
 import ListInfo from '../listInfoAlert'
+
+const { Table, Head, Row, HeadData, Body, Data } = T
 
 const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
@@ -58,12 +59,12 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="spaceBetween" marginTop={0}>
+      <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{formatMessage(m.listSigneesHeader)}</Text>
         <ListInfo />
       </Box>
 
-      <GridRow marginTop={2} marginBottom={4}>
+      <GridRow marginTop={3} marginBottom={2}>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <FilterInput
             name="searchSignee"
@@ -118,71 +119,68 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
 
       {signees && signees.length > 0 ? (
         <Box marginTop={3}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
-                <T.HeadData></T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
+          <Table>
+            <Head>
+              <Row>
+                <HeadData>{formatMessage(m.signeeDate)}</HeadData>
+                <HeadData>{formatMessage(m.signeeName)}</HeadData>
+                <HeadData>{formatMessage(m.signeeNationalId)}</HeadData>
+                <HeadData>{formatMessage(m.signeeAddress)}</HeadData>
+                <HeadData>{formatMessage(m.signeePage)}</HeadData>
+              </Row>
+            </Head>
+            <Body>
               {signees.length > 0 &&
                 signees
                   .slice(pageSize * (page - 1), pageSize * page)
                   .map((s) => {
+                    const textVariant = 'medium'
+                    const bgColor = s.isDigital ? 'white' : 'blueberry100'
                     return (
-                      <T.Row key={s.id}>
-                        <T.Data
-                          text={{ variant: 'medium' }}
+                      <Row key={s.id}>
+                        <Data
+                          text={{ variant: textVariant }}
                           box={{
-                            background: s.isDigital ? 'white' : 'blueberry100',
+                            background: bgColor,
                           }}
                           style={{ width: '22%' }}
                         >
                           {format(new Date(s.created), 'dd.MM.yyyy HH:mm')}
-                        </T.Data>
-                        <T.Data
-                          text={{ variant: 'medium' }}
+                        </Data>
+                        <Data
+                          text={{ variant: textVariant }}
                           box={{
-                            background: s.isDigital ? 'white' : 'blueberry100',
+                            background: bgColor,
                           }}
                         >
                           {s.signee.name}
-                        </T.Data>
-                        <T.Data
-                          text={{ variant: 'medium' }}
+                        </Data>
+                        <Data
+                          text={{ variant: textVariant }}
                           box={{
-                            background: s.isDigital ? 'white' : 'blueberry100',
+                            background: bgColor,
                           }}
                         >
                           {formatNationalId(s.signee.nationalId)}
-                        </T.Data>
-                        <T.Data
-                          text={{ variant: 'medium' }}
+                        </Data>
+                        <Data
+                          text={{ variant: textVariant }}
                           box={{
-                            background: s.isDigital ? 'white' : 'blueberry100',
+                            background: bgColor,
                           }}
                         >
                           {s.signee.address}
-                        </T.Data>
-                        <T.Data
+                        </Data>
+                        <Data
+                          text={{ variant: textVariant }}
                           box={{
-                            background: s.isDigital ? 'white' : 'blueberry100',
+                            background: bgColor,
+                            alignItems: 'center',
                           }}
                         >
                           {!s.isDigital && (
                             <Box display="flex">
-                              <Box marginRight={1}>
-                                <Text>{s.pageNumber}</Text>
-                              </Box>
-                              <Icon
-                                icon="document"
-                                type="outline"
-                                color="blue400"
-                              />
+                              <Text>{s.pageNumber}</Text>
                               <EditPage
                                 page={s.pageNumber ?? 0}
                                 name={s.signee.name}
@@ -193,12 +191,12 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                               />
                             </Box>
                           )}
-                        </T.Data>
-                      </T.Row>
+                        </Data>
+                      </Row>
                     )
                   })}
-            </T.Body>
-          </T.Table>
+            </Body>
+          </Table>
 
           <Box marginTop={3}>
             <Pagination

@@ -117,7 +117,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         label={''}
       >
         <Text>{formatMessage(m.compareListsModalDescription)}</Text>
-        <Box paddingTop={5} paddingBottom={5}>
+        <Box paddingY={5}>
           <InputFileUpload
             fileList={fileList}
             header={formatMessage(m.uploadHeader)}

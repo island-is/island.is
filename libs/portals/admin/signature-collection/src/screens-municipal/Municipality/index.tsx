@@ -150,7 +150,7 @@ export const Municipality = () => {
                             params: {
                               landAreaName: 'hofudborgarsvaedi',
                               municipalityName: 'reykjavik',
-                              listId: '1',
+                              listId: list.id,
                             },
                           }),
                         )

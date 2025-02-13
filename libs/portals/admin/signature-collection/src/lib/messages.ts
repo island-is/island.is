@@ -428,6 +428,11 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
+  signeePage: {
+    id: 'admin-portal.signature-collection:signeePage',
+    defaultMessage: 'Bls.',
+    description: '',
+  },
   updateListEndTime: {
     id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',

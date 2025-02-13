@@ -3,7 +3,7 @@ import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
-import { m } from '../../../lib/messages'
+import { m } from '../../lib/messages'
 import { ListStatus } from '@island.is/api/schema'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
 
@@ -38,16 +38,23 @@ const ActionLockList = ({
 
   return (
     <Box>
-      <Button
-        iconType="outline"
-        variant="ghost"
-        icon="lockClosed"
-        colorScheme="destructive"
-        onClick={() => setModalLockListIsOpen(true)}
-        disabled={listStatus !== ListStatus.Active}
-      >
-        {formatMessage(m.lockList)}
-      </Button>
+      <Box display="flex" justifyContent="spaceBetween">
+        <Box>
+          <Text variant="h5">Læsa framboði</Text>
+          <Text>Lorem ipsum dolor sit amet</Text>
+        </Box>
+        <Button
+          size="default"
+          iconType="outline"
+          variant="ghost"
+          icon="lockClosed"
+          colorScheme="destructive"
+          onClick={() => setModalLockListIsOpen(true)}
+          disabled={listStatus !== ListStatus.Active}
+        >
+          {formatMessage('Læsa framboði')}
+        </Button>
+      </Box>
       <Modal
         id="toggleLockList"
         isVisible={modalLockListIsOpen}

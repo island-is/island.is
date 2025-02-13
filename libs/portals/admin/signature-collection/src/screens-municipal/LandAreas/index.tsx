@@ -15,11 +15,7 @@ import { m } from '../../lib/messages'
 import { PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import ScreenHeader from '../../shared-components/screenHeader'
-import {
-  useLoaderData,
-  useNavigate,
-  useParams,
-} from 'react-router-dom'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { replaceParams } from '@island.is/react-spa/shared'
