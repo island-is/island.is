@@ -301,16 +301,19 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let civilClaimPdf = undefined
-      const civilClaim = theCase.caseFiles?.find(
-        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-      )
+      const civilClaimPdfs: string[] = []
+      const civilClaimFiles =
+        theCase.caseFiles?.filter(
+          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+        ) ?? []
 
-      if (civilClaim) {
-        civilClaimPdf = await this.fileService.getCaseFileFromS3(
+      for (const civilClaimFile of civilClaimFiles) {
+        const civilClaimPdf = await this.fileService.getCaseFileFromS3(
           theCase,
-          civilClaim,
+          civilClaimFile,
         )
+
+        civilClaimPdfs.push(Base64.btoa(civilClaimPdf.toString('binary')))
       }
 
       const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
@@ -326,9 +329,7 @@ export class SubpoenaService {
         Base64.btoa(subpoenaPdf.toString('binary')),
         Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdf
-          ? Base64.btoa(civilClaimPdf.toString('binary'))
-          : undefined,
+        civilClaimPdfs,
       )
 
       if (!createdSubpoena) {

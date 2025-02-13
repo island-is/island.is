@@ -1,8 +1,9 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { ApplicationType } from '../utils'
-import { YES } from '@island.is/application/types'
+import { YES } from '@island.is/application/core'
 import { error } from './messages'
+import * as kennitala from 'kennitala'
 
 const FileDocumentSchema = z.object({
   name: z.string(),
@@ -39,7 +40,7 @@ const MainOtherContactSchema = z
   .refine(
     ({ required, person }) => {
       if (!required) return true
-      return !!person?.nationalId
+      return !!person?.nationalId && kennitala.isValid(person.nationalId)
     },
     { path: ['person', 'nationalId'] },
   )
@@ -74,7 +75,10 @@ const MainOtherContactSchema = z
 
 const OtherContactSchema = z.object({
   person: z.object({
-    nationalId: z.string().min(1),
+    nationalId: z
+      .string()
+      .min(1)
+      .refine((nationalId) => kennitala.isValid(nationalId)),
     name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
