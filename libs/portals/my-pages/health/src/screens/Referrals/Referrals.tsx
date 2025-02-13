@@ -1,6 +1,7 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
+  CardLoader,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
@@ -40,6 +41,7 @@ const References: React.FC = () => {
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && loading && <CardLoader />}
 
       <Stack space={2}>
         {referrals?.map((referral, index) => (

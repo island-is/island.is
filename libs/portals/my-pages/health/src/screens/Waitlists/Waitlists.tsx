@@ -2,6 +2,7 @@ import { Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
+  CardLoader,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
@@ -40,6 +41,7 @@ const Waitlists: React.FC = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
 
+      {!error && loading && <CardLoader />}
       <Stack space={2}>
         {waitlists?.map((waitlist, index) => (
           <ActionCard
@@ -67,22 +69,6 @@ const Waitlists: React.FC = () => {
             }}
           />
         ))}
-
-        {/* <ActionCard
-          heading="Hjúkrunarheimili"
-          text="Staða síðast uppfærð 03.12.2024"
-          eyebrow="Sóltún hjúkrunarheimili"
-          tag={{ label: 'Umsókn í vinnslu', outlined: false, variant: 'blue' }}
-          cta={{
-            url: HealthPaths.HealthWaitlistsDetail.replace(
-              ':type',
-              'heimilislaekningar',
-            ),
-            label: formatMessage(messages.seeMore),
-            centered: true,
-            variant: 'text',
-          }}
-        /> */}
       </Stack>
     </IntroWrapper>
   )
