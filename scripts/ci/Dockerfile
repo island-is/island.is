@@ -62,10 +62,7 @@ ENV NODE_ENV=production \
 
 RUN yarn codegen
 RUN --mount=type=secret,id=nx_cloud_access_token \
-  bash -c ' \
-  export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
-  yarn run build ${APP} --prod \
-  '
+  NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
 # ------------------------------------------------
 # Minimal node base for outputs
