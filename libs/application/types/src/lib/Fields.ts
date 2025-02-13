@@ -92,6 +92,8 @@ type MaybeWithApplicationAndActiveField<T> =
   | T
   | ((application: Application, activeField?: Record<string, string>) => T)
 
+type MaybeWithIndex<T> = T | ((index: number) => T)
+
 export type RepeaterItem = {
   component: RepeaterFields
   /**
@@ -135,13 +137,14 @@ export type RepeaterItem = {
           activeField?: Record<string, string>,
         ) => string | string[] | undefined)
   }
-  clearOnChange?: string[] | ((index: number) => string[])
+  clearOnChange?: MaybeWithIndex<string[]>
   setOnChange?:
     | { key: string; value: any }[]
     | ((
+        newVal: any,
         index: number,
-        option: any,
         application: Application,
+        activeField?: Record<string, string>,
       ) => { key: string; value: any }[])
 } & (
   | {
@@ -196,8 +199,13 @@ export type RepeaterItem = {
       label: StaticText
       isMulti?: boolean
       isSearchable?: boolean
-      loadOptions(c: AsyncSelectContext): Promise<Option[]>
-      updateOnSelect?: string
+      loadOptions(
+        c: AsyncSelectContext,
+        activeField?: Record<string, string>,
+        lang?: Locale,
+        setValueAtIndex?: (key: string, value: any) => void,
+      ): Promise<Option[]>
+      updateOnSelect?: MaybeWithIndex<string | string[]>
     }
 )
 
@@ -243,6 +251,9 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((newVal: any) => { key: string; value: any }[])
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -408,7 +419,7 @@ export interface AsyncSelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
-  updateOnSelect?: string
+  updateOnSelect?: string | string[]
 }
 
 export interface TextField extends InputField {

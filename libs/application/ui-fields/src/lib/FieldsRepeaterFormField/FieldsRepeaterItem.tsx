@@ -35,9 +35,6 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
-  loadOptions?: (c: AsyncSelectContext) => Promise<Option[]>
-  clearOnChange?: boolean
-  updateOnSelect?: string
 }
 
 const componentMapper = {
@@ -90,6 +87,8 @@ export const Item = ({
     isClearable = false,
     updateValueObj,
     defaultValue,
+    clearOnChange,
+    setOnChange,
     ...props
   } = item
 
@@ -248,19 +247,19 @@ export const Item = ({
   }
 
   let ClearOnChange: string[] | undefined
-  if (typeof item.clearOnChange === 'function') {
-    ClearOnChange = item.clearOnChange(index)
+  if (typeof clearOnChange === 'function') {
+    ClearOnChange = clearOnChange(index)
   } else {
-    ClearOnChange = item.clearOnChange
+    ClearOnChange = clearOnChange
   }
 
   const SetOnChange =
-    item.setOnChange &&
+    setOnChange &&
     ((option: any) => {
-      if (typeof item.setOnChange === 'function') {
-        return item.setOnChange(index, option, application)
+      if (typeof setOnChange === 'function') {
+        return setOnChange(option, index, application, activeValues)
       } else {
-        return item.setOnChange || []
+        return setOnChange || []
       }
     })
 
@@ -275,8 +274,17 @@ export const Item = ({
       backgroundColor: backgroundColor,
       isSearchable: item.isSearchable,
       isMulti: item.isMulti,
-      loadOptions: item.loadOptions,
-      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
+      loadOptions: (c) =>
+        item.loadOptions(c, activeValues, lang, (subKey, value) => {
+          setValue(`${dataId}[${index}].${subKey}`, value)
+        }),
+      updateOnSelect:
+        typeof item.updateOnSelect === 'function'
+          ? item.updateOnSelect(index)
+          : item.updateOnSelect,
+      required: Required,
+      clearOnChange: ClearOnChange,
+      setOnChange: SetOnChange,
     }
   }
 
@@ -299,9 +307,6 @@ export const Item = ({
         <AsyncSelectFormField
           application={application}
           error={getFieldError(itemId)}
-          // required={Required}
-          clearOnChange={ClearOnChange}
-          // setOnChange={SetOnChange}
           field={{
             ...selectAsyncProps,
           }}

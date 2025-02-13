@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { SecondarySchool } from './types'
+import { Program, SecondarySchool } from './types'
 import { checkIsFreshman, SecondarySchoolAnswers } from '..'
 
 export const getRowsCountForSchoolSelection = (
@@ -68,4 +68,26 @@ export const getOtherSchoolIds = (
   })
 
   return result
+}
+
+export const getSchoolInfo = (
+  externalData: ExternalData,
+  activeField?: Record<string, string>,
+): SecondarySchool | undefined => {
+  const schoolOptions = getValueViaPath<SecondarySchool[]>(
+    externalData,
+    'schools.data',
+  )
+  const schoolId =
+    activeField && getValueViaPath<string>(activeField, 'school.id')
+  return schoolOptions?.find((x) => x.id === schoolId)
+}
+
+export const getProgramInfo = (
+  activeField?: Record<string, string>,
+  programId?: string,
+): Program | undefined => {
+  const programOptions =
+    activeField && getValueViaPath<Program[]>(activeField, 'programOptions')
+  return programOptions?.find((x) => x.id === programId)
 }

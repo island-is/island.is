@@ -37,7 +37,7 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   clearOnChange?: string[]
   setOnChange?:
     | { key: string; value: any }[]
-    | ((option: any) => { key: string; value: any }[])
+    | ((newVal: any) => { key: string; value: any }[])
 }
 
 export const SelectController = <Value, IsMulti extends boolean = false>({

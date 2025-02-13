@@ -10,11 +10,18 @@ import { school } from '../../../lib/messages'
 import {
   checkIsFreshman,
   getOtherSchoolIds,
+  getProgramInfo,
   getRowsCountForSchoolSelection,
+  getSchoolInfo,
   getTranslatedProgram,
   Routes,
   SecondarySchool,
 } from '../../../utils'
+import {
+  Query,
+  QuerySecondarySchoolProgramsBySchoolIdArgs,
+} from '@island.is/api/schema'
+import { PROGRAMS_BY_SCHOOLS_ID_QUERY } from '../../../graphql/queries'
 
 export const schoolSection = buildSection({
   id: 'schoolSection',
@@ -47,7 +54,7 @@ export const schoolSection = buildSection({
           marginTop: 0,
           fields: {
             'school.id': {
-              component: 'select', // TODOx async select (need to also graphql if school id is already in answers)
+              component: 'select',
               label: school.selection.schoolLabel,
               required: true,
               options: (application) => {
@@ -55,7 +62,6 @@ export const schoolSection = buildSection({
                   application.externalData,
                   'schools.data',
                 )
-
                 const isFreshman = checkIsFreshman(application.answers)
 
                 return (schoolOptions || [])
@@ -77,13 +83,13 @@ export const schoolSection = buildSection({
               },
               clearOnChange: (index) => {
                 return [
-                  `selection.${index}.firstProgram.id`,
-                  `selection.${index}.secondProgram.id`,
-                  `selection.${index}.thirdLanguage.code`,
-                  `selection.${index}.nordicLanguage.code`,
+                  `selection[${index}].firstProgram.id`,
+                  `selection[${index}].secondProgram.id`,
+                  `selection[${index}].thirdLanguage.code`,
+                  `selection[${index}].nordicLanguage.code`,
                 ]
               },
-              setOnChange: (index, option, application) => {
+              setOnChange: (option, index, application) => {
                 const schoolOptions = getValueViaPath<SecondarySchool[]>(
                   application.externalData,
                   'schools.data',
@@ -94,82 +100,101 @@ export const schoolSection = buildSection({
 
                 return [
                   {
-                    key: `selection.${index}.school.name`,
+                    key: `selection[${index}].school.name`,
                     value: selectedSchool?.name,
                   },
-                  { key: `selection.${index}.requestDormitory`, value: [] },
-                  {
-                    key: `selection.${index}.secondProgram.include`,
-                    // value: programOptions.length > 1, // TODOx get from graphql
-                    value: true,
-                  },
+                  { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
                 ]
               },
             },
             'firstProgram.id': {
-              component: 'select',
+              component: 'selectAsync',
               label: school.selection.firstProgramLabel,
               required: true,
-              // TODOx get options from graphql
-              options: (_1, activeField, lang) => {
+              updateOnSelect: (index) => [
+                `selection[${index}].school.id`,
+                `selection[${index}].secondProgram.id`,
+              ],
+              loadOptions: async (
+                { apolloClient, application },
+                activeField,
+                lang,
+                setValueAtIndex,
+              ) => {
+                const schoolId =
+                  activeField &&
+                  getValueViaPath<string>(activeField, 'school.id')
                 const secondProgramId =
                   activeField &&
                   getValueViaPath<string>(activeField, 'secondProgram.id')
 
-                const schoolId =
-                  activeField &&
-                  getValueViaPath<string>(activeField, 'school.id')
-                const options = [
-                  {
-                    label: getTranslatedProgram(lang, {
-                      nameIs: 'Braut 1',
-                      nameEn: '',
-                    }),
-                    value: `${schoolId}-1`,
-                  },
-                  {
-                    label: getTranslatedProgram(lang, {
-                      nameIs: 'Braut 2',
-                      nameEn: '',
-                    }),
-                    value: `${schoolId}-2`,
-                  },
-                  {
-                    label: getTranslatedProgram(lang, {
-                      nameIs: 'Braut 3',
-                      nameEn: '',
-                    }),
-                    value: `${schoolId}-3`,
-                  },
-                ]
+                if (schoolId) {
+                  const { data } = await apolloClient.query<
+                    Query,
+                    QuerySecondarySchoolProgramsBySchoolIdArgs
+                  >({
+                    query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
+                    variables: {
+                      isFreshman: checkIsFreshman(application.answers),
+                      schoolId,
+                    },
+                  })
 
-                return options.filter((x) => x.value !== secondProgramId)
+                  setValueAtIndex?.(
+                    'programOptions',
+                    data?.secondarySchoolProgramsBySchoolId,
+                  )
+
+                  setValueAtIndex?.(
+                    'secondProgram.include',
+                    data?.secondarySchoolProgramsBySchoolId.length > 1,
+                  )
+
+                  const options =
+                    data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
+                      value: program.id,
+                      label: getTranslatedProgram(lang, {
+                        nameIs: program.nameIs,
+                        nameEn: program.nameEn,
+                      }),
+                    })) ?? []
+
+                  return options.filter((x) => x.value !== secondProgramId)
+                }
+
+                return []
               },
-              // TODOx set isLoading+isDisabled when loading graphql
-              setOnChange: (index, _, application) => {
-                const firstProgramIsSpecialNeedsProgram = false // TODOx get from graphql
+              setOnChange: (option, index, application, activeField) => {
+                const programInfo = getProgramInfo(activeField, option.value)
+
                 return [
-                  { key: `selection.${index}.firstProgram.nameIs`, value: 'x' }, // TODOx get from graphql
-                  { key: `selection.${index}.firstProgram.nameEn`, value: 'x' }, // TODOx get from graphql
                   {
-                    key: `selection.${index}.firstProgram.registrationEndDate`,
-                    value: new Date().toISOString(), // TODOx get from graphql
+                    key: `selection[${index}].firstProgram.nameIs`,
+                    value: programInfo?.nameIs || '',
                   },
                   {
-                    key: `selection.${index}.firstProgram.isSpecialNeedsProgram`,
-                    value: firstProgramIsSpecialNeedsProgram,
+                    key: `selection[${index}].firstProgram.nameEn`,
+                    value: programInfo?.nameEn || '',
                   },
                   {
-                    key: `selection.${index}.secondProgram.require`,
+                    key: `selection[${index}].firstProgram.registrationEndDate`,
+                    value: programInfo?.registrationEndDate,
+                  },
+                  {
+                    key: `selection[${index}].firstProgram.isSpecialNeedsProgram`,
+                    value: programInfo?.isSpecialNeedsProgram,
+                  },
+                  {
+                    key: `selection[${index}].secondProgram.require`,
                     value:
                       checkIsFreshman(application.answers) &&
-                      !firstProgramIsSpecialNeedsProgram,
+                      !programInfo?.isSpecialNeedsProgram,
                   },
                 ]
               },
             },
             'secondProgram.id': {
-              component: 'select',
+              component: 'selectAsync',
               label: school.selection.secondProgramLabel,
               required: (_, activeField) => {
                 const secondProgramRequire =
@@ -177,6 +202,7 @@ export const schoolSection = buildSection({
                     getValueViaPath<boolean>(
                       activeField,
                       'secondProgram.require',
+                      true,
                     )) ||
                   false
                 return secondProgramRequire
@@ -187,6 +213,7 @@ export const schoolSection = buildSection({
                     getValueViaPath<boolean>(
                       activeField,
                       'secondProgram.require',
+                      true,
                     )) ||
                   false
                 return !secondProgramRequire
@@ -197,59 +224,75 @@ export const schoolSection = buildSection({
                     getValueViaPath<boolean>(
                       activeField,
                       'secondProgram.include',
+                      true,
                     )) ||
                   false
                 return secondProgramInclude
               },
-              // TODOx get options from school graphql
-              options: (_1, activeField, lang) => {
+              updateOnSelect: (index) => [
+                `selection[${index}].school.id`,
+                `selection[${index}].firstProgram.id`,
+              ],
+              loadOptions: async (
+                { apolloClient, application },
+                activeField,
+                lang,
+                setValueAtIndex,
+              ) => {
+                const schoolId =
+                  activeField &&
+                  getValueViaPath<string>(activeField, 'school.id')
+
                 const firstProgramId =
                   activeField &&
                   getValueViaPath<string>(activeField, 'firstProgram.id')
 
-                const schoolId =
-                  activeField &&
-                  getValueViaPath<string>(activeField, 'school.id')
-                const options = [
-                  {
-                    label: getTranslatedProgram(lang, {
-                      nameIs: 'Braut 1',
-                      nameEn: '',
-                    }),
-                    value: `${schoolId}-1`,
-                  },
-                  {
-                    label: getTranslatedProgram(lang, {
-                      nameIs: 'Braut 2',
-                      nameEn: '',
-                    }),
-                    value: `${schoolId}-2`,
-                  },
-                  {
-                    label: getTranslatedProgram(lang, {
-                      nameIs: 'Braut 3',
-                      nameEn: '',
-                    }),
-                    value: `${schoolId}-3`,
-                  },
-                ]
+                if (schoolId) {
+                  const { data } = await apolloClient.query<
+                    Query,
+                    QuerySecondarySchoolProgramsBySchoolIdArgs
+                  >({
+                    query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
+                    variables: {
+                      isFreshman: checkIsFreshman(application.answers),
+                      schoolId,
+                    },
+                  })
 
-                return options.filter((x) => x.value !== firstProgramId)
+                  setValueAtIndex?.(
+                    'programOptions',
+                    data?.secondarySchoolProgramsBySchoolId,
+                  )
+
+                  const options =
+                    data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
+                      value: program.id,
+                      label: getTranslatedProgram(lang, {
+                        nameIs: program.nameIs,
+                        nameEn: program.nameEn,
+                      }),
+                    })) ?? []
+
+                  return options.filter((x) => x.value !== firstProgramId)
+                }
+
+                return []
               },
-              // TODOx set isLoading+isDisabled when loading graphql
-              setOnChange: (index) => {
+              setOnChange: (option, index, _, activeField) => {
+                const programInfo = getProgramInfo(activeField, option.value)
+
                 return [
                   {
-                    key: `selection.${index}.secondProgram.nameIs`,
-                    value: 'x',
-                  }, // TODOx get from graphql
+                    key: `selection[${index}].secondProgram.nameIs`,
+                    value: programInfo?.nameIs || '',
+                  },
                   {
-                    key: `selection.${index}.secondProgram.nameEn`,
-                    value: 'x',
-                  }, // TODOx get from graphql
+                    key: `selection[${index}].secondProgram.nameEn`,
+                    value: programInfo?.nameEn || '',
+                  },
                   {
-                    key: `selection.${index}.secondProgram.registrationEndDate`,
-                    value: new Date().toISOString(), // TODOx get from graphql
+                    key: `selection[${index}].secondProgram.registrationEndDate`,
+                    value: programInfo?.registrationEndDate,
                   },
                 ]
               },
@@ -258,15 +301,31 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.thirdLanguageLabel,
               isClearable: true,
-              // TODOx get options from school graphql
-              options: [
-                { label: 'Þýska', value: 'DE' },
-                { label: 'Franska', value: 'FR' },
-              ],
-              // TODOx set isLoading+isDisabled when loading graphql
-              setOnChange: (index) => {
+              options: (application, activeField) => {
+                const schoolInfo = getSchoolInfo(
+                  application.externalData,
+                  activeField,
+                )
+                return (schoolInfo?.thirdLanguages || []).map((language) => {
+                  return {
+                    label: language.name,
+                    value: language.code,
+                  }
+                })
+              },
+              setOnChange: (option, index, application, activeField) => {
+                const schoolInfo = getSchoolInfo(
+                  application.externalData,
+                  activeField,
+                )
+                const languageInfo = schoolInfo?.thirdLanguages?.find(
+                  (x) => x.code === option.value,
+                )
                 return [
-                  { key: `selection.${index}.thirdLanguage.name`, value: 'x' }, // TODOx get from graphql
+                  {
+                    key: `selection[${index}].thirdLanguage.name`,
+                    value: languageInfo?.name,
+                  },
                 ]
               },
             },
@@ -274,15 +333,31 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.nordicLanguageLabel,
               isClearable: true,
-              // TODOx get options from school graphql (minus danish)
-              options: [
-                { label: 'Sænska', value: 'SE' },
-                { label: 'Norska', value: 'NO' },
-              ],
-              // TODOx set isLoading+isDisabled when loading graphql
-              setOnChange: (index) => {
+              options: (application, activeField) => {
+                const schoolInfo = getSchoolInfo(
+                  application.externalData,
+                  activeField,
+                )
+                return (schoolInfo?.nordicLanguages || []).map((language) => {
+                  return {
+                    label: language.name,
+                    value: language.code,
+                  }
+                })
+              },
+              setOnChange: (option, index, application, activeField) => {
+                const schoolInfo = getSchoolInfo(
+                  application.externalData,
+                  activeField,
+                )
+                const languageInfo = schoolInfo?.nordicLanguages?.find(
+                  (x) => x.code === option.value,
+                )
                 return [
-                  { key: `selection.${index}.nordicLanguage.name`, value: 'x' }, // TODOx get from graphql
+                  {
+                    key: `selection[${index}].nordicLanguage.name`,
+                    value: languageInfo?.name,
+                  },
                 ]
               },
             },
@@ -294,7 +369,13 @@ export const schoolSection = buildSection({
                   value: YES,
                 },
               ],
-              condition: () => true, // TODOx get condition from school graphql
+              condition: (application, activeField) => {
+                const schoolInfo = getSchoolInfo(
+                  application.externalData,
+                  activeField,
+                )
+                return schoolInfo?.allowRequestDormitory || false
+              },
             },
           },
         }),
@@ -315,14 +396,6 @@ export const schoolSection = buildSection({
             return isFreshman && !includeThirdSelection
           },
         }),
-
-        // TODOx remove
-        // buildCustomField({
-        //   component: 'SchoolSelection',
-        //   id: 'selection',
-        //   title: '',
-        //   description: '',
-        // }),
       ],
     }),
   ],
