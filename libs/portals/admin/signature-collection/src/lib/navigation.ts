@@ -9,7 +9,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     icon: 'receipt',
   },
   description: m.signatureListsDescription,
-  path: SignatureCollectionPaths.MunicipalAreaHofudborgarsvaedi,
+  path: SignatureCollectionPaths.MunicipalRoot,
   children: [
     {
       name: m.parliamentaryCollectionTitle,
@@ -23,48 +23,96 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalAreaHofudborgarsvaedi,
+      path: SignatureCollectionPaths.MunicipalRoot,
       activeIfExact: true,
       children: [
         {
           name: LandAreas.Hofudborgarsvaedi,
-          path: SignatureCollectionPaths.MunicipalAreaHofudborgarsvaedi,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaHofudborgarsvaedi,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.Sudurnes,
-          path: SignatureCollectionPaths.MunicipalAreaSudurnes,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaSudurnes,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.Vesturland,
-          path: SignatureCollectionPaths.MunicipalAreaVesturland,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaVesturland,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.Vestfirdir,
-          path: SignatureCollectionPaths.MunicipalAreaVestfirdir,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaVestfirdir,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.NordurlandVestra,
-          path: SignatureCollectionPaths.MunicipalAreaNordurlandVestra,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaNordurlandVestra,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.NordurlandEystra,
-          path: SignatureCollectionPaths.MunicipalAreaNordurlandEystra,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaNordurlandEystra,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.Austurland,
-          path: SignatureCollectionPaths.MunicipalAreaAusturland,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaAusturland,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
         {
           name: LandAreas.Sudurland,
-          path: SignatureCollectionPaths.MunicipalAreaSudurland,
-          activeIfExact: true,
+          path: SignatureCollectionPaths.LandAreaSudurland,
+          activeIfExact: false,
+          children: [
+            {
+              name: 'Sveitarfélag',
+              path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+            },
+          ],
         },
       ],
     },
