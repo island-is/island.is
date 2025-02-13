@@ -342,7 +342,7 @@ jobs:
       - uses: ./.github/actions/get-cache
         with:
           github-token: ${{ github.token }}
-          enable-cache: codegen
+          enable-cache: generated-files
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
