@@ -619,7 +619,7 @@ export class PoliceService {
     subpoena: string,
     indictment: string,
     user: User,
-    civilClaim?: string,
+    civilClaims: string[],
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
       theCase
@@ -646,11 +646,7 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentsBase64: [
-              subpoena,
-              indictment,
-              ...(civilClaim ? [civilClaim] : []),
-            ],
+            documentsBase64: [subpoena, indictment, ...civilClaims],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
