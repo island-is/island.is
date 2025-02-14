@@ -60,7 +60,11 @@ ENV CI=true \
   NX_VERBOSE_LOGGING=true \
   APP=${APP}
 
+# Run codegen during docker-build.
+# - If the host has the generated files, they are copied during `COPY . .` above
+# - If the generated files are missing on the host, the build would fail without this codegen
 RUN yarn codegen
+# Build with Nx Cloud caching. If credentials are missing or invalid, build will run without caching
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
