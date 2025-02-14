@@ -69,7 +69,7 @@ jobs:
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
-      YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+
     steps:
       - name: Get git branch
         id: git-branch
