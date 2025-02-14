@@ -28,6 +28,9 @@ class PageLink {
   @Field(() => String, { nullable: true })
   thumbnailImageHref?: string | null
 
+  @Field(() => String, { nullable: true })
+  tinyThumbnailImageHref?: string | null
+
   @Field()
   pageLinkIntro!: string
 }
@@ -69,15 +72,28 @@ export const mapOrganizationParentSubpageList = ({
           Boolean(page?.fields?.slug) &&
           Boolean(page?.fields?.title),
       )
-      .map((page) => ({
-        id: page.sys.id,
-        label: page.fields.title ?? '',
-        href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${
-          page.fields.organizationPage.fields.slug
-        }/${page.fields.slug}`,
-        thumbnailImageHref: page.fields.thumbnailImage?.fields?.file?.url,
-        pageLinkIntro: page.fields.pages?.[0]?.fields?.intro ?? '',
-      })),
+      .map((page) => {
+        let thumbnailImageHref =
+          page.fields.thumbnailImage?.fields?.file?.url ?? ''
+        if (thumbnailImageHref.startsWith('//')) {
+          thumbnailImageHref = `https:${thumbnailImageHref}`
+        }
+        let tinyThumbnailImageHref =
+          page.fields.tinyThumbnailImage?.fields?.file?.url ?? ''
+        if (tinyThumbnailImageHref.startsWith('//')) {
+          tinyThumbnailImageHref = `https:${tinyThumbnailImageHref}`
+        }
+        return {
+          id: page.sys.id,
+          label: page.fields.title ?? '',
+          href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${
+            page.fields.organizationPage.fields.slug
+          }/${page.fields.slug}`,
+          thumbnailImageHref,
+          tinyThumbnailImageHref,
+          pageLinkIntro: page.fields.pages?.[0]?.fields?.intro ?? '',
+        }
+      }),
     seeMoreLink: fields.seeMoreLink ? mapLink(fields.seeMoreLink) : null,
   }
 }

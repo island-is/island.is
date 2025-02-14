@@ -11,7 +11,7 @@ import { m } from '../messages'
 import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
 import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
-import { capitalize, capitalizeEveryWord } from '../utils/capitalize'
+import { capitalizeEveryWord } from '../utils/capitalize'
 import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
@@ -87,6 +87,10 @@ export class PassportMapper implements GenericLicenseMapper {
           }
         })
         .flat()
+
+    if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
+      mappedLicenses.push(emptyPassport)
+    }
 
     return mappedLicenses
   }
@@ -244,7 +248,7 @@ export class PassportMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(document),
       metadata: {
         links,
-        licenseNumber: document.number?.toString() ?? '',
+        licenseNumber: document.numberWithType?.toString() ?? '',
         licenseId: document.number?.toString(),
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
