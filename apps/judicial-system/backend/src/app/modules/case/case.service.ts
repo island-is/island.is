@@ -30,7 +30,6 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
-  CaseDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
