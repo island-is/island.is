@@ -35,7 +35,9 @@ jobs:
   prepare:
     runs-on: arc-runners
     timeout-minutes: 35
-
+    permissions:
+      contents: 'read'
+      actions: 'read'
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       SERVERSIDE_FEATURES_ON: ''
@@ -75,6 +77,11 @@ jobs:
             ${{ env.GENERATED_FILES }}
           key: generated-files-${{ github.sha }}
 
+      - name: Set Directory as Safe
+        run: |
+          git config --system --add safe.directory "$GITHUB_WORKSPACE"
+
+        shell: bash
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 

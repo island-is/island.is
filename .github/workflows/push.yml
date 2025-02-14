@@ -56,6 +56,9 @@ jobs:
   pre-checks:
     name: Check if job should run
     runs-on: arc-runners
+    permissions:
+      contents: 'read'
+      actions: 'read'
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -215,6 +218,11 @@ jobs:
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+
+      - name: Set Directory as Safe
+        run: |
+          git config --system --add safe.directory "$GITHUB_WORKSPACE"
+        shell: bash
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
