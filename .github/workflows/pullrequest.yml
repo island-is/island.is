@@ -64,24 +64,9 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Prepare generated files
-        run: |
-          echo "generated files: ${{ env.GENERATED_FILES }}"
-          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
-      - name: Cache Generated files
-        uses: runs-on/cache/save@v4
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Set Directory as Safe
-        run: |
-          git config --system --add safe.directory "$GITHUB_WORKSPACE"
-
-        shell: bash
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
@@ -215,17 +200,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -260,17 +236,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -286,17 +253,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -334,13 +292,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -372,17 +325,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -406,17 +350,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

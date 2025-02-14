@@ -1,0 +1,34 @@
+name: 'Generate files'
+description: 'Yarn setup and install dependencies'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Restore generated files
+      uses: runs-on/cache/restore@v4
+      id: restore-generated-files-cache
+      with:
+        path: |
+          ${{ env.GENERATED_FILES }}
+        key: generated-files-${{ github.sha }}
+
+    - name: Prepare generated files
+      shell: bash
+      if: steps.restore-generated-files-cache.outputs.cache-hit != 'true'
+      run: |
+        echo "generated files: ${{ env.GENERATED_FILES }}"
+        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+
+    - name: Cache Generated files
+      shell: bash
+      if: steps.restore-generated-files-cache.outputs.cache-hit != 'true'
+      uses: runs-on/cache/save@v4
+      with:
+        path: |
+          ${{ env.GENERATED_FILES }}
+        key: generated-files-${{ github.sha }}
+
+    - name: Extract generated files
+      shell: bash
+      run: |
+        tar -xzvf ${{ env.GENERATED_FILES }}
