@@ -1338,7 +1338,7 @@ export const messages = defineMessages({
   vaccineExpiredDesc: {
     id: 'sp.health:vaccine-expired-desc',
     defaultMessage:
-      'Bólusetning einstaklings hefur runnið út samkvæmt gildandi reglum og er ekki lengur talin veita fullnægjandi vörn.',
+      'Bólusetning einstaklings hefur runnið út samkvæmt gildandi viðmiðum og er ekki lengur talin veita fullnægjandi vörn.',
   },
   vaccineDeclined: {
     id: 'sp.health:vaccine-declined',
@@ -1346,8 +1346,7 @@ export const messages = defineMessages({
   },
   vaccineDeclinedDesc: {
     id: 'sp.health:vaccine-declined-desc',
-    defaultMessage:
-      'Einstaklingur hefur hafnað bólusetningu og því ekki fengið hana.',
+    defaultMessage: 'Einstaklingur hefur hafnað bólusetningu.',
   },
   vaccineUnregistered: {
     id: 'sp.health:vaccine-unregistered',
