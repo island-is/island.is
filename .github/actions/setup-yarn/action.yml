@@ -11,6 +11,8 @@ runs:
         echo "YARN_CACHE_FOLDER: $YARN_CACHE_FOLDER"
         echo "CYPRESS_CACHE_FOLDER: $CYPRESS_CACHE_FOLDER"
         echo "(yarn config get cacheFolder): $(yarn config get cacheFolder)"
+        echo github.action_path: ${{ github.action_path }}
+        ls -al ${{ github.action_path }} || true
 
     - name: Compare yarn.lock files
       shell: bash
