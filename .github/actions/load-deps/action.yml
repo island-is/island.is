@@ -5,16 +5,16 @@ inputs:
     required: false
     description: 'name of the generated files archive to fetch from cache'
     default: ${{ github.sha }}.tar.gz
-  skip_checkout:
+  checkout:
     description: 'skip the checkout step'
     required: false
-    default: 'false'
+    default: 'true'
 
 runs:
   using: 'composite'
   steps:
     - name: checkout
-      if: ${{ inputs.skip_checkout != 'true' }}
+      if: ${{ inputs.checkout == 'true' }}
       uses: actions/checkout@v4
 
     - name: Restore generated files
