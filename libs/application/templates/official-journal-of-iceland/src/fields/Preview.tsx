@@ -90,10 +90,6 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
     application.answers.misc?.signatureType ?? 'regular',
   ).safeParse(currentApplication.answers.signature)
 
-  console.log(currentApplication.answers.signature)
-
-  console.log('signatureValidationCheck', signatureValidationCheck)
-
   const hasError = !(
     advertValidationCheck.success &&
     signatureValidationCheck.success &&
