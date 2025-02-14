@@ -7,8 +7,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: echo ${{ inputs.action_ref }}
+    - name: Set cache key
       shell: bash
+      id: set-cache-key
+      run: |
+        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Check envs
       shell: bash
@@ -32,18 +35,6 @@ runs:
         echo "Will run 'yarn install': $run_install"
         echo "run_install=$run_install" >> $GITHUB_OUTPUT
 
-    - name: Setup Yarn
-      shell: bash
-      run: |
-        corepack enable
-        corepack prepare --activate
-        yarn --version
-
-    - name: Setup yarn (s3 cache)
-      shell: bash
-      if: steps.compare_yarn_lock.outputs.run_install == 'true'
-      uses: ./.github/actions/setup-yarn-s3
-
     - name: Link pre-installed dependencies
       if: steps.compare_yarn_lock.outputs.run_install == 'false'
       shell: bash
@@ -53,3 +44,31 @@ runs:
         ln -s /home/runner/dependencies/.yarn/cache .yarn/
         ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
         echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+
+    - name: Restore Dependencies Cache
+      shell: bash
+      if: steps.compare_yarn_lock.outputs.run_install == 'true'
+      uses: runs-on/cache/restore@v4
+      id: restore-cache
+      with:
+        path: |
+          $YARN_CACHE_FOLDER
+          $CYPRESS_CACHE_FOLDER
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+
+    - name: Setup Yarn
+      shell: bash
+      run: |
+        corepack enable
+        corepack prepare --activate
+        yarn --version
+
+    - name: Cache Dependencies
+      shell: bash
+      uses: runs-on/cache/save@v4
+      if: steps.restore-cache.outputs.cache-hit != 'true'
+      with:
+        path: |
+          $YARN_CACHE_FOLDER
+          $CYPRESS_CACHE_FOLDER
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
