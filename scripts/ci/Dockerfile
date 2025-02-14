@@ -16,6 +16,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   python3 \
   build-essential \
   jq \
+  openjdk-17-jdk \
   gcc && \
   ln -sf /usr/bin/python3 /usr/bin/python
 
