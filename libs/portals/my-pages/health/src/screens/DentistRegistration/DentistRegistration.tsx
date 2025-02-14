@@ -10,7 +10,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroWrapper, m } from '@island.is/portals/my-pages/core'
+import { IntroWrapper, Modal, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -24,6 +24,7 @@ import {
   useGetPaginatedDentistsQuery,
   useRegisterDentistMutation,
 } from './DentistRegistration.generated'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
@@ -47,6 +48,22 @@ export const DentistRegistration = () => {
     error: statusError,
     loading: statusLoading,
   } = useGetDentistStatusQuery()
+
+  const [useModalV2, setUseModalV2] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalDentistRegistrationModalV2Enabled,
+        false,
+      )
+      if (ffEnabled) {
+        setUseModalV2(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const [registerDentist, { loading: loadingTranser }] =
     useRegisterDentistMutation({
@@ -76,8 +93,8 @@ export const DentistRegistration = () => {
   }, [errorTransfering])
 
   const canRegister = status?.rightsPortalDentistStatus?.canRegister
-    ? true
-    : false
+    ? false
+    : true
 
   const contractType = status?.rightsPortalDentistStatus?.contractType
     ? status.rightsPortalDentistStatus.contractType
@@ -155,28 +172,30 @@ export const DentistRegistration = () => {
         />
       </Box>
 
-      <RegisterModal
-        onClose={() => setSelectedDentist(null)}
-        onAccept={() => {
-          setErrorTransfering(false)
-          if (selectedDentist && selectedDentist.id) {
-            registerDentist({
-              variables: {
-                input: {
-                  id: `${selectedDentist.id}`,
+      {useModalV2 && (
+        <RegisterModal
+          onClose={() => setSelectedDentist(null)}
+          onAccept={() => {
+            setErrorTransfering(false)
+            if (selectedDentist && selectedDentist.id) {
+              registerDentist({
+                variables: {
+                  input: {
+                    id: `${selectedDentist.id}`,
+                  },
                 },
-              },
-            })
-          }
-        }}
-        id={'dentistRegisterModal'}
-        title={`${formatMessage(messages.dentistModalTitle)} ${
-          selectedDentist?.name
-        }`}
-        description=""
-        isVisible={!!selectedDentist}
-        buttonLoading={loadingTranser}
-      />
+              })
+            }
+          }}
+          id={'dentistRegisterModal'}
+          title={`${formatMessage(messages.dentistModalTitle)} ${
+            selectedDentist?.name
+          }`}
+          description=""
+          isVisible={!!selectedDentist}
+          buttonLoading={loadingTranser}
+        />
+      )}
 
       {loading ? (
         <SkeletonLoader repeat={3} space={2} height={40} />
@@ -215,19 +234,68 @@ export const DentistRegistration = () => {
                               visible: dentist.id === hoverId,
                             })}
                           >
-                            <Button
-                              size="small"
-                              variant="text"
-                              icon="pencil"
-                              onClick={() => {
-                                setSelectedDentist({
-                                  id: dentist.id,
-                                  name: dentist.name,
-                                })
+                            <Modal
+                              id={'dentistRegisterModal'}
+                              initialVisibility={false}
+                              iconSrc="./assets/images/coffee.svg"
+                              iconAlt="coffee"
+                              toggleClose={!selectedDentist}
+                              onCloseModal={() => {
+                                setSelectedDentist(null)
                               }}
-                            >
-                              {formatMessage(messages.healthRegistrationSave)}
-                            </Button>
+                              title={`${formatMessage(
+                                messages.dentistModalTitle,
+                              )} ${selectedDentist?.name}`}
+                              buttons={[
+                                {
+                                  id: 'RegisterModalAccept',
+                                  type: 'primary' as const,
+                                  text: formatMessage(
+                                    messages.healthRegisterModalAccept,
+                                  ),
+                                  onClick: () => {
+                                    setErrorTransfering(false)
+                                    setSelectedDentist(null)
+                                    if (selectedDentist?.id) {
+                                      registerDentist({
+                                        variables: {
+                                          input: {
+                                            id: `${selectedDentist.id}`,
+                                          },
+                                        },
+                                      })
+                                    }
+                                  },
+                                },
+                                {
+                                  id: 'RegisterModalDecline',
+                                  type: 'ghost' as const,
+                                  text: formatMessage(
+                                    messages.healthRegisterModalDecline,
+                                  ),
+                                  onClick: () => {
+                                    setSelectedDentist(null)
+                                  },
+                                },
+                              ]}
+                              disclosure={
+                                <Button
+                                  size="small"
+                                  variant="text"
+                                  icon="pencil"
+                                  onClick={() => {
+                                    setSelectedDentist({
+                                      id: dentist.id,
+                                      name: dentist.name,
+                                    })
+                                  }}
+                                >
+                                  {formatMessage(
+                                    messages.healthRegistrationSave,
+                                  )}
+                                </Button>
+                              }
+                            />
                           </Box>
                         ) : undefined}
                       </T.Data>
