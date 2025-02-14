@@ -13,10 +13,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: checkout
-      if: ${{ inputs.checkout == 'true' }}
-      uses: actions/checkout@v4
-
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-generated-files-cache

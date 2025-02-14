@@ -57,6 +57,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
@@ -90,6 +93,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
@@ -178,6 +184,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
@@ -200,6 +209,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
