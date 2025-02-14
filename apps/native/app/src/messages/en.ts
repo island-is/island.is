@@ -252,6 +252,8 @@ export const en: TranslatedMessages = {
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
   'wallet.lastUpdated': 'Last updated: {date}',
   'wallet.update': 'Update',
+  'wallet.yourLicenses': 'Your licenses',
+  'wallet.childLicenses': 'Your children’s licenses',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',

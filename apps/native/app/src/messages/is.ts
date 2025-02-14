@@ -388,6 +388,8 @@ export const is = {
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
   'wallet.lastUpdated': 'Síðast uppfært: {date}',
   'wallet.update': 'Uppfæra',
+  'wallet.yourLicenses': 'Þín skírteini',
+  'wallet.childLicenses': 'Skírteini barna þinna',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
