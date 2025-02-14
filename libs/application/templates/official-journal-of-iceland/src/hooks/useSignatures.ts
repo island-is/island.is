@@ -16,15 +16,30 @@ import { InputFields } from '../lib/types'
 import debounce from 'lodash/debounce'
 import throttle from 'lodash/throttle'
 
-export const useSignatures = (applicationId: string) => {
+type UseSignaturesProps = {
+  applicationId: string
+  variant: 'regular' | 'committee'
+}
+
+export const useSignatures = ({
+  applicationId,
+  variant,
+}: UseSignaturesProps) => {
+  const signaturePath =
+    variant === 'regular'
+      ? InputFields.signature.regular
+      : InputFields.signature.committee
+
+  const recordsPath = `${signaturePath}.records`
+
   const { application, updateApplicationV2 } = useApplication({
     applicationId: applicationId,
   })
 
-  const applicationSignature = getValueViaPath(application, 'answers.signature')
+  const currentSignature = getValueViaPath(application.answers, signaturePath)
 
   const [signatureState, setSignatureState] = useState<SignatureSchema>(
-    applicationSignature ? applicationSignature : getEmptySignature(),
+    currentSignature ? currentSignature : getEmptySignature(),
   )
 
   const html = signatureTemplate(signatureState)
@@ -45,7 +60,7 @@ export const useSignatures = (applicationId: string) => {
     })
 
     updateApplicationV2({
-      path: InputFields.signature.records,
+      path: recordsPath,
       value: updatedRecords,
       onComplete: () => {
         setSignatureState({
@@ -81,7 +96,7 @@ export const useSignatures = (applicationId: string) => {
     })
 
     updateApplicationV2({
-      path: InputFields.signature.records,
+      path: recordsPath,
       value: updatedRecords,
       onComplete: () => {
         setSignatureState({
@@ -106,7 +121,7 @@ export const useSignatures = (applicationId: string) => {
     })
 
     updateApplicationV2({
-      path: InputFields.signature.records,
+      path: recordsPath,
       value: updatedRecords,
       onComplete: () => {
         setSignatureState({
@@ -129,7 +144,7 @@ export const useSignatures = (applicationId: string) => {
     })
 
     updateApplicationV2({
-      path: InputFields.signature.records,
+      path: recordsPath,
       value: updatedRecords,
       onComplete: () => {
         setSignatureState({
@@ -144,7 +159,7 @@ export const useSignatures = (applicationId: string) => {
     const updatedRecords = [...(signatureState.records || []), getEmptyRecord()]
 
     updateApplicationV2({
-      path: InputFields.signature.records,
+      path: recordsPath,
       value: updatedRecords,
       onComplete: () => {
         setSignatureState({

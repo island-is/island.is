@@ -32,7 +32,7 @@ export const SignaturesTab = ({ application, variant = 'regular' }: Props) => {
     handleUpdateSignature,
     signature,
     signatureHtml,
-  } = useSignatures(application.id)
+  } = useSignatures({ applicationId: application.id, variant: variant })
 
   return (
     <Box paddingY={4}>

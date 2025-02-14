@@ -32,7 +32,7 @@ export const memberItemSchema = z
 
 export const membersSchema = z.array(memberItemSchema).optional()
 
-const signatureRecordSchema = z.object({
+const signatureRecordItemSchema = z.object({
   institution: z.string().optional(),
   signatureDate: z.string().optional(),
   chairman: memberItemSchema.optional(),
@@ -40,20 +40,14 @@ const signatureRecordSchema = z.object({
   additional: z.string().optional(),
 })
 
-const signatureSchema = z.object({
-  records: z.array(signatureRecordSchema).optional(),
+const signatureRecordSchema = z.object({
+  records: z.array(signatureRecordItemSchema).optional(),
 })
 
-export type SignatureMemberKey = keyof z.infer<typeof memberItemSchema>
-export type SignatureInstitutionKey = keyof Pick<
-  z.infer<typeof signatureRecordSchema>,
-  'institution' | 'signatureDate' | 'additional'
->
-
-export type SignatureRecordSchema = z.infer<typeof signatureRecordSchema>
-
-export type SignatureMemberSchema = z.infer<typeof memberItemSchema>
-export type SignatureSchema = z.infer<typeof signatureSchema>
+const signatureSchema = z.object({
+  regular: signatureRecordSchema.optional(),
+  committee: signatureRecordSchema.optional(),
+})
 
 export const regularSignatureItemSchema = z
   .object({
@@ -229,7 +223,7 @@ export const signatureValidationSchema = z
   .object({
     signature: z.object({
       signatureDate: z.string().optional(),
-      records: z.array(signatureRecordSchema).optional(),
+      records: z.array(signatureRecordItemSchema).optional(),
     }),
   })
   .superRefine((schema, context) => {
@@ -332,3 +326,14 @@ const validateChannel = (channel: z.infer<typeof channelSchema>) => {
 }
 
 export type partialSchema = z.infer<typeof partialSchema>
+
+export type SignatureMemberKey = keyof z.infer<typeof memberItemSchema>
+export type SignatureInstitutionKey = keyof Pick<
+  z.infer<typeof signatureRecordItemSchema>,
+  'institution' | 'signatureDate' | 'additional'
+>
+
+export type SignatureRecordSchema = z.infer<typeof signatureRecordItemSchema>
+
+export type SignatureMemberSchema = z.infer<typeof memberItemSchema>
+export type SignatureSchema = z.infer<typeof signatureRecordSchema>

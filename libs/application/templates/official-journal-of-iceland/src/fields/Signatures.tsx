@@ -5,19 +5,12 @@ import { signatures } from '../lib/messages/signatures'
 import { useState } from 'react'
 import { Box, Button, Stack, Tabs } from '@island.is/island-ui/core'
 import { useApplication } from '../hooks/useUpdateApplication'
-import set from 'lodash/set'
 import { useLastSignature } from '../hooks/useLastSignature'
-import { useFormContext } from 'react-hook-form'
 import { SignaturesTab } from '../components/signatures/SignaturesTab'
 
 export const SignaturesField = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { setValue } = useFormContext()
-  const {
-    updateApplication,
-    application: currentApplication,
-    refetchApplication,
-  } = useApplication({
+  const { updateApplicationV2 } = useApplication({
     applicationId: application.id,
   })
 
@@ -45,14 +38,10 @@ export const SignaturesField = ({ application }: OJOIFieldBaseProps) => {
   const onTabChangeHandler = (tabId: string) => {
     setSelectedTab(tabId)
 
-    const currentAnswers = structuredClone(application.answers)
-    const newAnswers = set(
-      currentAnswers,
-      InputFields.misc.signatureType,
-      tabId,
-    )
-
-    updateApplication(newAnswers)
+    updateApplicationV2({
+      path: InputFields.misc.signatureType,
+      value: tabId,
+    })
   }
 
   return (

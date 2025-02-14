@@ -30,7 +30,8 @@ export const InputFields = {
     additions: 'advert.additions',
   },
   [Routes.SIGNATURE]: {
-    records: 'signature.records',
+    regular: 'signature.regular',
+    committee: 'signature.committee',
   },
   [Routes.MISC]: {
     signatureType: 'misc.signatureType',
