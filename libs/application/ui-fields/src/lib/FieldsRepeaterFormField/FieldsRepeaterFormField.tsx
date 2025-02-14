@@ -1,4 +1,3 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -19,10 +18,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { Item } from './FieldsRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import isEqual from 'lodash/isEqual'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { Item } from './FieldsRepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: FieldsRepeaterField
@@ -58,6 +58,10 @@ export const FieldsRepeaterFormField = ({
     id,
   )?.length
 
+  const [updatedApplication, setUpdatedApplication] = useState(application)
+  const stableApplication = useMemo(() => application, [application])
+  const stableAnswers = useMemo(() => answers, [answers])
+
   const minRowsValue =
     typeof minRows === 'function'
       ? minRows(answers, application.externalData)
@@ -70,9 +74,6 @@ export const FieldsRepeaterFormField = ({
   const [numberOfItems, setNumberOfItems] = useState(
     Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
   )
-  const [updatedApplication, setUpdatedApplication] = useState(application)
-  const stableApplication = useMemo(() => application, [application])
-  const stableAnswers = useMemo(() => answers, [answers])
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
@@ -213,7 +214,7 @@ export const FieldsRepeaterFormField = ({
             </Button>
           </Box>
         </Stack>
-        {error && typeof error === 'string' && fields.length === 0 && (
+        {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
           </Box>

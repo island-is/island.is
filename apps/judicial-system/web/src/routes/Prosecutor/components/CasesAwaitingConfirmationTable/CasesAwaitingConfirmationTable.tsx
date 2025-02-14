@@ -121,11 +121,7 @@ const CasesAwaitingConfirmationTable: FC<
                   ),
                 },
                 {
-                  cell: () => (
-                    <TagCaseState
-                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
-                    />
-                  ),
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
                 {
                   cell: (row) => <Text as="span">{row.prosecutor?.name}</Text>,

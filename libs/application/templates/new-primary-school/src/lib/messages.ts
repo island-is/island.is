@@ -562,7 +562,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Tungumálaumhverfi',
       description: 'Language environment',
     },
-    languageEnvironmentPlaceeholder: {
+    languageEnvironmentPlaceholder: {
       id: 'nps.application:different.needs.language.environment.placeholder',
       defaultMessage: 'Veldu það sem best á við',
       description: 'Choose the most appropriate',
@@ -591,21 +591,26 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     languageSelectionTitle: {
       id: 'nps.application:different.needs.language.selection.title',
-      defaultMessage: 'Tungumál {no}',
-      description: 'Language {no}',
+      defaultMessage: 'Tungumál {index}',
+      description: 'Language {index}',
     },
     addLanguageButton: {
       id: 'nps.application:different.needs.language.add.button',
       defaultMessage: 'Bæta við tungumáli',
       description: 'Add language',
     },
+    removeLanguageButton: {
+      id: 'nps.application:different.needs.language.remove.button',
+      defaultMessage: 'Fjarlægja tungumál',
+      description: 'Remove language',
+    },
     languageSelectionPlaceholder: {
       id: 'nps.application:different.needs.language.selection.placeholder',
       defaultMessage: 'Veldu tungumál',
       description: 'Choose language',
     },
-    childLanguageTitle: {
-      id: 'nps.application:different.needs.child.language.title',
+    preferredLanguageTitle: {
+      id: 'nps.application:different.needs.preferred.language.title',
       defaultMessage:
         'Á hvaða tungumáli sem þú hefur valið, finnst barninu sjálfu best að tjá sig á?',
       description:
@@ -899,8 +904,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Tungumálaumhverfi',
       description: 'Language environment',
     },
-    childLanguage: {
-      id: 'nps.application:overview.child.language',
+    preferredLanguage: {
+      id: 'nps.application:overview.preferred.language',
       defaultMessage: 'Tungumálið sem barninu finnst best að tjá sig á',
       description: 'The language the child prefers to express themselves in',
     },
@@ -1013,6 +1018,11 @@ export const errorMessages = defineMessages({
     id: 'nps.application:error.language.required',
     defaultMessage: 'Það þarf að velja tungumál',
     description: 'Language must be selected',
+  },
+  twoLanguagesRequired: {
+    id: 'nps.application:error.two.languages.required',
+    defaultMessage: 'Það þarf að velja a.m.k tvö tungumál',
+    description: 'At least two language must be selected',
   },
   noChildrenFoundTitle: {
     id: 'nps.application:error.no.children.found.title',
