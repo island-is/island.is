@@ -151,8 +151,21 @@ export const FileUploadController = ({
     }
   }
 
-  const onFileChange = async (newFiles: File[]) => {
-    if (!multiple && state.length > 0) return
+  const onFileChange = async (newFiles: File[], uploadCount?: number) => {
+    clearErrors(id)
+    setUploadError(undefined)
+
+    if(!multiple) {
+      // Trying to upload more than 1 file
+      if(uploadCount && uploadCount > 1) {
+        setUploadError(formatMessage(coreErrorMessages.uploadMultipleNotAllowed))
+        return
+      }
+      // Trying to upload a single file, but a file has already been uploaded
+      if(state.length === 1) {
+        await onRemoveFile(state[0])
+      }
+    }
 
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
       let isUnique = true
@@ -163,9 +176,6 @@ export const FileUploadController = ({
     })
 
     if (addedUniqueFiles.length === 0) return
-
-    clearErrors(id)
-    setUploadError(undefined)
 
     const totalNewFileSize = addedUniqueFiles
       .map((f) => f.size)

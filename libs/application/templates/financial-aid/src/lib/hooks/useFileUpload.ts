@@ -102,7 +102,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     _setFiles(files)
   }
 
-  const onChange = (newFiles: UploadFile[], isRetry?: boolean) => {
+  const onChange = (newFiles: UploadFile[], uploadCount?: number, isRetry?: boolean) => {
     setUploadErrorMessage(undefined)
 
     if (!isRetry) {
@@ -280,7 +280,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
 
   const onRetry = (file: UploadFile) => {
     setUploadErrorMessage(undefined)
-    onChange([file as File], true)
+    onChange([file as File], 1, true)
   }
 
   const onUploadRejection = (files: FileRejection[]) => {

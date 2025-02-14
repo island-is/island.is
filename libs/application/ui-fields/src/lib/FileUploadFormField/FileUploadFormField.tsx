@@ -72,7 +72,7 @@ export const FileUploadFormField = ({
             uploadButtonLabel &&
             formatText(uploadButtonLabel, application, formatMessage)
           }
-          multiple={uploadMultiple}
+          multiple={uploadMultiple ?? false}
           accept={uploadAccept}
           maxSize={maxSize}
           maxSizeErrorText={
