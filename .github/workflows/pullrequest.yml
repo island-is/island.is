@@ -246,7 +246,7 @@ jobs:
     needs:
       - prepare
     runs-on: arc-runners
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -278,7 +278,7 @@ jobs:
     needs:
       - prepare
     runs-on: arc-runners
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
       NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
