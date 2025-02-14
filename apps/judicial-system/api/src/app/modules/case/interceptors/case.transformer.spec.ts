@@ -748,7 +748,7 @@ describe('getIndictmentInfo', () => {
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: expectedIndictmentAppealDeadline.toISOString(),
-      indictmentCompletedDate: rulingDate,
+      indictmentCompletedDate: rulingDate.toISOString(),
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: false,
     })
