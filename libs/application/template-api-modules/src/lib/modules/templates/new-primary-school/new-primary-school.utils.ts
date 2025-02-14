@@ -133,7 +133,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           health: {
             ...(hasFoodAllergiesOrIntolerances?.includes(YES)
               ? {
-                  foodAllergiesOrIntolerances: foodAllergiesOrIntolerances,
+                  foodAllergiesOrIntolerances,
                 }
               : {}),
             ...(hasOtherAllergies?.includes(YES)
@@ -176,11 +176,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {}),
     },
     language: {
-      languageEnvironment: languageEnvironment,
+      languageEnvironment,
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
-            preferredLanguage: preferredLanguage,
+            preferredLanguage,
             guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
             firstLanguage: selectedLanguages[0]?.code,
             secondLanguage: selectedLanguages[1]?.code,

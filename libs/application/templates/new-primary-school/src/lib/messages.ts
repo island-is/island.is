@@ -743,7 +743,7 @@ export const newPrimarySchoolMessages: MessageDir = {
         'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders',
     },
     requestsMedicationAdministration: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.request.medication.administration',
+      id: 'nps.application:different.needs.allergies.and.intolerances.requests.medication.administration',
       defaultMessage:
         'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
       description:
