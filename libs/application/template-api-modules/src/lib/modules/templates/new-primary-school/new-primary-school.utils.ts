@@ -1,9 +1,10 @@
+import { YES } from '@island.is/application/core'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   ReasonForApplicationOptions,
 } from '@island.is/application/templates/new-primary-school'
-import { Application, YES } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import {
   AgentDto,
   FormDto,
@@ -22,14 +23,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchool,
-    language1,
-    language2,
-    language3,
-    language4,
-    childLanguage,
+    preferredLanguage,
     languageEnvironment,
     signLanguage,
-    interpreter,
+    selectedLanguages,
+    guardianRequiresInterpreter,
     developmentalAssessment,
     specialSupport,
     startDate,

@@ -69,7 +69,6 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
       YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -181,6 +180,7 @@ jobs:
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
       - uses: actions/checkout@v3
