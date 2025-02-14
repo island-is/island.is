@@ -39,7 +39,9 @@ export const useSignatures = ({
   const currentSignature = getValueViaPath(application.answers, signaturePath)
 
   const [signatureState, setSignatureState] = useState<SignatureSchema>(
-    currentSignature ? currentSignature : getEmptySignature(),
+    currentSignature
+      ? currentSignature
+      : getEmptySignature(variant === 'regular'),
   )
 
   const html = signatureTemplate(signatureState)
@@ -54,6 +56,36 @@ export const useSignatures = ({
         return {
           ...record,
           [key]: value,
+        }
+      }
+      return record
+    })
+
+    updateApplicationV2({
+      path: recordsPath,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
+  const updateChairman = (
+    key: SignatureMemberKey,
+    value: string,
+    recordIndex: number,
+  ) => {
+    const updatedRecords = signatureState.records?.map((record, index) => {
+      if (index === recordIndex) {
+        return {
+          ...record,
+          chairman: {
+            ...record.chairman,
+            [key]: value,
+          },
         }
       }
       return record
@@ -170,12 +202,33 @@ export const useSignatures = ({
     })
   }
 
+  const removeRecord = (recordIndex: number) => {
+    const updatedRecords = signatureState.records?.filter(
+      (_, i) => i !== recordIndex,
+    )
+
+    updateApplicationV2({
+      path: recordsPath,
+      value: updatedRecords,
+      onComplete: () => {
+        setSignatureState({
+          ...signatureState,
+          records: updatedRecords,
+        })
+      },
+    })
+  }
+
   const handleUpdateSignature = useCallback(debounce(updateSignature, 500), [
     updateSignature,
   ])
   const handleUpdateMember = useCallback(debounce(updateMember, 500), [
     updateMember,
   ])
+  const handleUpdateChairman = useCallback(debounce(updateChairman, 500), [
+    updateChairman,
+  ])
+  const handleRemoveRecord = throttle(removeRecord, 500)
   const handleAddRecord = throttle(addRecord, 500)
   const handleRemoveMember = throttle(removeMember, 500)
   const handleAddMember = throttle(addMember, 500)
@@ -184,7 +237,9 @@ export const useSignatures = ({
     signature: signatureState,
     signatureHtml: html,
     handleAddRecord,
+    handleRemoveRecord,
     handleUpdateSignature,
+    handleUpdateChairman,
     handleUpdateMember,
     handleRemoveMember,
     handleAddMember,

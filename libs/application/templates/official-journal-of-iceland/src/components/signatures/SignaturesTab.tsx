@@ -16,6 +16,7 @@ import { SignatureInstitution } from './SignatureInstititution'
 import { full } from './utils'
 import { useSignatures } from '../../hooks/useSignatures'
 import { AdvertPreview } from '../advertPreview/AdvertPreview'
+import { RegularMember } from './RegularMember'
 type Props = {
   application: OJOIApplication
   variant?: 'regular' | 'committee'
@@ -24,11 +25,15 @@ type Props = {
 export const SignaturesTab = ({ application, variant = 'regular' }: Props) => {
   const { formatMessage: f } = useLocale()
 
+  const isRegular = variant === 'regular'
+
   const {
     handleAddMember,
     handleRemoveMember,
     handleUpdateMember,
+    handleUpdateChairman,
     handleAddRecord,
+    handleRemoveRecord,
     handleUpdateSignature,
     signature,
     signatureHtml,
@@ -46,12 +51,36 @@ export const SignaturesTab = ({ application, variant = 'regular' }: Props) => {
                 onChange={(key, value) =>
                   handleUpdateSignature(key, value, recordIndex)
                 }
+                onDelete={
+                  recordIndex > 0
+                    ? () => handleRemoveRecord(recordIndex)
+                    : undefined
+                }
               />
+              {!isRegular && (
+                <Box border="standard" borderRadius="large" padding={2}>
+                  <Stack space={2}>
+                    <Text variant="h5">{f(signatures.headings.chairman)}</Text>
+                    <RegularMember
+                      {...record.chairman}
+                      onChange={(key, value) =>
+                        handleUpdateChairman(key, value, recordIndex)
+                      }
+                    />
+                  </Stack>
+                </Box>
+              )}
               <Box border="standard" borderRadius="large" padding={2}>
                 <Stack space={2}>
+                  <Text variant="h5">
+                    {isRegular
+                      ? f(signatures.headings.signedBy)
+                      : f(signatures.headings.committeeMembers)}
+                  </Text>
                   {record.members?.map((member, memberIndex) => (
                     <SignatureMember
                       {...member}
+                      regular={isRegular}
                       key={`${recordIndex}-${memberIndex}`}
                       onChange={(key, value) =>
                         handleUpdateMember(key, value, recordIndex, memberIndex)
@@ -104,14 +133,16 @@ export const SignaturesTab = ({ application, variant = 'regular' }: Props) => {
             </Stack>
           ))}
         </Stack>
-        <Button
-          variant="utility"
-          icon="add"
-          iconType="outline"
-          onClick={handleAddRecord}
-        >
-          {f(signatures.buttons.addInstitution)}
-        </Button>
+        {isRegular && (
+          <Button
+            variant="utility"
+            icon="add"
+            iconType="outline"
+            onClick={handleAddRecord}
+          >
+            {f(signatures.buttons.addInstitution)}
+          </Button>
+        )}
         <Stack space={2}>
           <Text variant="h5">{f(signatures.headings.preview)}</Text>
           <AdvertPreview advertText={signatureHtml} />

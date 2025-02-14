@@ -85,7 +85,7 @@ const signatureRecordTemplate = (record: SignatureRecordSchema) => {
   }
 
   const formattedDate = record.signatureDate
-    ? format(new Date(record.signatureDate), 'd MMMM yyyy', {
+    ? format(new Date(record.signatureDate), 'd. MMMM yyyy.', {
         locale: is,
       })
     : ''
@@ -105,7 +105,7 @@ const signatureRecordTemplate = (record: SignatureRecordSchema) => {
 
   return `
       <div class="signature" style="margin-bottom: 1.5em;">
-        <p align="center">${record.institution} <span class="signature__date">${formattedDate}</span></p>
+        <p align="center"><em>${record.institution} <span class="signature__date">${formattedDate}</span></em></p>
         ${chairmanMarkup}
         <div style="display: ${styleObject.display}; grid-template-columns: ${styleObject.gridTemplateColumns}; row-gap: ${styleObject.rowGap};" class="signature__content">
         ${membersMarkup}
