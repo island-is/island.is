@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    queryInterface.createTable('identity_confirmation', {
+    await queryInterface.createTable('identity_confirmation', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       type: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM('email', 'phone', 'chat', 'Web Form'),
         allowNull: false,
       },
       created: {
@@ -29,6 +29,12 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    queryInterface.dropTable('identity_confirmation')
+    await queryInterface.sequelize.transaction(async (transaction) => {
+      await queryInterface.dropTable('identity_confirmation', { transaction })
+      await queryInterface.sequelize.query(
+        'DROP TYPE IF EXISTS "enum_identity_confirmation_type"',
+        { transaction },
+      )
+    })
   },
 }

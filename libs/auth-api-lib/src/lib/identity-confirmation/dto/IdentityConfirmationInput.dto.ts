@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator'
+import { IsEnum, IsOptional, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { IdentityConfirmationType } from '../types/identity-confirmation-type'
 
@@ -10,4 +10,9 @@ export class IdentityConfirmationInputDto {
   @IsEnum(IdentityConfirmationType)
   @ApiProperty()
   type!: IdentityConfirmationType
+
+  @IsString()
+  @ApiProperty()
+  @IsOptional()
+  number?: string
 }

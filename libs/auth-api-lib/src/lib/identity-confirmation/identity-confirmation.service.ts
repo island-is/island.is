@@ -7,14 +7,11 @@ import { uuid } from 'uuidv4'
 import { IdentityConfirmationType } from './types/identity-confirmation-type'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
-import { join } from 'path'
 import { IdentityConfirmationApiConfig } from './config'
 import type { ConfigType } from '@island.is/nest/config'
 
 const ZENDESK_CUSTOM_FIELDS = {
-  Email: 1,
-  Phone: 2,
-  Chat: 3,
+  Link: 24598388531474,
 }
 
 @Injectable()
@@ -33,10 +30,13 @@ export class IdentityConfirmationService {
   async identityConfirmation({
     id,
     type,
+    number,
   }: IdentityConfirmationInputDto): Promise<string> {
-    const zendeskCase = await this.zendeskService.getTicket(id)
+    if (type === IdentityConfirmationType.PHONE && !number) {
+      throw new Error('Phone number is required')
+    }
 
-    const { phone, email, chat } = this.getCustomField(zendeskCase)
+    const zendeskCase = await this.zendeskService.getTicket(id)
 
     if (!zendeskCase) {
       throw new Error('Ticket not found')
@@ -52,13 +52,14 @@ export class IdentityConfirmationService {
 
     switch (type) {
       case IdentityConfirmationType.EMAIL:
-        await this.sendViaEmail(email, link)
+        await this.sendViaEmail(id, link)
         break
       case IdentityConfirmationType.PHONE:
-        await this.sendViaSms(phone, link)
+        await this.sendViaSms(number, link)
         break
+      case IdentityConfirmationType.WEB_FORM:
       case IdentityConfirmationType.CHAT:
-        await this.sendViaChat(chat, link)
+        await this.sendViaChat(id, link)
         break
       default:
         throw new Error('Invalid confirmation type')
@@ -67,59 +68,31 @@ export class IdentityConfirmationService {
     return link
   }
 
-  sendViaEmail(email: string, link: string) {
-    return this.emailService.sendEmail({
-      from: {
-        name: this.config.email.fromName,
-        address: this.config.email.fromEmail,
-      },
-      to: [
-        {
-          name: '',
-          address: email,
+  async sendViaEmail(id: string, link: string) {
+    try {
+      await this.zendeskService.updateTicket(id, {
+        comment: {
+          html_body: `Vinsamlegast opnaðu <a href="${link}">þennan hlekk</a> til að staðfesta þína auðkenningu`,
+          public: true,
         },
-      ],
-      subject: 'Staðfesting á auðkenningu',
-      template: {
-        title: 'Staðfesting á auðkenningu',
-        body: [
-          {
-            component: 'Image',
-            context: {
-              src: join(__dirname, `./assets/images/logois.jpg`),
-              alt: 'Ísland.is logo',
-            },
-          },
-          {
-            component: 'Heading',
-            context: {
-              copy: 'Staðfesting á auðkenningu',
-              small: true,
-            },
-          },
-          {
-            component: 'Copy',
-            context: {
-              copy: 'Vinasamlegast ýttu hér til að staðfesta auðkenningu',
-              small: true,
-            },
-          },
-          {
-            component: 'Button',
-            context: {
-              copy: 'Opna staðfestingarsíðu',
-              href: link,
-            },
-          },
-        ],
-      },
-    })
+      })
+    } catch (e) {
+      console.error(e)
+      throw new Error('Failed to send email')
+    }
   }
 
-  sendViaSms(phoneNumber: string, link: string) {
+  async sendViaSms(phone: string | undefined, link: string) {
+    if (!phone) {
+      throw new Error('Cannot send sms, phone number is missing')
+    }
+
     try {
       return this.smsService
-        .sendSms(phoneNumber, `Vinsamlegast opnaðu þetta: ${link}`)
+        .sendSms(
+          phone,
+          `Vinsamlegast opnaðu hlekkinn til að staðfesta þína auðkenningu: ${link}`,
+        )
         .then((response) => {
           return response.Code
         })
@@ -130,33 +103,23 @@ export class IdentityConfirmationService {
   }
 
   async sendViaChat(id: string, link: string) {
-    // TODO: Implement this
-    console.log(`Sending chat message to chat: ${id} with link: ${link}`)
+    try {
+      await this.zendeskService.updateTicket(id, {
+        // Update tickets custom field with link so it can be pushed to a Macro
+        custom_fields: [
+          {
+            id: ZENDESK_CUSTOM_FIELDS.Link,
+            value: link,
+          },
+        ],
+      })
+    } catch (e) {
+      console.error(e)
+      throw new Error('Failed to send chat message')
+    }
   }
 
   private generateLink = (id: string) => {
     return `${process.env.IDENTITY_SERVER_ISSUER_URL}/app/confirm-identity/${id}`
-  }
-
-  private getCustomField = (
-    ticket: Ticket,
-  ): { phone: string; email: string; chat: string } => {
-    const phone = ticket.custom_fields.find(
-      (field) => field.id === ZENDESK_CUSTOM_FIELDS.Phone,
-    )
-
-    const email = ticket.custom_fields.find(
-      (field) => field.id === ZENDESK_CUSTOM_FIELDS.Email,
-    )
-
-    const chat = ticket.custom_fields.find(
-      (field) => field.id === ZENDESK_CUSTOM_FIELDS.Chat,
-    )
-
-    return {
-      phone: phone?.value ?? '',
-      email: email?.value ?? '',
-      chat: chat?.value ?? '',
-    }
   }
 }
