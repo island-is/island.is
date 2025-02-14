@@ -71,6 +71,13 @@ jobs:
         id: export-sha
         uses: ./.github/actions/set-sha
 
+      - name: Git config user
+        id: git-config
+        run: |
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+          echo "{\"base_sha\": \"${{ steps.export-sha.outputs.HEAD_SHA }}\", \"head_sha\":\"${{ steps.export-sha.outputs.HEAD_SHA }}\"}" > event.json
+
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
