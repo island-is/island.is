@@ -376,35 +376,77 @@
           },
           "requestingMeeting": { "type": "boolean", "default": false },
           "expectedStartDate": { "format": "date-time", "type": "string" },
+          "expectedEndDate": { "format": "date-time", "type": "string" },
           "reason": { "type": "string" },
-          "movingAbroadCountry": { "type": "string" },
           "newDomicile": { "$ref": "#/components/schemas/AddressDto" }
         },
-        "required": ["defaultOrg", "reason"]
+        "required": ["defaultOrg"]
       },
       "HealthDto": {
         "type": "object",
         "properties": {
-          "usesEpipen": { "type": "boolean", "default": false },
+          "foodAllergiesOrIntolerances": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "allergies": { "type": "array", "items": { "type": "string" } },
-          "intolerances": { "type": "array", "items": { "type": "string" } }
+          "usesEpipen": { "type": "boolean", "default": false },
+          "hasConfirmedMedicalDiagnoses": {
+            "type": "boolean",
+            "default": false
+          },
+          "requestsMedicationAdministration": {
+            "type": "boolean",
+            "default": false
+          }
         }
+      },
+      "CaseManagerDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["name", "email"]
       },
       "SocialDto": {
         "type": "object",
         "properties": {
           "hasHadSupport": { "type": "boolean", "default": false },
-          "hasDiagnoses": { "type": "boolean", "default": false }
+          "hasDiagnoses": { "type": "boolean", "default": false },
+          "hasIntegratedServices": { "type": "boolean", "default": false },
+          "hasCaseManager": { "type": "boolean", "default": false },
+          "caseManager": { "$ref": "#/components/schemas/CaseManagerDto" }
         }
       },
       "LanguageDto": {
         "type": "object",
         "properties": {
-          "nativeLanguage": { "type": "string" },
-          "noIcelandic": { "type": "boolean" },
-          "otherLanguages": { "type": "array", "items": { "type": "string" } }
+          "languageEnvironment": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "guardianRequiresInterpreter": { "type": "boolean" },
+          "firstLanguage": { "type": "string" },
+          "secondLanguage": { "type": "string" },
+          "thirdLanguage": { "type": "string" },
+          "fourthLanguage": { "type": "string" }
         },
-        "required": ["nativeLanguage", "noIcelandic"]
+        "required": [
+          "languageEnvironment",
+          "preferredLanguage",
+          "signLanguage",
+          "guardianRequiresInterpreter",
+          "firstLanguage"
+        ]
+      },
+      "SchoolMealDto": {
+        "type": "object",
+        "properties": {
+          "acceptFreeSchoolLunch": { "type": "boolean" },
+          "hasSpecialNeeds": { "type": "boolean" },
+          "specialNeeds": { "type": "string" }
+        },
+        "required": ["acceptFreeSchoolLunch"]
       },
       "FormDto": {
         "type": "object",
@@ -418,7 +460,8 @@
           "registration": { "$ref": "#/components/schemas/RegistrationDto" },
           "health": { "$ref": "#/components/schemas/HealthDto" },
           "social": { "$ref": "#/components/schemas/SocialDto" },
-          "language": { "$ref": "#/components/schemas/LanguageDto" }
+          "language": { "$ref": "#/components/schemas/LanguageDto" },
+          "schoolMeal": { "$ref": "#/components/schemas/SchoolMealDto" }
         },
         "required": ["type", "user"]
       },
@@ -656,8 +699,8 @@
           },
           "requestingMeeting": { "type": "boolean" },
           "expectedStartDate": { "format": "date-time", "type": "string" },
-          "reason": { "type": "string" },
-          "movingAbroad": { "type": "boolean" }
+          "expectedEndDate": { "format": "date-time", "type": "string" },
+          "reason": { "type": "string" }
         },
         "required": [
           "id",
@@ -667,8 +710,7 @@
           "selectedOrganization",
           "requestingMeeting",
           "expectedStartDate",
-          "reason",
-          "movingAbroad"
+          "reason"
         ]
       },
       "ReviewActionModel": {
@@ -741,11 +783,22 @@
       "LanguageModel": {
         "type": "object",
         "properties": {
-          "nativeLanguage": { "type": "string" },
-          "noIcelandic": { "type": "boolean" },
-          "otherLanguages": { "type": "array", "items": { "type": "string" } }
+          "languageEnvironment": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "guardianRequiresInterpreter": { "type": "boolean" },
+          "firstLanguage": { "type": "string" },
+          "secondLanguage": { "type": "string" },
+          "thirdLanguage": { "type": "string" },
+          "fourthLanguage": { "type": "string" }
         },
-        "required": ["nativeLanguage", "noIcelandic", "otherLanguages"]
+        "required": [
+          "languageEnvironment",
+          "preferredLanguage",
+          "signLanguage",
+          "guardianRequiresInterpreter",
+          "firstLanguage"
+        ]
       },
       "RegistrationDetailModel": {
         "type": "object",
@@ -761,8 +814,8 @@
           },
           "requestingMeeting": { "type": "boolean" },
           "expectedStartDate": { "format": "date-time", "type": "string" },
+          "expectedEndDate": { "format": "date-time", "type": "string" },
           "reason": { "type": "string" },
-          "movingAbroad": { "type": "boolean" },
           "review": { "$ref": "#/components/schemas/ReviewModel" },
           "user": { "$ref": "#/components/schemas/UserModel" },
           "agents": {
@@ -780,7 +833,6 @@
           "requestingMeeting",
           "expectedStartDate",
           "reason",
-          "movingAbroad",
           "review",
           "user",
           "agents",
