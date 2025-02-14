@@ -33382,10 +33382,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-local-rules@npm:1.0.1":
-  version: 1.0.1
-  resolution: "eslint-plugin-local-rules@npm:1.0.1"
-  checksum: 10/481750b6d42160d16754b5ec01e2032ed23d5b886594be92439fb38ff3e762c77fc0dc57674d8c5f41d6476cc1b53469f9eec4f955a81a72407a56f07299cc99
+"eslint-plugin-local-rules@npm:3.0.2":
+  version: 3.0.2
+  resolution: "eslint-plugin-local-rules@npm:3.0.2"
+  checksum: 10/6ec5a9e6d5a0a8f56ed22307761d1bc2bebee75ebfc9518e0eeed0d334c45c84713aff1969eefa5ac0fdeca63e427fee53b3912333caa9e70cc1f87e4c198f11
   languageName: node
   linkType: hard
 
@@ -39304,7 +39304,7 @@ __metadata:
     eslint-plugin-cypress: "npm:2.14.0"
     eslint-plugin-import: "npm:2.27.5"
     eslint-plugin-jsx-a11y: "npm:6.7.1"
-    eslint-plugin-local-rules: "npm:1.0.1"
+    eslint-plugin-local-rules: "npm:3.0.2"
     eslint-plugin-react: "npm:7.32.2"
     eslint-plugin-react-hooks: "npm:4.6.0"
     eslint-plugin-simple-import-sort: "npm:10.0.0"
