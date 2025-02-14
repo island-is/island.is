@@ -7,7 +7,6 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseAppealState,
-  CaseDecision,
   InstitutionType,
   UserRole,
 } from '../../graphql/schema'

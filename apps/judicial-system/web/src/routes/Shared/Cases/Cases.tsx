@@ -30,7 +30,6 @@ import {
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
-  CaseDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,

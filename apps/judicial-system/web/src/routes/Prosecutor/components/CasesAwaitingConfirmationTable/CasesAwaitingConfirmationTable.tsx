@@ -24,10 +24,7 @@ import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
-import {
-  CaseListEntry,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesAwaitingConfirmationTable.strings'
 
