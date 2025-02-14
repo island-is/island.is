@@ -209,7 +209,7 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: prep-deps
+      - name: load-deps
         uses: ./.github/actions/load-deps
 
       - name: test-everything
@@ -288,8 +288,8 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - name: prep-deps
-        uses: ./.github/actions/prep-deps
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test

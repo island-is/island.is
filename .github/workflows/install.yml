@@ -55,8 +55,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: prep-deps
-        uses: ./.github/actions/prep-deps
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
