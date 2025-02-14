@@ -7,6 +7,7 @@ export default {
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   testTimeout: 10000,
+  detectLeaks: false,
   globals: {},
   displayName: 'services-auth-ids-api',
   testEnvironment: 'node',

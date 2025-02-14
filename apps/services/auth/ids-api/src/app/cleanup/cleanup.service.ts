@@ -17,8 +17,12 @@ export class CleanupService {
     this.logger.info('Worker starting...')
 
     this.logger.info(`Deleting expired grants...`)
-    const deletedGrants: number = await this.grantsService.deleteExpired()
+    const expiredGrants: number = await this.grantsService.deleteExpired()
 
+    this.logger.info(`Deleting consumed grants...`)
+    const consumedGrants: number = await this.grantsService.deleteConsumed()
+
+    const deletedGrants = expiredGrants + consumedGrants
     if (deletedGrants > 0) {
       this.logger.info(`Finished deleting ${deletedGrants} grants.`)
     } else {

@@ -1,4 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
+import subMinutes from 'date-fns/subMinutes'
+import subSeconds from 'date-fns/subSeconds'
 import faker from 'faker'
 
 import { Grant, SequelizeConfigService } from '@island.is/auth-api-lib'
@@ -70,5 +72,66 @@ describe('CleanupService', () => {
     expect(grants).toHaveLength(1)
     // Check that all remaining grants have not expired
     expect(grants.every((s) => !s.expiration || s.expiration > new Date()))
+  })
+
+  it('should remove consumed grants', async () => {
+    // Arrange
+
+    // Create grants that should be deleted
+    await grantsModel.create({
+      key: faker.datatype.uuid(),
+      type: faker.random.word(),
+      subjectId: faker.datatype.uuid(),
+      clientId: faker.random.word(),
+      creationTime: new Date('2023-01-01'),
+      data: faker.random.words(),
+      expiration: new Date('3024-01-01'),
+      consumedTime: new Date('2024-01-01'),
+    })
+
+    // Create grants that should remain
+    await grantsModel.create({
+      key: faker.datatype.uuid(),
+      type: faker.random.word(),
+      subjectId: faker.datatype.uuid(),
+      clientId: faker.random.word(),
+      creationTime: new Date('2023-01-01'),
+      data: faker.random.words(),
+      expiration: new Date('3024-01-01'),
+      consumedTime: new Date('3024-01-01'),
+    })
+    await grantsModel.create({
+      key: faker.datatype.uuid(),
+      type: faker.random.word(),
+      subjectId: faker.datatype.uuid(),
+      clientId: faker.random.word(),
+      creationTime: new Date('2023-01-01'),
+      data: faker.random.words(),
+      expiration: new Date('3024-01-01'),
+      consumedTime: subSeconds(new Date(), 10),
+    })
+    await grantsModel.create({
+      key: faker.datatype.uuid(),
+      type: faker.random.word(),
+      subjectId: faker.datatype.uuid(),
+      clientId: faker.random.word(),
+      creationTime: new Date('2023-01-01'),
+      data: faker.random.words(),
+      expiration: new Date('3024-01-01'),
+      consumedTime: null,
+    })
+
+    // Act
+    await cleanupService.run()
+
+    // Assert
+    const grants = await grantsModel.findAll()
+    expect(grants).toHaveLength(3)
+    // Check that all remaining grants have not been consumed before threshold
+    expect(
+      grants.every(
+        (s) => !s.consumedTime || s.consumedTime > subMinutes(new Date(), 1),
+      ),
+    )
   })
 })

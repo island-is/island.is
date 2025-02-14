@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import subMinutes from 'date-fns/subMinutes'
 import { Op, WhereOptions } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,7 +9,6 @@ import { GrantDto } from './dto/grant.dto'
 import { Grant } from './models/grants.model'
 
 import type { Logger } from '@island.is/logging'
-
 @Injectable()
 export class GrantsService {
   constructor(
@@ -138,6 +138,18 @@ export class GrantsService {
       where: {
         expiration: {
           [Op.lt]: new Date(),
+        },
+      },
+    })
+  }
+
+  async deleteConsumed(): Promise<number> {
+    const delay = 1 // delete grants that were consumed over a minute ago
+    const consumedTimeThreshold = subMinutes(new Date(), delay)
+    return this.grantModel.destroy({
+      where: {
+        consumedTime: {
+          [Op.lt]: consumedTimeThreshold,
         },
       },
     })
