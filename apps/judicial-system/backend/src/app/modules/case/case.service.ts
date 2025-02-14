@@ -30,6 +30,7 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
+  CaseDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -70,6 +71,7 @@ import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -175,6 +177,7 @@ export interface UpdateCase
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
+    | 'isCompletedWithoutRuling'
   > {
   type?: CaseType
   state?: CaseState
@@ -192,6 +195,7 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
+  caseSentToCourtDate?: string
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -316,6 +320,15 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -823,6 +836,7 @@ export class CaseService {
       CaseFileCategory.CASE_FILE,
       CaseFileCategory.PROSECUTOR_CASE_FILE,
       CaseFileCategory.DEFENDANT_CASE_FILE,
+      CaseFileCategory.CIVIL_CLAIM,
     ]
 
     const deliverCaseFileToCourtMessages =
@@ -943,7 +957,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages = [
+    const messages: Message[] = [
       {
         type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
         user,
@@ -980,6 +994,16 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
         caseId: theCase.id,
+      })
+    }
+
+    // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
+    if (theCase.isCompletedWithoutRuling) {
+      messages.push({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.RULING },
       })
     }
 
@@ -1084,11 +1108,14 @@ export class CaseService {
       })
     }
 
+    // TODO: Use subpoenas already included in theCase.defendants
+    // - no need to call the subpoena service
+    // - then add to transition tests
     const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
       theCase.id,
     )
 
-    if (subpoenasToRevoke?.length > 0) {
+    if (theCase.origin === CaseOrigin.LOKE && subpoenasToRevoke?.length > 0) {
       messages.push(
         ...subpoenasToRevoke.map((subpoena) => ({
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
@@ -1335,6 +1362,19 @@ export class CaseService {
           )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
       )
       .map((updatedDefendant) => [
+        ...(updatedCase.origin === CaseOrigin.LOKE
+          ? [
+              {
+                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+                user,
+                caseId: theCase.id,
+                elementId: [
+                  updatedDefendant.id,
+                  updatedDefendant.subpoenas?.[0].id ?? '',
+                ],
+              },
+            ]
+          : []),
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
           user,
@@ -1824,6 +1864,21 @@ export class CaseService {
       if (update.indictmentReviewDecision) {
         const eventLogDTO = this.constructEventLogDTO(
           EventType.INDICTMENT_REVIEWED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+    }
+
+    if (isRequestCase(theCase.type)) {
+      if (
+        update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.DRAFT
+      ) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.CASE_SENT_TO_COURT,
           theCase,
           user,
         )

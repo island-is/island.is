@@ -17,7 +17,6 @@ export const pickVehicleSubSection = buildSubSection({
         buildCustomField({
           id: 'pickVehicle',
           component: 'VehiclesField',
-          title: '',
           doesNotRequireAnswer: true,
         }),
       ],

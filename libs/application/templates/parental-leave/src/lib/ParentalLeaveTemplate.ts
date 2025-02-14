@@ -5,6 +5,8 @@ import { assign } from 'xstate'
 
 import {
   EphemeralStateLifeCycle,
+  NO,
+  YES,
   coreHistoryMessages,
   coreMessages,
   pruneAfterDays,
@@ -27,7 +29,6 @@ import {
   ApiModuleActions,
   Events,
   MANUAL,
-  NO,
   NO_MULTIPLE_BIRTHS,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -40,7 +41,6 @@ import {
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
@@ -69,6 +69,7 @@ import {
   needsOtherParentApproval,
   restructureVMSTPeriods,
 } from './parentalLeaveTemplateUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const birthDayLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -85,6 +86,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: parentalLeaveFormMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.ParentalLeave.translation,
   dataSchema,

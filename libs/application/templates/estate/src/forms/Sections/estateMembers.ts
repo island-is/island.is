@@ -18,13 +18,11 @@ export const estateMembers = buildSection({
         getEstateMembersDescriptionText(application),
       children: [
         buildCustomField({
-          title: '',
           id: 'estate.estateMembers',
           component: 'EstateMembersRepeater',
         }),
         buildDescriptionField({
           id: 'spaceEstatesMembers',
-          title: '',
           space: 'containerGutter',
         }),
       ],

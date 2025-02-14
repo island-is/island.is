@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Tag, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -22,6 +22,7 @@ import TableInfoContainer from '@island.is/judicial-system-web/src/components/Ta
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
 } from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
@@ -48,29 +49,20 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
-                  sortable: {
-                    isSortable: true,
-                    key: 'courtCaseNumber',
-                  },
+                  sortBy: 'courtCaseNumber',
                 },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: {
-                    isSortable: true,
-                    key: 'defendants',
-                  },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: {
-                    isSortable: true,
-                    key: 'indictmentAppealDeadline',
-                  },
+                  sortBy: 'indictmentAppealDeadline',
                 },
               ]}
               data={cases}
@@ -100,25 +92,21 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Tag variant="darkerBlue" outlined disabled>
-                      {formatMessage(
+                    <TagIndictmentRulingDecision
+                      isFine={
                         row.indictmentRulingDecision ===
-                          CaseIndictmentRulingDecision.FINE
-                          ? tables.fineTag
-                          : tables.rulingTag,
-                      )}
-                    </Tag>
+                        CaseIndictmentRulingDecision.FINE
+                      }
+                    />
                   ),
                 },
                 {
                   cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
                     />
                   ),
                 },

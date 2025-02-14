@@ -53,7 +53,7 @@ export type Context = {
 export type AsyncSelectContext = {
   application: Application
   apolloClient: ApolloClient<object>
-  selectedValue?: string[]
+  selectedValue?: string | string[]
 }
 
 export type TagVariant =
@@ -76,6 +76,7 @@ export type RepeaterFields =
   | 'date'
   | 'nationalIdWithName'
   | 'phone'
+  | 'selectAsync'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -187,6 +188,15 @@ export type RepeaterItem = {
       component: 'phone'
       format: string
     }
+  | {
+      component: 'selectAsync'
+      label: StaticText
+      isMulti?: boolean
+      isSearchable?: boolean
+      loadOptions(c: AsyncSelectContext): Promise<Option[]>
+      clearOnChange?: string[]
+      updateOnSelect?: string
+    }
 )
 
 export type AlertMessageLink = {
@@ -218,7 +228,7 @@ export interface SelectOption<T = string | number> {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly title: FormTextWithLocale
+  readonly title?: FormTextWithLocale
   readonly description?: FormTextWithLocale
   readonly children: undefined
   disabled?: boolean
@@ -273,6 +283,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   VEHICLE_RADIO = 'VEHICLE_RADIO',
+  VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
   SLIDER = 'SLIDER',
   DISPLAY = 'DISPLAY',
@@ -311,6 +322,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   VEHICLE_RADIO = 'VehicleRadioFormField',
+  VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
   SLIDER = 'SliderFormField',
   DISPLAY = 'DisplayFormField',
@@ -347,7 +359,7 @@ export interface DateField extends InputField {
 export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
-  readonly description?: FormText
+  readonly description?: FormTextWithLocale
   tooltip?: FormText
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
@@ -396,7 +408,7 @@ export interface AsyncSelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
-  updateOnSelect?: string[]
+  updateOnSelect?: string
 }
 
 export interface TextField extends InputField {
@@ -416,6 +428,7 @@ export interface TextField extends InputField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  tooltip?: FormText
   onChange?: (...event: any[]) => void
 }
 
@@ -461,7 +474,9 @@ export interface SubmitField extends BaseField {
   component: FieldComponents.SUBMIT
   readonly actions: CallToAction[]
   readonly placement: 'footer' | 'screen'
-  readonly refetchApplicationAfterSubmit?: boolean
+  readonly refetchApplicationAfterSubmit?:
+    | boolean
+    | ((event?: string) => boolean)
 }
 
 export interface DividerField extends BaseField {
@@ -518,7 +533,7 @@ export interface ExpandableDescriptionField extends BaseField {
   readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
   component: FieldComponents.EXPANDABLE_DESCRIPTION
   introText?: FormText
-  description: FormText
+  description: FormTextWithLocale
   startExpanded?: boolean
 }
 
@@ -526,7 +541,7 @@ export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
-  message?: FormText
+  message?: FormTextWithLocale
   links?: AlertMessageLink[]
 }
 
@@ -678,7 +693,7 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: number
+  minRows?: MaybeWithApplicationAndField<number>
   maxRows?: number
 }
 
@@ -725,8 +740,29 @@ export interface VehicleRadioField extends InputField {
   component: FieldComponents.VEHICLE_RADIO
   itemType: 'VEHICLE' | 'PLATE'
   itemList: unknown[]
+  shouldValidateErrorMessages?: boolean
   shouldValidateDebtStatus?: boolean
   shouldValidateRenewal?: boolean
+  alertMessageErrorTitle?: FormText
+  validationErrorMessages?: Record<string, FormText>
+  validationErrorFallbackMessage?: FormText
+  inputErrorMessage: FormText
+  debtStatusErrorMessage?: FormText
+  renewalExpiresAtTag?: StaticText
+  validateRenewal?: (item: unknown) => boolean
+}
+
+export interface VehicleSelectField extends InputField {
+  readonly type: FieldTypes.VEHICLE_SELECT
+  component: FieldComponents.VEHICLE_SELECT
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  getDetails?: (value: string) => Promise<unknown>
+  shouldValidateErrorMessages?: boolean
+  shouldValidateDebtStatus?: boolean
+  shouldValidateRenewal?: boolean
+  inputLabelText?: FormText
+  inputPlaceholderText?: FormText
   alertMessageErrorTitle?: FormText
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
@@ -845,6 +881,7 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | VehicleRadioField
+  | VehicleSelectField
   | StaticTableField
   | SliderField
   | DisplayField

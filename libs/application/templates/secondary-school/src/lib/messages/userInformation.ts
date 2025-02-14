@@ -30,6 +30,32 @@ export const userInformation = {
       defaultMessage: 'Umsækjandi',
       description: 'Applicant subtitle',
     },
+    email: {
+      id: 'ss.application:userInformation.applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Applicant email label',
+    },
+    phone: {
+      id: 'ss.application:userInformation.applicant.phone',
+      defaultMessage: 'Símanúmer',
+      description: 'Applicant phone number label',
+    },
+    alertMessage: {
+      id: 'ss.application:userInformation.applicant.alertMessageClean',
+      defaultMessage:
+        'Ef netfang og símanúmer er ekki rétt hér að ofan þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
+      description: 'Applicant alert message',
+    },
+    alertMessageLink: {
+      id: 'ss.application:userInformation.applicant.alertMessageLink',
+      defaultMessage: '/minarsidur',
+      description: 'Link for mínar síður',
+    },
+    alertMessageLinkTitle: {
+      id: 'ss.application:userInformation.applicant.alertMessageLinkTitle',
+      defaultMessage: 'Fara á mínar síður',
+      description: 'title for mínar síður link',
+    },
   }),
   applicationType: defineMessages({
     subtitle: {
@@ -50,30 +76,25 @@ export const userInformation = {
     alertMessage: {
       id: 'ss.application:userInformation.applicationType.alertMessage',
       defaultMessage:
-        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is',
+        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is eða í síma 514-7500',
       description: 'Application type alert message',
     },
   }),
   custodian: defineMessages({
     subSectionTitle: {
       id: 'ss.application:userInformation.custodian.subSectionTitle',
-      defaultMessage: 'Forsjáraðili',
+      defaultMessage: 'Forsjáraðili/ar',
       description: 'Title of custodian sub section',
     },
     pageTitle: {
       id: 'ss.application:userInformation.custodian.pageTitle',
-      defaultMessage: 'Forsjáraðili',
+      defaultMessage: 'Forsjáraðili/ar',
       description: 'Title of custodian page',
     },
-    subtitle1: {
-      id: 'ss.application:userInformation.custodian.subtitle1',
-      defaultMessage: 'Forsjáraðili 1',
-      description: 'Custodian 1 subtitle',
-    },
-    subtitle2: {
-      id: 'ss.application:userInformation.custodian.subtitle2',
-      defaultMessage: 'Forsjáraðili 2',
-      description: 'Custodian 1 subtitle',
+    label: {
+      id: 'ss.application:userInformation.custodian.label',
+      defaultMessage: 'Forsjáraðili',
+      description: 'Custodian label',
     },
     name: {
       id: 'ss.application:userInformation.custodian.name',
@@ -90,10 +111,15 @@ export const userInformation = {
       defaultMessage: 'Heimilisfang',
       description: 'Custodian address',
     },
-    postalCodeAndCity: {
-      id: 'ss.application:userInformation.custodian.postalCodeAndCity',
-      defaultMessage: 'Póstnúmer og staður',
-      description: 'Custodian postal code and city',
+    postalCode: {
+      id: 'ss.application:userInformation.custodian.postalCode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Custodian postal code',
+    },
+    city: {
+      id: 'ss.application:userInformation.custodian.city',
+      defaultMessage: 'Staður',
+      description: 'Custodian city',
     },
     email: {
       id: 'ss.application:userInformation.custodian.email',
@@ -105,16 +131,26 @@ export const userInformation = {
       defaultMessage: 'Símanúmer',
       description: 'Custodian phone',
     },
+    addButtonLabel: {
+      id: 'ss.application:userInformation.custodian.addButtonLabel',
+      defaultMessage: 'Bæta við forsjáraðila',
+      description: 'Custodian add button label',
+    },
+    removeButtonLabel: {
+      id: 'ss.application:userInformation.custodian.removeButtonLabel',
+      defaultMessage: 'Fjarlægja forsjáraðila',
+      description: 'Custodian remove button label',
+    },
   }),
   otherContact: defineMessages({
     subSectionTitle: {
       id: 'ss.application:userInformation.otherContact.subSectionTitle',
-      defaultMessage: 'Tengiliður',
+      defaultMessage: 'Tengiliður/ir',
       description: 'Title of other contact sub section',
     },
     pageTitle: {
       id: 'ss.application:userInformation.otherContact.pageTitle',
-      defaultMessage: 'Tengiliður',
+      defaultMessage: 'Tengiliður/ir',
       description: 'Title of other contact page',
     },
     description: {

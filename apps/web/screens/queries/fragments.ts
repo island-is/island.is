@@ -809,6 +809,8 @@ export const slices = gql`
     title
     displayTitle
     namespace
+    maxNumberOfCards
+    sorting
     resolvedGrantsList {
       total
       items {
@@ -1011,6 +1013,25 @@ export const slices = gql`
     }
   }
 
+  fragment OrganizationParentSubpageListFields on OrganizationParentSubpageList {
+    __typename
+    id
+    title
+    pageLinkVariant
+    pageLinks {
+      id
+      pageLinkIntro
+      label
+      href
+      thumbnailImageHref
+      tinyThumbnailImageHref
+    }
+    seeMoreLink {
+      text
+      url
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -1058,6 +1079,7 @@ export const slices = gql`
     ...LatestGenericListItemsFields
     ...FeaturedLinksFields
     ...GrantCardsListFields
+    ...OrganizationParentSubpageListFields
   }
 
   fragment AllSlices on Slice {
