@@ -51,13 +51,13 @@ ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
 
-ENV NODE_ENV=production \
-  CI=true \
-  NX_VERBOSE_LOGGING=true \
+ENV CI=true \
+  NODE_ENV=production \
   NODE_OPTIONS="--max-old-space-size=8192" \
   NX_PARALLEL=${NX_PARALLEL} \
   NX_MAX_PARALLEL=${NX_MAX_PARALLEL} \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
+  NX_VERBOSE_LOGGING=true \
   APP=${APP}
 
 RUN yarn codegen
