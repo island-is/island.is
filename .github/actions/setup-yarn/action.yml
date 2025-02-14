@@ -33,10 +33,10 @@ runs:
         corepack prepare --activate
         yarn --version
 
-    - name: Setup yarn (s3 cache)
-      shell: bash
-      if: steps.compare_yarn_lock.outputs.run_install == 'true'
-      uses: ./.github/actions/setup-yarn-s3
+    # - name: Setup yarn (s3 cache)
+    #   shell: bash
+    #   if: steps.compare_yarn_lock.outputs.run_install == 'true'
+    #   uses: ./.github/actions/setup-yarn-s3
 
     - name: Link pre-installed dependencies
       if: steps.compare_yarn_lock.outputs.run_install == 'false'
