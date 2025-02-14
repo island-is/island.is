@@ -9,20 +9,18 @@ type Props = {
 export const FileItem = ({ fileName, fileSize, fileType }: Props) => {
   return (
     <Box paddingY={2}>
-      <Box paddingY={2}>
-        <ActionCard
-          heading={fileName}
-          text={fileSize ?? ''}
-          headingVariant="h4"
-          cta={{
-            label: '',
-          }}
-          tag={{
-            label: fileType ?? '',
-          }}
-          backgroundColor="blue"
-        />
-      </Box>
+      <ActionCard
+        heading={fileName}
+        text={fileSize ?? ''}
+        headingVariant="h4"
+        cta={{
+          label: '',
+        }}
+        tag={{
+          label: fileType ?? '',
+        }}
+        backgroundColor="blue"
+      />
     </Box>
   )
 }

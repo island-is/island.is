@@ -828,7 +828,7 @@ export interface DisplayField extends BaseField {
   value: (answers: FormValue) => string
 }
 
-type KeyValueItem = {
+export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
   keyText?: FormText
   valueText?: FormText
@@ -836,7 +836,7 @@ type KeyValueItem = {
   lineAboveKeyText?: boolean
 }
 
-type AttachmentItem = {
+export type AttachmentItem = {
   width?: 'full' | 'half'
   fileName: FormText
   fileSize?: FormText

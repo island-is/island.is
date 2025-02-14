@@ -1,5 +1,5 @@
 import { formatTextWithLocale } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, OverviewField } from '@island.is/application/types'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   Box,
@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FileItem } from './FileItem'
-import { OverviewField } from '@island.is/application/types'
+
 interface Props extends FieldBaseProps {
   field: OverviewField
 }
@@ -111,47 +111,44 @@ export const OverviewFormField = ({
                 </GridColumn>
               )
             })}
-          {attachments && (
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-              <Box marginTop={8}>
-                {attachments?.map((attachment, i) => {
-                  return (
-                    <GridColumn
+          {attachments &&
+            attachments?.map((attachment, i) => {
+              return (
+                <GridColumn
+                  key={i}
+                  span={[
+                    '12/12',
+                    '12/12',
+                    '12/12',
+                    attachment.width === 'half' ? '6/12' : '12/12',
+                  ]}
+                >
+                  <Box marginTop={i === 0 ? 8 : 0}>
+                    <FileItem
                       key={i}
-                      span={[
-                        '12/12',
-                        '12/12',
-                        '12/12',
-                        attachment.width === 'half' ? '5/12' : '12/12',
-                      ]}
-                    >
-                      <FileItem
-                        key={i}
-                        fileName={formatTextWithLocale(
-                          attachment.fileName,
-                          application,
-                          locale,
-                          formatMessage,
-                        )}
-                        fileSize={formatTextWithLocale(
-                          attachment.fileSize ?? '',
-                          application,
-                          locale,
-                          formatMessage,
-                        )}
-                        fileType={formatTextWithLocale(
-                          attachment.fileType ?? '',
-                          application,
-                          locale,
-                          formatMessage,
-                        )}
-                      />
-                    </GridColumn>
-                  )
-                })}
-              </Box>
-            </GridColumn>
-          )}
+                      fileName={formatTextWithLocale(
+                        attachment.fileName,
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                      fileSize={formatTextWithLocale(
+                        attachment.fileSize ?? '',
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                      fileType={formatTextWithLocale(
+                        attachment.fileType ?? '',
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                    />
+                  </Box>
+                </GridColumn>
+              )
+            })}
           {tableData && (
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <Box marginTop={10}>
