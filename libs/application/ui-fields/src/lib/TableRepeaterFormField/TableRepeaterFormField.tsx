@@ -122,6 +122,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {
+    item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn ? formatFn(item[key]) : item[key]
     return typeof formatted === 'string'
