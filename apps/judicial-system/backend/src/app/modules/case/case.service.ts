@@ -1410,15 +1410,16 @@ export class CaseService {
     theCase.defendants?.forEach((defendant) => {
       const subpoena = defendant.subpoenas?.[0]
 
-      // Only send certificates for subpoenas which have been successfully served
-      if (
+      const hasSubpoenaBeenSuccessfullyServedToDefendant =
         subpoena?.serviceStatus &&
         [
           ServiceStatus.DEFENDER,
           ServiceStatus.ELECTRONICALLY,
           ServiceStatus.IN_PERSON,
         ].includes(subpoena.serviceStatus)
-      ) {
+
+      // Only send certificates for subpoenas which have been successfully served
+      if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
         messages.push({
           type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
           user,
