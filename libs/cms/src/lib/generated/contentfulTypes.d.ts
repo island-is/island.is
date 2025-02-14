@@ -3379,6 +3379,9 @@ export interface IOrganizationParentSubpageFields {
 
   /** Thumbnail Image */
   thumbnailImage?: Asset | undefined
+
+  /** Tiny Thumbnail Image */
+  tinyThumbnailImage?: Asset | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */

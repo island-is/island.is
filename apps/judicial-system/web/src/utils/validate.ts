@@ -282,8 +282,7 @@ export const isProcessingStepValidIndictments = (
     : true
 
   return Boolean(
-    workingCase.prosecutor &&
-      workingCase.court &&
+    workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
       defendantsAreValid,

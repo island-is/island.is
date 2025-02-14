@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   LinkV2,
   ProfileCard,
   Stack,
@@ -23,7 +24,7 @@ export const OrganizationParentSubpageListSlice = ({
 }: OrganizationParentSubpageListSliceProps) => {
   const { activeLocale } = useI18n()
   return (
-    <Stack space={3}>
+    <Stack space={4}>
       {slice.title && <Text variant="h3">{slice.title}</Text>}
       {slice.pageLinkVariant ===
         OrganizationParentSubpageListVariant.ServiceCard && (
@@ -33,7 +34,7 @@ export const OrganizationParentSubpageListSlice = ({
               key={page.id}
               heading={page.label}
               href={page.href}
-              imgSrc={page.thumbnailImageHref ?? ''}
+              imgSrc={page.tinyThumbnailImageHref ?? ''}
               alt=""
             />
           ))}
@@ -61,6 +62,20 @@ export const OrganizationParentSubpageListSlice = ({
               />
             </LinkV2>
           ))}
+        </Box>
+      )}
+      {!!slice.seeMoreLink?.text && !!slice.seeMoreLink?.url && (
+        <Box display="flex" justifyContent="flexEnd">
+          <LinkV2 href={slice.seeMoreLink.url}>
+            <Button
+              variant="text"
+              as="span"
+              unfocusable={true}
+              icon="arrowForward"
+            >
+              {slice.seeMoreLink.text}
+            </Button>
+          </LinkV2>
         </Box>
       )}
     </Stack>
