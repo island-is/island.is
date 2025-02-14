@@ -3,7 +3,7 @@ import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 
-import { sortAlpha } from '@island.is/shared/utils'
+// import { sortAlpha } from '@island.is/shared/utils'
 import { VerdictApi } from '../../gen/fetch/gopro'
 import { DefaultApi } from '../../gen/fetch/supreme-court'
 
@@ -131,7 +131,7 @@ export class VerdictsClientService {
           },
         }
     } else if (id.startsWith(SUPREME_COURT_ID_PREFIX)) {
-      const response = await this.goproApi.getVerdict({
+      const response = await this.supremeCourtApi.apiV2VerdictIdGet({
         id: id.slice(SUPREME_COURT_ID_PREFIX.length),
       })
       if (response.item?.verdictHtml)
@@ -149,68 +149,77 @@ export class VerdictsClientService {
   }
 
   async getCaseTypes() {
-    const [goproResponse, supremeCourtResponse] = await Promise.all([
-      this.goproApi.getCaseTypes({}),
-      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
-    ])
-
-    const items = (goproResponse.items ?? []).concat(
-      supremeCourtResponse.items ?? [],
-    )
-
-    const caseTypeSet = new Set<string>()
-
-    for (const item of items) {
-      if (item.label) {
-        caseTypeSet.add(item.label)
-      }
-    }
-
-    const caseTypes = Array.from(items)
-    caseTypes.sort(sortAlpha('label'))
-
     return {
-      caseTypes: caseTypes.map(({ label }) => ({ label: label as string })),
+      caseTypes: [],
     }
+    //   const [goproResponse, supremeCourtResponse] = await Promise.all([
+    //     this.goproApi.getCaseTypes({}),
+    //     this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+    //   ])
+
+    //   const items = (goproResponse.items ?? []).concat(
+    //     supremeCourtResponse.items ?? [],
+    //   )
+
+    //   const caseTypeSet = new Set<string>()
+
+    //   for (const item of items) {
+    //     if (item.label) {
+    //       caseTypeSet.add(item.label)
+    //     }
+    //   }
+
+    //   const caseTypes = Array.from(items)
+    //   caseTypes.sort(sortAlpha('label'))
+
+    //   return {
+    //     caseTypes: caseTypes.map(({ label }) => ({ label: label as string })),
+    //   }
   }
 
   async getCaseCategories() {
-    const [goproResponse] = await Promise.all([
-      this.goproApi.getCaseCategories({}),
-    ])
-
-    const categories = Array.from(goproResponse.items ?? [])
-    categories.sort(sortAlpha('label'))
-
     return {
-      caseCategories: categories.map(({ label }) => ({
-        label: label as string,
-      })),
+      caseCategories: [],
     }
+    // const [goproResponse] = await Promise.all([
+    //   this.goproApi.getCaseCategories({}),
+    // ])
+
+    // const categories = Array.from(goproResponse.items ?? [])
+    // categories.sort(sortAlpha('label'))
+
+    // return {
+    //   caseCategories: categories.map(({ label }) => ({
+    //     label: label as string,
+    //   })),
+    // }
   }
 
   async getKeywords() {
-    const [goproResponse, supremeCourtResponse] = await Promise.all([
-      this.goproApi.getKeywords({}),
-      this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
-    ])
-
-    const items = (goproResponse.items ?? []).concat(
-      supremeCourtResponse.items ?? [],
-    )
-    const keywordSet = new Set<string>()
-
-    for (const item of items) {
-      if (item.label) {
-        keywordSet.add(item.label)
-      }
-    }
-
-    const keywords = Array.from(items)
-    keywords.sort(sortAlpha('label'))
-
     return {
-      keywords: keywords.map(({ label }) => ({ label: label as string })),
+      keywords: [],
     }
+    // const [goproResponse, supremeCourtResponse] = await Promise.all([
+    //   this.goproApi.getKeywords({}),
+    //   this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
+    // ])
+
+    // const items = (goproResponse.items ?? []).concat(
+    //   supremeCourtResponse.items ?? [],
+    // )
+    // const keywordSet = new Set<string>()
+
+    // for (const item of items) {
+    //   if (item.label) {
+    //     keywordSet.add(item.label)
+    //   }
+    // }
+
+    // const keywords = Array.from(items)
+    // keywords.sort(sortAlpha('label'))
+
+    // return {
+    //   keywords: keywords.map(({ label }) => ({ label: label as string })),
+    // }
   }
 }
