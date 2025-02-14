@@ -126,6 +126,8 @@ codemagic.yaml                                                                  
 /libs/api/domains/municipalities-financial-aid                                                            @island-is/kolibri-robin-hood
 /libs/clients/municipalities-financial-aid                                                                @island-is/kolibri-robin-hood
 
+/libs/application/templates/rental-agreement/                                                             @island-is/kolibri-kotid
+
 /apps/download-service/                                                                                   @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                  @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                 @island-is/hugsmidjan
