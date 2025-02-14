@@ -15,6 +15,7 @@ import {
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
+const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
@@ -103,15 +104,6 @@ export const userNotificationServiceSetup = (services: {
           },
         },
       },
-      internal: {
-        host: {
-          dev: serviceName,
-          staging: serviceName,
-          prod: serviceName,
-        },
-        paths: ['/'],
-        public: false,
-      },
     })
     .resources({
       limits: {
@@ -189,6 +181,24 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .codeOwner(CodeOwners.Juni)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .db({ name: 'user-notification' })
+    .migrations()
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })
+
+export const userNotificationBirthdayWorkerSetup = (): ServiceBuilder<
+  typeof serviceBirthdayWorkerName
+> =>
+  service(serviceBirthdayWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceBirthdayWorkerName)
+    .codeOwner(CodeOwners.Juni)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=birthday')
     .db({ name: 'user-notification' })
     .migrations()
     .extraAttributes({
