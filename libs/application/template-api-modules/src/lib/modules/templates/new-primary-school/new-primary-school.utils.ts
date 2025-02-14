@@ -63,7 +63,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       },
       email: guardian.email,
       phone: guardian.phoneNumber,
-      role: 'parent',
+      role: 'guardian',
     })),
     ...contacts.map((contact) => ({
       name: contact.fullName,
