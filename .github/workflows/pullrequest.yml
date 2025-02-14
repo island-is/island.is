@@ -55,6 +55,9 @@ jobs:
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
