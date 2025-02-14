@@ -1,11 +1,7 @@
-name: 'Setup yarn'
-description: 'Yarn setup and install dependencies'
-inputs:
-  action_ref:
-    description: ''
-    default: ${{ github.action_ref }}
+name: Setup yarn
+description: Yarn setup and install dependencies
 runs:
-  using: 'composite'
+  using: composite
   steps:
     - name: Set cache key
       shell: bash
@@ -46,7 +42,6 @@ runs:
         echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
 
     - name: Restore Dependencies Cache
-      shell: bash
       if: steps.compare_yarn_lock.outputs.run_install == 'true'
       uses: runs-on/cache/restore@v4
       id: restore-cache
@@ -64,7 +59,6 @@ runs:
         yarn --version
 
     - name: Cache Dependencies
-      shell: bash
       uses: runs-on/cache/save@v4
       if: steps.restore-cache.outputs.cache-hit != 'true'
       with:

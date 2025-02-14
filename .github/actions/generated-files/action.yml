@@ -26,7 +26,6 @@ runs:
         node ./scripts/ci/generate-files.mjs "${{ github.sha }}.tar.gz"
 
     - name: Cache Generated files
-      shell: bash
       if: steps.restore-generated-files-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
