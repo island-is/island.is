@@ -48,6 +48,7 @@ import {
   isInvestigationCase,
   isRequestCase,
   notificationTypes,
+  ServiceStatus,
   StringType,
   stringTypes,
   UserRole,
@@ -1358,7 +1359,7 @@ export class CaseService {
         (updatedDefendant) =>
           theCase.defendants?.find(
             (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
+          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id, // Only deliver new subpoenas
       )
       .map((updatedDefendant) => [
         ...(updatedCase.origin === CaseOrigin.LOKE
@@ -1397,6 +1398,37 @@ export class CaseService {
     if (messages && messages.length > 0) {
       return this.messageService.sendMessagesToQueue(messages.flat())
     }
+  }
+
+  private addMessagesForIndictmentArraignmentCompletionToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages: Message[] = []
+
+    theCase.defendants?.forEach((defendant) => {
+      const subpoena = defendant.subpoenas?.[0]
+
+      const hasSubpoenaBeenSuccessfullyServedToDefendant =
+        subpoena?.serviceStatus &&
+        [
+          ServiceStatus.DEFENDER,
+          ServiceStatus.ELECTRONICALLY,
+          ServiceStatus.IN_PERSON,
+        ].includes(subpoena.serviceStatus)
+
+      // Only send certificates for subpoenas which have been successfully served
+      if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
+    })
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1608,6 +1640,14 @@ export class CaseService {
       }
 
       await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
+    }
+
+    // This only applies to indictments and only when an arraignment has been completed
+    if (updatedCase.indictmentDecision && !theCase.indictmentDecision) {
+      await this.addMessagesForIndictmentArraignmentCompletionToQueue(
+        updatedCase,
+        user,
+      )
     }
   }
 
