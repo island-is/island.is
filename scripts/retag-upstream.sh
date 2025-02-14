@@ -6,6 +6,10 @@ if [[ -z "${1:-}" ]]; then
   echo ""
   echo "  Retag an upstream image from docker.io to our ECR registry."
   echo "  Set UPSTREAM_REGISTRY and PUSH_REGISTRY environment variables if you want to use different registries."
+  echo ""
+  echo "example:"
+  echo "  export UPSTREAM_REGISTRY=docker.io PUSH_REGISTRY=quay.io"
+  echo "  $0 docker/whalesay"
   exit 1
 fi
 
