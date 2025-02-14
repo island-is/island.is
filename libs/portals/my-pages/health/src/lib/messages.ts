@@ -1290,6 +1290,58 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
+  referrals: {
+    id: 'sp.health:referrals',
+    defaultMessage: 'Tilvísanir',
+  },
+  referralsIntro: {
+    id: 'sp.health:referrals-intro',
+    defaultMessage: 'Hér finnur þú tilvísanir ...',
+  },
+  noReferrals: {
+    id: 'sp.health:no-referrals',
+    defaultMessage: 'Engar tilvísanir',
+  },
+  organizationWebsite: {
+    id: 'sp.health:referrals-org-website',
+    defaultMessage: 'Vefur stofnunar',
+  },
+  waitlists: {
+    id: 'sp.health:waitlists',
+    defaultMessage: 'Biðlistar',
+  },
+  noWaitlists: {
+    id: 'sp.health:no-waitlists',
+    defaultMessage: 'Engin skráning á biðlista finnst',
+  },
+  waitlistsIntro: {
+    id: 'sp.health:waitlists-intro',
+    defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  statusLastUpdated: {
+    id: 'sp.health:waitlist-last-updated',
+    defaultMessage: 'Staða síðast uppfærð',
+  },
+  waitlist: {
+    id: 'sp.health:waitlist',
+    defaultMessage: 'Biðlisti',
+  },
+  organization: {
+    id: 'sp.health:organization',
+    defaultMessage: 'Stofnun',
+  },
+  noDataRegistered: {
+    id: 'sp.health:no-data-registered',
+    defaultMessage: 'Engin gögn skráð',
+  },
+  registeredToList: {
+    id: 'sp.health:registered-to-list',
+    defaultMessage: 'Skráning á lista',
+  },
+  moreDetail: {
+    id: 'sp.health:more-detail',
+    defaultMessage: 'Nánar um ferlið',
+  },
   medicineDelegationLookup: {
     id: 'sp.health:medicine-delegation-lookup',
     defaultMessage:

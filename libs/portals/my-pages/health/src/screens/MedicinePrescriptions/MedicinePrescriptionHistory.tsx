@@ -15,10 +15,17 @@ import {
 } from '../../utils/mockData'
 import DispensingContainer from './components/DispensingContainer/DispensingContainer'
 import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
+import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
 
 const MedicinePrescriptionHistory = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+
+  const { data, loading, error } = useGetMedicinePrescriptionsQuery({
+    variables: { locale: lang },
+  })
+
+  console.log('data', data)
 
   return (
     <IntroWrapper

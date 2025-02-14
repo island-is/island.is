@@ -18,12 +18,19 @@ import {
 import DispensingContainer from './components/DispensingContainer/DispensingContainer'
 import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
 import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
+import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
 
 const MedicinePrescriptions = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [activePrescription, setActivePrescription] = React.useState<any>(null)
   const [openModal, setOpenModal] = useState(false)
   const [activeTag, setActiveTag] = useState('0')
+
+  const { data, error, loading } = useGetMedicinePrescriptionsQuery({
+    variables: { locale: lang },
+  })
+
+  console.log('data', data)
   const stringMaxLength = 22
   const filterList = (id: string) => {
     if (activeTag !== id) setActiveTag(id)
