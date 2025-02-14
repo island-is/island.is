@@ -48,7 +48,6 @@ import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffen
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
 import { indictmentCount as strings } from './IndictmentCount.strings'
-import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
 import * as styles from './IndictmentCount.css'
 
 interface Props {
@@ -67,22 +66,6 @@ interface Props {
     setWorkingCase: Dispatch<SetStateAction<Case>>,
     updatedOffenses?: Offense[],
   ) => void
-}
-
-const offensesCompare = (
-  offense1: IndictmentCountOffense,
-  offense2: IndictmentCountOffense,
-) => {
-  const offense1Index = Object.values(IndictmentCountOffense).indexOf(offense1)
-  const offense2Index = Object.values(IndictmentCountOffense).indexOf(offense2)
-
-  if (offense1Index < offense2Index) {
-    return -1
-  }
-  if (offense1Index > offense2Index) {
-    return 1
-  }
-  return 0
 }
 
 /**
@@ -247,28 +230,12 @@ export const IndictmentCount: FC<Props> = ({
   ] = useState<string>('')
   const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
     useState<string>('')
-  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
-    useState<string>('')
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
-    useState<string>('')
-  const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
-    useState<string>('')
-  const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =
     useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
-
-  const offensesOptions = useMemo(
-    () =>
-      Object.values(IndictmentCountOffense).map((offense) => ({
-        value: offense,
-        label: formatMessage(enumStrings[offense]),
-        disabled: indictmentCount.deprecatedOffenses?.includes(offense),
-      })),
-    [formatMessage, indictmentCount.deprecatedOffenses],
-  )
 
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
     () =>
