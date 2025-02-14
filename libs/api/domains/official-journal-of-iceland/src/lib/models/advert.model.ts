@@ -21,6 +21,9 @@ export class AdvertMainCategory {
 
   @Field(() => [AdvertCategory])
   categories!: AdvertCategory[]
+
+  @Field(() => String)
+  departmentId?: string
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertCategory')
@@ -135,6 +138,33 @@ export class Advert {
 
   @Field(() => AdvertDocument)
   document!: AdvertDocument
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertSimilar')
+export class AdvertSimilar {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
+
+  @Field(() => String)
+  subject?: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => AdvertPublicationNumber)
+  publicationNumber!: AdvertPublicationNumber | null
+
+  @Field(() => String)
+  publicationDate!: string | null
+
+  @Field(() => [AdvertEntity])
+  categories!: AdvertCategory[]
+
+  @Field(() => AdvertEntity)
+  involvedParty!: AdvertEntity
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertsMainType')

@@ -14,11 +14,9 @@ export const InReview: Form = buildForm({
   children: [
     buildSection({
       id: 'review',
-      title: '',
       children: [
         buildCustomField({
           id: 'InReviewSteps',
-          title: '',
           component: 'InReviewSteps',
         }),
       ],
