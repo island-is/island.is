@@ -1,9 +1,5 @@
 name: 'Generate files'
 description: 'Yarn setup and install dependencies'
-inputs:
-  action_ref:
-    description: ''
-    default: ${{ github.action_ref }}
 runs:
   using: 'composite'
   steps:

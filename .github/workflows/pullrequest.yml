@@ -52,8 +52,8 @@ jobs:
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+      BASE_SHA: ${{ steps.export-sha.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ steps.export-sha.outputs.HEAD_SHA }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
@@ -67,32 +67,9 @@ jobs:
       - name: Generated files
         uses: ./.github/actions/generated-files
 
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
-
-      - name: Checking out relevant branches
+      - name: Export sha
         id: export-sha
-        run: |
-          set -euo pipefail
-          echo "CHUNK_SIZE: $CHUNK_SIZE"
-          echo "MAX_JOBS: $MAX_JOBS"
-          echo "NX_PARALLEL: $NX_PARALLEL"
-          set -x
-
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-          BASE_SHA=${{ env.NX_BASE }} || $(echo $(git merge-base origin/${{github.base_ref}} HEAD))
-          HEAD_SHA=${{ env.NX_HEAD }}
-          echo "BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
-          echo "HEAD_SHA=$HEAD_SHA" >> "$GITHUB_ENV"
-          echo "NX_BASE=$BASE_SHA" >> "$GITHUB_OUTPUT"
-          echo "NX_HEAD=$HEAD_SHA" >> "$GITHUB_OUTPUT"
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+        uses: ./.github/actions/set-sha
 
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
@@ -188,8 +165,8 @@ jobs:
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -224,8 +201,8 @@ jobs:
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -279,8 +256,8 @@ jobs:
     runs-on: arc-runners
     timeout-minutes: 15
     env:
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
@@ -313,8 +290,8 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -337,8 +314,8 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}

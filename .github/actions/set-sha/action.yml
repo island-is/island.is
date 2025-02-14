@@ -1,0 +1,35 @@
+name: 'Set base and head sha'
+description: 'Set NX base and head sha'
+outputs:
+  BASE_SHA:
+    description: 'NX_BASE sha'
+    value: ${{ steps.set-sha.outputs.BASE_SHA }}
+  HEAD_SHA:
+    description: 'NX_HEAD sha'
+    value: ${{ steps.set-sha.outputs.HEAD_SHA }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Derive appropriate SHAs
+      uses: nrwl/nx-set-shas@v4
+
+    - name: Set base and head sha
+      id: set-sha
+      shell: bash
+      run: |
+        echo "BASE: ${{ env.NX_BASE }}"
+        echo "HEAD: ${{ env.NX_HEAD }}"
+
+        # BASE_SHA=${{ env.NX_BASE }} || $(echo $(git merge-base origin/${{github.base_ref}} HEAD))
+        BASE_SHA=${{ env.NX_BASE }}
+        HEAD_SHA=${{ env.NX_HEAD }}
+        echo "BASE_SHA=$BASE_SHA" >> "$GITHUB_OUTPUT"
+        echo "HEAD_SHA=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+
+        echo "BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
+        echo "HEAD_SHA=$HEAD_SHA" >> "$GITHUB_ENV"
+
+        git config --global user.email "ci@island.is"
+        git config --global user.name "CI Bot"
+        echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
+        echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
