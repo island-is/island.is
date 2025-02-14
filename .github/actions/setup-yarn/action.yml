@@ -57,6 +57,7 @@ runs:
         corepack enable
         corepack prepare --activate
         yarn --version
+        yarn install --immutable
 
     - name: Cache Dependencies
       uses: runs-on/cache/save@v4
