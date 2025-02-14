@@ -31,7 +31,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
           status: formatMessage(messages.status),
         }}
         expandable
-        defaultSortByKey="status"
+        defaultSortByKey="vaccine"
         mobileTitleKey="vaccine"
         align="left"
         tagOutlined
