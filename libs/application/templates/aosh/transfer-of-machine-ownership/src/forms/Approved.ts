@@ -12,7 +12,6 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

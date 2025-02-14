@@ -19,7 +19,6 @@ const buildSupportingDocumentsSections = (): Section[] => {
 
 export const CitizenshipForm: Form = buildForm({
   id: 'CitizenshipFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
