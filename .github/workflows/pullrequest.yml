@@ -60,11 +60,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -96,11 +96,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -114,11 +114,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -152,13 +152,11 @@ jobs:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-        with:
-          checkout: false
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -187,11 +185,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -212,11 +210,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

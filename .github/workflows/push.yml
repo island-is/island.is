@@ -209,6 +209,9 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
@@ -288,6 +291,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
