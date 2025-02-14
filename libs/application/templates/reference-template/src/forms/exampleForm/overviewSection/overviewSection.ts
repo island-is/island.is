@@ -20,7 +20,6 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overviewMultiField',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'overview',
@@ -58,7 +57,6 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'submitApplication',
-          title: '',
           actions: [
             {
               event: DefaultEvents.SUBMIT,

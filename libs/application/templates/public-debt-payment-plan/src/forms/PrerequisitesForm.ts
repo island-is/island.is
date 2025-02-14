@@ -10,6 +10,8 @@ import {
   buildSubSection,
   buildRadioField,
   buildPhoneField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Form,
@@ -20,7 +22,6 @@ import {
 import { Logo } from '../assets'
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
 import { isApplicantCompany, isApplicantPerson } from '../lib/paymentPlanUtils'
@@ -220,7 +221,6 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'unused',
-          title: '',
           description: '',
         }),
       ],

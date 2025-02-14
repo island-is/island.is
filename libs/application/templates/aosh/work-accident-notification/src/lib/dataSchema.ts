@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/types'
 import { EMPLOYMENT_STATUS } from '../shared/constants'
 import { isValid24HFormatTime, isValidPhoneNumber } from '../utils'
+import { YES } from '@island.is/application/core'
 
 const option = z.object({
   value: z.string(),
@@ -195,15 +195,21 @@ const companyLaborProtectionSchema = z.object({
 const projectPurchaseSchema = z
   .object({
     radio: z.string(),
-    contractor: z.object({
-      nationalId: z.string(),
-      name: z.string(),
-    }),
+    contractor: z
+      .object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+      })
+      .optional(),
   })
   .refine(
     (data) => {
-     return data.radio !== YES ||
-      (data.contractor.nationalId && data.contractor.name && kennitala.isCompany(data.contractor.nationalId))
+      return (
+        data.radio !== YES ||
+        (data.contractor?.nationalId &&
+          data.contractor.name &&
+          kennitala.isCompany(data.contractor.nationalId))
+      )
     },
     {
       path: [''],

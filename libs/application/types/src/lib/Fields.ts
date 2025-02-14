@@ -283,6 +283,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   VEHICLE_RADIO = 'VEHICLE_RADIO',
+  VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
   SLIDER = 'SLIDER',
   DISPLAY = 'DISPLAY',
@@ -322,6 +323,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   VEHICLE_RADIO = 'VehicleRadioFormField',
+  VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
   SLIDER = 'SliderFormField',
   DISPLAY = 'DisplayFormField',
@@ -359,7 +361,7 @@ export interface DateField extends InputField {
 export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
-  readonly description?: FormText
+  readonly description?: FormTextWithLocale
   tooltip?: FormText
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
@@ -693,7 +695,7 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: number
+  minRows?: MaybeWithApplicationAndField<number>
   maxRows?: number
 }
 
@@ -740,8 +742,29 @@ export interface VehicleRadioField extends InputField {
   component: FieldComponents.VEHICLE_RADIO
   itemType: 'VEHICLE' | 'PLATE'
   itemList: unknown[]
+  shouldValidateErrorMessages?: boolean
   shouldValidateDebtStatus?: boolean
   shouldValidateRenewal?: boolean
+  alertMessageErrorTitle?: FormText
+  validationErrorMessages?: Record<string, FormText>
+  validationErrorFallbackMessage?: FormText
+  inputErrorMessage: FormText
+  debtStatusErrorMessage?: FormText
+  renewalExpiresAtTag?: StaticText
+  validateRenewal?: (item: unknown) => boolean
+}
+
+export interface VehicleSelectField extends InputField {
+  readonly type: FieldTypes.VEHICLE_SELECT
+  component: FieldComponents.VEHICLE_SELECT
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  getDetails?: (value: string) => Promise<unknown>
+  shouldValidateErrorMessages?: boolean
+  shouldValidateDebtStatus?: boolean
+  shouldValidateRenewal?: boolean
+  inputLabelText?: FormText
+  inputPlaceholderText?: FormText
   alertMessageErrorTitle?: FormText
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
@@ -898,6 +921,7 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | VehicleRadioField
+  | VehicleSelectField
   | StaticTableField
   | SliderField
   | DisplayField
