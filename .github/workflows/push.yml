@@ -49,15 +49,16 @@ env:
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   pre-checks:
     name: Check if job should run
     runs-on: arc-runners
+    permissions:
+      contents: 'read'
+      actions: 'read'
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
@@ -68,7 +69,7 @@ jobs:
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
-      YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+
     steps:
       - name: Get git branch
         id: git-branch
@@ -186,18 +187,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: corepack enable
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          ls -l `which node`
+        uses: ./.github/actions/setup-yarn
 
       - name: Git refs
         id: git_refs
@@ -227,12 +219,9 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Export sha
+        id: export-sha
+        uses: ./.github/actions/set-sha
 
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
@@ -244,12 +233,9 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
-          BASE_SHA=${{ env.NX_BASE }}
-          HEAD_SHA=${{ env.NX_HEAD }}
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+      - name: Export sha
+        id: export-sha
+        uses: ./.github/actions/set-sha
 
       - name: Checking out relevant branches for a branch build
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
@@ -322,48 +308,11 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Set cache key
-        id: set-cache-key
-        run: |
-          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-
-      - name: Prepare generated files
-        run: |
-          echo "generated files: ${{ env.GENERATED_FILES }}"
-          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Cache Generated files
-        uses: runs-on/cache/save@v4
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Set Test Everything true
         run: |
@@ -395,7 +344,7 @@ jobs:
           export SHELL=/usr/bin/bash
           source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
           git checkout "$GITHUB_SHA"
-          echo BASE="$BASE" >> "$GITHUB_ENV"
+          echo BASE_SHA="$BASE_SHA" >> "$GITHUB_ENV"
           echo LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Docker login to ECR repo
@@ -445,7 +394,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          export BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
           CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
@@ -465,7 +414,8 @@ jobs:
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
 
     strategy:
       fail-fast: false
@@ -475,32 +425,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: |
-          corepack enable
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
-            ${{ env.CYPRESS_CACHE_FOLDER }}
-          key: ${{ needs.prepare.outputs.CACHE_KEY }}
-
-      - run: |
-          yarn install --immutable
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -549,17 +478,8 @@ jobs:
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'

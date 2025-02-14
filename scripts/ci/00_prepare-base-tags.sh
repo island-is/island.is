@@ -45,7 +45,7 @@ if [[ "$BUILD_REF" == "null" || "$BUILD_REF" == "" ]]; then
   curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"Change detection failed for $HTML_URL\"}" "$ISSUE_REPORTING_SLACK_WEBHOOK_URL"
   exit 1
 fi
-export BASE="$BUILD_REF"
+export BASE_SHA="$BUILD_REF"
 
 # Log the Docker tag of the last successful build
 >&2 echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
