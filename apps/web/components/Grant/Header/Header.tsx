@@ -113,7 +113,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
         <img
           src={props.featuredImage}
           className={
-            props.featureImageMaxSize === 'large'
+            props.featuredImageMaxSize === 'large'
               ? styles.largeImage
               : styles.image
           }
@@ -132,7 +132,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
             span={
               props.offset
                 ? ['1/1', '1/1', '7/12', '6/12', '6/12']
-                : ['1/1', '1/1', '8/12', '7/12', '7/12']
+                : ['1/1', '1/1', '7/12', '7/12', '7/12']
             }
           >
             {props.breadcrumbs}
