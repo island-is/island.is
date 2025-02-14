@@ -6,9 +6,10 @@ import {
   buildCustomField,
   buildSubSection,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { EstateTypes, YES } from '../../lib/constants'
+import { EstateTypes } from '../../lib/constants'
 import { getAssetDescriptionText } from '../../lib/utils'
 
 export const estateAssets = buildSection({

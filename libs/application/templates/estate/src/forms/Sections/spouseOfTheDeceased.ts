@@ -5,8 +5,10 @@ import {
   buildRadioField,
   getValueViaPath,
   buildCustomField,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { JA, YES, NEI, NO } from '../../lib/constants'
+import { JA, NEI } from '../../lib/constants'
 import { deceasedInfoFields } from './deceasedInfoFields'
 import { m } from '../../lib/messages'
 
