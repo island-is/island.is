@@ -1,5 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { InvolvededParty } from './getUserInvolvedParties.response'
+
+export enum SignatureType {
+  Regular = 'regular',
+  Committee = 'committee',
+}
+registerEnumType(SignatureType, {
+  name: 'OfficialJournalOfIcelandApplicationSignatureType',
+})
 
 @ObjectType('OfficialJournalOfIcelandApplicationInstitution')
 export class Institution extends InvolvededParty {}
@@ -30,6 +38,9 @@ export class InvolvedPartySignatures {
   @Field()
   signatureDate!: string
 
+  @Field(() => SignatureMember, { nullable: true })
+  chairman?: SignatureMember
+
   @Field(() => [SignatureMember])
   members!: Array<SignatureMember>
 
@@ -39,6 +50,9 @@ export class InvolvedPartySignatures {
 
 @ObjectType('OfficialJournalOfIcelandApplicationInvolvedPartySignatureResponse')
 export class GetInvolvedPartySignature {
+  @Field(() => SignatureType)
+  type!: SignatureType
+
   @Field(() => [InvolvedPartySignatures])
   records!: InvolvedPartySignatures[]
 }

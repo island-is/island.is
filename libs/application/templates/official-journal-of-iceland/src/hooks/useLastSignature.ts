@@ -1,12 +1,15 @@
 import { useLazyQuery, useQuery } from '@apollo/client'
 import { INVOLVED_PARTY_SIGNATURES_QUERY } from '../graphql/queries'
-import { OfficialJournalOfIcelandApplicationInvolvedPartySignature } from '@island.is/api/schema'
-type Props = {
-  involvedPartyId?: string
-}
+import { OfficialJournalOfIcelandApplicationInvolvedPartySignatureResponse } from '@island.is/api/schema'
 
 type LastSignatureResponse = {
-  officialJournalOfIcelandApplicationInvolvedPartySignatures: OfficialJournalOfIcelandApplicationInvolvedPartySignature
+  officialJournalOfIcelandApplicationInvolvedPartySignature: OfficialJournalOfIcelandApplicationInvolvedPartySignatureResponse
+}
+
+type Props = {
+  involvedPartyId?: string
+  onCompleted?: (data: LastSignatureResponse) => void
+  onError?: (error: Error) => void
 }
 
 export const useLastSignature = ({ involvedPartyId }: Props) => {
@@ -25,13 +28,17 @@ export const useLastSignature = ({ involvedPartyId }: Props) => {
 
   return {
     lastSignature:
-      data?.officialJournalOfIcelandApplicationInvolvedPartySignatures,
+      data?.officialJournalOfIcelandApplicationInvolvedPartySignature,
     error,
     loading,
   }
 }
 
-export const useLastSignatureLazy = ({ involvedPartyId }: Props) => {
+export const useLastSignatureLazy = ({
+  involvedPartyId,
+  onCompleted,
+  onError,
+}: Props) => {
   return useLazyQuery<LastSignatureResponse>(INVOLVED_PARTY_SIGNATURES_QUERY, {
     variables: {
       input: {
@@ -39,5 +46,7 @@ export const useLastSignatureLazy = ({ involvedPartyId }: Props) => {
       },
     },
     fetchPolicy: 'no-cache',
+    onCompleted: onCompleted,
+    onError: onError,
   })
 }

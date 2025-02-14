@@ -153,10 +153,18 @@ export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
     $input: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
   ) {
     officialJournalOfIcelandApplicationInvolvedPartySignature(input: $input) {
+      type
       records {
         institution
         signatureDate
         additionalSignature
+        chairman {
+          name
+          above
+          before
+          after
+          below
+        }
         members {
           name
           above

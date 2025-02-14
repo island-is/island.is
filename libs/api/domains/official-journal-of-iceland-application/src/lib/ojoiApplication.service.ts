@@ -35,9 +35,11 @@ import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySigna
 import {
   GetInvolvedPartySignature,
   InvolvedPartySignatures,
+  SignatureType,
 } from '../models/getInvolvedPartySignatures.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -327,6 +329,12 @@ export class OfficialJournalOfIcelandApplicationService {
           user,
         )
 
+      const type = data.signature.records.some((record) =>
+        isDefined(record.chairman),
+      )
+        ? SignatureType.Committee
+        : SignatureType.Regular
+
       const records: InvolvedPartySignatures[] = data.signature.records.map(
         (record) => ({
           id: record.id,
@@ -353,6 +361,7 @@ export class OfficialJournalOfIcelandApplicationService {
       )
 
       return {
+        type: type,
         records: records,
       }
     } catch (error) {
