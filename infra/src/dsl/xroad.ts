@@ -934,6 +934,17 @@ export const HealthDirectorateVaccination = new XroadConf({
   },
 })
 
+export const HealthDirectorateHealthService = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
+      staging:
+        'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
+    },
+  },
+})
+
 export const SecondarySchool = new XroadConf({
   env: {
     XROAD_SECONDARY_SCHOOL_PATH: {
