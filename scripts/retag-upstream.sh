@@ -3,6 +3,9 @@ set -euo pipefail
 
 if [[ -z "${1:-}" ]]; then
   echo "usage: $0 <image>"
+  echo ""
+  echo "  Retag an upstream image from docker.io to our ECR registry."
+  echo "  Set UPSTREAM_REGISTRY and PUSH_REGISTRY environment variables if you want to use different registries."
   exit 1
 fi
 
