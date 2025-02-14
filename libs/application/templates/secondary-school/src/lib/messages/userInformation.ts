@@ -41,7 +41,7 @@ export const userInformation = {
       description: 'Applicant phone number label',
     },
     alertMessage: {
-      id: 'ss.application:userInformation.applicant.alertMessage#markdown',
+      id: 'ss.application:userInformation.applicant.alertMessageClean',
       defaultMessage:
         'Ef netfang og símanúmer er ekki rétt hér að ofan þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
       description: 'Applicant alert message',
