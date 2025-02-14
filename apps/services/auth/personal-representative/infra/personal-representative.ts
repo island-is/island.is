@@ -7,15 +7,9 @@ import {
 } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
-  dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-  ]),
-  staging: json([
-    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-  ]),
-  prod: json([
-    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-  ]),
+  dev: json(['redis.internal:6379']),
+  staging: json(['redis.internal:6379']),
+  prod: json(['redis.internal:6379']),
 }
 
 export const serviceSetup =
@@ -27,7 +21,7 @@ export const serviceSetup =
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
         IDENTITY_SERVER_ISSUER_URL: {
-          dev: 'https://identity-server.dev01.devland.is',
+          dev: 'https://innskra.dev01.devland.is',
           staging: 'https://identity-server.staging01.devland.is',
           prod: 'https://innskra.island.is',
         },
