@@ -4,17 +4,25 @@ description: 'Yarn setup and install dependencies'
 runs:
   using: 'composite'
   steps:
+    - name: Check envs
+      shell: bash
+      run: |
+        echo "NODE_VERSION: $NODE_VERSION"
+        echo "YARN_CACHE_FOLDER: $YARN_CACHE_FOLDER"
+        echo "CYPRESS_CACHE_FOLDER: $CYPRESS_CACHE_FOLDER"
+        echo "(yarn config get cacheFolder): $(yarn config get cacheFolder)"
+
     - name: Compare yarn.lock files
       shell: bash
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
         bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
-        skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
+        run_install=$([ "$current" = "$bundled" ] && echo false || echo true)
         echo "Current hash: $current"
         echo "Bundled hash: $bundled"
-        echo "Will skip running 'yarn install' step: $skip_install"
-        echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
+        echo "Will run 'yarn install': $run_install"
+        echo "run_install=$run_install" >> $GITHUB_OUTPUT
 
     - name: Setup Yarn
       shell: bash
@@ -23,14 +31,12 @@ runs:
         corepack prepare --activate
         yarn --version
 
-    - name: Run yarn install if yarn.lock changed
-      shell: bash
-      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
-      run: |
-        yarn install --immutable
+    - name: Setup yarn (s3 cache)
+      if: steps.compare_yarn_lock.outputs.run_install == 'run'
+      uses: ./.github/actions/setup-yarn-s3
 
     - name: Link pre-installed dependencies
-      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
+      if: steps.compare_yarn_lock.outputs.run_install == 'false'
       shell: bash
       run: |
         rm -rf node_modules

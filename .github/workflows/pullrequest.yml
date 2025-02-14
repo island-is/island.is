@@ -55,15 +55,6 @@ jobs:
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set cache key
-        id: set-cache-key
-        run: |
-          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
