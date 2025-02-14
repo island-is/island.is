@@ -477,7 +477,7 @@ export class DrivingLicenseApi {
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
     jurisdictionId: number
-    sendLicenseInMail: boolean
+    sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {

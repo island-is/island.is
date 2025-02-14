@@ -502,7 +502,7 @@ export class DrivingLicenseService {
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
-      sendLicenseInMail: false,
+      sendLicenseInMail: input.sendLicenseInMail,
       sendLicenseToAddress: '',
     })
 
