@@ -7,8 +7,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 
 # should be set by the caller or fail
-export HEAD=$HEAD_SHA
-export BASE=$BASE_SHA
+export HEAD_SHA=$HEAD_SHA
+export BASE_SHA=$BASE_SHA
 NX_AFFECTED_ALL=${NX_AFFECTED_ALL:-}
 TEST_EVERYTHING=${TEST_EVERYTHING:-}
 # This is a helper script to find NX affected projects for a specific target
@@ -19,7 +19,7 @@ BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 if [[ (-n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH") || (-n "$NX_AFFECTED_ALL" && "$NX_AFFECTED_ALL" == "true") || (-n "$TEST_EVERYTHING" && "$TEST_EVERYTHING" == "true") ]]; then
   EXTRA_ARGS=""
 else
-  EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
+  EXTRA_ARGS=(--affected --base "$BASE_SHA" --head "$HEAD_SHA")
 fi
 
 npx nx show projects --withTarget="$1" "${EXTRA_ARGS[@]}" --json | jq -r 'join(", ")'
