@@ -5,8 +5,10 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-export HEAD=${HEAD:-HEAD}
-export BASE=${BASE:-main}
+
+# should be set by the caller or fail
+export HEAD=$HEAD_SHA
+export BASE=$BASE_SHA
 NX_AFFECTED_ALL=${NX_AFFECTED_ALL:-}
 TEST_EVERYTHING=${TEST_EVERYTHING:-}
 # This is a helper script to find NX affected projects for a specific target
