@@ -6,7 +6,7 @@ import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { getTranslatedProgram, Routes, checkIsEditable } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,
@@ -64,6 +64,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 {selection?.[0]?.nordicLanguage?.name}
               </Text>
             )}
+            {!!selection?.[0]?.requestDormitory?.includes(YES) && (
+              <Text>
+                {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                {formatMessage(overview.selection.yesValue)}
+              </Text>
+            )}
           </GridColumn>
 
           {/* Second selection */}
@@ -93,6 +99,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 <Text>
                   {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
                   {selection?.[1]?.nordicLanguage?.name}
+                </Text>
+              )}
+              {!!selection?.[1]?.requestDormitory?.includes(YES) && (
+                <Text>
+                  {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                  {formatMessage(overview.selection.yesValue)}
                 </Text>
               )}
             </GridColumn>
@@ -126,6 +138,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   <Text>
                     {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
                     {selection?.[2]?.nordicLanguage?.name}
+                  </Text>
+                )}
+                {!!selection?.[2]?.requestDormitory?.includes(YES) && (
+                  <Text>
+                    {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                    {formatMessage(overview.selection.yesValue)}
                   </Text>
                 )}
               </GridColumn>

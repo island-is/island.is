@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Text,
   Box,
@@ -21,6 +21,7 @@ import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
 import { Markdown } from '@island.is/shared/components'
+import { YES } from '@island.is/application/core'
 
 const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,

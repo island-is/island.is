@@ -3,9 +3,11 @@ import {
   buildRadioField,
   buildCheckboxField,
   buildDescriptionField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { NO, ResturantCategories, YES } from '../../lib/constants'
+import { ResturantCategories } from '../../lib/constants'
 import {
   APPLICATION_TYPES,
   ResturantTypes,

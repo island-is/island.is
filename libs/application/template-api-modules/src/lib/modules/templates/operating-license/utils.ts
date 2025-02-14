@@ -11,8 +11,7 @@ import {
   Property,
   BankruptcyHistoryResult,
 } from './types/application'
-import { YES } from './constants'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
   const answers: OperatingLicenseAnswers =
