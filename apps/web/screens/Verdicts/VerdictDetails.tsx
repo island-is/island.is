@@ -17,7 +17,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
 
 interface VerdictDetailsProps {
-  item: GetVerdictByIdQuery['webVerdictById']['item']
+  item: NonNullable<GetVerdictByIdQuery['webVerdictById']>['item']
 }
 
 const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
