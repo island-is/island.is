@@ -1,6 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import {
+  ActivityIndicator,
   Image,
   Platform,
   SafeAreaView,
@@ -17,18 +18,21 @@ import {
   CustomLicenseType,
   dynamicColor,
   font,
-  Input,
-  InputRow,
   LicenseCard,
   LinkText,
   theme,
 } from '../../ui'
 import IconStatusVerified from '../../assets/icons/valid.png'
 import IconStatusNonVerified from '../../assets/icons/warning.png'
-import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
+import {
+  GenericLicenseType,
+  useListLicensesQuery,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/use-browser'
+import { useLocale } from '../../hooks/use-locale'
+import { FieldRender } from '../wallet-pass/components/field-render'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -75,18 +79,6 @@ const { useNavigationOptions, getNavigationOptions } =
       },
     },
   )
-const capitalizeEveryWord = (s: string) => {
-  if (typeof s !== 'string') return ''
-
-  const arr = s.split(' ')
-
-  const capitalized = arr.map(
-    (item) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase(),
-  )
-
-  const word = capitalized.join(' ')
-  return word
-}
 
 export const WalletPassportScreen: NavigationFunctionComponent<{
   id: string
@@ -97,17 +89,27 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   const { openBrowser } = useBrowser()
 
   const intl = useIntl()
-  const { data, loading, error } = useGetIdentityDocumentQuery({
-    fetchPolicy: 'cache-first',
+  const { data, loading, error } = useListLicensesQuery({
+    variables: {
+      input: {
+        includedTypes: [GenericLicenseType.Passport],
+      },
+      locale: useLocale(),
+    },
   })
 
-  const passportData = data?.getIdentityDocument
-  const item = passportData?.find((x) => x.number === id) || null
+  const passportData = data?.genericLicenseCollection?.licenses
+  const item =
+    passportData?.find(
+      (passport) => passport.payload?.metadata?.licenseNumber === id,
+    ) || null
 
-  const childrenPassport = data?.getIdentityDocumentChildren ?? []
+  const childrenPassport =
+    passportData?.filter((passport) => passport.isOwnerChildOfUser) ?? []
 
-  const isInvalid = item?.status?.toLowerCase() === 'invalid'
-  const expireWarning = !!item?.expiresWithinNoticeTime
+  const isInvalid = item?.payload?.metadata?.expired
+  const expireDate = item?.payload?.metadata?.expireDate
+  const expireWarning = false //!!item?.expiresWithinNoticeTime
 
   if (!item) return null
 
@@ -115,11 +117,12 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
       <Information contentInset={{ bottom: 162 }}>
-        <SafeAreaView style={{ marginHorizontal: 0 }}>
+        <SafeAreaView
+          style={{ marginHorizontal: 0, paddingHorizontal: theme.spacing[2] }}
+        >
           <View
             style={{
               paddingTop: theme.spacing[5],
-              paddingHorizontal: theme.spacing[2],
             }}
           >
             <Alert
@@ -153,88 +156,38 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
             </View>
           ) : null}
 
-          <InputRow>
-            <Input
-              label={intl.formatMessage({ id: 'walletPassport.displayName' })}
-              value={capitalizeEveryWord(
-                `${item?.displayFirstName} ${item?.displayLastName}`,
-              )}
-              loading={loading}
-              error={!!error}
-              size="big"
+          {!item?.payload?.data && loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#0061FF"
+              style={{ marginTop: theme.spacing[4] }}
             />
-          </InputRow>
-
-          <InputRow>
-            <Input
-              label={intl.formatMessage({ id: 'walletPassport.number' })}
-              value={item?.numberWithType}
-              loading={loading}
-              error={!!error}
-              noBorder
-              copy
+          ) : item?.payload?.data ? (
+            <FieldRender
+              data={item?.payload?.data}
+              licenseType={GenericLicenseType.Passport}
             />
-          </InputRow>
-
-          <InputRow>
-            {item?.issuingDate ? (
-              <Input
-                label={intl.formatMessage({ id: 'walletPassport.issuingDate' })}
-                value={
-                  item?.issuingDate
-                    ? intl.formatDate(new Date(item?.issuingDate))
-                    : '-'
-                }
-                loading={loading}
-                error={!!error}
-                noBorder
-                isCompact
-              />
-            ) : null}
-            {item?.expirationDate ? (
-              <Input
-                label={intl.formatMessage({
-                  id: 'walletPassport.expirationDate',
-                })}
-                value={
-                  item?.expirationDate
-                    ? intl.formatDate(new Date(item?.expirationDate))
-                    : '-'
-                }
-                loading={loading}
-                error={!!error}
-                noBorder
-                isCompact
-              />
-            ) : null}
-          </InputRow>
-
-          <InputRow>
-            <Input
-              label={intl.formatMessage({ id: 'walletPassport.mrzName' })}
-              value={`${item?.mrzLastName} ${item?.mrzFirstName}`}
-              loading={loading}
-              noBorder
-              error={!!error}
-            />
-          </InputRow>
+          ) : null}
 
           {childrenPassport?.length > 0 ? (
-            <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
+            <View style={{ marginTop: theme.spacing[3] }}>
               <Label>
                 {intl.formatMessage({ id: 'walletPassport.children' })}
               </Label>
               <Accordion>
-                {childrenPassport?.map((child) => {
-                  const isInvalid =
-                    child?.passports?.some(
-                      (p) => p.status?.toLowerCase() === 'invalid',
-                    ) || child?.passports?.length === 0
-                  const noPassport = child?.passports?.length === 0
+                {childrenPassport?.map((child, index) => {
+                  const isInvalid = child.payload?.metadata?.expired
+                  const childName = child.payload?.data?.find(
+                    (field) => field.label === 'Nafn einstaklings',
+                  )?.value
+                  const fieldsWithoutName = child.payload?.data?.filter(
+                    (field) => field.label !== 'Nafn einstaklings',
+                  )
+                  const noPassport = child?.payload?.data?.length === 0
                   return (
                     <AccordionItem
-                      key={child.childNationalId}
-                      title={child?.childName ?? '-'}
+                      key={index}
+                      title={childName ?? '-'}
                       icon={
                         <Image
                           source={
@@ -247,79 +200,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                         />
                       }
                     >
-                      <View>
-                        {child.passports?.map((passport) => {
-                          return (
-                            <View key={passport.number}>
-                              <InputRow>
-                                <Input
-                                  label={intl.formatMessage({
-                                    id: 'walletPassport.number',
-                                  })}
-                                  value={passport?.numberWithType}
-                                  loading={loading}
-                                  error={!!error}
-                                  noBorder
-                                  isCompact
-                                  copy
-                                />
-                              </InputRow>
-
-                              <InputRow>
-                                {passport?.issuingDate ? (
-                                  <Input
-                                    label={intl.formatMessage({
-                                      id: 'walletPassport.issuingDate',
-                                    })}
-                                    value={
-                                      passport?.issuingDate
-                                        ? intl.formatDate(
-                                            new Date(passport?.issuingDate),
-                                          )
-                                        : '-'
-                                    }
-                                    loading={loading}
-                                    error={!!error}
-                                    noBorder
-                                    isCompact
-                                  />
-                                ) : null}
-                                {passport?.expirationDate ? (
-                                  <Input
-                                    label={intl.formatMessage({
-                                      id: 'walletPassport.expirationDate',
-                                    })}
-                                    value={
-                                      passport?.expirationDate
-                                        ? intl.formatDate(
-                                            new Date(passport?.expirationDate),
-                                          )
-                                        : '-'
-                                    }
-                                    loading={loading}
-                                    error={!!error}
-                                    noBorder
-                                    isCompact
-                                  />
-                                ) : null}
-                              </InputRow>
-
-                              <InputRow>
-                                <Input
-                                  label={intl.formatMessage({
-                                    id: 'walletPassport.mrzName',
-                                  })}
-                                  value={`${passport?.mrzLastName} ${passport?.mrzFirstName}`}
-                                  loading={loading}
-                                  error={!!error}
-                                  noBorder
-                                  isCompact
-                                />
-                              </InputRow>
-                            </View>
-                          )
-                        })}
-                        {noPassport && (
+                      <View style={{ paddingHorizontal: theme.spacing[2] }}>
+                        {noPassport ? (
                           <View
                             style={{
                               marginVertical: 16,
@@ -347,6 +229,12 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                               </LinkText>
                             </TouchableOpacity>
                           </View>
+                        ) : (
+                          <FieldRender
+                            data={fieldsWithoutName}
+                            licenseType={GenericLicenseType.Passport}
+                            compact={true}
+                          />
                         )}
                       </View>
                     </AccordionItem>
@@ -372,9 +260,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
         <LicenseCard
           nativeID={`license-${CustomLicenseType.Passport}_destination`}
           type={CustomLicenseType.Passport}
-          date={
-            item?.expirationDate ? new Date(item?.expirationDate) : undefined
-          }
+          date={expireDate ? new Date(expireDate) : undefined}
           status={isInvalid ? 'NOT_VALID' : 'VALID'}
         />
       </SafeAreaView>

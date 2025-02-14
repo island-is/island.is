@@ -5,8 +5,8 @@ import styled from 'styled-components/native'
 import { CustomLicenseType, LicenseListCard } from '../../../ui'
 import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
 import {
+  GenericLicenseType,
   GenericUserLicense,
-  IdentityDocumentModel,
 } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 
@@ -21,18 +21,12 @@ const Pressable = styled(PressableRaw)`
 `
 
 export const WalletItem = React.memo(
-  ({
-    item,
-    style,
-  }: {
-    item: GenericUserLicense | IdentityDocumentModel
-    style?: ViewStyle
-  }) => {
+  ({ item, style }: { item: GenericUserLicense; style?: ViewStyle }) => {
     let cardHeight = 96
-    const type = item.__typename
+    const type = item.license?.type
 
     // Passport card
-    if (type === 'IdentityDocumentModel') {
+    if (type === GenericLicenseType.Passport) {
       return (
         <Container
           style={style}
@@ -43,24 +37,27 @@ export const WalletItem = React.memo(
           <Pressable
             style={style}
             onPress={() => {
-              navigateTo(`/walletpassport/${item?.number}`, {
-                fromId: `license-${CustomLicenseType.Passport}_source`,
-                toId: `license-${CustomLicenseType.Passport}_destination`,
-                cardHeight: cardHeight,
-              })
+              navigateTo(
+                `/walletpassport/${item?.payload?.metadata?.licenseNumber}`,
+                {
+                  fromId: `license-${CustomLicenseType.Passport}_source`,
+                  toId: `license-${CustomLicenseType.Passport}_destination`,
+                  cardHeight: cardHeight,
+                },
+              )
             }}
           >
             <SafeAreaView>
               <LicenseListCard
                 nativeID={`license-${CustomLicenseType.Passport}_source`}
                 type={CustomLicenseType.Passport}
-                licenseNumber={item?.numberWithType ?? ''}
+                licenseNumber={item?.payload?.metadata?.licenseNumber ?? ''}
               />
             </SafeAreaView>
           </Pressable>
         </Container>
       )
-    } else if (type === 'GenericUserLicense') {
+    } else {
       return (
         <Container
           style={style}

@@ -279,7 +279,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         applicationsWidgetEnabled && applicationsRes.refetch(),
         inboxWidgetEnabled && inboxRes.refetch(),
         licensesWidgetEnabled && licensesRes.refetch(),
-        licensesWidgetEnabled && licensesRes.refetchPassport(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
       ].filter(Boolean)

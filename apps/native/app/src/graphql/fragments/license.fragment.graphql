@@ -19,6 +19,7 @@ fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
 
 fragment GenericUserLicenseFragment on GenericUserLicense {
   nationalId
+  isOwnerChildOfUser
   license {
     type
     provider {
@@ -41,7 +42,12 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
     metadata {
       licenseNumber
       expired
+      expireDate
       name
+      subtitle
+      displayTag {
+        text
+      }
     }
   }
 }
