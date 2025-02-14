@@ -3,8 +3,6 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import {
-  NO,
-  YES,
   MANUAL,
   SPOUSE,
   TransferRightsOption,
@@ -23,7 +21,7 @@ import {
 import { errorMessages } from './messages'
 import { formatBankInfo } from './parentalLeaveUtils'
 import { yearFosterCareOrAdoption, yearInMonths } from '../config'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, NO, YES } from '@island.is/application/core'
 import { defaultMultipleBirthsMonths } from '../config'
 
 const PersonalAllowance = z

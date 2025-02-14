@@ -12,6 +12,8 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
@@ -36,8 +38,6 @@ import {
   Form,
   FormModes,
   FormValue,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
