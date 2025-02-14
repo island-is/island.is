@@ -1,0 +1,31 @@
+name: 'Load Dependencies'
+description: 'Prerequisite is that the prepare step has already been run'
+inputs:
+  generated_files:
+    required: false
+    description: 'name of the generated files archive to fetch from cache'
+    default: ${{ github.sha }}.tar.gz
+  checkout:
+    description: 'skip the checkout step'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: checkout
+      if: ${{ inputs.checkout == 'true' }}
+      uses: actions/checkout@v4
+
+    - name: Restore generated files
+      uses: runs-on/cache/restore@v4
+      id: restore-generated-files-cache
+      with:
+        path: |
+          ${{ inputs.generated_files }}
+        key: generated-files-${{ github.sha }}
+
+    - name: Extract generated files
+      shell: bash
+      run: |
+        tar -xzvf ${{ inputs.generated_files }}
