@@ -75,7 +75,7 @@ export const GrantsSearchResultsFilter = ({
         variant={variant}
         align={'left'}
       >
-        <Box background="white" padding={[1, 1, 2]} borderRadius="large">
+        <Box background="white" borderRadius="large">
           <FilterMultiChoice
             labelClear={formatMessage(m.search.clearFilterCategory)}
             onChange={({ categoryId, selected }) => {

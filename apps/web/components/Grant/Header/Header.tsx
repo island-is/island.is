@@ -30,17 +30,19 @@ export type HeaderProps = {
   shortcutsTitle?: string
   searchUrl?: string
   searchPlaceholder?: string
-  box?: BoxProps
+  offset?: boolean
 }
 
 export type ImageProps = HeaderProps & {
   featuredImage: string
   featuredImageAlt: string
+  featuredImageMaxSize?: 'default' | 'large'
 }
 
 export type NoImageProps = HeaderProps & {
   featuredImage: never
   featuredImageAlt: never
+  featuredImageMaxSize: never
 }
 
 export type HeaderWithImageProps = ImageProps | NoImageProps
@@ -108,18 +110,30 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
         justifyContent="center"
         alignItems="center"
       >
-        <img src={props.featuredImage} alt={props.featuredImageAlt} />
+        <img
+          src={props.featuredImage}
+          className={
+            props.featureImageMaxSize === 'large'
+              ? styles.largeImage
+              : styles.image
+          }
+          alt={props.featuredImageAlt}
+        />
       </Box>
     )
   }
 
   return (
-    <Box {...props.box}>
+    <Box marginTop={9}>
       <GridContainer>
         <GridRow>
           <GridColumn
-            offset={['0', '0', '0', '1/12', '1/12']}
-            span={['1/1', '1/1', '7/12', '6/12', '6/12']}
+            offset={props.offset ? ['0', '0', '0', '1/12', '1/12'] : ['0']}
+            span={
+              props.offset
+                ? ['1/1', '1/1', '7/12', '6/12', '6/12']
+                : ['1/1', '1/1', '8/12', '7/12', '7/12']
+            }
           >
             {props.breadcrumbs}
             <Text as="h1" variant="h1" marginY={2}>

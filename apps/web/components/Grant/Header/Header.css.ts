@@ -13,3 +13,11 @@ export const searchBox = style({
   border: 0,
   color: theme.color.black,
 })
+
+export const image = style({
+  maxWidth: '318px',
+})
+
+export const largeImage = style({
+  maxWidth: '432px',
+})

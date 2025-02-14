@@ -18,12 +18,13 @@ import {
   Breadcrumbs,
   FilterInput,
   Pagination,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { GrantWrapper, GrantsHeader } from '@island.is/web/components'
+import { GrantsHeader, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -56,6 +57,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   locale,
   initialGrantList,
   tags,
+  customPageData,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
@@ -246,12 +248,11 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <GrantsHeader
-        box={{
-          marginY: 9,
-        }}
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
-        featuredImage={formatMessage(m.home.featuredImage)}
+        featuredImage={
+          customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
+        }
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
         breadcrumbs={
           breadcrumbItems && (
@@ -270,25 +271,21 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           )
         }
       />
-      <Box background="blue100">
+      <Box marginTop={8} background="blue100">
         {!isMobile && (
           <SidebarLayout
             fullWidthContent={true}
             sidebarContent={
-              <Box marginBottom={[1, 1, 2]}>
-                <Box marginBottom={3}>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(m.search.search)}
-                  </Text>
-                </Box>
-                <Box marginBottom={[1, 1, 2]}>
-                  <FilterInput
-                    name="query"
-                    placeholder={formatMessage(m.search.inputPlaceholder)}
-                    value={query ?? ''}
-                    onChange={(option) => setQuery(option)}
-                  />
-                </Box>
+              <Stack space={3}>
+                <Text fontWeight="semiBold">
+                  {formatMessage(m.search.search)}
+                </Text>
+                <FilterInput
+                  name="query"
+                  placeholder={formatMessage(m.search.inputPlaceholder)}
+                  value={query ?? ''}
+                  onChange={(option) => setQuery(option)}
+                />
                 <GrantsSearchResultsFilter
                   searchState={{
                     category: categories ?? undefined,
@@ -303,7 +300,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   variant={'default'}
                   hits={totalHits}
                 />
-              </Box>
+              </Stack>
             }
           >
             <Box marginLeft={3}>

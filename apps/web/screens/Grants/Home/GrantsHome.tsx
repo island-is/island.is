@@ -86,9 +86,6 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   return (
     <Box>
       <GrantsHeader
-        box={{
-          marginY: 9,
-        }}
         title={customPageData?.ogTitle ?? formatMessage(m.home.title)}
         description={
           customPageData?.ogDescription ?? formatMessage(m.home.description)
@@ -100,6 +97,8 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
         }
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
+        featuredImageMaxSize="large"
+        offset
         quickLinks={[
           {
             title: formatMessage(m.bullets.open),
@@ -140,7 +139,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
         }
       />
 
-      <Box background="blue100" paddingY={6}>
+      <Box background="blue100" marginY={6} paddingY={6}>
         <GridContainer>
           <Box
             display={'flex'}

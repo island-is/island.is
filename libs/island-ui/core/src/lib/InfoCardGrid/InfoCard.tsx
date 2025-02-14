@@ -37,7 +37,7 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       width="full"
       borderRadius="large"
     >
-      <Box width="full" padding={2}>
+      <Box width="full" padding={3}>
         {restOfProps.variant === 'detailed' ? (
           <DetailedInfoCard size={size} {...restOfProps} />
         ) : (
