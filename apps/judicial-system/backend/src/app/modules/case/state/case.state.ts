@@ -128,7 +128,9 @@ const indictmentCaseStateMachine: Map<
       ],
       transition: (update: UpdateCase, theCase: Case) => ({
         ...update,
-        rulingDate: theCase.courtEndTime,
+        // Shouldn't ever happen since court end time should always be set
+        // but just in case, we don't want rulingDate to be empty when completed.
+        rulingDate: theCase.courtEndTime ?? nowFactory(),
         state: CaseState.COMPLETED,
       }),
     },
