@@ -35,9 +35,6 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
-  loadOptions?: (c: AsyncSelectContext) => Promise<Option[]>
-  clearOnChange?: boolean
-  updateOnSelect?: string
 }
 
 const componentMapper = {
@@ -58,8 +55,8 @@ export const Item = ({
   index,
   values,
 }: ItemFieldProps) => {
-  const { formatMessage } = useLocale()
-  const { setValue, control, clearErrors } = useFormContext()
+  const { formatMessage, lang } = useLocale()
+  const { setValue, getValues, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
   const getSpan = (component: string, width: string) => {
@@ -86,8 +83,12 @@ export const Item = ({
     condition,
     readonly = false,
     disabled = false,
+    required = false,
+    isClearable = false,
     updateValueObj,
     defaultValue,
+    clearOnChange,
+    setOnChange,
     ...props
   } = item
 
@@ -165,12 +166,14 @@ export const Item = ({
       return undefined
     }
 
-    return defaultValue(application, activeField)
+    return typeof defaultValue === 'function'
+      ? defaultValue(application, activeField)
+      : defaultValue
   }
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues)
+    translatedOptions = options(application, activeValues, lang)
   } else {
     translatedOptions =
       options?.map((option) => ({
@@ -180,6 +183,14 @@ export const Item = ({
           tooltip: formatText(option.tooltip, application, formatMessage),
         }),
       })) ?? []
+  }
+
+  if (item.filterOptions && typeof item.filterOptions === 'function') {
+    translatedOptions = item.filterOptions(
+      translatedOptions,
+      getValues(),
+      index,
+    )
   }
 
   let Readonly: boolean | undefined
@@ -194,6 +205,20 @@ export const Item = ({
     Disabled = disabled(application, activeValues)
   } else {
     Disabled = disabled
+  }
+
+  let Required: boolean | undefined
+  if (typeof required === 'function') {
+    Required = required(application, activeValues)
+  } else {
+    Required = required
+  }
+
+  let IsClearable: boolean | undefined
+  if (typeof isClearable === 'function') {
+    IsClearable = isClearable(application, activeValues)
+  } else {
+    IsClearable = isClearable
   }
 
   let DefaultValue: any
@@ -221,6 +246,23 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
+  let ClearOnChange: string[] | undefined
+  if (typeof clearOnChange === 'function') {
+    ClearOnChange = clearOnChange(index)
+  } else {
+    ClearOnChange = clearOnChange
+  }
+
+  const SetOnChange =
+    setOnChange &&
+    ((option: any) => {
+      if (typeof setOnChange === 'function') {
+        return setOnChange(option, application, index, activeValues)
+      } else {
+        return setOnChange || []
+      }
+    })
+
   let selectAsyncProps: AsyncSelectField | undefined
   if (component === 'selectAsync') {
     selectAsyncProps = {
@@ -232,13 +274,28 @@ export const Item = ({
       backgroundColor: backgroundColor,
       isSearchable: item.isSearchable,
       isMulti: item.isMulti,
-      loadOptions: item.loadOptions,
-      clearOnChange: item.clearOnChange,
-      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
+      loadOptions: (c) =>
+        item.loadOptions(c, lang, activeValues, (subKey, value) => {
+          setValue(`${dataId}[${index}].${subKey}`, value)
+        }),
+      updateOnSelect:
+        typeof item.updateOnSelect === 'function'
+          ? item.updateOnSelect(index)
+          : item.updateOnSelect,
+      disabled: Disabled,
+      required: Required,
+      isClearable: IsClearable,
+      defaultValue: DefaultValue,
+      clearOnChange: ClearOnChange,
+      setOnChange: SetOnChange,
     }
   }
 
-  if (condition && !condition(application, activeValues)) {
+  if (
+    typeof condition === 'function'
+      ? condition && !condition(application, activeValues)
+      : condition
+  ) {
     return null
   }
 
@@ -258,7 +315,7 @@ export const Item = ({
           }}
         />
       )}
-      {component !== 'selectAsync' && (
+      {!(component === 'selectAsync' && selectAsyncProps) && (
         <Component
           id={id}
           name={id}
@@ -271,6 +328,9 @@ export const Item = ({
           control={control}
           readOnly={Readonly}
           disabled={Disabled}
+          required={Required}
+          isClearable={IsClearable}
+          defaultValue={DefaultValue}
           backgroundColor={backgroundColor}
           onChange={() => {
             if (error) {
@@ -278,9 +338,10 @@ export const Item = ({
             }
           }}
           application={application}
-          defaultValue={DefaultValue}
           large={true}
           placeholder={formatText(placeholder, application, formatMessage)}
+          clearOnChange={ClearOnChange}
+          setOnChange={SetOnChange}
           {...props}
         />
       )}

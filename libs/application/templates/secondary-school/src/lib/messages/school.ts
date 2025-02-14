@@ -51,16 +51,6 @@ export const school = {
       defaultMessage: 'Ég óska eftir heimavist',
       description: 'Request dormitory checkbox label',
     },
-    schoolDuplicateError: {
-      id: 'ss.application:school.selection.schoolDuplicateError',
-      defaultMessage: 'Það má ekki velja sama skóla tvisvar',
-      description: 'School duplicate error',
-    },
-    programDuplicateError: {
-      id: 'ss.application:school.selection.programDuplicateError',
-      defaultMessage: 'Það má ekki velja sömu braut tvisvar í sama vali',
-      description: 'Program duplicate error',
-    },
     addButtonLabel: {
       id: 'ss.application:school.selection.addButtonLabel',
       defaultMessage: 'Bæta við vali á skóla',

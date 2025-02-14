@@ -62,15 +62,17 @@ export const FieldsRepeaterFormField = ({
   const stableApplication = useMemo(() => application, [application])
   const stableAnswers = useMemo(() => answers, [answers])
 
-  let computeMinRows: number
-  if (typeof minRows === 'function') {
-    computeMinRows = minRows(updatedApplication, data)
-  } else {
-    computeMinRows = minRows
-  }
+  const minRowsValue =
+    typeof minRows === 'function'
+      ? minRows(answers, application.externalData)
+      : minRows
+  const maxRowsValue =
+    typeof maxRows === 'function'
+      ? maxRows(answers, application.externalData)
+      : maxRows
 
   const [numberOfItems, setNumberOfItems] = useState(
-    Math.max(numberOfItemsInAnswers ?? 0, computeMinRows),
+    Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
   )
 
   useEffect(() => {
@@ -169,7 +171,9 @@ export const FieldsRepeaterFormField = ({
                       {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
                       {formTitle &&
                         formatTextWithLocale(
-                          formTitle,
+                          typeof formTitle === 'function'
+                            ? formTitle(i)
+                            : formTitle,
                           application,
                           locale as Locale,
                           formatMessage,
@@ -183,7 +187,7 @@ export const FieldsRepeaterFormField = ({
             ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > computeMinRows && (
+            {numberOfItems > minRowsValue && (
               <Box marginRight={2}>
                 <Button
                   variant="ghost"
@@ -204,7 +208,7 @@ export const FieldsRepeaterFormField = ({
               type="button"
               onClick={handleNewItem}
               icon="add"
-              disabled={!maxRows ? false : numberOfItems >= maxRows}
+              disabled={!maxRowsValue ? false : numberOfItems >= maxRowsValue}
             >
               {formatText(addItemButtonText, updatedApplication, formatMessage)}
             </Button>
