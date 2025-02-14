@@ -32,11 +32,12 @@ runs:
         yarn --version
 
     - name: Setup yarn (s3 cache)
-      if: ${{ steps.compare_yarn_lock.outputs.run_install == 'true' }}
+      shell: bash
+      if: steps.compare_yarn_lock.outputs.run_install == 'true'
       uses: ./.github/actions/setup-yarn-s3
 
     - name: Link pre-installed dependencies
-      if: ${{ steps.compare_yarn_lock.outputs.run_install == 'false' }}
+      if: steps.compare_yarn_lock.outputs.run_install == 'false'
       shell: bash
       run: |
         rm -rf node_modules
