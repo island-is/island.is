@@ -10,6 +10,7 @@ import { logger } from '../../common'
 export function hacks(
   fullSetOfServices: ServiceBuilder<any>[],
   habitat: ServiceBuilder<any>[],
+  dockerTag?: string,
 ) {
   logger.debug('hacks', { numberOfServices: fullSetOfServices.length })
   const api = fullSetOfServices.find((s) => s.serviceDef.name === 'api')
@@ -20,5 +21,12 @@ export function hacks(
     applicationSystemAPI.serviceDef.env[GRAPHQL_API_URL_ENV_VAR_NAME] = ref(
       (h) => `http://${h.svc(habitat.find((s) => s.name() === 'api')!)}`,
     )
+  }
+  if (dockerTag) {
+    for (const serviceDef of fullSetOfServices) {
+      serviceDef.serviceDef.image = {
+        tag: dockerTag,
+      }
+    }
   }
 }
