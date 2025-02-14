@@ -5,11 +5,11 @@ __metadata:
   version: 8
   cacheKey: 10
 
-"@actions/cache@npm:3.2.4":
-  version: 3.2.4
-  resolution: "@actions/cache@npm:3.2.4"
+"@actions/cache@npm:3.3.0":
+  version: 3.3.0
+  resolution: "@actions/cache@npm:3.3.0"
   dependencies:
-    "@actions/core": "npm:^1.10.0"
+    "@actions/core": "npm:^1.11.1"
     "@actions/exec": "npm:^1.0.1"
     "@actions/glob": "npm:^0.1.0"
     "@actions/http-client": "npm:^2.1.1"
@@ -18,30 +18,21 @@ __metadata:
     "@azure/ms-rest-js": "npm:^2.6.0"
     "@azure/storage-blob": "npm:^12.13.0"
     semver: "npm:^6.3.1"
-    uuid: "npm:^3.3.3"
-  checksum: 10/f315f011c392d64684009faf2ac22350b79f3f5b2e48d783f4ff1b55a7c830f6f49d7d303fee7fa99641feed08fc61ef98aadac939e4881b51dccc90e651a9af
+  checksum: 10/b3e31b9204ee690187b4cfbcf98e85b12ed0f769f2dc824d0122c0ff1f37f7bb847a07f9437db3496d459bde99d26d5383789b76236ca10a11e39cc4e7f23f2d
   languageName: node
   linkType: hard
 
-"@actions/cache@patch:@actions/cache@npm%3A3.2.4#./.yarn/patches/@actions-cache-npm-3.2.4-c57b047f14.patch::locator=root-workspace-0b6124%40workspace%3A.":
-  version: 3.2.4
-  resolution: "@actions/cache@patch:@actions/cache@npm%3A3.2.4#./.yarn/patches/@actions-cache-npm-3.2.4-c57b047f14.patch::version=3.2.4&hash=10abe1&locator=root-workspace-0b6124%40workspace%3A."
+"@actions/core@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@actions/core@npm:1.11.1"
   dependencies:
-    "@actions/core": "npm:^1.10.0"
-    "@actions/exec": "npm:^1.0.1"
-    "@actions/glob": "npm:^0.1.0"
-    "@actions/http-client": "npm:^2.1.1"
-    "@actions/io": "npm:^1.0.1"
-    "@azure/abort-controller": "npm:^1.1.0"
-    "@azure/ms-rest-js": "npm:^2.6.0"
-    "@azure/storage-blob": "npm:^12.13.0"
-    semver: "npm:^6.3.1"
-    uuid: "npm:^3.3.3"
-  checksum: 10/408935ddecbb22153cdd44ad22944a23b3a68a1a43520bd1d94e9b35af9e4c980b4f72463145d93ee4c94a4c51dbd8685734bc5c20f3978d1daa065e443e9195
+    "@actions/exec": "npm:^1.1.1"
+    "@actions/http-client": "npm:^2.0.1"
+  checksum: 10/94f260e33607cc16567ce4c88014f069cd7da92baaa443b72cff80fdf4f1dcd18192e135df0d51ec29e8b82cfe214218715d482f2a7804efa5095737d1245f38
   languageName: node
   linkType: hard
 
-"@actions/core@npm:^1.10.0, @actions/core@npm:^1.2.6":
+"@actions/core@npm:^1.2.6":
   version: 1.10.1
   resolution: "@actions/core@npm:1.10.1"
   dependencies:
@@ -51,7 +42,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/exec@npm:^1.0.1":
+"@actions/exec@npm:^1.0.1, @actions/exec@npm:^1.1.1":
   version: 1.1.1
   resolution: "@actions/exec@npm:1.1.1"
   dependencies:
@@ -492,9 +483,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.4.2":
-  version: 10.4.2
-  resolution: "glob@npm:10.4.2"
+"glob@npm:10.4.5":
+  version: 10.4.5
+  resolution: "glob@npm:10.4.5"
   dependencies:
     foreground-child: "npm:^3.1.0"
     jackspeak: "npm:^3.1.2"
@@ -504,7 +495,7 @@ __metadata:
     path-scurry: "npm:^1.11.1"
   bin:
     glob: dist/esm/bin.mjs
-  checksum: 10/e412776b5952a818eba790c830bea161c9a56813fd767d8c4c49f855603b1fb962b3e73f1f627a47298a57d2992b9f0f2fe15cf93e74ecaaa63fb45d63fdd090
+  checksum: 10/698dfe11828b7efd0514cd11e573eaed26b2dff611f0400907281ce3eab0c1e56143ef9b35adc7c77ecc71fba74717b510c7c223d34ca8a98ec81777b293d4ac
   languageName: node
   linkType: hard
 
@@ -652,8 +643,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@actions/cache": "npm:3.2.4"
-    glob: "npm:10.4.2"
+    "@actions/cache": "npm:3.3.0"
+    glob: "npm:10.4.5"
   languageName: unknown
   linkType: soft
 
@@ -777,15 +768,6 @@ __metadata:
   dependencies:
     "@fastify/busboy": "npm:^2.0.0"
   checksum: 10/a666a9f5ac4270c659fafc33d78b6b5039a0adbae3e28f934774c85dcc66ea91da907896f12b414bd6f578508b44d5dc206fa636afa0e49a4e1c9e99831ff065
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^3.3.3":
-  version: 3.4.0
-  resolution: "uuid@npm:3.4.0"
-  bin:
-    uuid: ./bin/uuid
-  checksum: 10/4f2b86432b04cc7c73a0dd1bcf11f1fc18349d65d2e4e32dd0fc658909329a1e0cc9244aa93f34c0cccfdd5ae1af60a149251a5f420ec3ac4223a3dab198fb2e
   languageName: node
   linkType: hard
 
