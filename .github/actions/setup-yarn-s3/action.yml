@@ -1,9 +1,15 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
-
+inputs:
+  action_ref:
+    description: ''
+    default: ${{ github.action_ref }}
 runs:
   using: 'composite'
   steps:
+    - run: echo ${{ inputs.action_ref }}
+      shell: bash
+
     - name: Set cache key
       shell: bash
       id: set-cache-key

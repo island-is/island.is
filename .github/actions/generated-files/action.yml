@@ -7,6 +7,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - run: echo ${{ inputs.action_ref }}
+      shell: bash
+
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-generated-files-cache
