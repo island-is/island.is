@@ -51,6 +51,7 @@ jobs:
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
@@ -95,8 +96,10 @@ jobs:
 
           BASE_SHA=${{ env.NX_BASE }}
           HEAD_SHA=${{ env.NX_HEAD }}
-          echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
+          echo "BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
+          echo "HEAD_SHA=$HEAD_SHA" >> "$GITHUB_ENV"
           echo "NX_BASE=$BASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$HEAD_SHA" >> "$GITHUB_OUTPUT"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -195,6 +198,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -239,6 +243,7 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -311,6 +316,7 @@ jobs:
     timeout-minutes: 5
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
@@ -349,6 +355,7 @@ jobs:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -381,6 +388,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
