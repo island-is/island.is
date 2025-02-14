@@ -15,6 +15,8 @@ runs:
 
     - name: Set base and head sha
       id: set-sha
+      with:
+        error-on-no-successful-workflow: true
       shell: bash
       run: |
         echo "BASE: ${{ env.NX_BASE }}"
