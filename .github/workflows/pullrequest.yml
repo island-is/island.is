@@ -85,8 +85,7 @@ jobs:
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
-
-          BASE_SHA=${{ env.NX_BASE }}
+          BASE_SHA=${{ env.NX_BASE }} || $(echo $(git merge-base origin/${{github.base_ref}} HEAD))
           HEAD_SHA=${{ env.NX_HEAD }}
           echo "BASE_SHA=$BASE_SHA" >> "$GITHUB_ENV"
           echo "HEAD_SHA=$HEAD_SHA" >> "$GITHUB_ENV"
