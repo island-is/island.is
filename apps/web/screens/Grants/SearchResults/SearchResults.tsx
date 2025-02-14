@@ -21,10 +21,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Problem } from '@island.is/react-spa/shared'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
+import { GrantWrapper, GrantsHeader } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -246,12 +245,14 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       pageDescription={formatMessage(m.search.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
-      <GrantHeaderWithImage
+      <GrantsHeader
+        box={{
+          marginY: 9,
+        }}
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
         featuredImage={formatMessage(m.home.featuredImage)}
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
-        imageLayout="left"
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs
