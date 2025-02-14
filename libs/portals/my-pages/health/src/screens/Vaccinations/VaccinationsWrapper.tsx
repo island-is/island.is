@@ -63,6 +63,7 @@ export const VaccinationsWrapper = () => {
           text={formatMessage(m.makeVaccinationAppointment)}
         />,
         <Button
+          key="vaccinations-status-info"
           icon="informationCircle"
           variant="utility"
           iconType="outline"

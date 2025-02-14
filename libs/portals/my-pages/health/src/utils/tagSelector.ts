@@ -4,7 +4,7 @@ import type { TagVariant } from '@island.is/island-ui/core'
 
 // Tag selector for expandable, sorting table in vaccinations
 export const tagSelector = (
-  status?: HealthDirectorateVaccinationStatusEnum | string,
+  status?: HealthDirectorateVaccinationStatusEnum,
 ): TagVariant => {
   if (!isDefined(status)) return 'blue'
 
