@@ -15,4 +15,10 @@ export const weight = styleVariants({
   blue300: { background: theme.color.blue300 },
   blueberry200: { background: theme.color.blueberry200 },
   red200: { background: theme.color.red200 },
+  black: { background: theme.border.color.black },
+})
+
+export const thickness = styleVariants({
+  standard: { height: '1px' },
+  thick: { height: '2px' },
 })
