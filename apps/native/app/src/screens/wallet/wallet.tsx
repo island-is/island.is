@@ -27,8 +27,6 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import {
   GenericLicenseType,
   GenericUserLicense,
-  IdentityDocumentModel,
-  useGetIdentityDocumentQuery,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -43,7 +41,6 @@ import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type FlatListItem =
   | GenericUserLicense
-  | IdentityDocumentModel
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
 
@@ -121,6 +118,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           GenericLicenseType.PCard,
           GenericLicenseType.Ehic,
           GenericLicenseType.HuntingLicense,
+          GenericLicenseType.Passport,
         ],
       },
       locale: useLocale(),
@@ -128,25 +126,24 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     fetchPolicy: 'cache-first',
   })
 
-  // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery()
-
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['licenseScan'] }),
-    queryResult: [res, resPassport],
+    queryResult: res,
     refetching,
   })
 
   // Filter licenses
   const licenseItems = useMemo(() => {
     if ((!res.loading && !res.error) || res.data) {
-      return (res.data?.genericLicenses ?? []).filter(({ license }) => {
-        if (license.status === 'Unknown') {
-          return false
-        }
-        return true
-      })
+      return (res.data?.genericLicenseCollection.licenses ?? []).filter(
+        ({ license }) => {
+          if (license.status === 'Unknown') {
+            return false
+          }
+          return true
+        },
+      )
     }
 
     return []
@@ -227,8 +224,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       }
 
       if (
-        item.__typename === 'GenericUserLicense' ||
-        item.__typename === 'IdentityDocumentModel'
+        item.__typename === 'GenericUserLicense' &&
+        !item.isOwnerChildOfUser
       ) {
         return <WalletItem item={item} />
       }
@@ -242,27 +239,19 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     const type = item.__typename
 
     if (type === 'GenericUserLicense') {
-      return item.license.type ?? fallback
-    } else if (type === 'IdentityDocumentModel') {
-      return item.number ?? fallback
+      return `${item.license.type}-${fallback}`
     }
 
     return (item as { id: string })?.id ?? fallback
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (
-      (res.loading && !res.data) ||
-      (resPassport.loading && !resPassport.data)
-    ) {
+    if (res.loading && !res.data) {
       return getSkeletonArr()
     }
 
-    return [
-      ...licenseItems,
-      ...(resPassport?.data?.getIdentityDocument ?? []),
-    ] as FlatListItem[]
-  }, [licenseItems, resPassport, res.loading, res.data])
+    return [...licenseItems] as FlatListItem[]
+  }, [licenseItems, res.loading, res.data])
 
   // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
   if (hiddenContent) {
