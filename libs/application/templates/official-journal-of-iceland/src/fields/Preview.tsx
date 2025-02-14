@@ -13,14 +13,12 @@ import { base64ToBlob, parseZodIssue } from '../lib/utils'
 import { Routes } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { advert, error, preview, signatures } from '../lib/messages'
-import {
-  previewValidationSchema,
-  signatureValidationSchema,
-} from '../lib/dataSchema'
+import { previewValidationSchema, signatureValidator } from '../lib/dataSchema'
 import { ZodCustomIssue } from 'zod'
 import { usePdf } from '../hooks/usePdf'
 import { useState } from 'react'
 import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
+import { useSignatures } from '../hooks/useSignatures'
 
 export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { application: currentApplication } = useApplication({
@@ -30,6 +28,14 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const [hasInvalidPdf, setHasInvalidPdf] = useState(false)
 
   const { formatMessage: f } = useLocale()
+
+  const { signatureHtml } = useSignatures({
+    applicationId: application.id,
+    variant:
+      application?.answers?.misc?.signatureType === 'regular'
+        ? 'regular'
+        : 'committee',
+  })
 
   const {
     fetchPdf,
@@ -80,17 +86,13 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
     currentApplication.answers,
   )
 
-  const signatureValidationCheck = signatureValidationSchema.safeParse({
-    signatures: currentApplication.answers.signature,
-    misc: currentApplication.answers.misc,
-  })
+  const signatureValidationCheck = signatureValidator(
+    application.answers.misc?.signatureType ?? 'regular',
+  ).safeParse(currentApplication.answers.signature)
 
-  const signatureMarkup = '<div></div>'
+  console.log(currentApplication.answers.signature)
 
-  // getSignaturesMarkup({
-  //   signatures: currentApplication.answers.signatures,
-  //   type: currentApplication.answers.misc?.signatureType as SignatureTypes,
-  // })
+  console.log('signatureValidationCheck', signatureValidationCheck)
 
   const hasError = !(
     advertValidationCheck.success &&
@@ -202,7 +204,9 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         <AdvertPreview
           advertSubject={currentApplication.answers.advert?.title}
           advertType={currentApplication.answers.advert?.type?.title}
-          advertText={currentApplication.answers.advert?.html + signatureMarkup}
+          advertText={
+            currentApplication.answers.advert?.html ?? '' + signatureHtml
+          }
         />
       </Box>
     </Stack>

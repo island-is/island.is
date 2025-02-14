@@ -219,61 +219,90 @@ export const publishingValidationSchema = z.object({
     }),
 })
 
-export const signatureValidationSchema = z
-  .object({
-    signature: z.object({
-      signatureDate: z.string().optional(),
-      records: z.array(signatureRecordItemSchema).optional(),
-    }),
-  })
-  .superRefine((schema, context) => {
-    let validInstitutionAndDate = true
-    let validMembers = true
-
-    schema.signature.records?.forEach((record) => {
-      const isValidInstitutionAndDate = validateInstitutionAndDate(
-        record?.institution,
-        record?.signatureDate,
-        context,
-      )
-
-      if (!isValidInstitutionAndDate) {
+export const signatureValidator = (type: string) => {
+  return z
+    .object({
+      committee: signatureRecordSchema.optional(),
+      regular: signatureRecordSchema.optional(),
+    })
+    .optional()
+    .superRefine((schema, context) => {
+      if (!schema) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
-          params: error.signaturesValidationError,
+          params: error.missingSignature,
         })
-        validInstitutionAndDate = false
+
+        return false
       }
 
-      if (record?.chairman) {
-        const isValidChairman = validateMember(
-          record.chairman,
-          context,
-          error.missingChairmanName,
-        )
+      let hasValidInstitutionAndDate = true
+      let hasValidSignatureMembers = true
+      let hasValidChairman = true
 
-        if (!isValidChairman) {
+      const recordsToParse =
+        type === 'committee' ? schema.committee : schema.regular
+
+      if (!recordsToParse?.records || recordsToParse.records.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.missingSignature,
+        })
+
+        hasValidInstitutionAndDate = false
+      }
+
+      recordsToParse?.records?.forEach((record) => {
+        if (!record?.institution) {
           context.addIssue({
             code: z.ZodIssueCode.custom,
-            params: error.missingChairmanName,
+            params: error.missingSignatureInstitution,
           })
 
-          validMembers = false
+          hasValidInstitutionAndDate = false
         }
-      }
 
-      if (!record?.members || record.members.length === 0) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          params: error.missingSignatureMember,
-        })
+        if (!record?.signatureDate) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: error.missingSignatureDate,
+          })
 
-        validMembers = false
-      }
+          hasValidInstitutionAndDate = false
+        }
+
+        if (type === 'committee') {
+          if (!record?.chairman || !record?.chairman?.name) {
+            context.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: error.missingChairmanName,
+            })
+
+            hasValidChairman = false
+          }
+        }
+
+        if (!record.members || record.members.length === 0) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: error.missingSignatureMember,
+          })
+
+          hasValidSignatureMembers = false
+        }
+
+        hasValidSignatureMembers =
+          record.members?.every((member) => validateMember(member, context)) ??
+          false
+      })
+
+      return (
+        hasValidInstitutionAndDate &&
+        hasValidSignatureMembers &&
+        hasValidChairman
+      )
     })
-
-    return validInstitutionAndDate && validMembers
-  })
+}
 
 const validateMember = (
   schema: z.infer<typeof memberItemSchema>,

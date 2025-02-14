@@ -76,14 +76,19 @@ export const SignaturesField = ({ application }: OJOIFieldBaseProps) => {
       updateApplicationV2({
         path: path,
         value: records,
-      })
-
-      updateApplicationV2({
-        path: InputFields.misc.signatureType,
-        value: signatureType,
         onComplete: () => {
-          setSelectedTab(signatureType)
+          updateApplicationV2({
+            path: InputFields.misc.signatureType,
+            value: signatureType,
+            onComplete: () => {
+              setSelectedTab(signatureType)
+              setLoadingTabChange(false)
+            },
+          })
+        },
+        onError: () => {
           setLoadingTabChange(false)
+          toast.error(f(signatures.errors.lastSignature))
         },
       })
     },
