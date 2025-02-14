@@ -7,11 +7,9 @@ import router from 'next/router'
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -81,9 +79,6 @@ export const getIndictmentIntroductionAutofill = (
 }
 
 const Indictment = () => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-
   const {
     workingCase,
     setWorkingCase,
@@ -122,7 +117,7 @@ const Indictment = () => {
     },
   })
 
-  const stepIsValid = isIndictmentStepValid(workingCase, isOffenseEndpointEnabled)
+  const stepIsValid = isIndictmentStepValid(workingCase)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -136,25 +131,18 @@ const Indictment = () => {
       // If the case has:
       // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
-      const requestDriversLicenseSuspension = isOffenseEndpointEnabled
-        ? indictmentCounts?.some((count) => {
-            return count.offenses?.some((o) =>
-              [
-                IndictmentCountOffense.DRUNK_DRIVING,
-                IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-                IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-              ].includes(o.offense),
-            )
-          })
-        : indictmentCounts?.some((count) =>
-            count.deprecatedOffenses?.some((offense) =>
-              [
-                IndictmentCountOffense.DRUNK_DRIVING,
-                IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-                IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-              ].includes(offense),
-            ),
+      const requestDriversLicenseSuspension = indictmentCounts?.some(
+        (count) => {
+          return count.offenses?.some((o) =>
+            [
+              IndictmentCountOffense.DRUNK_DRIVING,
+              IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+              IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+            ].includes(o.offense),
           )
+        },
+      )
+
       if (
         requestDriversLicenseSuspension !==
         workingCase.requestDriversLicenseSuspension
@@ -174,13 +162,7 @@ const Indictment = () => {
         )
       }
     },
-    [
-      isOffenseEndpointEnabled,
-      formatMessage,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {

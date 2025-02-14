@@ -9,13 +9,11 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  Feature,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -104,9 +102,6 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant = () => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -309,7 +304,6 @@ const Defendant = () => {
             formatMessage,
             crimeScene,
             subtypesRecord: subtypes,
-            isOffenseEndpointEnabled,
           })
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
