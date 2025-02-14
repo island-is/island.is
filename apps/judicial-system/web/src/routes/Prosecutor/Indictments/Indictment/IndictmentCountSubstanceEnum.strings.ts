@@ -81,6 +81,11 @@ export const indictmentCountSubstanceEnum = defineMessages({
     defaultMessage: 'brómazepam {amount} ng/ml',
     description: 'Notaður fyrir brómazepam í blóði',
   },
+  BROMAZOLAM: {
+    id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.bromazolam',
+    defaultMessage: 'brómazólam {amount} ng/ml',
+    description: 'Notaður fyrir brómazólam í blóði',
+  },
   BUPRENORPHINE: {
     id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.buprenorphine',
     defaultMessage: 'búprenorfín {amount} ng/ml',
@@ -110,6 +115,11 @@ export const indictmentCountSubstanceEnum = defineMessages({
     id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.flunitrazepam',
     defaultMessage: 'flúnitrazepam {amount} ng/ml',
     description: 'Notaður fyrir flúnitrazepam í blóði',
+  },
+  FLUALPRAZOLAM: {
+    id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.flualprazolam',
+    defaultMessage: 'flúalprazólam {amount} ng/ml',
+    description: 'Notaður fyrir flúalprazólam í blóði',
   },
   GABAPENTIN: {
     id: 'judicial.system.core:indictments_indictment.indictment_offense_count_enum.gabapentin',

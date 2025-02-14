@@ -19,6 +19,18 @@ export const substanceEnum = defineMessages({
     description:
       'Notaður fyrir fenazepam í leitanlegum lyfja lista á ákæru skrefi í ákærum.',
   },
+  FLUALPRAZOLAM: {
+    id: 'judicial.system.core:substances.flualprazolam',
+    defaultMessage: 'Flúalprazólam',
+    description:
+      'Notaður fyrir flúalprazólam í leitanlegum lyfja lista á ákæru skrefi í ákærum.',
+  },
+  BROMAZOLAM: {
+    id: 'judicial.system.core:substances.bromazolam',
+    defaultMessage: 'Brómazólam',
+    description:
+      'Notaður fyrir bromazolam í leitanlegum lyfja lista á ákæru skrefi í ákærum.',
+  },
   KETAMINE: {
     id: 'judicial.system.core:substances.ketamine',
     defaultMessage: 'Ketamín',
