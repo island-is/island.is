@@ -105,6 +105,9 @@ jobs:
     runs-on: arc-runners
     timeout-minutes: 15
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
