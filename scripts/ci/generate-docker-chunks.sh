@@ -4,9 +4,11 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
+
+# should be set by the caller or fail
 export \
-  HEAD=${HEAD:-HEAD} \
-  BASE=${BASE:-main} \
+  HEAD_SHA=${HEAD_SHA} \
+  BASE_SHA=${BASE_SHA} \
   MAX_JOBS='100'
 
 if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
@@ -20,7 +22,7 @@ fi
 
 chunks='[]'
 for target in "$@"; do
-  processed_chunks=$(yarn nx show projects --withTarget="$target" --affected --base "$BASE" --head "$HEAD" --json |
+  processed_chunks=$(yarn nx show projects --withTarget="$target" --affected --base "$BASE_SHA" --head "$HEAD_SHA" --json |
     jq -r '.[]' |
     xargs -I {} -P "${MAX_JOBS:-4}" bash -c "
       project=\"\$1\"
