@@ -30,13 +30,11 @@ import {
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
-  CaseDecision,
   CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
   EventType,
-  IndictmentDecision,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
