@@ -222,9 +222,12 @@ export class PdfService {
       )
 
       if (confirmationEvent && confirmationEvent.nationalId) {
-        const actor = await this.userService.findByNationalId(
+        const users = await this.userService.findByNationalId(
           confirmationEvent.nationalId,
         )
+
+        // TODO: Fix event log so we can select the correct user
+        const actor = users[0]
 
         confirmation = {
           actor: actor.name,

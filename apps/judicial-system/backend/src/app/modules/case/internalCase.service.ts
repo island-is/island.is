@@ -331,13 +331,16 @@ export class InternalCaseService {
   }
 
   async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
-    const creator = await this.userService
+    const users = await this.userService
       .findByNationalId(caseToCreate.prosecutorNationalId)
       .catch(() => undefined)
 
-    if (!creator) {
+    if (!users) {
       throw new BadRequestException('Creating user not found')
     }
+
+    // TODO: Sync with LÖKE so we can select the correct user
+    const creator = users[0]
 
     if (!isProsecutionUser(creator)) {
       throw new BadRequestException(
