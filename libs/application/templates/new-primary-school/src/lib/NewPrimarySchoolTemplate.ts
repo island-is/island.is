@@ -256,13 +256,13 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       clearSupport: assign((context) => {
         const { application } = context
         const {
-          developmentalAssessment,
-          specialSupport,
+          hasDiagnoses,
+          hasHadSupport,
           hasIntegratedServices,
           hasCaseManager,
         } = getApplicationAnswers(application.answers)
 
-        if (developmentalAssessment !== YES && specialSupport !== YES) {
+        if (hasDiagnoses !== YES && hasHadSupport !== YES) {
           unset(application.answers, 'support.hasIntegratedServices')
           unset(application.answers, 'support.hasCaseManager')
           unset(application.answers, 'support.caseManager')
