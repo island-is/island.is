@@ -8,8 +8,8 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
-    DrivingLicenseApiModule,
     FeatureFlagModule,
+    DrivingLicenseApiModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof DrivingDigitalLicenseClientConfig>,

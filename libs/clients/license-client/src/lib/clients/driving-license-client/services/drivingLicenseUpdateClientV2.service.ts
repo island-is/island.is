@@ -3,68 +3,66 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  Pass,
+  PassData,
   PassDataInput,
-  RevokePassData,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
+  PassRevocationData,
   PassVerificationData,
   Result,
-  VerifyInputData,
 } from '../../../licenseClient.type'
-import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
-import {
-  createPkPassDataInput,
-  mapNationalId,
-  nationalIdIndex,
-} from '../drivingLicenseMapper'
+import { createPkPassDataInput, mapNationalId } from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
+import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import { VerifyInputDataDto } from '../../base/baseLicenseUpdateClient.types'
+import { PkPassService } from '../../../helpers/pk-pass-service/pkPass.service'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
 
+const apiVersion = 'v2'
+
 @Injectable()
-/** @deprecated */
-export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
+export class DrivingLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
     @Inject(DrivingDigitalLicenseClientConfig.KEY)
     private config: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
     private drivingLicenseApi: DrivingLicenseApi,
-    protected smartApi: SmartSolutionsApi,
+    private readonly passService: PkPassService,
   ) {
-    super(logger, smartApi)
+    super()
   }
 
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PassData | undefined>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (
       inputFieldValues &&
-      !inputFieldValues?.some((nt) => nt.identifier === nationalIdIndex)
+      !inputFieldValues?.some((nt) => nt.identifier === 'kennitala')
     ) {
       inputFieldValues.push(mapNationalId(nationalId))
     }
-    return this.smartApi.updatePkPass(
+    return this.passService.updatePkPass(
       {
         ...inputData,
         inputFieldValues,
         passTemplateId: this.config.passTemplateId,
       },
       requestId,
+      apiVersion,
     )
   }
 
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PassData | undefined>> {
     let data
     try {
       data = await Promise.all([
@@ -126,31 +124,35 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     }
 
     const image = licenseInfo.photo?.image
-    const thumbnail = image
-      ? {
-          imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
-        }
-      : null
 
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
       expirationDate: licenseInfo.dateValidTo.toISOString(),
       passTemplateId: this.config.passTemplateId,
-      thumbnail,
+      thumbnail: image
+        ? {
+            imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
+          }
+        : undefined,
     }
 
-    return this.smartApi.updatePkPass(payload, requestId)
+    return this.passService.updatePkPass(payload, requestId, apiVersion)
   }
 
   revoke(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<RevokePassData>> {
+  ): Promise<Result<PassRevocationData>> {
     const passTemplateId = this.config.passTemplateId
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],
     }
-    return this.smartApi.revokePkPass(passTemplateId, payload, requestId)
+    return this.passService.revokePkPass(
+      passTemplateId,
+      payload,
+      requestId,
+      apiVersion,
+    )
   }
 
   /** We need to verify the pk pass AND the license itself! */
@@ -159,9 +161,20 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     requestId?: string,
   ): Promise<Result<PassVerificationData>> {
     //need to parse the scanner data
-    let parsedInput
+    let parsedInput: VerifyInputDataDto
     try {
-      parsedInput = JSON.parse(inputData) as VerifyInputData
+      parsedInput = plainToInstance(VerifyInputDataDto, JSON.parse(inputData))
+      const errors = await validate(parsedInput)
+      if (errors.length > 0) {
+        return {
+          ok: false,
+          error: {
+            code: 12,
+            message:
+              'Pkpass verification data input mapping failed, data may be invalid',
+          },
+        }
+      }
     } catch (ex) {
       this.logger.error(
         'Pkpass verification data input mapping failed, data may be invalid',
@@ -200,9 +213,10 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass(
+    const verifyRes = await this.passService.verifyPkPass(
       { code, date },
       requestId,
+      apiVersion,
     )
 
     if (!verifyRes.ok) {
@@ -210,7 +224,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     }
 
     if (!verifyRes.data.valid) {
-      this.logger.debug('PkPass is valid', {
+      this.logger.debug('PkPass is invalid', {
         requestId,
         category: LOG_CATEGORY,
       })
@@ -222,8 +236,8 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const passNationalId = verifyRes.data.pass?.inputFieldValues.find(
-      (i) => i.passInputField.identifier === 'kennitala',
+    const passNationalId = verifyRes.data.pass?.inputFieldValues?.find(
+      (i) => i.identifier === 'kennitala',
     )?.value
 
     if (!passNationalId) {
@@ -259,7 +273,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     }
 
     const licenseNationalId = license.socialSecurityNumber
-    const name = license.name ?? ''
+    const name = license?.name ?? ''
     const picture = license.photo?.image ?? ''
 
     if (!licenseNationalId || !name || !picture) {
