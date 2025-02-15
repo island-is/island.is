@@ -822,9 +822,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     daysToUse?: string,
     months?: number,
   ) {
-    if (daysToUse) {
-      return daysToUse
-    }
     const start = parseISO(startDate)
     const end = parseISO(endDate)
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
