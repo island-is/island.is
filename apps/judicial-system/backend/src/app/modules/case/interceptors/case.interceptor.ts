@@ -10,6 +10,7 @@ import {
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
 
@@ -36,6 +37,8 @@ const transformCase = (theCase: Case) => {
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
+    caseSentToCourtDate: EventLog.caseSentToCourtEvent(theCase.eventLogs)
+      ?.created,
   }
 }
 
