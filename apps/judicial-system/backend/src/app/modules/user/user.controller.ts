@@ -96,7 +96,7 @@ export class UserController {
     type: User,
     description: 'Gets an existing user by national id',
   })
-  getByNationalId(@Query('nationalId') nationalId: string): Promise<User> {
+  getByNationalId(@Query('nationalId') nationalId: string): Promise<User[]> {
     this.logger.debug('Getting a user by national id')
 
     return this.userService.findByNationalId(nationalId)
