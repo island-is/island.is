@@ -1,0 +1,24 @@
+name: 'Set GHA cache url'
+description: 'Set your custom cache URL'
+inputs:
+  github-token:
+    description: 'GitHub token (omit to skip setting URL)'
+    required: false
+  cache-url:
+    description: 'Cache URL'
+    default: 'https://cache.dev01.devland.is/'
+runs:
+  using: 'composite'
+  steps:
+    - name: Adding required env vars
+      # Skip when running locally
+      if: ${{ !!inputs.github-token && !github.event.localrun }}
+      uses: actions/github-script@v7
+      env:
+        cache-url: ${{ inputs.cache-url }}
+        github-token: ${{ inputs.GITHUB_TOKEN }}
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env['cache-url'])
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+          core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
