@@ -31,7 +31,7 @@ export const TableRow = ({
   const renderValueItem = (valueItem: any, i: number) => {
     if (tag && valueItems.length - 1 === i) {
       return (
-        <Tag variant={tag} outlined={tagOutlined}>
+        <Tag variant={tag} outlined={tagOutlined} disabled>
           {valueItem}
         </Tag>
       )
