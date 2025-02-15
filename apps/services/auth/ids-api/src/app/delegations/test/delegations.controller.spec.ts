@@ -1,7 +1,7 @@
 import { getModelToken } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
 import request from 'supertest'
 import { uuid } from 'uuidv4'
-import addDays from 'date-fns/addDays'
 
 import {
   ApiScope,
@@ -465,6 +465,7 @@ describe('DelegationsController', () => {
               name: 'custom',
               description: 'custom',
               providerId: AuthDelegationProvider.Custom,
+              actorDiscretionRequired: false,
             })
 
             await delegationScopesModel.create({

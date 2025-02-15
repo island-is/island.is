@@ -28,6 +28,7 @@ import {
   IdentityResource,
   Language,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationType,
   PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
@@ -469,6 +470,7 @@ export class FixtureFactory {
           providerId: delegationProvider.id,
           provider: delegationProvider,
           description: `Personal representative delegation type for right type ${id}`,
+          actorDiscretionRequired: false,
         },
       },
     )
@@ -569,7 +571,13 @@ export class FixtureFactory {
     const delegationTypes = await Promise.all(
       rightTypes
         ? rightTypes.map((rightType) =>
-            this.createDelegationType({ id: rightType?.code ?? '' }),
+            this.createDelegationType({
+              id: `${AuthDelegationType.PersonalRepresentative}:${
+                rightType?.code ?? ''
+              }`,
+              providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
+              actorDiscretionRequired: false,
+            }),
           )
         : [],
     )
@@ -698,6 +706,7 @@ export class FixtureFactory {
     name = faker.random.word(),
     description = faker.random.words(3),
     providerId,
+    actorDiscretionRequired = false,
   }: CreateDelegationType) {
     const delegationProvider = await this.createDelegationProvider({
       id: providerId,
@@ -712,10 +721,23 @@ export class FixtureFactory {
           description,
           providerId: delegationProvider.id,
           provider: delegationProvider,
+          actorDiscretionRequired,
         },
       },
     )
 
     return delegationType
+  }
+
+  async createAllDelegationTypes() {
+    await Promise.all(
+      [
+        ...Object.values(AuthDelegationType),
+        PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
+        `${AuthDelegationType.PersonalRepresentative}:finance`,
+      ].map(async (delegationType) => {
+        await this.createDelegationType({ id: delegationType })
+      }),
+    )
   }
 }

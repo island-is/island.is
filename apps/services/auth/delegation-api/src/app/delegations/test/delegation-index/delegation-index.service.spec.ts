@@ -4,20 +4,6 @@ import faker from 'faker'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
-  indexingTestCases,
-  prRight1,
-  testDate,
-} from './delegation-index-test-cases'
-import { setupWithAuth } from '../../../../../test/setup'
-import {
-  customScopes,
-  customScopesOtherDomain,
-  domainName,
-  TestCase,
-  user,
-} from './delegations-index-types'
-
-import {
   actorSubjectIdType,
   audkenniProvider,
   Delegation,
@@ -37,6 +23,20 @@ import {
 } from '@island.is/shared/types'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { TestApp, truncate } from '@island.is/testing/nest'
+
+import { setupWithAuth } from '../../../../../test/setup'
+import {
+  indexingTestCases,
+  prRight1,
+  testDate,
+} from './delegation-index-test-cases'
+import {
+  customScopes,
+  customScopesOtherDomain,
+  domainName,
+  TestCase,
+  user,
+} from './delegations-index-types'
 
 describe('DelegationsIndexService', () => {
   let app: TestApp
@@ -210,9 +210,12 @@ describe('DelegationsIndexService', () => {
       (type) => {
         const testCase = indexingTestCases[type]
         testCase.user = user
+        let factory: FixtureFactory
 
         beforeEach(async () => {
           await setup(testCase)
+          factory = new FixtureFactory(app)
+          await factory.createAllDelegationTypes()
         })
 
         it('should index delegations', async () => {
@@ -237,9 +240,12 @@ describe('DelegationsIndexService', () => {
 
     describe('Reindex (multiple indexing)', () => {
       const testCase = indexingTestCases.custom
+      let factory: FixtureFactory
 
       beforeEach(async () => {
         await setup(testCase)
+        factory = new FixtureFactory(app)
+        await factory.createAllDelegationTypes()
       })
 
       it('should not duplicate delegations on reindex', async () => {
