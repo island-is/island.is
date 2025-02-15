@@ -38,6 +38,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-procuration-holder',
     defaultMessage: 'Prókúra',
   },
+  delegationTypeExecutiveDirector: {
+    id: 'sp.access-control-delegations:delegation-type-executive-director',
+    defaultMessage: 'Framkvæmdastjóri',
+  },
   delegationTypePersonalRepresentative: {
     id: 'sp.access-control-delegations:delegation-type-personal-representative',
     defaultMessage: 'Pers. talsmaður',
