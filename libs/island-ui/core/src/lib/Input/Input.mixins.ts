@@ -5,7 +5,7 @@ import omit from 'lodash/omit'
 const inputPadding = `0 ${theme.spacing[2]}px`
 const mobileInputPadding = `0 ${theme.spacing[1]}px`
 const labelFontSize = 14
-const mobileLabelFontSize = 12
+const mobileLabelFontSize = 14
 const inputFontSize = 24
 const mobileInputFontSize = 20
 const inputFontSizeSmall = 18
