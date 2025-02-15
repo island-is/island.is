@@ -16,7 +16,7 @@ import {
   StaticText,
 } from './Form'
 import { ApolloClient } from '@apollo/client'
-import { Application, FormValue } from './Application'
+import { Application, ExternalData, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
@@ -290,6 +290,7 @@ export enum FieldTypes {
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   TITLE = 'TITLE',
+  OVERVIEW = 'OVERVIEW',
 }
 
 export enum FieldComponents {
@@ -329,6 +330,7 @@ export enum FieldComponents {
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
   TITLE = 'TitleFormField',
+  OVERVIEW = 'OverviewFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -849,6 +851,44 @@ export interface DisplayField extends BaseField {
   value: (answers: FormValue) => string
 }
 
+export type KeyValueItem = {
+  width?: 'full' | 'half' | 'snug'
+  keyText?: FormText
+  valueText?: FormText
+  boldValueText?: boolean
+  lineAboveKeyText?: boolean
+}
+
+export type AttachmentItem = {
+  width?: 'full' | 'half'
+  fileName: FormText
+  fileSize?: FormText
+  fileType?: FormText
+}
+
+type TableData = {
+  header: Array<FormTextWithLocale>
+  rows: Array<Array<string>>
+}
+
+export interface OverviewField extends BaseField {
+  readonly type: FieldTypes.OVERVIEW
+  component: FieldComponents.OVERVIEW
+  title: FormText
+  description?: FormText
+  backId?: string
+  bottomLine?: boolean
+  items?: (
+    answers: FormValue,
+    externalData: ExternalData,
+  ) => Array<KeyValueItem>
+  attachments?: (
+    answers: FormValue,
+    externalData: ExternalData,
+  ) => Array<AttachmentItem>
+  tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -888,3 +928,4 @@ export type Field =
   | AccordionField
   | BankAccountField
   | TitleField
+  | OverviewField
