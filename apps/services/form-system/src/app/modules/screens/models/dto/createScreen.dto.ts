@@ -1,9 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
 export class CreateScreenDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
   sectionId!: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  displayOrder!: number
 }

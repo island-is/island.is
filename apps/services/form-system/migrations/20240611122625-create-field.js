@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -11,6 +9,10 @@ module.exports = {
             primaryKey: true,
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
+          },
+          identifier: {
+            type: Sequelize.UUID,
+            allowNull: false,
           },
           name: {
             type: Sequelize.JSON,
@@ -34,7 +36,7 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          is_hidden: {
+          is_required: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
@@ -43,6 +45,10 @@ module.exports = {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
+          },
+          field_settings: {
+            type: Sequelize.JSON,
+            allowNull: true,
           },
           screen_id: {
             type: Sequelize.UUID,
@@ -56,10 +62,6 @@ module.exports = {
           field_type: {
             type: Sequelize.STRING,
             allowNull: false,
-            references: {
-              model: 'field_type',
-              key: 'type',
-            },
           },
         },
         { transaction: t },

@@ -8,7 +8,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApplicantTypes } from '../../../enums/applicantTypes'
 import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'applicant' })
@@ -35,15 +34,13 @@ export class Applicant extends Model<Applicant> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
   })
-  name!: string
+  name?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: '',
   })
   nationalId!: string
 
@@ -51,33 +48,31 @@ export class Applicant extends Model<Applicant> {
     type: DataType.STRING,
     allowNull: true,
   })
-  email!: string
+  email?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  phoneNumber!: string
+  phoneNumber?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  address!: string
+  address?: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  municipality!: string
+  municipality?: string
 
   @Column({
-    type: DataType.ENUM,
+    type: DataType.STRING,
     allowNull: false,
-    values: Object.values(ApplicantTypes),
-    defaultValue: ApplicantTypes.INDIVIDUAL,
   })
-  applicantType!: string
+  applicantTypeId!: string
 
   @ForeignKey(() => Application)
   @Column({

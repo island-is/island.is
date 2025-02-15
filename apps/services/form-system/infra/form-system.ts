@@ -4,11 +4,14 @@ import {
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'services-form-system'> =>
-  service('services-form-system')
-    .image('services-form-system')
-    .namespace('services-form-system')
+export const serviceSetup = (): ServiceBuilder<'services-form-system-api'> =>
+  service('services-form-system-api')
+    .image('services-form-system-api')
+    .namespace('services-form-system-api')
     .codeOwner(CodeOwners.Advania)
+    .db()
+    .migrations()
+    .seed()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -18,7 +21,4 @@ export const serviceSetup = (): ServiceBuilder<'services-form-system'> =>
     })
     .liveness('/liveness')
     .readiness('/readiness')
-    .db()
-    .migrations()
-    .seed()
     .grantNamespaces('islandis')
