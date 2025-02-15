@@ -1,11 +1,13 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType } from 'react-native'
+import { Image, ImageSourcePropType, Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
 import { Typography } from '../typography/typography'
 import { Label } from '../label/label'
 import { dynamicColor } from '../../utils'
+import checkmarkIcon from '../../assets/icons/checkmark.png'
+import starFilledIcon from '../../../assets/icons/star-filled.png'
 
 const Host = styled.SafeAreaView<{ unread?: boolean }>`
   flex-direction: row;
@@ -22,7 +24,11 @@ const Host = styled.SafeAreaView<{ unread?: boolean }>`
     true,
   )};
 `
-const Icon = styled.View<{ unread?: boolean }>`
+const Icon = styled.View<{
+  unread?: boolean
+  selectable?: boolean
+  selected?: boolean
+}>`
   margin-vertical: ${({ theme }) => theme.spacing[3]}px;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${({ theme, unread }) =>
@@ -33,6 +39,9 @@ const Icon = styled.View<{ unread?: boolean }>`
   justify-content: center;
   border-radius: ${({ theme }) => theme.border.radius.full};
   flex-direction: column;
+  border: ${({ theme, selectable, selected }) =>
+      selectable && !selected ? theme.border.width.standard : 0}px
+    solid ${({ theme }) => theme.color.blue200};
 `
 
 const Content = styled.View`
@@ -60,6 +69,15 @@ const Title = styled.View`
 
 const Cell = styled.View``
 
+const StarImage = styled.Image<{ active?: boolean }>`
+  tint-color: ${dynamicColor(({ active, theme }) => ({
+    dark: active ? theme.color.blue400 : theme.color.dark300,
+    light: active ? theme.color.blue400 : theme.color.dark300,
+  }))};
+  width: 16px;
+  height: 16px;
+`
+
 interface ListItemAction {
   id: string
   text: string
@@ -73,7 +91,11 @@ interface ListItemProps {
   unread?: boolean
   actions?: ListItemAction[]
   icon?: ImageSourcePropType | React.ReactNode
+  starred?: boolean
   urgent?: boolean
+  selectable?: boolean
+  selected?: boolean
+  onPressIcon?: () => void
 }
 
 export function ListItem({
@@ -83,6 +105,10 @@ export function ListItem({
   icon,
   unread = false,
   urgent = false,
+  starred = false,
+  selectable = false,
+  selected = false,
+  onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
   return (
@@ -91,11 +117,18 @@ export function ListItem({
         {icon && isValidElement(icon) ? (
           icon
         ) : icon ? (
-          <Icon unread={unread}>
-            <Image
-              source={icon as ImageSourcePropType}
-              style={{ width: 24, height: 24 }}
-            />
+          <Icon unread={unread} selectable={selectable} selected={selected}>
+            {!selectable && !selected && (
+              <Pressable hitSlop={24} onPress={onPressIcon}>
+                <Image
+                  source={icon as ImageSourcePropType}
+                  style={{ width: 24, height: 24 }}
+                />
+              </Pressable>
+            )}
+            {selectable && selected && (
+              <Image source={checkmarkIcon} style={{ width: 50, height: 50 }} />
+            )}
           </Icon>
         ) : null}
         <Content>
@@ -128,6 +161,7 @@ export function ListItem({
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}
+            {starred && <StarImage source={starFilledIcon} active={starred} />}
           </Row>
         </Content>
       </Host>
