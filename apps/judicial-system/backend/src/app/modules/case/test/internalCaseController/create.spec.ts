@@ -113,7 +113,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
       const mockDefendantCreate =
@@ -215,7 +215,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       then = await givenWhenThen(caseToCreate)
     })
@@ -244,7 +244,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       await givenWhenThen({
         ...caseToCreate,
@@ -285,7 +285,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       await givenWhenThen({ ...caseToCreate, isHeightenedSecurityLevel: true })
     })
@@ -338,7 +338,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       then = await givenWhenThen(caseToCreate)
     })
@@ -364,7 +364,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
 
@@ -392,7 +392,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
       const mockDefendantCreate =
