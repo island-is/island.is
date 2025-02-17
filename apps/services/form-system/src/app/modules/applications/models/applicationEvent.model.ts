@@ -10,6 +10,7 @@ import {
 import { CreationOptional } from 'sequelize'
 import { Application } from './application.model'
 import { Value } from './value.model'
+import { ApplicationEvents } from '../../../enums/applicationEvents'
 
 @Table({ tableName: 'application_event' })
 export class ApplicationEvent extends Model<ApplicationEvent> {
@@ -28,8 +29,9 @@ export class ApplicationEvent extends Model<ApplicationEvent> {
   modified!: CreationOptional<Date>
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(ApplicationEvents),
   })
   eventType!: string
 

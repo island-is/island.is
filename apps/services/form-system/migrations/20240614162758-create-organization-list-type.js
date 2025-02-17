@@ -29,7 +29,7 @@ module.exports = {
             },
           },
           list_type_id: {
-            type: Sequelize.UUID,
+            type: Sequelize.STRING,
             allowNull: false,
           },
         },

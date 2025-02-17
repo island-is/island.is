@@ -9,6 +9,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
+import { UrlMethods } from '../../../enums/urlMethods'
+import { UrlTypes } from '../../../enums/urlTypes'
 
 @Table({ tableName: 'organization_url' })
 export class OrganizationUrl extends Model<OrganizationUrl> {
@@ -48,15 +50,16 @@ export class OrganizationUrl extends Model<OrganizationUrl> {
   isTest!: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(UrlTypes),
   })
   type!: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
-    defaultValue: '',
+    values: Object.values(UrlMethods),
   })
   method!: string
 

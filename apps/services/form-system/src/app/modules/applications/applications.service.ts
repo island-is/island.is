@@ -25,6 +25,8 @@ import { ScreenValidationResponse } from '../../dataTypes/validationResponse.mod
 import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
 import { ApplicantTypesEnum } from '../../dataTypes/applicantTypes/applicantTypes.enum'
+import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
+import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -57,9 +59,9 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
-    const transaction = await this.sequelize.transaction()
+    let newApplicationId: string = ''
 
-    try {
+    await this.sequelize.transaction(async (transaction) => {
       const newApplication: Application = await this.applicationModel.create(
         {
           formId: form.id,
@@ -114,14 +116,10 @@ export class ApplicationsService {
         ),
       )
 
-      await transaction.commit()
-
-      const applicationDto = await this.getApplication(newApplication.id)
-      return applicationDto
-    } catch (error) {
-      await transaction.rollback()
-      throw error
-    }
+      newApplicationId = newApplication.id
+    })
+    const applicationDto = await this.getApplication(newApplicationId)
+    return applicationDto
   }
 
   async update(
@@ -209,7 +207,7 @@ export class ApplicationsService {
     }
 
     application.submittedAt = new Date()
-    application.save()
+    await application.save()
 
     const applicationDto = await this.getApplication(id)
 
@@ -218,7 +216,7 @@ export class ApplicationsService {
     if (success) {
       application.status = ApplicationStatus.SUBMITTED
       application.submittedAt = new Date()
-      application.save()
+      await application.save()
     }
 
     return success
@@ -364,6 +362,14 @@ export class ApplicationsService {
               ],
             },
           ],
+        },
+        {
+          model: FormApplicantType,
+          as: 'formApplicantTypes',
+        },
+        {
+          model: FormCertificationType,
+          as: 'formCertificationTypes',
         },
       ],
       order: [

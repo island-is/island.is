@@ -9,6 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Application } from '../../applications/models/application.model'
+import { ApplicantTypesEnum } from '../../../dataTypes/applicantTypes/applicantTypes.enum'
 
 @Table({ tableName: 'applicant' })
 export class Applicant extends Model<Applicant> {
@@ -69,8 +70,9 @@ export class Applicant extends Model<Applicant> {
   municipality?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(ApplicantTypesEnum),
   })
   applicantTypeId!: string
 

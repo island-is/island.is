@@ -50,7 +50,7 @@ module.exports = {
             allowNull: true,
           },
           applicant_type_id: {
-            type: Sequelize.UUID,
+            type: Sequelize.STRING,
             allowNull: false,
           },
           application_id: {

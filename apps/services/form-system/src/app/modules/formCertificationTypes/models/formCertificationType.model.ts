@@ -9,6 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
+import { CertificationTypesEnum } from '../../../dataTypes/certificationTypes/certificationTypes.enum'
 
 @Table({ tableName: 'form_certification_type' })
 export class FormCertificationType extends Model<FormCertificationType> {
@@ -35,9 +36,9 @@ export class FormCertificationType extends Model<FormCertificationType> {
   formId!: string
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.ENUM,
     allowNull: false,
-    defaultValue: DataType.UUIDV4,
+    values: Object.values(CertificationTypesEnum),
   })
   certificationTypeId!: string
 }

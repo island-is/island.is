@@ -10,6 +10,7 @@ import {
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
 import { CreationOptional } from 'sequelize'
+import { ApplicantTypesEnum } from '../../../dataTypes/applicantTypes/applicantTypes.enum'
 
 @Table({ tableName: 'form_applicant_type' })
 export class FormApplicantType extends Model<FormApplicantType> {
@@ -35,8 +36,9 @@ export class FormApplicantType extends Model<FormApplicantType> {
   name!: LanguageType
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(ApplicantTypesEnum),
   })
   applicantTypeId!: string
 

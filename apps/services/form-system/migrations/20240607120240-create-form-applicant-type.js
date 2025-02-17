@@ -25,7 +25,7 @@ module.exports = {
             allowNull: false,
           },
           applicant_type_id: {
-            type: Sequelize.UUID,
+            type: Sequelize.STRING,
             allowNull: false,
           },
           form_id: {

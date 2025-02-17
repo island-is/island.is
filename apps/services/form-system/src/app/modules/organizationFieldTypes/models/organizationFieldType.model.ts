@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
 import { CreationOptional } from 'sequelize'
+import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
 
 @Table({ tableName: 'organization_field_type' })
 export class OrganizationFieldType extends Model<OrganizationFieldType> {
@@ -35,9 +36,9 @@ export class OrganizationFieldType extends Model<OrganizationFieldType> {
   organizationId!: string
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.ENUM,
     allowNull: false,
-    defaultValue: DataType.UUIDV4,
+    values: Object.values(FieldTypesEnum),
   })
   fieldTypeId!: string
 }

@@ -7,6 +7,8 @@ import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
+import { ListItem } from '../../listItems/models/listItem.model'
+import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -61,6 +63,16 @@ export class ApplicationMapper {
                 isRequired: field.isRequired,
                 fieldSettings: field.fieldSettings,
                 isHidden: this.isHidden(field.id, application.dependencies),
+                list: field.list?.map((list) => {
+                  return {
+                    id: list.id,
+                    label: list.label,
+                    description: list.description,
+                    displayOrder: list.displayOrder,
+                    value: list.value,
+                    isSelected: list.isSelected,
+                  } as ListItemDto
+                }),
                 values: field.values?.map((value) => {
                   return {
                     id: value.id,
