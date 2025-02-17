@@ -353,7 +353,7 @@ jobs:
             # The final sha for the merge commit
             # mcgh: Merge Commit GitHub
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
-            type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
+            type=raw,priority=50,value=mcgh-${{ github.event.pull_request.merge_commit_sha }},enable=${{ !!github.event.pull_request.merge_commit_sha }}
 
       - name: Ensure generated files (codegen)
         uses: ./.github/actions/get-cache
