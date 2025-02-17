@@ -353,7 +353,8 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,value=mcgh-${{ github.event.pull_request.merge_commit_sha }}
 
-      - uses: ./.github/actions/get-cache
+      - name: Ensure generated files (codegen)
+        uses: ./.github/actions/get-cache
         with:
           github-token: ${{ github.token }}
           enable-cache: generated-files
