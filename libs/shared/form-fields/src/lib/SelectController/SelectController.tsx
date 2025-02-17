@@ -37,7 +37,9 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   clearOnChange?: string[]
   setOnChange?:
     | { key: string; value: any }[]
-    | ((newVal: any) => { key: string; value: any }[])
+    | ((
+        optionValue: MultiValue<Value> | SingleValue<Value> | undefined,
+      ) => { key: string; value: any }[])
 }
 
 export const SelectController = <Value, IsMulti extends boolean = false>({
@@ -147,7 +149,11 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
             if (setOnChange) {
               setInputsOnChange(
                 typeof setOnChange === 'function'
-                  ? setOnChange(newVal)
+                  ? setOnChange(
+                      isMultiValue(newVal)
+                        ? newVal?.map((v) => v.value)
+                        : newVal?.value,
+                    )
                   : setOnChange,
                 setValue,
               )

@@ -98,6 +98,8 @@ type MaybeWithAnswersAndExternalData<T> =
   | T
   | ((formValue: FormValue, externalData: ExternalData) => T)
 
+export type RepeaterOptionValue = string | readonly string[] | undefined | null
+
 export type RepeaterItem = {
   component: RepeaterFields
   /**
@@ -145,7 +147,7 @@ export type RepeaterItem = {
   setOnChange?:
     | { key: string; value: any }[]
     | ((
-        newVal: any,
+        optionValue: RepeaterOptionValue,
         application: Application,
         index: number,
         activeField?: Record<string, string>,
@@ -257,7 +259,7 @@ export interface BaseField extends FormItem {
   clearOnChange?: string[]
   setOnChange?:
     | { key: string; value: any }[]
-    | ((newVal: any) => { key: string; value: any }[])
+    | ((optionValue: RepeaterOptionValue) => { key: string; value: any }[])
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean

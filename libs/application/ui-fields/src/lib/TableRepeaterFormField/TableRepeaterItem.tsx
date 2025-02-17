@@ -1,12 +1,11 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  AsyncSelectContext,
   AsyncSelectField,
   FieldComponents,
   FieldTypes,
-  Option,
   RepeaterItem,
+  RepeaterOptionValue,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -249,9 +248,9 @@ export const Item = ({
 
   const setOnChangeFunc =
     setOnChange &&
-    ((option: any) => {
+    ((optionValue: RepeaterOptionValue) => {
       if (typeof setOnChange === 'function') {
-        return setOnChange(option, application, activeIndex, activeValues)
+        return setOnChange(optionValue, application, activeIndex, activeValues)
       } else {
         return setOnChange || []
       }

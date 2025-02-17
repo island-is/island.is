@@ -3,6 +3,7 @@ import {
   Application,
   ExternalData,
   FormValue,
+  RepeaterOptionValue,
 } from '@island.is/application/types'
 import { Program, SecondarySchool } from './types'
 import {
@@ -42,6 +43,12 @@ const getProgramInfo = (
   const programOptions =
     activeField && getValueViaPath<Program[]>(activeField, 'programOptions')
   return programOptions?.find((x) => x.id === programId)
+}
+
+const getStringFromOptionValue = (optionValue: RepeaterOptionValue): string => {
+  return (
+    optionValue && (Array.isArray(optionValue) ? optionValue[0] : optionValue)
+  )
 }
 
 export const getFormTitle = (index: number): StaticText => {
@@ -149,7 +156,7 @@ export const clearOnChangeSchool = (index: number) => {
 }
 
 export const setOnChangeSchool = (
-  option: { value: string },
+  optionValue: RepeaterOptionValue,
   application: Application,
   index: number,
 ) => {
@@ -157,7 +164,9 @@ export const setOnChangeSchool = (
     application.externalData,
     'schools.data',
   )
-  const selectedSchool = schoolOptions?.find((x) => x.id === option.value)
+  const selectedSchool = schoolOptions?.find(
+    (x) => x.id === getStringFromOptionValue(optionValue),
+  )
   return [
     {
       key: `selection[${index}].school.name`,
@@ -227,12 +236,15 @@ export const loadProgramOptions = async (
 }
 
 export const setOnChangeFirstProgram = (
-  option: { value: string },
+  optionValue: RepeaterOptionValue,
   application: Application,
   index: number,
   activeField?: Record<string, string>,
 ) => {
-  const programInfo = getProgramInfo(activeField, option.value)
+  const programInfo = getProgramInfo(
+    activeField,
+    getStringFromOptionValue(optionValue),
+  )
   return [
     {
       key: `selection[${index}].firstProgram.nameIs`,
@@ -297,11 +309,14 @@ export const getUpdateOnSelectSecondProgram = (index: number): string[] => {
 }
 
 export const setOnChangeSecondProgram = (
-  option: { value: string },
+  optionValue: RepeaterOptionValue,
   index: number,
   activeField?: Record<string, string>,
 ) => {
-  const programInfo = getProgramInfo(activeField, option.value)
+  const programInfo = getProgramInfo(
+    activeField,
+    getStringFromOptionValue(optionValue),
+  )
   return [
     {
       key: `selection[${index}].secondProgram.nameIs`,
@@ -332,14 +347,14 @@ export const getThirdLanguageOptions = (
 }
 
 export const setOnChangeThirdLanguage = (
-  option: { value: string },
+  optionValue: RepeaterOptionValue,
   application: Application,
   index: number,
   activeField?: Record<string, string>,
 ) => {
   const schoolInfo = getSchoolInfo(application.externalData, activeField)
   const languageInfo = schoolInfo?.thirdLanguages?.find(
-    (x) => x.code === option.value,
+    (x) => x.code === getStringFromOptionValue(optionValue),
   )
   return [
     {
@@ -363,14 +378,14 @@ export const getNordicLanguageOptions = (
 }
 
 export const setOnChangeNordicLanguage = (
-  option: { value: string },
+  optionValue: RepeaterOptionValue,
   application: Application,
   index: number,
   activeField?: Record<string, string>,
 ) => {
   const schoolInfo = getSchoolInfo(application.externalData, activeField)
   const languageInfo = schoolInfo?.nordicLanguages?.find(
-    (x) => x.code === option.value,
+    (x) => x.code === getStringFromOptionValue(optionValue),
   )
   return [
     {
