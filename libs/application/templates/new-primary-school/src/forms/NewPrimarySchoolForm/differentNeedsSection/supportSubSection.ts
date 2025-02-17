@@ -28,7 +28,7 @@ export const supportSubSection = buildSubSection({
       },
       children: [
         buildRadioField({
-          id: 'support.developmentalAssessment',
+          id: 'support.hasDiagnoses',
           title: (application) => {
             const { applicationType } = getApplicationAnswers(
               application.answers,
@@ -36,9 +36,8 @@ export const supportSubSection = buildSubSection({
 
             return applicationType ===
               ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds
-                  .enrollmentDevelopmentalAssessment
-              : newPrimarySchoolMessages.differentNeeds.developmentalAssessment
+              ? newPrimarySchoolMessages.differentNeeds.enrollmentHasDiagnoses
+              : newPrimarySchoolMessages.differentNeeds.hasDiagnoses
           },
           width: 'half',
           required: true,
@@ -56,7 +55,7 @@ export const supportSubSection = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'support.specialSupport',
+          id: 'support.hasHadSupport',
           title: (application) => {
             const { applicationType } = getApplicationAnswers(
               application.answers,
@@ -64,8 +63,8 @@ export const supportSubSection = buildSubSection({
 
             return applicationType ===
               ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds.enrollmentSpecialSupport
-              : newPrimarySchoolMessages.differentNeeds.specialSupport
+              ? newPrimarySchoolMessages.differentNeeds.enrollmentHasHadSupport
+              : newPrimarySchoolMessages.differentNeeds.hasHadSupport
           },
           width: 'half',
           required: true,
@@ -105,10 +104,10 @@ export const supportSubSection = buildSubSection({
             },
           ],
           condition: (answers) => {
-            const { developmentalAssessment, specialSupport } =
+            const { hasDiagnoses, hasHadSupport } =
               getApplicationAnswers(answers)
 
-            return developmentalAssessment === YES || specialSupport === YES
+            return hasDiagnoses === YES || hasHadSupport === YES
           },
         }),
         buildRadioField({
@@ -132,14 +131,11 @@ export const supportSubSection = buildSubSection({
             },
           ],
           condition: (answers) => {
-            const {
-              developmentalAssessment,
-              specialSupport,
-              hasIntegratedServices,
-            } = getApplicationAnswers(answers)
+            const { hasDiagnoses, hasHadSupport, hasIntegratedServices } =
+              getApplicationAnswers(answers)
 
             return (
-              (developmentalAssessment === YES || specialSupport === YES) &&
+              (hasDiagnoses === YES || hasHadSupport === YES) &&
               hasIntegratedServices === YES
             )
           },
@@ -151,14 +147,14 @@ export const supportSubSection = buildSubSection({
           required: true,
           condition: (answers) => {
             const {
-              developmentalAssessment,
-              specialSupport,
+              hasDiagnoses,
+              hasHadSupport,
               hasIntegratedServices,
               hasCaseManager,
             } = getApplicationAnswers(answers)
 
             return (
-              (developmentalAssessment === YES || specialSupport === YES) &&
+              (hasDiagnoses === YES || hasHadSupport === YES) &&
               hasIntegratedServices === YES &&
               hasCaseManager === YES
             )
@@ -171,14 +167,14 @@ export const supportSubSection = buildSubSection({
           required: true,
           condition: (answers) => {
             const {
-              developmentalAssessment,
-              specialSupport,
+              hasDiagnoses,
+              hasHadSupport,
               hasIntegratedServices,
               hasCaseManager,
             } = getApplicationAnswers(answers)
 
             return (
-              (developmentalAssessment === YES || specialSupport === YES) &&
+              (hasDiagnoses === YES || hasHadSupport === YES) &&
               hasIntegratedServices === YES &&
               hasCaseManager === YES
             )
@@ -203,14 +199,15 @@ export const supportSubSection = buildSubSection({
           marginTop: 4,
         }),
         buildCheckboxField({
-          id: 'support.requestMeeting',
-          description: newPrimarySchoolMessages.differentNeeds.requestMeeting,
+          id: 'support.requestingMeeting',
+          description:
+            newPrimarySchoolMessages.differentNeeds.requestingMeeting,
           options: [
             {
               value: YES,
               label:
                 newPrimarySchoolMessages.differentNeeds
-                  .requestMeetingDescription,
+                  .requestingMeetingDescription,
             },
           ],
         }),
