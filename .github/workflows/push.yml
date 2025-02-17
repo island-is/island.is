@@ -111,6 +111,8 @@ jobs:
       - name: feature-checkout
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: prerelease-checkout
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'

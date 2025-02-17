@@ -1,5 +1,9 @@
 name: 'Checkout for features'
 description: 'Checkout refs for feature deployments'
+inputs:
+  token:
+    description: 'A Github PAT'
+    required: true
 
 runs:
   using: 'composite'
@@ -33,7 +37,7 @@ runs:
       shell: bash
       id: git_nx_base
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
         HTML_URL: ${{ github.event.pull_request.html_url }}
         ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
       run: |
