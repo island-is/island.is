@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { useApplication } from './useUpdateApplication'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   getEmptyRecord,
   getEmptySignature,
@@ -43,6 +43,19 @@ export const useSignatures = ({
       ? currentSignature
       : getEmptySignature(variant === 'regular'),
   )
+
+  useEffect(() => {
+    return () => {
+      handleUpdateChairman.cancel()
+      handleUpdateMember.cancel()
+      handleUpdateSignature.cancel()
+      handleRemoveRecord.cancel()
+      handleAddRecord.cancel()
+      handleRemoveMember.cancel()
+      handleAddMember.cancel()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const html = signatureTemplate(signatureState)
 

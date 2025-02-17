@@ -200,9 +200,9 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         <AdvertPreview
           advertSubject={currentApplication.answers.advert?.title}
           advertType={currentApplication.answers.advert?.type?.title}
-          advertText={
-            currentApplication.answers.advert?.html ?? '' + signatureHtml
-          }
+          advertText={`${
+            currentApplication.answers.advert?.html ?? ''
+          }${signatureHtml}`}
         />
       </Box>
     </Stack>
