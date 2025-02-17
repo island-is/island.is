@@ -46,5 +46,7 @@ runs:
         echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
         cd scripts/ci/cache
+        echo "::group::yarn install"
         npx yarn install --immutable
+        echo "::endgroup::"
         node cache-action.mjs
