@@ -158,12 +158,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - run: corepack enable
-      - name: Ensure generated files (codegen)
-        uses: ./.github/actions/get-cache
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Restore generated files cache
+        id: cache
+        uses: runs-on/cache/save@v4
         with:
-          github-token: ${{ github.token }}
-          enable-cache: generated-files,node_modules
+          path: ${{ github.sha }}
+          key: generated-files-${{ github.sha }}
+      - name: Prepare generated files
+        if: ${{ steps.cache.outcome != 'success' }]
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          echo "generated files: $SHA"
+          node ./scripts/ci/generate-files.mjs "$SHA"
+          tar -xzvf "$SHA"
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: ${{ github.sha }}
+          key: generated-files-${{ github.sha }}
 
   deps:
     name: Build dependencies
@@ -356,10 +371,11 @@ jobs:
             type=raw,priority=50,value=mcgh-${{ github.event.pull_request.merge_commit_sha }},enable=${{ !!github.event.pull_request.merge_commit_sha }}
 
       - name: Ensure generated files (codegen)
-        uses: ./.github/actions/get-cache
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
         with:
-          github-token: ${{ github.token }}
-          enable-cache: generated-files
+          path: ${{ github.sha }}
+          key: generated-files-${{ github.sha }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
