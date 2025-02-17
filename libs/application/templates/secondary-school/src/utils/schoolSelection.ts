@@ -1,9 +1,57 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { Program, SecondarySchool } from './types'
-import { checkIsFreshman, SecondarySchoolAnswers } from '..'
+import {
+  checkIsFreshman,
+  getTranslatedProgram,
+  SecondarySchoolAnswers,
+} from '..'
+import { school } from '../lib/messages'
+import { Locale, StaticText } from '@island.is/shared/types'
+import { ApolloClient } from '@apollo/client'
+import {
+  Query,
+  QuerySecondarySchoolProgramsBySchoolIdArgs,
+  SecondarySchoolProgram,
+} from '@island.is/api/schema'
+import { PROGRAMS_BY_SCHOOLS_ID_QUERY } from '../graphql/queries'
 
-export const getRowsCountForSchoolSelection = (
+type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
+
+const getSchoolInfo = (
+  externalData: ExternalData,
+  activeField?: Record<string, string>,
+): SecondarySchool | undefined => {
+  const schoolOptions = getValueViaPath<SecondarySchool[]>(
+    externalData,
+    'schools.data',
+  )
+  const schoolId =
+    activeField && getValueViaPath<string>(activeField, 'school.id')
+  return schoolOptions?.find((x) => x.id === schoolId)
+}
+
+const getProgramInfo = (
+  activeField?: Record<string, string>,
+  programId?: string,
+): Program | undefined => {
+  const programOptions =
+    activeField && getValueViaPath<Program[]>(activeField, 'programOptions')
+  return programOptions?.find((x) => x.id === programId)
+}
+
+export const getFormTitle = (index: number): StaticText => {
+  if (index === 0) return school.firstSelection.subtitle
+  else if (index === 1) return school.secondSelection.subtitle
+  else if (index === 2) return school.thirdSelection.subtitle
+  return ''
+}
+
+export const getRowsLimitCount = (
   answers: FormValue,
   externalData: ExternalData,
 ): { min: number; max: number } => {
@@ -51,43 +99,311 @@ export const getRowsCountForSchoolSelection = (
   return { min: minSelectionCount, max: maxSelectionCount }
 }
 
-export const getOtherSchoolIds = (
+export const getSchoolOptions = (
+  application: Application,
+): RepeaterOption[] => {
+  const schoolOptions = getValueViaPath<SecondarySchool[]>(
+    application.externalData,
+    'schools.data',
+  )
+  const isFreshman = checkIsFreshman(application.answers)
+
+  return (schoolOptions || [])
+    .filter((x) =>
+      isFreshman ? x.isOpenForAdmissionFreshman : x.isOpenForAdmissionGeneral,
+    )
+    .map((school) => {
+      return {
+        label: school.name,
+        value: school.id,
+      }
+    })
+}
+
+export const filterSchoolOptions = (
+  options: RepeaterOption[],
   answers: FormValue,
   index: number,
-): string[] => {
-  const result: string[] = []
+): RepeaterOption[] => {
+  const otherSchoolIds: string[] = []
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
     answers,
     'selection',
   )
-
   selection?.forEach((item, i) => {
     if (i !== index && item.school?.id) {
-      result.push(item.school.id)
+      otherSchoolIds.push(item.school.id)
     }
   })
 
-  return result
+  return options.filter((x) => !otherSchoolIds.includes(x.value))
 }
 
-export const getSchoolInfo = (
-  externalData: ExternalData,
-  activeField?: Record<string, string>,
-): SecondarySchool | undefined => {
+export const clearOnChangeSchool = (index: number) => {
+  return [
+    `selection[${index}].firstProgram.id`,
+    `selection[${index}].secondProgram.id`,
+    `selection[${index}].thirdLanguage.code`,
+    `selection[${index}].nordicLanguage.code`,
+  ]
+}
+
+export const setOnChangeSchool = (
+  option: { value: string },
+  application: Application,
+  index: number,
+) => {
   const schoolOptions = getValueViaPath<SecondarySchool[]>(
-    externalData,
+    application.externalData,
     'schools.data',
   )
-  const schoolId =
-    activeField && getValueViaPath<string>(activeField, 'school.id')
-  return schoolOptions?.find((x) => x.id === schoolId)
+  const selectedSchool = schoolOptions?.find((x) => x.id === option.value)
+  return [
+    {
+      key: `selection[${index}].school.name`,
+      value: selectedSchool?.name,
+    },
+    { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
+  ]
 }
 
-export const getProgramInfo = (
+export const getUpdateOnSelectFirstProgram = (index: number): string[] => {
+  return [
+    `selection[${index}].school.id`,
+    `selection[${index}].secondProgram.id`,
+  ]
+}
+
+export const loadProgramOptions = async (
+  apolloClient: ApolloClient<object>,
+  application: Application,
+  lang: Locale,
   activeField?: Record<string, string>,
-  programId?: string,
-): Program | undefined => {
-  const programOptions =
-    activeField && getValueViaPath<Program[]>(activeField, 'programOptions')
-  return programOptions?.find((x) => x.id === programId)
+  setValueAtIndex?: (
+    key: string,
+    value: SecondarySchoolProgram[] | boolean,
+  ) => void,
+  otherProgramIdFieldKey?: string,
+) => {
+  const schoolId =
+    activeField && getValueViaPath<string>(activeField, 'school.id')
+  const otherProgramId =
+    activeField &&
+    otherProgramIdFieldKey &&
+    getValueViaPath<string>(activeField, otherProgramIdFieldKey)
+
+  if (!schoolId) {
+    return []
+  }
+
+  const { data } = await apolloClient.query<
+    Query,
+    QuerySecondarySchoolProgramsBySchoolIdArgs
+  >({
+    query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
+    variables: {
+      isFreshman: checkIsFreshman(application.answers),
+      schoolId,
+    },
+  })
+
+  setValueAtIndex?.('programOptions', data?.secondarySchoolProgramsBySchoolId)
+
+  setValueAtIndex?.(
+    'secondProgram.include',
+    data?.secondarySchoolProgramsBySchoolId.length > 1,
+  )
+
+  const options =
+    data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
+      value: program.id,
+      label: getTranslatedProgram(lang, {
+        nameIs: program.nameIs,
+        nameEn: program.nameEn,
+      }),
+    })) ?? []
+
+  return options.filter((x) => x.value !== otherProgramId)
+}
+
+export const setOnChangeFirstProgram = (
+  option: { value: string },
+  application: Application,
+  index: number,
+  activeField?: Record<string, string>,
+) => {
+  const programInfo = getProgramInfo(activeField, option.value)
+  return [
+    {
+      key: `selection[${index}].firstProgram.nameIs`,
+      value: programInfo?.nameIs || '',
+    },
+    {
+      key: `selection[${index}].firstProgram.nameEn`,
+      value: programInfo?.nameEn || '',
+    },
+    {
+      key: `selection[${index}].firstProgram.registrationEndDate`,
+      value: programInfo?.registrationEndDate,
+    },
+    {
+      key: `selection[${index}].firstProgram.isSpecialNeedsProgram`,
+      value: programInfo?.isSpecialNeedsProgram,
+    },
+    {
+      key: `selection[${index}].secondProgram.require`,
+      value:
+        checkIsFreshman(application.answers) &&
+        !programInfo?.isSpecialNeedsProgram,
+    },
+  ]
+}
+
+export const getRequiredSecondProgram = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const secondProgramRequire =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'secondProgram.require', true)) ||
+    false
+  return secondProgramRequire
+}
+
+export const getIsClearableSecondProgram = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const secondProgramRequire =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'secondProgram.require', true)) ||
+    false
+  return !secondProgramRequire
+}
+
+export const getConditionSecondProgram = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const secondProgramInclude =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'secondProgram.include', true)) ||
+    false
+  return secondProgramInclude
+}
+
+export const getUpdateOnSelectSecondProgram = (index: number): string[] => {
+  return [
+    `selection[${index}].school.id`,
+    `selection[${index}].firstProgram.id`,
+  ]
+}
+
+export const setOnChangeSecondProgram = (
+  option: { value: string },
+  index: number,
+  activeField?: Record<string, string>,
+) => {
+  const programInfo = getProgramInfo(activeField, option.value)
+  return [
+    {
+      key: `selection[${index}].secondProgram.nameIs`,
+      value: programInfo?.nameIs || '',
+    },
+    {
+      key: `selection[${index}].secondProgram.nameEn`,
+      value: programInfo?.nameEn || '',
+    },
+    {
+      key: `selection[${index}].secondProgram.registrationEndDate`,
+      value: programInfo?.registrationEndDate,
+    },
+  ]
+}
+
+export const getThirdLanguageOptions = (
+  application: Application,
+  activeField?: Record<string, string>,
+): RepeaterOption[] => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  return (schoolInfo?.thirdLanguages || []).map((language) => {
+    return {
+      label: language.name,
+      value: language.code,
+    }
+  })
+}
+
+export const setOnChangeThirdLanguage = (
+  option: { value: string },
+  application: Application,
+  index: number,
+  activeField?: Record<string, string>,
+) => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  const languageInfo = schoolInfo?.thirdLanguages?.find(
+    (x) => x.code === option.value,
+  )
+  return [
+    {
+      key: `selection[${index}].thirdLanguage.name`,
+      value: languageInfo?.name,
+    },
+  ]
+}
+
+export const getNordicLanguageOptions = (
+  application: Application,
+  activeField?: Record<string, string>,
+): RepeaterOption[] => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  return (schoolInfo?.nordicLanguages || []).map((language) => {
+    return {
+      label: language.name,
+      value: language.code,
+    }
+  })
+}
+
+export const setOnChangeNordicLanguage = (
+  option: { value: string },
+  application: Application,
+  index: number,
+  activeField?: Record<string, string>,
+) => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  const languageInfo = schoolInfo?.nordicLanguages?.find(
+    (x) => x.code === option.value,
+  )
+  return [
+    {
+      key: `selection[${index}].nordicLanguage.name`,
+      value: languageInfo?.name,
+    },
+  ]
+}
+
+export const getRequestDormitoryOptions = (): RepeaterOption[] => {
+  return [
+    {
+      label: school.selection.requestDormitoryCheckboxLabel,
+      value: YES,
+    },
+  ]
+}
+
+export const getRequestDormitoryCondition = (
+  application: Application,
+  activeField?: Record<string, string>,
+): boolean => {
+  const schoolInfo = getSchoolInfo(application.externalData, activeField)
+  return schoolInfo?.allowRequestDormitory || false
+}
+
+export const getAlertMessageAddThirdSelectionCondition = (
+  answers: FormValue,
+): boolean => {
+  const isFreshman = checkIsFreshman(answers)
+  const includeThirdSelection = getValueViaPath<boolean>(
+    answers,
+    'selection.2.include',
+  )
+  return isFreshman && !includeThirdSelection
 }
