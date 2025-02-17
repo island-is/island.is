@@ -7,7 +7,6 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseAppealState,
-  CaseDecision,
   InstitutionType,
   UserRole,
 } from '../../graphql/schema'
@@ -37,7 +36,7 @@ const CaseTitleInfoAndTags: FC = () => {
           {titleForCase(formatMessage, workingCase)}
         </PageTitle>
         {workingCase.rulingDate &&
-          (workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING ? (
+          (workingCase.isCompletedWithoutRuling ? (
             <DateLabel
               date={workingCase.rulingDate}
               text={formatMessage(strings.caseCompletedDatePrefix)}

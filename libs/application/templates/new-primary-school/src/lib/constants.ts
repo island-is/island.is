@@ -40,6 +40,7 @@ export enum OptionsType {
   RELATION = 'relation',
   SCHOOL_MEAL = 'schoolMeal',
   ALLERGY = 'allergy',
+  LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }
 
 export enum MembershipRole {
@@ -60,8 +61,8 @@ export enum MembershipOrganizationType {
 
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',
-  ICELANDIC_AND_FOREIGN = 'icelandicAndForeign',
-  ONLY_FOREIGN = 'onlyForeign',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER_THAN_ICELANDIC = 'onlyOtherThanIcelandic',
 }
 
 export enum ApplicationType {

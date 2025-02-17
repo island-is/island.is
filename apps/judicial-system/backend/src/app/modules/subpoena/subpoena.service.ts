@@ -28,6 +28,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -35,7 +36,7 @@ import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceService, SubpoenaInfo } from '../police'
+import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -94,6 +95,8 @@ export class SubpoenaService {
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -298,16 +301,19 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let civilClaimPdf = undefined
-      const civilClaim = theCase.caseFiles?.find(
-        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-      )
+      const civilClaimPdfs: string[] = []
+      const civilClaimFiles =
+        theCase.caseFiles?.filter(
+          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+        ) ?? []
 
-      if (civilClaim) {
-        civilClaimPdf = await this.fileService.getCaseFileFromS3(
+      for (const civilClaimFile of civilClaimFiles) {
+        const civilClaimPdf = await this.fileService.getCaseFileFromS3(
           theCase,
-          civilClaim,
+          civilClaimFile,
         )
+
+        civilClaimPdfs.push(Base64.btoa(civilClaimPdf.toString('binary')))
       }
 
       const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
@@ -323,9 +329,7 @@ export class SubpoenaService {
         Base64.btoa(subpoenaPdf.toString('binary')),
         Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdf
-          ? Base64.btoa(civilClaimPdf.toString('binary'))
-          : undefined,
+        civilClaimPdfs,
       )
 
       if (!createdSubpoena) {
@@ -346,10 +350,46 @@ export class SubpoenaService {
       }
 
       this.logger.info(
-        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to the police centralized file service`,
       )
 
       return { delivered: true }
+    } catch (error) {
+      this.logger.error(
+        'Error delivering subpoena to the police centralized file service',
+        error,
+      )
+
+      return { delivered: false }
+    }
+  }
+
+  async deliverSubpoenaFileToPolice(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: PoliceDocumentType.RVFK,
+              courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
     } catch (error) {
       this.logger.error('Error delivering subpoena to police', error)
 
@@ -391,7 +431,43 @@ export class SubpoenaService {
         return { delivered: false }
       })
   }
-  async deliverSubpoenaRevokedToPolice(
+
+  async deliverServiceCertificateToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getServiceCertificatePdf(theCase, defendant, subpoena)
+      .then(async (pdf) => {
+        const fileName = `Birtingarvottorð - ${defendant.name}`
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.SUBPOENA_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload service certificate pdf to court for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverSubpoenaRevocationToPolice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
@@ -418,6 +494,7 @@ export class SubpoenaService {
       return { delivered: false }
     }
   }
+
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
     if (!subpoena.subpoenaId) {
       // The subpoena has not been delivered to the police
