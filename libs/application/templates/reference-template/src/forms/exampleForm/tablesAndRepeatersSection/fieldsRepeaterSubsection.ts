@@ -93,7 +93,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
             selectAsyncReliant: {
               component: 'selectAsync',
               label: 'Reliant Select Async',
-              updateOnSelect: 'selectAsyncPrimary',
+              updateOnSelect: ['selectAsyncPrimary'],
               loadOptions: async ({ apolloClient, selectedValue }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({

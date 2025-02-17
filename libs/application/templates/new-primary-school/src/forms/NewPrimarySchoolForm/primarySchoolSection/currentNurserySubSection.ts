@@ -51,7 +51,7 @@ export const currentNurserySubSection = buildSubSection({
             newPrimarySchoolMessages.primarySchool.nurseryPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-nursery',
-          updateOnSelect: 'currentNursery.municipality',
+          updateOnSelect: ['currentNursery.municipality'],
           loadOptions: async ({ apolloClient, selectedValue }) => {
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({

@@ -209,7 +209,7 @@ export type RepeaterItem = {
         activeField?: Record<string, string>,
         setValueAtIndex?: (key: string, value: any) => void,
       ): Promise<Option[]>
-      updateOnSelect?: MaybeWithIndex<string | string[]>
+      updateOnSelect?: MaybeWithIndex<string[]>
     }
 )
 
@@ -428,7 +428,7 @@ export interface AsyncSelectField extends InputField {
   isSearchable?: boolean
   isMulti?: boolean
   isClearable?: boolean
-  updateOnSelect?: string | string[]
+  updateOnSelect?: string[]
 }
 
 export interface TextField extends InputField {

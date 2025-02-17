@@ -56,9 +56,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     useState<string>('')
 
   const watchUpdateOnSelect = updateOnSelect
-    ? Array.isArray(updateOnSelect)
-      ? JSON.stringify(watch(updateOnSelect))
-      : watch(updateOnSelect)
+    ? JSON.stringify(watch(updateOnSelect))
     : ''
 
   const load = async (selectedValue?: string | string[]) => {
