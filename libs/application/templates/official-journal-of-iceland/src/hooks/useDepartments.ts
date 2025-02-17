@@ -6,7 +6,11 @@ type DepartmentsResponse = {
   officialJournalOfIcelandDepartments: OfficialJournalOfIcelandAdvertsDepartmentsResponse
 }
 
-export const useDepartments = () => {
+type Props = {
+  onCompleted?: (data: DepartmentsResponse) => void
+}
+
+export const useDepartments = ({ onCompleted }: Props = {}) => {
   const { data, loading, error } = useQuery<DepartmentsResponse>(
     DEPARTMENTS_QUERY,
     {
@@ -15,6 +19,7 @@ export const useDepartments = () => {
           page: 1,
         },
       },
+      onCompleted,
     },
   )
 

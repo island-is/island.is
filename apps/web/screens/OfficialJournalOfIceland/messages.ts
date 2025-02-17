@@ -260,6 +260,11 @@ export const m = {
       id: 'web.ojoi:advert.sidebarTitle',
       defaultMessage: 'Upplýsingar um auglýsingu',
     },
+
+    similarTitle: {
+      id: 'web.ojoi:advert.similarTitle',
+      defaultMessage: 'Tengd mál',
+    },
     sidebarDepartment: {
       id: 'web.ojoi:advert.sidebarDepartment',
       defaultMessage: 'Deild',

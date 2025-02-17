@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js'
-import Base64 from 'js-base64'
+import { Base64 } from 'js-base64'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
@@ -179,12 +179,16 @@ export class FileService {
       return undefined
     }
 
+    const completedEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
+    )
+
     return createConfirmedPdf(
       {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: theCase.rulingDate,
+        date: completedEvent?.created || theCase.rulingDate,
       },
       pdf,
       file.category,

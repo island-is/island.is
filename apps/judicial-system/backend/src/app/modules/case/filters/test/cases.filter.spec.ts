@@ -11,7 +11,6 @@ import {
   completedRequestCaseStates,
   courtOfAppealsRoles,
   DateType,
-  districtCourtRoles,
   EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,

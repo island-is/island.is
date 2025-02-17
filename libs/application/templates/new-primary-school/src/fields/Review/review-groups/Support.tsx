@@ -1,4 +1,3 @@
-import { YES } from '@island.is/application/types'
 import {
   DataValue,
   RadioValue,
@@ -10,6 +9,7 @@ import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { YES } from '@island.is/application/core'
 
 export const Support = ({
   application,
@@ -19,13 +19,13 @@ export const Support = ({
   const { formatMessage } = useLocale()
   const {
     applicationType,
-    developmentalAssessment,
-    specialSupport,
+    hasDiagnoses,
+    hasHadSupport,
     hasIntegratedServices,
     hasCaseManager,
     caseManagerName,
     caseManagerEmail,
-    requestMeeting,
+    requestingMeeting,
   } = getApplicationAnswers(application.answers)
 
   return (
@@ -41,11 +41,10 @@ export const Support = ({
               label={formatMessage(
                 applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
                   ? newPrimarySchoolMessages.differentNeeds
-                      .enrollmentDevelopmentalAssessment
-                  : newPrimarySchoolMessages.differentNeeds
-                      .developmentalAssessment,
+                      .enrollmentHasDiagnoses
+                  : newPrimarySchoolMessages.differentNeeds.hasDiagnoses,
               )}
-              value={developmentalAssessment}
+              value={hasDiagnoses}
             />
           </GridColumn>
         </GridRow>
@@ -55,14 +54,14 @@ export const Support = ({
               label={formatMessage(
                 applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
                   ? newPrimarySchoolMessages.differentNeeds
-                      .enrollmentSpecialSupport
-                  : newPrimarySchoolMessages.differentNeeds.specialSupport,
+                      .enrollmentHasHadSupport
+                  : newPrimarySchoolMessages.differentNeeds.hasHadSupport,
               )}
-              value={specialSupport}
+              value={hasHadSupport}
             />
           </GridColumn>
         </GridRow>
-        {(developmentalAssessment === YES || specialSupport === YES) && (
+        {(hasDiagnoses === YES || hasHadSupport === YES) && (
           <>
             <GridRow>
               <GridColumn span="12/12">
@@ -118,9 +117,9 @@ export const Support = ({
             <RadioValue
               label={formatMessage(
                 newPrimarySchoolMessages.differentNeeds
-                  .requestMeetingDescription,
+                  .requestingMeetingDescription,
               )}
-              value={requestMeeting}
+              value={requestingMeeting}
             />
           </GridColumn>
         </GridRow>
