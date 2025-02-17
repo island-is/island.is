@@ -85,11 +85,19 @@ export const SubPageContent = ({
           />
         </Box>
       )}
-      <GridRow className="rs_read">
+      <GridRow
+        className="rs_read"
+        rowGap={3}
+        marginBottom={
+          (!!subpage?.links && subpage.links.length > 0) ||
+          (!!subpage?.description && subpage.description.length > 0)
+            ? 3
+            : 0
+        }
+      >
         {subpage?.description && subpage.description.length > 0 && (
           <GridColumn
             span={['12/12', '12/12', subpage?.links?.length ? '7/12' : '12/12']}
-            paddingBottom={3}
           >
             {webRichText(
               subpage?.description as SliceType[],
@@ -104,7 +112,6 @@ export const SubPageContent = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             offset={[null, null, '1/12']}
-            paddingBottom={3}
           >
             <Stack space={2}>
               {subpage?.links?.map((link) => (
