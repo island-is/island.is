@@ -31,6 +31,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
   BoostChatPanel,
   boostChatPanelEndpoints,
@@ -62,61 +63,34 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
-import {
-  FiskistofaDefaultHeader,
-  FiskistofaHeader,
-} from './Themes/FiskistofaTheme'
+import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
+import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import {
-  FjarsyslaRikisinsFooter,
-  FjarsyslaRikisinsHeader,
-} from './Themes/FjarsyslaRikisinsTheme'
-import { GevFooter, GevHeader } from './Themes/GevTheme'
-import {
-  HeilbrigdisstofnunAusturlandsFooter,
-  HeilbrigdisstofnunAusturlandsHeader,
-} from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
+import { FjarsyslaRikisinsFooter } from './Themes/FjarsyslaRikisinsTheme'
+import { GevFooter } from './Themes/GevTheme'
+import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
 import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
-import { HmsHeader } from './Themes/HmsTheme'
-import { HveFooter, HveHeader } from './Themes/HveTheme'
-import {
-  IcelandicNaturalDisasterInsuranceFooter,
-  IcelandicNaturalDisasterInsuranceHeader,
-} from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import { IcelandicRadiationSafetyAuthorityHeader } from './Themes/IcelandicRadiationSafetyAuthority'
+import { HveFooter } from './Themes/HveTheme'
+import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
-import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme'
 import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
-import { LandlaeknirHeader } from './Themes/LandlaeknirTheme'
 import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
-import { RettindagaeslaFatladsFolksHeader } from './Themes/RettindagaeslaFatladsFolksTheme'
-import { RikislogmadurHeader } from './Themes/RikislogmadurTheme'
 import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
-import { RikissaksoknariHeader } from './Themes/RikissaksoknariTheme'
-import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
-import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import { SAkFooter } from './Themes/SAkTheme'
+import { ShhFooter } from './Themes/SHHTheme'
 import {
   SjukratryggingarDefaultHeader,
   SjukratryggingarFooter,
-  SjukratryggingarHeader,
 } from './Themes/SjukratryggingarTheme'
 import {
   SyslumennDefaultHeader,
   SyslumennFooter,
-  SyslumennHeader,
 } from './Themes/SyslumennTheme'
-import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
-import {
-  UtlendingastofnunFooter,
-  UtlendingastofnunHeader,
-} from './Themes/UtlendingastofnunTheme'
+import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
@@ -182,10 +156,7 @@ export const getThemeConfig = (
   const usingDefaultHeader: boolean =
     organizationNamespace['usingDefaultHeader'] ?? false
 
-  const footerVersion: LayoutProps['footerVersion'] =
-    theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
-      ? 'organization'
-      : 'default'
+  const footerVersion: LayoutProps['footerVersion'] = 'organization'
 
   if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
     return { themeConfig: { footerVersion } }
@@ -269,54 +240,30 @@ export const OrganizationHeader: React.FC<
 
   switch (organizationPage.theme) {
     case 'syslumenn':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <SyslumennDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
           isSubpage={isSubpage}
         />
-      ) : (
-        <SyslumennHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'sjukratryggingar':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <SjukratryggingarDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
           isSubpage={isSubpage}
         />
-      ) : (
-        <SjukratryggingarHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'utlendingastofnun':
-      return n('usingDefaultHeader', false) ? (
-        <DefaultHeader {...defaultProps} />
-      ) : (
-        <UtlendingastofnunHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'digital_iceland':
-      return n('useDefaultDigitalIcelandHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           titleClassName={styles.digitalIcelandHeaderTitle}
         />
-      ) : (
-        <DigitalIcelandHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'hsn':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           image={n(
@@ -324,14 +271,9 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
           )}
         />
-      ) : (
-        <HeilbrigdisstofnunNordurlandsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'hsu':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           image={n(
@@ -339,14 +281,9 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
           )}
         />
-      ) : (
-        <HeilbrigdisstofnunSudurlandsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'landlaeknir':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           image={n(
@@ -359,27 +296,17 @@ export const OrganizationHeader: React.FC<
               : styles.landlaeknirHeaderGridContainer
           }
         />
-      ) : (
-        <LandlaeknirHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'fiskistofa':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <FiskistofaDefaultHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
           isSubpage={isSubpage}
         />
-      ) : (
-        <FiskistofaHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'rikislogmadur':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           className={
@@ -388,34 +315,15 @@ export const OrganizationHeader: React.FC<
               : styles.rikislogmadurHeaderGridContainerWidth
           }
         />
-      ) : (
-        <RikislogmadurHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'landskjorstjorn':
-      return n('usingDefaultHeader', false) ? (
-        <DefaultHeader {...defaultProps} />
-      ) : (
-        <LandskjorstjornHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
+      return <DefaultHeader {...defaultProps} />
     case 'landing_page':
       return null
     case 'fjarsysla-rikisins':
-      return n('usingDefaultHeader', false) ? (
-        <DefaultHeader {...defaultProps} />
-      ) : (
-        <FjarsyslaRikisinsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
+      return <DefaultHeader {...defaultProps} />
     case 'sak':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           className={
@@ -429,14 +337,9 @@ export const OrganizationHeader: React.FC<
           )}
           titleSectionPaddingLeft={isSubpage ? 0 : 10}
         />
-      ) : (
-        <SAkHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'gev':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           image={n(
@@ -444,14 +347,9 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png',
           )}
         />
-      ) : (
-        <GevHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'hve':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           className={
@@ -464,14 +362,9 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
           )}
         />
-      ) : (
-        <HveHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'shh':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           className={
@@ -481,14 +374,9 @@ export const OrganizationHeader: React.FC<
           }
           titleSectionPaddingLeft={isSubpage ? 0 : 5}
         />
-      ) : (
-        <ShhHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'hsa':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           className={
@@ -496,11 +384,6 @@ export const OrganizationHeader: React.FC<
               ? styles.hsaHeaderGridContainerWidthSubpage
               : styles.hsaHeaderGridContainerWidth
           }
-        />
-      ) : (
-        <HeilbrigdisstofnunAusturlandsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
         />
       )
     case 'haskolanam':
@@ -511,7 +394,7 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'nti':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           image={n(
@@ -519,23 +402,12 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg',
           )}
         />
-      ) : (
-        <IcelandicNaturalDisasterInsuranceHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
+
     case 'samgongustofa':
-      return n('usingDefaultHeader', false) ? (
-        <DefaultHeader {...defaultProps} />
-      ) : (
-        <TransportAuthorityHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
+      return <DefaultHeader {...defaultProps} />
     case 'geislavarnir-rikisins':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           background="linear-gradient(96.23deg, rgba(1, 54, 65, 0.8) 0.85%, rgba(19, 101, 103, 0.93) 16.4%, rgba(19, 101, 103, 0.885709) 32.16%, rgba(1, 73, 87, 0.88) 56.43%, rgba(2, 69, 91, 0.98) 78.47%, rgba(1, 52, 62, 0.96) 100.8%)"
@@ -544,23 +416,11 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/5KjaMY9IIB0aX0GOUU60H7/176b6ed26dc01fe4e2559ba2957e85b7/skjaldamerki-transparent.svg',
           )}
         />
-      ) : (
-        <IcelandicRadiationSafetyAuthorityHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'rettindagaesla-fatlads-folks':
-      return n('usingDefaultHeader', false) ? (
-        <DefaultHeader {...defaultProps} />
-      ) : (
-        <RettindagaeslaFatladsFolksHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
+      return <DefaultHeader {...defaultProps} />
     case 'hms':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           image={n(
@@ -568,14 +428,9 @@ export const OrganizationHeader: React.FC<
             'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
           )}
         />
-      ) : (
-        <HmsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
       )
     case 'rikissaksoknari':
-      return n('usingDefaultHeader', false) ? (
+      return (
         <DefaultHeader
           {...defaultProps}
           className={
@@ -583,11 +438,6 @@ export const OrganizationHeader: React.FC<
               ? styles.rikissaksoknariHeaderGridContainerSubpage
               : styles.rikissaksoknariHeaderGridContainerWidth
           }
-        />
-      ) : (
-        <RikissaksoknariHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
         />
       )
     case 'vinnueftirlitid':
@@ -944,6 +794,20 @@ export const OrganizationFooter: React.FC<
         )
       }
       break
+    case 'stafraent-island':
+    case 'digital-iceland':
+      OrganizationFooterComponent = (
+        <GridContainer>
+          <DigitalIcelandFooter
+            illustrationSrc={n(
+              'digitalIcelandFooterIllustrationSrc',
+              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
+            )}
+            links={n('digitalIcelandFooterLinks', [])}
+          />
+        </GridContainer>
+      )
+      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break
@@ -1228,12 +1092,12 @@ export const OrganizationWrapper: React.FC<
                   title={navigationData.title}
                   activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href} legacyBehavior>
+                    return !item?.href || shouldLinkBeAnAnchorTag(item.href) ? (
+                      link
+                    ) : (
+                      <NextLink href={item.href} legacyBehavior>
                         {link}
                       </NextLink>
-                    ) : (
-                      link
                     )
                   }}
                 />

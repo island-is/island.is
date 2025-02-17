@@ -45,7 +45,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection, SelectCourt } from '../../components'
+import { SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
@@ -285,7 +285,6 @@ const Processing: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
-        <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SelectCourt />
         </Box>
@@ -685,7 +684,7 @@ const Processing: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
         />

@@ -29,6 +29,7 @@ interface Props {
   tags: Array<GenericTag>
   url: string
   variant?: FilterProps['variant']
+  hits?: number
 }
 
 export const GrantsSearchResultsFilter = ({
@@ -38,6 +39,7 @@ export const GrantsSearchResultsFilter = ({
   tags,
   url,
   variant = 'default',
+  hits,
 }: Props) => {
   const { formatMessage } = useIntl()
 
@@ -65,9 +67,10 @@ export const GrantsSearchResultsFilter = ({
         labelClearAll={formatMessage(m.search.clearFilters)}
         labelOpen={formatMessage(m.search.openFilter)}
         labelClose={formatMessage(m.search.closeFilter)}
-        labelClear={formatMessage(m.search.clearFilterCategory)}
+        labelClear={formatMessage(m.search.clearFilters)}
         labelTitle={formatMessage(m.search.filterTitle)}
-        labelResult={formatMessage(m.search.resultFound)}
+        labelResult={formatMessage(m.search.viewResults)}
+        resultCount={hits}
         onFilterClear={onReset}
         variant={variant}
         align={'left'}
@@ -136,8 +139,8 @@ export const GrantsSearchResultsFilter = ({
                     label: 'Rannís',
                   },
                   {
-                    value: 'orkustofnun',
-                    label: 'Orkustofnun',
+                    value: 'umhverfisstofnun',
+                    label: 'Umhverfis- og orkustofnun',
                   },
                 ],
               },

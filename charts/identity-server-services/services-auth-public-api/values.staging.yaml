@@ -31,7 +31,7 @@ env:
   LOG_LEVEL: 'info'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: '19e7d60e-920e-4a6f-a125-25ea283ee1a4'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
-  NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+  NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
   PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'

@@ -86,6 +86,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     'status',
     parseAsStringLiteral(Availability),
   )
+  const [searchString, setSearchString] = useState<string | null>()
 
   const [initialRender, setInitialRender] = useState<boolean>(true)
 
@@ -116,7 +117,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           lang: locale,
           organizations: organizations ? [...organizations] : null,
           page,
-          search: query,
+          search: searchString,
           size: PAGE_SIZE,
           types: types ? [...types] : null,
           status: status
@@ -145,18 +146,24 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     organizations,
     page,
     status,
-    query,
+    searchString,
     types,
     initialRender,
   ])
 
+  useEffect(() => {
+    fetchGrants()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories, locale, organizations, page, searchString, types, status])
+
   //SEARCH STATE UPDATES
   const debouncedSearchUpdate = useMemo(() => {
     return debounce(() => {
-      fetchGrants()
+      setSearchString(query)
+      setPage(null)
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, locale, organizations, page, query, types, status])
+  }, [query])
 
   useEffect(() => {
     debouncedSearchUpdate()
@@ -182,8 +189,9 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   ]
 
   const onResetFilter = () => {
-    setPage(1)
+    setPage(null)
     setQuery(null)
+    setSearchString(null)
     setCategories(null)
     setTypes(null)
     setOrganizations(null)
@@ -229,6 +237,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         break
       }
     }
+    setPage(null)
   }
 
   return (
@@ -291,6 +300,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   tags={tags ?? []}
                   url={currentUrl}
                   variant={'default'}
+                  hits={totalHits}
                 />
               </Box>
             }
@@ -341,25 +351,24 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 backgroundColor={'white'}
               />
             </Box>
-            <Box
-              marginY={2}
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              <Text>{hitsMessage}</Text>
+            <Box marginY={2}>
               <GrantsSearchResultsFilter
                 searchState={{
                   category: categories ?? undefined,
                   type: types ?? undefined,
                   organization: organizations ?? undefined,
+                  status: status ?? undefined,
                 }}
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
                 tags={tags ?? []}
                 url={currentUrl}
-                variant={'popover'}
+                variant={'dialog'}
+                hits={totalHits}
               />
+            </Box>
+            <Box marginY={3}>
+              <Text>{hitsMessage}</Text>
             </Box>
 
             <SearchResultsContent grants={grants} locale={locale} />

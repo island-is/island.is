@@ -51,7 +51,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
-      application.applicant.startsWith('110130') &&
+      application.applicant.startsWith('010130') &&
       application.applicant.endsWith('2399')
         ? [
             getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
@@ -71,6 +71,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
             .then((inheritanceTax) => {
               inheritanceReportInfo.inheritanceTax = inheritanceTax
               resolve()
+            })
+            .catch((e) => {
+              this.logger.warn(
+                '[inheritance-report]: Failed to fetch inheritance tax',
+                e,
+              )
             })
         })
       }),

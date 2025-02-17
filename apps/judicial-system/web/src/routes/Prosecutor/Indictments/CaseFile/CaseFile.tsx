@@ -108,7 +108,7 @@ const CaseFile = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
           nextIsDisabled={editCount > 0}

@@ -39,8 +39,13 @@ export const overview = {
   custodian: defineMessages({
     subtitle: {
       id: 'ss.application:overview.custodian.subtitle',
-      defaultMessage: 'Forsjáraðili',
+      defaultMessage: 'Forsjáraðili/ar',
       description: 'Custodian subtitle',
+    },
+    label: {
+      id: 'ss.application:overview.custodian.label',
+      defaultMessage: 'Forsjáraðili',
+      description: 'Custodian label',
     },
     phoneLabel: {
       id: 'ss.application:overview.custodian.phoneLabel',
@@ -51,7 +56,7 @@ export const overview = {
   otherContact: defineMessages({
     subtitle: {
       id: 'ss.application:overview.otherContact.subtitle',
-      defaultMessage: 'Tengiliður',
+      defaultMessage: 'Tengiliður/ir',
       description: 'Other contact subtitle',
     },
     label: {
@@ -106,6 +111,16 @@ export const overview = {
       defaultMessage: 'Norðurlandamál',
       description: 'Selection nordic language label',
     },
+    requestDormitoryLabel: {
+      id: 'ss.application:overview.selection.requestDormitoryLabel',
+      defaultMessage: 'Heimavist',
+      description: 'Selection request dormitory label',
+    },
+    yesValue: {
+      id: 'ss.application:overview.selection.yesValue',
+      defaultMessage: 'Já',
+      description: 'Selection yes value',
+    },
   }),
   extraInformation: defineMessages({
     subtitle: {
@@ -134,6 +149,26 @@ export const overview = {
       id: 'ss.application:overview.buttons.submit',
       defaultMessage: 'Senda umsókn',
       description: 'Submit application button',
+    },
+    edit: {
+      id: 'ss.application:overview.buttons.edit',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application button',
+    },
+    reSubmit: {
+      id: 'ss.application:overview.buttons.reSubmit',
+      defaultMessage: 'Staðfesta breytingar',
+      description: 'Re-submit application button',
+    },
+    abort: {
+      id: 'ss.application:overview.buttons.abort',
+      defaultMessage: 'Hætta við breytingar',
+      description: 'Abort changes button',
+    },
+    received: {
+      id: 'ss.application:overview.buttons.received',
+      defaultMessage: 'Móttekin',
+      description: 'Received application button',
     },
   }),
 }

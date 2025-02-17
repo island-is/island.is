@@ -36,7 +36,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-              title: '',
               ...fileUploadSharedProps,
             }),
             buildSubmitField({
