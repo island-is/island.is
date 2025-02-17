@@ -74,7 +74,6 @@ export const operatingCostSubsection = buildSubSection({
         }),
         buildDisplayField({
           id: PARTYOPERATIONIDS.totalIncome,
-          title: '',
           label: m.totalIncome,
           value: sumIncome,
           variant: 'currency',
@@ -103,7 +102,6 @@ export const operatingCostSubsection = buildSubSection({
         }),
         buildDisplayField({
           id: PARTYOPERATIONIDS.totalExpense,
-          title: '',
           label: m.totalExpenses,
           value: sumExpenses,
           variant: 'currency',
@@ -118,7 +116,6 @@ export const operatingCostSubsection = buildSubSection({
         }),
         buildDisplayField({
           id: OPERATINGCOST.total,
-          title: '',
           value: sumTotal,
           variant: 'currency',
           rightAlign: true,

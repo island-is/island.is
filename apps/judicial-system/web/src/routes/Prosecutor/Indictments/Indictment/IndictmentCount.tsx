@@ -503,7 +503,6 @@ export const IndictmentCount: FC<Props> = ({
               required
             />
           </Box>
-
           <Offenses
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
@@ -511,7 +510,6 @@ export const IndictmentCount: FC<Props> = ({
             updateIndictmentCountState={updateIndictmentCountState}
             handleIndictmentCountChanges={handleIndictmentCountChanges}
           />
-
           <Box marginBottom={2}>
             <SectionHeading
               heading="h4"

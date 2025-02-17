@@ -211,7 +211,6 @@ export const employeeSubSection = (index: number) =>
           }),
           buildAlertMessageField({
             id: 'employee.startTimeAlert',
-            title: '',
             message: employee.employee.startTimeAlert,
             alertType: 'info',
             marginBottom: 0,

@@ -10,7 +10,6 @@ import { getChargeItems } from '../../utils'
 
 export const DigitalTachographDriversCardForm: Form = buildForm({
   id: 'DigitalTachographDriversCardFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
