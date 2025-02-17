@@ -85,6 +85,13 @@ export enum GenericUserLicenseValidity {
   Valid = 'Valid',
 }
 
+export enum ExpiryStatus {
+  EXPIRED,
+  EXPIRING,
+  ACTIVE,
+  UNKNOWN,
+}
+
 export enum GenericUserLicenseDataFieldTagType {
   'checkmarkCircle',
   'closeCircle',

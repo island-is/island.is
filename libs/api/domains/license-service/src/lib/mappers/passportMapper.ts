@@ -16,6 +16,7 @@ import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
   AlertType,
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -255,6 +256,14 @@ export class PassportMapper implements GenericLicenseMapper {
         links,
         licenseNumber: document.numberWithType?.toString() ?? '',
         licenseId: document.number?.toString(),
+        expiryStatus:
+          document.expiryStatus === 'EXPIRED'
+            ? ExpiryStatus.EXPIRED
+            : document.expiresWithinNoticeTime
+            ? ExpiryStatus.EXPIRING
+            : document.expiryStatus === 'LOST'
+            ? ExpiryStatus.UNKNOWN
+            : ExpiryStatus.ACTIVE,
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
