@@ -7,6 +7,8 @@ on:
         value: ${{ jobs.should-run.outputs.NODE_IMAGE_VERSION }}
       GIT_BRANCH:
         value: ${{ jobs.should-run.outputs.GIT_BRANCH }}
+      GIT_BASE_BRANCH:
+        value: ${{ jobs.should-run.outputs.GIT_BASE_BRANCH }}
       GIT_BRANCH_DEPLOY:
         value: ${{ jobs.should-run.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME:
@@ -54,6 +56,7 @@ jobs:
     outputs:
       NODE_IMAGE_VERSION: ${{ steps.git-branch.outputs.NODE_IMAGE_VERSION }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+      GIT_BASE_BRANCH: ${{ steps.git-base-branch.outputs.GIT_BASE_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
@@ -67,6 +70,20 @@ jobs:
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+
+      - name: Set GIT_BASE_BRANCH
+        id: git-base-branch
+        run: |
+          # NOTE: moved from push.yml
+          if [[ -n "$GITHUB_BASE_REF" ]]
+          then
+            # in a PR
+            echo GIT_BASE_BRANCH="$GITHUB_BASE_REF" >> "$GITHUB_OUTPUT"
+          else
+           # on main
+            echo GIT_BASE_BRANCH="main" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |

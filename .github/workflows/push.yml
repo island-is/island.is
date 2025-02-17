@@ -6,7 +6,6 @@ on:
       - 'main'
       - 'release/**'
       - 'pre-release/**'
-      - '!feature/test-in-mergequeue'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -70,6 +69,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      GIT_BASE_BRANCH: ${{ needs.pre-checks.outputs.GIT_BASE_BRANCH }}
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
@@ -88,25 +88,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Git refs
-        id: git_refs
-        run: |
-          set -euo pipefail
-          # if [[ -n "$GITHUB_BASE_REF" ]]
-          # then
-          #  # a PR
-          #  GIT_BASE_BRANCH="$GITHUB_BASE_REF"
-          # else
-          #  # on main
-          #  GIT_BASE_BRANCH=main
-          # fi
-          # NOTE: we are always on push
-          # GIT_BASE_BRANCH=main
-          # echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
-          # echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
-          # echo "Base branch is '${GIT_BASE_BRANCH}'"
-          # echo "Branch is '${GIT_BRANCH}'"
 
       - name: feature-checkout
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
