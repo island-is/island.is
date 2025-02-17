@@ -697,6 +697,30 @@ export class InternalCaseService {
       })
   }
 
+  async deliverIndictmentArraignmentDateToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
+    return this.courtService
+      .updateIndictmentCaseWithArraignmentDate(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        arraignmentDate,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with assigned roles`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverIndictmentCancellationNoticeToCourt(
     theCase: Case,
     withCourtCaseNumber: boolean,
