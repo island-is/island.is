@@ -63,7 +63,10 @@ import { PassportService } from './passport/passport.service'
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
+
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
+import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -145,6 +148,7 @@ export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
   ReferenceTemplateModule,
+  ExampleCommonActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
@@ -217,6 +221,7 @@ export const modules = [
 
 export const services = [
   ReferenceTemplateService,
+  ExampleCommonActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PublicDebtPaymentPlanTemplateService,

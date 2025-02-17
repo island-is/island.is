@@ -1,26 +1,22 @@
 import { Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import {
-  generateApplicationApprovedEmail,
-  generateAssignApplicationEmail,
-} from './emailGenerators'
+import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+import { NotificationsService } from '../../../../notification/notifications.service'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { TemplateApiModuleActionProps } from '../../../../types'
+import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { NotificationsService } from '../../../notification/notifications.service'
-import { NotificationType } from '../../../notification/notificationsTemplates'
+import { NotificationType } from '../../../../notification/notificationsTemplates'
 
-const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
+// const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
-export class ReferenceTemplateService extends BaseTemplateApiService {
+export class ExampleCommonActionsService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
   ) {
-    super(ApplicationTypes.EXAMPLE)
+    super(ApplicationTypes.EXAMPLE_COMMON_ACTIONS)
   }
 
   async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
@@ -57,7 +53,7 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async getAnotherReferenceData({ application }: TemplateApiModuleActionProps) {
+  async getAnotherReferenceData() {
     return {
       anotherData: {
         stuff: 'someDataString',
@@ -79,35 +75,37 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     )
   }
 
-  async createApplication({ application }: TemplateApiModuleActionProps) {
+  async createApplication() {
+    console.log('------------ Hér í create application ------------')
+
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const token = await this.sharedTemplateAPIService.createAssignToken(
-      application,
-      TWO_HOURS_IN_SECONDS,
-    )
+    // const token = await this.sharedTemplateAPIService.createAssignToken(
+    //   application,
+    //   TWO_HOURS_IN_SECONDS,
+    // )
 
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignApplicationEmail,
-      application,
-      token,
-    )
+    // await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+    //   generateAssignApplicationEmail,
+    //   application,
+    //   token,
+    // )
 
     return {
       id: 1337,
     }
   }
 
-  async completeApplication({ application }: TemplateApiModuleActionProps) {
+  async completeApplication() {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     // Use the shared service to send an email using a custom email generator
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationApprovedEmail,
-      application,
-    )
+    // await this.sharedTemplateAPIService.sendEmail(
+    //   generateApplicationApprovedEmail,
+    //   application,
+    // )
 
     return {
       id: 1337,
