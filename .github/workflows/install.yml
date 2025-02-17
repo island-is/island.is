@@ -12,6 +12,8 @@ on:
         value: ${{ jobs.install.outputs.BUILD_CHUNKS }}
       LINT_CHUNKS:
         value: ${{ jobs.install.outputs.LINT_CHUNKS }}
+      DOCKER_CHUNKS:
+        value: ${{ jobs.install.outputs.DOCKER_CHUNKS }}
       NX_HEAD:
         value: ${{ jobs.install.outputs.NX_HEAD }}
       NX_BASE:
@@ -56,6 +58,7 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
@@ -152,6 +155,16 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare docker build targets
+        id: docker_projects
+        run: |
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       - name: License audit Node modules
