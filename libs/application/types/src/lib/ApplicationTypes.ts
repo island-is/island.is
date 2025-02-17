@@ -87,13 +87,13 @@ export const ApplicationConfigurations = {
     slug: 'example',
     translation: 'example.application',
   },
-  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
-    slug: 'example-state-transfers',
-    translation: 'ets.application',
-  },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+    slug: 'example-state-transfers',
+    translation: 'ets.application',
   },
   [ApplicationTypes.EXAMPLE_FIELDS]: {
     slug: 'example-fields',

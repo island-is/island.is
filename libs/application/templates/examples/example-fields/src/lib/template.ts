@@ -5,20 +5,15 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
-  UserProfileApi,
   DefaultEvents,
   FormModes,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { exampleSchema } from './dataSchema'
+import { dataSchema } from './dataSchema'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
-import {
-  EphemeralApi,
-  MyMockProvider,
-  NationalRegistryApi,
-  ReferenceDataApi,
-} from '../dataProviders'
+import { NationalRegistryApi, ReferenceDataApi } from '../dataProviders'
 import { assign } from 'xstate'
 
 const template: ApplicationTemplate<
@@ -26,11 +21,11 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
-  name: 'Example Common Actions',
+  type: ApplicationTypes.EXAMPLE_FIELDS,
+  name: 'Example Fields',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
-  dataSchema: exampleSchema,
+  dataSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -45,16 +40,6 @@ const template: ApplicationTemplate<
             shouldBePruned: true,
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
-          },
-          actionCard: {
-            title: 'Test titill prerequsites',
-            description: 'Test description prerequsites',
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Eitthvað message prerequsites',
-              },
-            ],
           },
           roles: [
             {
@@ -80,8 +65,6 @@ const template: ApplicationTemplate<
                   },
                 }),
                 UserProfileApi,
-                MyMockProvider,
-                EphemeralApi,
               ],
               delete: true,
             },
@@ -98,27 +81,13 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
-          actionCard: {
-            title: 'Test titill draft',
-            description: 'Test description draft',
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Eitthvað message draft',
-              },
-            ],
-            tag: {
-              label: 'Main form',
-              variant: 'blue',
-            },
-          },
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/exampleCommonActionsForm').then((module) =>
-                  Promise.resolve(module.ExampleCommonActionsForm),
+                import('../forms/mainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -138,30 +107,9 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
-          status: 'completed',
-          actionCard: {
-            title: 'Test titill completed.',
-            description: 'Test title completed',
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Eitthvað message completed',
-              },
-            ],
-          },
+          progress: 1,
+          status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
-
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
-                ),
-              write: 'all',
-              read: 'all',
-            },
-          ],
         },
       },
     },
