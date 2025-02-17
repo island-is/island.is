@@ -115,9 +115,11 @@ jobs:
         env:
           projects: ${{ inputs.projects }}
           is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+          test_everything: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') }}
+          base_ref: ${{ github.event.pull_request.base.ref }}
         run: |
-          if [[ "$is_debug" == true ]] && [[ -z "$projects" ]]; then
-            echo "Using small subset for testing docker build (on ${{ github.event.pull_request.base.ref }})"
+          if [[ "$is_debug" == true ]] && [[ -z "$projects" ]] && [[ "$test_everything" != true ]]; then
+            echo "Using small subset for testing docker build (on $base_ref)"
             # A representative sample of various docker build targets
             export projects="web,air-discount-scheme-backend,license-api"
           fi
