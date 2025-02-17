@@ -18,7 +18,7 @@ runs:
       id: restore-codegen-cache
       with:
         path: |
-          ${{ inputs.generated_files }}
+          ${{ github.workspace}}/${{ inputs.generated_files }}
         key: generated-files-${{ github.sha }}
 
     - name: Prepare generated files
@@ -38,5 +38,5 @@ runs:
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ inputs.generated_files }}
+          ${{ github.workspace}}/${{ inputs.generated_files }}
         key: generated-files-${{ github.sha }}
