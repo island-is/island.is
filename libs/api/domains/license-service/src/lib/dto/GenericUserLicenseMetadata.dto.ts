@@ -29,7 +29,7 @@ export class GenericUserLicenseMetadata {
   @Field({ nullable: true })
   expireDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => ExpiryStatus, { nullable: true })
   expiryStatus?: ExpiryStatus
 
   @Field(() => GenericUserLicenseMetaTag, { nullable: true })

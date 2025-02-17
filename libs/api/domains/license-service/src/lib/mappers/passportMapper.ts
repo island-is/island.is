@@ -102,7 +102,9 @@ export class PassportMapper implements GenericLicenseMapper {
   ): Array<Payload> {
     if (document.passports?.length) {
       return (
-        document.passports?.map((p) => this.mapDocument(p, formatMessage)) ?? []
+        document.passports?.map((p) =>
+          this.mapDocument(p, formatMessage, document.childName ?? undefined),
+        ) ?? []
       )
     }
 
@@ -125,6 +127,7 @@ export class PassportMapper implements GenericLicenseMapper {
   private mapDocument(
     document: IdentityDocument,
     formatMessage: FormatMessage,
+    licenseName?: string,
   ): Payload {
     const isExpired = document.expiryStatus === 'EXPIRED'
     const isLost = document.expiryStatus === 'LOST'
@@ -267,7 +270,7 @@ export class PassportMapper implements GenericLicenseMapper {
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
-        name: document.verboseType ?? undefined,
+        name: licenseName ?? document.verboseType ?? undefined,
         title: document.verboseType ?? undefined,
         subtitle: formatMessage(m.passportNumberDisplay, {
           arg:

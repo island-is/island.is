@@ -11,7 +11,7 @@ import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
+  IntroWrapper,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
@@ -95,12 +95,11 @@ export const LicensesOverviewV2 = () => {
     data?.genericLicenseCollection?.licenses ?? []
 
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(m.title)}
-        intro={formatMessage(m.intro)}
-        marginBottom={4}
-      />
+    <IntroWrapper
+      title={formatMessage(m.title)}
+      intro={formatMessage(m.intro)}
+      marginBottom={4}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !errors?.length && !licenses?.length && (
         <Problem
@@ -148,7 +147,7 @@ export const LicensesOverviewV2 = () => {
             .map((license, index) => generateLicense(license, index))}
         </Stack>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 
