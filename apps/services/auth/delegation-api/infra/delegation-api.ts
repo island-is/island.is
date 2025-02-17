@@ -14,7 +14,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
