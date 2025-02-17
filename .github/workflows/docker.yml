@@ -332,6 +332,7 @@ jobs:
         if: ${{ steps.ecr-login.conclusion == 'success' }}
         id: docker-login
         uses: docker/login-action@v3
+        # The ecr-login action takes care of loading credentials,  we only need to specify the registry
         with:
           registry: ${{ steps.ecr-login.outputs.registry }}
 
