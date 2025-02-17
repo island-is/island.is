@@ -18,7 +18,7 @@ runs:
       id: restore-codegen-cache
       with:
         path: |
-          ${{ github.workspace}}/${{ inputs.generated_files }}
+          ${{ inputs.generated_files }}
         key: generated-files-${{ github.sha }}
 
     - name: Prepare generated files
@@ -29,14 +29,15 @@ runs:
         node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
 
     - name: Extract generated files
+      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         tar -xzvf ${{ inputs.generated_files }}
 
     - name: Cache Generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
+      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ github.workspace}}/${{ inputs.generated_files }}
+          ${{ inputs.generated_files }}
         key: generated-files-${{ github.sha }}
