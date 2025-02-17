@@ -8,7 +8,8 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
 
     .env({
-      REDIS_NODES: 'redis.internal:6379',
+      REDIS_NODES:
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
     })
     .ingress({
       primary: {
