@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -29,13 +27,11 @@ module.exports = {
           },
           name: {
             type: Sequelize.STRING,
-            allowNull: false,
-            defaultValue: '',
+            allowNull: true,
           },
           national_id: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: '',
           },
           email: {
             type: Sequelize.STRING,
@@ -53,17 +49,9 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          applicant_type: {
-            type: Sequelize.ENUM(
-              'individual',
-              'individualWithDelegationFromIndividual',
-              'individualWithDelegationFromLegalEntity',
-              'individualWithProcuration',
-              'individualGivingDelegation',
-              'legalEntity',
-            ),
+          applicant_type_id: {
+            type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: 'individual',
           },
           application_id: {
             type: Sequelize.UUID,
