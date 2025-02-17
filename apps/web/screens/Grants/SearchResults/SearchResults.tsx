@@ -17,6 +17,9 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   FilterInput,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Pagination,
   Stack,
   Text,
@@ -50,6 +53,7 @@ import { m } from '../messages'
 import { Availability } from '../types'
 import { SearchResultsContent } from './SearchResultsContent'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
+import * as styles from './SearchResults.css'
 
 const PAGE_SIZE = 8
 
@@ -271,9 +275,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           )
         }
       />
-      <Box marginTop={8} background="blue100">
+      <Box background="blue100">
         {!isMobile && (
           <SidebarLayout
+            paddingTop={6}
             fullWidthContent={true}
             sidebarContent={
               <Stack space={3}>
@@ -334,22 +339,24 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           </SidebarLayout>
         )}
         {isMobile && (
-          <Box padding={[1, 1, 2]} margin={[1, 1, 2]} paddingBottom={3}>
-            <Box marginBottom={3}>
+          <Box paddingTop={6}>
+            <Stack space={2}>
               <Text fontWeight="semiBold">
                 {formatMessage(m.search.search)}
               </Text>
-            </Box>
-            <Box marginBottom={[1, 1, 2]}>
-              <FilterInput
-                name="query"
-                placeholder={formatMessage(m.search.inputPlaceholder)}
-                value={query ?? ''}
-                onChange={(option) => setQuery(option)}
-                backgroundColor={'white'}
-              />
-            </Box>
-            <Box marginY={2}>
+              <Box className={styles.searchInput}>
+                <FilterInput
+                  name="query"
+                  placeholder={formatMessage(m.search.inputPlaceholder)}
+                  value={query ?? ''}
+                  onChange={(option) => setQuery(option)}
+                  backgroundColor={'white'}
+                />
+              </Box>
+              <Box display="flex" height="full" alignItems={'center'}>
+                <Text>{hitsMessage}</Text>
+              </Box>
+
               <GrantsSearchResultsFilter
                 searchState={{
                   category: categories ?? undefined,
@@ -364,32 +371,28 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 variant={'dialog'}
                 hits={totalHits}
               />
-            </Box>
-            <Box marginY={3}>
-              <Text>{hitsMessage}</Text>
-            </Box>
-
-            <SearchResultsContent grants={grants} locale={locale} />
-            <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
-              <Pagination
-                variant="purple"
-                page={page}
-                itemsPerPage={PAGE_SIZE}
-                totalItems={totalHits}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() => {
-                      setPage(page)
-                    }}
-                  >
-                    {children}
-                  </Box>
-                )}
-              />
-            </Box>
+              <SearchResultsContent grants={grants} locale={locale} />
+              <Box marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+                <Pagination
+                  variant="purple"
+                  page={page}
+                  itemsPerPage={PAGE_SIZE}
+                  totalItems={totalHits}
+                  totalPages={totalPages}
+                  renderLink={(page, className, children) => (
+                    <Box
+                      cursor="pointer"
+                      className={className}
+                      onClick={() => {
+                        setPage(page)
+                      }}
+                    >
+                      {children}
+                    </Box>
+                  )}
+                />
+              </Box>
+            </Stack>
           </Box>
         )}
       </Box>

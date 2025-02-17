@@ -73,7 +73,8 @@ export const GrantsSearchResultsFilter = ({
         resultCount={hits}
         onFilterClear={onReset}
         variant={variant}
-        align={'left'}
+        align={'right'}
+        usePopoverDiscloureButtonStyling
       >
         <Box background="white" borderRadius="large">
           <FilterMultiChoice

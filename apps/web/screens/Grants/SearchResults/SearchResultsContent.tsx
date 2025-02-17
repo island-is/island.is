@@ -40,13 +40,10 @@ export const SearchResultsContent = ({
   return (
     <>
       {!isMobile && (
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          marginBottom={3}
-          marginRight={3}
-        >
-          <Text>{subheader}</Text>
+        <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
+          <Box display="flex" alignItems="center">
+            <Text>{subheader}</Text>
+          </Box>
           <Button
             variant="utility"
             icon={isGridLayout ? 'menu' : 'gridView'}
