@@ -34,7 +34,6 @@ export const schoolSection = buildSection({
       children: [
         buildFieldsRepeaterField({
           id: 'selection',
-          title: '',
           titleVariant: 'h5',
           formTitleNumbering: 'none',
           formTitle: (index) => {
@@ -383,7 +382,6 @@ export const schoolSection = buildSection({
         buildAlertMessageField({
           id: 'alertAddThirdSelection',
           alertType: 'info',
-          title: '',
           message: school.thirdSelection.addDescription,
           condition: (answers) => {
             const isFreshman = checkIsFreshman(answers)

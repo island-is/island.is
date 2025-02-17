@@ -34,7 +34,6 @@ import { fakeDataSection } from './fakeDataSection'
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'OperatingLicenseApplicationDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -110,7 +109,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildFileUploadField({
                 id: 'attachments.houseBlueprints.file',
-                title: '',
                 uploadAccept: UPLOAD_ACCEPT,
                 uploadHeader: m.uploadHeader,
                 uploadDescription: m.uploadDescription,
@@ -124,7 +122,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildFileUploadField({
                 id: 'attachments.healthLicense.file',
-                title: '',
                 uploadAccept: UPLOAD_ACCEPT,
                 uploadHeader: m.uploadHeader,
                 uploadDescription: m.uploadDescription,
@@ -138,7 +135,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildFileUploadField({
                 id: 'attachments.formerLicenseHolderConfirmation.file',
-                title: '',
                 uploadAccept: UPLOAD_ACCEPT,
                 uploadHeader: m.uploadHeader,
                 uploadDescription: m.uploadDescription,
@@ -152,7 +148,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildFileUploadField({
                 id: 'attachments.outsideBlueprints.file',
-                title: '',
                 uploadAccept: UPLOAD_ACCEPT,
                 uploadHeader: m.uploadHeader,
                 uploadDescription: m.uploadDescription,
@@ -166,7 +161,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildFileUploadField({
                 id: 'attachments.otherFiles.file',
-                title: '',
                 uploadAccept: UPLOAD_ACCEPT,
                 uploadHeader: m.uploadHeader,
                 uploadDescription: m.uploadDescription,
@@ -191,14 +185,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             children: [
               buildCustomField({
                 id: 'paymentCharge',
-                title: '',
                 component: 'PaymentCharge',
                 doesNotRequireAnswer: true,
               }),
               buildSubmitField({
                 id: 'payment',
                 placement: 'footer',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
