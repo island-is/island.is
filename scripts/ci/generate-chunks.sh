@@ -10,7 +10,6 @@ source "$DIR"/_common.sh
 # Used to debug services, e.g. '["services-user-notification", "auth-api"]'
 if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
   echo "$CHUNKS_DEBUG"
-  exit 0
 fi
 
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
