@@ -52,7 +52,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          depth: 0
+          fetch-depth: 0
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
