@@ -169,6 +169,11 @@ export class PassportMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.number),
             value: document.numberWithType,
+            link: {
+              label: formatMessage(m.copy),
+              value: document.numberWithType,
+              type: GenericUserLicenseMetaLinksType.Copy,
+            },
           }
         : null,
       document.issuingDate

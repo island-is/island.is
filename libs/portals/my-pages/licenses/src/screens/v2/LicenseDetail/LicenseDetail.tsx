@@ -9,6 +9,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import {
   CardLoader,
   IntroHeader,
+  IntroWrapper,
   LinkButton,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
@@ -61,85 +62,83 @@ const LicenseDetail = () => {
   const genericLicense = data?.genericLicense ?? null
 
   return (
-    <>
-      <IntroHeader
-        title={
-          genericLicense?.payload?.metadata?.title ??
-          formatMessage(coreMessages.licenseNavTitle)
-        }
-        introComponent={genericLicense?.payload?.metadata?.description
-          ?.map((message, index) => {
-            if (!message.linkInText) {
-              return (
-                <Text key={`intro-header-text-${index}`}>
-                  {message.text}
-                  <br />
-                </Text>
-              )
+    <IntroWrapper
+      title={
+        genericLicense?.payload?.metadata?.title ??
+        formatMessage(coreMessages.licenseNavTitle)
+      }
+      introComponent={genericLicense?.payload?.metadata?.description
+        ?.map((message, index) => {
+          if (!message.linkInText) {
+            return (
+              <Text key={`intro-header-text-${index}`}>
+                {message.text}
+                <br />
+              </Text>
+            )
+          }
+          if (message.linkInText && message.linkIconType) {
+            return (
+              <LinkButton
+                key={`intro-header-button-${index}`}
+                variant="text"
+                to={message.linkInText}
+                text={message.text}
+              />
+            )
+          }
+          return null
+        })
+        .filter(isDefined)}
+      marginBottom={4}
+    >
+      {genericLicense?.payload?.metadata.alert ? (
+        <Box paddingTop={3}>
+          <AlertMessage
+            type={
+              genericLicense.payload.metadata.alert.type === 'WARNING'
+                ? 'warning'
+                : genericLicense.payload.metadata.alert.type === 'ERROR'
+                ? 'error'
+                : 'info'
             }
-            if (message.linkInText && message.linkIconType) {
-              return (
-                <LinkButton
-                  key={`intro-header-button-${index}`}
-                  variant="text"
-                  to={message.linkInText}
-                  text={message.text}
-                />
-              )
-            }
-            return null
-          })
-          .filter(isDefined)}
-        marginBottom={4}
-      >
-        {genericLicense?.payload?.metadata.alert ? (
-          <Box paddingTop={3}>
-            <AlertMessage
-              type={
-                genericLicense.payload.metadata.alert.type === 'WARNING'
-                  ? 'warning'
-                  : genericLicense.payload.metadata.alert.type === 'ERROR'
-                  ? 'error'
-                  : 'info'
-              }
-              title={genericLicense.payload.metadata.alert.title}
-              message={genericLicense.payload.metadata.alert.message}
-            />
-          </Box>
-        ) : undefined}
-        {genericLicense?.payload?.metadata?.links ||
-        (genericLicense?.license.pkpassStatus ===
-          GenericUserLicensePkPassStatus.Available &&
-          licenseType) ? (
-          <Box paddingTop={3}>
-            <Inline space={1}>
-              {genericLicense.license.pkpassStatus ===
-                GenericUserLicensePkPassStatus.Available &&
-                licenseType && <PkPass licenseType={licenseType} />}
-              {genericLicense?.payload?.metadata.links
-                ?.map((link, index) => {
-                  if (link.label && link.value && link.type) {
-                    return (
-                      <LinkButton
-                        variant="utility"
-                        key={`${type}-license-button-${index}`}
-                        to={link.value}
-                        text={link.label}
-                        icon={
-                          link.type === GenericUserLicenseMetaLinksType.Download
-                            ? 'download'
-                            : 'open'
-                        }
-                      />
-                    )
-                  }
-                  return null
-                })
-                .filter(isDefined)}
-            </Inline>
-          </Box>
-        ) : undefined}
-      </IntroHeader>
+            title={genericLicense.payload.metadata.alert.title}
+            message={genericLicense.payload.metadata.alert.message}
+          />
+        </Box>
+      ) : undefined}
+      {genericLicense?.payload?.metadata?.links ||
+      (genericLicense?.license.pkpassStatus ===
+        GenericUserLicensePkPassStatus.Available &&
+        licenseType) ? (
+        <Box paddingTop={3}>
+          <Inline space={1}>
+            {genericLicense.license.pkpassStatus ===
+              GenericUserLicensePkPassStatus.Available &&
+              licenseType && <PkPass licenseType={licenseType} />}
+            {genericLicense?.payload?.metadata.links
+              ?.map((link, index) => {
+                if (link.label && link.value && link.type) {
+                  return (
+                    <LinkButton
+                      variant="utility"
+                      key={`${type}-license-button-${index}`}
+                      to={link.value}
+                      text={link.label}
+                      icon={
+                        link.type === GenericUserLicenseMetaLinksType.Download
+                          ? 'download'
+                          : 'open'
+                      }
+                    />
+                  )
+                }
+                return null
+              })
+              .filter(isDefined)}
+          </Inline>
+        </Box>
+      ) : undefined}
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !genericLicense && (
         <Problem
@@ -156,7 +155,7 @@ const LicenseDetail = () => {
         fields={genericLicense?.payload?.data ?? []}
         licenseType={licenseType}
       />
-    </>
+    </IntroWrapper>
   )
 }
 

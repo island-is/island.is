@@ -76,6 +76,7 @@ export enum GenericUserLicensePkPassStatus {
 export enum GenericUserLicenseMetaLinksType {
   External = 'External',
   Download = 'Download',
+  Copy = 'Copy',
 }
 
 export enum GenericUserLicenseValidity {
