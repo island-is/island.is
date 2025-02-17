@@ -14,7 +14,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   InstitutionNationalIds,
-  YES,
   defineTemplateApi,
   NationalRegistrySpouseApi,
   UserProfileApi,
@@ -24,6 +23,7 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  YES,
 } from '@island.is/application/core'
 import { HouseholdSupplementHousing } from './constants'
 import { dataSchema } from './dataSchema'

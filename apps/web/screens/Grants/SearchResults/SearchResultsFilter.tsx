@@ -139,8 +139,8 @@ export const GrantsSearchResultsFilter = ({
                     label: 'Rannís',
                   },
                   {
-                    value: 'orkustofnun',
-                    label: 'Orkustofnun',
+                    value: 'umhverfisstofnun',
+                    label: 'Umhverfis- og orkustofnun',
                   },
                 ],
               },

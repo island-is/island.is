@@ -2,8 +2,8 @@ import {
   buildCheckboxField,
   buildMultiField,
   buildSection,
+  YES,
 } from '@island.is/application/core'
-import { YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const sectionReasonForApplication = buildSection({
@@ -17,7 +17,6 @@ export const sectionReasonForApplication = buildSection({
       children: [
         buildCheckboxField({
           id: 'reason.confirmationCheckbox',
-          title: '',
           defaultValue: [],
           options: [
             {

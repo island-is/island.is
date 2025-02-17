@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -33,6 +35,7 @@ export const createTestingIndictmentCountModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(IndictmentCount),
         useValue: {
@@ -47,12 +50,9 @@ export const createTestingIndictmentCountModule = async () => {
       {
         provide: getModelToken(Offense),
         useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
           create: jest.fn(),
           update: jest.fn(),
           destroy: jest.fn(),
-          findByPk: jest.fn(),
         },
       },
       IndictmentCountService,
@@ -67,6 +67,8 @@ export const createTestingIndictmentCountModule = async () => {
     getModelToken(Offense),
   )
 
+  const sequelize = indictmentCountModule.get<Sequelize>(Sequelize)
+
   const indictmentCountService =
     indictmentCountModule.get<IndictmentCountService>(IndictmentCountService)
 
@@ -78,6 +80,7 @@ export const createTestingIndictmentCountModule = async () => {
   indictmentCountModule.close()
 
   return {
+    sequelize,
     offenseModel,
     indictmentCountModel,
     indictmentCountService,

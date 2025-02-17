@@ -21,7 +21,6 @@ import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -38,7 +37,6 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'introText',
-              title: '',
             }),
           ],
         }),
@@ -56,7 +54,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
