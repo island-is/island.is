@@ -35,6 +35,31 @@ export const setOnChangeSubsection = buildSubSection({
           and change the selections in any of the other fields.`,
         }),
 
+        buildAsyncSelectField({
+          id: 'asyncSelectField',
+          title: 'Async Select',
+          loadingError: 'Loading error',
+          setOnChange: (optionValue) => [
+            {
+              key: 'settableTextField',
+              value: 'This is the value that was selected: ' + optionValue,
+            },
+          ],
+          loadOptions: async ({ apolloClient }) => {
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipality>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                value: municipality.name,
+                label: municipality.name,
+              })) ?? []
+            )
+          },
+        }),
+
         buildSelectField({
           id: 'selectField',
           title: 'Select',
