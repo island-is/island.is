@@ -33,7 +33,7 @@ env:
   GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
 
 jobs:
-  check:
+  pre-checks:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
   prepare:
