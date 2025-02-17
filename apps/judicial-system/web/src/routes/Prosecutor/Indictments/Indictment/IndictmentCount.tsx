@@ -23,7 +23,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
-  FeatureContext,
   IndictmentInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -221,9 +220,6 @@ export const IndictmentCount: FC<Props> = ({
   updateIndictmentCountState,
   setWorkingCase,
 }) => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
   const { deleteOffense } = useOffenses()
