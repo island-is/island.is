@@ -4,10 +4,11 @@ import {
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'services-form-system-api'> =>
-  service('services-form-system-api')
-    .image('services-form-system-api')
-    .namespace('services-form-system-api')
+const serviceName = 'services-form-system-api'
+export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+  service(serviceName)
+    .image(serviceName)
+    .namespace(serviceName)
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
