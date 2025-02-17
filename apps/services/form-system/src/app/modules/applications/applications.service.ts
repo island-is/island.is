@@ -59,7 +59,7 @@ export class ApplicationsService {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
-    let newApplicationId: string = ''
+    let newApplicationId = ''
 
     await this.sequelize.transaction(async (transaction) => {
       const newApplication: Application = await this.applicationModel.create(
