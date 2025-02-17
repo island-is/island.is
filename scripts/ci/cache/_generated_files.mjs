@@ -43,13 +43,14 @@ export async function getGeneratedFilesHash() {
       ignore: ignorePatterns,
     })
   ).sort()
-  console.log(`Files to hash:`)
+  console.log('::group::Files to hash:')
   for (const _file of files) {
     console.log(_file)
     const file = resolve(ROOT, _file)
     const content = await readFile(file, 'utf8')
     hash.update(content)
   }
+  console.log('::endgroup::')
 
   const finalHash = hash.digest('hex')
   return finalHash
