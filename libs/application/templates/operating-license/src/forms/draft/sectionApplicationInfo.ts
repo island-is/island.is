@@ -75,7 +75,6 @@ export const applicationInfo = buildMultiField({
     //fake field to trigger rerender on category switch
     buildDescriptionField({
       id: 'fake_helper_field',
-      title: '',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
           APPLICATION_TYPES.HOTEL &&

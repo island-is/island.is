@@ -18,7 +18,6 @@ export const overviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'addEmployee',
-          title: '',
           component: 'AddEmployee',
         }),
       ],
@@ -30,7 +29,6 @@ export const overviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'overview',
-          title: '',
           component: 'Overview',
         }),
         buildSubmitField({

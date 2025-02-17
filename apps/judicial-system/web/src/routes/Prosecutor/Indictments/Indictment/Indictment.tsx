@@ -7,9 +7,11 @@ import router from 'next/router'
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -79,6 +81,9 @@ export const getIndictmentIntroductionAutofill = (
 }
 
 const Indictment = () => {
+  const { features } = useContext(FeatureContext)
+  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
+
   const {
     workingCase,
     setWorkingCase,
@@ -117,7 +122,7 @@ const Indictment = () => {
     },
   })
 
-  const stepIsValid = isIndictmentStepValid(workingCase)
+  const stepIsValid = isIndictmentStepValid(workingCase, isOffenseEndpointEnabled)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -162,7 +167,13 @@ const Indictment = () => {
         )
       }
     },
-    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+    [
+      isOffenseEndpointEnabled,
+      formatMessage,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -519,7 +530,7 @@ const Indictment = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

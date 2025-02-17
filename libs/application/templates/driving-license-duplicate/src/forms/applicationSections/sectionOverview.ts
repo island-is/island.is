@@ -39,7 +39,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'overview.currentLicense',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildDividerField({}),
@@ -52,7 +51,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'qsignatureOverview',
-          title: '',
           component: 'QualitySignature',
         }),
         buildDividerField({}),
@@ -65,7 +63,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'qphotoOverview',
-          title: '',
           component: 'QualityPhoto',
         }),
         buildDividerField({}),
@@ -98,7 +95,6 @@ export const sectionOverview = buildSection({
         }),
         buildCheckboxField({
           id: 'overview.confirmationCheckbox',
-          title: '',
           defaultValue: [],
           options: [
             {
