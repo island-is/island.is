@@ -261,6 +261,11 @@ export const m = {
       defaultMessage: 'Upplýsingar um auglýsingu',
     },
 
+    sidebarCorrectionTitle: {
+      id: 'web.ojoi:advert.sidebarCorrectionTitle',
+      defaultMessage: 'Leiðréttingar',
+    },
+
     similarTitle: {
       id: 'web.ojoi:advert.similarTitle',
       defaultMessage: 'Tengd mál',
@@ -284,6 +289,18 @@ export const m = {
     publicationDate: {
       id: 'web.ojoi:advert.publicationDate',
       defaultMessage: 'Útgáfudagur',
+    },
+    correctedDate: {
+      id: 'web.ojoi:advert.correctedDate',
+      defaultMessage: 'Leiðrétt',
+    },
+    correctionSingular: {
+      id: 'web.ojoi:advert.correctionSingular',
+      defaultMessage: 'Leiðrétting',
+    },
+    correctionDoc: {
+      id: 'web.ojoi:advert.correctionDoc',
+      defaultMessage: 'Leiðrétt skjal',
     },
     getPdf: {
       id: 'web.ojoi:advert.getPdf',
