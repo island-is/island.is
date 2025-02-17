@@ -126,6 +126,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectoratePrescriptions',
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptions(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',

@@ -21,14 +21,20 @@ interface Props {
       color: IconProps['color']
     }
   }[]
+  backgroundColor?: 'blue' | 'white'
 }
 
-const DispensingContainer: React.FC<Props> = ({ label, data }) => {
+const DispensingContainer: React.FC<Props> = ({
+  label,
+  data,
+  backgroundColor,
+}) => {
   return (
     <Box
       marginY={[1, 1, 1, 2, 2]}
       marginX={[0, 0, 0, 2, 2]}
       className={styles.container}
+      background={backgroundColor === 'blue' ? 'blue100' : 'white'}
     >
       <Text fontWeight="medium" paddingBottom={[1, 1, 1, 2, 2]}>
         {label}

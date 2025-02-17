@@ -4,12 +4,14 @@ query GetMedicinePrescriptions($locale: String) {
       prescriberName
       issueDate
       expiryDate
+      productId
       productName
       productType
       productForm
       productUrl
       productStrength
       productQuantity
+      category
       dosageInstructions
       indication
       totalPrescribedAmountDisplay

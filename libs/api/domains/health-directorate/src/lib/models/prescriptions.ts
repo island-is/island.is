@@ -1,6 +1,7 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
+  PrescribedItemCategoryEnum,
   PrescribedItemRenewalBlockedReasonEnum,
   PrescribedItemRenewalStatusEnum,
 } from './enums'
@@ -16,8 +17,8 @@ export class Prescription {
   @Field()
   prescriberId!: string
 
-  @Field()
-  prescriberName!: string
+  @Field({ nullable: true })
+  prescriberName?: string
 
   @Field(() => Date)
   issueDate!: Date
@@ -43,8 +44,11 @@ export class Prescription {
   @Field({ nullable: true })
   productStrength?: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   productQuantity?: number
+
+  @Field(() => PrescribedItemCategoryEnum, { nullable: true })
+  category?: PrescribedItemCategoryEnum
 
   @Field({ nullable: true })
   dosageInstructions?: string
@@ -52,7 +56,7 @@ export class Prescription {
   @Field({ nullable: true })
   indication?: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   totalPrescribedAmount?: number
 
   @Field({ nullable: true })
@@ -70,7 +74,7 @@ export class Prescription {
   @Field(() => PrescribedItemRenewalStatusEnum, { nullable: true })
   renewalStatus?: PrescribedItemRenewalStatusEnum
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   amountRemaining?: number
 
   @Field({ nullable: true })
@@ -79,7 +83,7 @@ export class Prescription {
   @Field({ nullable: true })
   amountRemainingDisplay?: string
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   percentageRemaining?: number
 
   @Field(() => Boolean)

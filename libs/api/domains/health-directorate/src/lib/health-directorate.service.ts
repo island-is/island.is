@@ -17,6 +17,7 @@ import { Referral, Referrals } from './models/referrals.model'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
+  mapPrescriptionCategory,
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
@@ -219,6 +220,9 @@ export class HealthDirectorateService {
           productUrl: item.productUrl,
           productStrength: item.productStrength,
           productQuantity: item.productQuantity,
+          category: item.category
+            ? mapPrescriptionCategory(item.category)
+            : undefined,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
           totalPrescribedAmount: item.totalPrescribedAmount,

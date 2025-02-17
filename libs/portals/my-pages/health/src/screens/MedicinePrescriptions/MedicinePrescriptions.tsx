@@ -2,6 +2,7 @@ import { Box, Stack, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   EmptyTable,
+  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   SortableTable,
@@ -19,41 +20,49 @@ import DispensingContainer from './components/DispensingContainer/DispensingCont
 import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
 import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
 import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
+import { HealthDirectoratePrescribedItemCategory } from '@island.is/api/schema'
 
 const MedicinePrescriptions = () => {
   const { formatMessage, lang } = useLocale()
   const [activePrescription, setActivePrescription] = React.useState<any>(null)
   const [openModal, setOpenModal] = useState(false)
-  const [activeTag, setActiveTag] = useState('0')
+  const [activeTag, setActiveTag] =
+    useState<HealthDirectoratePrescribedItemCategory>(
+      HealthDirectoratePrescribedItemCategory.Owner,
+    )
 
   const { data, error, loading } = useGetMedicinePrescriptionsQuery({
     variables: { locale: lang },
   })
 
+  const prescriptions = data?.healthDirectoratePrescriptions.prescriptions
   console.log('data', data)
   const stringMaxLength = 22
-  const filterList = (id: string) => {
+
+  const filterList = (id: HealthDirectoratePrescribedItemCategory) => {
+    if (!prescriptions) return []
     if (activeTag !== id) setActiveTag(id)
-    if (id === '0') return MedicinePrescriptionsData
-    return MedicinePrescriptionsData.filter((item) => item.id === id)
+    if (id === HealthDirectoratePrescribedItemCategory.Owner)
+      return prescriptions
+    return prescriptions.filter((item) => item.category === id)
   }
 
   const tagLabels = [
     {
       label: 'Öll lyf',
-      id: '0',
+      id: HealthDirectoratePrescribedItemCategory.Owner,
     },
     {
-      label: 'Lyf notuð reglulega',
-      id: '1',
+      label: 'Föst lyf',
+      id: HealthDirectoratePrescribedItemCategory.Regular,
     },
     {
       label: 'Tímabundin lyf',
-      id: '2',
+      id: HealthDirectoratePrescribedItemCategory.Pn,
     },
     {
       label: 'Lyfjakúrar',
-      id: '3',
+      id: HealthDirectoratePrescribedItemCategory.Regimen,
     },
   ]
 
@@ -79,69 +88,75 @@ const MedicinePrescriptions = () => {
             </Box>
           ))}
         </Box>
-        <SortableTable
-          title=""
-          labels={{
-            medicine: formatMessage(messages.medicineTitle),
-            usedFor: formatMessage(messages.usedFor),
-            process: formatMessage(messages.process),
-            validTo: formatMessage(messages.medicineValidTo),
-            status: formatMessage(messages.renewal),
-          }}
-          expandable
-          align="left"
-          defaultSortByKey="medicine"
-          mobileTitleKey="medicine"
-          ellipsisLength={stringMaxLength}
-          items={
-            filteredData?.map((item, i) => ({
-              id: item?.id ?? `${i}`,
-              medicine: item?.medicineName ?? '',
-              usedFor: item?.usedFor ?? '',
-              process: item?.process ?? '',
-              validTo: item?.validTo ?? '',
-              status: undefined,
-              lastNode:
-                item?.status.type === 'renew'
-                  ? {
-                      type: 'action',
-                      label: formatMessage(messages.renew),
-                      action: () => {
-                        setActivePrescription(item)
-                        setOpenModal(true)
-                      },
-                      icon: { icon: 'reload', type: 'outline' },
-                    }
-                  : item?.status.type === 'tooltip'
-                  ? {
-                      type: 'info',
-                      label: item.status.data,
-                      text: formatMessage(messages.notValidForRenewal),
-                    }
-                  : { type: 'text', label: item.status.data },
+        {!loading && !error && filteredData?.length > 0 && (
+          <SortableTable
+            title=""
+            labels={{
+              medicine: formatMessage(messages.medicineTitle),
+              usedFor: formatMessage(messages.usedFor),
+              process: formatMessage(messages.process),
+              validTo: formatMessage(messages.medicineValidTo),
+              status: formatMessage(messages.renewal),
+            }}
+            expandable
+            align="left"
+            defaultSortByKey="medicine"
+            mobileTitleKey="medicine"
+            ellipsisLength={stringMaxLength}
+            items={
+              filteredData.map((item, i) => ({
+                id: item?.productId ?? `${i}`,
+                medicine: item?.productName ?? '',
+                usedFor: item?.indication ?? '',
+                process: '',
+                validTo: formatDate(item?.expiryDate) ?? '',
+                status: undefined,
 
-              children: (
-                <Box background={'blue100'}>
-                  <Stack space={2}>
-                    <NestedInfoLines
-                      label={formatMessage(messages.moreDetailedInfo)}
-                      data={MedicinePrescriptionDetailData}
-                    />
-                    <NestedInfoLines
-                      label={formatMessage(messages.version)}
-                      data={MedicinePrescriptionDetailData2}
-                    />
-                    <DispensingContainer
-                      label={formatMessage(messages.dispenseHistory)}
-                      data={MedicineDispenseData}
-                    />
-                  </Stack>
-                </Box>
-              ),
-              subTitleFirstCol: item?.instructions,
-            })) ?? []
-          }
-        />
+                // lastNode:
+                //   item?.status.type === 'renew'
+                //     ? {
+                //         type: 'action',
+                //         label: formatMessage(messages.renew),
+                //         action: () => {
+                //           setActivePrescription(item)
+                //           setOpenModal(true)
+                //         },
+                //         icon: { icon: 'reload', type: 'outline' },
+                //       }
+                //     : item?.status.type === 'tooltip'
+                //     ? {
+                //         type: 'info',
+                //         label: item.status.data,
+                //         text: formatMessage(messages.notValidForRenewal),
+                //       }
+                //     : { type: 'text', label: item.status.data },
+
+                children: (
+                  <Box background={'blue100'} paddingBottom={1}>
+                    <Stack space={2}>
+                      <NestedInfoLines
+                        backgroundColor="blue"
+                        label={formatMessage(messages.moreDetailedInfo)}
+                        data={MedicinePrescriptionDetailData}
+                      />
+                      <NestedInfoLines
+                        backgroundColor="blue"
+                        label={formatMessage(messages.version)}
+                        data={MedicinePrescriptionDetailData2}
+                      />
+                      <DispensingContainer
+                        backgroundColor="blue"
+                        label={formatMessage(messages.dispenseHistory)}
+                        data={MedicineDispenseData}
+                      />
+                    </Stack>
+                  </Box>
+                ),
+                subTitleFirstCol: item?.dosageInstructions ?? '',
+              })) ?? []
+            }
+          />
+        )}
       </Box>
 
       {activePrescription && (
@@ -153,9 +168,9 @@ const MedicinePrescriptions = () => {
         />
       )}
       {/* || loading */}
-      {!filteredData.length && (
+      {!error && !filteredData.length && (
         <EmptyTable
-          // loading={loading}
+          loading={loading}
           message={formatMessage(messages.noDataFound, { arg: 'lyf' })}
         />
       )}
