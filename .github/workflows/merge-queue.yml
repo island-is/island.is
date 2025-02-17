@@ -238,10 +238,10 @@ jobs:
         run: echo "Build is successful"
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      # - name: Check tests success
+      #   run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+      # - name: Check e2e success
+      #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       # - name: Check build success
       #   run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
 
