@@ -13,6 +13,12 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: INFO
+      shell: bash
+      run: |
+        echo "generated files: ${{ inputs.generated_files }}"
+        echo "${{ toJson(github) }}"
+
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
@@ -25,7 +31,6 @@ runs:
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        echo "generated files: ${{ inputs.generated_files }}"
         node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
 
     - name: Extract generated files
