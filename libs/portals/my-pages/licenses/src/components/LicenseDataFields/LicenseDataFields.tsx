@@ -71,7 +71,7 @@ export const LicenseDataFields = ({
                         label: field.link.label ?? undefined,
                         to: field.link.value,
                       }
-                    :/* field.link?.type ===
+                    : /*: field.link?.type ===
                         GenericUserLicenseMetaLinksType.Copy &&
                       field.link?.value
                     ? {
@@ -81,7 +81,7 @@ export const LicenseDataFields = ({
                         action: () => copyToClipboard(field.link?.value ?? ''),
                         variant: 'utility',
                       } */
-                    : undefined
+                      undefined
                 }
                 renderContent={
                   field.value
