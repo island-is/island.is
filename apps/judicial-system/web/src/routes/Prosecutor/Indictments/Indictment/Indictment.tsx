@@ -81,9 +81,6 @@ export const getIndictmentIntroductionAutofill = (
 }
 
 const Indictment = () => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-
   const {
     workingCase,
     setWorkingCase,
@@ -122,7 +119,7 @@ const Indictment = () => {
     },
   })
 
-  const stepIsValid = isIndictmentStepValid(workingCase, isOffenseEndpointEnabled)
+  const stepIsValid = isIndictmentStepValid(workingCase)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -168,7 +165,6 @@ const Indictment = () => {
       }
     },
     [
-      isOffenseEndpointEnabled,
       formatMessage,
       setAndSendCaseToServer,
       setWorkingCase,
