@@ -46,6 +46,7 @@ import {
   getDefenceUserCaseFileCategories,
 } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
@@ -114,6 +115,7 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewDecision',
   'indictmentReviewerId',
   'hasCivilClaims',
+  'isCompletedWithoutRuling',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -212,6 +214,15 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {

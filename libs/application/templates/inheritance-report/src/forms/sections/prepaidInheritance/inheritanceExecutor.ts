@@ -26,7 +26,6 @@ export const inheritanceExecutor = buildSection({
         }),
         buildNationalIdWithNameField({
           id: 'executors.executor',
-          title: '',
           required: true,
         }),
         buildTextField({
@@ -45,12 +44,10 @@ export const inheritanceExecutor = buildSection({
         }),
         buildDescriptionField({
           id: 'description_empty',
-          title: '',
           marginBottom: 'p5',
         }),
         buildCheckboxField({
           id: 'executors.includeSpouse',
-          title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],
@@ -73,7 +70,6 @@ export const inheritanceExecutor = buildSection({
         }),
         buildNationalIdWithNameField({
           id: 'executors.spouse',
-          title: '',
           required: true,
           condition: (answers) =>
             !!((answers.executors as any)?.includeSpouse as Array<string>)

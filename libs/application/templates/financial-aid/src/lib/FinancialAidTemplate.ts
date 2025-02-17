@@ -144,7 +144,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/PrerequisitesSpouse').then((module) =>
+                import('../forms/prerequisitesSpouseForm').then((module) =>
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
@@ -184,7 +184,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Spouse').then((module) =>
+                import('../forms/spouseForm').then((module) =>
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',

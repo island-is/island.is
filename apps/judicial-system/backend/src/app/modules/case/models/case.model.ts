@@ -591,7 +591,7 @@ export class Case extends Model {
   prosecutorPostponedAppealDate?: Date
 
   /**********
-   * The date and time of the judge's ruling (when the csae is completed)
+   * The date and time of the judge's ruling (when the case is completed)
    **********/
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
@@ -1089,4 +1089,12 @@ export class Case extends Model {
   @HasMany(() => CivilClaimant, 'caseId')
   @ApiPropertyOptional({ type: () => CivilClaimant, isArray: true })
   civilClaimants?: CivilClaimant[]
+
+  /**********
+   * Indicates whether an investigation case was completed without a ruling -
+   * optional
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isCompletedWithoutRuling?: boolean
 }

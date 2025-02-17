@@ -8,7 +8,6 @@ import { Form, FormModes } from '@island.is/application/types'
 
 export const PaymentForm: Form = buildForm({
   id: 'ExamplePaymentPaymentForm',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: false,
   children: [

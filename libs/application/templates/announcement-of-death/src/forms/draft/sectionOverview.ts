@@ -36,7 +36,6 @@ export const sectionOverview = buildSection({
         ...additionalInfo,
         buildSubmitField({
           id: 'submit',
-          title: '',
           placement: 'footer',
           refetchApplicationAfterSubmit: true,
           actions: [
