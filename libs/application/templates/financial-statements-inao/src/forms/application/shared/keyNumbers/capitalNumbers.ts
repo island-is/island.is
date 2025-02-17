@@ -17,7 +17,6 @@ export const capitalNumberSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'capitalNumberField',
-          title: '',
           description: '',
           component: 'KeyNumbersCapital',
           childInputIds: Object.values(CAPITALNUMBERS),
