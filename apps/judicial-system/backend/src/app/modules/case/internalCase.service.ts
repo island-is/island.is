@@ -714,7 +714,7 @@ export class InternalCaseService {
       .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
-          `Failed to update indictment case ${theCase.id} with assigned roles`,
+          `Failed to update indictment case ${theCase.id} with the arraignment date`,
           { reason },
         )
 
