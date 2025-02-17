@@ -7,7 +7,7 @@ on:
       E2E_CHUNKS:
         value: ${{ jobs.install.outputs.E2E_CHUNKS }}
       E2E_BUILD_ID:
-        value: ${{ jobs.install.outputs.BUILD_ID }}
+        value: ${{ jobs.install.outputs.E2E_BUILD_ID }}
       BUILD_CHUNKS:
         value: ${{ jobs.install.outputs.BUILD_CHUNKS }}
       LINT_CHUNKS:
@@ -42,7 +42,7 @@ jobs:
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.LINT_CHUNKS }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.TEST_CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.E2E_CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
+      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.BUILD_CHUNKS }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
@@ -128,7 +128,7 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+          echo E2E_BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
         id: build_projects
