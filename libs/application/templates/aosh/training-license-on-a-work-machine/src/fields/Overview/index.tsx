@@ -55,7 +55,11 @@ export const Overview: FC<
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: '',
-            value: getApplicantInformation(application.answers, formatMessage),
+            value: getApplicantInformation(
+              application.answers,
+              formatMessage,
+              hideActionButtons,
+            ),
           }}
         />
       </ReviewGroup>

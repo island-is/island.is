@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -19,6 +20,12 @@ export const overviewSection = buildSection({
           id: 'overview',
           title: '',
           component: 'Overview',
+        }),
+        buildDescriptionField({
+          id: 'overviewSection.agreementText',
+          title: '',
+          description: overview.general.agreementText,
+          titleVariant: 'h5',
         }),
         buildSubmitField({
           id: 'submit',

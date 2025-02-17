@@ -97,45 +97,6 @@ export const informationSection = buildSection({
               '',
             ),
         }),
-        buildTextField({
-          id: 'information.machineLicenseNumber',
-          title: information.labels.machineLicenseNumber,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.email',
-              '',
-            ),
-        }),
-        buildTextField({
-          id: 'information.driversLicenseNumber',
-          title: information.labels.driversLicenseNumber,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.email',
-              '',
-            ),
-        }),
-        buildTextField({
-          id: 'information.driversLicenseDate',
-          title: information.labels.driversLicenseDate,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.email',
-              '',
-            ),
-        }),
       ],
     }),
   ],

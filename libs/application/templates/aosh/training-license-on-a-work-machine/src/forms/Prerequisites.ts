@@ -54,8 +54,8 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: LicensesApi,
-              title: '',
-              subTitle: '',
+              title: externalData.licenses.title,
+              subTitle: externalData.licenses.subTitle,
             }),
           ],
         }),

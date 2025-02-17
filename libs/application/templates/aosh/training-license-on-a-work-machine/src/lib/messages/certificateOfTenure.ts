@@ -5,17 +5,18 @@ export const certificateOfTenure = {
   general: defineMessages({
     title: {
       id: 'aosh.tlwm.application:certificateOfTenure.general.title',
-      defaultMessage: 'Vottorð um starfstíma',
+      defaultMessage: 'Starfstími á vinnuvél',
       description: 'Title of certificateOfTenure screen',
     },
     sectionTitle: {
       id: 'aosh.tlwm.application:certificateOfTenure.general.sectionTitle',
-      defaultMessage: 'Vottorð um starfstíma',
+      defaultMessage: 'Starfstími á vinnuvél',
       description: 'Section title of certificateOfTenure screen',
     },
     description: {
       id: 'aosh.tlwm.application:certificateOfTenure.general.description',
-      defaultMessage: 'Upplýsingar um skráningaraðila',
+      defaultMessage:
+        'Vinsamlegast fylltu út upplýsingar um þá vél sem þú hefur unnið á. Hægt er að sækja um kennsluréttindi á einn vinnuvélaflokk í hverri umsókn. ',
       description: 'Description of certificateOfTenure screen',
     },
   }),

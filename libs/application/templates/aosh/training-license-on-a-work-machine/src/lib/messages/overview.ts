@@ -18,6 +18,12 @@ export const overview = {
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
     },
+    agreementText: {
+      id: 'aosh.tlwm.application:overview.general.agreementText',
+      defaultMessage:
+        'Með því að senda inn umsóknina staðfestir þú að hafa stjórnað og sinnt viðhaldi á ofangreindri vél.',
+      description: 'Agreement text on overview page',
+    },
     approveButton: {
       id: 'aosh.tlwm.application:overview.general.approveButton',
       defaultMessage: 'Staðfesta',

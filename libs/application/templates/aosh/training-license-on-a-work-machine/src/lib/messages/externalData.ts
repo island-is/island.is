@@ -64,18 +64,16 @@ export const externalData = {
         'In order to apply for this application we need your email and phone number',
     },
   }),
-  // licenses: defineMessages({
-  //   title: {
-  //     id: 'aosh.tlwm.application:externalData.licenses.title',
-  //     defaultMessage: 'Upplýsingar frá Vinnueftirlitinu',
-  //     description: 'Your user profile information',
-  //   },
-  //   subTitle: {
-  //     id: 'aosh.tlwm.application:externalData.licenses.subTitle',
-  //     defaultMessage:
-  //       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-  //     description:
-  //       'In order to apply for this application we need your email and phone number',
-  //   },
-  // }),
+  licenses: defineMessages({
+    title: {
+      id: 'aosh.tlwm.application:externalData.licenses.title',
+      defaultMessage: 'Upplýsingar frá Vinnueftirlitinu',
+      description: 'Information from Vinnueftirlitið',
+    },
+    subTitle: {
+      id: 'aosh.tlwm.application:externalData.licenses.subTitle',
+      defaultMessage: 'Sóttar eru upplýsingar um vinnuvélaréttindi.',
+      description: 'We collect you information bout your machine license',
+    },
+  }),
 }

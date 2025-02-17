@@ -13,9 +13,6 @@ const InformationSchema = z.object({
   postCode: z.string().min(1),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  machineLicenseNumber: z.string(), // TODO: Add validation if any
-  driversLicenseNumber: z.string(), // TODO: Add validation if any
-  driversLicenseDate: z.string(), // TODO: Add validation if any
 })
 
 export const CertificateOfTenureSchema = z.object({
@@ -33,9 +30,8 @@ export const CertificateOfTenureSchema = z.object({
       params: certificateOfTenure.labels.tenureInHoursError,
     },
   ),
-  approveMachines: z
-    .array(z.string())
-    .refine((v) => v.includes('approveMachines')),
+  unknownMachineType: z.boolean().optional(),
+  unknownPracticalRight: z.boolean().optional(),
 })
 
 const AssigneeInformationSchema = z

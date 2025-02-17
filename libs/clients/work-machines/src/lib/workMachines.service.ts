@@ -8,6 +8,7 @@ import {
   ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachineSubCategoriesGetRequest,
+  ApiMachineTypesTypeByRegistrationNumberGetRequest,
   ApiMachinesGetRequest,
   ApiMachinesPostRequest,
   ApiTechnicalInfoInputsGetRequest,
@@ -371,5 +372,14 @@ export class WorkMachinesClientService {
 
   async getLicenses(auth: Auth, requestParameters: ApiLicenseGetRequest) {
     return await this.licenseApiWithAuth(auth).apiLicenseGet(requestParameters)
+  }
+
+  async getTypeByRegistrationNumber(
+    auth: Auth,
+    requestParameters: ApiMachineTypesTypeByRegistrationNumberGetRequest,
+  ) {
+    return await this.machineTypesApiWithAuth(
+      auth,
+    ).apiMachineTypesTypeByRegistrationNumberGet(requestParameters)
   }
 }
