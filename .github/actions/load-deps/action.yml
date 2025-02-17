@@ -1,14 +1,5 @@
 name: 'Load Dependencies'
 description: 'Prerequisite is that the prepare step has already been run'
-inputs:
-  generated_files:
-    required: false
-    description: 'name of the generated files archive to fetch from cache'
-    default: ${{ github.sha }}.tar.gz
-  checkout:
-    description: 'skip the checkout step'
-    required: false
-    default: 'true'
 
 runs:
   using: 'composite'
@@ -16,33 +7,33 @@ runs:
     - name: INFO
       shell: bash
       run: |
-        echo "generated files: ${{ inputs.generated_files }}"
-        echo "${{ toJson(github) }}"
+        echo "generated files: ${{ env.GENERATED_FILES }}"
+        echo "$GITHUB_CONTEXT"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ inputs.generated_files }}
+          ${{ env.GENERATED_FILES }}
         key: generated-files-${{ github.sha }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ inputs.generated_files }}
+        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        tar -xzvf ${{ inputs.generated_files }}
+        tar -xzvf ${{ env.GENERATED_FILES }}
 
     - name: Cache Generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ inputs.generated_files }}
+          ${{ env.GENERATED_FILES }}
         key: generated-files-${{ github.sha }}
