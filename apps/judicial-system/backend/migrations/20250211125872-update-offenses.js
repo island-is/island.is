@@ -111,7 +111,7 @@ module.exports = {
 
               const offenseSubstances = offenses.map((offense) => ({
                 offense,
-                availableSubstances: offenseSubstancesMap[offense],
+                availableSubstances: offenseSubstancesMap[offense] || [],
               }))
 
               // Logic from getRelevantSubstances in apps/judicial-system/web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.tsx
@@ -139,14 +139,16 @@ module.exports = {
                 )}`,
               )
 
-              offensesToMigrate.forEach((o) =>
-                queryInterface.sequelize.query(
-                  `INSERT INTO "offense" (id, indictment_count_id, offense, substances) VALUES (md5(random()::text || clock_timestamp()::text)::uuid, '${
-                    indictment_count.id
-                  }', '${o.offense}', '${JSON.stringify(o.substances)}');`,
-                  {
-                    transaction: t,
-                  },
+              return Promise.all(
+                offensesToMigrate.map((o) =>
+                  queryInterface.sequelize.query(
+                    `INSERT INTO "offense" (id, indictment_count_id, offense, substances) VALUES (md5(random()::text || clock_timestamp()::text)::uuid, '${
+                      indictment_count.id
+                    }', '${o.offense}', '${JSON.stringify(o.substances)}');`,
+                    {
+                      transaction: t,
+                    },
+                  ),
                 ),
               )
             }),
