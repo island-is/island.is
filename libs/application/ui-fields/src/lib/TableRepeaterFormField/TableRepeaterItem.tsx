@@ -187,67 +187,67 @@ export const Item = ({
     )
   }
 
-  let Readonly: boolean | undefined
+  let readonlyVal: boolean | undefined
   if (typeof readonly === 'function') {
-    Readonly = readonly(application, activeValues)
+    readonlyVal = readonly(application, activeValues)
   } else {
-    Readonly = readonly
+    readonlyVal = readonly
   }
 
-  let Disabled: boolean | undefined
+  let disabledVal: boolean | undefined
   if (typeof disabled === 'function') {
-    Disabled = disabled(application, activeValues)
+    disabledVal = disabled(application, activeValues)
   } else {
-    Disabled = disabled
+    disabledVal = disabled
   }
 
-  let Required: boolean | undefined
+  let requiredVal: boolean | undefined
   if (typeof required === 'function') {
-    Required = required(application, activeValues)
+    requiredVal = required(application, activeValues)
   } else {
-    Required = required
+    requiredVal = required
   }
 
-  let IsClearable: boolean | undefined
+  let isClearableVal: boolean | undefined
   if (typeof isClearable === 'function') {
-    IsClearable = isClearable(application)
+    isClearableVal = isClearable(application)
   } else {
-    IsClearable = isClearable
+    isClearableVal = isClearable
   }
 
-  let DefaultValue: any
+  let defaultVal: any
   if (component === 'input') {
-    DefaultValue = getDefaultValue(item, application, activeValues)
+    defaultVal = getDefaultValue(item, application, activeValues)
   }
   if (component === 'select') {
-    DefaultValue =
+    defaultVal =
       getValueViaPath(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'radio') {
-    DefaultValue =
+    defaultVal =
       (getValueViaPath(application.answers, id) as string[]) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
-    DefaultValue =
+    defaultVal =
       (getValueViaPath(application.answers, id) as string[]) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
-    DefaultValue =
+    defaultVal =
       (getValueViaPath(application.answers, id) as string) ??
       getDefaultValue(item, application, activeValues)
   }
 
-  let ClearOnChange: string[] | undefined
+  let clearOnChangeVal: string[] | undefined
   if (typeof clearOnChange === 'function') {
-    ClearOnChange = clearOnChange(activeIndex)
+    clearOnChangeVal = clearOnChange(activeIndex)
   } else {
-    ClearOnChange = clearOnChange
+    clearOnChangeVal = clearOnChange
   }
 
-  const SetOnChange =
+  const setOnChangeFunc =
     setOnChange &&
     ((option: any) => {
       if (typeof setOnChange === 'function') {
@@ -276,12 +276,12 @@ export const Item = ({
         typeof item.updateOnSelect === 'function'
           ? item.updateOnSelect(activeIndex)
           : item.updateOnSelect,
-      disabled: Disabled,
-      required: Required,
-      isClearable: IsClearable,
-      defaultValue: DefaultValue,
-      clearOnChange: ClearOnChange,
-      setOnChange: SetOnChange,
+      disabled: disabledVal,
+      required: requiredVal,
+      isClearable: isClearableVal,
+      defaultValue: defaultVal,
+      clearOnChange: clearOnChangeVal,
+      setOnChange: setOnChangeFunc,
     }
   }
 
@@ -319,11 +319,11 @@ export const Item = ({
           split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
           error={getFieldError(itemId)}
           control={control}
-          readOnly={Readonly}
-          disabled={Disabled}
-          required={Required}
-          isClearable={IsClearable}
-          defaultValue={DefaultValue}
+          readOnly={readonlyVal}
+          disabled={disabledVal}
+          required={requiredVal}
+          isClearable={isClearableVal}
+          defaultValue={defaultVal}
           backgroundColor={backgroundColor}
           onChange={() => {
             if (error) {
@@ -332,8 +332,8 @@ export const Item = ({
           }}
           application={application}
           large={true}
-          clearOnChange={ClearOnChange}
-          setOnChange={SetOnChange}
+          clearOnChange={clearOnChangeVal}
+          setOnChange={setOnChangeFunc}
           {...props}
         />
       )}
