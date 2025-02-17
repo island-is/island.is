@@ -71,6 +71,7 @@ env:
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-base
+    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-deps
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-output-base
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-output-base-with-pg
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-playwright-base
