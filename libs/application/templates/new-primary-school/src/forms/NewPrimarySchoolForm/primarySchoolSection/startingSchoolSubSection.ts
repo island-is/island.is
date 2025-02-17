@@ -23,7 +23,7 @@ export const startingSchoolSubSection = buildSubSection({
         newPrimarySchoolMessages.primarySchool.startingSchoolDescription,
       children: [
         buildDateField({
-          id: 'startDate',
+          id: 'expectedStartDate',
           title: newPrimarySchoolMessages.shared.date,
           placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
           defaultValue: null,
