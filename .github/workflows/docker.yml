@@ -336,7 +336,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.IMAGE_REGISTRY }}
+            ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
