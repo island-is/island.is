@@ -1,8 +1,11 @@
 name: 'Checkout for features'
 description: 'Checkout refs for feature deployments'
 inputs:
-  token:
+  github_token:
     description: 'A Github PAT'
+    required: true
+  slack_webhook_url:
+    description: 'Webhook url for build issues resports'
     required: true
 
 runs:
@@ -39,7 +42,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         HTML_URL: ${{ github.event.pull_request.html_url }}
-        ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+        ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ inputs.slack_webhook_url }}
       run: |
         set -euo pipefail
         git config --global user.email "ci@island.is"

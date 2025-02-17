@@ -113,6 +113,7 @@ jobs:
         uses: ./.github/actions/feature-checkout
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: prerelease-checkout
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
