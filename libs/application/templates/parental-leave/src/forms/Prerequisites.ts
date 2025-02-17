@@ -1,4 +1,6 @@
 import {
+  NO,
+  YES,
   buildAlertMessageField,
   buildDataProviderItem,
   buildDataProviderPermissionItem,
@@ -27,11 +29,9 @@ import Logo from '../assets/Logo'
 import { defaultMultipleBirthsMonths } from '../config'
 import {
   ADOPTION,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
-  YES,
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
@@ -460,7 +460,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -476,7 +475,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],
@@ -549,7 +547,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -567,7 +564,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],
@@ -584,7 +580,6 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'selectedChild',
-                  title: '',
                   description:
                     parentalLeaveFormMessages.selectChild.screenDescription,
                   required: true,
@@ -646,7 +641,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -663,7 +657,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],

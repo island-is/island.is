@@ -12,7 +12,6 @@ export const customSection = buildSection({
   children: [
     buildMultiField({
       id: 'customMultiField',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'customDescription',
@@ -22,7 +21,6 @@ export const customSection = buildSection({
         }),
         buildDescriptionField({
           id: 'customDescription2',
-          title: '',
           description: m.customComponentNumberedList,
           marginBottom: [2],
         }),

@@ -199,9 +199,9 @@ export const icCourtRecord = {
     }),
     nextButtonInfo: defineMessages({
       text: {
-        id: 'judicial.system.investigation_cases:court_record.next_button_info_v2.text',
+        id: 'judicial.system.investigation_cases:court_record.next_button_info.text_v2',
         defaultMessage:
-          'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
+          'Til að halda áfram þarf að skrá lyktir máls {isCompletedWithoutRuling, select, true {} other {og skrifa úrskurðarorð}} á skjánum Úrskurður.',
         description:
           'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
       },

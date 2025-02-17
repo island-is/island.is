@@ -4,7 +4,6 @@ import {
   Application,
   DefaultEvents,
   Field,
-  NO,
   RecordObject,
 } from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -33,6 +32,7 @@ import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
+import { NO } from '@island.is/application/core'
 
 interface ReviewScreenProps {
   application: Application

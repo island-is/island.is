@@ -12,7 +12,6 @@ import { Logo } from '../../assets/Logo'
 
 export const ChangeOperatorOfVehicleForm: Form = buildForm({
   id: 'ChangeOperatorOfVehicleFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
@@ -26,7 +25,6 @@ export const ChangeOperatorOfVehicleForm: Form = buildForm({
         // Only to have submit button visible
         buildTextField({
           id: 'tmp',
-          title: '',
           description: '',
         }),
       ],

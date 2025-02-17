@@ -119,7 +119,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   title: capitalize(formatMessage(tables.sentToCourtDate)),
                   sortBy: 'caseSentToCourtDate',
                 },
-                { title: formatMessage(tables.state) },
+                { title: formatMessage(tables.state), sortBy: 'state' },
                 {
                   title: formatMessage(tables.hearingArrangementDate),
                   sortBy: 'courtDate',
@@ -154,16 +154,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   ),
                 },
                 {
-                  cell: (row) => (
-                    <TagCaseState
-                      caseState={row.state}
-                      caseType={row.type}
-                      isCourtRole={true}
-                      courtDate={row.courtDate}
-                      indictmentDecision={row.indictmentDecision}
-                      defendants={row.defendants}
-                    />
-                  ),
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
                 {
                   cell: (row) =>

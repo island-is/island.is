@@ -31,12 +31,10 @@ export const conclusionSection = buildSection({
         }),
         buildCustomField({
           id: 'pdfoverview',
-          title: '',
           component: 'PdfOverview',
         }),
         buildMessageWithLinkButtonField({
           id: 'uiForms.conclusionBottomLink',
-          title: '',
           url: '/minarsidur/umsoknir',
           buttonTitle: coreMessages.openServicePortalButtonTitle,
           message: coreMessages.openServicePortalMessageText,
