@@ -29,7 +29,7 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -43,7 +43,6 @@ env:
   COREPACK_HOME: /home/runner/dependencies/corepack
   NODE_PATH: /home/runner/dependencies/node_modules
   COREPACK_ENABLE_STRICT: '0'
-  GITHUB_CONTEXT: ${{ toJson(github) }}
 
 jobs:
   prepare:

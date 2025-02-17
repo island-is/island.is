@@ -8,7 +8,6 @@ runs:
       shell: bash
       run: |
         echo "generated files: ${{ env.GENERATED_FILES }}"
-        echo "$GITHUB_CONTEXT"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
@@ -25,7 +24,7 @@ runs:
         node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
 
     - name: Extract generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
         tar -xzvf ${{ env.GENERATED_FILES }}
