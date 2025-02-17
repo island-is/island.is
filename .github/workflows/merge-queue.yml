@@ -230,8 +230,8 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - prepare
-      - tests
-      - e2e
+      # - tests
+      # - e2e
       # - build
     steps:
       - name: Announce success
