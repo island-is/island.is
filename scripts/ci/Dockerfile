@@ -29,7 +29,8 @@ COPY .yarn/patches .yarn/patches
 COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
-RUN yarn install --immutable && yarn clean
+RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
+  yarn install --immutable
 
 # ------------------------------------------------
 # Copy monorepo source
