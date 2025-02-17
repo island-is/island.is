@@ -4,48 +4,24 @@ import {
   GridRow,
   Input,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './SignaturesTab.css'
 import { signatures } from '../../lib/messages/signatures'
 import { useLocale } from '@island.is/localization'
-import { full, half, fraction } from './utils'
+import { half, fraction } from './utils'
 import { SignatureMemberKey } from '../../lib/dataSchema'
 
 type Props = {
-  regular?: boolean
-  above?: string
   name?: string
-  after?: string
   below?: string
   onChange: (key: SignatureMemberKey, value: string) => void
   onDelete?: () => void
 }
 
-export const RegularMember = ({
-  above,
-  name,
-  after,
-  below,
-  onChange,
-  onDelete,
-}: Props) => {
+export const CommitteeMember = ({ name, below, onChange, onDelete }: Props) => {
   const { formatMessage: f } = useLocale()
   return (
     <Stack space={2}>
-      <GridRow className={styles.gridRowSpacing}>
-        <GridColumn className={styles.gridColumnSpacing} span={full}>
-          <Input
-            name="signature-member-above"
-            maxLength={100}
-            label={f(signatures.inputs.above.label)}
-            size="sm"
-            backgroundColor="blue"
-            defaultValue={above}
-            onChange={(e) => onChange('above', e.target.value)}
-          />
-        </GridColumn>
-      </GridRow>
       <GridRow className={styles.gridRowSpacing}>
         <GridColumn className={styles.gridColumnSpacing} span={half}>
           <Input
@@ -59,19 +35,6 @@ export const RegularMember = ({
           />
         </GridColumn>
         <GridColumn className={styles.gridColumnSpacing} span={half}>
-          <Input
-            name="signature-member-after"
-            maxLength={100}
-            label={f(signatures.inputs.after.label)}
-            size="sm"
-            backgroundColor="blue"
-            defaultValue={after}
-            onChange={(e) => onChange('after', e.target.value)}
-          />
-        </GridColumn>
-      </GridRow>
-      <GridRow className={styles.gridRowSpacing}>
-        <GridColumn className={styles.gridColumnSpacing} span={full}>
           <Input
             name="signature-member-below"
             maxLength={100}
