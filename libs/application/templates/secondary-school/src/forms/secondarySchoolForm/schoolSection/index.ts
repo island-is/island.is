@@ -127,41 +127,41 @@ export const schoolSection = buildSection({
                   activeField &&
                   getValueViaPath<string>(activeField, 'secondProgram.id')
 
-                if (schoolId) {
-                  const { data } = await apolloClient.query<
-                    Query,
-                    QuerySecondarySchoolProgramsBySchoolIdArgs
-                  >({
-                    query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
-                    variables: {
-                      isFreshman: checkIsFreshman(application.answers),
-                      schoolId,
-                    },
-                  })
-
-                  setValueAtIndex?.(
-                    'programOptions',
-                    data?.secondarySchoolProgramsBySchoolId,
-                  )
-
-                  setValueAtIndex?.(
-                    'secondProgram.include',
-                    data?.secondarySchoolProgramsBySchoolId.length > 1,
-                  )
-
-                  const options =
-                    data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
-                      value: program.id,
-                      label: getTranslatedProgram(lang, {
-                        nameIs: program.nameIs,
-                        nameEn: program.nameEn,
-                      }),
-                    })) ?? []
-
-                  return options.filter((x) => x.value !== secondProgramId)
+                if (!schoolId) {
+                  return []
                 }
 
-                return []
+                const { data } = await apolloClient.query<
+                  Query,
+                  QuerySecondarySchoolProgramsBySchoolIdArgs
+                >({
+                  query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
+                  variables: {
+                    isFreshman: checkIsFreshman(application.answers),
+                    schoolId,
+                  },
+                })
+
+                setValueAtIndex?.(
+                  'programOptions',
+                  data?.secondarySchoolProgramsBySchoolId,
+                )
+
+                setValueAtIndex?.(
+                  'secondProgram.include',
+                  data?.secondarySchoolProgramsBySchoolId.length > 1,
+                )
+
+                const options =
+                  data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
+                    value: program.id,
+                    label: getTranslatedProgram(lang, {
+                      nameIs: program.nameIs,
+                      nameEn: program.nameEn,
+                    }),
+                  })) ?? []
+
+                return options.filter((x) => x.value !== secondProgramId)
               },
               setOnChange: (option, application, index, activeField) => {
                 const programInfo = getProgramInfo(activeField, option.value)
@@ -241,41 +241,40 @@ export const schoolSection = buildSection({
                 const schoolId =
                   activeField &&
                   getValueViaPath<string>(activeField, 'school.id')
-
                 const firstProgramId =
                   activeField &&
                   getValueViaPath<string>(activeField, 'firstProgram.id')
 
-                if (schoolId) {
-                  const { data } = await apolloClient.query<
-                    Query,
-                    QuerySecondarySchoolProgramsBySchoolIdArgs
-                  >({
-                    query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
-                    variables: {
-                      isFreshman: checkIsFreshman(application.answers),
-                      schoolId,
-                    },
-                  })
-
-                  setValueAtIndex?.(
-                    'programOptions',
-                    data?.secondarySchoolProgramsBySchoolId,
-                  )
-
-                  const options =
-                    data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
-                      value: program.id,
-                      label: getTranslatedProgram(lang, {
-                        nameIs: program.nameIs,
-                        nameEn: program.nameEn,
-                      }),
-                    })) ?? []
-
-                  return options.filter((x) => x.value !== firstProgramId)
+                if (!schoolId) {
+                  return []
                 }
 
-                return []
+                const { data } = await apolloClient.query<
+                  Query,
+                  QuerySecondarySchoolProgramsBySchoolIdArgs
+                >({
+                  query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
+                  variables: {
+                    isFreshman: checkIsFreshman(application.answers),
+                    schoolId,
+                  },
+                })
+
+                setValueAtIndex?.(
+                  'programOptions',
+                  data?.secondarySchoolProgramsBySchoolId,
+                )
+
+                const options =
+                  data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
+                    value: program.id,
+                    label: getTranslatedProgram(lang, {
+                      nameIs: program.nameIs,
+                      nameEn: program.nameEn,
+                    }),
+                  })) ?? []
+
+                return options.filter((x) => x.value !== firstProgramId)
               },
               setOnChange: (option, _, index, activeField) => {
                 const programInfo = getProgramInfo(activeField, option.value)
