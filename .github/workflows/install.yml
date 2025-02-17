@@ -42,7 +42,7 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  CHUNKS_DEBUG: '["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web"]'
+  CHUNKS_DEBUG: '["air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web"]'
   YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
   CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
   COREPACK_HOME: /home/runner/dependencies/corepack
@@ -52,11 +52,11 @@ env:
 jobs:
   install:
     outputs:
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.LINT_CHUNKS }}
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.TEST_CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.E2E_CHUNKS }}
+      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
+      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.BUILD_CHUNKS }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
