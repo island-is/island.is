@@ -549,6 +549,7 @@ export class InternalCaseService {
         },
       ],
       order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+      where: { state: { [Op.is]: CaseState.RECEIVED } },
     })
   }
 
