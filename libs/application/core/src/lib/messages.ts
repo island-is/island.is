@@ -393,8 +393,8 @@ export const coreErrorMessages = defineMessages({
   uploadMultipleNotAllowed: {
     id: 'application.system:core.error.file.uploadMultipleNotAllowed',
     defaultMessage:
-      'Ekki má hlaða upp mörgum skrám.',
-    description: 'Error message when multi upload is not allowed',
+      'Það má bara hlaða upp einni skrá',
+    description: 'Error message when multi upload is not allowed.',
   },
   fileRemove: {
     id: 'application.system:core.error.file.remove',
