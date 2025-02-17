@@ -11,9 +11,9 @@ export const checkUseAnswersCopy = (application: Application): boolean => {
   if (state !== States.IN_REVIEW && state !== States.COMPLETED) return false
 
   // Picking any field in answers, that should not be empty in IN_REVIEW/COMPLETED state
-  const firstSchoolId = getValueViaPath<SecondarySchoolAnswers['selection']>(
+  const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
     application.answers,
-    'copy.selection.0.school.id',
+    'copy.applicant',
   )
-  return !!firstSchoolId
+  return !!applicant?.nationalId
 }
