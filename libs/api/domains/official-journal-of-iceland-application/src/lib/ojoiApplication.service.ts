@@ -24,6 +24,7 @@ import type { Logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 import {
+  CommentActionEnum,
   CommentDirection,
   GetCommentsResponse,
 } from '../models/getComments.response'
@@ -40,6 +41,7 @@ import {
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { isDefined } from '@island.is/shared/utils'
+import { convertDateToDaysAgo } from './utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -66,11 +68,16 @@ export class OfficialJournalOfIcelandApplicationService {
           ? CommentDirection.RECEIVED
           : CommentDirection.SENT
 
+      const action =
+        c.action === CaseActionEnum.APPLICATIONCOMMENT
+          ? CommentActionEnum.APPLICATION
+          : CommentActionEnum.EXTERNAL
+
       return {
         id: c.id,
-        age: c.created,
+        age: convertDateToDaysAgo(c.created),
         direction: direction,
-        action: c.action,
+        action: action,
         comment: c.comment,
         creator: c.creator.title,
         receiver: c.receiver?.title ?? null,
