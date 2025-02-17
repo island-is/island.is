@@ -1295,4 +1295,79 @@ export const messages = defineMessages({
     defaultMessage:
       'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
   },
+  vaccineValid: {
+    id: 'sp.health:vaccine-valid',
+    defaultMessage: 'Í gildi',
+  },
+  vaccineValidDesc: {
+    id: 'sp.health:vaccine-valid-desc',
+    defaultMessage:
+      'Bólusetning einstaklings er gild og uppfyllir skilyrði fyrir vernd.',
+  },
+  vaccineFinished: {
+    id: 'sp.health:vaccine-finished',
+    defaultMessage: 'Lokið',
+  },
+  vaccineFinishedDesc: {
+    id: 'sp.health:vaccine-finished-desc',
+    defaultMessage:
+      'Einstaklingur hefur fengið allar nauðsynlegar bólusetningar samkvæmt viðeigandi leiðbeiningum.',
+  },
+  vaccineUnvaccined: {
+    id: 'sp.health:vaccine-unvaccined',
+    defaultMessage: 'Óbólusett',
+  },
+  vaccineUnvaccinedDesc: {
+    id: 'sp.health:vaccine-unvaccined-desc',
+    defaultMessage:
+      'Engin skráð bólusetning fyrir einstakling. Þetta á einnig við ef einstaklingur hefur ekki enn átt að mæta í bólusetningu, t.d. vegna aldurs.',
+  },
+  vaccineUnfinished: {
+    id: 'sp.health:vaccine-unfinished',
+    defaultMessage: 'Ólokið',
+  },
+  vaccineUnfinishedDesc: {
+    id: 'sp.health:vaccine-unfinished-desc',
+    defaultMessage:
+      'Einstaklingur hefur hafið bólusetningarferlið en ekki lokið við allar nauðsynlega skammta.',
+  },
+  vaccineExpired: {
+    id: 'sp.health:vaccine-expired',
+    defaultMessage: 'Útrunnið',
+  },
+  vaccineExpiredDesc: {
+    id: 'sp.health:vaccine-expired-desc',
+    defaultMessage:
+      'Bólusetning einstaklings hefur runnið út samkvæmt gildandi viðmiðum og er ekki lengur talin veita fullnægjandi vörn.',
+  },
+  vaccineDeclined: {
+    id: 'sp.health:vaccine-declined',
+    defaultMessage: 'Hafnað',
+  },
+  vaccineDeclinedDesc: {
+    id: 'sp.health:vaccine-declined-desc',
+    defaultMessage: 'Einstaklingur hefur hafnað bólusetningu.',
+  },
+  vaccineUnregistered: {
+    id: 'sp.health:vaccine-unregistered',
+    defaultMessage: 'Óskráð',
+  },
+  vaccineUnregisteredDesc: {
+    id: 'sp.health:vaccine-unregistered-desc',
+    defaultMessage:
+      'Engar upplýsingar liggja fyrir um bólusetningu einstaklings í skráningarkerfinu.',
+  },
+  vaccineUncertain: {
+    id: 'sp.health:vaccine-uncertain',
+    defaultMessage: 'Óljós',
+  },
+  vaccineUncertainDesc: {
+    id: 'sp.health:vaccine-uncertain-desc',
+    defaultMessage:
+      'Ekki er hægt að ákvarða bólusetningarstöðu einstaklings, t.d. vegna ófullnægjandi gagna eða ósamræmis í skráningu.',
+  },
+  vaccinationStatusDesc: {
+    id: 'sp.health:vaccination-status-desc',
+    defaultMessage: 'Útskýring á stöðu bólusetninga',
+  },
 })
