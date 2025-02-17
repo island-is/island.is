@@ -484,11 +484,13 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
-        <ProsecutorSection
-          handleChange={
-            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
-          }
-        />
+        <Box component="section" marginBottom={5}>
+          <ProsecutorSection
+            handleChange={
+              workingCase.id ? undefined : () => setIsProsecutorSelected(true)
+            }
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}

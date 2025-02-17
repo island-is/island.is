@@ -1,6 +1,5 @@
 import { FC, useContext } from 'react'
 
-import { Box } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -39,12 +38,12 @@ const ProsecutorSection: FC<Props> = (props) => {
   }
 
   return (
-    <Box component="section" marginBottom={5}>
+    <>
       <ProsecutorSectionHeading
         isIndictment={isIndictmentCase(workingCase.type)}
       />
       <ProsecutorSelection onChange={handleChange ?? handleProsecutorChange} />
-    </Box>
+    </>
   )
 }
 
