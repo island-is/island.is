@@ -15,7 +15,6 @@ import { checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
   id: 'SubmittedForm',
-  title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
@@ -50,12 +49,10 @@ export const Submitted: Form = buildForm({
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
@@ -63,7 +60,6 @@ export const Submitted: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
@@ -76,7 +72,6 @@ export const Submitted: Form = buildForm({
             buildCustomField({
               component: 'HandleBeforeSubmitInSubmitted',
               id: 'handleBeforeSubmitInSubmitted',
-              title: '',
               description: '',
             }),
           ],

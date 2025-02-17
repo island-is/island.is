@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js'
-import Base64 from 'js-base64'
+import { Base64 } from 'js-base64'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'

@@ -24,7 +24,6 @@ export const personalOverview = buildMultiField({
     buildDividerField({}),
     buildDescriptionField({
       id: 'overviewPI.infoTitle',
-      title: '',
       space: 'gutter',
       marginBottom: 'gutter',
     }),
@@ -50,7 +49,6 @@ export const personalOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space1',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -78,7 +76,6 @@ export const personalOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space2',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({

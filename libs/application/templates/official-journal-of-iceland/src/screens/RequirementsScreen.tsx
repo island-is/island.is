@@ -8,9 +8,8 @@ import {
 } from '@island.is/island-ui/core'
 import { error, requirements } from '../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, YesOrNoEnum } from '@island.is/application/core'
 import {
-  AnswerOption,
   DEFAULT_ADDITIONS_COUNT,
   DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
   DEFAULT_REGULAR_SIGNATURE_COUNT,
@@ -94,7 +93,7 @@ export const RequirementsScreen = ({
         name={InputFields.requirements.approveExternalData}
         defaultValue={
           application.answers.requirements?.approveExternalData ??
-          AnswerOption.NO
+          YesOrNoEnum.NO
         }
         render={({ field: { onChange, value } }) => {
           return (
@@ -102,9 +101,9 @@ export const RequirementsScreen = ({
               id={InputFields.requirements.approveExternalData}
               name={InputFields.requirements.approveExternalData}
               label={f(requirements.inputs.accept)}
-              checked={value === AnswerOption.YES}
+              checked={value === YesOrNoEnum.YES}
               onChange={(e) => {
-                onChange(e.target.checked ? AnswerOption.YES : AnswerOption.NO)
+                onChange(e.target.checked ? YesOrNoEnum.YES : YesOrNoEnum.NO)
               }}
               backgroundColor="blue"
               hasError={

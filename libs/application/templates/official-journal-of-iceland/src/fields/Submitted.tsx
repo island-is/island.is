@@ -20,10 +20,10 @@ import {
 } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { AnswerOption, OJOI_INPUT_HEIGHT } from '../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
 import { useApplicationCase } from '../hooks/useApplicationCase'
-import { Comments } from './Comments'
+import { YesOrNoEnum } from '@island.is/application/core'
 import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 export const Submitted = (props: OJOIFieldBaseProps) => {
   const { formatMessage, locale } = useLocale()
@@ -54,7 +54,7 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
     currentAnswers = set(
       currentAnswers,
       InputFields.requirements.approveExternalData,
-      AnswerOption.YES,
+      YesOrNoEnum.YES,
     )
 
     updateApplicationMutation({
