@@ -1696,13 +1696,16 @@ export class CaseService {
     ]
 
     if (defendant.noNationalId) {
+      const defendantName = defendant.name ?? ''
+      const defendantNationalId = defendant.nationalId ?? ''
+
       whereClause.push({
         id: {
           [Op.in]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE national_id = '${defendant.nationalId}'
-              AND name = '${defendant.name}'
+              WHERE national_id = ${this.sequelize.escape(defendantNationalId)}
+              AND name = ${this.sequelize.escape(defendantName)}
           )`),
         },
       })
