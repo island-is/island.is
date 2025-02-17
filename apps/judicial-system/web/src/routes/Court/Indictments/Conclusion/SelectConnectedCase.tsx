@@ -8,12 +8,9 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { useConnectedCasesQuery } from './connectedCases.generated'
 import { strings } from './SelectConnectedCase.strings'
-
-type ConnectedCaseOption = ReactSelectOption & { connectedCase: Case }
 
 interface Props {
   workingCase: Case
@@ -55,7 +52,7 @@ const SelectConnectedCase: FC<Props> = ({
     ?.map((connectedCase) => ({
       label: `${connectedCase.courtCaseNumber}`,
       value: connectedCase.id,
-    })) as ConnectedCaseOption[]
+    }))
 
   // For now we only want to allow cases with a single defendant to be able to merge
   // in to another case
@@ -88,7 +85,7 @@ const SelectConnectedCase: FC<Props> = ({
       </Box>
     )
   } else {
-    return connectedCases.length === 0 ? (
+    return connectedCases?.length === 0 ? (
       <AlertMessage
         type="warning"
         message={formatMessage(strings.noConnectedCasesMessage)}
