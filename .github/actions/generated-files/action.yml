@@ -1,0 +1,38 @@
+name: 'Generated files'
+description: 'Fetch from cache, or generate and save'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup yarn
+      uses: ./.github/actions/setup-yarn
+
+    - name: Restore generated files
+      uses: runs-on/cache/restore@v4
+      id: restore-generated-files-cache
+      with:
+        path: ${{ github.sha }}.tar.gz
+        key: generated-files-${{ github.sha }}
+
+    - name: Prepare generated files
+      if: ${{ steps.restore-generated-files-cache.outcomes.cache-hit != 'true' }}
+      shell: bash -euo pipefail
+      env:
+        GENERATED_FILES: ${{ env.GENERATED_FILES }}
+      run: |
+        echo "generated files: $GENERATED_FILES"
+        node ./scripts/ci/generate-files.mjs "$GENERATED_FILES"
+        tar -xzvf "$GENERATED_FILES"
+
+    - name: Cache Generated files
+      uses: runs-on/cache/save@v4
+      with:
+        path: ${{ github.sha }}.tar.gz
+        key: generated-files-${{ github.sha }}
+
+    - name: Extract generated files
+      shell: bash -euo pipefail
+      env:
+        GENERATED_FILES: ${{ github.sha }}
+      run: |
+        tar -xzvf "$GENERATED_FILES"
