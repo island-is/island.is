@@ -11,4 +11,5 @@ export {
   HealthDirectorateHealthService,
   PrescribedItemDtoRenewalBlockedReasonEnum,
   PrescribedItemDtoRenewalStatusEnum,
+  PrescribedItemDtoCategoryEnum,
 } from './health'

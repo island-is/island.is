@@ -17,4 +17,5 @@ export {
   DiseaseVaccinationDtoVaccinationStatusEnum,
   PrescribedItemDtoRenewalBlockedReasonEnum,
   PrescribedItemDtoRenewalStatusEnum,
+  PrescribedItemDtoCategoryEnum,
 } from './lib/clients'
