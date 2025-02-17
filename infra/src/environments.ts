@@ -5,7 +5,7 @@ const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
   auroraReplica: 'postgres-applications-reader.internal',
   redisHost: JSON.stringify([
-    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
   ]),
   domain: 'dev01.devland.is',
   type: 'dev',
@@ -69,6 +69,9 @@ export let Envs: EnvironmentConfigs = {
   dev01: dev01,
   devIds: merge({}, dev01, {
     awsAccountId: '324037283794',
+    redisHost: JSON.stringify([
+      'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+    ]),
     global: {
       global: { env: { AUDIT_GROUP_NAME: '/identity-server/audit-log' } },
     },

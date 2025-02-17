@@ -236,7 +236,7 @@ export const serviceSetup = (services: {
       },
       XROAD_RSK_PROCURING_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
         staging: json([
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -247,7 +247,7 @@ export const serviceSetup = (services: {
       },
       APOLLO_CACHE_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
         staging: json([
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -258,7 +258,7 @@ export const serviceSetup = (services: {
       },
       LICENSE_SERVICE_REDIS_NODES: {
         dev: json([
-          'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         ]),
         staging: json([
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
