@@ -13,7 +13,7 @@ import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.gen
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {
-  onChange: (prosecutorId: string) => boolean
+  onChange: (prosecutorId: string) => void
 }
 
 const ProsecutorSelection: FC<Props> = ({ onChange }) => {

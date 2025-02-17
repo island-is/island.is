@@ -1,6 +1,7 @@
 import { z } from 'zod'
-import { INCOME, ISK, RatioType, YES } from './constants'
+import { INCOME, ISK, RatioType } from './constants'
 import { errorMessages } from './messages'
+import { YES } from '@island.is/application/core'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

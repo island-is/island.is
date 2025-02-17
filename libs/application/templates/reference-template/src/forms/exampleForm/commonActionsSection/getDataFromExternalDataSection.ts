@@ -12,7 +12,6 @@ export const getDataFromExternalDataSubsection = buildSubSection({
   children: [
     buildMultiField({
       id: 'externalDataSuccess',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'externalDataSuccessTitle',
@@ -34,7 +33,6 @@ export const getDataFromExternalDataSubsection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'externalDataSuccessDescription2',
-          title: '',
           description: (application: Application) => {
             const value = getValueViaPath<number>(
               application.externalData,

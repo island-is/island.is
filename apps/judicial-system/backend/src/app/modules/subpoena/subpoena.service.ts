@@ -301,16 +301,19 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let civilClaimPdf = undefined
-      const civilClaim = theCase.caseFiles?.find(
-        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-      )
+      const civilClaimPdfs: string[] = []
+      const civilClaimFiles =
+        theCase.caseFiles?.filter(
+          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+        ) ?? []
 
-      if (civilClaim) {
-        civilClaimPdf = await this.fileService.getCaseFileFromS3(
+      for (const civilClaimFile of civilClaimFiles) {
+        const civilClaimPdf = await this.fileService.getCaseFileFromS3(
           theCase,
-          civilClaim,
+          civilClaimFile,
         )
+
+        civilClaimPdfs.push(Base64.btoa(civilClaimPdf.toString('binary')))
       }
 
       const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
@@ -326,9 +329,7 @@ export class SubpoenaService {
         Base64.btoa(subpoenaPdf.toString('binary')),
         Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdf
-          ? Base64.btoa(civilClaimPdf.toString('binary'))
-          : undefined,
+        civilClaimPdfs,
       )
 
       if (!createdSubpoena) {
@@ -424,6 +425,41 @@ export class SubpoenaService {
         // Tolerate failure, but log error
         this.logger.warn(
           `Failed to upload subpoena ${subpoena.id} pdf to court for defendant ${defendant.id} of case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverServiceCertificateToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getServiceCertificatePdf(theCase, defendant, subpoena)
+      .then(async (pdf) => {
+        const fileName = `Birtingarvottorð - ${defendant.name}`
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.SUBPOENA_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload service certificate pdf to court for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
           { reason },
         )
 

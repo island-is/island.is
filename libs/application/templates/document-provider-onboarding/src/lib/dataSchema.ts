@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { AnswerOptions } from './types'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 const phoneNumberSchema = z.string().refine(
   (p) => {
@@ -34,7 +34,7 @@ const applicant = z.object({
 const termsOfAgreement = z.object({
   userTerms: z
     .array(
-      z.nativeEnum(AnswerOptions).refine((v) => v === AnswerOptions.YES, {}),
+      z.nativeEnum(YesOrNoEnum).refine((v) => v === YesOrNoEnum.YES, {}),
     )
     .length(1),
 })
