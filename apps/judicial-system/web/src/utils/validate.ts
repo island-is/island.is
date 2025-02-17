@@ -289,10 +289,7 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
-export const isIndictmentStepValid = (
-  workingCase: Case,
-  isOffenseEndpointEnabled?: boolean,
-): boolean => {
+export const isIndictmentStepValid = (workingCase: Case): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
