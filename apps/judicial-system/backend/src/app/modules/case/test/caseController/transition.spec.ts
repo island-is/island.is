@@ -375,7 +375,9 @@ describe('CaseController - Transition', () => {
                   ? null
                   : undefined,
               rulingDate:
-                transition === CaseTransition.COMPLETE ? date : undefined,
+                transition === CaseTransition.COMPLETE
+                  ? courtEndTime
+                  : undefined,
               indictmentDeniedExplanation:
                 transition === CaseTransition.SUBMIT ? null : undefined,
               indictmentReturnedExplanation:

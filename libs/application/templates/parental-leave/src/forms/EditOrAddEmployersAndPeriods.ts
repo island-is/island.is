@@ -381,17 +381,14 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirmation',
-          title: '',
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              title: '',
               component: 'EditOrAddEmployersAndPeriodsReview',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.ABORT,

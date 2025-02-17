@@ -46,7 +46,6 @@ export const buildFormPaymentChargeOverviewSection = (props: props) =>
         children: [
           buildPaymentChargeOverviewField({
             id: 'uiForms.paymentChargeOverviewMultifield',
-            title: '',
             forPaymentLabel: props.forPaymentLabel
               ? props.forPaymentLabel
               : paymentChargeOverview.payment.forPayment,

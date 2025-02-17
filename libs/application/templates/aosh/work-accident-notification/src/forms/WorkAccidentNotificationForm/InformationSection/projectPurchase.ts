@@ -22,7 +22,6 @@ export const projectPurchaseSection = buildSubSection({
       children: [
         buildAlertMessageField({
           id: 'projectPurchase.alertMessage',
-          title: '',
           message: information.labels.projectPurchase.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,

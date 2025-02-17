@@ -51,15 +51,17 @@ ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
 
-ENV NODE_ENV=production \
-  CI=true \
-  NX_VERBOSE_LOGGING=true \
+ENV CI=true \
+  NODE_ENV=production \
   NODE_OPTIONS="--max-old-space-size=8192" \
+  NX_VERBOSE_LOGGING=true \
   NX_PARALLEL=${NX_PARALLEL} \
   NX_MAX_PARALLEL=${NX_MAX_PARALLEL} \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
+  NX_VERBOSE_LOGGING=true \
   APP=${APP}
 
+# Build with Nx Cloud caching. If credentials are missing or invalid, build will run without caching
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
