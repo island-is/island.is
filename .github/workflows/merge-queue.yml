@@ -39,6 +39,8 @@ jobs:
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
+    needs:
+      - pre-checks
 
   docker-build:
     needs:
