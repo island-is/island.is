@@ -36,8 +36,6 @@ export class IdentityConfirmationService {
     @Inject(IdentityConfirmationApiConfig.KEY)
     private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
     private nationalRegistryClient: NationalRegistryV3ClientService,
-    @Inject(DelegationsIncomingService)
-    private delegationsIncomingService: DelegationsIncomingService,
   ) {}
 
   async identityConfirmation({
@@ -164,11 +162,6 @@ export class IdentityConfirmationService {
       )
     }
 
-    const delegations = await this.delegationsIncomingService.findAllAvailable({
-      user,
-      delegationTypes: user.delegationType,
-    })
-
     await this.zendeskService.updateTicket('93', {
       comment: {
         html_body: `
@@ -179,15 +172,6 @@ export class IdentityConfirmationService {
               ? 'Heimilisfang:' + person.heimilisfang.husHeiti + ', '
               : ''
           }</p>
-            <b>Umboð:</b>
-            <ul>
-              ${delegations
-                .map(
-                  (delegation) =>
-                    `<li>${delegation.fromName} (${delegation.fromNationalId}) ${delegation.types}</li>`,
-                )
-                .join('')}
-            </ul>
           `,
         public: false,
       },

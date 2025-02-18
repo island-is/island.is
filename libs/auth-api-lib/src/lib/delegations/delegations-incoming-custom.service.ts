@@ -123,7 +123,6 @@ export class DelegationsIncomingCustomService {
       ),
     )
     if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
-      console.log('returinng early')
       return []
     }
 
@@ -135,8 +134,6 @@ export class DelegationsIncomingCustomService {
       false,
       user,
     )
-
-    console.log('custom delegations', { delegations })
 
     const validDelegations = delegations
       .map((d) => {
