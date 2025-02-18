@@ -16,17 +16,27 @@ export const Done: Form = buildForm({
     /* Sections for the stepper */
     buildSection({
       id: 'screen1',
-      title: m.dataCollection,
+      title: m.intro,
       children: [],
     }),
     buildSection({
       id: 'screen2',
-      title: m.information,
+      title: m.dataCollection,
       children: [],
     }),
     buildSection({
       id: 'screen3',
+      title: m.information,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen4',
       title: m.overview,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen5',
+      title: m.confirmCreation,
       children: [],
     }),
     /* ------------------------ */
@@ -42,15 +52,9 @@ export const Done: Form = buildForm({
             buildDescriptionField({
               id: 'nextStepsTitle',
               title: m.nextSteps,
-              titleVariant: 'h3',
-              marginBottom: 1,
-            }),
-            //Set up separately for even spacing
-            buildDescriptionField({
-              id: 'nextStepsDescription',
               description: m.nextStepsDescription,
               titleVariant: 'h4',
-              marginBottom: 5,
+              marginBottom: 'containerGutter',
             }),
             buildCustomField({
               id: 'copyLink',
@@ -59,10 +63,10 @@ export const Done: Form = buildForm({
             buildMessageWithLinkButtonField({
               condition: (_, externalData) => {
                 return !(
-                  externalData?.delegatedToCompany.data as {
+                  externalData?.delegatedToCompany?.data as {
                     delegatedToCompany: boolean
                   }
-                ).delegatedToCompany
+                )?.delegatedToCompany
               },
               id: 'done.goToServicePortal',
               title: '',
@@ -73,10 +77,10 @@ export const Done: Form = buildForm({
             buildMessageWithLinkButtonField({
               condition: (_, externalData) => {
                 return (
-                  externalData?.delegatedToCompany.data as {
+                  externalData?.delegatedToCompany?.data as {
                     delegatedToCompany: boolean
                   }
-                ).delegatedToCompany
+                )?.delegatedToCompany
               },
               id: 'done.goToServicePortalCompany',
               title: '',

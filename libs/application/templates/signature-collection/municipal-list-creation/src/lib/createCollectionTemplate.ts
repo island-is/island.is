@@ -18,10 +18,10 @@ import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import {
-  ParliamentaryCollectionApi,
   CandidateApi,
-  ParliamentaryIdentityApi,
   IsDelegatedToCompanyApi,
+  MunicipalCollectionApi,
+  MunicipalIdentityApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -37,14 +37,15 @@ const createListTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
+  type: ApplicationTypes.MUNICIPAL_LIST_CREATION,
   name: m.applicationName,
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
+  //TODO: create FF for municipal
   featureFlag: Features.ParliamentaryElectionApplication,
   dataSchema,
   translationNamespaces: [
-    ApplicationConfigurations[ApplicationTypes.PARLIAMENTARY_LIST_CREATION]
+    ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]
       .translation,
   ],
   allowedDelegations: [
@@ -82,8 +83,8 @@ const createListTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 CandidateApi,
-                ParliamentaryCollectionApi,
-                ParliamentaryIdentityApi,
+                MunicipalCollectionApi,
+                MunicipalIdentityApi,
                 IsDelegatedToCompanyApi,
               ],
             },
@@ -137,11 +138,11 @@ const createListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: WeekLifeCycle,
-          onEntry: defineTemplateApi({
+          /*onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),
+          }),*/
           roles: [
             {
               id: Roles.APPLICANT,

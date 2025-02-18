@@ -11,6 +11,7 @@ import {
   buildSubmitField,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, UserProfile } from '@island.is/api/schema'
@@ -19,11 +20,9 @@ import Logo from '../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
-import { Collection } from '@island.is/clients/signature-collection'
-import { Signee } from '@island.is/clients/signature-collection'
 
 export const Draft: Form = buildForm({
-  id: 'ParliamentaryListCreationDraft',
+  id: 'MunicipalListCreationDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -51,48 +50,26 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'listHeader',
               title: m.listHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
+            }),
+            buildTextField({
+              id: 'list.municipality',
+              title: m.listMunicipality,
+              width: 'full',
+              readOnly: true,
+              defaultValue: () => 'Borgarbyggð',
             }),
             buildTextField({
               id: 'list.name',
               title: m.listName,
               width: 'full',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.candidate.data as Signee)
-                  .partyBallotLetterInfo?.name ?? '',
-            }),
-            buildTextField({
-              id: 'list.letter',
-              title: m.listLetter,
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.candidate.data as Signee)
-                  .partyBallotLetterInfo?.letter ?? '',
-            }),
-            buildTextField({
-              id: 'list.nationalId',
-              title: m.nationalId,
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                formatNationalId(application.applicant),
+              required: true,
             }),
             buildDescriptionField({
               id: 'applicantHeader',
               title: m.applicantActorHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               space: 'containerGutter',
-            }),
-            buildTextField({
-              id: 'applicant.name',
-              title: m.name,
-              width: 'half',
-              readOnly: true,
-              defaultValue: ({ externalData }: Application) => {
-                return externalData.parliamentaryIdentity?.data.fullName
-              },
             }),
             buildTextField({
               id: 'applicant.nationalId',
@@ -103,6 +80,15 @@ export const Draft: Form = buildForm({
                 application?.applicantActors[0]
                   ? formatNationalId(application?.applicantActors[0])
                   : formatNationalId(application.applicant),
+            }),
+            buildTextField({
+              id: 'applicant.name',
+              title: m.name,
+              width: 'half',
+              readOnly: true,
+              defaultValue: ({ externalData }: Application) => {
+                return externalData.nationalRegistry?.data.fullName
+              },
             }),
             buildPhoneField({
               id: 'applicant.phone',
@@ -136,42 +122,6 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'constituency',
-      title: m.constituency,
-      children: [
-        buildMultiField({
-          id: 'constituency',
-          title: m.selectConstituency,
-          description: m.selectConstituencyDescription,
-          children: [
-            buildCheckboxField({
-              id: 'constituency',
-              large: true,
-              defaultValue: (application: Application) => {
-                const collection = application.externalData
-                  .parliamentaryCollection.data as Collection
-
-                if (!collection?.areas) {
-                  return []
-                }
-
-                return collection.areas.map((area) => `${area.id}|${area.name}`)
-              },
-              options: (application) => {
-                return (
-                  application.externalData.parliamentaryCollection
-                    .data as Collection
-                )?.areas.map((area) => ({
-                  value: `${area.id}|${area.name}`,
-                  label: area.name,
-                }))
-              },
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
       id: 'overview',
       title: m.overview,
       children: [
@@ -189,26 +139,20 @@ export const Draft: Form = buildForm({
               marginBottom: 3,
             }),
             buildKeyValueField({
-              label: m.listName,
+              label: m.listMunicipality,
               width: 'full',
               value: ({ answers }) =>
-                getValueViaPath(answers, 'list.name') ?? '',
+                getValueViaPath(answers, 'list.municipality') ?? '',
             }),
             buildDescriptionField({
               id: 'space',
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: m.listLetter,
+              label: m.listName,
               width: 'half',
               value: ({ answers }) =>
-                getValueViaPath(answers, 'list.letter') ?? '',
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'list.nationalId') ?? '',
+                getValueViaPath(answers, 'list.name') ?? '',
             }),
             buildDescriptionField({
               id: 'space1',
@@ -223,16 +167,16 @@ export const Draft: Form = buildForm({
               marginBottom: 3,
             }),
             buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'applicant.name') ?? '',
-            }),
-            buildKeyValueField({
               label: m.nationalId,
               width: 'half',
               value: ({ answers }) =>
                 getValueViaPath(answers, 'applicant.nationalId') ?? '',
+            }),
+            buildKeyValueField({
+              label: m.name,
+              width: 'half',
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'applicant.name') ?? '',
             }),
             buildDescriptionField({
               id: 'space2',
@@ -260,28 +204,30 @@ export const Draft: Form = buildForm({
               space: 'gutter',
             }),
             buildDividerField({}),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmCreation',
+      title: m.confirmCreation,
+      children: [
+        buildMultiField({
+          id: 'confirmCreation',
+          title: m.confirmCreation,
+          description: m.confirmCreationDescription,
+          children: [
             buildDescriptionField({
-              id: 'listsOverview',
-              title: m.listsOverviewHeader,
+              id: 'confirmSpace',
+              title: '',
+              space: 'containerGutter',
               titleVariant: 'h3',
-              space: 'gutter',
             }),
-            buildActionCardListField({
-              id: 'listsInOverview',
-              doesNotRequireAnswer: true,
-              items: ({ answers }) => {
-                return (answers.constituency as string[]).map(
-                  (constituency: string) => ({
-                    heading: constituency.split('|')[1],
-                    eyebrow: getValueViaPath(answers, 'list.name'),
-                    progressMeter: {
-                      currentProgress: 0,
-                      maxProgress: 350,
-                      withLabel: true,
-                    },
-                  }),
-                )
-              },
+            buildCheckboxField({
+              id: 'confirmCreationCheckbox',
+              large: true,
+              title: '',
+              options: [{ value: YES, label: m.confirmCreationCheckboxLabel }],
             }),
             buildSubmitField({
               id: 'submit',
@@ -300,7 +246,6 @@ export const Draft: Form = buildForm({
         }),
       ],
     }),
-    /* Section setup for the stepper */
     buildSection({
       id: 'done',
       title: m.listCreated,

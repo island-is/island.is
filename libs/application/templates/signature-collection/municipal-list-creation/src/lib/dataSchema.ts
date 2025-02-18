@@ -1,39 +1,19 @@
+import { YES } from '@island.is/application/core'
 import { z } from 'zod'
-import { m } from './messages'
-import * as nationalId from 'kennitala'
-
-const nationalIdAndName = z.object({
-  name: z.string(),
-  nationalId: z.string().refine((v) => nationalId.isPerson(v), {
-    params: m.nationalIdValidationError,
-  }),
-})
 
 export const dataSchema = z.object({
-  /* Gagnaöflun */
   approveExternalData: z.boolean().refine((v) => v),
-
-  /* Upplýsingar */
   applicant: z.object({
     name: z.string(),
     nationalId: z.string(),
     phone: z.string().min(11),
     email: z.string().email(),
   }),
-  collection: z.object({
-    dateFrom: z.string(),
-    dateTil: z.string(),
-  }),
   list: z.object({
-    name: z.string(),
-    nationalId: z.string(),
-    letter: z.string(),
+    municipality: z.string().min(1),
+    name: z.string().min(1),
   }),
-
-  /* Kjördæmi */
-  constituency: z.array(z.string()).refine((arr) => arr.length >= 1, {
-    params: m.constituencyValidationError,
-  }),
+  confirmCreationCheckbox: z.array(z.enum([YES])).length(1),
 })
 
-export type ParliamentaryCreateListSchema = z.TypeOf<typeof dataSchema>
+export type MunicipalCreateListSchema = z.TypeOf<typeof dataSchema>

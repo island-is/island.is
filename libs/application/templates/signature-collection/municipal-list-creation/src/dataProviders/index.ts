@@ -5,13 +5,13 @@ export const CandidateApi = defineTemplateApi({
   order: 0,
 })
 
-export const ParliamentaryCollectionApi = defineTemplateApi({
-  action: 'parliamentaryCollection',
+export const MunicipalCollectionApi = defineTemplateApi({
+  action: 'municipalCollection',
   order: 1,
 })
 
-export const ParliamentaryIdentityApi = defineTemplateApi({
-  action: 'parliamentaryIdentity',
+export const MunicipalIdentityApi = defineTemplateApi({
+  action: 'municipalIdentity',
   order: 2,
 })
 
