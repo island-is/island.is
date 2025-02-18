@@ -19,32 +19,61 @@ const ActionDrawer = () => {
   }
 
   return (
-    <Box marginTop={3}>
-      <Drawer
-        ariaLabel={''}
-        baseId={''}
-        disclosure={
-          <Button variant="utility" icon="settings" iconType="outline">
+    <Box>
+      <Box marginTop={3} display="flex">
+        <Drawer
+          ariaLabel={''}
+          baseId={''}
+          disclosure={
+            <Button variant="utility" icon="settings" iconType="outline">
+              Aðgerðir
+            </Button>
+          }
+        >
+          <Text variant="h2" color="backgroundBrand" marginY={3}>
             Aðgerðir
-          </Button>
-        }
-      >
-        <Text variant="h2" color="backgroundBrand" marginY={3}>
-          Aðgerðir
-        </Text>
-        <Divider />
-        <Text marginY={6}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
-          justo interdum, pharetra enim vel, ultrices augue. Vestibulum
-          tincidunt cursus viverra.{' '}
-        </Text>
+          </Text>
+          <Divider />
+          <Text marginY={6}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
+            justo interdum, pharetra enim vel, ultrices augue. Vestibulum
+            tincidunt cursus viverra.{' '}
+          </Text>
 
-        <Stack space={7}>
-          <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
-          <ActionLockList listId={list?.id} listStatus={listStatus} />
-          <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
-        </Stack>
-      </Drawer>
+          <Stack space={7}>
+            <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
+            <ActionLockList listId={list?.id} listStatus={listStatus} />
+            <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
+          </Stack>
+        </Drawer>
+        <Drawer
+            ariaLabel={''}
+            baseId={''}
+            disclosure={
+              <Box marginLeft={2}>
+                <Button variant="utility" icon="person" iconType="outline">
+                  Aðilar
+                </Button>
+              </Box>
+            }
+          >
+            <Text variant="h2" color="backgroundBrand" marginY={3}>
+              Aðgerðir
+            </Text>
+            <Divider />
+            <Text marginY={6}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
+              justo interdum, pharetra enim vel, ultrices augue. Vestibulum
+              tincidunt cursus viverra.{' '}
+            </Text>
+
+            <Stack space={7}>
+              <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
+              <ActionLockList listId={list?.id} listStatus={listStatus} />
+              <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
+            </Stack>
+          </Drawer>
+      </Box>
     </Box>
   )
 }

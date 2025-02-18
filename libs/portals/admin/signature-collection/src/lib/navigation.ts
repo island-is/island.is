@@ -14,17 +14,14 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
     {
       name: m.parliamentaryCollectionTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
-      activeIfExact: true,
     },
     {
       name: m.collectionTitle,
       path: SignatureCollectionPaths.PresidentialLists,
-      activeIfExact: true,
     },
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalRoot,
-      activeIfExact: true,
       children: [
         {
           name: LandAreas.Hofudborgarsvaedi,

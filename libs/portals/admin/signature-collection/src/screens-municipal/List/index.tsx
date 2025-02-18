@@ -1,6 +1,7 @@
 import {
   Box,
   Breadcrumbs,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -41,7 +42,7 @@ const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
+          <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
             <Breadcrumbs
               items={[
                 {
@@ -55,18 +56,21 @@ const List = () => {
                 {
                   title: 'Sveitarfélag',
                 },
-                { title: 'Framboð A' }, //list?.candidate.name
+                { title: list.title },
               ]}
             />
           </Box>
           <IntroHeader
-            title={'Reykjavík - Framboð A'}
+            title={list?.title}
             intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             buttonGroup={<ActionDrawer />}
+            marginBottom={4}
           />
+          <Divider />
+          <Box marginTop={9} />
           <Signees numberOfSignatures={list?.numberOfSignatures ?? 0} />
           <PaperSignees listId={list?.id} />
         </GridColumn>
