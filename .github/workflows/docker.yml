@@ -85,7 +85,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
     runs-on: 'arc-runners'
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      build-matrix: ${{ steps.build-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
       playwright-image-version: ${{ steps.args-prep.outputs.playwright-image-version }}
       build-args: ${{ steps.args-prep.outputs.build-args }}
@@ -109,8 +109,8 @@ jobs:
           echo DOCKER_IMAGE_REGISTRY="$ECR_PULLTHROUGH_CACHE" | tee -a "$GITHUB_OUTPUT"
           echo EOF | tee -a "$GITHUB_OUTPUT"
 
-      - name: Create matrix from input
-        id: set-matrix
+      - name: Create matrix from input (build)
+        id: build-matrix
         env:
           projects: ${{ inputs.projects }}
           is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
@@ -146,11 +146,11 @@ jobs:
       - name: Debug outputs
         env:
           args_prep: ${{ toJson(steps.args-prep.outputs) }}
-          set_matrix: ${{ toJson(steps.set-matrix.outputs) }}
+          build_matrix: ${{ toJson(steps.build-matrix.outputs) }}
         run: |
           echo "---"
           echo "${args_prep}" | jq
-          echo "${set_matrix}" | jq
+          echo "${build_matrix}" | jq
           echo "---"
 
   codegen:
@@ -258,7 +258,7 @@ jobs:
       - codegen
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.build-matrix) }}
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
