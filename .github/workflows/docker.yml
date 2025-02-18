@@ -188,6 +188,16 @@ jobs:
     name: Docker-build dependencies
     runs-on: arc-runners
     needs: prepare
+    strategy:
+      fail-fast: true
+      matrix:
+        target:
+          - base
+          - deps
+          - output-base
+          - output-base-with-pg
+          - static-base
+          - playwright-base
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
@@ -224,10 +234,10 @@ jobs:
           use: true
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (base)
+      - name: Docker build/cache dependencies (${{ matrix.target }})
         uses: docker/build-push-action@v6
         with:
-          target: base
+          target: ${{ matrix.target }}
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./scripts/ci/Dockerfile
@@ -235,79 +245,9 @@ jobs:
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
             ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-base
+            ${{ env.AWS_CACHE_PREFIX }},name=target-${{ matrix.target }}
           cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-base;${{ github.sha }};${{ github.ref }}
-      - name: Docker build/cache dependencies (deps)
-        uses: docker/build-push-action@v6
-        with:
-          target: deps
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ./scripts/ci/Dockerfile
-          push: false
-          build-args: ${{ needs.prepare.outputs.build-args }}
-          cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-deps
-          cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-deps;${{ github.sha }};${{ github.ref }}
-      - name: Docker build/cache dependencies (output-base)
-        uses: docker/build-push-action@v6
-        with:
-          target: output-base
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ./scripts/ci/Dockerfile
-          push: false
-          build-args: ${{ needs.prepare.outputs.build-args }}
-          cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base
-          cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base;${{ github.sha }};${{ github.ref }}
-      - name: Docker build/cache dependencies (static-base)
-        uses: docker/build-push-action@v6
-        with:
-          target: static-base
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ./scripts/ci/Dockerfile
-          push: false
-          build-args: ${{ needs.prepare.outputs.build-args }}
-          cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-static-base
-          cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-static-base;${{ github.sha }};${{ github.ref }}
-      - name: Docker build/cache dependencies (output-base-with-pg)
-        uses: docker/build-push-action@v6
-        with:
-          target: output-base-with-pg
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ./scripts/ci/Dockerfile
-          push: false
-          build-args: ${{ needs.prepare.outputs.build-args }}
-          cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base-with-pg
-          cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-output-base-with-pg;${{ github.sha }};${{ github.ref }}
-      - name: Docker build/cache dependencies (playwright-base)
-        uses: docker/build-push-action@v6
-        with:
-          target: playwright-base
-          context: .
-          builder: ${{ steps.buildx.outputs.name }}
-          file: ./scripts/ci/Dockerfile
-          push: false
-          build-args: ${{ needs.prepare.outputs.build-args }}
-          cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-playwright-base
-          cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-playwright-base;${{ github.sha }};${{ github.ref }}
+            ${{ env.AWS_CACHE_PREFIX }},name=${{ github.sha }};${{ github.ref }};target-${{ matrix.target }}
 
   build:
     name: Docker-build ${{ matrix.project }}
