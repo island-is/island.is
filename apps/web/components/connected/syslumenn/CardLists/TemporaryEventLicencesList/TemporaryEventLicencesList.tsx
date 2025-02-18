@@ -321,12 +321,6 @@ const TemporaryEventLicencesList: FC<
                       ]}
                       justifyContent="spaceBetween"
                     >
-                      {Boolean(temporaryEventLicence.maximumNumberOfGuests) && (
-                        <Text>
-                          {formatMessage(t.licenseMaximumNumberOfGuests)}:{' '}
-                          {temporaryEventLicence.maximumNumberOfGuests}
-                        </Text>
-                      )}
                       <Text variant="eyebrow" color="purple400" paddingTop={1}>
                         {getLicenceTypeRepresentation(temporaryEventLicence)}
                       </Text>
