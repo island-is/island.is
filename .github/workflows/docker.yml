@@ -86,6 +86,7 @@ jobs:
     runs-on: 'arc-runners'
     outputs:
       build-matrix: ${{ steps.build-matrix.outputs.matrix }}
+      deps-matrix: ${{ steps.deps-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
       playwright-image-version: ${{ steps.args-prep.outputs.playwright-image-version }}
       build-args: ${{ steps.args-prep.outputs.build-args }}
@@ -143,14 +144,33 @@ jobs:
             }')"
           echo "matrix=$matrix" | tee -a "$GITHUB_OUTPUT"
 
+      - name: Create matrix from input (deps)
+        id: deps-matrix
+        # Find targets containing `base` and output matrix with targets
+        run: |
+          matrix="$(grep -oP '(?<= AS )\S*\bbase\b\S*$' ./scripts/ci/Dockerfile |
+            sort -u |
+            jq -cRne '{
+              include: [
+                inputs
+                | {
+                    target: .
+                  }
+                ]
+              }'
+            )"
+          echo "matrix=$matrix"| tee -a "$GITHUB_OUTPUT"
+
       - name: Debug outputs
         env:
           args_prep: ${{ toJson(steps.args-prep.outputs) }}
           build_matrix: ${{ toJson(steps.build-matrix.outputs) }}
+          deps_matrix: ${{ toJson(steps.deps-matrix.outputs) }}
         run: |
           echo "---"
           echo "${args_prep}" | jq
           echo "${build_matrix}" | jq
+          echo "${deps_matrix}" | jq
           echo "---"
 
   codegen:
@@ -190,20 +210,21 @@ jobs:
     needs: prepare
     strategy:
       fail-fast: true
-      matrix:
-        target:
-          - base
-          - deps
-          - output-base
-          - output-base-with-pg
-          - static-base
-          - playwright-base
+      matrix: ${{ fromJson(needs.prepare.outputs.deps-matrix) }}
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
       contents: read # This is required for actions/checkout
 
     steps:
+      - name: Debug inputs
+        env:
+          matrix: ${{ toJson(matrix) }}
+        run: |
+          echo "---"
+          echo "$matrix" | jq
+          echo "---"
+
       - name: Check out repo
         uses: actions/checkout@v4
 
