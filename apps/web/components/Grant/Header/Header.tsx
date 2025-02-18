@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
-  BoxProps,
   GridColumn,
   GridContainer,
   GridRow,
@@ -12,6 +12,7 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import { Webreader } from '../../Webreader'
 import * as styles from './Header.css'
@@ -131,8 +132,8 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
             offset={props.offset ? ['0', '0', '0', '1/12', '1/12'] : ['0']}
             span={
               props.offset
-                ? ['1/1', '1/1', '7/12', '6/12', '6/12']
-                : ['1/1', '1/1', '7/12', '7/12', '7/12']
+                ? ['1/1', '1/1', '4/6', '6/12', '6/12']
+                : ['1/1', '1/1', '4/6', '7/12', '7/12']
             }
           >
             {props.breadcrumbs}
@@ -147,7 +148,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
             {renderQuickLinks()}
           </GridColumn>
           <GridColumn
-            span={['0', '0', '5/12', '4/12', '4/12']}
+            span={['0', '0', '2/6', '4/12', '4/12']}
             offset={['0', '0', '0', '1/12', '1/12']}
             hiddenBelow="md"
           >
