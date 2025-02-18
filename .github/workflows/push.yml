@@ -52,11 +52,110 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cache/Cypress
 
 jobs:
   pre-checks:
-    uses: ./.github/workflows/pre-checks.yml
-    secrets: inherit
+    name: Check if job should run
+    runs-on: arc-runners
+    env:
+      CREATE_PATTERNS: ^release/
+      PRE_RELEASE_PATTERN: ^pre-release/
+    outputs:
+      NODE_IMAGE_VERSION: ${{ steps.git-branch.outputs.NODE_IMAGE_VERSION }}
+      GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+      GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
+      PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
+      PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
+      YARN_CACHE_FOLDER: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+    steps:
+      - name: Get git branch
+        id: git-branch
+        run: |
+          set -euo pipefail
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+      - name: Generate deployment branch name
+        id: git-branch-deploy
+        run: |
+          set -euo pipefail
+          export GIT_BRANCH_DEPLOY="$GIT_BRANCH"
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+              # If event is pull request but branch is not prefixed with feature/
+              GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH_DEPLOY"
+            fi
+            # Avoid too long resource names
+            GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+          fi
+          echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+          echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+          echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
+      - name: Check if we want to run workflow
+        id: should-run
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+        run: |
+          echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
+          echo "PRE_RELEASE=false" >> "$GITHUB_OUTPUT"
+
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
+            echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
+
+            for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+            done
+
+            for pattern in $(echo "$CREATE_PATTERNS" | sed "s/,/ /g")
+            do
+                echo "Checking branch against pattern '$pattern'"
+                if [[ "$GIT_BRANCH" =~ $pattern ]]; then
+                  echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
+                  echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+            done
+            echo "No pattern matches '$GIT_BRANCH', exiting."
+            exit 0
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ "${{ github.event.action }}" == "labeled" ]]; then
+              echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
+              deployFeature="$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )"
+            else
+              echo "Action is ${{ github.event.action }}, using labels on PR"
+              deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+            fi
+            if [[ "$deployFeature" == "true" ]]; then
+              echo "Pull request contains deploy-feature label, continuing with feature deployment"
+              echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "Pull request does not have deploy-feature label, exiting..."
+            exit 0
+          fi
+          for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
+                  exit 0
+                fi
+            done
+          echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
     runs-on: arc-runners
@@ -69,7 +168,6 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
-      GIT_BASE_BRANCH: ${{ needs.pre-checks.outputs.GIT_BASE_BRANCH }}
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
@@ -85,25 +183,57 @@ jobs:
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: feature-checkout
-        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
-        uses: ./.github/actions/feature-checkout
+      - uses: actions/setup-node@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+          node-version-file: 'package.json'
 
-      - name: prerelease-checkout
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          ls -l `which node`
+
+      - name: Git refs
+        id: git_refs
+        run: |
+          set -euo pipefail
+          if [[ -n "$GITHUB_BASE_REF" ]]
+          then
+           # a PR
+           GIT_BASE_BRANCH="$GITHUB_BASE_REF"
+          else
+           # on main
+           GIT_BASE_BRANCH=main
+          fi
+          echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+          echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
+          echo "Base branch is '${GIT_BASE_BRANCH}'"
+          echo "Branch is '${GIT_BRANCH}'"
+
+      - name: Checking out relevant branches for a pre-release
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
-        uses: ./.github/actions/prerelease-checkout
+        run: |
+          echo "Feature Name: '$FEATURE_NAME'"
+
+          git checkout main
+          git checkout "$GITHUB_SHA"
+
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
-        # NOTE: checkout features
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
@@ -121,7 +251,6 @@ jobs:
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
-      # NOTE: checkout main
       - name: Checking out relevant branches for a branch build
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
@@ -193,14 +322,81 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
+      - name: Set cache key
+        id: set-cache-key
+        run: |
+          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
+      - name: Get Yarn Cache Directory Path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - name: test-everything
-        uses: ./.github/actions/test-everything
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+
+      - run: |
+          yarn install --immutable
+
+      - name: Cache Dependencies
+        uses: runs-on/cache/save@v4
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+
+      - name: Prepare generated files
+        run: |
+          echo "generated files: ${{ env.GENERATED_FILES }}"
+          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Cache Generated files
+        uses: runs-on/cache/save@v4
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Set Test Everything true
+        run: |
+          echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'test everything')
+
+      - name: Set Test Everything false
+        run: echo "TEST_EVERYTHING=false" >> "$GITHUB_ENV"
+        if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'test everything')
+
+      - name: Preparing BASE tags
+        id: git_nx_base
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HTML_URL: ${{ github.event.pull_request.html_url }}
+          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+        run: |
+          set -euo pipefail
+          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
+            export HEAD_REF="$GITHUB_HEAD_REF"
+            export BASE_REF="$GITHUB_BASE_REF"
+            export PR_REF="$GITHUB_SHA"
+          else
+            export HEAD_REF="$GIT_BRANCH"
+            export BASE_REF="$GIT_BASE_BRANCH"
+            export PR_REF="not used"
+          fi
+          export WORKFLOW_ID=push
+          export SHELL=/usr/bin/bash
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
+          git checkout "$GITHUB_SHA"
+          echo BASE="$BASE" >> "$GITHUB_ENV"
+          echo LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
@@ -260,6 +456,60 @@ jobs:
         id: docker-deps
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
+
+  tests:
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    runs-on: arc-runners
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - run: |
+          corepack enable
+
+      - name: Restore Dependencies Cache
+        uses: runs-on/cache/restore@v4
+        id: restore-cache
+        with:
+          path: |
+            ${{ needs.prepare.outputs.YARN_CACHE_FOLDER }}
+            ${{ env.CYPRESS_CACHE_FOLDER }}
+          key: ${{ needs.prepare.outputs.CACHE_KEY }}
+
+      - run: |
+          yarn install --immutable
+
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
+
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   docker-build:
     needs:
@@ -537,11 +787,14 @@ jobs:
       - pre-checks
       - retag-unaffected
       - deploy
+      - tests
     steps:
       - name: Check retag success
         run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Announce success
         if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"
