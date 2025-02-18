@@ -93,7 +93,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [initialRender, setInitialRender] = useState<boolean>(true)
 
   const { width } = useWindowSize()
-  const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg
 
   const [getGrants] = useLazyQuery<
     { getGrants: GrantList },
@@ -273,7 +273,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         }
       />
       <Box background="blue100">
-        {!isMobile && (
+        {!isTablet && (
           <SidebarLayout
             paddingTop={6}
             fullWidthContent={true}
@@ -335,7 +335,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             </Box>
           </SidebarLayout>
         )}
-        {isMobile && (
+        {isTablet && (
           <Box marginTop={6} margin={3} paddingTop={3}>
             <Text fontWeight="semiBold">{formatMessage(m.search.search)}</Text>
             <Box marginTop={2} className={styles.searchInput}>

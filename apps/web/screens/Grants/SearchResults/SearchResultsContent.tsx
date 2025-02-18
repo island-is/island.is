@@ -31,6 +31,7 @@ export const SearchResultsContent = ({
   const { linkResolver } = useLinkResolver()
 
   const { width } = useWindowSize()
+  const isTablet = width <= theme.breakpoints.lg
   const isMobile = width <= theme.breakpoints.md
 
   const [isGridLayout, setIsGridLayout] = useState(true)
@@ -39,7 +40,7 @@ export const SearchResultsContent = ({
 
   return (
     <>
-      {!isMobile && (
+      {!isTablet && (
         <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
           <Box display="flex" alignItems="center">
             <Text>{subheader}</Text>
