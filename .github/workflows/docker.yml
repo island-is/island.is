@@ -118,10 +118,15 @@ jobs:
           test_everything: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') }}
           base_ref: ${{ github.event.pull_request.base.ref }}
         run: |
-          if [[ "$is_debug" == true ]] && [[ -z "$projects" ]] && [[ "$test_everything" != true ]]; then
-            echo "Using small subset for testing docker build (on $base_ref)"
-            # A representative sample of various docker build targets
-            export projects="web,air-discount-scheme-backend,license-api"
+          if [[ "$is_debug" == true ]] && [[ -z "$projects" ]]; then
+            if [[ "$test_everything" == true ]]; then
+              echo "Using all projects for testing docker build (on $base_ref)"
+              projects="$(yarn nx show projects | tr '\n' ',' | sed 's/,$//')"
+            else
+              echo "Using small subset for testing docker build (on $base_ref)"
+              # A representative sample of various docker build targets
+              projects="web,air-discount-scheme-backend,license-api"
+            fi
           fi
           # Create a list of objects of the form:
           # [
