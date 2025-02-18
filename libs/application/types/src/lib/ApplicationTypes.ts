@@ -55,7 +55,6 @@ export enum ApplicationTypes {
   PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
   PARLIAMENTARY_LIST_SIGNING = 'ParliamentaryListSigning',
   MUNICIPAL_LIST_CREATION = 'MunicipalListCreation',
-  MUNICIPAL_LIST_SIGNING = 'MunicipalListSigning',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -305,10 +304,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MUNICIPAL_LIST_CREATION]: {
     slug: 'sveitastjornar-medmaelasofnun',
     translation: 'mlc.application',
-  },
-  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: {
-    slug: 'maela-med-sveitastjornarframbodi',
-    translation: 'mls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
