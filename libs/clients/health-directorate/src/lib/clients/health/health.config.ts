@@ -6,7 +6,6 @@ const schema = z.object({
   scope: z.array(z.string()),
 })
 
-// TODO: ADD SCOPE
 export const HealthDirectorateHealthClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
