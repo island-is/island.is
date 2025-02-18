@@ -113,7 +113,7 @@ const template: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days,
           },
           roles: [
             {
