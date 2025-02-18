@@ -20,13 +20,11 @@ export const overviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'overviewCemetryField',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'CemeteryOverview',
         }),
         buildCheckboxField({
           id: 'approveOverview',
-          title: '',
           options: [
             {
               label: m.overviewCorrect,
@@ -36,7 +34,6 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'overview.submit',
-          title: '',
           actions: [
             {
               event: DefaultEvents.SUBMIT,

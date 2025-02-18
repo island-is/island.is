@@ -1,0 +1,125 @@
+import { Inject, Injectable } from '@nestjs/common'
+import { IdentityConfirmationInputDto } from './dto/IdentityConfirmationInput.dto'
+import { InjectModel } from '@nestjs/sequelize'
+import { IdentityConfirmation } from './models/Identity-Confirmation.model'
+import { Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import { uuid } from 'uuidv4'
+import { IdentityConfirmationType } from './types/identity-confirmation-type'
+import { SmsService } from '@island.is/nova-sms'
+import { EmailService } from '@island.is/email-service'
+import { IdentityConfirmationApiConfig } from './config'
+import type { ConfigType } from '@island.is/nest/config'
+
+const ZENDESK_CUSTOM_FIELDS = {
+  Link: 24598388531474,
+}
+
+@Injectable()
+export class IdentityConfirmationService {
+  constructor(
+    @InjectModel(IdentityConfirmation)
+    private identityConfirmationModel: typeof IdentityConfirmation,
+    private readonly zendeskService: ZendeskService,
+    private readonly smsService: SmsService,
+    @Inject(EmailService)
+    private readonly emailService: EmailService,
+    @Inject(IdentityConfirmationApiConfig.KEY)
+    private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
+  ) {}
+
+  async identityConfirmation({
+    id,
+    type,
+    number,
+  }: IdentityConfirmationInputDto): Promise<string> {
+    if (type === IdentityConfirmationType.PHONE && !number) {
+      throw new Error('Phone number is required')
+    }
+
+    const zendeskCase = await this.zendeskService.getTicket(id)
+
+    if (!zendeskCase) {
+      throw new Error('Ticket not found')
+    }
+
+    const identityConfirmation = await this.identityConfirmationModel.create({
+      id: uuid(),
+      ticketId: id,
+      type,
+    })
+
+    const link = this.generateLink(identityConfirmation.id)
+
+    switch (type) {
+      case IdentityConfirmationType.EMAIL:
+        await this.sendViaEmail(id, link)
+        break
+      case IdentityConfirmationType.PHONE:
+        await this.sendViaSms(number, link)
+        break
+      case IdentityConfirmationType.WEB_FORM:
+      case IdentityConfirmationType.CHAT:
+        await this.sendViaChat(id, link)
+        break
+      default:
+        throw new Error('Invalid confirmation type')
+    }
+
+    return link
+  }
+
+  async sendViaEmail(id: string, link: string) {
+    try {
+      await this.zendeskService.updateTicket(id, {
+        comment: {
+          html_body: `Vinsamlegast opnaðu <a href="${link}">þennan hlekk</a> til að staðfesta þína auðkenningu`,
+          public: true,
+        },
+      })
+    } catch (e) {
+      console.error(e)
+      throw new Error('Failed to send email')
+    }
+  }
+
+  async sendViaSms(phone: string | undefined, link: string) {
+    if (!phone) {
+      throw new Error('Cannot send sms, phone number is missing')
+    }
+
+    try {
+      return this.smsService
+        .sendSms(
+          phone,
+          `Vinsamlegast opnaðu hlekkinn til að staðfesta þína auðkenningu: ${link}`,
+        )
+        .then((response) => {
+          return response.Code
+        })
+    } catch (e) {
+      console.error(e)
+      throw new Error('Failed to send sms')
+    }
+  }
+
+  async sendViaChat(id: string, link: string) {
+    try {
+      await this.zendeskService.updateTicket(id, {
+        // Update tickets custom field with link so it can be pushed to a Macro
+        custom_fields: [
+          {
+            id: ZENDESK_CUSTOM_FIELDS.Link,
+            value: link,
+          },
+        ],
+      })
+    } catch (e) {
+      console.error(e)
+      throw new Error('Failed to send chat message')
+    }
+  }
+
+  private generateLink = (id: string) => {
+    return `${process.env.IDENTITY_SERVER_ISSUER_URL}/app/confirm-identity/${id}`
+  }
+}

@@ -55,6 +55,7 @@ import { Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -398,7 +399,16 @@ export class InternalCaseService {
     const theCase = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
-        { model: IndictmentCount, as: 'indictmentCounts' },
+        {
+          model: IndictmentCount,
+          as: 'indictmentCounts',
+          include: [
+            {
+              model: Offense,
+              as: 'offenses',
+            },
+          ],
+        },
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
       ],
@@ -538,6 +548,7 @@ export class InternalCaseService {
           required: true,
         },
       ],
+      where: { state: { [Op.eq]: CaseState.RECEIVED } },
       order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
     })
   }
@@ -913,7 +924,7 @@ export class InternalCaseService {
       })
   }
 
-  private async deliverCaseToPoliceWithFiles(
+  async deliverCaseToPoliceWithFiles(
     theCase: Case,
     user: TUser,
     courtDocuments: PoliceDocument[],

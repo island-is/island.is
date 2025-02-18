@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { FieldBaseProps, ValidAnswers } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -8,7 +8,6 @@ import { useLocale } from '@island.is/localization'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths, maxMonths } from '../../config'
-import { YES, NO } from '../../constants'
 
 const RequestRights: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,

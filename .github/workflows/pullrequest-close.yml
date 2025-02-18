@@ -4,7 +4,6 @@ on:
   pull_request:
     types:
       - closed
-
 defaults:
   run:
     shell: bash
@@ -64,6 +63,7 @@ jobs:
 
       - name: Create a PR
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        id: create_pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BRANCH: ${{ github.head_ref}}/cherry-pick
@@ -81,6 +81,17 @@ jobs:
           echo "new branch created"
           PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
           echo "$PR created"
+          echo PR=$PR >> "$GITHUB_OUTPUT"
+
+      - name: Send slack message
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "A new PR has been created: ${{ steps.create_pr.outputs.PR }}"
 
   cleanup:
     name: Clean up feature deployment
@@ -117,4 +128,3 @@ jobs:
             }
           }
           BODY
-

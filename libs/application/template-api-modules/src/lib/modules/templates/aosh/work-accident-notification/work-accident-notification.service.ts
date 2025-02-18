@@ -77,7 +77,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
             },
           ),
 
-        buyersSSN: answers.projectPurchase.nationalId ?? '',
+        buyersSSN: answers.projectPurchase.contractor?.nationalId ?? '',
         dateAndTimeOfAccident: getDateAndTime(
           answers.accident.date,
           answers.accident.time.slice(0, 2),

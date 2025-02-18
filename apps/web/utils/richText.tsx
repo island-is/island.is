@@ -72,6 +72,7 @@ import {
   GrantCardsList as GrantCardsListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
+  OrganizationParentSubpageList,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
   SectionWithImage as SectionWithImageSchema,
@@ -86,6 +87,7 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
+import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
@@ -97,6 +99,7 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
@@ -215,6 +218,9 @@ export const webRenderConnectedComponent = (
     case 'Brennuleyfi/BurningPermitList':
       connectedComponent = <BurningPermitList slice={slice} />
       break
+    case 'DigitalIcelandStatistics':
+      connectedComponent = <DigitalIcelandStatistics />
+      break
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
@@ -308,6 +314,9 @@ const defaultRenderComponent = {
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
     <GrantCardsList slice={slice} />
+  ),
+  OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
+    <OrganizationParentSubpageListSlice slice={slice} />
   ),
 }
 

@@ -1,5 +1,5 @@
-import { formatText } from '@island.is/application/core'
-import { FieldBaseProps, FormValue, YES } from '@island.is/application/types'
+import { formatText, YES } from '@island.is/application/core'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import {
   formatPhoneNumber,
   ReviewGroup,
