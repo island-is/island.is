@@ -381,6 +381,9 @@ jobs:
         with:
           path: ${{ github.sha }}
           key: generated-files-${{ github.sha }}
+      - name: Unpack generate files (codegen)
+        run: |
+          tar -xzvf "$GITHUB_SHA"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
