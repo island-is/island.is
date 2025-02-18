@@ -169,7 +169,7 @@ jobs:
           path: ${{ github.sha }}
           key: generated-files-${{ github.sha }}
       - name: Prepare generated files
-        if: ${{ steps.cache.outcome != 'success' }}
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         id: gen-files
         env:
           SHA: ${{ github.sha }}
