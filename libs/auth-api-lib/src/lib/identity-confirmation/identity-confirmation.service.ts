@@ -162,7 +162,7 @@ export class IdentityConfirmationService {
       )
     }
 
-    await this.zendeskService.updateTicket('93', {
+    await this.zendeskService.updateTicket(identityConfirmation.ticketId, {
       comment: {
         html_body: `
           <b>Auðkenning hefur verið staðfest</b>
