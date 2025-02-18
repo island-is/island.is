@@ -131,6 +131,7 @@ jobs:
           #   },
           #   ...
           # ]
+          set -x
           matrix="$(git ls-files '**/project.json' |
             xargs cat |
             jq -s -c --arg projects "$projects" '{ include: [
@@ -148,6 +149,7 @@ jobs:
         id: deps-matrix
         # Find targets containing `base` and output matrix with targets
         run: |
+          set -x
           matrix="$(grep -oP '(?<= AS )\S*\bbase\b\S*$' ./scripts/ci/Dockerfile |
             sort -u |
             jq -cRne '{
