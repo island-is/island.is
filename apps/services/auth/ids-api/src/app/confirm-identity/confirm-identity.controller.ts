@@ -18,8 +18,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/confirm-identity'
 
