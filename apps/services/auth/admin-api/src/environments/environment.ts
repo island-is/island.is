@@ -18,7 +18,7 @@ const devConfig = {
     // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
     'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
   zendeskIdentityConfirmationSecret:
-    process.env.ZENDESK_IDENTITY_CONFIRMATION_SECRET ??
+    process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION ??
     //The static test signing secret from Zendesk as described in their docs
     // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
     'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
