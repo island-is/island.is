@@ -5,6 +5,8 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   addDocuments,
@@ -15,18 +17,11 @@ import {
   fatalAccidentAttachment,
   injuredPersonInformation,
 } from '../../../lib/messages'
-import {
-  isFatalAccident,
-  isReportingOnBehalfOfInjured,
-  isRepresentativeOfCompanyOrInstitute,
-} from '../../../utils'
+import { isRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 import { AttachmentsEnum } from '../../../types'
-import {
-  FILE_SIZE_LIMIT,
-  NO,
-  UPLOAD_ACCEPT,
-  YES,
-} from '../../../utils/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
+import { isReportingOnBehalfOfInjured } from '../../../utils/reportingUtils'
+import { isFatalAccident } from '../../../utils/accidentUtils'
 
 // Injury certificate and fatal accident section
 export const attachmentsSubSection = buildSubSection({
@@ -39,7 +34,6 @@ export const attachmentsSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'injuryCertificate.answer',
-          title: '',
           description: attachments.general.description,
           required: true,
           options: (application) =>
@@ -108,7 +102,6 @@ export const attachmentsSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'wasTheAccidentFatal',
-          title: '',
           backgroundColor: 'blue',
           width: 'half',
           required: true,
@@ -129,7 +122,6 @@ export const attachmentsSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'fatalAccidentUploadDeathCertificateNow',
-          title: '',
           backgroundColor: 'blue',
           required: true,
           options: [
@@ -185,7 +177,6 @@ export const attachmentsSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'additionalAttachments.answer',
-          title: '',
           description: attachments.general.additionalAttachmentDescription,
           required: true,
           options: () => [

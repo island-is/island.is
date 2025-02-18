@@ -30,7 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 
-import { hasSentNotification } from '../../stepHelper'
+import { hasSentNotification } from '../../utils'
 import { strings } from './useAppealAlertBanner.strings'
 import * as styles from './useAppealAlertBanner.css'
 

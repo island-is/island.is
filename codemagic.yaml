@@ -14,6 +14,8 @@ definitions:
     #      - pattern: "main"
     #        include: true
     #        source: true
+  environment: &environment
+    node: 20.15.0
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
@@ -38,6 +40,11 @@ definitions:
         else
           echo "No previous commit detected. Continuing."
         fi
+    - &pip_install
+      name: Install distutils with pip
+      script: |
+        pip3 install --upgrade setuptools
+        python3 -c "import distutils; print(distutils.__file__)"
     - &set_android_location
       name: Prepare Android configuration
       script: |
@@ -116,6 +123,7 @@ workflows:
     integrations:
       app_store_connect: 'Island.is API Key'
     environment:
+      <<: *environment
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app
@@ -126,6 +134,7 @@ workflows:
         APP_STORE_APPLE_ID: 1569828682
     scripts:
       - *check_changes
+      - *pip_install
       - *npm_install
       - *codegen
       - *cocoapods
@@ -149,6 +158,7 @@ workflows:
     integrations:
       app_store_connect: 'Island.is API Key'
     environment:
+      <<: *environment
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
@@ -159,6 +169,7 @@ workflows:
         APP_STORE_APPLE_ID: 1570427360
     scripts:
       - *check_changes
+      - *pip_install
       - *npm_install
       - *codegen
       - *cocoapods
@@ -186,6 +197,7 @@ workflows:
         - $CM_BUILD_DIR/.yarn/cache
         - $CM_BUILD_DIR/.cache/nx
     environment:
+      <<: *environment
       android_signing:
         - island-upload-keystore
       groups:
@@ -198,6 +210,7 @@ workflows:
     scripts:
       - *check_changes
       - *set_android_location
+      - *pip_install
       - *npm_install
       - *codegen
       - *build_android
@@ -215,6 +228,7 @@ workflows:
     # instance_type: linux_x2
     cache: *android_cache
     environment:
+      <<: *environment
       android_signing:
         - island-upload-keystore
       groups:
@@ -227,6 +241,7 @@ workflows:
     scripts:
       - *check_changes
       - *set_android_location
+      - *pip_install
       - *npm_install
       - *codegen
       - *build_android

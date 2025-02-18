@@ -7,14 +7,20 @@ export const strings = defineMessages({
     description: 'Titill á yfirliti ákæru',
   },
   title: {
-    id: 'judicial.system.core:indictment_overview.title',
-    defaultMessage: 'Dómur til fullnustu',
+    id: 'judicial.system.core:indictment_overview.title_v1',
+    defaultMessage:
+      '{isFine, select, true {Viðurlagaákvörðun} other {Dómur}} til fullnustu',
     description: 'Notaður sem titill á yfirliti ákæru fyrir fangelsi',
   },
   indictmentCompletedTitle: {
     id: 'judicial.system.core:indictment_overview.indictment_completed_title',
     defaultMessage: 'Dómsuppkvaðning {date}',
-    description: 'Titill á yfirliti ákæru fyrir fangelsi',
+    description: 'Undirtitill á yfirliti ákæru fyrir fangelsi',
+  },
+  indictmentReceivedTitle: {
+    id: 'judicial.system.core:indictment_overview.indictment_received_title',
+    defaultMessage: 'Móttekið {date}',
+    description: 'Undirtitill á yfirliti ákæru fyrir fangelsi',
   },
   infoCardDefendantsTitle: {
     id: 'judicial.system.core:indictment_overview.info_card_defendants_title',
@@ -25,6 +31,11 @@ export const strings = defineMessages({
     id: 'judicial.system.core:indictment_overview.verdict_title',
     defaultMessage: 'Dómur',
     description: 'Titill á Dómur hluta',
+  },
+  courtRecordTitle: {
+    id: 'judicial.system.core:indictment_overview.court_record_title',
+    defaultMessage: 'Þingbók',
+    description: 'Titill á Þingbók hluta',
   },
   punishmentTypeTitle: {
     id: 'judicial.system.core:indictment_overview.punishment_type_title',
@@ -62,5 +73,10 @@ export const strings = defineMessages({
     id: 'judicial.system.core:indictment_overview.sent_to_prison_admin_file_title',
     defaultMessage: 'Fullnusta',
     description: 'Titill á til fullnustu skjali',
+  },
+  criminalRecordUpdateSection: {
+    id: 'judicial.system.core:indictment_overview.criminal_record_update_section',
+    defaultMessage: 'Tilkynning til sakaskrár',
+    description: 'Titill á Tilkynning til sakaskrár',
   },
 })

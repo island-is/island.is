@@ -11,19 +11,17 @@ import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
-import { mapGrant, GrantStatus } from '../../models/grant.model'
+import { mapGrant } from '../../models/grant.model'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class GrantsSyncService implements CmsSyncProvider<IGrant> {
   processSyncData(entries: processSyncDataInput<IGrant>) {
-    // only process grants that we consider not to be empty and dont have circular structures
+    // only process grants that we consider not to be empty
     return entries.filter(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (entry: Entry<any>): entry is IGrant =>
-        entry.sys.contentType.sys.id === 'grant' &&
-        entry.fields.grantName &&
-        !isCircular(entry),
+        entry.sys.contentType.sys.id === 'grant' && entry.fields.grantName,
     )
   }
 
@@ -41,6 +39,9 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
           }
 
           const content = [
+            mapped.fund?.title,
+            mapped.fund?.parentOrganization.title,
+            mapped.description,
             mapped.specialEmphasis
               ? extractStringsFromObject(
                   mapped?.specialEmphasis?.map(
@@ -56,6 +57,13 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             mapped.howToApply
               ? extractStringsFromObject(
                   mapped?.howToApply?.map(pruneNonSearchableSliceUnionFields),
+                )
+              : undefined,
+            mapped.answeringQuestions
+              ? extractStringsFromObject(
+                  mapped?.answeringQuestions?.map(
+                    pruneNonSearchableSliceUnionFields,
+                  ),
                 )
               : undefined,
             mapped?.applicationHints
@@ -93,34 +101,28 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             }
           })
 
+          if (mapped.fund) {
+            tags.push({
+              type: 'fund',
+              key: mapped.fund.id,
+              value: mapped.fund.title,
+            })
+          }
+
           if (mapped.fund?.parentOrganization?.slug) {
             tags.push({
-              key: mapped.fund.parentOrganization.slug,
               type: 'organization',
+              key: mapped.fund.parentOrganization.slug,
               value: mapped.fund.parentOrganization.title,
             })
           }
 
-          switch (mapped.status) {
-            case GrantStatus.OPEN:
-            case GrantStatus.ALWAYS_OPEN:
-            case GrantStatus.OPEN_WITH_NOTE:
-              tags.push({
-                key: 'open',
-                type: 'status',
-                value: 'open',
-              })
-              break
-            case GrantStatus.CLOSED:
-            case GrantStatus.CLOSED_OPENING_SOON:
-            case GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION:
-            case GrantStatus.CLOSED_WITH_NOTE:
-              tags.push({
-                key: 'closed',
-                type: 'status',
-                value: 'closed',
-              })
-              break
+          //Use the raw field to escape the mapping
+          if (entry.fields.grantStatus) {
+            tags.push({
+              type: 'status',
+              key: entry.fields.grantStatus,
+            })
           }
 
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
@@ -131,7 +133,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
               type: 'hasChildEntryWithId',
             })
           }
-
           return {
             _id: mapped.id,
             title: mapped.name,
@@ -141,8 +142,9 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             termPool: createTerms([mapped.name]),
             response: JSON.stringify({ ...mapped, typename: 'Grant' }),
             tags,
-            dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            releaseDate: mapped.dateFrom ?? undefined,
+            dateCreated: mapped.dateTo ?? entry.sys.createdAt,
           }
         } catch (error) {
           logger.warn('Failed to import grants', {

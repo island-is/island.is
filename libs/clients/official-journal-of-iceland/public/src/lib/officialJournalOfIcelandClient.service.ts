@@ -7,11 +7,14 @@ import {
   GetDepartmentsRequest,
   GetInstitutionsRequest,
   GetMainCategoriesRequest,
-  GetAdvertTypesRequest,
   GetDepartmentByIdRequest,
-  GetAdvertTypeByIdRequest,
   GetCasesInProgressRequest,
+  GetTypeByIdRequest,
+  GetTypesRequest,
+  GetMainTypesRequest,
+  GetSimilarAdvertsByIdRequest,
 } from '../../gen/fetch/apis'
+import { GetAdvertMainTypes } from '../../gen/fetch'
 
 @Injectable()
 export class OfficialJournalOfIcelandClientService {
@@ -19,6 +22,10 @@ export class OfficialJournalOfIcelandClientService {
 
   public async getAdvertById(params: GetAdvertByIdRequest) {
     return this.api.getAdvertById(params)
+  }
+
+  public async getSimilarAdvertsById(params: GetSimilarAdvertsByIdRequest) {
+    return this.api.getSimilarAdvertsById(params)
   }
 
   public async getAdverts(input: GetAdvertsRequest) {
@@ -33,12 +40,18 @@ export class OfficialJournalOfIcelandClientService {
     return this.api.getDepartments(params ?? {})
   }
 
-  public async getAdvertTypeById(params: GetAdvertTypeByIdRequest) {
-    return this.api.getAdvertTypeById(params)
+  public async getAdvertTypeById(params: GetTypeByIdRequest) {
+    return this.api.getTypeById(params)
   }
 
-  public async getAdvertTypes(params: GetAdvertTypesRequest) {
-    return this.api.getAdvertTypes(params)
+  public async getAdvertMainTypes(
+    params: GetMainTypesRequest,
+  ): Promise<GetAdvertMainTypes> {
+    return this.api.getMainTypes(params)
+  }
+
+  public async getAdvertTypes(params: GetTypesRequest) {
+    return this.api.getTypes(params)
   }
 
   public async getMainCategories(params: GetMainCategoriesRequest) {

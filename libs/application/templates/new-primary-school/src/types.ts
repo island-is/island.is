@@ -1,10 +1,6 @@
-import {
-  MembershipOrganizationType,
-  MembershipRole,
-  SiblingRelationOptions,
-} from './lib/constants'
+import { MembershipOrganizationType, MembershipRole } from './lib/constants'
 
-export interface RelativesRow {
+export interface ContactsRow {
   fullName: string
   phoneNumber: string
   nationalId: string
@@ -14,7 +10,6 @@ export interface RelativesRow {
 export interface SiblingsRow {
   fullName: string
   nationalId: string
-  relation: SiblingRelationOptions
 }
 
 export type Child = {
@@ -41,6 +36,7 @@ export type ChildInformation = {
     streetAddress: string
     postalCode: string
   }
+  usePronounAndPreferredName?: string[]
 }
 
 export type Person = {
@@ -54,11 +50,6 @@ export type Person = {
     postalCode: string
     city: string
   }
-}
-
-export type Parents = {
-  parent1: Person
-  parent2: Person
 }
 
 export type SelectOption = {

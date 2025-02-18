@@ -9,11 +9,13 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
+  Feature,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -30,16 +32,15 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  UpdateIndictmentCount,
   useCase,
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { DefendantInfo } from '../../components'
+import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
+import { getIncidentDescription } from '../Indictment/lib/getIncidentDescription'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -103,6 +104,9 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant = () => {
+  const { features } = useContext(FeatureContext)
+  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
+
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -115,9 +119,11 @@ const Defendant = () => {
   } = useDefendants()
   const router = useRouter()
 
-  const { updateIndictmentCount } = useIndictmentCounts()
+  const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+  const [isProsecutorSelected, setIsProsecutorSelected] =
+    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -249,6 +255,12 @@ const Defendant = () => {
       workingCase,
       setWorkingCase,
     )
+
+    const indictmentCountId = workingCase.indictmentCounts?.[index]?.id
+
+    if (indictmentCountId) {
+      deleteIndictmentCount(workingCase.id, indictmentCountId)
+    }
   }
 
   const handleUpdatePoliceCase = (
@@ -279,20 +291,33 @@ const Defendant = () => {
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => {
     if (workingCase.indictmentCounts) {
       workingCase.indictmentCounts
-        .filter((ic) => ic.policeCaseNumber === policeCaseNumber)
-        .forEach((ic) => {
-          const incidentDescription = getIncidentDescription(
-            ic,
+        .filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === policeCaseNumber,
+        )
+        .forEach((indictmentCount) => {
+          const updatedIndictmentCount = {
+            ...indictmentCount,
+            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+          }
+          const incidentDescription = getIncidentDescription({
+            indictmentCount: updatedIndictmentCount,
             formatMessage,
             crimeScene,
-          )
+            subtypesRecord: subtypes,
+            isOffenseEndpointEnabled,
+          })
 
-          updateIndictmentCount(workingCase.id, ic.id, {
+          updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-          } as UpdateIndictmentCount)
+            ...(subtypes && {
+              indictmentCountSubtypes: subtypes[policeCaseNumber],
+            }),
+          })
         })
     }
   }
@@ -435,7 +460,16 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = isDefendantStepValidIndictments(workingCase)
+  /**
+   * This condition can be a little hard to read. The point is that if the
+   * case exists, i.e. if `workingCase.id` is truthy, then the user has
+   * selected a prosecutor. If the case does not exist, i.e. if
+   * `workingCase.id` is falsy, then the user has not selected a prosecutor
+   * and must do so before proceeding.
+   */
+  const stepIsValid =
+    isDefendantStepValidIndictments(workingCase) &&
+    Boolean(workingCase.id || isProsecutorSelected)
 
   return (
     <PageLayout
@@ -450,6 +484,11 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
+        <ProsecutorSection
+          handleChange={
+            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
+          }
+        />
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
@@ -506,6 +545,11 @@ const Defendant = () => {
                         workingCase.origin === CaseOrigin.LOKE && index === 0
                       }
                       updateIndictmentCount={handleUpdateIndictmentCount}
+                      indictmentCount={workingCase.indictmentCounts?.find(
+                        (indictmentCount) =>
+                          indictmentCount.policeCaseNumber ===
+                          workingCase.policeCaseNumbers?.[index],
+                      )}
                     />
                   )}
                 </Box>

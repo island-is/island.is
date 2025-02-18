@@ -3,7 +3,7 @@ import { whoIsTheNotificationFor } from '../../../lib/messages'
 import {
   whoIsTheNotificationForOptions,
   whoIsTheNotificationForProcureOptions,
-} from '../../../utils/getWhoIstheNotificationForOptions'
+} from '../../../utils/getOptions'
 
 export const whoIsTheNotificationForMultiField = buildMultiField({
   id: 'whoIsTheNotificationFor',
@@ -17,14 +17,12 @@ export const whoIsTheNotificationForMultiField = buildMultiField({
   children: [
     buildRadioField({
       id: 'whoIsTheNotificationFor.answer',
-      title: '',
       width: 'half',
       condition: (_answers, externalData) => !externalData.identity,
       options: whoIsTheNotificationForOptions,
     }),
     buildRadioField({
       id: 'whoIsTheNotificationFor.answer',
-      title: '',
       width: 'half',
       condition: (_answers, externalData) => !!externalData.identity,
       options: whoIsTheNotificationForProcureOptions,

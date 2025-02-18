@@ -30,11 +30,13 @@ import {
   MachinesApi,
   MustInspectBeforeRegistrationApi,
   VinnueftirlitidPaymentCatalogApi,
+  GetAvailableRegistrationTypes,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getChargeItems } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getExtraData } from '../utils/getSelectedMachine'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -55,6 +57,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.STREET_REGISTRATION,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.StreetRegistration.translation,
@@ -111,6 +114,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 MachinesApi,
                 MustInspectBeforeRegistrationApi,
+                GetAvailableRegistrationTypes,
                 VinnueftirlitidPaymentCatalogApi,
               ],
             },

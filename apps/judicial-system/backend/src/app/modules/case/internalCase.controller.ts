@@ -77,6 +77,20 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
+  @Post('cases/postHearingArrangements')
+  async postHearingArrangements(
+    @Body() { date }: { date: Date },
+  ): Promise<void> {
+    this.logger.debug(
+      `Post internal summary of all cases that have court hearing arrangement at ${date}`,
+    )
+
+    const cases = await this.internalCaseService.getCaseHearingArrangements(
+      new Date(date),
+    )
+    await this.eventService.postDailyHearingArrangementEvents(date, cases)
+  }
+
   @Get('cases/indictments/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
@@ -116,7 +130,10 @@ export class InternalCaseController {
     )
   }
 
-  @UseGuards(CaseExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+  )
   @Post(
     `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_PROSECUTOR]}`,
   )

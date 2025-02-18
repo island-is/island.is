@@ -1,0 +1,10 @@
+mutation CreateOffense($input: CreateOffenseInput!) {
+  createOffense(input: $input) {
+    id
+    created
+    modified
+    indictmentCountId
+    offense
+    substances
+  }
+}

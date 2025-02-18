@@ -4,10 +4,11 @@ import {
   ComplaintsToAlthingiOmbudsmanAnswers,
   OmbudsmanComplaintTypeEnum,
 } from '@island.is/application/templates/complaints-to-althingi-ombudsman'
-import { Application, YES } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { addHeader, addSubheader, addValue, newDocument } from '../pdfUtils'
 import { format as formatNationalId } from 'kennitala'
 import { PdfConstants } from '../constants'
+import { YES } from '@island.is/application/core'
 
 export const generateComplaintPdf = async (application: Application) => {
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers

@@ -26,6 +26,12 @@ export const strings = defineMessages({
     description:
       'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
   },
+  noRuling: {
+    id: 'judicial.system.core:defender_case_overview.no_ruling',
+    defaultMessage: 'Máli lokið án úrskurðar',
+    description:
+      'Texti sem birtist ef enginn úrskurður er skráður á yfirlitsskjá verjanda',
+  },
   confirmAppealAfterDeadlineModalTitle: {
     id: 'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
     defaultMessage: 'Kærufrestur er liðinn',
@@ -73,12 +79,6 @@ export const strings = defineMessages({
     defaultMessage: 'Hætta við',
     description:
       'Notaður sem texti í Hætta við takka í modal glugga hjá verjanda þegar frestur til greinargerðar er liðinn.',
-  },
-  getAllDocuments: {
-    id: 'judicial.system.core:defender_case_overview.get_all_documents',
-    defaultMessage: 'Sækja öll skjöl',
-    description:
-      'Notaður sem texti í "Sækja öll skjöl" takka á yfirlitsskjá verjanda.',
   },
   noCourtNumber: {
     id: 'judicial.system.core:defender_case_overview.no_court_number',

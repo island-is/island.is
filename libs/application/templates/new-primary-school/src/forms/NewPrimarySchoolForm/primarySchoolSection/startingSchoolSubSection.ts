@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -11,9 +11,9 @@ export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication } = getApplicationAnswers(answers)
-    return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+    // Only display section if application type is "Application for a new primary school"
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
   },
   children: [
     buildMultiField({
@@ -23,7 +23,7 @@ export const startingSchoolSubSection = buildSubSection({
         newPrimarySchoolMessages.primarySchool.startingSchoolDescription,
       children: [
         buildDateField({
-          id: 'startDate',
+          id: 'expectedStartDate',
           title: newPrimarySchoolMessages.shared.date,
           placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
           defaultValue: null,

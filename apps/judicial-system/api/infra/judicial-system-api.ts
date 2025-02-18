@@ -46,9 +46,9 @@ export const serviceSetup = (services: {
         prod: 'master',
       },
       HIDDEN_FEATURES: {
-        dev: '',
-        staging: 'MULTIPLE_INDICTMENT_SUBTYPES',
-        prod: 'MULTIPLE_INDICTMENT_SUBTYPES',
+        dev: 'OFFENSE_ENDPOINTS',
+        staging: 'OFFENSE_ENDPOINTS',
+        prod: 'OFFENSE_ENDPOINTS',
       },
     })
     .secrets({
@@ -67,7 +67,13 @@ export const serviceSetup = (services: {
           staging: 'judicial-system',
           prod: 'rettarvorslugatt.island.is',
         },
-        paths: ['/api/graphql', '/api/auth', '/api/case', '/api/feature'],
+        paths: [
+          '/api/graphql',
+          '/api/auth',
+          '/api/case',
+          '/api/feature',
+          '/api/defender',
+        ],
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',

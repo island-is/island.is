@@ -27,6 +27,7 @@ import {
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
   PlateOrderValidation,
+  BasicVehicleInformation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -156,5 +157,20 @@ export class MainResolver {
   @Query(() => PlateAvailability)
   async plateAvailable(@Args('input') input: PlateAvailabilityInput) {
     return this.transportAuthorityApi.getPlateAvailability(input.regno)
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => BasicVehicleInformation, {
+    name: 'vehicleBasicInfoByPermno',
+    nullable: true,
+  })
+  async getBasicVehicleInfoByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getBasicVehicleInfoByPermno(
+      user,
+      permno,
+    )
   }
 }

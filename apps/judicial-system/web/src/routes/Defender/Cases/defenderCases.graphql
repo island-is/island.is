@@ -1,7 +1,6 @@
 query DefenderCases($input: CaseListQueryInput) {
   cases(input: $input) {
     id
-    created
     type
     decision
     state
@@ -23,6 +22,11 @@ query DefenderCases($input: CaseListQueryInput) {
       name
       noNationalId
       defenderChoice
+      subpoenas {
+        id
+        serviceStatus
+        subpoenaId
+      }
     }
     initialRulingDate
     rulingDate
@@ -30,5 +34,6 @@ query DefenderCases($input: CaseListQueryInput) {
     indictmentDecision
     indictmentRulingDecision
     courtSessionType
+    caseSentToCourtDate
   }
 }

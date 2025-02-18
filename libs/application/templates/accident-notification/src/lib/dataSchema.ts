@@ -1,7 +1,6 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import { z } from 'zod'
-import { YES } from '../utils/constants'
 import {
   AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
@@ -19,10 +18,10 @@ import {
   ReviewApprovalEnum,
   OnBehalf,
   Status,
-  ChoiceEnum,
 } from '../types'
-import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
+import { isValid24HFormatTime } from '../utils/dateUtils'
+import { YES, YesOrNoEnum } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -99,7 +98,7 @@ const accidentDetails = z.object({
   dateOfAccident: z.string().refine((x) => x.trim().length > 0, {
     params: error.invalidValue,
   }),
-  isHealthInsured: z.nativeEnum(ChoiceEnum).optional(),
+  isHealthInsured: z.nativeEnum(YesOrNoEnum).optional(),
   timeOfAccident: z
     .string()
     .refine((x) => (x ? isValid24HFormatTime(x) : false), {
@@ -193,8 +192,8 @@ export const AccidentNotificationSchema = z.object({
   info: z.object({
     onBehalf: z.nativeEnum(OnBehalf),
   }),
-  timePassedHindrance: z.nativeEnum(ChoiceEnum),
-  carAccidentHindrance: z.nativeEnum(ChoiceEnum),
+  timePassedHindrance: z.nativeEnum(YesOrNoEnum),
+  carAccidentHindrance: z.nativeEnum(YesOrNoEnum),
   applicant: applicantInformationSchema(),
   whoIsTheNotificationFor: z.object({
     answer: z.nativeEnum(WhoIsTheNotificationForEnum),
@@ -213,13 +212,13 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   attachments,
-  wasTheAccidentFatal: z.nativeEnum(ChoiceEnum),
-  fatalAccidentUploadDeathCertificateNow: z.nativeEnum(ChoiceEnum),
+  wasTheAccidentFatal: z.nativeEnum(YesOrNoEnum),
+  fatalAccidentUploadDeathCertificateNow: z.nativeEnum(YesOrNoEnum),
   accidentDetails,
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo,
   onPayRoll: z.object({
-    answer: z.nativeEnum(ChoiceEnum),
+    answer: z.nativeEnum(YesOrNoEnum),
   }),
   locationAndPurpose: z.object({
     location: z.string().refine((x) => x.trim().length > 0, {
@@ -240,7 +239,7 @@ export const AccidentNotificationSchema = z.object({
   shipLocation: z.object({
     answer: z.nativeEnum(FishermanWorkplaceAccidentShipLocationEnum),
   }),
-  workMachineRadio: z.nativeEnum(ChoiceEnum),
+  workMachineRadio: z.nativeEnum(YesOrNoEnum),
   workMachine: z.object({
     descriptionOfMachine: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,

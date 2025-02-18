@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import { YES, NO } from './constants'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -21,6 +21,16 @@ const individualInfo = z.object({
   }),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   email: z.string().refine((v) => isValidEmail(v)),
+  hasBirthCertificate: z.boolean().optional(),
+
+  //Validators
+  nationalIdValidatorApplicant: z.string().optional(),
+  nationalIdValidatorSpouse: z.string().optional(),
+  nationalIdValidatorWitness: z.string().optional(),
+})
+
+const individualInfoWithElectronicId = individualInfo.extend({
+  electronicID: z.string().optional(),
 })
 
 const personalInfo = z.object({
@@ -33,9 +43,94 @@ export const dataSchema = z.object({
   //applicant's part of the application
   approveExternalData: z.boolean().refine((v) => v),
   applicant: individualInfo,
-  spouse: individualInfo,
-  witness1: individualInfo,
-  witness2: individualInfo,
+  spouse: individualInfoWithElectronicId.superRefine(
+    ({ person, nationalIdValidatorApplicant, electronicID }, ctx) => {
+      if (
+        person.nationalId === nationalIdValidatorApplicant?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.nationalIdDuplicateErrorSpouse.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      } else if (electronicID === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.phoneElectronicIdError.defaultMessage,
+          path: ['phone'],
+        })
+      }
+    },
+  ),
+  witness1: individualInfoWithElectronicId.superRefine(
+    (
+      {
+        person,
+        nationalIdValidatorApplicant,
+        nationalIdValidatorSpouse,
+        electronicID,
+      },
+      ctx,
+    ) => {
+      if (
+        person.nationalId ===
+          nationalIdValidatorApplicant?.replace(/\D/g, '') ||
+        person.nationalId === nationalIdValidatorSpouse?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            m.nationalIdDuplicateErrorMaritalSideVsWitness.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      } else if (electronicID === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.phoneElectronicIdError.defaultMessage,
+          path: ['phone'],
+        })
+      }
+    },
+  ),
+  witness2: individualInfoWithElectronicId.superRefine(
+    (
+      {
+        person,
+        nationalIdValidatorApplicant,
+        nationalIdValidatorSpouse,
+        nationalIdValidatorWitness,
+        electronicID,
+      },
+      ctx,
+    ) => {
+      if (
+        person.nationalId ===
+          nationalIdValidatorApplicant?.replace(/\D/g, '') ||
+        person.nationalId === nationalIdValidatorSpouse?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            m.nationalIdDuplicateErrorMaritalSideVsWitness.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      } else if (
+        person.nationalId === nationalIdValidatorWitness?.replace(/\D/g, '')
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.nationalIdDuplicateErrorWitness.defaultMessage,
+          path: ['person', 'nationalId'],
+        })
+      } else if (electronicID === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.phoneElectronicIdError.defaultMessage,
+          path: ['phone'],
+        })
+      }
+    },
+  ),
   personalInfo: personalInfo,
   spousePersonalInfo: personalInfo,
   ceremony: z
@@ -102,6 +197,9 @@ export const dataSchema = z.object({
       message: coreErrorMessages.defaultError.defaultMessage,
       path: ['place', 'ceremonyPlace'],
     }),
+  applicantConfirmMissingInfo: z.array(z.enum([YES])).length(1),
+  spouseConfirmMissingInfo: z.array(z.enum([YES])).length(1),
+
   //spouse's part of the application
   spouseApprove: z.array(z.enum([YES, NO])).nonempty(),
   spouseApproveExternalData: z.boolean().refine((v) => v),

@@ -1,4 +1,5 @@
 import {
+  YES,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -30,7 +31,6 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
-  YES,
 } from '../lib/constants'
 import {
   getApplicationAnswers,
@@ -72,9 +72,8 @@ export const IncomePlanForm: Form = buildForm({
               id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
               description: (application: Application) => {
-                const { latestIncomePlan } = getApplicationExternalData(
-                  application.externalData,
-                )
+                const { incomePlanConditions, latestIncomePlan } =
+                  getApplicationExternalData(application.externalData)
                 const hasLatestIncomePlan = !isEmpty(latestIncomePlan)
                 const baseMessage = hasLatestIncomePlan
                   ? incomePlanFormMessage.incomePlan
@@ -84,7 +83,9 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: latestIncomePlan.year,
+                    incomePlanYear:
+                      incomePlanConditions?.incomePlanYear ??
+                      new Date().getFullYear(),
                   },
                 }
               },
@@ -629,7 +630,6 @@ export const IncomePlanForm: Form = buildForm({
           description: incomePlanFormMessage.info.tableDescription,
           children: [
             buildCustomField({
-              title: '',
               id: 'overviewPrint',
               doesNotRequireAnswer: true,
               component: 'PrintScreen',
@@ -645,12 +645,10 @@ export const IncomePlanForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'temporaryCalculationTable',
-              title: '',
               component: 'TemporaryCalculationTable',
             }),
             buildDescriptionField({
               id: 'assumptions',
-              title: '',
               description: incomePlanFormMessage.info.assumptions,
             }),
           ],
@@ -663,7 +661,6 @@ export const IncomePlanForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(
@@ -700,7 +697,7 @@ export const IncomePlanForm: Form = buildForm({
       expandableIntro: '',
       bottomButtonMessage:
         incomePlanFormMessage.conclusionScreen.bottomButtonMessage,
-      bottomButtonLink: '/minarsidur/framfaersla/tekjuaaetlun',
+      bottomButtonLink: '/minarsidur/umsoknir',
     }),
   ],
 })

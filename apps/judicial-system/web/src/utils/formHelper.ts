@@ -2,6 +2,10 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  IndictmentSubtype,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { replaceTabs } from './formatters'
@@ -169,7 +173,7 @@ export type stepValidationsType = {
   [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case, isOffenseEndpointEnabled?: boolean) => boolean
   [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
@@ -251,10 +255,9 @@ export const stepValidations = (): stepValidationsType => {
     [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
-    [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
-      validations.isTrafficViolationStepValidIndictments(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
-      validations.isCaseFilesStepValidIndictments(theCase),
+    [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case, isOffenseEndpointEnabled?: boolean) =>
+      validations.isIndictmentStepValid(theCase, isOffenseEndpointEnabled),
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
@@ -316,4 +319,23 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
+}
+
+export const isTrafficViolationIndictmentCount = (
+  policeCaseNumber?: string | null,
+  indictmentSubtypes?: IndictmentSubtypeMap,
+) => {
+  if (!policeCaseNumber || !indictmentSubtypes) {
+    return false
+  }
+
+  if (
+    indictmentSubtypes[policeCaseNumber].length === 1 &&
+    indictmentSubtypes[policeCaseNumber][0] ===
+      IndictmentSubtype.TRAFFIC_VIOLATION
+  ) {
+    return true
+  }
+
+  return false
 }

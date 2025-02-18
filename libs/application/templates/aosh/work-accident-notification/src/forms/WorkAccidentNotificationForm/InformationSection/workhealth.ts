@@ -13,8 +13,8 @@ export const workhealthSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'workhealth',
-      title: information.general.pageTitle,
-      description: information.general.description,
+      title: information.labels.workhealth.pageTitle,
+      description: information.labels.workhealth.pageDescription,
       children: [
         buildDescriptionField({
           id: 'companyInformation.description',
@@ -24,13 +24,11 @@ export const workhealthSection = buildSubSection({
         buildAlertMessageField({
           id: 'companyLaborProtection.alertField',
           alertType: 'info',
-          title: '',
           message: information.labels.laborProtection.alertMessageText,
           doesNotRequireAnswer: true,
         }),
         buildCustomField({
           id: 'companyLaborProtection.workhealthAndSafetyOccupation',
-          title: '',
           component: 'CheckboxFieldCustom',
         }),
       ],

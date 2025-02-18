@@ -8,7 +8,6 @@ import {
   FAFieldBaseProps,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
-import withLogo from '../Logo/Logo'
 import { childrenForm } from '../../lib/messages'
 
 import { ChildInput } from './ChildInput'
@@ -94,4 +93,4 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(ChildrenForm)
+export default ChildrenForm

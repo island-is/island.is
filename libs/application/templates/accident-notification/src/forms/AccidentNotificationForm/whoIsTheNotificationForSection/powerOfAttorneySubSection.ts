@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { powerOfAttorney } from '../../../lib/messages'
 import { PowerOfAttorneyUploadEnum } from '../../../types'
-import { isPowerOfAttorney } from '../../../utils'
+import { isPowerOfAttorney } from '../../../utils/miscUtils'
 
 export const powerOfAttorneySubSection = buildSubSection({
   id: 'powerOfAttorney.type.section',
@@ -20,7 +20,6 @@ export const powerOfAttorneySubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'powerOfAttorney.type',
-          title: '',
           options: [
             {
               value: PowerOfAttorneyUploadEnum.UPLOADNOW,

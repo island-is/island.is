@@ -1,10 +1,9 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
-import { Sequelize } from 'sequelize-typescript'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -34,6 +33,7 @@ export enum CourtDocumentFolder {
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
+  SUBPOENA_DOCUMENTS = 'Boðanir',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -111,8 +111,8 @@ export const courtSubtypes: CourtSubtypes = {
   // 'Sektir málflytjenda',
   PHONE_TAPPING: 'Símhlerun',
   // 'Skýrslutaka brotaþola eldri en 18 ára',
-  // 'Skýrslutaka brotaþola yngri en 18 ára',
-  // 'Skýrslutaka fyrir dómi',
+  STATEMENT_FROM_MINOR: 'Skýrslutaka brotaþola yngri en 18 ára',
+  STATEMENT_IN_COURT: 'Skýrslutaka fyrir dómi',
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
@@ -140,7 +140,6 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(RobotLog) private readonly robotLogModel: typeof RobotLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
@@ -162,7 +161,9 @@ export class CourtService {
             },
           })
       } else {
-        logger.error('Missing required configuration for Microsoft Graph API')
+        this.logger.error(
+          'Missing required configuration for Microsoft Graph API',
+        )
       }
     }
   }
@@ -342,6 +343,7 @@ export class CourtService {
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        // TODO: send a list of subtypes when CourtService supports it
         subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),

@@ -3,13 +3,14 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
+  LinkButton,
   SortableTable,
   formatDate,
 } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
-import { DetailHeader, DetailRow } from '../../../utils/types'
-import { VaccinationsDetailTable } from './VaccinationsDetailTable'
+import * as styles from '../tables/VaccinationsTable.css'
 
 interface Props {
   data?: Array<HealthDirectorateVaccination>
@@ -17,61 +18,62 @@ interface Props {
 export const SortedVaccinationsTable = ({ data }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-  const headerDataDetail: Array<DetailHeader> = [
-    {
-      value: formatMessage(messages.vaccinesTableHeaderNr),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderDate),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderAge),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderVaccine),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderLocation),
-    },
-  ]
+
   if (!data || data?.length === 0)
     return <EmptyTable message={formatMessage(messages.noVaccinesRegistered)} />
 
   return (
     <Box paddingY={4}>
       <SortableTable
-        title=""
         labels={{
           vaccine: formatMessage(messages.vaccinatedFor),
           date: formatMessage(messages.vaccinatedLast),
           status: formatMessage(messages.status),
         }}
-        tagOutlined
         expandable
-        defaultSortByKey="status"
+        defaultSortByKey="vaccine"
+        mobileTitleKey="vaccine"
+        align="left"
+        tagOutlined
         items={
           data.map((item, i) => ({
             id: item?.id ?? `${i}`,
-            name: item?.name ?? '',
             vaccine: item?.name ?? '',
             date: formatDate(item?.lastVaccinationDate) ?? '',
-
+            status: item?.statusName ?? '',
+            tag: tagSelector(item?.status ?? undefined),
             children: (
-              <VaccinationsDetailTable
-                headerData={headerDataDetail}
-                rowData={item.vaccinationsInfo?.map(
-                  (vaccination, i): Array<DetailRow> => {
-                    return [
-                      {
-                        value: (i + 1).toString(),
-                      },
-                      {
-                        value: new Date(vaccination.date).toLocaleDateString(
+              <Box
+                padding={[0, 0, 0, 3]}
+                background={['transparent', 'transparent', 'blue100']}
+              >
+                <Box background="white">
+                  <SortableTable
+                    labels={{
+                      nr: formatMessage(messages.vaccinesTableHeaderNr),
+                      date: formatMessage(messages.vaccinesTableHeaderDate),
+                      age: formatMessage(messages.vaccinesTableHeaderAge),
+                      vaccine: formatMessage(
+                        messages.vaccinesTableHeaderVaccine,
+                      ),
+                      location: formatMessage(
+                        messages.vaccinesTableHeaderLocation,
+                      ),
+                    }}
+                    align="left"
+                    defaultSortByKey="nr"
+                    inner
+                    emptyTableMessage={formatMessage(
+                      messages.noVaccinesRegistered,
+                    )}
+                    items={
+                      item.vaccinationsInfo?.map((vaccination, x) => ({
+                        id: vaccination?.id.toString() ?? `${x}`,
+                        nr: (x + 1).toString(),
+                        date: new Date(vaccination.date).toLocaleDateString(
                           'is-IS',
                         ),
-                      },
-                      {
-                        value: [
+                        age: [
                           vaccination.age?.years,
                           vaccination.age?.years
                             ? formatMessage(messages.years)
@@ -81,23 +83,41 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                         ]
                           .filter(Boolean)
                           .join(' '),
-                      },
-                      {
-                        value: vaccination.name ?? '',
-                        type: 'link',
-                        url: vaccination.url ?? '',
-                      },
-                      {
-                        value: vaccination.location ?? '',
-                      },
-                    ]
-                  },
-                )}
-                footerText={item.comments ?? []}
-              />
+                        vaccine: vaccination.url ? (
+                          <LinkButton
+                            icon={undefined}
+                            size="small"
+                            to={vaccination.url ?? '/'}
+                            text={vaccination.name ?? ''}
+                          />
+                        ) : (
+                          vaccination.name ?? ''
+                        ),
+                        location: vaccination.location ?? '',
+                      })) ?? []
+                    }
+                    footer={
+                      item.comments && item.comments.length > 0 ? (
+                        <Box
+                          width="full"
+                          paddingY={2}
+                          paddingX={5}
+                          background="blue100"
+                        >
+                          <ul color="black">
+                            {item.comments?.map((item, i) => (
+                              <li key={i} className={styles.footerList}>
+                                <Markdown>{item}</Markdown>
+                              </li>
+                            ))}
+                          </ul>
+                        </Box>
+                      ) : undefined
+                    }
+                  />
+                </Box>
+              </Box>
             ),
-            status: item?.statusName ?? '',
-            tag: tagSelector(item?.status ?? undefined),
           })) ?? []
         }
       />

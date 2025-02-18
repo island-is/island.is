@@ -1,9 +1,7 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.createTable(
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.createTable(
         'form',
         {
           id: {
@@ -12,6 +10,10 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
+          identifier: {
+            type: Sequelize.UUID,
+            allowNull: false,
+          },
           name: {
             type: Sequelize.JSON,
             allowNull: false,
@@ -19,7 +21,6 @@ module.exports = {
           slug: {
             type: Sequelize.STRING,
             allowNull: false,
-            unique: true,
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
@@ -34,6 +35,12 @@ module.exports = {
           invalidation_date: {
             type: Sequelize.DATE,
             allowNull: true,
+            defaultValue: null,
+          },
+          been_published: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
           },
           is_translated: {
             type: Sequelize.BOOLEAN,
@@ -46,7 +53,11 @@ module.exports = {
             defaultValue: 60,
           },
           derived_from: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.UUID,
+            allowNull: true,
+          },
+          status: {
+            type: Sequelize.STRING,
             allowNull: false,
           },
           stop_progress_on_validating_screen: {
@@ -55,6 +66,10 @@ module.exports = {
             defaultValue: true,
           },
           completed_message: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
+          dependencies: {
             type: Sequelize.JSON,
             allowNull: true,
           },
@@ -68,13 +83,13 @@ module.exports = {
           },
         },
         { transaction: t },
-      ),
-    )
+      )
+    })
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form', { transaction: t }),
-    )
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.dropTable('form', { transaction: t })
+    })
   },
 }

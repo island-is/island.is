@@ -91,17 +91,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
     ),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-company-card'
-    ),
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: () =>
     import(
       '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
-    ),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-workshop-card'
     ),
   [ApplicationTypes.LICENSE_PLATE_RENEWAL]: () =>
     import(
@@ -209,6 +201,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.SECONDARY_SCHOOL]: () =>
+    import('@island.is/application/templates/secondary-school'),
 }
 
 export default templates

@@ -1,4 +1,5 @@
-import { NO, YES } from '../utils/constants'
+import { YesOrNo } from '@island.is/application/core'
+import { companyInfo, representativeInfo } from '../lib/messages'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
@@ -53,11 +54,6 @@ export enum OnBehalf {
   OTHERS = 'others',
 }
 
-export enum ChoiceEnum {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export enum WhoIsTheNotificationForEnum {
   JURIDICALPERSON = 'juridicalPerson',
   ME = 'me',
@@ -72,8 +68,6 @@ export enum AccidentTypeEnum {
   STUDIES = 'studies',
   SPORTS = 'sports',
 }
-
-export type YesOrNo = typeof NO | typeof YES
 
 export enum AttachmentsEnum {
   INJURYCERTIFICATE = 'injuryCertificate',
@@ -228,4 +222,14 @@ export type RepresentativeInfoV2 = {
   name?: string | null
   nationalId?: string | null
   phoneNumber?: string | null
+}
+
+export type WorkplaceData = {
+  companyInfo: CompanyInfo
+  representitive: RepresentativeInfo
+  companyInfoMsg: typeof companyInfo
+  representitiveMsg: typeof representativeInfo
+  type: WorkAccidentTypeEnum | AccidentTypeEnum
+  onPayRoll?: YesOrNo
+  screenId: string
 }

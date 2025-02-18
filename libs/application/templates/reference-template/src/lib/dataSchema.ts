@@ -1,7 +1,21 @@
+/*
+ * DataSchema uses Zod to validate the answers object and can be used to refine values, provide
+ * error messages, and more.
+ *
+ * When checking if a value is of an enum type, use z.nativeEnum instead of z.enum. This eliminates the need to list up all possible values in the enum.
+ */
+
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidNumber } from 'libphonenumber-js'
 import { m } from './messages'
+import {
+  ApprovedByReviewerEnum,
+  CareerHistoryEnum,
+  CareerIndustryEnum,
+} from '../utils/constants'
+import { radioValidationExampleEnum } from '../utils/types'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 const careerHistoryCompaniesValidation = (data: any) => {
   // Applicant selected other but didnt supply the reason so we dont allow it
@@ -13,6 +27,18 @@ const careerHistoryCompaniesValidation = (data: any) => {
   }
   return true
 }
+
+const personSchema = z.object({
+  name: z.string().min(1).max(256),
+  age: z.string().refine((x) => {
+    const asNumber = parseInt(x)
+    if (isNaN(asNumber)) {
+      return false
+    }
+    return asNumber > 15
+  }),
+})
+
 export const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   tableRepeaterField: z.array(
@@ -58,32 +84,37 @@ export const ExampleSchema = z.object({
     //   .string()
     //   .refine((x) => x.includes('Valid')),
   }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerIndustry: z.enum(['software', 'finance', 'consulting', 'other']),
-  careerHistoryDetails: z
-    .object({
-      careerHistoryCompanies: z
-        .array(z.enum(['government', 'aranja', 'advania', 'other']))
-        .nonempty(),
-      careerHistoryOther: z.string(),
-    })
-    .partial()
-    .refine((data) => careerHistoryCompaniesValidation(data), {
-      params: m.careerHistoryOtherError,
-      path: ['careerHistoryOther'],
-    }),
-  deepNestedValues: z.object({
-    something: z.object({
-      very: z.object({
-        deep: z.object({
+  nationalId: z.string().refine((n) => n && !kennitala.isValid(n), {
+    params: m.dataSchemeNationalId,
+  }),
+  phoneNumber: z
+    .string()
+    .refine(isValidNumber, { params: m.dataSchemePhoneNumber }),
+  email: z.string().email(),
+})
+
+const careerHistoryDetailsSchema = z
+  .object({
+    careerHistoryCompanies: z.array(z.nativeEnum(CareerHistoryEnum)).nonempty(),
+    careerHistoryOther: z.string(),
+  })
+  .partial()
+  .refine((data) => careerHistoryCompaniesValidation(data), {
+    params: m.regularTextExample,
+    path: ['careerHistoryOther'],
+  })
+
+const deepNestedSchema = z.object({
+  something: z.object({
+    very: z.object({
+      deep: z.object({
+        so: z.object({
           so: z.object({
-            so: z.object({
+            very: z.object({
               very: z.object({
-                very: z.object({
-                  deep: z.object({
-                    nested: z.object({
-                      value: z.string(),
-                    }),
+                deep: z.object({
+                  nested: z.object({
+                    value: z.string(),
                   }),
                 }),
               }),
@@ -93,7 +124,27 @@ export const ExampleSchema = z.object({
       }),
     }),
   }),
+})
+
+const validationSchema = z.object({
+  validationTextField: z.string().min(3, {
+    message: 'Custom validation message',
+  }),
+  validationRadioField: z.nativeEnum(radioValidationExampleEnum),
+})
+
+// The exported dataSchema should be as flat and easy to read as possible.
+export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  person: personSchema,
+  careerHistory: z.nativeEnum(YesOrNoEnum).optional(),
+  careerIndustry: z.nativeEnum(CareerIndustryEnum),
+  careerHistoryDetails: careerHistoryDetailsSchema,
+  deepNestedValues: deepNestedSchema,
   dreamJob: z.string().optional(),
   assigneeEmail: z.string().email(),
-  approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
+  approvedByReviewer: z.nativeEnum(ApprovedByReviewerEnum),
+  validation: validationSchema,
 })
+
+export type AnswersSchema = z.infer<typeof dataSchema>

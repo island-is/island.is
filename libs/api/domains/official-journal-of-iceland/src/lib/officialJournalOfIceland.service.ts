@@ -8,6 +8,8 @@ import {
   AdvertSingleParams,
   QueryParams,
   TypeQueryParams,
+  MainTypesQueryParams,
+  AdvertSimilarParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
@@ -15,8 +17,10 @@ import {
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
+  AdvertSimilarResponse,
   AdvertsResponse,
   AdvertTypesResponse,
+  MainTypesResponse,
 } from './models/advert.response'
 import { CasesInProgressResponse } from './models/cases.response'
 
@@ -54,6 +58,10 @@ export class OfficialJournalOfIcelandService {
     return await this.ojoiService.getAdvertTypes(params)
   }
 
+  async getMainTypes(params: MainTypesQueryParams): Promise<MainTypesResponse> {
+    return await this.ojoiService.getAdvertMainTypes(params)
+  }
+
   async getInstitutions(
     params: QueryParams,
   ): Promise<AdvertInstitutionsResponse> {
@@ -62,6 +70,12 @@ export class OfficialJournalOfIcelandService {
 
   async getAdvertById(params: AdvertSingleParams): Promise<AdvertResponse> {
     return await this.ojoiService.getAdvertById(params)
+  }
+
+  async getSimilarAdvertsById(
+    params: AdvertSimilarParams,
+  ): Promise<AdvertSimilarResponse> {
+    return await this.ojoiService.getSimilarAdvertsById(params)
   }
 
   async getAdverts(input: GetAdvertsRequest): Promise<AdvertsResponse> {

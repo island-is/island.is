@@ -25,6 +25,7 @@ import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
+import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -42,6 +43,8 @@ export class DelegationResourcesService {
     private domainModel: typeof Domain,
     @InjectModel(DelegationScope)
     private delegationScopeModel: typeof DelegationScope,
+    @InjectModel(ApiScopeDelegationType)
+    private apiScopeDelegationTypeModel: typeof ApiScopeDelegationType,
     private resourceTranslationService: ResourceTranslationService,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
@@ -304,20 +307,37 @@ export class DelegationResourcesService {
   }
 
   private async delegationTypeFilter(user: User, prefix?: string) {
-    if (!user.delegationType || !user.actor) {
+    if (!user.delegationType) {
       return []
     }
 
     // We currently only support access control for company (delegation) actors.
     // Actors for individuals should not have the scope required to reach this
     // point, but we assert it just to be safe.
+    // EDIT: This is no longer true, as we now support LegalRepresentative delegations for individuals.
     if (!isCompany(user.nationalId)) {
-      throw new ForbiddenException(
-        'Actors for individuals should not be able to manage delegations.',
-      )
+      if (
+        !user.delegationType.includes(AuthDelegationType.LegalRepresentative)
+      ) {
+        throw new ForbiddenException(
+          'Actors for individuals should not be able to manage delegations.',
+        )
+      }
     }
 
     const delegationOr: Array<WhereOptions<ApiScope>> = []
+    if (user.delegationType.includes(AuthDelegationType.LegalRepresentative)) {
+      const scopes = await this.apiScopeDelegationTypeModel.findAll({
+        attributes: ['apiScopeName'],
+        where: {
+          delegationType: AuthDelegationType.LegalRepresentative,
+        },
+      })
+
+      delegationOr.push({
+        [col(prefix, 'name')]: scopes.map((scope) => scope.apiScopeName),
+      })
+    }
     if (user.delegationType.includes(AuthDelegationType.ProcurationHolder)) {
       delegationOr.push({ [col(prefix, 'grantToProcuringHolders')]: true })
     }
