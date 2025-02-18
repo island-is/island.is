@@ -1,0 +1,17 @@
+name: 'Set base and head sha'
+description: 'Set NX base and head sha'
+outputs:
+  BASE_SHA:
+    description: 'NX_BASE sha'
+    value: ${{ steps.set-sha.outputs.base }}
+  HEAD_SHA:
+    description: 'NX_HEAD sha'
+    value: ${{ steps.set-sha.outputs.head }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Derive appropriate SHAs
+      id: nx-set-sha
+      uses: nrwl/nx-set-shas@v4
+      with:
+        error-on-no-successful-workflow: true

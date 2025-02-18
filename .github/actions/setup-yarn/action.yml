@@ -1,36 +1,38 @@
-name: 'Setup yarn'
-description: 'Yarn setup and install dependencies'
-
+name: Setup yarn
+description: Yarn setup and install dependencies
 runs:
-  using: 'composite'
+  using: composite
   steps:
+    - name: Set cache key
+      shell: bash
+      id: set-cache-key
+      run: |
+        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+
+    - name: Check envs
+      shell: bash
+      run: |
+        echo "NODE_VERSION: $NODE_VERSION"
+        echo "YARN_CACHE_FOLDER: $YARN_CACHE_FOLDER"
+        echo "CYPRESS_CACHE_FOLDER: $CYPRESS_CACHE_FOLDER"
+        echo "(yarn config get cacheFolder): $(yarn config get cacheFolder)"
+        echo github.action_path: ${{ github.action_path }}
+        ls -al ${{ github.action_path }} || true
+
     - name: Compare yarn.lock files
       shell: bash
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
         bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
-        skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
+        run_install=$([ "$current" = "$bundled" ] && echo false || echo true)
         echo "Current hash: $current"
         echo "Bundled hash: $bundled"
-        echo "Will skip running 'yarn install' step: $skip_install"
-        echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
-
-    - name: Setup Yarn
-      shell: bash
-      run: |
-        corepack enable
-        corepack prepare --activate
-        yarn --version
-
-    - name: Run yarn install if yarn.lock changed
-      shell: bash
-      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
-      run: |
-        yarn install --immutable
+        echo "Will run 'yarn install': $run_install"
+        echo "run_install=$run_install" >> $GITHUB_OUTPUT
 
     - name: Link pre-installed dependencies
-      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
+      if: steps.compare_yarn_lock.outputs.run_install == 'false'
       shell: bash
       run: |
         rm -rf node_modules
@@ -38,3 +40,30 @@ runs:
         ln -s /home/runner/dependencies/.yarn/cache .yarn/
         ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
         echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+
+    - name: Restore Dependencies Cache
+      if: steps.compare_yarn_lock.outputs.run_install == 'true'
+      uses: runs-on/cache/restore@v4
+      id: restore-cache
+      with:
+        path: |
+          $YARN_CACHE_FOLDER
+          $CYPRESS_CACHE_FOLDER
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+
+    - name: Setup Yarn
+      shell: bash
+      run: |
+        corepack enable
+        corepack prepare --activate
+        yarn --version
+        yarn install --immutable
+
+    - name: Cache Dependencies
+      uses: runs-on/cache/save@v4
+      if: steps.restore-cache.outputs.cache-hit != 'true'
+      with:
+        path: |
+          $YARN_CACHE_FOLDER
+          $CYPRESS_CACHE_FOLDER
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}

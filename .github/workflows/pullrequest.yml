@@ -35,7 +35,9 @@ jobs:
   prepare:
     runs-on: arc-runners
     timeout-minutes: 35
-
+    permissions:
+      contents: 'read'
+      actions: 'read'
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       SERVERSIDE_FEATURES_ON: ''
@@ -50,61 +52,31 @@ jobs:
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      BASE_SHA: ${{ steps.export-sha.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ steps.export-sha.outputs.HEAD_SHA }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set cache key
-        id: set-cache-key
-        run: |
-          echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+      - name: checkout
+        uses: actions/checkout@v4
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Prepare generated files
-        run: |
-          echo "generated files: ${{ env.GENERATED_FILES }}"
-          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
-      - name: Cache Generated files
-        uses: runs-on/cache/save@v4
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
-
-      - name: Checking out relevant branches
+      - name: Export sha
         id: export-sha
-        run: |
-          set -euo pipefail
-          echo "CHUNK_SIZE: $CHUNK_SIZE"
-          echo "MAX_JOBS: $MAX_JOBS"
-          echo "NX_PARALLEL: $NX_PARALLEL"
-          set -x
+        uses: ./.github/actions/set-sha
 
+      - name: Git config user
+        id: git-config
+        run: |
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
-
-          BASE_SHA=${{ env.NX_BASE }}
-          HEAD_SHA=${{ env.NX_HEAD }}
-          echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
-          echo "NX_BASE=$BASE_SHA" >> "$GITHUB_OUTPUT"
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+          echo "{\"base_sha\": \"${{ steps.export-sha.outputs.HEAD_SHA }}\", \"head_sha\":\"${{ steps.export-sha.outputs.HEAD_SHA }}\"}" > event.json
 
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
@@ -200,7 +172,8 @@ jobs:
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -210,17 +183,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -244,7 +208,8 @@ jobs:
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -254,17 +219,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -280,17 +236,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -316,7 +263,8 @@ jobs:
     runs-on: arc-runners
     timeout-minutes: 15
     env:
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
@@ -327,13 +275,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -354,7 +297,8 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
@@ -364,17 +308,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -386,7 +321,8 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      BASE_SHA: ${{ needs.prepare.outputs.BASE_SHA }}
+      HEAD_SHA: ${{ needs.prepare.outputs.HEAD_SHA }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
@@ -397,17 +333,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: Generated files
+        uses: ./.github/actions/generated-files
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

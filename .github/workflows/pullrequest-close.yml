@@ -36,17 +36,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules'
 
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
+      - name: Export sha
+        id: export-sha
+        uses: ./.github/actions/set-sha
 
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
       - name: Check unicorn affected
         id: unicorn_affected
         run: |
-          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+          echo "Comparing nx affected for $HEAD_SHA using $BASE_SHA as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"$HEAD_SHA}\", \"base\": \"${BASE_SHA}\" }") >> "$GITHUB_OUTPUT"
 
       - name: Results
         run: |
