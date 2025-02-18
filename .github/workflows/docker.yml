@@ -375,6 +375,25 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,priority=50,value=mcgh-${{ github.event.pull_request.merge_commit_sha }},enable=${{ !!github.event.pull_request.merge_commit_sha }}
 
+      - name: Prepare app specific build-args
+        id: app-args
+        env:
+          app_name: ${{ matrix.project }}
+        run: |
+          # Fetch source root from project files (but strip trailing /src, if any)
+          app_home="$(
+            git ls-files '**/project.json' |
+            xargs cat |
+            jq -r --arg project "app_name" 'select( .name == $project ) | .sourceRoot' |
+            sed 's;/src;;'
+          )"
+          # Multi-line output
+          echo "build-args<<EOF" | tee -a "$GITHUB_OUTPUT"
+          echo "APP=$app_name" | tee -a "$GITHUB_OUTPUT"
+          echo "APP_HOME=$app_home" | tee -a "$GITHUB_OUTPUT"
+          echo "APP_DIST_HOME=dist/$app_home" | tee -a "$GITHUB_OUTPUT"
+          echo "EOF" | tee -a "$GITHUB_OUTPUT"
+
       - name: Ensure generated files (fetch cache)
         uses: runs-on/cache/restore@v4
         id: restore-generated-files-cache
@@ -398,6 +417,7 @@ jobs:
             nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
             ${{ needs.prepare.outputs.build-args }}
+            ${{ steps.app-args.outputs.build-args }}
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
