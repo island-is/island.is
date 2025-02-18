@@ -6,6 +6,7 @@ import {
   buildSection,
   buildMultiField,
   buildDescriptionField,
+  buildImageField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -16,6 +17,7 @@ import {
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '../../assets/Logo'
+import DigitalServices from '../../assets/DigitalServices'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
@@ -33,8 +35,11 @@ export const Prerequisites: Form = buildForm({
           title: m.introTitle,
           description: m.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'introText',
+            buildImageField({
+              id: 'introImage',
+              image: DigitalServices,
+              imageWidth: '50%',
+              imagePosition: 'center',
             }),
           ],
         }),

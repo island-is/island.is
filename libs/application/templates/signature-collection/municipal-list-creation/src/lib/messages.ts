@@ -190,7 +190,7 @@ export const m = defineMessages({
   listCreatedDescription: {
     id: 'mlc.application:listCreatedDescription#markdown',
     defaultMessage:
-      'Hægt er að fylgjast með stöðu meðmæla eftir kjördæmum á Mínum síðum. Einnig er hægt að veita umboð til ábyrgðaraðila og umsjónaraðila á Mínum síðum. Meðmælendur sjá sín meðmæli á Mínum síðum á Ísland.is. Framboðsfresti lýkur xx. mánuð og þá lokar sjálfkrafa fyrir söfnun meðmæla.',
+      'Nú er hægt að safna meðmælum! Consectetur adipiscing elit. Nam luctus purus at malesuada mattis. Donec eleifend enim in lectus accumsan, in pharetra ligula elementum.',
     description: '',
   },
   nextSteps: {
@@ -201,7 +201,7 @@ export const m = defineMessages({
   nextStepsDescription: {
     id: 'mlc.application:nextStepsDescription#markdown',
     defaultMessage:
-      'Nú er hægt að safna meðmælum! Hægt er að afrita og deila hlekknum til fólks svo þau geti á einfaldan hátt mælt með stjórnmálasamtökunum í viðeigandi kjördæmi.',
+      'Hægt er að afrita og deila hlekknum til fólks svo þau geti á einfaldan hátt mælt með stjórnmálasamtökunum í viðeigandi kjördæmi.',
     description: '',
   },
   copyLink: {

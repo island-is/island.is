@@ -5,15 +5,16 @@ import {
   buildMessageWithLinkButtonField,
   buildDescriptionField,
   buildCustomField,
+  buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import Jobs from '../../assets/Jobs'
 
 export const Done: Form = buildForm({
   id: 'done',
   mode: FormModes.COMPLETED,
   children: [
-    /* Sections for the stepper */
     buildSection({
       id: 'screen1',
       title: m.intro,
@@ -39,7 +40,6 @@ export const Done: Form = buildForm({
       title: m.confirmCreation,
       children: [],
     }),
-    /* ------------------------ */
     buildSection({
       id: 'doneScreen',
       title: m.listCreated,
@@ -49,12 +49,19 @@ export const Done: Form = buildForm({
           title: m.listCreated,
           description: m.listCreatedDescription,
           children: [
+            buildImageField({
+              id: 'doneImage',
+              image: Jobs,
+              imageWidth: '50%',
+              imagePosition: 'center',
+              marginTop: 'none',
+            }),
             buildDescriptionField({
               id: 'nextStepsTitle',
-              title: m.nextSteps,
+              title: '',
               description: m.nextStepsDescription,
               titleVariant: 'h4',
-              marginBottom: 'containerGutter',
+              marginBottom: 'gutter',
             }),
             buildCustomField({
               id: 'copyLink',
@@ -73,6 +80,7 @@ export const Done: Form = buildForm({
               url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
+              marginTop: 'p2',
             }),
             buildMessageWithLinkButtonField({
               condition: (_, externalData) => {
@@ -87,6 +95,17 @@ export const Done: Form = buildForm({
               url: '/minarsidur/fyrirtaeki/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonCompanyTitle,
               message: m.linkFieldCompanyMessage,
+              marginTop: 'p2',
+            }),
+            buildDescriptionField({
+              id: 'doneScreenSpace',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildDescriptionField({
+              id: 'doneScreenSpace2',
+              title: '',
+              space: 'containerGutter',
             }),
           ],
         }),
