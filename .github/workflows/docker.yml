@@ -368,6 +368,7 @@ jobs:
         uses: runs-on/cache/restore@v4
         id: restore-generated-files-cache
         with:
+          fail-on-cache-miss: true
           path: ${{ github.sha }}
           key: generated-files-${{ github.base_ref }}-${{ github.head_ref }}-${{ github.sha }}
           restore-keys: |
