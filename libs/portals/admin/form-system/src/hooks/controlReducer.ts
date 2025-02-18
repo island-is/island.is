@@ -13,6 +13,19 @@ import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { SectionTypes } from '@island.is/form-system/ui'
 
+// TODO 
+// This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
+// For example create sepeare reducers for
+// ActiveItem
+// Screen
+// Field
+// Section
+// Dnd
+// Form-level settings (form-wide settings like setting form name, validation and certification etc)
+// InputSettings (field-specific settings like for file upload, add list item etc)
+
+// And then combine into a main reducer that could be called "controlReducer"
+
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
   | {
