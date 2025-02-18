@@ -1,0 +1,98 @@
+export const RANNIS_GRANTS = [
+  {
+    fundid: '55',
+    fund_name_is: 'Jafnréttissjóður Íslands',
+    fund_name_en: 'The Icelandic Equal Rights Fund',
+    datefrom: '2025-02-27 11:00:00',
+    dateto: '2025-04-10 15:02:00',
+    fund_url: 'https://www.rannis.is/sjodir/rannsoknir/jafnrettissjodur',
+    is_open: '0',
+  },
+  {
+    fundid: '18',
+    fund_name_is: 'Starfslaunasjóður sjálfstætt starfandi fræðimanna',
+    fund_name_en: 'Starfslaunasjóður sjálfstætt starfandi fræðimanna',
+    datefrom: '2025-02-14 08:00:00',
+    dateto: '2025-03-17 15:02:00',
+    fund_url:
+      'https://www.rannis.is/sjodir/menntun/starfslaunasjodur-sjalfstaett-starfandi-fraedimanna/',
+    is_open: '1',
+  },
+  {
+    fundid: '69',
+    fund_name_is: 'Bókasafnasjóður',
+    fund_name_en: 'Library Fund',
+    datefrom: '2025-02-03 08:00:00',
+    dateto: '2025-03-17 15:02:00',
+    fund_url: 'https://www.rannis.is/sjodir/menning-listir/bokasafnasjodur/',
+    is_open: '1',
+  },
+  {
+    fundid: '62',
+    fund_name_is: 'Netöryggisstyrkur',
+    fund_name_en: 'Network security fund',
+    datefrom: '2025-01-17 12:00:00',
+    dateto: '2025-03-17 15:02:00',
+    fund_url: 'https://www.rannis.is/sjodir/rannsoknir/netoryggissjodur',
+    is_open: '1',
+  },
+  {
+    fundid: '19',
+    fund_name_is: 'Barnamenningarsjóður',
+    fund_name_en: "\t\nChildren's Culture Fund of Iceland",
+    datefrom: '2025-02-04 13:00:00',
+    dateto: '2025-04-04 15:05:00',
+    fund_url:
+      'https://www.rannis.is/sjodir/menning-listir/barnamenningarsjodur/',
+    is_open: '1',
+  },
+  {
+    fundid: '48',
+    fund_name_is: 'Sóknarstyrkir',
+    fund_name_en: 'Preparatory Grants',
+    datefrom: '2025-01-01 10:40:00',
+    dateto: '2025-12-31 23:59:59',
+    fund_url: 'https://www.rannis.is/sjodir/rannsoknir/soknarstyrkir',
+    is_open: '1',
+  },
+  {
+    fundid: '51',
+    fund_name_is: 'Frádráttarheimild fyrir erlenda sérfræðinga',
+    fund_name_en: 'Application For Specialist Tax Reduction',
+    datefrom: '2017-06-01 11:00:00',
+    dateto: '2025-12-31 23:59:59',
+    fund_url:
+      'https://www.rannis.is/sjodir/rannsoknir/fradrattur-fra-tekjum-erlendra-serfraedinga',
+    is_open: '1',
+  },
+  {
+    fundid: '57',
+    fund_name_is: 'Stuðningur við bókaútgáfu',
+    fund_name_en: 'Support for the publication of books in Icelandic',
+    datefrom: '2019-07-10 19:00:00',
+    dateto: '2025-12-31 23:59:59',
+    fund_url:
+      'https://www.rannis.is/sjodir/menning-listir/studningur-vid-utgafu-boka-a-islensku/',
+    is_open: '1',
+  },
+  {
+    fundid: '39',
+    fund_name_is: 'Tækniþróunarsjóður - Umsókn um einkaleyfisstyrk',
+    fund_name_en: 'TDF Patent applications',
+    datefrom: '2014-01-27 13:00:00',
+    dateto: '2025-12-31 23:59:59',
+    fund_url:
+      'https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/einkaleyfastyrkur',
+    is_open: '1',
+  },
+  {
+    fundid: '42',
+    fund_name_is: 'Tækniþróunarsjóður Fræ/Þróunarfræ',
+    fund_name_en: 'TDF - Seed',
+    datefrom: '2024-01-01 01:00:00',
+    dateto: '2025-12-31 23:59:59',
+    fund_url:
+      'https://www.rannis.is/sjodir/rannsoknir/taeknithrounarsjodur/fyrirtaekjastyrkur-frae',
+    is_open: '1',
+  },
+]

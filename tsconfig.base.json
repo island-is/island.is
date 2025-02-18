@@ -1143,6 +1143,9 @@
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
+      "client-rannis": [
+        "libs/clients/grants/src/lib/clients/rannis/src/index.ts"
+      ],
       "clients/grants": ["libs/clients/grants/src/index.ts"],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
