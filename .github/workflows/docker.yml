@@ -162,13 +162,13 @@ jobs:
       - uses: actions/setup-node@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-      - name: Restore generated files cache
+      - name: Ensure generated files (fetch cache)
         id: cache
         uses: runs-on/cache/restore@v4
         with:
           path: ${{ github.sha }}
           key: generated-files-${{ github.sha }}
-      - name: Prepare generated files
+      - name: Ensure generated files (codegen)
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         id: gen-files
         env:
@@ -177,7 +177,7 @@ jobs:
           echo "generated files: $SHA"
           node ./scripts/ci/generate-files.mjs "$SHA"
           tar -xzvf "$SHA"
-      - name: Save generated files cache
+      - name: Ensure generated files (save cache)
         if: ${{ steps.gen-files.outcome == 'success' }}
         uses: runs-on/cache/save@v4
         with:
@@ -375,13 +375,13 @@ jobs:
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,priority=50,value=mcgh-${{ github.event.pull_request.merge_commit_sha }},enable=${{ !!github.event.pull_request.merge_commit_sha }}
 
-      - name: Ensure generated files (codegen)
+      - name: Ensure generated files (fetch cache)
         uses: runs-on/cache/restore@v4
         id: restore-generated-files-cache
         with:
           path: ${{ github.sha }}
           key: generated-files-${{ github.sha }}
-      - name: Unpack generate files (codegen)
+      - name: Ensure generated files (unpack)
         run: |
           tar -xzvf "$GITHUB_SHA"
 
