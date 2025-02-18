@@ -14,7 +14,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { SyslumennListCsvExport } from '@island.is/web/components'
-import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
+import {
+  ConnectedComponent,
+  Query,
+  ReligousOrganization,
+} from '@island.is/web/graphql/schema'
 
 import {
   getNormalizedSearchTerms,
@@ -25,6 +29,17 @@ import { GET_RELIGOUS_ORGANIZATIONS_QUERY } from './queries'
 import { m } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 10
+
+const formatHomeAddress = (item: ReligousOrganization) => {
+  if (!item.homeAddress) {
+    if (item.municipality) return item.municipality
+    else return ''
+  }
+
+  return `${item.homeAddress ?? ''}${
+    Boolean(item.postalCode) || Boolean(item.municipality) ? ',' : ''
+  } ${item.postalCode ?? ''} ${item.municipality ?? ''}`
+}
 
 interface ReligousOrganizationListProps {
   slice: ConnectedComponent
@@ -78,7 +93,7 @@ export const ReligousOrganizationList: FC<
           dataRows.push([
             item.name ?? '',
             item.director ?? '',
-            item.homeAddress ?? '', // TODO: Add postal code..
+            formatHomeAddress(item),
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -179,11 +194,7 @@ export const ReligousOrganizationList: FC<
                       {Boolean(item.homeAddress) && (
                         <Text>
                           {formatMessage(m.homeAddress)}: {item.homeAddress}
-                          {Boolean(item.postalCode) ||
-                          Boolean(item.municipality)
-                            ? ','
-                            : ''}{' '}
-                          {item.postalCode} {item.municipality}
+                          {formatHomeAddress(item)}
                         </Text>
                       )}
                     </Box>
