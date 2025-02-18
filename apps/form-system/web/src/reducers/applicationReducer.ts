@@ -1,5 +1,5 @@
 import { FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
-import { Action, ApplicationState } from "./reducerTypes"
+import { SectionTypes, Action, ApplicationState } from "@island.is/form-system/ui"
 import { decrementWithoutScreens, decrementWithScreens, getDecrementVariables, getIncrementVariables, hasScreens, incrementWithoutScreens, incrementWithScreens } from "./reducerUtils"
 
 export const initialReducer = (
@@ -8,16 +8,22 @@ export const initialReducer = (
   const { application } = state
   const { completed } = application
   //TODO: need to implement logic on getting current section and screen when loading the application
-  const sectionId = application.sections && application.sections[0] ? application.sections[0].id : null
+  const section = application.sections && application.sections[0] ? application.sections[0] : null
   const sections = (application.sections ?? []).filter(Boolean) as FormSystemSection[]
   const screens = sections.flatMap(section => section.screens ?? []).filter(Boolean) as FormSystemScreen[]
 
+  // Move payment to the end, should get fixed in the backend
+  const paymentIndex = sections.findIndex(section => section.sectionType === SectionTypes.PAYMENT)
+  if (paymentIndex !== -1) {
+    const payment = sections.splice(paymentIndex, 1)
+    sections.push(payment[0])
+  }
   return {
     ...state,
     sections,
     screens,
     currentSection: {
-      id: sectionId ?? '',
+      data: section ?? {},
       index: 0
     },
   }

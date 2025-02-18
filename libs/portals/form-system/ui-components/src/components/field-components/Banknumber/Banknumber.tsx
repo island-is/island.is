@@ -3,16 +3,19 @@ import {
   GridColumn as Column,
   Input,
 } from '@island.is/island-ui/core'
-import { useRef, useState } from 'react'
+import { Dispatch, useEffect, useRef, useState } from 'react'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
+import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
+  dispatch: Dispatch<Action>
 }
 
-export const Banknumber = ({ item }: Props) => {
+export const Banknumber = ({ item, dispatch }: Props) => {
   const [bank, setBank] = useState<string>('')
   const [ledger, setLedger] = useState<string>('')
   const [account, setAccount] = useState<string>('')
@@ -21,6 +24,9 @@ export const Banknumber = ({ item }: Props) => {
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
   ]
+  const [value, setValue] = useState<string>(getValue(item, 'bankAccount'))
+
+  const isInitialMount = useRef(true)
 
   const { formatMessage } = useIntl()
 
@@ -63,60 +69,82 @@ export const Banknumber = ({ item }: Props) => {
     return leadingZeros + originalNumber
   }
 
+  useEffect(() => {
+    const combinedValue = `${bank}-${ledger}-${account}`
+    setValue(combinedValue)
+    dispatch({
+      type: 'SET_BANK_ACCOUNT',
+      payload: { value: combinedValue, id: item.id },
+    })
+  }, [bank, ledger, account, dispatch, item.id])
+
+  useEffect(() => {
+    if (isInitialMount.current && value) {
+      const parts = value.split('-')
+      if (parts.length === 3) {
+        setBank(parts[0])
+        setLedger(parts[1])
+        setAccount(parts[2])
+      }
+      isInitialMount.current = false
+    }
+  }, [value])
+
   return (
-    <Column>
-      <Row marginTop={2}>
-        <Column span="4/12">
-          <Input
-            ref={
-              inputRefs[0] as React.RefObject<
-                HTMLInputElement | HTMLTextAreaElement
-              >
-            }
-            label={formatMessage(m.bank)}
-            type="number"
-            value={bank}
-            maxLength={4}
-            name=""
-            onChange={(e) => handleChange(0, e.target.value)}
-            onBlur={(e) => setBank(addLeadingZeros(e.target.value, 4))}
-            required={item?.isRequired ?? false}
-          />
-        </Column>
-        <Column span="2/12">
-          <Input
-            ref={
-              inputRefs[1] as React.RefObject<
-                HTMLInputElement | HTMLTextAreaElement
-              >
-            }
-            label={formatMessage(m.ledger)}
-            maxLength={2}
-            type="number"
-            value={ledger}
-            name=""
-            onChange={(e) => handleChange(1, e.target.value)}
-            onBlur={(e) => setLedger(addLeadingZeros(e.target.value, 2))}
-            required={item?.isRequired ?? false}
-          />
-        </Column>
-        <Column span="4/12">
-          <Input
-            ref={
-              inputRefs[2] as React.RefObject<
-                HTMLInputElement | HTMLTextAreaElement
-              >
-            }
-            label={formatMessage(m.accountNumber)}
-            type="number"
-            value={account}
-            name=""
-            onChange={(e) => handleChange(2, e.target.value)}
-            onBlur={(e) => setAccount(addLeadingZeros(e.target.value, 6))}
-            required={item?.isRequired ?? false}
-          />
-        </Column>
-      </Row>
-    </Column>
+    <Row marginTop={2}>
+      <Column span="4/12">
+        <Input
+          ref={
+            inputRefs[0] as React.RefObject<
+              HTMLInputElement | HTMLTextAreaElement
+            >
+          }
+          label={formatMessage(m.bank)}
+          type="number"
+          value={bank}
+          maxLength={4}
+          name=""
+          onChange={(e) => handleChange(0, e.target.value)}
+          onBlur={(e) => setBank(addLeadingZeros(e.target.value, 4))}
+          required={item?.isRequired ?? false}
+          backgroundColor='blue'
+        />
+      </Column>
+      <Column span="2/12">
+        <Input
+          ref={
+            inputRefs[1] as React.RefObject<
+              HTMLInputElement | HTMLTextAreaElement
+            >
+          }
+          label={formatMessage(m.ledger)}
+          maxLength={2}
+          type="number"
+          value={ledger}
+          name=""
+          onChange={(e) => handleChange(1, e.target.value)}
+          onBlur={(e) => setLedger(addLeadingZeros(e.target.value, 2))}
+          required={item?.isRequired ?? false}
+          backgroundColor='blue'
+        />
+      </Column>
+      <Column span="4/12">
+        <Input
+          ref={
+            inputRefs[2] as React.RefObject<
+              HTMLInputElement | HTMLTextAreaElement
+            >
+          }
+          label={formatMessage(m.accountNumber)}
+          type="number"
+          value={account}
+          name=""
+          onChange={(e) => handleChange(2, e.target.value)}
+          onBlur={(e) => setAccount(addLeadingZeros(e.target.value, 6))}
+          required={item?.isRequired ?? false}
+          backgroundColor='blue'
+        />
+      </Column>
+    </Row>
   )
 }

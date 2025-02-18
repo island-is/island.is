@@ -3,14 +3,16 @@ import {
   GridColumn as Column,
   Input,
 } from '@island.is/island-ui/core'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, Dispatch, useState } from 'react'
 import { FormSystemField } from '@island.is/api/schema'
+import { Action } from '../../../lib'
 
 interface Props {
   item: FormSystemField
+  dispatch: Dispatch<Action>
 }
 
-export const CurrencyField = ({ item }: Props) => {
+export const CurrencyField = ({ item, dispatch }: Props) => {
   const [currency, setCurrency] = useState('')
   const label = item?.name?.is
 
@@ -33,6 +35,7 @@ export const CurrencyField = ({ item }: Props) => {
           value={currency}
           onChange={handleCurrencyChange}
           required={item?.isRequired ?? false}
+          backgroundColor='blue'
         />
       </Column>
     </Row>

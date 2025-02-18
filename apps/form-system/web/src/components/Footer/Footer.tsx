@@ -1,10 +1,33 @@
-import { Box, Button, GridColumn, GridContainer } from "@island.is/island-ui/core"
+import { Box, Button, GridColumn } from "@island.is/island-ui/core"
 import * as styles from './Footer.css'
 import { useApplicationContext } from "../../context/ApplicationProvider"
+import { useIntl } from "react-intl"
+import { webMessages } from "@island.is/form-system/ui"
+import { SUBMIT_SCREEN } from "@island.is/form-system/graphql"
+import { useMutation } from '@apollo/client'
 
+interface Props {
+  externalDataAgreement: boolean
+}
 
-export const Footer = () => {
+export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
+  const { formatMessage } = useIntl()
+
+  const continueButtonText =
+    state.currentSection.index === 0
+      ? formatMessage(webMessages.externalDataConfirmation)
+      : formatMessage(webMessages.continue)
+  const enableContinueButton =
+    state.currentSection.index === 0
+      ? externalDataAgreement
+      : state.currentSection.index !== state.sections.length - 1
+
+  const handleIncrement = () => dispatch({ type: "INCREMENT" })
+  const handleDecrement = () => dispatch({ type: "DECREMENT" })
+
+  const [submitScreen, { loading, error }] = useMutation(SUBMIT_SCREEN)
+
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -23,25 +46,35 @@ export const Footer = () => {
             {/* Implement logic on whether submit button should be rendered */}
             <Button
               icon="arrowForward"
-              onClick={() => dispatch({
-                type: 'INCREMENT'
-              })}
+              onClick={handleIncrement}
+              disabled={!enableContinueButton}
             >
-              Áfram
+              {continueButtonText}
             </Button>
           </Box>
           {/* <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none"> */}
           {
-            state.currentSection.index > 0 && (
+            state.currentSection.index > 1 && (
               <Box display="inlineFlex" padding={2} paddingLeft="none">
                 <Button
                   icon="arrowBack"
                   variant="ghost"
-                  onClick={() => dispatch({
-                    type: 'DECREMENT'
-                  })}
+                  onClick={() => {
+                    // if (state.currentScreen?.data) {
+                    //   submitScreen({
+                    //     variables: {
+                    //       input: {
+                    //         screenId: state.currentScreen?.data.id,
+                    //         applicationDto: state.application,
+                    //       }
+                    //     },
+                    //     errorPolicy: 'all'
+                    //   })
+                    // }
+                    handleDecrement()
+                  }}
                 >
-                  Til baka
+                  {formatMessage(webMessages.back)}
                 </Button>
               </Box>
             )

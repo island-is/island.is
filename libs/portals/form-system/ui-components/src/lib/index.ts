@@ -1,2 +1,3 @@
-export { m } from './messages'
+export * from './messages'
 export * from './enums'
+export * from './reducerTypes'

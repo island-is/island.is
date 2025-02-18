@@ -3,6 +3,9 @@ import { OrganizationInput } from './organization.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
 import { ValueDtoInput } from './value.input'
+import { FormCertificationTypeDtoInput } from './certification.input'
+import { FormApplicantTypeDtoInput } from './applicant.input'
+import { LanguageTypeInput } from './languageType.input'
 
 @InputType('FormSystemCreateApplicationDtoInput')
 export class CreateApplicationDtoInput {
@@ -25,12 +28,6 @@ export class GetApplicationInput {
   id?: string
 }
 
-@InputType('FormSystemSubmitScreenInput')
-export class SubmitScreenInput {
-  @Field(() => String, { nullable: true })
-  screenId?: string
-}
-
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })
@@ -48,11 +45,17 @@ export class ApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => OrganizationInput, { nullable: true })
-  organization?: OrganizationInput
+  @Field(() => LanguageTypeInput, { nullable: true })
+  organizationName?: LanguageTypeInput
 
   @Field(() => String, { nullable: true })
   formId?: string
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  formName?: LanguageTypeInput
+
+  @Field(() => Boolean, { nullable: true })
+  isTest?: boolean
 
   @Field(() => String, { nullable: true })
   slug?: string
@@ -66,7 +69,7 @@ export class ApplicationInput {
   @Field(() => Date, { nullable: true })
   submittedAt?: Date
 
-  @Field(() => [DependencyInput], { nullable: true })
+  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
 
   @Field(() => [String], { nullable: 'itemsAndList' })
@@ -75,7 +78,7 @@ export class ApplicationInput {
   @Field(() => String, { nullable: true })
   status?: string
 
-  @Field(() => [ApplicationEventDtoInput], { nullable: true })
+  @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]
 
   @Field(() => [SectionInput], { nullable: 'itemsAndList' })
@@ -83,4 +86,19 @@ export class ApplicationInput {
 
   @Field(() => [ValueDtoInput], { nullable: 'itemsAndList' })
   files?: ValueDtoInput[]
+
+  @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeDtoInput[]
+
+  @Field(() => [FormApplicantTypeDtoInput], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicantTypeDtoInput[]
+}
+
+@InputType('FormSystemSubmitScreenInput')
+export class SubmitScreenInput {
+  @Field(() => String, { nullable: true })
+  screenId?: string
+
+  @Field(() => ApplicationInput, { nullable: true })
+  applicationDto?: ApplicationInput
 }

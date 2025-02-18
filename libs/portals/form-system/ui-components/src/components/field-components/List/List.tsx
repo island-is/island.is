@@ -1,9 +1,11 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { useEffect, useState } from 'react'
+import { Dispatch } from 'react'
 import { Select } from '@island.is/island-ui/core'
+import { Action } from '../../../lib/reducerTypes'
 
 interface Props {
   item: FormSystemField
+  dispatch: Dispatch<Action>
 }
 
 type ListItem = {
@@ -18,27 +20,44 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item }: Props) => {
-  const [listItems, setListItems] = useState<ListItem[]>([])
-
+export const List = ({ item, dispatch }: Props) => {
   const mapToListItems = (items: any[]): ListItem[] =>
     items?.map((item) => ({
       label: item?.label?.is ?? '',
       value: item?.label?.is ?? '',
     })) ?? []
 
-  console.log('item', item)
+  const value = () => {
+    const listVal = item?.values?.[0]?.json?.listValue
+    const hasValue = listVal !== undefined && listVal !== null
+    if (hasValue) {
+      return {
+        label: listVal,
+        value: listVal,
+      }
+    }
+    return undefined
+  }
+
   return (
     <Select
       name="list"
       label={item.name?.is ?? ''}
-      options={listItems}
+      options={mapToListItems(item?.list ?? [])}
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
+      backgroundColor='blue'
+      onChange={(e) =>
+        dispatch({
+          type: 'SET_LIST_VALUE',
+          payload: { id: item.id, value: e?.value },
+        })
+      }
+      value={value()}
     />
   )
 }

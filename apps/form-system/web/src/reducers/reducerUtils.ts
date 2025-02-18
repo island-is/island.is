@@ -1,10 +1,9 @@
-import { FormSystemSection } from "@island.is/api/schema"
-import { ApplicationState, Action } from "./reducerTypes"
+import { FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
+import { ApplicationState } from '@island.is/form-system/ui'
 
 export const hasScreens = (section: FormSystemSection): boolean => {
   return Boolean(section.screens && section.screens.length > 0)
 }
-
 
 export const getIncrementVariables = (state: ApplicationState) => {
   const { sections, currentSection, currentScreen } = state
@@ -48,13 +47,13 @@ export const incrementWithScreens = (
     return {
       ...state,
       currentSection: {
-        id: nextSection.id ?? '',
         index: state.currentSection.index + 1,
+        data: nextSection,
       },
       currentScreen: hasScreens(nextSection)
         ? {
-          id: nextSection.screens?.[0]?.id ?? '',
           index: 0,
+          data: nextSection.screens ? nextSection.screens[0] as FormSystemScreen : undefined,
         }
         : undefined,
     }
@@ -62,7 +61,7 @@ export const incrementWithScreens = (
     return {
       ...state,
       currentScreen: {
-        id: screens[currentScreenIndex + 1]?.id ?? '',
+        data: screens[currentScreenIndex + 1] as FormSystemScreen,
         index: currentScreenIndex + 1,
       },
     }
@@ -77,12 +76,12 @@ export const incrementWithoutScreens = (
   return {
     ...state,
     currentSection: {
-      id: nextSection.id ?? '',
+      data: nextSection,
       index: nextSectionIndex,
     },
     currentScreen: hasScreens(nextSection)
       ? {
-        id: nextSection.screens?.[0]?.id ?? '',
+        data: nextSection.screens?.[0] as FormSystemScreen,
         index: 0,
       }
       : undefined,
@@ -100,7 +99,7 @@ export const decrementWithScreens = (
     return {
       ...state,
       currentScreen: {
-        id: screens[currentScreenIndex - 1]?.id ?? '',
+        data: screens[currentScreenIndex - 1] as FormSystemScreen,
         index: currentScreenIndex - 1,
       },
     }
@@ -112,12 +111,12 @@ export const decrementWithScreens = (
     return {
       ...state,
       currentSection: {
-        id: prevSection.id ?? '',
+        data: prevSection,
         index: currentSectionIndex - 1,
       },
       currentScreen: hasScreens(prevSection)
         ? {
-          id: prevSection.screens ? prevSection.screens[prevSection.screens.length - 1]?.id ?? '' : '',
+          data: prevSection.screens ? prevSection.screens[prevSection.screens.length - 1] as FormSystemScreen : undefined,
           index: prevSection.screens ? prevSection.screens.length - 1 : 0,
         }
         : undefined,
@@ -136,14 +135,77 @@ export const decrementWithoutScreens = (
   return {
     ...state,
     currentSection: {
-      id: prevSection.id ?? '',
+      data: prevSection,
       index: currentSectionIndex - 1,
     },
     currentScreen: hasScreens(prevSection)
       ? {
-        id: prevSection.screens ? prevSection.screens[prevSection.screens.length - 1]?.id ?? '' : '',
+        data: prevSection.screens ? prevSection.screens[prevSection.screens.length - 1] as FormSystemScreen : undefined,
         index: prevSection.screens ? prevSection.screens.length - 1 : 0,
       }
       : undefined,
+  }
+}
+
+export const setFieldValue = (
+  state: ApplicationState,
+  fieldProperty: string,
+  fieldId: string,
+  value: any): ApplicationState => {
+  const { currentSection, currentScreen } = state
+  if (!currentScreen || !currentScreen.data) {
+    return state
+  }
+  const screen = currentScreen.data
+
+  const updatedFields = screen.fields?.map((field) => {
+    if (field?.id === fieldId) {
+      let newValue = field?.values?.[0] ?? {}
+      newValue = {
+        ...newValue,
+        json: {
+          ...newValue.json,
+          [fieldProperty]: value
+        }
+      }
+      return {
+        ...field,
+        values: [newValue]
+      }
+    } else {
+      return field
+    }
+  })
+
+  const updatedScreen = {
+    ...screen,
+    fields: updatedFields
+  }
+
+  const updatedSections: FormSystemSection[] = state.sections.map((section) => {
+    if (section.screens) {
+      return {
+        ...section,
+        screens: section.screens.map((screen) => {
+          if (screen?.id === updatedScreen.id) {
+            return updatedScreen
+          }
+          return screen
+        })
+      }
+    }
+    return section
+  })
+  return {
+    ...state,
+    application: {
+      ...state.application,
+      sections: updatedSections
+    },
+    sections: updatedSections,
+    currentScreen: {
+      ...currentScreen,
+      data: updatedScreen
+    }
   }
 }

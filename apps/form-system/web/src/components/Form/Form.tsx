@@ -10,12 +10,19 @@ import { FormStepper } from '@island.is/form-system/ui'
 import { FormSystemSection } from '@island.is/api/schema'
 import { Screen } from '../Screen/Screen'
 import { useApplicationContext } from '../../context/ApplicationProvider'
+import { useEffect, useState } from 'react'
 
 
 export const Form = () => {
   const { setInfo } = useHeaderInfo()
   const { state } = useApplicationContext()
-  const { application } = state
+
+  useEffect(() => {
+    setInfo({
+      applicationName: state.application?.formName?.is ?? '',
+      organisationName: state.application?.organizationName?.is ?? '',
+    })
+  }, [state.application.formName, state.application.organizationName, setInfo])
 
   return (
     <Box className={styles.root}>

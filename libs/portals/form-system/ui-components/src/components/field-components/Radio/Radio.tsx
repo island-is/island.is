@@ -9,7 +9,7 @@ interface Props {
 export const Radio = ({ item }: Props) => {
   const radioButtons = item.list as FormSystemListItem[]
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
-
+  console.log(item)
   useEffect(() => {
     setRadioChecked(radioButtons?.map(() => false) ?? [])
   }, [radioButtons])
@@ -32,7 +32,7 @@ export const Radio = ({ item }: Props) => {
             : undefined
         }
         large
-        backgroundColor="white"
+        backgroundColor="blue"
         checked={radioChecked[index]}
       />
     </Box>

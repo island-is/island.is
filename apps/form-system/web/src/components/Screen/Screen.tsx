@@ -7,11 +7,8 @@ import { Footer } from '../Footer/Footer'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { SectionTypes } from '@island.is/form-system/ui'
 import { ExternalData } from './components/ExternalData/ExternalData'
-
-interface Props {
-  screenTitle: string
-}
-
+import { Field } from './components/Field/Field'
+import { useState } from 'react'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
@@ -19,6 +16,9 @@ export const Screen = () => {
   const screenTitle = currentScreen
     ? state.screens?.[currentScreen.index]?.name?.is
     : state.sections?.[currentSection.index]?.name?.is
+  const s = currentScreen ? state.screens[currentScreen?.index] : null
+
+  const [externalDataAgreement, setExternalDataAgreement] = useState(state.sections?.[0].isCompleted ?? false)
 
   return (
     <Box
@@ -40,10 +40,23 @@ export const Screen = () => {
           {state.sections?.[currentSection.index]?.sectionType !== SectionTypes.PREMISES && screenTitle}
         </Text>
         {state.sections?.[currentSection.index]?.sectionType === SectionTypes.PREMISES && (
-          <ExternalData />
+          <ExternalData
+            setExternalDataAgreement={setExternalDataAgreement}
+          />
         )}
+        {
+          currentScreen && currentScreen?.data?.fields
+            ?.filter((field) => field != null)
+            .map((field, index) => {
+              return (
+                <Field field={field!} key={index} />
+              )
+            })
+        }
       </GridColumn>
-      <Footer />
+      <Footer
+        externalDataAgreement={externalDataAgreement}
+      />
     </Box>
   )
 

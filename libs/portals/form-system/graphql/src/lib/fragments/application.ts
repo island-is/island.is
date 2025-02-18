@@ -15,12 +15,9 @@ export const ApplicationFragment = gql`
     }
     isTest
     slug
-    created
-    modified
     sections {
       ...Section
     }
-    completed
     status
     certificationTypes {
       id

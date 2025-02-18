@@ -1,16 +1,25 @@
-import { Box, Icon, Text } from "@island.is/island-ui/core"
+import { Box, Checkbox, Icon, Stack, Text } from "@island.is/island-ui/core"
 import { Markdown } from "../../../../../../../../libs/shared/components/src"
 import { useApplicationContext } from "../../../../context/ApplicationProvider"
+import { webMessages } from "@island.is/form-system/ui"
+import { useIntl } from "react-intl"
 
+interface Props {
+  setExternalDataAgreement: (value: boolean) => void
+}
 
-export const ExternalData = () => {
+export const ExternalData = ({ setExternalDataAgreement }: Props) => {
   const { state } = useApplicationContext()
   const { application } = state
   const { certificationTypes } = application
+  const { formatMessage } = useIntl()
 
   return (
     <Box>
       <Box marginTop={2} marginBottom={5}>
+        <Box marginBottom={5}>
+          <Text variant="h2">Gagnaöflun</Text>
+        </Box>
         <Box display="flex" alignItems="center" justifyContent="flexStart">
           <Box marginRight={1}>
             <Icon
@@ -21,26 +30,43 @@ export const ExternalData = () => {
             />
           </Box>
           <Text variant="h4">
-            Gagnaöflun
+            {formatMessage(webMessages.externalDataTitle)}
           </Text>
         </Box>
       </Box>
 
       <Box marginBottom={5}>
-        {certificationTypes?.map(certificationType => (
-          <>
-            <Text variant="h4" color="blue400">
-              {certificationType?.certificationTypeId}
-            </Text>
+        <Stack space={2}>
+          <div>
+            <Text variant='h4' color="blue400">{formatMessage(webMessages.icelandicRegistryTitle)}</Text>
+            <Text><Markdown>{formatMessage(webMessages.icelandicRegistryDescription)}</Markdown></Text>
+          </div>
+          <div>
+            <Text variant='h4' color="blue400">{formatMessage(webMessages.myPagesTitle)}</Text>
+            <Text><Markdown>{formatMessage(webMessages.myPagesDescription)}</Markdown></Text>
+          </div>
 
-            <Text>
-              <Markdown>
-                {certificationType?.id ?? ''}
-              </Markdown>
-            </Text>
-          </>
-        ))}
+          {certificationTypes?.map(certificationType => (
+            <div>
+              <Text variant="h4" color="blue400">
+                {certificationType?.certificationTypeId}
+              </Text>
+
+              <Text>
+                <Markdown>
+                  {certificationType?.id ?? ''}
+                </Markdown>
+              </Text>
+            </div>
+          ))}
+        </Stack>
       </Box>
+      <Checkbox
+        large={true}
+        backgroundColor="blue"
+        label={formatMessage(webMessages.externalDataAgreement)}
+        onChange={(event) => setExternalDataAgreement(event.target.checked)}
+      />
     </Box>
   )
 }

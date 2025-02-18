@@ -19,7 +19,6 @@ export const Email = ({ item }: Props) => {
   const { formatMessage } = useIntl()
   return (
     <Stack space={2}>
-      <Text>{item?.name?.is}</Text>
       <Input
         type="email"
         name="email"
@@ -27,9 +26,11 @@ export const Email = ({ item }: Props) => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         onBlur={() => setHasError(isValidEmail())}
+        onFocus={() => setHasError(false)}
         errorMessage={formatMessage(m.invalidEmail)}
         hasError={hasError}
         required={item?.isRequired ?? false}
+        backgroundColor='blue'
       />
     </Stack>
   )

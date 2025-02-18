@@ -14,6 +14,7 @@ export const TextInput = ({ item }: Props) => {
       name="text"
       textarea={fieldSettings?.isLarge ?? false}
       required={item.isRequired ?? false}
+      backgroundColor='blue'
     />
   )
 }

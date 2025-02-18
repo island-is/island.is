@@ -21,6 +21,7 @@ export const PhoneNumber = ({ item }: Props) => {
           placeholder="Símanúmer"
           name="phoneNumber"
           required={item.isRequired ?? false}
+          backgroundColor='blue'
         />
       </Column>
     </Row>

@@ -5,12 +5,12 @@ export interface ApplicationState {
   sections: FormSystemSection[]
   screens: FormSystemScreen[]
   currentSection: {
-    id?: string
     index: number
+    data: FormSystemSection
   }
   currentScreen?: {
-    id?: string
     index: number
+    data?: FormSystemScreen
   }
 }
 
@@ -18,4 +18,11 @@ export interface Action {
   type: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
+}
+
+export interface FieldActions {
+  type: 'LIST_VALUE',
+  payload: {
+    value: string
+  }
 }

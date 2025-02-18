@@ -484,3 +484,52 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
   },
 })
+
+export const webMessages = defineMessages({
+  externalDataTitle: {
+    id: 'form-system:external-data-title',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    description:
+      'The following data will be retrieved electronically with your consent',
+  },
+  externalDataConfirmation: {
+    id: 'form-system:externalData.confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm',
+  },
+  externalDataAgreement: {
+    id: 'form-system:externalData.agreement',
+    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+    description: 'I have read the above regarding data collection',
+  },
+  icelandicRegistryTitle: {
+    id: 'form-system:icelandic-registry-title',
+    defaultMessage: 'Upplýsingar úr Þjóðskrá',
+    description: 'Icelandic registry',
+  },
+  icelandicRegistryDescription: {
+    id: 'form-system:icelandic-registry-description',
+    defaultMessage: 'Upplýsingar um þig, maka og börn.',
+    description: 'Information about you, your spouse and children',
+  },
+  myPagesTitle: {
+    id: 'form-system:my-pages-title',
+    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+    description: 'My information on My Pages on Ísland.is',
+  },
+  myPagesDescription: {
+    id: 'form-system:my-pages-description',
+    defaultMessage: 'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+    description: 'Information about phone number and email to facilitate the application process',
+  },
+  continue: {
+    id: 'form-system:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
+  },
+  back: {
+    id: 'form-system:back',
+    defaultMessage: 'Til baka',
+    description: 'Back',
+  }
+})

@@ -1,4 +1,5 @@
 import { InputType, Field, Int } from '@nestjs/graphql'
+import { ApplicationEventDtoInput } from './application.input'
 
 @InputType('FormSystemMonthInput')
 export class MonthInput {
@@ -94,18 +95,6 @@ export class ValueInput {
 
   @Field(() => String, { nullable: true })
   paymentCode?: string
-}
-
-@InputType('FormSystemApplicationEventDtoInput')
-export class ApplicationEventDtoInput {
-  @Field(() => Date, { nullable: true })
-  created?: Date
-
-  @Field(() => String, { nullable: true })
-  eventType?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
 }
 
 @InputType('FormSystemValueDtoInput')
