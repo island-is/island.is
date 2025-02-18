@@ -132,7 +132,7 @@ jobs:
           #   ...
           # ]
           set -x
-          matrix="$(git ls-files '**/project.json' |
+          matrix="$(git ls-files --error-unmatch '**/project.json' |
             xargs cat |
             jq -s -c --arg projects "$projects" '{ include: [
               .[]
@@ -347,7 +347,7 @@ jobs:
         run: |
           # Fetch source root from project files (but strip trailing /src, if any)
           app_home="$(
-            git ls-files '**/project.json' |
+            git ls-files --error-unmatch '**/project.json' |
             xargs cat |
             jq -re --arg project "$app_name" 'select( .name == $project ) | .sourceRoot' |
             sed 's;/src;;'
