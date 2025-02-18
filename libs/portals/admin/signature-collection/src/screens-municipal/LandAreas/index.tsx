@@ -1,13 +1,11 @@
 import {
+  Text,
   ActionCard,
   Box,
-  DialogPrompt,
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Stack,
-  Tag,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
@@ -15,17 +13,18 @@ import { m } from '../../lib/messages'
 import { PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import ScreenHeader from '../../shared-components/screenHeader'
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { replaceParams } from '@island.is/react-spa/shared'
 import DownloadReports from '../../shared-components/downloadReports'
+import CompareLists from '../../shared-components/compareLists'
+import StartAreaCollection from './StartAreaCollection'
 
 const LandAreas = () => {
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const params = useParams()
 
   return (
     <GridContainer>
@@ -50,13 +49,19 @@ const LandAreas = () => {
             intro={formatMessage(m.municipalCollectionIntro)}
             image={nationalRegistryLogo}
           />
-          <Box marginBottom={5} display="flex" justifyContent="flexEnd">
+          <Box
+            marginBottom={3}
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="flexEnd"
+          >
+            <Text variant="eyebrow">Samtals fjöldi: {allLists.length}</Text>
             <DownloadReports areas={[]} collectionId={''} />
           </Box>
           <Stack space={3}>
             {allLists.map((list) => (
               <ActionCard
-                key={'test'}
+                key={list.id}
                 eyebrow={'Höfuðborgarsvæði (3000)'}
                 heading={'Reykjavík'}
                 text={'Fjöldi framboða: 12'}
@@ -78,34 +83,12 @@ const LandAreas = () => {
                 tag={{
                   label: 'Tag',
                   variant: 'blue',
-                  renderTag: () => (
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <DialogPrompt
-                        baseId="open_collection"
-                        ariaLabel=""
-                        title="Opna fyrir meðmælasöfnun"
-                        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit?"
-                        disclosureElement={
-                          <Tag outlined variant="blue">
-                            <Box display="flex" alignItems="center">
-                              <Icon
-                                icon="lockClosed"
-                                size="small"
-                                type="outline"
-                              />
-                            </Box>
-                          </Tag>
-                        }
-                        onConfirm={() => console.log('opened')}
-                        buttonTextConfirm="Já, opna"
-                        buttonTextCancel="Hætta við"
-                      />
-                    </Box>
-                  ),
+                  renderTag: () => <StartAreaCollection />,
                 }}
               />
             ))}
           </Stack>
+          <CompareLists collectionId={collection?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>

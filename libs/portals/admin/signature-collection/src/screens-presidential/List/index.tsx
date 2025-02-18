@@ -16,7 +16,7 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
 import { ListStatus } from '../../lib/utils'
-import ActionReviewComplete from '../../shared-components/completeReview'
+import ActionReviewComplete from '../../shared-components/completeListReview'
 import Signees from '../../shared-components/signees'
 import ActionExtendDeadline from '../../shared-components/extendDeadline'
 

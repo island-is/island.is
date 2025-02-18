@@ -18,6 +18,8 @@ import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
 import { m } from '../../lib/messages'
 import { createFileList, getFileData } from '../../lib/utils'
 
+const { Table, Row, Head, HeadData, Body, Data } = T
+
 const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -82,7 +84,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
   }
 
   return (
-    <Box marginTop={10}>
+    <Box marginTop={7}>
       <Box
         background="blue100"
         borderRadius="large"
@@ -91,7 +93,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         alignItems="center"
         padding={3}
       >
-        <Text marginBottom={[2, 0, 0]} variant="medium">
+        <Text marginBottom={[2, 0, 0]} variant="medium" color="blue600">
           {formatMessage(m.compareListsDescription)}
         </Text>
         <Button
@@ -142,31 +144,29 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
                 )}
               </Text>
               {uploadResults && uploadResults?.length > 0 && (
-                <T.Table>
-                  <T.Head>
-                    <T.Row>
-                      <T.HeadData>
-                        {formatMessage(m.signeeNationalId)}
-                      </T.HeadData>
-                      <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
-                      <T.HeadData>{formatMessage(m.singleList)}</T.HeadData>
-                      <T.HeadData></T.HeadData>
-                    </T.Row>
-                  </T.Head>
-                  <T.Body>
+                <Table>
+                  <Head>
+                    <Row>
+                      <HeadData>{formatMessage(m.signeeNationalId)}</HeadData>
+                      <HeadData>{formatMessage(m.signeeName)}</HeadData>
+                      <HeadData>{formatMessage(m.singleList)}</HeadData>
+                      <HeadData></HeadData>
+                    </Row>
+                  </Head>
+                  <Body>
                     {!loading ? (
                       uploadResults?.map(
                         (result: SignatureCollectionSignature) => {
                           return (
-                            <T.Row key={result.id}>
-                              <T.Data style={{ minWidth: '140px' }}>
+                            <Row key={result.id}>
+                              <Data style={{ minWidth: '140px' }}>
                                 {formatNationalId(result.signee.nationalId)}
-                              </T.Data>
-                              <T.Data style={{ minWidth: '250px' }}>
+                              </Data>
+                              <Data style={{ minWidth: '250px' }}>
                                 {result.signee.name}
-                              </T.Data>
-                              <T.Data>{result.listTitle}</T.Data>
-                              <T.Data style={{ minWidth: '160px' }}>
+                              </Data>
+                              <Data>{result.listTitle}</Data>
+                              <Data style={{ minWidth: '160px' }}>
                                 <Button
                                   variant="utility"
                                   onClick={() => {
@@ -175,16 +175,16 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
                                 >
                                   {formatMessage(m.unsignFromList)}
                                 </Button>
-                              </T.Data>
-                            </T.Row>
+                              </Data>
+                            </Row>
                           )
                         },
                       )
                     ) : (
                       <Skeleton />
                     )}
-                  </T.Body>
-                </T.Table>
+                  </Body>
+                </Table>
               )}
             </Box>
           )}

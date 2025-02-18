@@ -7,7 +7,7 @@ import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
 
-const ActionReviewComplete = ({
+const CompleteListReview = ({
   listId,
   listStatus,
 }: {
@@ -93,4 +93,4 @@ const ActionReviewComplete = ({
   )
 }
 
-export default ActionReviewComplete
+export default CompleteListReview

@@ -1,11 +1,10 @@
-import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
+import { PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
-  Breadcrumbs,
   DialogPrompt,
   Icon,
   Tag,
@@ -14,82 +13,21 @@ import {
   GridRow,
   Stack,
   Text,
-  toast,
-  TagVariant,
 } from '@island.is/island-ui/core'
-import {
-  useLoaderData,
-  useNavigate,
-  useParams,
-  useRevalidator,
-} from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
-import format from 'date-fns/format'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import { SignatureCollectionList } from '@island.is/api/schema'
 import ScreenHeader from '../../shared-components/screenHeader'
 import { replaceParams } from '@island.is/react-spa/shared'
+import { getTagConfig } from '../../lib/utils'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { revalidate } = useRevalidator()
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
-  const { constituencyName } = useParams() as { constituencyName: string }
-
-  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
-
-  const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
-    return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
-      acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
-      return acc
-    }, {})
-  }
-
-  const candidatesListCount = countCandidatesLists(allLists)
-
-  /*const [removeList] = useSignatureCollectionAdminRemoveListMutation({
-    onCompleted: () => {
-      toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
-      revalidate()
-    },
-    onError: () => {
-      toast.error(formatMessage(m.cancelCollectionModalToastError))
-    },
-  })
-
-  const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()*/
-
-  const getTagConfig = (list: SignatureCollectionList) => {
-    // Lista læst
-    if (!list.active && !list.reviewed) {
-      return {
-        label: formatMessage(m.listLocked),
-        variant: 'blueberry' as TagVariant,
-        outlined: false,
-      }
-    }
-
-    // Úrvinnslu lokið
-    if (!list.active && list.reviewed) {
-      return {
-        label: formatMessage(m.confirmListReviewed),
-        variant: 'mint' as TagVariant,
-        outlined: false,
-      }
-    }
-
-    // Söfnun í gangi
-    return {
-      label: formatMessage(m.listOpen),
-      variant: 'blue' as TagVariant,
-      outlined: false,
-    }
-  }
 
   return (
     <GridContainer>
@@ -114,7 +52,7 @@ export const Municipality = () => {
             image={nationalRegistryLogo}
           />
           <GridRow>
-            <GridColumn span={'12/12'}>
+            <GridColumn span="12/12">
               <Box
                 marginBottom={3}
                 display="flex"
@@ -124,17 +62,15 @@ export const Municipality = () => {
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) + ': ' + allLists.length}
                 </Text>
-                <CreateCollection
-                  collectionId={collection?.id}
-                  areaId={areaId}
-                />
+                <CreateCollection collectionId={collection?.id} areaId={''} />
               </Box>
               <Stack space={3}>
                 {allLists.map((list) => (
                   <ActionCard
                     key={list.id}
-                    date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
+                    eyebrow="Höfuðborgarsvæði"
                     heading={list.candidate.name}
+                    text={'Ábyrgðaraðili: ' + list.candidate.name}
                     progressMeter={{
                       currentProgress: list.numberOfSignatures ?? 0,
                       maxProgress: list.area.min,
@@ -168,13 +104,9 @@ export const Municipality = () => {
                               ' - ' +
                               list.area?.name
                             }
-                            description={
-                              candidatesListCount[list.candidate.id] === 1
-                                ? formatMessage(
-                                    m.cancelCollectionModalMessageLastList,
-                                  )
-                                : formatMessage(m.cancelCollectionModalMessage)
-                            }
+                            description={formatMessage(
+                              m.cancelCollectionModalMessage,
+                            )}
                             ariaLabel="delete"
                             disclosureElement={
                               <Tag outlined variant="red">
@@ -187,36 +119,8 @@ export const Municipality = () => {
                                 </Box>
                               </Tag>
                             }
-                            onConfirm={() => {
-                              /*removeList({
-                                      variables: {
-                                        input: {
-                                          listId: list.id,
-                                        },
-                                      },
-                                    })*/
-
-                              if (
-                                candidatesListCount[list.candidate.id] === 1
-                              ) {
-                                /*removeCandidate({
-                                        variables: {
-                                          input: {
-                                            candidateId: list.candidate.id,
-                                          },
-                                        },
-                                      })*/
-                              }
-                            }}
-                            buttonTextConfirm={
-                              candidatesListCount[list.candidate.id] === 1
-                                ? formatMessage(
-                                    m.cancelCollectionAndCandidateModalConfirmButton,
-                                  )
-                                : formatMessage(
-                                    m.cancelCollectionModalConfirmButton,
-                                  )
-                            }
+                            onConfirm={() => console.log('cancelled')}
+                            buttonTextConfirm={'Já, eyða'}
                             buttonPropsConfirm={{
                               variant: 'primary',
                               colorScheme: 'destructive',
