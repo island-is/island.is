@@ -9,15 +9,16 @@ export \
   BASE=${BASE:-main} \
   MAX_JOBS='100'
 
-chunks='[]'
 if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
-  chunks=$CHUNKS_DEBUG
+  echo "$CHUNKS_DEBUG" | jq -cM '. | map("\(.|tostring)")'
+  exit 0
 elif [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
-  echo "$chunks"
+  echo "[]"
   exit 0
 fi
 
+chunks='[]'
 for target in "$@"; do
   processed_chunks=$(yarn nx show projects --withTarget="$target" --affected --base "$BASE" --head "$HEAD" --json |
     jq -r '.[]' |
