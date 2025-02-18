@@ -354,7 +354,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: theme.spacing[1],
+              marginTop: theme.spacing[3],
             }}
           >
             {lastUpdatedFormatted && (
