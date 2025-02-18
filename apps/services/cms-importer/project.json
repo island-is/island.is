@@ -7,11 +7,7 @@
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "target": "node",
-        "compiler": "tsc",
         "outputPath": "dist/apps/services/cms-importer",
         "main": "apps/services/cms-importer/src/main.ts",
         "tsConfig": "apps/services/cms-importer/tsconfig.app.json",
@@ -20,8 +16,13 @@
       },
       "configurations": {
         "development": {},
-        "production": {}
-      }
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
     },
     "worker": {
       "executor": "@nx/js:node",
