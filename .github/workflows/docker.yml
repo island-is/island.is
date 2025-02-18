@@ -164,7 +164,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
       - name: Restore generated files cache
         id: cache
-        uses: runs-on/cache/save@v4
+        uses: runs-on/cache/restore@v4
         with:
           path: ${{ github.sha }}
           key: generated-files-${{ github.sha }}
