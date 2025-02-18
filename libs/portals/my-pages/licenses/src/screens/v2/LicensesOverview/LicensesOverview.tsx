@@ -20,9 +20,7 @@ import { getPathFromType } from '../../../utils/mapPaths'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
-  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const { formatMessage, lang } = useLocale()
 
   const includedTypes = [
     GenericLicenseType.AdrLicense,
@@ -38,7 +36,7 @@ export const LicensesOverviewV2 = () => {
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
-      locale,
+      locale: lang,
       input: {
         includedTypes,
       },

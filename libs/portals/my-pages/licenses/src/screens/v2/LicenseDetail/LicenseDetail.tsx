@@ -30,9 +30,7 @@ type UseParams = {
 
 const LicenseDetail = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
-  const locale = userProfile?.locale ?? 'is'
+  const { formatMessage, lang } = useLocale()
   const { type, id } = useParams() as UseParams
 
   const [genericLicenseQuery, { data, loading, error }] =
@@ -49,7 +47,7 @@ const LicenseDetail = () => {
     if (licenseType) {
       genericLicenseQuery({
         variables: {
-          locale,
+          locale: lang,
           input: {
             licenseId: id,
             licenseType,
@@ -57,7 +55,7 @@ const LicenseDetail = () => {
         },
       })
     }
-  }, [genericLicenseQuery, id, locale, licenseType])
+  }, [genericLicenseQuery, id, lang, licenseType])
 
   const genericLicense = data?.genericLicense ?? null
 
