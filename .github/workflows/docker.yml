@@ -170,6 +170,7 @@ jobs:
           key: generated-files-${{ github.sha }}
       - name: Prepare generated files
         if: ${{ steps.cache.outcome != 'success' }}
+        id: gen-files
         env:
           SHA: ${{ github.sha }}
         run: |
@@ -177,6 +178,7 @@ jobs:
           node ./scripts/ci/generate-files.mjs "$SHA"
           tar -xzvf "$SHA"
       - name: Cache Generated files
+        if: ${{ steps.gen-files.outcome == 'success' }}
         uses: runs-on/cache/save@v4
         with:
           path: ${{ github.sha }}
