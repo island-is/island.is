@@ -1,4 +1,4 @@
-import { PortalNavigation } from '@island.is/portals/core'
+import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -13,13 +13,13 @@ import {
   GridRow,
   Stack,
   Text,
+  Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ScreenHeader from '../../shared-components/screenHeader'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
 
@@ -46,10 +46,21 @@ export const Municipality = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <ScreenHeader
-            electionName={formatMessage(m.municipalCollectionTitle)}
+          <Box marginBottom={2}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage(m.municipalCollectionTitle),
+                },
+              ]}
+            />
+          </Box>
+          <IntroHeader
+            title={formatMessage(m.municipalCollectionTitle)}
             intro={formatMessage(m.municipalCollectionIntro)}
-            image={nationalRegistryLogo}
+            imgPosition="right"
+            imgHiddenBelow="sm"
+            img={nationalRegistryLogo}
           />
           <GridRow>
             <GridColumn span="12/12">
