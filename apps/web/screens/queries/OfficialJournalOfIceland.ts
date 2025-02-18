@@ -70,6 +70,13 @@ export const ADVERT_QUERY = gql`
           html
           pdfUrl
         }
+        corrections {
+          title
+          description
+          advertId
+          documentPdfUrl
+          createdDate
+        }
       }
     }
   }
