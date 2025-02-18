@@ -177,7 +177,7 @@ jobs:
           echo "generated files: $SHA"
           node ./scripts/ci/generate-files.mjs "$SHA"
           tar -xzvf "$SHA"
-      - name: Cache Generated files
+      - name: Save generated files cache
         if: ${{ steps.gen-files.outcome == 'success' }}
         uses: runs-on/cache/save@v4
         with:
