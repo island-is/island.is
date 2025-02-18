@@ -194,45 +194,47 @@ export const loadProgramOptions = async (
   ) => void,
   otherProgramIdFieldKey?: string,
 ) => {
-  const schoolId =
-    activeField && getValueViaPath<string>(activeField, 'school.id')
-  const otherProgramId =
-    activeField &&
-    otherProgramIdFieldKey &&
-    getValueViaPath<string>(activeField, otherProgramIdFieldKey)
+  try {
+    const schoolId =
+      activeField && getValueViaPath<string>(activeField, 'school.id')
+    const otherProgramId =
+      activeField &&
+      otherProgramIdFieldKey &&
+      getValueViaPath<string>(activeField, otherProgramIdFieldKey)
 
-  if (!schoolId) {
+    if (!schoolId) {
+      return []
+    }
+
+    const { data } = await apolloClient.query<
+      Query,
+      QuerySecondarySchoolProgramsBySchoolIdArgs
+    >({
+      query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
+      variables: {
+        isFreshman: checkIsFreshman(application.answers),
+        schoolId,
+      },
+    })
+
+    const programs = data?.secondarySchoolProgramsBySchoolId || []
+
+    setValueAtIndex?.('programOptions', programs)
+    setValueAtIndex?.('secondProgram.include', programs.length > 1)
+
+    return programs
+      .map((program) => ({
+        value: program.id,
+        label: getTranslatedProgram(lang, {
+          nameIs: program.nameIs,
+          nameEn: program.nameEn,
+        }),
+      }))
+      .filter((x) => x.value !== otherProgramId)
+  } catch (error) {
+    console.error('Error loading program options:', error)
     return []
   }
-
-  const { data } = await apolloClient.query<
-    Query,
-    QuerySecondarySchoolProgramsBySchoolIdArgs
-  >({
-    query: PROGRAMS_BY_SCHOOLS_ID_QUERY,
-    variables: {
-      isFreshman: checkIsFreshman(application.answers),
-      schoolId,
-    },
-  })
-
-  setValueAtIndex?.('programOptions', data?.secondarySchoolProgramsBySchoolId)
-
-  setValueAtIndex?.(
-    'secondProgram.include',
-    data?.secondarySchoolProgramsBySchoolId.length > 1,
-  )
-
-  const options =
-    data?.secondarySchoolProgramsBySchoolId?.map((program) => ({
-      value: program.id,
-      label: getTranslatedProgram(lang, {
-        nameIs: program.nameIs,
-        nameEn: program.nameEn,
-      }),
-    })) ?? []
-
-  return options.filter((x) => x.value !== otherProgramId)
 }
 
 export const setOnChangeFirstProgram = (
