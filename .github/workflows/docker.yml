@@ -93,7 +93,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build arg prep
+      - name: Prepare Docker build-args
         id: args-prep
         run: |
           # Setters
@@ -185,7 +185,7 @@ jobs:
           key: generated-files-${{ github.sha }}
 
   deps:
-    name: Build dependencies
+    name: Docker-build dependencies
     runs-on: arc-runners
     needs: prepare
 
@@ -310,7 +310,7 @@ jobs:
             ${{ env.AWS_CACHE_PREFIX }},name=target-playwright-base;${{ github.sha }};${{ github.ref }}
 
   build:
-    name: Build ${{ matrix.project }}
+    name: Docker-build ${{ matrix.project }}
     runs-on: arc-runners
     needs:
       - prepare
@@ -385,7 +385,7 @@ jobs:
         run: |
           tar -xzvf "$GITHUB_SHA"
 
-      - name: Build and push Docker image
+      - name: Docker-build and push Docker image
         uses: docker/build-push-action@v6
         with:
           target: output-${{ matrix.docker }}
