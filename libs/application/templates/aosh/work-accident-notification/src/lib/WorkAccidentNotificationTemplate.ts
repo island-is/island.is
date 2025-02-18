@@ -56,7 +56,6 @@ const template: ApplicationTemplate<
       [States.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
-          progress: 0,
           status: 'draft',
           actionCard: {
             tag: {
@@ -111,7 +110,11 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
