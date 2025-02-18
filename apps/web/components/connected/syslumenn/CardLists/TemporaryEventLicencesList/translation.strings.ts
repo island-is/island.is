@@ -6,6 +6,11 @@ export const translation = defineMessages({
     defaultMessage: "d. MMMM yyyy 'kl.' HH:mm",
     description: 'Hvernig dagsetningin birtist',
   },
+  temporaryPermit: {
+    id: 'web.syslumenn.temporaryEventLicencesList:temporaryPermit',
+    defaultMessage: 'Bráðabirgðaleyfi',
+    description: 'Bráðabirgðaleyfi',
+  },
   csvHeaderLicenceType: {
     id: 'web.syslumenn.temporaryEventLicencesList:csvHeaderLicenceType',
     defaultMessage: 'Tegund',

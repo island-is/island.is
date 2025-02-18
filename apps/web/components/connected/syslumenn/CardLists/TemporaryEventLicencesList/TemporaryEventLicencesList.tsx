@@ -300,6 +300,16 @@ const TemporaryEventLicencesList: FC<
             {filteredTemporaryEventLicences
               .slice(0, showCount)
               .map((temporaryEventLicence, index) => {
+                const periodRepresentation = getValidPeriodRepresentation(
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
+                  temporaryEventLicence.validFrom,
+                  temporaryEventLicence.validTo,
+                  DATE_FORMAT,
+                  format,
+                  formatMessage(t.validPeriodUntil),
+                  formatMessage(t.validPeriodIndefinite),
+                )
                 return (
                   <Box
                     key={`temporary-event-licence-${index}`}
@@ -340,16 +350,13 @@ const TemporaryEventLicencesList: FC<
 
                       <Text>
                         {formatMessage(t.validPeriodLabel)}:{' '}
-                        {getValidPeriodRepresentation(
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          temporaryEventLicence.validFrom,
-                          temporaryEventLicence.validTo,
-                          DATE_FORMAT,
-                          format,
-                          formatMessage(t.validPeriodUntil),
-                          formatMessage(t.validPeriodIndefinite),
-                        )}
+                        {periodRepresentation}{' '}
+                        {temporaryEventLicence.validTo ? (
+                          <div>
+                            -{' '}
+                            <strong>{formatMessage(t.temporaryPermit)}</strong>
+                          </div>
+                        ) : null}
                       </Text>
 
                       <Text>
