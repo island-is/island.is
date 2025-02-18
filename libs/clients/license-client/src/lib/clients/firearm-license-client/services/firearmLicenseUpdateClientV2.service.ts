@@ -4,43 +4,42 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OpenFirearmApi } from '@island.is/clients/firearm-license'
 import { sanitize as sanitizeNationalId } from 'kennitala'
 import {
-  Pass,
+  PassData,
   PassDataInput,
-  RevokePassData,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
+  PassRevocationData,
   PassVerificationData,
   Result,
-  VerifyInputData,
 } from '../../../licenseClient.type'
 import { createPkPassDataInput, nationalIdIndex } from '../firearmLicenseMapper'
-import { BaseLicenseUpdateClient } from '../../base/baseLicenseUpdateClient'
 import { mapNationalId } from '../firearmLicenseMapper'
 import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
+import { BaseLicenseUpdateClientV2 } from '../../base/licenseUpdateClientV2'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import { VerifyInputDataDto } from '../../base/baseLicenseUpdateClient.types'
+import { PkPassService } from '../../../helpers/pk-pass-service/pkPass.service'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
 
 @Injectable()
-/** @deprecated */
-export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
+export class FirearmLicenseUpdateClientV2 extends BaseLicenseUpdateClientV2 {
   constructor(
     @Inject(LOGGER_PROVIDER) protected logger: Logger,
     @Inject(FirearmDigitalLicenseClientConfig.KEY)
     private config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
     private openFirearmApi: OpenFirearmApi,
-    protected smartApi: SmartSolutionsApi,
+    private readonly passService: PkPassService,
   ) {
-    super(logger, smartApi)
+    super()
   }
 
   pushUpdate(
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PassData | undefined>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (
@@ -50,20 +49,21 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       inputFieldValues.push(mapNationalId(nationalId))
     }
 
-    return this.smartApi.updatePkPass(
+    return this.passService.updatePkPass(
       {
         ...inputData,
         inputFieldValues,
         passTemplateId: this.config.passTemplateId,
       },
       requestId,
+      'v2',
     )
   }
 
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass>> {
+  ): Promise<Result<PassData>> {
     let data
     try {
       data = await Promise.all([
@@ -136,21 +136,26 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
               .substring(thumbnail.indexOf(',') + 1)
               .trim(),
           }
-        : null,
+        : undefined,
     }
 
-    return this.smartApi.updatePkPass(payload, requestId)
+    return this.passService.updatePkPass(payload, requestId, 'v2')
   }
 
   revoke(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<RevokePassData>> {
+  ): Promise<Result<PassRevocationData>> {
     const passTemplateId = this.config.passTemplateId
     const payload: PassDataInput = {
       inputFieldValues: [mapNationalId(nationalId)],
     }
-    return this.smartApi.revokePkPass(passTemplateId, payload, requestId)
+    return this.passService.revokePkPass(
+      passTemplateId,
+      payload,
+      requestId,
+      'v2',
+    )
   }
 
   /** We need to verify the pk pass AND the license itself! */
@@ -159,9 +164,19 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     requestId?: string,
   ): Promise<Result<PassVerificationData>> {
     //need to parse the scanner data
-    let parsedInput
+    let parsedInput: VerifyInputDataDto
     try {
-      parsedInput = JSON.parse(inputData) as VerifyInputData
+      parsedInput = plainToInstance(VerifyInputDataDto, JSON.parse(inputData))
+      const errors = await validate(parsedInput)
+      if (errors.length > 0) {
+        return {
+          ok: false,
+          error: {
+            code: 12,
+            message: 'Invalid input data',
+          },
+        }
+      }
     } catch (ex) {
       return {
         ok: false,
@@ -185,9 +200,10 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const verifyRes = await this.smartApi.verifyPkPass(
+    const verifyRes = await this.passService.verifyPkPass(
       { code, date },
       requestId,
+      'v2',
     )
 
     if (!verifyRes.ok) {
@@ -203,8 +219,8 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const passNationalId = verifyRes.data.pass?.inputFieldValues.find(
-      (i) => i.passInputField.identifier === 'kt',
+    const passNationalId = verifyRes.data.pass?.inputFieldValues?.find(
+      (i) => i.identifier === 'kt',
     )?.value
 
     if (!passNationalId) {
