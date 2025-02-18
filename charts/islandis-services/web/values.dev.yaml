@@ -54,7 +54,9 @@ hpa:
       max: 50
       min: 2
 image:
-  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+  name: 'web'
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+  tag: 'latest_master'
 ingress:
   primary-alb:
     annotations:

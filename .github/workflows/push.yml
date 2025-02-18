@@ -92,7 +92,7 @@ jobs:
           fi
           echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
-          echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
+          echo "FEATURE_NAME=$(echo $GIT_BRANCH | tr -cs '[:alnum:]' '-' | sed -e 's/^-//' -e 's/-$//' | tr '[:upper:]' '[:lower:]' | cut -c 1-63)" >> $GITHUB_OUTPUT
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -286,7 +286,7 @@ jobs:
         id: docker_tags
         run: |
           set -euo pipefail
-          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          export DOCKER_BRANCH_TAG=$(echo $GIT_BRANCH | tr -cs '[:alnum:]' '-' | sed -e 's/^-//' -e 's/-$//' | tr '[:upper:]' '[:lower:]' | cut -c 1-63)
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -725,7 +725,59 @@ jobs:
           aws-region: eu-west-1
       - name: Retag unaffected Docker images
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
+  deploy-feature:
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    if: always() && needs.pre-checks.result == 'success' && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && needs.helm-docker-build.result != 'failure' && needs.prepare.outputs.IMAGES != ''
+    needs:
+      # - pre-checks
+      - prepare
+      # - helm-docker-build
+      # - retag-unaffected
+    env:
+      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          path: monorepo
+      - name: Checkout feature-values
+        uses: actions/checkout@v4
+        with:
+          repository: island-is/feature-values
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          path: feature-values
+      - name: Install infra modules
+        if: steps.infra-node-modules.outputs.cache-hit != 'true'
+        working-directory: monorepo/infra
+        run: |
+          CI=true yarn install --immutable
+      - name: Generate islandis feature-deployment charts for ArgoCD
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+          IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+        run: |
+          ./monorepo/infra/scripts/generate-feature-values.sh jobs --feature $FEATURE_NAME --images "$IMAGES" --chart islandis --jobImage "821090935708.dkr.ecr.eu-west-1.amazonaws.com/helm-config:$DOCKER_TAG" > feature-values/$FEATURE_NAME-job-manifest.yaml
+          ./monorepo/infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" --dockertag "$DOCKER_TAG" > feature-values/$FEATURE_NAME.yaml
+      - name: Commit and push feature-values
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+        working-directory: feature-values
+        run: |
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name andes-it
+          git config user.email andes-it@andes.is
+          git add .
+          git commit -m "Generated feature values for $FEATURE_NAME"
+          git push
   deploy:
     runs-on: arc-runners
     if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
