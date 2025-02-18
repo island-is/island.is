@@ -195,6 +195,7 @@ jobs:
         id: gen-files
         env:
           SHA: ${{ github.sha }}
+          NX_TASKS_RUNNER: default
         run: |
           echo "generated files: $SHA"
           node ./scripts/ci/generate-files.mjs "$SHA"
