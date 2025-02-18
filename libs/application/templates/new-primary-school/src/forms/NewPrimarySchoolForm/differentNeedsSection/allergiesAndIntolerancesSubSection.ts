@@ -163,9 +163,10 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'allergiesAndIntolerances.requestMedicationAssistance',
+          id: 'allergiesAndIntolerances.requestsMedicationAdministration',
           title:
-            newPrimarySchoolMessages.differentNeeds.requestMedicationAssistance,
+            newPrimarySchoolMessages.differentNeeds
+              .requestsMedicationAdministration,
           width: 'half',
           required: true,
           space: 4,
@@ -191,12 +192,12 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           condition: (answers) => {
             const {
               hasConfirmedMedicalDiagnoses,
-              requestMedicationAssistance,
+              requestsMedicationAdministration,
             } = getApplicationAnswers(answers)
 
             return (
               hasConfirmedMedicalDiagnoses === YES ||
-              requestMedicationAssistance === YES
+              requestsMedicationAdministration === YES
             )
           },
         }),
