@@ -11,6 +11,11 @@ import {
 } from '@island.is/clients/work-machines'
 import { coreErrorMessages } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import {
+  getCleanApplicantInformation,
+  getCleanCertificateOfTenure,
+  getCleanCompanyInformation,
+} from './training-license-on-a-work-machine.utils'
 @Injectable()
 export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateApiService {
   constructor(
@@ -50,5 +55,30 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     // Submit
     console.log('SUBMITTING APPLICATION')
+    const applicant = getCleanApplicantInformation(application)
+    const company = getCleanCompanyInformation(application)
+    const certificateOfTenure = getCleanCertificateOfTenure(application)
+    await this.workMachineClientService
+      .machineLicenseTeachingApplication(auth, {
+        xCorrelationID: application.id,
+        machineLicenseTeachingApplicationCreateDto: {
+          applicant,
+          company,
+          machineRegistrationNumber:
+            certificateOfTenure.machineRegistrationNumber,
+          licenseCategoryPrefix: certificateOfTenure.licenseCategoryPrefix,
+          machineType: certificateOfTenure.machineType,
+          dateWorkedOnMachineFrom: certificateOfTenure.dateWorkedOnMachineFrom,
+          dateWorkedOnMachineTo: certificateOfTenure.dateWorkedOnMachineTo,
+          hoursWorkedOnMachine: certificateOfTenure.hoursWorkedOnMachine,
+        },
+      })
+      .catch((error) => {
+        this.logger.error(
+          '[training-license-on-a-work-machine-service]: Error submitting application to AOSH',
+          error,
+        )
+        throw Error('Error submitting application to AOSH')
+      })
   }
 }

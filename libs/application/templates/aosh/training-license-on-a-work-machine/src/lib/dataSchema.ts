@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidEmail, isValidPhoneNumber } from '../utils'
-import { YES } from '@island.is/application/types'
 import { certificateOfTenure } from './messages'
+import { YES } from '@island.is/application/core'
 
 const InformationSchema = z.object({
   nationalId: z
@@ -30,8 +30,10 @@ export const CertificateOfTenureSchema = z.object({
       params: certificateOfTenure.labels.tenureInHoursError,
     },
   ),
+  licenseCategoryPrefix: z.string().optional(),
   unknownMachineType: z.boolean().optional(),
   unknownPracticalRight: z.boolean().optional(),
+  alreadyHaveTrainingLicense: z.boolean().optional(),
 })
 
 const AssigneeInformationSchema = z

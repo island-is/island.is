@@ -4,8 +4,16 @@ import {
   buildSection,
   buildDateField,
   buildCustomField,
+  buildAlertMessageField,
+  getValueViaPath,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { certificateOfTenure } from '../../lib/messages'
+import {
+  alreadyHaveTrainingLicense,
+  isUnknownMachineType,
+  isUnknownPracticalRight,
+} from '../../utils'
 
 export const certificateOfTenureSection = buildSection({
   id: 'certificateOfTenureSection',
@@ -20,47 +28,71 @@ export const certificateOfTenureSection = buildSection({
           id: 'certificateOfTenure.machineNumber',
           title: certificateOfTenure.labels.machineNumber,
           width: 'half',
+          required: true,
           clearOnChange: [
             'certificateOfTenure.machineType',
             'certificateOfTenure.practicalRight',
           ],
         }),
-        buildTextField({
+        buildCustomField({
           id: 'certificateOfTenure.machineType',
-          title: certificateOfTenure.labels.machineType,
+          title: '',
           width: 'half',
-          readOnly: true,
-          defaultValue: () => 'temp',
+          component: 'SetAnswersForCertificateOfTenure',
         }),
         buildTextField({
           id: 'certificateOfTenure.practicalRight',
           title: certificateOfTenure.labels.practicalRight,
           readOnly: true,
-          defaultValue: () => 'temp2',
+          required: true,
         }),
-        buildCustomField({
-          id: 'certificateOfTenure.SetAnswersForCertificateOfTenure',
+        buildAlertMessageField({
+          id: 'certificateOfTenure.unknownPracticalRight',
           title: '',
-          component: 'SetAnswersForCertificateOfTenure',
+          message: certificateOfTenure.labels.unknownPracticalRight,
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers) => isUnknownPracticalRight(answers),
         }),
-        // TODO: Add alertMessage here
+        buildAlertMessageField({
+          id: 'certificateOfTenure.unknownMachineType',
+          title: '',
+          message: certificateOfTenure.labels.unknownMachineType,
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers) => isUnknownMachineType(answers),
+        }),
+        buildAlertMessageField({
+          id: 'certificateOfTenure.alreadyHaveTrainingLicense',
+          title: '',
+          message: certificateOfTenure.labels.alreadyHaveTrainingLicense,
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers) => alreadyHaveTrainingLicense(answers),
+        }),
         buildDateField({
           id: 'certificateOfTenure.dateFrom',
           title: certificateOfTenure.labels.dateFrom,
           width: 'half',
+          required: true,
           placeholder: certificateOfTenure.labels.datePlaceholder,
         }),
         buildDateField({
           id: 'certificateOfTenure.dateTo',
           title: certificateOfTenure.labels.dateTo,
           width: 'half',
+          required: true,
           placeholder: certificateOfTenure.labels.datePlaceholder,
         }),
         buildTextField({
           id: 'certificateOfTenure.tenureInHours',
           title: certificateOfTenure.labels.tenureInHours,
           width: 'half',
+          required: true,
           variant: 'number',
+        }),
+        buildHiddenInput({
+          id: 'certificateOfTenure.licenseCategoryPrefix',
         }),
       ],
     }),

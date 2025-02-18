@@ -82,5 +82,22 @@ export const certificateOfTenure = {
       defaultMessage: 'Starfstími þarf að hafa náð 1000 klst.',
       description: 'Certificate of tenure tenure in hours error message',
     },
+    unknownPracticalRight: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.unknownPracticalRight',
+      defaultMessage:
+        'Vinnuvélanúmerið sem þú skráðir passar ekki. Öll vinnuvélanúmer byrja á tveimur bókstöfum og þurfa að byrja á bókstöfunum  A,B,G eða Z. Dæmi um vinnuvélanúmer er AB9999.',
+      description: 'Certificate of tenure unknown practical right label',
+    },
+    unknownMachineType: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.unknownMachineType',
+      defaultMessage:
+        'Ekki finnst tegund vélar út frá innskráðu vinnuvélanúmeri.',
+      description: 'Certificate of tenure unknown machine type label',
+    },
+    alreadyHaveTrainingLicense: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.alreadyHaveTrainingLicense',
+      defaultMessage: 'Þú ert nú þegar með kennsluréttindi á þessa vél.',
+      description: 'Certificate of tenure already have training license label',
+    },
   }),
 }

@@ -65,17 +65,18 @@ export const overview = {
   confirmationModal: defineMessages({
     title: {
       id: 'aosh.tlwm.application:overview.confirmationModal.title',
-      defaultMessage: 'Hafna tilkynningu',
+      defaultMessage: 'Hafna staðfestingu',
       description: 'Confirmation modal reject title',
     },
     text: {
       id: 'aosh.tlwm.application:overview.confirmationModal.text',
-      defaultMessage: 'Þú ert að fara að hafna tilkynningu.',
+      defaultMessage:
+        'Þú ert að fara að hafna staðfestingu um starfstíma á vinnuvél.',
       description: 'Confirmation modal reject text',
     },
     buttonText: {
       id: 'aosh.tlwm.application:overview.confirmationModal.buttonText',
-      defaultMessage: 'Hafna tilkynningu',
+      defaultMessage: 'Hafna',
       description: 'Confirmation modal reject button',
     },
     cancelButton: {

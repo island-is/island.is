@@ -29,7 +29,7 @@ export const Overview: FC<
 > = ({ ...props }) => {
   const { application, goToScreen, field } = props
   const { hideActionButtons } = field.props
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
@@ -84,6 +84,8 @@ export const Overview: FC<
             label: '',
             value: getMachineTenureInformation(
               application.answers,
+              application.externalData,
+              lang,
               formatMessage,
             ),
           }}

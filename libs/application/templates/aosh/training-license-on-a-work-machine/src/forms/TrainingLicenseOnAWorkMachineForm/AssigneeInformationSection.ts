@@ -5,7 +5,6 @@ import {
   YES,
   buildNationalIdWithNameField,
   buildAlertMessageField,
-  getValueViaPath,
   buildCustomField,
 } from '@island.is/application/core'
 import { assigneeInformation } from '../../lib/messages'

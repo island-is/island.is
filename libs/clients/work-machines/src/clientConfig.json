@@ -2127,6 +2127,10 @@
             "type": "string",
             "nullable": true
           },
+          "categoryNameEn": {
+            "type": "string",
+            "nullable": true
+          },
           "categoryPrefix": {
             "type": "string",
             "nullable": true

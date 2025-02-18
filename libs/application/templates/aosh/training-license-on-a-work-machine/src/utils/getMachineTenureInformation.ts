@@ -1,12 +1,19 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormatMessage,
+  FormValue,
+} from '@island.is/application/types'
 import { assigneeInformation, certificateOfTenure } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './formatPhoneNumber'
 import { formatDate } from './formatDate'
+import { MachineLicenseCategoryDto } from '@island.is/clients/work-machines'
 
 export const getMachineTenureInformation = (
   answers: FormValue,
+  externalData: ExternalData,
+  lang: 'en' | 'is',
   formatMessage: FormatMessage,
 ) => {
   const machineNumber = getValueViaPath<string>(
@@ -26,12 +33,30 @@ export const getMachineTenureInformation = (
     answers,
     'certificateOfTenure.tenureInHours',
   )
+  const licenseCategoryPrefix = getValueViaPath<string>(
+    answers,
+    'certificateOfTenure.licenseCategoryPrefix',
+  )
+  const licenseCategories = getValueViaPath<MachineLicenseCategoryDto[]>(
+    externalData,
+    'licenses.data.licenseCategories',
+    [],
+  )
+  const licenseCategory = licenseCategories?.find(
+    (category) => category.categoryPrefix === licenseCategoryPrefix,
+  )
+  console.log(licenseCategoryPrefix, licenseCategories, licenseCategory)
 
   return [
     `${formatMessage(
       certificateOfTenure.labels.machineNumber,
     )}: ${machineNumber}`,
     `${formatMessage(certificateOfTenure.labels.machineType)}: ${machineType}`,
+    `${formatMessage(certificateOfTenure.labels.practicalRight)}: ${
+      lang === 'is'
+        ? licenseCategory?.categoryName
+        : licenseCategory?.categoryNameEn
+    }`,
     `${formatMessage(
       certificateOfTenure.labels.tenureInHours,
     )}: ${tenureInHours}`,

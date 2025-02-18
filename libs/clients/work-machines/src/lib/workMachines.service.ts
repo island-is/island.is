@@ -2,6 +2,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   ApiLicenseGetRequest,
+  ApiMachineLicenseTeachingApplicationPostRequest,
   ApiMachineModelsGetRequest,
   ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
@@ -18,6 +19,7 @@ import {
   MachineCategoryApi,
   MachineHateoasDto,
   MachineInspectionRequestCreateDto,
+  MachineLicenseTeachingApplicationApi,
   MachineModelDto,
   MachineModelsApi,
   MachineOwnerChangeApi,
@@ -72,6 +74,7 @@ export class WorkMachinesClientService {
     private readonly machineSubCategoriesApi: MachineSubCategoriesApi,
     private readonly technicalInfoApi: TechnicalInfoApi,
     private readonly licenseApi: LicenseApi,
+    private readonly machineLicenseTeachingApplicationApi: MachineLicenseTeachingApplicationApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -132,6 +135,12 @@ export class WorkMachinesClientService {
 
   private licenseApiWithAuth(auth: Auth) {
     return this.licenseApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineLicenseTeachingApplicationApiWithAuth(auth: Auth) {
+    return this.machineLicenseTeachingApplicationApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   getWorkMachines = async (
@@ -381,5 +390,15 @@ export class WorkMachinesClientService {
     return await this.machineTypesApiWithAuth(
       auth,
     ).apiMachineTypesTypeByRegistrationNumberGet(requestParameters)
+  }
+
+  async machineLicenseTeachingApplication(
+    auth: Auth,
+    requestParameters: ApiMachineLicenseTeachingApplicationPostRequest,
+  ) {
+    console.log('requestParameters', requestParameters)
+    return await this.machineLicenseTeachingApplicationApiWithAuth(
+      auth,
+    ).apiMachineLicenseTeachingApplicationPost(requestParameters)
   }
 }

@@ -1,11 +1,14 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect } from 'react'
-import { isContractor, isSameAsApplicant } from '../../utils'
-import { getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { MachineLicenseCategoryDto } from '@island.is/clients/work-machines'
 import { useFormContext } from 'react-hook-form'
 import { gql, useLazyQuery } from '@apollo/client'
 import { MACHINE_TYPE_BY_REGISTRATION_NUMBER } from '../../graphql/queries'
+import { Box } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { certificateOfTenure } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 export const machineTypeByRegistrationNumber = gql`
   ${MACHINE_TYPE_BY_REGISTRATION_NUMBER}
@@ -14,7 +17,8 @@ export const machineTypeByRegistrationNumber = gql`
 export const SetAnswersForCertificateOfTenure: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ ...props }) => {
-  const { application } = props
+  const { application, field, errors } = props
+  const { formatMessage, lang } = useLocale()
   const { watch, setValue } = useFormContext()
   const watchMachineNumber = watch(
     'certificateOfTenure.machineNumber',
@@ -24,35 +28,30 @@ export const SetAnswersForCertificateOfTenure: FC<
     'licenses.data.licenseCategories',
     [],
   )
-  const bla = 0
-  console.log(watchMachineNumber)
 
   const [runQuery, { loading }] = useLazyQuery(
     machineTypeByRegistrationNumber,
     {
       onCompleted: (data) => {
-        console.log(data)
-        // If machine type, setvalue for machine type
         if (data?.getTypeByRegistrationNumber) {
           setValue(
             'certificateOfTenure.machineType',
             data.getTypeByRegistrationNumber.name,
           )
         } else {
-          // If no machine type, then error message
           setValue('certificateOfTenure.unknownMachineType', true)
         }
       },
-      onError: (error) => {
-        console.log(error)
-        // If has no machine type, then error message
+      onError: () => {
         setValue('certificateOfTenure.unknownMachineType', true)
       },
     },
   )
 
   useEffect(() => {
-    console.log('hello')
+    setValue('certificateOfTenure.unknownPracticalRight', false)
+    setValue('certificateOfTenure.unknownMachineType', false)
+    setValue('certificateOfTenure.alreadyHaveTrainingLicense', false)
     const selectedCategory =
       watchMachineNumber && watchMachineNumber.length > 0
         ? licenseCategories?.find(
@@ -68,22 +67,49 @@ export const SetAnswersForCertificateOfTenure: FC<
     ) {
       setValue(
         'certificateOfTenure.practicalRight',
-        `${selectedCategory.categoryPrefix} - ${selectedCategory.categoryName}`,
+        `${selectedCategory.categoryPrefix} - ${
+          lang === 'is'
+            ? selectedCategory.categoryName
+            : selectedCategory.categoryNameEn
+        }`,
       )
-      // TODO: We have to call for machine type
+      setValue(
+        'certificateOfTenure.licenseCategoryPrefix',
+        selectedCategory.categoryPrefix,
+      )
       runQuery({
         variables: {
           registrationNumber: watchMachineNumber,
           applicationId: application.id,
         },
       })
-    } else if (selectedCategory && selectedCategory.hasInstructorLicense) {
-      // An error message
-      // Clear practicalRight and machineType values
-    } else {
-      // If no selected value clear values and show error message
+    } else if (
+      watchMachineNumber &&
+      watchMachineNumber.length > 5 &&
+      selectedCategory &&
+      selectedCategory.hasInstructorLicense
+    ) {
+      setValue('certificateOfTenure.alreadyHaveTrainingLicense', true)
+    } else if (
+      watchMachineNumber &&
+      watchMachineNumber.length > 5 &&
+      !selectedCategory
+    ) {
+      setValue('certificateOfTenure.unknownPracticalRight', true)
     }
   }, [watchMachineNumber])
 
-  return <></>
+  return (
+    <Box paddingTop={2}>
+      <InputController
+        id={field.id}
+        label={formatMessage(certificateOfTenure.labels.machineType)}
+        backgroundColor="blue"
+        required
+        readOnly
+        loading={loading}
+        error={errors && getErrorViaPath(errors, field.id)}
+      />
+    </Box>
+  )
 }
