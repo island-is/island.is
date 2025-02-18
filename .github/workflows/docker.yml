@@ -302,8 +302,8 @@ jobs:
           app_home="$(
             git ls-files --error-unmatch '**/project.json' |
             xargs cat |
-            jq -re --arg project "$app_name" 'select( .name == $project ) | .sourceRoot' |
-            sed 's;/src;;'
+            # Some projects don't have `.sourceRoot`, and some have trailing whitespace in `.sourceRoot`
+            jq -sre --arg project "$app_name" '.[] | select(.name == $project and .sourceRoot) | .sourceRoot | sub("/src ?"; "")'
           )"
           # Multi-line output
           echo "build-args<<EOF" | tee -a "$GITHUB_OUTPUT"
