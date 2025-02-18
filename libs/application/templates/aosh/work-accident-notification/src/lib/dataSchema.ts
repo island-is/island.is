@@ -71,7 +71,7 @@ const companySchema = z
     phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
   })
   .superRefine((data, ctx) => {
-    // Validating that both address/postnumber are input or netiher
+    // Validating that both address/postnumber are input or neither
     const hasAddress =
       data.addressOfBranch && data.addressOfBranch.trim() !== ''
     const hasPostnumber = data.postnumberOfBranch
