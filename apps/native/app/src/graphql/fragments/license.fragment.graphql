@@ -8,11 +8,17 @@ fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
     name
     label
     value
+    link {
+      type
+    }
     fields {
       type
       name
       label
       value
+      link {
+        type
+      }
     }
   }
 }
@@ -43,6 +49,7 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
       licenseNumber
       expired
       expireDate
+      expiryStatus
       name
       subtitle
       displayTag {

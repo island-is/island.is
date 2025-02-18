@@ -413,8 +413,6 @@ export const is = {
     'Of stutt síðan skírteini var sótt á öðru tæki',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
-  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
-  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
   // wallet passport
@@ -425,14 +423,8 @@ export const is = {
   'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
   'walletPassport.warningDescription':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
-  'walletPassport.displayName': 'Nafn einstaklings',
-  'walletPassport.number': 'Númer vegabréfs',
-  'walletPassport.issuingDate': 'Útgáfudagur',
-  'walletPassport.expirationDate': 'Lokadagur',
-  'walletPassport.mrzName': 'Nafn á tölvulesanlegu formi',
-  'walletPassport.children': 'Vegabréf barna',
-  'walletPassport.noPassport': 'Ekki til útgefið vegabréf.',
-  'walletPassport.noPassportLink': 'Nánar á island.is/vegabref',
+  'walletPassport.noPassport': 'Engin gild vegabréf',
+  'walletPassport.noPassportLink': 'Sækja um',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',

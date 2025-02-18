@@ -1,38 +1,40 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ViewStyle } from 'react-native'
+import { Image, TouchableOpacity, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
-import { font } from '../../utils/font'
+import Clipboard from '@react-native-clipboard/clipboard'
+
 import { Skeleton } from '../skeleton/skeleton'
+import { Typography } from '../typography/typography'
+import {
+  GenericUserLicenseMetaLinks,
+  GenericUserLicenseMetaLinksType,
+} from '../../../graphql/types/schema'
+import copyIcon from '../../../ui/assets/icons/copy.png'
 
 const Host = styled.View<{ compact?: boolean }>`
   ${(props) => (props.compact ? 'width: 50%;' : 'flex: 1;')}
 `
 
 const Content = styled.View`
-  padding-bottom: 20px;
+  padding-bottom: ${({ theme }) => theme.spacing[3]}px;
 `
 
-const Label = styled.Text`
-  ${font({
-    fontSize: 13,
-    lineHeight: 17,
-  })}
-
+const Label = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Value = styled.Text<{ size?: 'large' | 'small' }>`
-  margin-right: ${({ theme }) => theme.spacing[2]}px;
-  ${font({
-    fontWeight: '600',
-    fontSize: (props) => (props.size === 'large' ? 20 : 16),
-  })}
+const Value = styled(Typography)``
+
+const ValueWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
 `
 
 interface FieldProps {
   label?: string | null
   value?: string | null
+  link?: GenericUserLicenseMetaLinks | null
   loading?: boolean
   compact?: boolean
   size?: 'large' | 'small'
@@ -46,6 +48,7 @@ export function Field({
   label,
   value,
   loading,
+  link,
   compact,
   size = 'small',
   style,
@@ -66,8 +69,28 @@ export function Field({
   return (
     <Host compact={compact} style={style}>
       <Content>
-        <Label>{label}</Label>
-        {loading ? <Skeleton active /> : <Value size={size}>{val}</Value>}
+        <Label variant={'body3'}>{label}</Label>
+        <ValueWrapper>
+          {loading ? (
+            <Skeleton active />
+          ) : (
+            <Value variant={size === 'large' ? 'heading4' : 'heading5'}>
+              {val}
+            </Value>
+          )}
+          {link?.type === GenericUserLicenseMetaLinksType.Copy && (
+            <TouchableOpacity
+              onPress={() => Clipboard.setString(value ?? '')}
+              style={{ marginLeft: 4 }}
+            >
+              <Image
+                source={copyIcon}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          )}
+        </ValueWrapper>
       </Content>
     </Host>
   )

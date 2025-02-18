@@ -1,36 +1,16 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import {
-  ActivityIndicator,
-  Image,
-  Platform,
-  SafeAreaView,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { ActivityIndicator, Platform, SafeAreaView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
-import {
-  Accordion,
-  AccordionItem,
-  Alert,
-  CustomLicenseType,
-  dynamicColor,
-  font,
-  LicenseCard,
-  LinkText,
-  theme,
-} from '../../ui'
-import IconStatusVerified from '../../assets/icons/valid.png'
-import IconStatusNonVerified from '../../assets/icons/warning.png'
+import { Alert, dynamicColor, LicenseCard, theme } from '../../ui'
 import {
   GenericLicenseType,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { useBrowser } from '../../lib/use-browser'
 import { useLocale } from '../../hooks/use-locale'
 import { FieldRender } from '../wallet-pass/components/field-render'
 
@@ -48,15 +28,6 @@ const Information = styled.ScrollView`
 `
 const Spacer = styled.View`
   height: 150px;
-`
-
-const Label = styled.Text`
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontSize: 13,
-    lineHeight: 17,
-  })}
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -86,10 +57,9 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 }> = ({ id, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
-  const { openBrowser } = useBrowser()
 
   const intl = useIntl()
-  const { data, loading, error } = useListLicensesQuery({
+  const { data, loading } = useListLicensesQuery({
     variables: {
       input: {
         includedTypes: [GenericLicenseType.Passport],
@@ -104,12 +74,9 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
       (passport) => passport.payload?.metadata?.licenseNumber === id,
     ) || null
 
-  const childrenPassport =
-    passportData?.filter((passport) => passport.isOwnerChildOfUser) ?? []
-
   const isInvalid = item?.payload?.metadata?.expired
   const expireDate = item?.payload?.metadata?.expireDate
-  const expireWarning = false //!!item?.expiresWithinNoticeTime
+  const expireWarning = item?.payload?.metadata?.expiryStatus === 'EXPIRING'
 
   if (!item) return null
 
@@ -139,7 +106,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
             <View
               style={{
                 paddingTop: theme.spacing[2],
-                paddingHorizontal: theme.spacing[2],
                 paddingBottom: 10,
               }}
             >
@@ -168,81 +134,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               licenseType={GenericLicenseType.Passport}
             />
           ) : null}
-
-          {childrenPassport?.length > 0 ? (
-            <View style={{ marginTop: theme.spacing[3] }}>
-              <Label>
-                {intl.formatMessage({ id: 'walletPassport.children' })}
-              </Label>
-              <Accordion>
-                {childrenPassport?.map((child, index) => {
-                  const isInvalid = child.payload?.metadata?.expired
-                  const childName = child.payload?.data?.find(
-                    (field) => field.label === 'Nafn einstaklings',
-                  )?.value
-                  const fieldsWithoutName = child.payload?.data?.filter(
-                    (field) => field.label !== 'Nafn einstaklings',
-                  )
-                  const noPassport = child?.payload?.data?.length === 0
-                  return (
-                    <AccordionItem
-                      key={index}
-                      title={childName ?? '-'}
-                      icon={
-                        <Image
-                          source={
-                            isInvalid
-                              ? IconStatusNonVerified
-                              : IconStatusVerified
-                          }
-                          style={{ width: 24, height: 24 }}
-                          resizeMode="contain"
-                        />
-                      }
-                    >
-                      <View style={{ paddingHorizontal: theme.spacing[2] }}>
-                        {noPassport ? (
-                          <View
-                            style={{
-                              marginVertical: 16,
-                              paddingHorizontal: 16,
-                            }}
-                          >
-                            <Label>
-                              {intl.formatMessage({
-                                id: 'walletPassport.noPassport',
-                              })}
-                            </Label>
-                            <TouchableOpacity
-                              style={{ flexWrap: 'wrap' }}
-                              onPress={() =>
-                                openBrowser(
-                                  `https://island.is/vegabref`,
-                                  componentId,
-                                )
-                              }
-                            >
-                              <LinkText>
-                                {intl.formatMessage({
-                                  id: 'walletPassport.noPassportLink',
-                                })}
-                              </LinkText>
-                            </TouchableOpacity>
-                          </View>
-                        ) : (
-                          <FieldRender
-                            data={fieldsWithoutName}
-                            licenseType={GenericLicenseType.Passport}
-                            compact={true}
-                          />
-                        )}
-                      </View>
-                    </AccordionItem>
-                  )
-                })}
-              </Accordion>
-            </View>
-          ) : null}
         </SafeAreaView>
         {Platform.OS === 'android' && <Spacer />}
       </Information>
@@ -258,8 +149,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
         }}
       >
         <LicenseCard
-          nativeID={`license-${CustomLicenseType.Passport}_destination`}
-          type={CustomLicenseType.Passport}
+          nativeID={`license-${GenericLicenseType.Passport}_destination`}
+          type={GenericLicenseType.Passport}
           date={expireDate ? new Date(expireDate) : undefined}
           status={isInvalid ? 'NOT_VALID' : 'VALID'}
         />
