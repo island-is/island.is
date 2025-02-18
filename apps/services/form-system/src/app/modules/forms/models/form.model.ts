@@ -11,12 +11,11 @@ import {
 } from 'sequelize-typescript'
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
-import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
-import { FormStatus } from '../../../enums/formStatus'
+import { Dependency, LanguageType } from '@island.is/form-system-dataTypes'
+import { FormStatus } from '@island.is/form-system-enums'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {

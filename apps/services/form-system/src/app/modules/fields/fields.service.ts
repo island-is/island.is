@@ -1,15 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { CreateFieldDto } from './models/dto/createField.dto'
-import { FieldDto } from './models/dto/field.dto'
-import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { Field } from './models/field.model'
-import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
-import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import {
+  CreateFieldDto,
+  FieldDto,
+  UpdateFieldDto,
+  UpdateFieldsDisplayOrderDto,
+} from '@island.is/form-system-dto'
+import {
+  FieldSettings,
+  FieldSettingsFactory,
+} from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class FieldsService {

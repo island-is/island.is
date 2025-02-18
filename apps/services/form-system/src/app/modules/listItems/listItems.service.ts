@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ListItem } from './models/listItem.model'
-import { ListItemDto } from './models/dto/listItem.dto'
-import { CreateListItemDto } from './models/dto/createListItem.dto'
-import { UpdateListItemDto } from './models/dto/updateListItem.dto'
-import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import {
+  CreateListItemDto,
+  ListItemDto,
+  UpdateListItemDto,
+  UpdateListItemsDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class ListItemsService {

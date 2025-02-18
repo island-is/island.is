@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Screen } from './models/screen.model'
 import { InjectModel } from '@nestjs/sequelize'
-import { CreateScreenDto } from './models/dto/createScreen.dto'
-import { UpdateScreenDto } from './models/dto/updateScreen.dto'
-import { ScreenDto } from './models/dto/screen.dto'
-import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayOrder.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import {
+  CreateScreenDto,
+  ScreenDto,
+  UpdateScreenDto,
+  UpdateScreensDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class ScreensService {

@@ -7,10 +7,12 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
 import { CreationOptional } from 'sequelize'
-import { ApplicantTypesEnum } from '../../../dataTypes/applicantTypes/applicantTypes.enum'
+import {
+  ApplicantTypesEnum,
+  LanguageType,
+} from '@island.is/form-system-dataTypes'
 
 @Table({ tableName: 'form_applicant_type' })
 export class FormApplicantType extends Model<FormApplicantType> {

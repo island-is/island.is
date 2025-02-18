@@ -4,11 +4,12 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { OrganizationUrl } from './models/organizationUrl.model'
-import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto'
-import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
-import { UrlTypes } from '../../enums/urlTypes'
-import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
-import { UrlMethods } from '../../enums/urlMethods'
+import {
+  CreateOrganizationUrlDto,
+  OrganizationUrlDto,
+  UpdateOrganizationUrlDto,
+} from '@island.is/form-system-dto'
+import { UrlMethods, UrlTypes } from '@island.is/form-system-enums'
 
 @Injectable()
 export class OrganizationUrlsService {

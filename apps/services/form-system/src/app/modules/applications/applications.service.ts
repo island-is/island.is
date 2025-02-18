@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { Application } from './models/application.model'
-import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
 import { Section } from '../sections/models/section.model'
 import { ListItem } from '../listItems/models/listItem.model'
@@ -10,23 +9,30 @@ import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from './models/value.model'
-import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
-import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { CreateApplicationDto } from './models/dto/createApplication.dto'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { ApplicationStatus } from '../../enums/applicationStatus'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ApplicationEvent } from './models/applicationEvent.model'
-import { ApplicationEvents } from '../../enums/applicationEvents'
-import { ApplicationListDto } from './models/dto/applicationList.dto'
-import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
-import { ApplicantTypesEnum } from '../../dataTypes/applicantTypes/applicantTypes.enum'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import {
+  ApplicationDto,
+  ApplicationListDto,
+  CreateApplicationDto,
+  UpdateApplicationDto,
+} from '@island.is/form-system-dto'
+import {
+  ApplicationEvents,
+  ApplicationStatus,
+} from '@island.is/form-system-enums'
+import {
+  ApplicantTypesEnum,
+  FieldTypesEnum,
+  ScreenValidationResponse,
+  ValueType,
+  ValueTypeFactory,
+} from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class ApplicationsService {

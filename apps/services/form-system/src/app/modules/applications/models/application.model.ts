@@ -10,11 +10,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
-import { Dependency } from '../../../dataTypes/dependency.model'
 import { ApplicationEvent } from './applicationEvent.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Value } from './value.model'
-import { ApplicationStatus } from '../../../enums/applicationStatus'
+import { Dependency } from '@island.is/form-system-dataTypes'
+import { ApplicationStatus } from '@island.is/form-system-enums'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {

@@ -9,7 +9,6 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { FieldsService } from './fields.service'
-import { CreateFieldDto } from './models/dto/createField.dto'
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -18,11 +17,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { UpdateFieldDto } from './models/dto/updateField.dto'
-import { FieldDto } from './models/dto/field.dto'
-import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  CreateFieldDto,
+  FieldDto,
+  UpdateFieldDto,
+  UpdateFieldsDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

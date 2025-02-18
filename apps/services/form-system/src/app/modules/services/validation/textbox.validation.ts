@@ -1,6 +1,6 @@
+import { FieldValidation } from '@island.is/form-system-dataTypes'
+import { FieldDto } from '@island.is/form-system-dto'
 import { BadRequestException } from '@nestjs/common'
-import { FieldDto } from '../../fields/models/dto/field.dto'
-import { FieldValidation } from '../../../dataTypes/validationResponse.model'
 
 export class TextboxValidation {
   static validate(field: FieldDto): FieldValidation {

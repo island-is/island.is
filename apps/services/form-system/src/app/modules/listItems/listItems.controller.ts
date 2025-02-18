@@ -17,12 +17,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ListItemsService } from './listItems.service'
-import { CreateListItemDto } from './models/dto/createListItem.dto'
-import { ListItemDto } from './models/dto/listItem.dto'
-import { UpdateListItemDto } from './models/dto/updateListItem.dto'
-import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  CreateListItemDto,
+  ListItemDto,
+  UpdateListItemDto,
+  UpdateListItemsDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

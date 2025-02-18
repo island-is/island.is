@@ -17,11 +17,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { OrganizationUrlsService } from './organizationUrls.service'
-import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
-import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto'
-import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  CreateOrganizationUrlDto,
+  OrganizationUrlDto,
+  UpdateOrganizationUrlDto,
+} from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

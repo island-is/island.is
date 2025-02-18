@@ -7,9 +7,9 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional } from 'sequelize'
 import { Field } from '../../fields/models/field.model'
+import { LanguageType } from '@island.is/form-system-dataTypes'
 
 @Table({ tableName: 'list_item' })
 export class ListItem extends Model<ListItem> {

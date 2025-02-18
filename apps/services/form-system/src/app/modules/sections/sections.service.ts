@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Section } from './models/section.model'
-import { CreateSectionDto } from './models/dto/createSection.dto'
-import { UpdateSectionDto } from './models/dto/updateSection.dto'
-import { SectionDto } from './models/dto/section.dto'
-import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import {
+  CreateSectionDto,
+  SectionDto,
+  UpdateSectionDto,
+  UpdateSectionsDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class SectionsService {

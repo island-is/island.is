@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-import { ListTypesEnum } from '../../../dataTypes/listTypes/listTypes.enum'
+import { ListTypesEnum } from '@island.is/form-system-dataTypes'
 
 @Table({ tableName: 'organization_list_type' })
 export class OrganizationListType extends Model<OrganizationListType> {

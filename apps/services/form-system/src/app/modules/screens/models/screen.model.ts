@@ -11,7 +11,7 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { CreationOptional } from 'sequelize'
 import { Field } from '../../fields/models/field.model'
-import { LanguageType } from '../../../dataTypes/languageType.model'
+import { LanguageType } from '@island.is/form-system-dataTypes'
 
 @Table({ tableName: 'screen' })
 export class Screen extends Model<Screen> {

@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormApplicantType } from './models/formApplicantType.model'
-import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
-import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
-import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
-import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
+import {
+  CreateFormApplicantTypeDto,
+  FormApplicantTypeDto,
+  UpdateFormApplicantTypeDto,
+} from '@island.is/form-system-dto'
+import { ApplicantTypes } from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class FormApplicantTypesService {

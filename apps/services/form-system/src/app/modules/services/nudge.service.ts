@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { ApplicationEvent } from '../applications/models/applicationEvent.model'
-import { ApplicationEvents } from '../../enums/applicationEvents'
+import { ApplicationDto } from '@island.is/form-system-dto'
+import { ApplicationEvents } from '@island.is/form-system-enums'
 
 @Injectable()
 export class NudgeService {

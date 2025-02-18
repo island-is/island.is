@@ -10,11 +10,13 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Screen } from '../../screens/models/screen.model'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Value } from '../../applications/models/value.model'
-import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItem } from '../../listItems/models/listItem.model'
-import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
+import {
+  FieldSettings,
+  FieldTypesEnum,
+  LanguageType,
+} from '@island.is/form-system-dataTypes'
 
 @Table({ tableName: 'field' })
 export class Field extends Model<Field> {

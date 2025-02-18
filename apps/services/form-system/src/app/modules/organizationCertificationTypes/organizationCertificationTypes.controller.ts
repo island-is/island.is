@@ -16,10 +16,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { OrganizationCertificationTypesService } from './organizationCertificationTypes.service'
-import { OrganizationCertificationTypeDto } from './models/dto/organizationCertificationType.dto'
-import { CreateOrganizationCertificationTypeDto } from './models/dto/createOrganizationCertificationType.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  CreateOrganizationCertificationTypeDto,
+  OrganizationCertificationTypeDto,
+} from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystemSuperUser)

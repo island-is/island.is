@@ -9,10 +9,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { LanguageType } from '../../../dataTypes/languageType.model'
-import { SectionTypes } from '../../../enums/sectionTypes'
 import { Form } from '../../forms/models/form.model'
 import { Screen } from '../../screens/models/screen.model'
+import { LanguageType } from '@island.is/form-system-dataTypes'
+import { SectionTypes } from '@island.is/form-system-enums'
 
 @Table({ tableName: 'section' })
 export class Section extends Model<Section> {

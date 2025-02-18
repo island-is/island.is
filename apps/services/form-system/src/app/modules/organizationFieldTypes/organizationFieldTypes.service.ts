@@ -4,9 +4,11 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { OrganizationFieldType } from './models/organizationFieldType.model'
-import { CreateOrganizationFieldTypeDto } from './models/dto/createOrganizationFieldType.dto'
-import { OrganizationFieldTypeDto } from './models/dto/organizationFieldType.dto'
-import { FieldTypes } from '../../dataTypes/fieldTypes/fieldType.model'
+import {
+  CreateOrganizationFieldTypeDto,
+  OrganizationFieldTypeDto,
+} from '@island.is/form-system-dto'
+import { FieldTypes } from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class OrganizationFieldTypesService {

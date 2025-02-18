@@ -8,12 +8,12 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
 import { OrganizationCertificationType } from '../../organizationCertificationTypes/models/organizationCertificationType.model'
 import { OrganizationFieldType } from '../../organizationFieldTypes/models/organizationFieldType.model'
 import { OrganizationListType } from '../../organizationListTypes/models/organizationListType.model'
 import { OrganizationUrl } from '../../organizationUrls/models/organizationUrl.model'
+import { LanguageType } from '@island.is/form-system-dataTypes'
 
 @Table({ tableName: 'organization' })
 export class Organization extends Model<Organization> {

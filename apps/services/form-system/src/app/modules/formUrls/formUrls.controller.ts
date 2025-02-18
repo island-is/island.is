@@ -16,10 +16,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { FormUrlsService } from './formUrls.services'
-import { FormUrlDto } from './models/dto/formUrl.dto'
-import { CreateFormUrlDto } from './models/dto/createFormUrl.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { CreateFormUrlDto, FormUrlDto } from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

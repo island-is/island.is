@@ -19,8 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { FormsService } from './forms.service'
-import { FormResponseDto } from './models/dto/form.response.dto'
-import { UpdateFormDto } from './models/dto/updateForm.dto'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -29,6 +27,7 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { FormResponseDto, UpdateFormDto } from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

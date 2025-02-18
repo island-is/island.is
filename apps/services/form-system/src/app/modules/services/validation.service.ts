@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
+import { TextboxValidation } from './validation/textbox.validation'
+import { FieldDto, ScreenDto } from '@island.is/form-system-dto'
 import {
+  FieldTypesEnum,
   FieldValidation,
   ScreenValidationResponse,
-} from '../../dataTypes/validationResponse.model'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
-import { TextboxValidation } from './validation/textbox.validation'
-import { FieldDto } from '../fields/models/dto/field.dto'
+} from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class ValidationService {

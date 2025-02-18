@@ -19,11 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
-import { ApplicationDto } from './models/dto/application.dto'
-import { CreateApplicationDto } from './models/dto/createApplication.dto'
-import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { ApplicationListDto } from './models/dto/applicationList.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -32,6 +27,13 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import {
+  ApplicationDto,
+  ApplicationListDto,
+  CreateApplicationDto,
+  UpdateApplicationDto,
+} from '@island.is/form-system-dto'
+import { ScreenValidationResponse } from '@island.is/form-system-dataTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)

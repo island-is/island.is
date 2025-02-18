@@ -1,6 +1,5 @@
+import { FieldSettings, ValueType } from '@island.is/form-system-dataTypes'
 import { BadRequestException } from '@nestjs/common'
-import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
-import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 
 export class NumberboxValidation {
   static validate(

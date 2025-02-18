@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormUrl } from './models/formUrl.model'
-import { CreateFormUrlDto } from './models/dto/createFormUrl.dto'
-import { FormUrlDto } from './models/dto/formUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
+import { CreateFormUrlDto, FormUrlDto } from '@island.is/form-system-dto'
 
 @Injectable()
 export class FormUrlsService {

@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { Form } from '../../forms/models/form.model'
-import { ApplicationDto } from './dto/application.dto'
 import { Application } from './application.model'
-import { FieldDto } from '../../fields/models/dto/field.dto'
-import { ScreenDto } from '../../screens/models/dto/screen.dto'
-import { SectionDto } from '../../sections/models/dto/section.dto'
-import { Dependency } from '../../../dataTypes/dependency.model'
-import { ValueDto } from './dto/value.dto'
 import { ListItem } from '../../listItems/models/listItem.model'
-import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
+import {
+  ApplicationDto,
+  FieldDto,
+  ListItemDto,
+  ScreenDto,
+  SectionDto,
+  ValueDto,
+} from '@island.is/form-system-dto'
+import { Dependency } from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class ApplicationMapper {

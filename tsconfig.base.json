@@ -896,6 +896,13 @@
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
       "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
+      "@island.is/form-system-dataTypes": [
+        "libs/form-system/src/lib/dataTypes/index.ts"
+      ],
+      "@island.is/form-system-dto": ["libs/form-system/src/lib/dto/index.ts"],
+      "@island.is/form-system-enums": [
+        "libs/form-system/src/lib/enums/index.ts"
+      ],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -1143,7 +1150,9 @@
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "form-system": ["libs/form-system/src/index.ts"],
+      "form-system/server": ["libs/form-system/src/server.ts"]
     }
   }
 }

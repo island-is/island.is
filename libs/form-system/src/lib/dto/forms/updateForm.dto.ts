@@ -1,0 +1,68 @@
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
+import { Type } from 'class-transformer'
+import { Dependency, LanguageType } from '@island.is/form-system-dataTypes'
+
+export class UpdateFormDto {
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  organizationId?: string
+
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @IsOptional()
+  @ApiPropertyOptional({ type: LanguageType })
+  name?: LanguageType
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  slug?: string
+
+  @IsDateString()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Date })
+  invalidationDate?: Date
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  beenPublished?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  isTranslated?: boolean
+
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional()
+  applicationDaysToRemove?: number
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  stopProgressOnValidatingScreen?: boolean
+
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @IsOptional()
+  @ApiPropertyOptional({ type: LanguageType })
+  completedMessage?: LanguageType
+
+  @ValidateNested()
+  @Type(() => Dependency)
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
+}

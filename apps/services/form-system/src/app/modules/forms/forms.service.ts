@@ -4,53 +4,51 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes } from '../../enums/sectionTypes'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
-import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
 import { Organization } from '../organizations/models/organization.model'
-import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { FormDto } from './models/dto/form.dto'
-import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
-import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { OrganizationCertificationType } from '../organizationCertificationTypes/models/organizationCertificationType.model'
-import {
-  CertificationType,
-  CertificationTypes,
-} from '../../dataTypes/certificationTypes/certificationType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
-import {
-  ApplicantType,
-  ApplicantTypes,
-} from '../../dataTypes/applicantTypes/applicantType.model'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
-import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
-import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import {
-  FieldType,
-  FieldTypes,
-} from '../../dataTypes/fieldTypes/fieldType.model'
 import { OrganizationFieldType } from '../organizationFieldTypes/models/organizationFieldType.model'
-import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
-import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
-import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
 import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
-import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
-import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
-import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
-import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
-import { FormStatus } from '../../enums/formStatus'
 import { Op } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
+import {
+  FieldDto,
+  FormApplicantTypeDto,
+  FormCertificationTypeDto,
+  FormDto,
+  FormResponseDto,
+  FormUrlDto,
+  OrganizationUrlDto,
+  ScreenDto,
+  SectionDto,
+  UpdateFormDto,
+} from '@island.is/form-system-dto'
+import { FormStatus, SectionTypes } from '@island.is/form-system-enums'
+import {
+  ApplicantType,
+  ApplicantTypes,
+  CertificationType,
+  CertificationTypes,
+  FieldSettings,
+  FieldSettingsFactory,
+  FieldType,
+  FieldTypes,
+  ListType,
+  ListTypes,
+  ValueType,
+  ValueTypeFactory,
+} from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class FormsService {

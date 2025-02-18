@@ -1,4 +1,4 @@
-import { ApplicationDto } from '../../applications/models/dto/application.dto'
+import { ApplicationDto } from '@island.is/form-system-dto'
 import { ApplicationServeDto } from './applicationServe.dto'
 
 export class ApplicationServeMapper {

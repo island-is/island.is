@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ScreensService } from './screens.service'
-import { CreateScreenDto } from './models/dto/createScreen.dto'
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -18,11 +17,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { UpdateScreenDto } from './models/dto/updateScreen.dto'
-import { ScreenDto } from './models/dto/screen.dto'
-import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayOrder.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  CreateScreenDto,
+  ScreenDto,
+  UpdateScreenDto,
+  UpdateScreensDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

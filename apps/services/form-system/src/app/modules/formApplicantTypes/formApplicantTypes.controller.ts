@@ -17,11 +17,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
-import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
-import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
-import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  CreateFormApplicantTypeDto,
+  FormApplicantTypeDto,
+  UpdateFormApplicantTypeDto,
+} from '@island.is/form-system-dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)

@@ -4,9 +4,11 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { OrganizationListType } from './models/organizationListType.model'
-import { CreateOrganizationListTypeDto } from './models/dto/createOrganizationListType.dto'
-import { OrganizationListTypeDto } from './models/dto/organizationListType.dto'
-import { ListTypes } from '../../dataTypes/listTypes/listType.model'
+import {
+  CreateOrganizationListTypeDto,
+  OrganizationListTypeDto,
+} from '@island.is/form-system-dto'
+import { ListTypes } from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class OrganizationListTypesService {

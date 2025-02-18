@@ -2,14 +2,12 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
-import { UrlTypes } from '../../enums/urlTypes'
 import { ZendeskService } from './zendesk.service'
 import { NudgeService } from './nudge.service'
-import { UrlMethods } from '../../enums/urlMethods'
-import { ApplicationDto } from '../applications/models/dto/application.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from './validation.service'
-import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { ApplicationDto, ScreenDto } from '@island.is/form-system-dto'
+import { UrlMethods, UrlTypes } from '@island.is/form-system-enums'
+import { ScreenValidationResponse } from '@island.is/form-system-dataTypes'
 
 @Injectable()
 export class ServiceManager {

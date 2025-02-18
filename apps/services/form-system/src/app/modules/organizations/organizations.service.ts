@@ -1,14 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Form } from '../forms/models/form.model'
-import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Organization } from './models/organization.model'
-import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
-import { OrganizationDto } from './models/dto/organization.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
-import { FormDto } from '../forms/models/dto/form.dto'
+import {
+  CreateOrganizationDto,
+  FormDto,
+  OrganizationDto,
+  OrganizationsResponseDto,
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class OrganizationsService {
