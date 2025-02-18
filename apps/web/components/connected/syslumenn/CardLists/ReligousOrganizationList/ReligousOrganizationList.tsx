@@ -179,6 +179,11 @@ export const ReligousOrganizationList: FC<
                       {Boolean(item.homeAddress) && (
                         <Text>
                           {formatMessage(m.homeAddress)}: {item.homeAddress}
+                          {Boolean(item.postalCode) ||
+                          Boolean(item.municipality)
+                            ? ','
+                            : ''}{' '}
+                          {item.postalCode} {item.municipality}
                         </Text>
                       )}
                     </Box>
