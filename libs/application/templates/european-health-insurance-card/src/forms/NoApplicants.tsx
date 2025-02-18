@@ -24,13 +24,11 @@ import { useLocale } from '@island.is/localization'
 
 export const NoApplicants: Form = buildForm({
   id: 'NoApplicants',
-  title: '',
   mode: FormModes.COMPLETED,
 
   children: [
     buildMultiField({
       id: 'noApplicantsMultifield',
-      title: '',
       description: '',
       children: [
         buildCheckboxField({
@@ -71,7 +69,6 @@ export const NoApplicants: Form = buildForm({
 
         buildDescriptionField({
           id: 'break3',
-          title: '',
           titleVariant: 'h3',
           marginBottom: 'gutter',
           space: 'gutter',

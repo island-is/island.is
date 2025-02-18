@@ -19,7 +19,6 @@ export const done: Form = buildForm({
         buildCustomField(
           {
             id: 'congratulationsAlert',
-            title: '',
             component: 'Alert',
           },
           {

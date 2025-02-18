@@ -34,6 +34,9 @@ test.describe.serial('Indictment tests', () => {
     await page.getByTestId('policeCaseNumber0').click()
     await page.getByTestId('policeCaseNumber0').fill(policeCaseNumber)
 
+    await page.locator('#prosecutor').click()
+    await page.getByRole('option', { name: 'Test Sækjandi' }).click()
+
     await page.getByText('Sakarefni *Veldu sakarefni').click()
     await page.getByRole('option', { name: 'Umferðarlagabrot' }).click()
     await page.getByPlaceholder('Sláðu inn vettvang').click()
@@ -73,8 +76,14 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
-    // Processing
+    // Case files
+    await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
+    // Processing
     await Promise.all([
       expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -94,8 +103,8 @@ test.describe.serial('Indictment tests', () => {
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
-    // Indictment
 
+    // Indictment
     await Promise.all([
       expect(page).toHaveURL(`/akaera/akaera/${caseId}`),
       verifyRequestCompletion(page, '/api/graphql', 'CreateIndictmentCount'),
@@ -126,13 +135,6 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
 
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Case files
-    await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),

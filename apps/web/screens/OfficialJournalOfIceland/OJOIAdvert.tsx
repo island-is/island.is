@@ -149,6 +149,54 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
               </Stack>
             </Box>
           )}
+          {advert.corrections && advert.corrections.length > 0
+            ? advert.corrections.map((correction) => (
+                <Box
+                  background="purple100"
+                  padding={[2, 2, 3]}
+                  borderRadius="large"
+                  key={correction.id ?? correction.title}
+                >
+                  <Stack space={[1, 1, 2]}>
+                    <Text variant="h4">
+                      {formatMessage(m.advert.sidebarCorrectionTitle)}
+                    </Text>
+
+                    <Box>
+                      <Text variant="h5">
+                        {formatMessage(m.advert.correctedDate)}
+                      </Text>
+                      <Text variant="small">
+                        {formatDate(correction.createdDate, 'dd. MMMM yyyy')}
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Text variant="h5">
+                        {correction.title ??
+                          formatMessage(m.advert.correctionSingular)}
+                      </Text>
+                      <Text variant="small">{correction.description}</Text>
+                    </Box>
+                    {correction.documentPdfUrl ? (
+                      <Box>
+                        <Link href={correction.documentPdfUrl}>
+                          <Button
+                            variant="text"
+                            as="span"
+                            icon="download"
+                            iconType="outline"
+                            size="small"
+                          >
+                            {formatMessage(m.advert.correctionDoc)}
+                          </Button>
+                        </Link>
+                      </Box>
+                    ) : undefined}
+                  </Stack>
+                </Box>
+              ))
+            : undefined}
         </Stack>
       }
       preFooter={
