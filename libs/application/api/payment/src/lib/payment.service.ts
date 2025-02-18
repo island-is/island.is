@@ -36,7 +36,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-
+import gql from 'graphql-tag'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 @Injectable()
 export class PaymentService {
   constructor(
@@ -50,9 +51,32 @@ export class PaymentService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
+  private readonly client = new ApolloClient({
+    uri: 'https://featbootstrap-payments-beta.dev01.devland.is/api/graphql',
+    cache: new InMemoryCache(),
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+    },
+  })
+
+  private readonly CREATE_PAYMENT_MUTATION = gql`
+    mutation CreatePaymentFlow($input: CreatePaymentFlowInput!) {
+      paymentsCreateFlow(input: $input) {
+        urls {
+          is
+        }
+      }
+    }
+  `
+
   async findPaymentByApplicationId(
     applicationId: string,
   ): Promise<Payment | null> {
+    console.log('===============================================')
+    console.log('findPaymentByApplicationId', applicationId)
+    console.log('===============================================')
     return this.paymentModel.findOne({
       where: {
         application_id: applicationId,
@@ -86,6 +110,9 @@ export class PaymentService {
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
+    console.log('===============================================')
+    console.log('getStatus', foundPayment)
+    console.log('===============================================')
     if (!foundPayment) {
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
@@ -172,6 +199,9 @@ export class PaymentService {
       },
       expires_at: new Date(),
     }
+    console.log('===============================================')
+    console.log('createPaymentModel', paymentModel)
+    console.log('===============================================')
     return await this.paymentModel.create(paymentModel)
   }
 
@@ -261,6 +291,11 @@ export class PaymentService {
         extraData,
       )
       user4 = chargeResult.user4
+
+      const gqlChargeResult = await this.createGQLCharge(paymentModel, user)
+      console.log('===============================================')
+      console.log('gqlChargeResult', gqlChargeResult)
+      console.log('===============================================')
     }
 
     //5. Update payment with user4 from charge result
@@ -270,11 +305,59 @@ export class PaymentService {
     return this.buildChargeResult(paymentModel.id, user4)
   }
 
+  async createGQLCharge(paymentModel: Payment, user: User) {
+    if (!paymentModel.definition) {
+      throw new Error('Payment model definition is missing')
+    }
+    const parsedDefinition =
+      typeof paymentModel.definition === 'string' // this is a workaround the fact that the definition is stored as a string in the database but as an object in during testing
+        ? JSON.parse(paymentModel.definition as unknown as string)
+        : JSON.parse(JSON.stringify(paymentModel.definition))
+    const parsedDefinitionCharges = parsedDefinition.charges as [
+      {
+        chargeItemName: string
+        chargeItemCode: string
+        amount: number
+        quantity?: number
+      },
+    ]
+    try {
+      const result = await this.client.mutate({
+        mutation: this.CREATE_PAYMENT_MUTATION,
+        variables: {
+          charges: parsedDefinitionCharges,
+          performingOrganizationID: parsedDefinition.performingOrganizationID,
+          payerNationalId: user.nationalId,
+          applicationId: paymentModel.application_id,
+          onUpdateUrl:
+            'https://webhook.site/65eeba60-5632-45ad-af51-004f3ecac11a',
+        },
+      })
+      console.log('===============================================')
+      console.log('createGQLCharge', result)
+      console.log('===============================================')
+      return result
+    } catch (error) {
+      console.log('===============================================')
+      console.log('createGQLCharge error', error)
+      console.log('===============================================')
+      throw error
+    }
+  }
+
   async createNewCharge(
     paymentModel: Payment,
     user: User,
     extraData: ExtraData[] | undefined,
   ): Promise<ChargeResponse> {
+    console.log('===============================================')
+    console.log('createNewCharge')
+    console.dir(paymentModel, { depth: null })
+    console.log('user')
+    console.dir(user, { depth: null })
+    console.log('extraData')
+    console.dir(extraData, { depth: null })
+    console.log('===============================================')
     return await this.chargeFjsV2ClientService.createCharge(
       formatCharge(
         paymentModel,
