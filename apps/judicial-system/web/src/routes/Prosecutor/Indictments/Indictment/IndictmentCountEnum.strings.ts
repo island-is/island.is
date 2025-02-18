@@ -27,8 +27,8 @@ export const indictmentCountEnum = defineMessages({
     description: 'Notaður sem titill á subtype fyrir "hraðakstur" brot.',
   },
   OTHER: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count_enum.other',
-    defaultMessage: 'Anna[',
+    id: 'judicial.system.core:indictments_indictment.indictment_count_enum.other_v1',
+    defaultMessage: 'Annað',
     description: 'Notaður sem titill á subtype fyrir "annað" brot.',
   },
 })

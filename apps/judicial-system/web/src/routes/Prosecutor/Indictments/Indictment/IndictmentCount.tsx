@@ -252,6 +252,8 @@ export const IndictmentCount: FC<Props> = ({
       })),
     [lawTag, indictmentCount.lawsBroken],
   )
+  // TODO
+  const showLegalArticleSelection = indictmentCount.offenses?.some(({offense}) => offense !== IndictmentCountOffense.OTHER)
 
   const handleIndictmentCountChanges = (
     update: UpdateIndictmentCount,
@@ -511,7 +513,7 @@ export const IndictmentCount: FC<Props> = ({
             updateIndictmentCountState={updateIndictmentCountState}
             handleIndictmentCountChanges={handleIndictmentCountChanges}
           />
-          <Box marginBottom={2}>
+          {showLegalArticleSelection && <Box marginBottom={2}>
             <SectionHeading
               heading="h4"
               title={formatMessage(strings.lawsBrokenTitle)}
@@ -541,7 +543,7 @@ export const IndictmentCount: FC<Props> = ({
               }}
               required
             />
-          </Box>
+          </Box>}
           {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
             <Box marginBottom={2}>
               {indictmentCount.lawsBroken.map((brokenLaw) => (
