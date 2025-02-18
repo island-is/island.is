@@ -385,7 +385,7 @@ jobs:
           app_home="$(
             git ls-files '**/project.json' |
             xargs cat |
-            jq -r --arg project "$app_name" 'select( .name == $project ) | .sourceRoot' |
+            jq -re --arg project "app_name" 'select( .name == $project ) | .sourceRoot' |
             sed 's;/src;;'
           )"
           # Multi-line output
