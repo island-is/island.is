@@ -10,12 +10,16 @@ import { IdentityConfirmationService } from './identity-confirmation.service'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
 import { XRoadConfig } from '@island.is/nest/config'
 import { IdentityConfirmationApiConfig } from './config'
+import { DelegationsModule } from '../delegations/delegations.module'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 
 @Module({
   imports: [
     ZendeskModule,
     SmsModule,
     EmailModule,
+    DelegationsModule,
+    NationalRegistryV3ClientModule,
     SequelizeModule.forFeature([IdentityConfirmation]),
     ConfigModule.forRoot({
       isGlobal: true,

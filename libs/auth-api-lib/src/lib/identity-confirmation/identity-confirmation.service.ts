@@ -1,15 +1,25 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { IdentityConfirmationInputDto } from './dto/IdentityConfirmationInput.dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
-import { Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import { ZendeskService } from '@island.is/clients/zendesk'
 import { uuid } from 'uuidv4'
 import { IdentityConfirmationType } from './types/identity-confirmation-type'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import { IdentityConfirmationApiConfig } from './config'
 import type { ConfigType } from '@island.is/nest/config'
+import { IdentityConfirmationDTO } from './dto/identity-confirmation-dto.dto'
+import type { User } from '@island.is/auth-nest-tools'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { DelegationsIncomingService } from '../delegations/delegations-incoming.service'
 
+const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
 const ZENDESK_CUSTOM_FIELDS = {
   Link: 24598388531474,
 }
@@ -25,6 +35,9 @@ export class IdentityConfirmationService {
     private readonly emailService: EmailService,
     @Inject(IdentityConfirmationApiConfig.KEY)
     private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
+    private nationalRegistryClient: NationalRegistryV3ClientService,
+    @Inject(DelegationsIncomingService)
+    private delegationsIncomingService: DelegationsIncomingService,
   ) {}
 
   async identityConfirmation({
@@ -114,12 +127,94 @@ export class IdentityConfirmationService {
         ],
       })
     } catch (e) {
-      console.error(e)
       throw new Error('Failed to send chat message')
     }
   }
 
   private generateLink = (id: string) => {
     return `${process.env.IDENTITY_SERVER_ISSUER_URL}/app/confirm-identity/${id}`
+  }
+
+  async confirmIdentity(user: User, id: string) {
+    const identityConfirmation = await this.identityConfirmationModel.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!identityConfirmation) {
+      throw new Error('Identity confirmation not found')
+    }
+
+    // Throw error if identity is older than 2 days
+    if (
+      new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+      Date.now()
+    ) {
+      throw new Error('Identity confirmation expired')
+    }
+
+    const person = await this.nationalRegistryClient.getAllDataIndividual(
+      user.nationalId,
+    )
+
+    if (!person) {
+      throw new BadRequestException(
+        `A person with nationalId<${user.nationalId}> could not be found`,
+      )
+    }
+
+    const delegations = await this.delegationsIncomingService.findAllAvailable({
+      user,
+      delegationTypes: user.delegationType,
+    })
+
+    await this.zendeskService.updateTicket('93', {
+      comment: {
+        html_body: `
+          <b>Auðkenning hefur verið staðfest</b>
+          <p>Umsækjandi: ${person.nafn}, kennitala: ${user.nationalId}</p>
+          <p>${
+            person.heimilisfang?.husHeiti
+              ? 'Heimilisfang:' + person.heimilisfang.husHeiti + ', '
+              : ''
+          }</p>
+            <b>Umboð:</b>
+            <ul>
+              ${delegations
+                .map(
+                  (delegation) =>
+                    `<li>${delegation.fromName} (${delegation.fromNationalId}) ${delegation.types}</li>`,
+                )
+                .join('')}
+            </ul>
+          `,
+        public: false,
+      },
+    })
+
+    await identityConfirmation.destroy()
+  }
+
+  async getIdentityConfirmation(id: string): Promise<IdentityConfirmationDTO> {
+    const identityConfirmation = await this.identityConfirmationModel.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!identityConfirmation) {
+      throw new NotFoundException('Identity confirmation not found')
+    }
+
+    return {
+      id: identityConfirmation.id,
+      ticketId: identityConfirmation.ticketId,
+      type: identityConfirmation.type,
+      // Check if time now is 2 days older than created at time
+      isExpired:
+        new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+        Date.now(),
+    }
   }
 }
