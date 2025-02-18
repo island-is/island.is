@@ -293,6 +293,25 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      - name: Prepare app specific build-args
+        id: app-args
+        env:
+          app_name: ${{ matrix.project }}
+        run: |
+          # Fetch source root from project files (but strip trailing /src, if any)
+          app_home="$(
+            git ls-files --error-unmatch '**/project.json' |
+            xargs cat |
+            jq -re --arg project "$app_name" 'select( .name == $project ) | .sourceRoot' |
+            sed 's;/src;;'
+          )"
+          # Multi-line output
+          echo "build-args<<EOF" | tee -a "$GITHUB_OUTPUT"
+          echo "APP=$app_name" | tee -a "$GITHUB_OUTPUT"
+          echo "APP_HOME=$app_home" | tee -a "$GITHUB_OUTPUT"
+          echo "APP_DIST_HOME=dist/$app_home" | tee -a "$GITHUB_OUTPUT"
+          echo "EOF" | tee -a "$GITHUB_OUTPUT"
+
       - name: Log in to Amazon ECR
         if: ${{ !github.event.localrun }}
         id: ecr-login
@@ -339,25 +358,6 @@ jobs:
             # mcgh: Merge Commit GitHub
             type=raw,value=${{ inputs.version }},enable=${{ !!inputs.version }}
             type=raw,priority=50,value=mcgh-${{ github.event.pull_request.merge_commit_sha }},enable=${{ !!github.event.pull_request.merge_commit_sha }}
-
-      - name: Prepare app specific build-args
-        id: app-args
-        env:
-          app_name: ${{ matrix.project }}
-        run: |
-          # Fetch source root from project files (but strip trailing /src, if any)
-          app_home="$(
-            git ls-files --error-unmatch '**/project.json' |
-            xargs cat |
-            jq -re --arg project "$app_name" 'select( .name == $project ) | .sourceRoot' |
-            sed 's;/src;;'
-          )"
-          # Multi-line output
-          echo "build-args<<EOF" | tee -a "$GITHUB_OUTPUT"
-          echo "APP=$app_name" | tee -a "$GITHUB_OUTPUT"
-          echo "APP_HOME=$app_home" | tee -a "$GITHUB_OUTPUT"
-          echo "APP_DIST_HOME=dist/$app_home" | tee -a "$GITHUB_OUTPUT"
-          echo "EOF" | tee -a "$GITHUB_OUTPUT"
 
       - name: Ensure generated files (fetch cache)
         uses: runs-on/cache/restore@v4
