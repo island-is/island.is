@@ -30,7 +30,7 @@ export class MessageProcessorService {
       locale,
     )
     return {
-      title: 'BINGO' + notification.title,
+      title: 'BANGO' + notification.title,
       externalBody: notification.externalBody,
       internalBody: notification.internalBody,
       clickActionUrl: notification.clickActionUrl,
