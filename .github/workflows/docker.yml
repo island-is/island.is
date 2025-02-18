@@ -78,7 +78,6 @@ env:
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-static-base
   AWS_CACHE_TO_COMMON: |
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }},mode=max
-  DOCKERFILE: ./scripts/ci/Dockerfile
 
 jobs:
   prepare:
@@ -231,7 +230,7 @@ jobs:
           target: base
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
@@ -245,7 +244,7 @@ jobs:
           target: deps
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
@@ -259,7 +258,7 @@ jobs:
           target: output-base
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
@@ -273,7 +272,7 @@ jobs:
           target: static-base
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
@@ -287,7 +286,7 @@ jobs:
           target: output-base-with-pg
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
@@ -301,7 +300,7 @@ jobs:
           target: playwright-base
           context: .
           builder: ${{ steps.buildx.outputs.name }}
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
@@ -410,7 +409,7 @@ jobs:
         with:
           target: output-${{ matrix.docker }}
           context: .
-          file: ${{ env.DOCKERFILE }}
+          file: ./scripts/ci/Dockerfile
           push: ${{ !github.event.localrun }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
