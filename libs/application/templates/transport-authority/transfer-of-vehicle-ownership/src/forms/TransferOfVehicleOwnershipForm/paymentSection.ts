@@ -20,7 +20,6 @@ export const paymentSection = buildSection({
       children: [
         buildPaymentChargeOverviewField({
           id: 'uiForms.paymentChargeOverviewMultifield',
-          title: '',
           forPaymentLabel: payment.paymentChargeOverview.forPayment,
           totalLabel: payment.paymentChargeOverview.total,
           getSelectedChargeItems: (_) =>
@@ -31,7 +30,6 @@ export const paymentSection = buildSection({
         }),
         buildCustomField({
           id: 'ValidationErrorMessages',
-          title: '',
           component: 'ValidationErrorMessages',
         }),
         buildSubmitField({

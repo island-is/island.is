@@ -41,7 +41,6 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.useFakeData',
-          title: '',
           width: 'half',
           options: [
             {

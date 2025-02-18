@@ -432,6 +432,41 @@ export class SubpoenaService {
       })
   }
 
+  async deliverServiceCertificateToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getServiceCertificatePdf(theCase, defendant, subpoena)
+      .then(async (pdf) => {
+        const fileName = `Birtingarvottorð - ${defendant.name}`
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.SUBPOENA_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload service certificate pdf to court for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverSubpoenaRevocationToPolice(
     theCase: Case,
     subpoena: Subpoena,
