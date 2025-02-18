@@ -3,20 +3,28 @@ import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { LicenseModule as LicenseCommonModule } from '@island.is/services/license'
 import { Module } from '@nestjs/common'
 import {
-  LicensesController,
-  UserLicensesController,
-} from './license.controller'
-import { LicenseService } from './license.service'
+  LicensesControllerV1,
+  LicensesControllerV2,
+  UserLicensesControllerV1,
+  UserLicensesControllerV2,
+} from './controllers'
+import { LicenseServiceV1, LicenseServiceV2 } from './services'
 
 @Module({
   imports: [LicenseUpdateClientModule, LicenseCommonModule],
-  controllers: [LicensesController, UserLicensesController],
+  controllers: [
+    LicensesControllerV1,
+    LicensesControllerV2,
+    UserLicensesControllerV1,
+    UserLicensesControllerV2,
+  ],
   providers: [
     {
       provide: LOGGER_PROVIDER,
       useValue: logger,
     },
-    LicenseService,
+    LicenseServiceV1,
+    LicenseServiceV2,
   ],
 })
 export class LicenseModule {}
