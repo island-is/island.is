@@ -229,6 +229,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Debug AWS user/login
+        if: ${{ !github.event.localrun }}
         run: |
           echo "DEBUG AWS user/login"
           aws sts get-caller-identity | xargs echo "STS caller identity:"
