@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
+import { GrantsService } from './grant.service'
 
 @Module({
-  controllers: [],
-  providers: [],
-  exports: [],
+  providers: [GrantsService],
+  exports: [GrantsService],
 })
 export class GrantsClientModule {}
