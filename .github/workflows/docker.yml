@@ -131,7 +131,7 @@ jobs:
           #   },
           #   ...
           # ]
-          echo "matrix=$(git ls-files '**/project.json' |
+          matrix="$(git ls-files '**/project.json' |
             xargs cat |
             jq -s -c --arg projects "$projects" '{ include: [
               .[]
@@ -141,7 +141,8 @@ jobs:
                   docker: (.targets | keys | map(select(startswith("docker-") and . != "docker-native")) | map(sub("^docker-"; "")) | .[])
                 }
               ]
-            }')" | tee -a "$GITHUB_OUTPUT"
+            }')"
+          echo "matrix=$matrix" | tee -a "$GITHUB_OUTPUT"
 
       - name: Debug outputs
         env:
