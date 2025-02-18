@@ -100,6 +100,7 @@ import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSuppo
 import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
+import { ReligousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligousOrganizationList/ReligousOrganizationList'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
@@ -220,6 +221,9 @@ export const webRenderConnectedComponent = (
       break
     case 'DigitalIcelandStatistics':
       connectedComponent = <DigitalIcelandStatistics />
+      break
+    case 'Trufelog/Lifsskodunarfelog':
+      connectedComponent = <ReligousOrganizationList />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

@@ -30,6 +30,7 @@ import {
   VedbandayfirlitRegluverkGeneralSvar,
   Skip,
   Brennuleyfi,
+  TrufelogOgLisskodunarfelogModel,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -74,6 +75,7 @@ import {
   MortgageCertificateValidation,
   MortgageCertificate,
   BurningPermit,
+  ReligousOrganization,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -588,6 +590,18 @@ export const mapBurningPermits = (permit: Brennuleyfi): BurningPermit => {
     licensee: permit.leyfishafi,
     place: permit.stadur,
     size: permit.staerd,
+  }
+}
+
+export const mapReligousOrganization = (
+  religousOrganization: TrufelogOgLisskodunarfelogModel,
+): ReligousOrganization => {
+  return {
+    director: religousOrganization.forstodumadur,
+    homeAddress: religousOrganization.heimili,
+    name: religousOrganization.nafnFelags ?? '',
+    postalCode: religousOrganization.postnumer,
+    municipality: religousOrganization.sveitarfelag,
   }
 }
 

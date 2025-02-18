@@ -37,6 +37,7 @@ import { ProfessionRightsResponse } from './models/professionRights'
 import { ManyPropertyDetail } from './models/manyPropertyDetail'
 import { GetElectronicIDInput } from './dto/getElectronicID.input'
 import { BurningPermitsResponse } from './models/burningPermits'
+import { ReligousOrganizationsResponse } from './models/religousOrganizations'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -230,5 +231,13 @@ export class SyslumennResolver {
   async getBurningPermits(): Promise<BurningPermitsResponse> {
     const burningPermits = await this.syslumennService.getBurningPermits()
     return { list: burningPermits }
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ReligousOrganizationsResponse)
+  @BypassAuth()
+  async getReligousOrganizations(): Promise<ReligousOrganizationsResponse> {
+    const items = await this.syslumennService.getReligousOrganizations()
+    return { list: items }
   }
 }
