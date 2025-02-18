@@ -17,9 +17,6 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   FilterInput,
-  GridColumn,
-  GridContainer,
-  GridRow,
   Pagination,
   Stack,
   Text,
@@ -308,7 +305,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               </Stack>
             }
           >
-            <Box marginLeft={3}>
+            <Box marginLeft={2}>
               <SearchResultsContent
                 grants={grants}
                 subheader={hitsMessage}
@@ -339,23 +336,25 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           </SidebarLayout>
         )}
         {isMobile && (
-          <Box paddingTop={6}>
-            <Stack space={2}>
-              <Text fontWeight="semiBold">
-                {formatMessage(m.search.search)}
-              </Text>
-              <Box className={styles.searchInput}>
-                <FilterInput
-                  name="query"
-                  placeholder={formatMessage(m.search.inputPlaceholder)}
-                  value={query ?? ''}
-                  onChange={(option) => setQuery(option)}
-                  backgroundColor={'white'}
-                />
-              </Box>
-              <Box display="flex" height="full" alignItems={'center'}>
-                <Text>{hitsMessage}</Text>
-              </Box>
+          <Box marginTop={6} margin={3} paddingTop={3}>
+            <Text fontWeight="semiBold">{formatMessage(m.search.search)}</Text>
+            <Box marginTop={2} className={styles.searchInput}>
+              <FilterInput
+                name="query"
+                placeholder={formatMessage(m.search.inputPlaceholder)}
+                value={query ?? ''}
+                onChange={(option) => setQuery(option)}
+                backgroundColor={'white'}
+              />
+            </Box>
+            <Box
+              marginTop={3}
+              display="flex"
+              justifyContent="spaceBetween"
+              height="full"
+              alignItems={'center'}
+            >
+              <Text>{hitsMessage}</Text>
 
               <GrantsSearchResultsFilter
                 searchState={{
@@ -371,28 +370,30 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 variant={'dialog'}
                 hits={totalHits}
               />
+            </Box>
+            <Box marginTop={2}>
               <SearchResultsContent grants={grants} locale={locale} />
-              <Box marginBottom={0} hidden={(totalPages ?? 0) < 1}>
-                <Pagination
-                  variant="purple"
-                  page={page}
-                  itemsPerPage={PAGE_SIZE}
-                  totalItems={totalHits}
-                  totalPages={totalPages}
-                  renderLink={(page, className, children) => (
-                    <Box
-                      cursor="pointer"
-                      className={className}
-                      onClick={() => {
-                        setPage(page)
-                      }}
-                    >
-                      {children}
-                    </Box>
-                  )}
-                />
-              </Box>
-            </Stack>
+            </Box>
+            <Box marginTop={2} paddingBottom={2} hidden={(totalPages ?? 0) < 1}>
+              <Pagination
+                variant="purple"
+                page={page}
+                itemsPerPage={PAGE_SIZE}
+                totalItems={totalHits}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
           </Box>
         )}
       </Box>
