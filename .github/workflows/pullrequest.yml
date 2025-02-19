@@ -48,6 +48,14 @@ jobs:
     uses: ./.github/workflows/install.yml
     secrets: inherit
 
+  debug:
+    needs:
+      - prepare
+    runs-on: arc-runners
+    steps:
+      - name: check outputs
+        run: |
+          echo "BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}"
   tests:
     needs:
       - prepare
