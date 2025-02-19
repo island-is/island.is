@@ -82,7 +82,7 @@ USER runner
 # ------------------------------------------------
 # Express output
 # ------------------------------------------------
-FROM output-base-with-pg AS output-express
+FROM output-base-with-pg AS docker-express
 
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
@@ -105,7 +105,7 @@ CMD ["node", "--no-experimental-fetch", "main.js"]
 # ------------------------------------------------
 # Next.js output
 # ------------------------------------------------
-FROM output-base-with-pg AS output-next
+FROM output-base-with-pg AS docker-next
 
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
@@ -136,7 +136,7 @@ FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS static-base
 RUN apk update && apk upgrade && apk add --no-cache bash nodejs
 RUN mkdir -p /etc/nginx/templates
 
-FROM static-base AS output-static
+FROM static-base AS docker-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -162,7 +162,7 @@ LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 # ------------------------------------------------
 # Jest output
 # ------------------------------------------------
-FROM output-base AS output-jest
+FROM output-base AS docker-jest
 
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
@@ -195,7 +195,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 # ------------------------------------------------
 # Playwright output
 # ------------------------------------------------
-FROM playwright-base AS output-playwright
+FROM playwright-base AS docker-playwright
 
 ARG APP_DIST_HOME
 ARG APP_HOME
@@ -239,5 +239,5 @@ ENTRYPOINT ["./entrypoint.sh"]
 # ------------------------------------------------
 # Native output (placeholder)
 # ------------------------------------------------
-FROM output-base AS output-native
+FROM output-base AS docker-native
 RUN echo "not-implemented"

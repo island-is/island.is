@@ -38,7 +38,7 @@ for target in "$@"; do
         --arg docker_type \"\$docker_type\" \
         --arg home \"\$home\" \
         --arg dist \"\$dist\" \
-        '{projects: \$project, docker_type: \$docker_type, home: \$home, dist: \$dist}'
+        '{project: \$project, docker_type: \$docker_type, home: \$home, dist: \$dist}'
     " _ {} "$target" |
     jq -s '.')
 

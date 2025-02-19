@@ -77,7 +77,7 @@ jobs:
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
-      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.build_map.outputs.CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -227,13 +227,14 @@ jobs:
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
-      - name: Prepare Docker targets
+      - name: Prepare docker build targets
         id: build_map
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "BUILD_CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
+            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
@@ -243,10 +244,11 @@ jobs:
         run: |
           set -euo pipefail
           export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          CHUNKS="${{ steps.build_map.outputs.BUILD_CHUNKS }}"
+          CHUNKS="${{ steps.build_map.outputs.CHUNKS }}"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
+            IMAGES="$(echo "$CHUNKS" | jq -r 'map(fromjson.project) | join(",")')"
+            echo "IMAGES=$IMAGES" >> "$GITHUB_OUTPUT"
           fi
 
   docker-build:

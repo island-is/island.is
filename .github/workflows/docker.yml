@@ -15,7 +15,7 @@ on:
   workflow_call:
     inputs:
       projects:
-        description: 'Comma-separated list of project names to build.'
+        description: 'Json array of project objects, [{"project": "p1", "docker_type": "docker-express", "home": "apps/..", "dist": "dist/.."}, ...]'
         type: string
         required: true
       build-args:
@@ -68,14 +68,7 @@ env:
   AWS_CACHE_PREFIX: >-
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,mode=max
   AWS_CACHE_FROM_COMMON: |
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }}
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.ref }}
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-base
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-deps
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-output-base
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-output-base-with-pg
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-playwright-base
-    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=target-static-base
+    type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=deps-cache
   AWS_CACHE_TO_COMMON: |
     type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},prefix=docker-cache/,name=${{ github.sha }};${{ github.ref }},mode=max
 
@@ -85,8 +78,6 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
     runs-on: 'arc-runners'
     outputs:
-      build-matrix: ${{ steps.build-matrix.outputs.matrix }}
-      deps-matrix: ${{ steps.deps-matrix.outputs.matrix }}
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
       playwright-image-version: ${{ steps.args-prep.outputs.playwright-image-version }}
       build-args: ${{ steps.args-prep.outputs.build-args }}
@@ -110,70 +101,10 @@ jobs:
           echo DOCKER_IMAGE_REGISTRY="$ECR_PULLTHROUGH_CACHE" | tee -a "$GITHUB_OUTPUT"
           echo EOF | tee -a "$GITHUB_OUTPUT"
 
-      - name: Create matrix from input (build)
-        id: build-matrix
-        env:
-          projects: ${{ inputs.projects }}
-          is_debug: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
-          test_everything: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') }}
-          base_ref: ${{ github.event.pull_request.base.ref }}
+      - name: Prepare docker deps
+        id: docker-deps
         run: |
-          if [[ "$is_debug" == true ]] && [[ -z "$projects" ]] && [[ "$test_everything" != true ]]; then
-            echo "Using small subset for testing docker build (on $base_ref)"
-            # A representative sample of various docker build targets
-            projects="web,air-discount-scheme-backend,license-api"
-          fi
-          # Create a list of objects of the form:
-          # [
-          #   {
-          #     "name": "services-my-service",
-          #     "docker": "next|nest|mytype"
-          #   },
-          #   ...
-          # ]
-          set -x
-          matrix="$(git ls-files --error-unmatch '**/project.json' |
-            xargs cat |
-            jq -s -c --arg projects "$projects" '{ include: [
-              .[]
-              | select( .name | if ($projects | length > 0) then IN($projects | split(",") | .[]) else true end )
-              | {
-                  project: .name,
-                  docker: (.targets | keys | map(select(startswith("docker-") and . != "docker-native")) | map(sub("^docker-"; "")) | .[])
-                }
-              ]
-            }')"
-          echo "matrix=$matrix" | tee -a "$GITHUB_OUTPUT"
-
-      - name: Create matrix from input (deps)
-        id: deps-matrix
-        # Find targets containing `base` and output matrix with targets
-        run: |
-          set -x
-          matrix="$(grep -oP '(?<= AS )\S*\bbase\b\S*$' ./scripts/ci/Dockerfile |
-            sort -u |
-            jq -cRne '{
-              include: [
-                inputs
-                | {
-                    target: .
-                  }
-                ]
-              }'
-            )"
-          echo "matrix=$matrix"| tee -a "$GITHUB_OUTPUT"
-
-      - name: Debug outputs
-        env:
-          args_prep: ${{ toJson(steps.args-prep.outputs) }}
-          build_matrix: ${{ toJson(steps.build-matrix.outputs) }}
-          deps_matrix: ${{ toJson(steps.deps-matrix.outputs) }}
-        run: |
-          echo "---"
-          echo "${args_prep}" | jq
-          echo "${build_matrix}" | jq
-          echo "${deps_matrix}" | jq
-          echo "---"
+          ./scripts/ci/10_prepare-docker-deps.sh
 
   codegen:
     name: Codegen
@@ -216,23 +147,12 @@ jobs:
     name: Docker-build dependencies
     runs-on: arc-docker
     needs: prepare
-    strategy:
-      fail-fast: true
-      matrix: ${{ fromJson(needs.prepare.outputs.deps-matrix) }}
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
       contents: read # This is required for actions/checkout
 
     steps:
-      - name: Debug inputs
-        env:
-          matrix: ${{ toJson(matrix) }}
-        run: |
-          echo "---"
-          echo "$matrix" | jq
-          echo "---"
-
       - name: Check out repo
         uses: actions/checkout@v4
 
@@ -264,23 +184,22 @@ jobs:
           use: true
 
       # Build stable layers; only difference between these steps should be the `target`
-      - name: Docker build/cache dependencies (${{ matrix.target }})
+      - name: Docker build/cache dependencies
         uses: docker/build-push-action@v6
         with:
-          target: ${{ matrix.target }}
+          target: deps
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./scripts/ci/Dockerfile
           push: false
           build-args: ${{ needs.prepare.outputs.build-args }}
           cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-${{ matrix.target }}
+            type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},name=cache-deps
           cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=${{ github.sha }};${{ github.ref }};target-${{ matrix.target }}
+            type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},name=cache-deps,mode=max
 
   build:
-    name: Docker-build ${{ matrix.project }}
+    name: Docker-build ${{ matrix.chunk.project }}
     runs-on: arc-docker
     needs:
       - prepare
@@ -288,7 +207,8 @@ jobs:
       - codegen
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.build-matrix) }}
+      matrix:
+        chunk: ${{ fromJson(inputs.projects) }}
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
@@ -297,25 +217,6 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
-
-      - name: Prepare app specific build-args
-        id: app-args
-        env:
-          app_name: ${{ matrix.project }}
-        run: |
-          # Fetch source root from project files (but strip trailing /src, if any)
-          app_home="$(
-            git ls-files --error-unmatch '**/project.json' |
-            xargs cat |
-            # Some projects don't have `.sourceRoot`, and some have trailing whitespace in `.sourceRoot`
-            jq -sre --arg project "$app_name" '.[] | select(.name == $project and .sourceRoot) | .sourceRoot | sub("/src ?"; "")'
-          )"
-          # Multi-line output
-          echo "build-args<<EOF" | tee -a "$GITHUB_OUTPUT"
-          echo "APP=$app_name" | tee -a "$GITHUB_OUTPUT"
-          echo "APP_HOME=$app_home" | tee -a "$GITHUB_OUTPUT"
-          echo "APP_DIST_HOME=dist/$app_home" | tee -a "$GITHUB_OUTPUT"
-          echo "EOF" | tee -a "$GITHUB_OUTPUT"
 
       - name: Log in to Amazon ECR
         if: ${{ !github.event.localrun }}
@@ -339,6 +240,19 @@ jobs:
           install: true
           use: true
 
+      - name: Gather apps
+        id: gather
+        run: |
+          set -euo pipefail
+          APP="$(echo '${{ matrix.chunk }}' | jq -r '.project')"
+          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
+          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          echo APP="$APP" >> "$GITHUB_ENV"
+          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
+          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
+
       - name: Generate image metadata
         id: meta
         # This step requires a valid GitHub token to query the API for e.g. description of repository
@@ -346,7 +260,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.IMAGE_REGISTRY }}/${{ matrix.project }}
+            ${{ env.IMAGE_REGISTRY }}/${APP}
           tags: |
             # Edge without prefix should only be used on `main`, so as not to conflict with type=sha
             # type=edge
@@ -383,7 +297,7 @@ jobs:
       - name: Docker-build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          target: output-${{ matrix.docker }}
+          target: ${{ matrix.chunk.docker_type }}
           context: .
           file: ./scripts/ci/Dockerfile
           push: ${{ !github.event.localrun }}
@@ -392,12 +306,11 @@ jobs:
           secrets: |
             nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
           build-args: |
+            APP=${APP}
+            APP_HOME=${APP_HOME}
+            APP_DIST_HOME=${APP_DIST_HOME}
             ${{ needs.prepare.outputs.build-args }}
-            ${{ steps.app-args.outputs.build-args }}
             ${{ inputs.build-args }}
           # Caching final images doesn't make sense when this should only run if the project is affected (changed)
           cache-from: |
-            ${{ env.AWS_CACHE_FROM_COMMON }}
-            ${{ env.AWS_CACHE_PREFIX }},name=target-output-${{ matrix.docker }},mode=min
-          cache-to: |
-            ${{ env.AWS_CACHE_PREFIX }},name=target-output-${{ matrix.docker }};${{ github.sha }};${{ github.ref }},mode=min
+            type=s3,region=${{ vars.AWS_REGION }},bucket=${{ secrets.S3_DOCKER_CACHE_BUCKET }},name=cache-deps
