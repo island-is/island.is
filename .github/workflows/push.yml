@@ -234,7 +234,7 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo "CHUNKS=$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
@@ -315,7 +315,7 @@ jobs:
 
   deploy:
     runs-on: arc-runners
-    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result != 'failure' }}
+    if: ${{ !cancelled() && needs.helm-docker-build.result == 'success' && needs.docker-build.result == 'success' }}
     needs:
       - pre-checks
       - prepare

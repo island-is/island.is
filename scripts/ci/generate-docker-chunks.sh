@@ -46,4 +46,5 @@ for target in "$@"; do
 done
 
 >&2 echo "Map: ${chunks}"
-echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+# echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+echo "$chunks"
