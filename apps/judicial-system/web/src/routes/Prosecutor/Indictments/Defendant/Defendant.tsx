@@ -104,9 +104,6 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant = () => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -309,7 +306,6 @@ const Defendant = () => {
             formatMessage,
             crimeScene,
             subtypesRecord: subtypes,
-            isOffenseEndpointEnabled,
           })
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
