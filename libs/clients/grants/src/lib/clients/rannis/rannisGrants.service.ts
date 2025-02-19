@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+
 import { RannisGrantResponse } from './rannisGrants.types'
 import { RannisGrantDto, mapRannisGrant } from './dtos/rannisGrant.dto'
 
@@ -7,6 +9,8 @@ const BASE_URL = 'https://sjodir.rannis.is/statistics/fund_schedule.php'
 
 @Injectable()
 export class RannisGrantService {
+  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+
   getGrants = async (): Promise<Array<RannisGrantDto>> => {
     const grants = await fetch(BASE_URL)
 
@@ -14,9 +18,7 @@ export class RannisGrantService {
       return []
     }
 
-    const jsonData = await grants.json()
-    const object: RannisGrantResponse = JSON.parse(jsonData)
-
-    return object.map((o) => mapRannisGrant(o)).filter(isDefined)
+    const response: RannisGrantResponse = await grants.json()
+    return response.map((o) => mapRannisGrant(o)).filter(isDefined)
   }
 }

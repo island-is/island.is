@@ -10,6 +10,7 @@ export interface CmsGrant {
 
 export type CmsGrantInput = Array<{
   referenceId: string
+  cmsGrantEntry: Entry
   inputFields: CmsGrantInputFields
 }>
 

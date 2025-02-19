@@ -45,11 +45,8 @@ export class CmsRepository {
     }
   }
 
-  updateContentfulGrants = async (grantsToUpdate: CmsGrantInput) => {
-    const referenceIds = grantsToUpdate.map((g) => g.referenceId)
-    const entriesResponse = await this.getContentfulGrants()
-
-    if (!entriesResponse.length) {
+  updateContentfulGrants = async (grants: CmsGrantInput) => {
+    if (!grants.length) {
       logger.warn('no entries to update')
       return [
         {
@@ -75,18 +72,14 @@ export class CmsRepository {
       ]
     }
 
-    const promises = entriesResponse
-      .filter((i) => referenceIds.includes(i.referenceId))
-      .map((i) => {
-        const grant = grantsToUpdate.find(
-          (g) => g.referenceId === i.referenceId,
-        )
+    const promises = grants
+      .map((grant) => {
         if (!grant?.inputFields) {
           logger.warn('No input fields to update')
           return
         }
         return this.updateContentfulEntry(
-          i.entry,
+          grant.cmsGrantEntry,
           contentTypeResponse.data?.fields,
           grant?.inputFields,
         )
@@ -119,16 +112,21 @@ export class CmsRepository {
           entry.fields[inputField.key][LOCALE] = inputField.value
         }
       } else {
-        logger.info(`Field ${inputField.key} not found`)
+        logger.info(`Field not found`, {
+          inputField: inputField.key,
+        })
         Promise.reject(`Invalid field in input fields: ${inputField.key}`)
       }
     }
     if (hasChanges) {
-      logger.debug('Updating values')
+      logger.info('updating values', {
+        id: entry.sys.id,
+      })
       return entry.update()
     }
-
-    logger.debug('Values unchanged, aborting update')
+    logger.info('Values unchanged, aborting update', {
+      id: entry.sys.id,
+    })
     return Promise.resolve(undefined)
   }
 }

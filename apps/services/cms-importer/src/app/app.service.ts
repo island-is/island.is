@@ -14,8 +14,34 @@ export class AppService {
 
   public async run() {
     logger.debug('Starting cms import worker...')
+
     await this.processGrants()
-    logger.debug('Cms import worker done.')
+
+    logger.debug('...cms import worker finished.')
+  }
+
+  private parseGrantDate = (date: Date): { date: string; hour?: number } => {
+    const dateHour: number = date.getHours()
+
+    const parsedDate = {
+      date: date.toISOString().split('T')[0],
+    }
+
+    if (dateHour > 0 && dateHour < 24) {
+      return {
+        ...parsedDate,
+        hour: dateHour,
+      }
+    }
+
+    if (dateHour === 0) {
+      return {
+        ...parsedDate,
+        hour: 0,
+      }
+    }
+
+    return parsedDate
   }
 
   private async processGrants() {
@@ -24,15 +50,13 @@ export class AppService {
       this.clientsRepository.getGrants(),
     ])
 
-    const grantsToUpdate: CmsGrantInput = cmsGrants
+    const grantsToUpdate: CmsGrantInput = clientGrants
       .map((grant) => {
-        const clientGrant = clientGrants.find(
-          (cg) => cg.id === grant.referenceId,
-        )
+        const clientGrant = cmsGrants.find((cg) => cg.referenceId === grant.id)
 
         if (!clientGrant) {
           logger.info('No matching client grant discovered', {
-            referenceId: grant.referenceId,
+            referenceId: grant.id,
           })
           return
         }
@@ -57,18 +81,40 @@ export class AppService {
           return
         }
 
+        const parsedGrantDateTo = this.parseGrantDate(grantDateTo)
+        const parsedGrantDateFrom = this.parseGrantDate(grantDateFrom)
+
         return {
-          referenceId: clientGrant.id,
+          referenceId: grant.id,
+          cmsGrantEntry: clientGrant.entry,
           inputFields: [
             {
-              key: 'dateFrom',
-              value: grantDateFrom.toISOString(),
+              key: 'grantDateFrom',
+              value: parsedGrantDateFrom.date,
             },
             {
-              key: 'dateTo',
-              value: grantDateTo.toISOString(),
+              key: 'grantDateTo',
+              value: parsedGrantDateTo.date,
             },
-          ],
+            parsedGrantDateFrom.hour
+              ? {
+                  key: 'grantOpenFromHour',
+                  value:
+                    parsedGrantDateFrom.hour === 0
+                      ? undefined
+                      : parsedGrantDateFrom.hour,
+                }
+              : undefined,
+            parsedGrantDateTo.hour
+              ? {
+                  key: 'grantOpenToHour',
+                  value:
+                    parsedGrantDateTo.hour === 0
+                      ? undefined
+                      : parsedGrantDateTo.hour,
+                }
+              : undefined,
+          ].filter(isDefined),
         }
       })
       .filter(isDefined)
