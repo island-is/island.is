@@ -30,7 +30,7 @@ export const requirements = {
     accept: {
       id: 'ojoi.application:requirements.inputs.accept',
       defaultMessage:
-        'Ég skil ofangreindar upplýsingar og hef leyfi til þess að senda inn mál til birtingar',
+        'Ég skil ofangreindar upplýsingar og hef umboð til þess að senda inn mál til birtingar',
       description: 'Label for the accept input',
     },
   }),
