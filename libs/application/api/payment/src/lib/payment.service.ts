@@ -36,8 +36,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-import gql from 'graphql-tag'
-import { ApolloClient, InMemoryCache } from '@apollo/client'
+import {
+  CreatePaymentFlowInputAvailablePaymentMethodsEnum,
+  PaymentsApi,
+} from '@island.is/clients/payments'
 @Injectable()
 export class PaymentService {
   constructor(
@@ -49,27 +51,8 @@ export class PaymentService {
     private readonly auditService: AuditService,
     private readonly applicationService: ApplicationService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly paymentsApi: PaymentsApi,
   ) {}
-
-  private readonly client = new ApolloClient({
-    uri: 'https://featbootstrap-payments-beta.dev01.devland.is/api/graphql',
-    cache: new InMemoryCache(),
-    defaultOptions: {
-      query: {
-        fetchPolicy: 'no-cache',
-      },
-    },
-  })
-
-  private readonly CREATE_PAYMENT_MUTATION = gql`
-    mutation CreatePaymentFlow($input: CreatePaymentFlowInput!) {
-      paymentsCreateFlow(input: $input) {
-        urls {
-          is
-        }
-      }
-    }
-  `
 
   async findPaymentByApplicationId(
     applicationId: string,
@@ -292,9 +275,36 @@ export class PaymentService {
       )
       user4 = chargeResult.user4
 
-      const gqlChargeResult = await this.createGQLCharge(paymentModel, user)
       console.log('===============================================')
-      console.log('gqlChargeResult', gqlChargeResult)
+      console.log('catalogChargeItems')
+      console.dir(catalogChargeItems, { depth: null })
+      console.log('===============================================')
+
+      const paymentUrl =
+        await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+          createPaymentFlowInput: {
+            availablePaymentMethods: [
+              CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
+            ],
+            charges: [
+              {
+                chargeType: catalogChargeItems[0].chargeType,
+                chargeItemCode: catalogChargeItems[0].chargeItemCode,
+                quantity: catalogChargeItems[0].quantity ?? 1,
+                price: catalogChargeItems[0].priceAmount,
+              },
+            ],
+            payerNationalId: user.nationalId,
+            organisationId: performingOrganizationID,
+            onUpdateUrl:
+              'https://webhook.site/b60602ce-55af-4603-8571-afaae4b70d11',
+            metadata: {
+              applicationId,
+            },
+          },
+        })
+      console.log('===============================================')
+      console.log('paymentUrl', paymentUrl)
       console.log('===============================================')
     }
 
@@ -303,46 +313,6 @@ export class PaymentService {
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
     return this.buildChargeResult(paymentModel.id, user4)
-  }
-
-  async createGQLCharge(paymentModel: Payment, user: User) {
-    if (!paymentModel.definition) {
-      throw new Error('Payment model definition is missing')
-    }
-    const parsedDefinition =
-      typeof paymentModel.definition === 'string' // this is a workaround the fact that the definition is stored as a string in the database but as an object in during testing
-        ? JSON.parse(paymentModel.definition as unknown as string)
-        : JSON.parse(JSON.stringify(paymentModel.definition))
-    const parsedDefinitionCharges = parsedDefinition.charges as [
-      {
-        chargeItemName: string
-        chargeItemCode: string
-        amount: number
-        quantity?: number
-      },
-    ]
-    try {
-      const result = await this.client.mutate({
-        mutation: this.CREATE_PAYMENT_MUTATION,
-        variables: {
-          charges: parsedDefinitionCharges,
-          performingOrganizationID: parsedDefinition.performingOrganizationID,
-          payerNationalId: user.nationalId,
-          applicationId: paymentModel.application_id,
-          onUpdateUrl:
-            'https://webhook.site/65eeba60-5632-45ad-af51-004f3ecac11a',
-        },
-      })
-      console.log('===============================================')
-      console.log('createGQLCharge', result)
-      console.log('===============================================')
-      return result
-    } catch (error) {
-      console.log('===============================================')
-      console.log('createGQLCharge error', error)
-      console.log('===============================================')
-      throw error
-    }
   }
 
   async createNewCharge(

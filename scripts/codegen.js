@@ -17,7 +17,11 @@ const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.ts'
 /**
  * See https://docs.devland.is/repository/codegen about setting up your project with auto-generated API schema and client files
  */
-const TARGETS = ['codegen/backend-schema', 'codegen/frontend-client']
+const TARGETS = [
+  'codegen/backend-client',
+  'codegen/backend-schema',
+  'codegen/frontend-client',
+]
 
 const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))

@@ -63,7 +63,7 @@ import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
-
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
@@ -125,6 +125,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         UserNotificationClientConfig,
         NationalRegistryV3ClientConfig,
         SecondarySchoolClientConfig,
+        PaymentsApiClientConfig,
       ],
     }),
   ],
