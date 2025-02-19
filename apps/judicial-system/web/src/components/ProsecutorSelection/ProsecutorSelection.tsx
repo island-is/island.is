@@ -18,17 +18,20 @@ interface Props {
 
 const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const { formatMessage } = useIntl()
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user: currentUser } = useContext(UserContext)
 
   const selectedProsecutor = useMemo(() => {
-    return workingCase.prosecutor
-      ? {
-          label: workingCase.prosecutor.name ?? '',
-          value: workingCase.prosecutor.id,
-        }
-      : undefined
-  }, [workingCase.prosecutor])
+    const label = workingCase.prosecutor
+      ? workingCase.prosecutor.name ?? ''
+      : currentUser?.name ?? ''
+
+    const value = workingCase.prosecutor
+      ? workingCase.prosecutor.id
+      : currentUser?.id
+
+    return { label, value }
+  }, [currentUser?.id, currentUser?.name, workingCase.prosecutor])
 
   const { data, loading } = useProsecutorSelectionUsersQuery({
     fetchPolicy: 'no-cache',
@@ -73,7 +76,18 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       options={eligibleProsecutors}
       onChange={(value) => {
         const id = value?.value
+
         if (id && typeof id === 'string') {
+          if (!workingCase.id) {
+            const prosecutor = data?.users?.find((p) => p.id === id)
+
+            setWorkingCase((prevWorkingCase) => ({
+              ...prevWorkingCase,
+              prosecutor,
+            }))
+          } else {
+            onChange(id)
+          }
           onChange(id)
         }
       }}
