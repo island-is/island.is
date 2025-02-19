@@ -153,7 +153,6 @@ interface LawsBrokenOption {
   disabled: boolean
 }
 
-// TODO: remove
 export const getRelevantSubstances = (
   deprecatedOffenses: IndictmentCountOffense[],
   substances: SubstanceMap,

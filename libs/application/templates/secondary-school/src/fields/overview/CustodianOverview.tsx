@@ -10,6 +10,7 @@ import {
   formatPhoneNumber,
   Routes,
   checkIsEditable,
+  checkUseAnswersCopy,
 } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
@@ -20,10 +21,13 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
-      'custodians',
+      copyPrefix + 'custodians',
     ) || []
 
   const custodiansExternalData = custodiansAnswers.filter(
@@ -32,12 +36,12 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
-  >(application.answers, 'mainOtherContact')
+  >(application.answers, copyPrefix + 'mainOtherContact')
 
   const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       application.answers,
-      'otherContacts',
+      copyPrefix + 'otherContacts',
     ) || []
   ).filter((x) => !!x.person.nationalId)
 
