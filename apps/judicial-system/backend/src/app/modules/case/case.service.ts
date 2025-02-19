@@ -1894,7 +1894,7 @@ export class CaseService {
 
       if (update.state === CaseState.COMPLETED) {
         return this.eventLogService.createWithUser(
-          EventType.INDICTMENT_CONFIRMED,
+          EventType.INDICTMENT_CONPLETED,
           theCase.id,
           user,
           transaction,
