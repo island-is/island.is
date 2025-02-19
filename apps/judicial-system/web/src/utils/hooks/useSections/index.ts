@@ -40,7 +40,6 @@ const validateFormStepper = (
   isActiveSubSectionValid: boolean,
   steps: string[],
   workingCase: Case,
-  isOffenseEndpointEnabled?: boolean
 ) => {
   if (!isActiveSubSectionValid) {
     return false
@@ -50,7 +49,7 @@ const validateFormStepper = (
 
   return steps.some(
     (step) =>
-      validationForStep[step as keyof typeof validationForStep](workingCase, isOffenseEndpointEnabled) ===
+      validationForStep[step as keyof typeof validationForStep](workingCase) ===
       false,
   )
     ? false
@@ -61,9 +60,6 @@ const useSections = (
   isValid = true,
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-  
   const { formatMessage } = useIntl()
 
   const router = useRouter()
@@ -552,7 +548,6 @@ const useSections = (
                     constants.INDICTMENTS_PROCESSING_ROUTE,
                   ],
                   workingCase,
-                  isOffenseEndpointEnabled
                 ) &&
                 onNavigationTo
                   ? async () =>

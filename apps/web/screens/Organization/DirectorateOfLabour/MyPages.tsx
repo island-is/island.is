@@ -110,14 +110,6 @@ const MyPages: CustomScreen<MyPagesProps> = ({
                     alt=""
                     autoStack={true}
                   />
-                  <CategoryCard
-                    heading={formatMessage(m.parentalLeaveLabel)}
-                    text={formatMessage(m.parentalLeaveDescription)}
-                    href={formatMessage(m.parentalLeaveHref)}
-                    src={formatMessage(m.parentalLeaveImageSrc)}
-                    alt=""
-                    autoStack={true}
-                  />
                 </Stack>
               </GridColumn>
             </GridRow>
