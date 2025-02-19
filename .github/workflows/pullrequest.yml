@@ -56,7 +56,7 @@ jobs:
       - name: check outputs
         run: |
           echo "BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}"
-          echo "DOCKER_CHUNKS: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}"
+          echo "DOCKER_CHUNKS: '${{ needs.prepare.outputs.DOCKER_CHUNKS }}'"
           echo "DEPLOY_FEATURE: ${{ needs.prepare.outputs.DEPLOY_FEATURE }}"
   tests:
     needs:
