@@ -3,8 +3,28 @@ import { Entry } from 'contentful-management'
 export interface CmsGrant {
   entry: Entry
   id: string
-  applicationId: string
+  referenceId: string
   dateFrom?: string
   dateTo?: string
-  isOpen?: boolean
 }
+
+export type CmsGrantInput = Array<{
+  referenceId: string
+  inputFields: CmsGrantInputFields
+}>
+
+export type CmsGrantInputFields = Array<{ key: string; value: unknown }>
+
+export type GrantUpdateResult =
+  | {
+      ok: 'success'
+      entry: Entry
+    }
+  | {
+      ok: 'error'
+      error?: string
+    }
+  | {
+      ok: 'somewhat'
+      error?: string
+    }

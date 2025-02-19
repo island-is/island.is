@@ -674,6 +674,7 @@
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
+      "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
@@ -1143,7 +1144,6 @@
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
-      "clients/grants": ["libs/clients/grants/src/index.ts"],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
   }
