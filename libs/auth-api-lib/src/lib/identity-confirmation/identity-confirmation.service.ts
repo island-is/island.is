@@ -1,14 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { IdentityConfirmationInputDto } from './dto/IdentityConfirmationInput.dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
-import { Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import { ZendeskService } from '@island.is/clients/zendesk'
 import { uuid } from 'uuidv4'
 import { IdentityConfirmationType } from './types/identity-confirmation-type'
 import { SmsService } from '@island.is/nova-sms'
-import { EmailService } from '@island.is/email-service'
-import { IdentityConfirmationApiConfig } from './config'
-import type { ConfigType } from '@island.is/nest/config'
 
 const ZENDESK_CUSTOM_FIELDS = {
   Link: 24598388531474,
@@ -21,10 +18,6 @@ export class IdentityConfirmationService {
     private identityConfirmationModel: typeof IdentityConfirmation,
     private readonly zendeskService: ZendeskService,
     private readonly smsService: SmsService,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
-    @Inject(IdentityConfirmationApiConfig.KEY)
-    private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
   ) {}
 
   async identityConfirmation({

@@ -82,8 +82,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
-      EMAIL_FROM: '/k8s/services-auth/api/EMAIL_FROM',
-      EMAIL_FROM_NAME: '/k8s/services-auth/api/EMAIL_FROM_NAME',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
       ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
