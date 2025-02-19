@@ -75,7 +75,6 @@ env:
 jobs:
   prepare:
     name: Prepare
-    if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
     runs-on: 'arc-runners'
     outputs:
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}

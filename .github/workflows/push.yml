@@ -250,7 +250,7 @@ jobs:
           fi
 
   docker-build:
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS || needs.pre-checks.outputs.GIT_BRANCH == 'main' }}
     needs:
       - pre-checks
       - prepare
