@@ -199,13 +199,13 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: test-everything
-        id: test-everything
-        uses: ./.github/actions/test-everything
-
       - name: Set test-everything env
         run: |
-          echo "TEST_EVERYTHING=${{ steps.test-everything.outputs.TEST_EVERYTHING }} >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "pull_request" && "${{ contains(github.event.pull_request.labels.*.name, 'test everything') }}" == "true" ]]; then
+            echo "TEST_EVERYTHING=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "TEST_EVERYTHING=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
