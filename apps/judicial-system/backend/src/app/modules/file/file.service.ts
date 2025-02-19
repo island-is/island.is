@@ -179,12 +179,16 @@ export class FileService {
       return undefined
     }
 
+    const completedEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
+    )
+
     return createConfirmedPdf(
       {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: theCase.rulingDate,
+        date: completedEvent?.created || theCase.rulingDate,
       },
       pdf,
       file.category,

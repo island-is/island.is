@@ -1,0 +1,5 @@
+export const UrlMethods = {
+  SEND_TO_ZENDESK: 'SEND_TO_ZENDESK',
+  SEND_NUDGE: 'SEND_NUDGE',
+  SEND_DATA: 'SEND_DATA',
+}

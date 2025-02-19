@@ -4,7 +4,12 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
-import { getTranslatedProgram, Routes, checkIsEditable } from '../../utils'
+import {
+  getTranslatedProgram,
+  Routes,
+  checkIsEditable,
+  checkUseAnswersCopy,
+} from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath, YES } from '@island.is/application/core'
 
@@ -14,9 +19,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage, lang } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
     application.answers,
-    'selection',
+    copyPrefix + 'selection',
   )
 
   const onClick = (page: string) => {
