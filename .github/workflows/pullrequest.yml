@@ -232,12 +232,12 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   docker-build:
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+    if: ${{ needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
     needs:
       - prepare
     uses: ./.github/workflows/docker.yml
     with:
-      projects: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
+      projects: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
       version: ${{ needs.prepare.outputs.DOCKER_TAG }}
 
   success:
