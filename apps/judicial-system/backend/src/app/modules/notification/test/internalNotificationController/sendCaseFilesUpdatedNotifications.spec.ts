@@ -23,7 +23,10 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (user: User) => Promise<Then>
+type GivenWhenThen = (
+  user: User,
+  isDefenderChoiceConfirmed?: boolean,
+) => Promise<Then>
 
 describe('InternalNotificationController - Send case files updated notifications', () => {
   const { prosecutor, judge, defender, spokesperson } = createTestUsers([
@@ -44,7 +47,7 @@ describe('InternalNotificationController - Send case files updated notifications
 
     mockEmailService = emailService
 
-    givenWhenThen = async (user: User) => {
+    givenWhenThen = async (user: User, isDefenderChoiceConfirmed = true) => {
       const then = {} as Then
 
       await internalNotificationController
@@ -62,6 +65,7 @@ describe('InternalNotificationController - Send case files updated notifications
                 defenderNationalId: defender.nationalId,
                 defenderName: defender.name,
                 defenderEmail: defender.email,
+                isDefenderChoiceConfirmed: isDefenderChoiceConfirmed,
               },
             ],
             civilClaimants: [
@@ -85,7 +89,7 @@ describe('InternalNotificationController - Send case files updated notifications
     }
   })
 
-  describe('notification sent by prosecutor', () => {
+  describe('notification sent by prosecutor when defender is confirmed', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -115,6 +119,29 @@ describe('InternalNotificationController - Send case files updated notifications
           to: [{ name: defender.name, address: defender.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent by prosecutor when defender choice is not confirmed', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        } as unknown as User,
+        false,
+      )
+    })
+
+    it('should not send an email to the defender', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defender.name, address: defender.email }],
         }),
       )
       expect(then.result).toEqual({ delivered: true })
