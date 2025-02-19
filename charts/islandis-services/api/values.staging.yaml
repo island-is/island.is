@@ -35,6 +35,7 @@ env:
   AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
   AUTH_IDS_API_URL: 'https://identity-server.staging01.devland.is'
   AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
+  CLIENT_BASE_URL: 'https://beta.staging01.devland.is'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
   CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'

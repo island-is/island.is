@@ -274,6 +274,7 @@ api:
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
     AUTH_IDS_API_URL: 'https://innskra.island.is'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
+    CLIENT_BASE_URL: 'https://island.is'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi.island.is'
