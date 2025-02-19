@@ -77,7 +77,6 @@ jobs:
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
@@ -237,13 +236,6 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Gather unaffected docker images
-        id: unaffected
-        run: |
-          set -euo pipefail
-          UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
-          echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
 
       # NOTE: only on PRs
       - name: Prepare deployment targets
@@ -431,14 +423,6 @@ jobs:
         env:
           PUBLISH: 'true'
 
-      - name: Retag as latest
-        if: ${{ env.GIT_BRANCH == 'main' && env.NX_AFFECTED_ALL != 'true' }}
-        env:
-          UNAFFECTED: helm-config
-          LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
-          DOCKER_TAG: latest
-        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
@@ -449,43 +433,13 @@ jobs:
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
 
-  # retag-unaffected:
-  #   runs-on: arc-runners
-  #   timeout-minutes: 5
-  #   if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
-  #   needs:
-  #     - pre-checks
-  #     - docker-build
-  #     - prepare
-  #   env:
-  #     GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-  #     DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-  #     LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
-  #     UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
-  #
-  #   steps:
-  #     - name: Check prepare success
-  #       run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-  #     - name: Check docker-build success
-  #       run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-  #     - uses: actions/checkout@v4
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: eu-west-1
-  #     - name: Retag unaffected Docker images
-  #       run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-  #
   deploy:
     runs-on: arc-runners
-    # if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
-    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' }}
+    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result != 'failure' }}
     needs:
-      # - retag-unaffected
       - pre-checks
       - prepare
+      - docker-build
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -538,11 +492,9 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
-      # - retag-unaffected
+      - docker-build
       - deploy
     steps:
-      # - name: Check retag success
-      #   run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
@@ -559,7 +511,6 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
-      # - retag-unaffected
       - deploy
     steps:
       - name: Send Slack notification
