@@ -1,5 +1,8 @@
+// import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
 
+// @InputType('FormSystemScreenValidationResponseInput')
+// @ObjectType('FormSystemScreenValidationResponse')
 export class ScreenValidationResponse {
   isValid!: boolean
   screenId!: string

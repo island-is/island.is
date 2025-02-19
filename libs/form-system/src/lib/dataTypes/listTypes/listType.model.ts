@@ -1,18 +1,25 @@
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
 import { ListTypesEnum } from './listTypes.enum'
 
+@InputType('FormSystemListTypeInput')
+@ObjectType('FormSystemListType')
 export class ListType {
   @ApiProperty()
+  @Field(() => String)
   id!: string
 
   @ApiProperty({ type: LanguageType })
+  @Field(() => LanguageType)
   name!: LanguageType
 
   @ApiProperty({ type: LanguageType })
+  @Field(() => LanguageType)
   description!: LanguageType
 
   @ApiProperty()
+  @Field(() => Boolean)
   isCommon!: boolean
 }
 

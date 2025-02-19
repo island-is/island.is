@@ -1,19 +1,26 @@
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
 import { ApplicantTypesEnum } from './applicantTypes.enum'
 import { ApplicantTypeNames } from './applicantTypeName.model'
 
+@InputType('FormSystemApplicantTypeInput')
+@ObjectType('FormSystemApplicantType')
 export class ApplicantType {
   @ApiProperty()
+  @Field(() => String)
   id!: string
 
   @ApiProperty({ type: LanguageType })
+  @Field(() => LanguageType)
   description!: LanguageType
 
   @ApiPropertyOptional({ type: LanguageType })
+  @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 
   @ApiPropertyOptional({ type: [LanguageType] })
+  @Field(() => [LanguageType], { nullable: 'itemsAndList' })
   nameSuggestions?: LanguageType[]
 }
 

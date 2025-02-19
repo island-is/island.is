@@ -1,26 +1,35 @@
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { FieldTypesEnum } from './fieldTypes.enum'
 import { FieldSettings } from '../fieldSettings/fieldSettings.model'
 import { LanguageType } from '../languageType.model'
 import { ValueDto } from '@island.is/form-system-dto'
 
+@InputType('FormSystemFieldTypeInput')
+@ObjectType('FormSystemFieldType')
 export class FieldType {
   @ApiProperty()
+  @Field(() => String)
   id!: string
 
   @ApiProperty({ type: LanguageType })
+  @Field(() => LanguageType)
   name!: LanguageType
 
   @ApiProperty({ type: LanguageType })
+  @Field(() => LanguageType)
   description!: LanguageType
 
   @ApiProperty()
+  @Field(() => Boolean)
   isCommon!: boolean
 
   @ApiPropertyOptional({ type: FieldSettings })
+  @Field(() => FieldSettings, { nullable: true })
   fieldSettings?: FieldSettings
 
   @ApiPropertyOptional({ type: [ValueDto] })
+  @Field(() => [ValueDto], { nullable: 'itemsAndList' })
   values?: ValueDto[]
 }
 
