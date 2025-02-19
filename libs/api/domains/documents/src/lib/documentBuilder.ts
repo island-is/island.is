@@ -6,6 +6,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { Document } from './models/v1/document.model'
 import { DocumentTypeFilter, FileType } from './types'
+import { createBffUrl } from './helpers/creatBffUrl'
 
 @Injectable()
 export class DocumentBuilder {
@@ -60,6 +61,10 @@ export class DocumentBuilder {
   }
 
   private formatDownloadServiceUrl(document: DocumentInfoDTO): string {
-    return `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${document.id}`
+    const dlUrl = createBffUrl(
+      this.downloadServiceConfig.clientBasePath,
+      `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${document.id}`,
+    )
+    return dlUrl
   }
 }

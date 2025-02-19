@@ -27,6 +27,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { getBirthday } from './helpers/getBirthday'
 import differceInYears from 'date-fns/differenceInYears'
 import type { Locale } from '@island.is/shared/types'
+import { createBffUrl } from './helpers/creatBffUrl'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
@@ -71,7 +72,10 @@ export class DocumentServiceV2 {
       publicationDate: document.date,
       id: documentId,
       name: document.fileName,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
+      downloadUrl: createBffUrl(
+        this.downloadServiceConfig.clientBasePath,
+        `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
+      ),
       sender: {
         id: document.senderNationalId,
         name: document.senderName,
@@ -143,7 +147,10 @@ export class DocumentServiceV2 {
       publicationDate: document.date,
       id: documentId,
       name: document.fileName,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
+      downloadUrl: createBffUrl(
+        this.downloadServiceConfig.clientBasePath,
+        `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
+      ),
       sender: {
         id: document.senderNationalId,
         name: document.senderName,
@@ -204,7 +211,10 @@ export class DocumentServiceV2 {
           return {
             ...d,
             id: d.id,
-            downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
+            downloadUrl: createBffUrl(
+              this.downloadServiceConfig.clientBasePath,
+              `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
+            ),
             sender: {
               name: d.senderName,
               id: d.senderNationalId,
@@ -268,7 +278,10 @@ export class DocumentServiceV2 {
           return {
             ...d,
             id: d.id,
-            downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
+            downloadUrl: createBffUrl(
+              this.downloadServiceConfig.clientBasePath,
+              `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
+            ),
             sender: {
               name: d.senderName,
               id: d.senderNationalId,
@@ -514,7 +527,10 @@ export class DocumentServiceV2 {
         return {
           ...x,
           icon: 'download',
-          data: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${id}`,
+          data: createBffUrl(
+            this.downloadServiceConfig.clientBasePath,
+            `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${id}`,
+          ),
         }
       }
       if (x.type === 'url') {

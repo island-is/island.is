@@ -148,6 +148,11 @@ export const serviceSetup = (services: {
         dev: 'https://api.dev01.devland.is',
         staging: 'https://api.staging01.devland.is',
       },
+      CLIENT_BASE_URL: {
+        dev: 'https://beta.dev01.devland.is',
+        staging: 'https://beta.staging01.devland.is',
+        prod: 'https://island.is',
+      },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),

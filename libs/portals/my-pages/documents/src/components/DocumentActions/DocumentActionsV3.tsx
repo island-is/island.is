@@ -1,11 +1,10 @@
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { IconMapIcon } from '@island.is/island-ui/core/types'
-import { useBffUrlGenerator } from '@island.is/react-spa/bff'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { formatBffPath } from '@island.is/portals/my-pages/core'
 
 const DocumentActions = () => {
   const { activeDocument } = useDocumentContext()
-  const bffUrlGenerator = useBffUrlGenerator()
   const DEFAULT_ICON: IconMapIcon = 'document'
   const actions = activeDocument?.actions
   const alert = activeDocument?.alert
@@ -52,12 +51,10 @@ const DocumentActions = () => {
                   icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
                   iconType="outline"
                   onClick={() => {
-                    window.open(
-                      bffUrlGenerator('/api', {
-                        url: a.data ?? activeDocument.downloadUrl,
-                      }),
-                      '_blank',
+                    const bffUrl = formatBffPath(
+                      a.data ?? activeDocument.downloadUrl,
                     )
+                    window.open(bffUrl, '_blank')
                   }}
                 >
                   {a.title}

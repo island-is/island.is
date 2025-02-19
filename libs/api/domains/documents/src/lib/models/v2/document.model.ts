@@ -57,7 +57,7 @@ export class Document {
 
   @Field({
     nullable: true,
-    description: 'URL in download service. For downloading PDFs',
+    description: 'BFF url for downloading documents',
   })
   downloadUrl?: string
 

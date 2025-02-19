@@ -75,3 +75,14 @@ export function getErrorViaPath(obj: RecordObject, path: string): string {
 export const ellipsis = (text: string, length: number) => {
   return text.length > length ? `${text.substring(0, length)}...` : text
 }
+
+export const formatBffPath = (path: string) => {
+  try {
+    // Remove domain. Add current domain. so it can be used with feature deployments.
+    const bffPath = path.replace(/.*\/\/[^/]*/, '')
+    const bffUrl = window.location.origin + bffPath
+    return bffUrl
+  } catch (error) {
+    return path
+  }
+}

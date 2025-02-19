@@ -7,5 +7,6 @@ export const DownloadServiceConfig = defineConfig({
       'DOWNLOAD_SERVICE_BASE_PATH',
       'http://localhost:3377',
     ),
+    clientBasePath: env.required('CLIENT_BASE_URL', 'http://localhost:4200'),
   }),
 })
