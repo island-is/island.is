@@ -11,6 +11,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { CreateEventLogDto } from './dto/createEventLog.dto'
@@ -40,6 +41,26 @@ export class EventLogService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  async createWithUser(
+    eventType: EventType,
+    caseId: string,
+    user: User,
+    transaction?: Transaction,
+  ): Promise<void> {
+    await this.create(
+      {
+        eventType,
+        caseId,
+        nationalId: user.nationalId,
+        userRole: user.role,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      transaction,
+    )
+  }
 
   async create(
     event: CreateEventLogDto,
