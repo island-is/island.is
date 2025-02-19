@@ -66,13 +66,18 @@ export class EventLogService {
     event: CreateEventLogDto,
     transaction?: Transaction,
   ): Promise<void> {
-    const { eventType, caseId, userRole, nationalId } = event
+    const { eventType, caseId, userRole, nationalId, institutionName } = event
 
     if (!allowMultiple.includes(event.eventType)) {
       const where = Object.fromEntries(
-        Object.entries({ caseId, eventType, nationalId, userRole }).filter(
-          ([_, value]) => value !== undefined,
-        ),
+        // The user name and title do not matter when checking for duplicates
+        Object.entries({
+          eventType,
+          caseId,
+          nationalId,
+          userRole,
+          institutionName,
+        }).filter(([_, value]) => value !== undefined),
       )
 
       const eventExists = await this.eventLogModel.findOne({ where })
@@ -83,10 +88,7 @@ export class EventLogService {
     }
 
     try {
-      await this.eventLogModel.create(
-        { eventType, caseId, nationalId, userRole },
-        { transaction },
-      )
+      await this.eventLogModel.create({ ...event }, { transaction })
     } catch (error) {
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
