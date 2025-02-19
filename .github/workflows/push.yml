@@ -223,6 +223,11 @@ jobs:
         env:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
 
+      - name: check pre-release
+        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || steps.set-branch-env.outputs.GIT_BRANCH == 'main' }}
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -239,11 +244,6 @@ jobs:
           set -euo pipefail
           UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
           echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
-
-      - name: check pre-release
-        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || steps.set-branch-env.outputs.GIT_BRANCH == 'main' }}
-        run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
       # NOTE: only on PRs
       - name: Prepare deployment targets
