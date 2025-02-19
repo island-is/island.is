@@ -234,6 +234,7 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS=$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo "DOCKER_CHUNKS=$CHUNKS" >> "$GITHUB_ENV"
           fi
 
       # NOTE: only on PRs
@@ -243,9 +244,8 @@ jobs:
         run: |
           set -euo pipefail
           export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          CHUNKS="${{ steps.build_map.outputs.CHUNKS }}"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            IMAGES="$(echo "$CHUNKS" | jq -r '[.[].project] | join(",")')"
+          if [[ "$DOCKER_CHUNKS" != "[]" ]]; then
+            IMAGES="$(echo "$DOCKER_CHUNKS" | jq -r '[.[].project] | join(",")')"
             echo "IMAGES=$IMAGES" >> "$GITHUB_OUTPUT"
           fi
 
