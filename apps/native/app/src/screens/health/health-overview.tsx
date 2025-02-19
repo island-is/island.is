@@ -583,6 +583,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                         : '',
                     },
                   )}`}
+                  loadLabel={true}
                   loading={organDonationRes.loading && !organDonationRes.data}
                   error={organDonationRes.error && !organDonationRes.data}
                   noBorder
