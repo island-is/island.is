@@ -9,12 +9,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
-interface Props {
-  handleChange?: () => void
-}
-
-const ProsecutorSection: FC<Props> = (props) => {
-  const { handleChange } = props
+const ProsecutorSection: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCase } = useCase()
 
@@ -42,7 +37,7 @@ const ProsecutorSection: FC<Props> = (props) => {
       <ProsecutorSectionHeading
         isIndictment={isIndictmentCase(workingCase.type)}
       />
-      <ProsecutorSelection onChange={handleChange ?? handleProsecutorChange} />
+      <ProsecutorSelection onChange={handleProsecutorChange} />
     </>
   )
 }
