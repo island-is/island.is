@@ -8,28 +8,10 @@ name: Docker Build
 # to speed up dependency and final image builds.
 
 on:
-  pull_request:
-    types:
-      - labeled
-      - synchronize
   workflow_call:
     inputs:
       projects:
         description: 'Json array of project objects, [{"project": "p1", "docker_type": "docker-express", "home": "apps/..", "dist": "dist/.."}, ...]'
-        type: string
-        required: true
-      build-args:
-        description: 'Additional build-args (newline separated)'
-        type: string
-        required: false
-      version:
-        description: 'The version to tag the image with (previously DOCKER_TAG)'
-        type: string
-        required: false
-  workflow_dispatch:
-    inputs:
-      projects:
-        description: 'Comma-separated list of project names to build.'
         type: string
         required: true
       build-args:
