@@ -6,7 +6,6 @@ import { AnchorPageSyncService } from './importers/anchorPage.service'
 import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
-import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
@@ -25,6 +24,7 @@ import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import type { CmsSyncProvider, processSyncDataInput } from './cmsSync.service'
+import { GrantsSyncService } from './importers/grants.service'
 
 @Injectable()
 export class MappingService {
@@ -37,7 +37,6 @@ export class MappingService {
     private readonly subArticleSyncService: SubArticleSyncService,
     private readonly anchorPageSyncService: AnchorPageSyncService,
     private readonly lifeEventPageSyncService: LifeEventPageSyncService,
-    private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly menuSyncService: MenuSyncService,
     private readonly groupedMenuSyncService: GroupedMenuSyncService,
     private readonly organizationPageSyncService: OrganizationPageSyncService,
@@ -53,6 +52,7 @@ export class MappingService {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
+    private readonly grantSyncService: GrantsSyncService,
     private readonly genericListItemSyncService: GenericListItemSyncService,
     private readonly teamListSyncService: TeamListSyncService,
   ) {
@@ -63,7 +63,6 @@ export class MappingService {
       this.lifeEventPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
-      this.adgerdirPageSyncService,
       this.menuSyncService,
       this.groupedMenuSyncService,
       this.organizationPageSyncService,
@@ -73,6 +72,7 @@ export class MappingService {
       this.supportQNASyncService,
       this.linkSyncService,
       this.enhancedAssetService,
+      this.grantSyncService,
       this.vacancyService,
       this.serviceWebPageSyncService,
       this.eventSyncService,

@@ -5,7 +5,7 @@ export const FinancialStatementsInaoClientConfig = defineConfig({
   load: (env) => ({
     basePath: env.required(
       'FINANCIAL_STATEMENTS_INAO_BASE_PATH',
-      'https://star-re.crm4.dynamics.com/api/data/v9.1',
+      'https://dev-re.crm4.dynamics.com/api/data/v9.1',
     ),
     issuer: env.required(
       'FINANCIAL_STATEMENTS_INAO_ISSUER',
@@ -13,7 +13,7 @@ export const FinancialStatementsInaoClientConfig = defineConfig({
     ),
     scope: env.required(
       'FINANCIAL_STATEMENTS_INAO_SCOPE',
-      'https://star-re.crm4.dynamics.com/.default',
+      'https://dev-re.crm4.dynamics.com/.default',
     ),
     tokenEndpoint: env.required(
       'FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT',

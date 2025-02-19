@@ -109,7 +109,7 @@ const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
       : 'Listen to this page using ReadSpeaker'
 
   return (
-    <Box marginTop={marginTop} marginBottom={marginBottom}>
+    <Box marginTop={marginTop} marginBottom={marginBottom} printHidden={true}>
       <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
         <a
           rel="nofollow"
@@ -117,6 +117,9 @@ const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
           accessKey="L"
           title={buttonTitle}
           href={href}
+          onClick={(event) => {
+            event.preventDefault() // So the Plausible outbound link tracking script doesn't open the href
+          }}
         >
           <span className="rsbtn_left rsimg rspart">
             <span className="rsbtn_text">

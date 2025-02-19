@@ -1,27 +1,14 @@
-import { useMemo, useRef, useState } from 'react'
-import { useDebounce } from 'react-use'
-import { CollectionProp, EntryProps, KeyValueMap } from 'contentful-management'
+import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { EditorExtensionSDK } from '@contentful/app-sdk'
-import {
-  Box,
-  Button,
-  EntryCard,
-  FormControl,
-  Pagination,
-  Spinner,
-  Stack,
-  Text,
-  TextInput,
-} from '@contentful/f36-components'
+import { Box, Button, FormControl } from '@contentful/f36-components'
 import { PlusIcon } from '@contentful/f36-icons'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
+import { EntryListSearch } from '../../../../components/EntryListSearch'
 import { mapLocalesToFieldApis } from '../../utils'
 
-const SEARCH_DEBOUNCE_TIME_IN_MS = 300
 const LIST_ITEM_CONTENT_TYPE_ID = 'genericListItem'
-const LIST_ITEMS_PER_PAGE = 4
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   return {
@@ -58,50 +45,10 @@ export const GenericListEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
   const cma = useCMA()
 
-  const searchValueRef = useRef('')
-  const [searchValue, setSearchValue] = useState('')
-  const [listItemResponse, setListItemResponse] =
-    useState<CollectionProp<EntryProps<KeyValueMap>>>()
-  const [loading, setLoading] = useState(false)
-  const [page, setPage] = useState(0)
-  const pageRef = useRef(0)
-
   /** Counter that's simply used to refresh the list when an item gets created */
-  const [counter, setCounter] = useState(0)
-
-  const skip = LIST_ITEMS_PER_PAGE * page
+  const [_, setCounter] = useState(0)
 
   const defaultLocale = sdk.locales.default
-
-  useDebounce(
-    async () => {
-      setLoading(true)
-      try {
-        const response = await cma.entry.getMany({
-          environmentId: sdk.ids.environment,
-          spaceId: sdk.ids.space,
-          query: {
-            content_type: LIST_ITEM_CONTENT_TYPE_ID,
-            limit: LIST_ITEMS_PER_PAGE,
-            skip,
-            'fields.internalTitle[match]': searchValue,
-            'fields.genericList.sys.id': sdk.entry.getSys().id,
-            'sys.archivedAt[exists]': false,
-          },
-        })
-        if (
-          searchValueRef.current === searchValue &&
-          pageRef.current === page
-        ) {
-          setListItemResponse(response)
-        }
-      } finally {
-        setLoading(false)
-      }
-    },
-    SEARCH_DEBOUNCE_TIME_IN_MS,
-    [page, searchValue, counter],
-  )
 
   const createListItem = async () => {
     const cardIntro = {}
@@ -189,70 +136,14 @@ export const GenericListEditor = () => {
           <Button startIcon={<PlusIcon />}>Add item</Button>
         </Box>
       </Box>
-      <Box style={{ display: 'flex', flexFlow: 'column nowrap', gap: '24px' }}>
-        <TextInput
-          placeholder="Search for a list item"
-          value={searchValue}
-          onChange={(ev) => {
-            searchValueRef.current = ev.target.value
-            setSearchValue(ev.target.value)
-            setPage(0)
-            pageRef.current = 0
-          }}
-        />
-
-        <Box
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            visibility: loading ? 'visible' : 'hidden',
-          }}
-        >
-          <Spinner />
-        </Box>
-
-        {listItemResponse?.items?.length > 0 && (
-          <>
-            <Box style={{ minHeight: '440px' }}>
-              <Stack flexDirection="column" spacing="spacingL">
-                {listItemResponse.items.map((item) => (
-                  <EntryCard
-                    key={item.sys.id}
-                    contentType="List Item"
-                    title={
-                      item.fields.internalTitle?.[defaultLocale] ?? 'Untitled'
-                    }
-                    onClick={() => {
-                      sdk.navigator
-                        .openEntry(item.sys.id, {
-                          slideIn: { waitForClose: true },
-                        })
-                        .then(() => {
-                          setCounter((c) => c + 1)
-                        })
-                    }}
-                  />
-                ))}
-              </Stack>
-            </Box>
-            <Pagination
-              activePage={page}
-              itemsPerPage={LIST_ITEMS_PER_PAGE}
-              totalItems={listItemResponse.total}
-              onPageChange={(newPage) => {
-                pageRef.current = newPage
-                setPage(newPage)
-              }}
-            />
-          </>
-        )}
-
-        {listItemResponse?.items?.length === 0 && (
-          <Box style={{ display: 'flex', justifyContent: 'center' }}>
-            <Text>No item was found</Text>
-          </Box>
-        )}
-      </Box>
+      <EntryListSearch
+        contentTypeId={LIST_ITEM_CONTENT_TYPE_ID}
+        contentTypeLabel="List Item"
+        contentTypeTitleField="internalTitle"
+        query={{
+          'fields.genericList.sys.id': sdk.ids.entry,
+        }}
+      />
     </Box>
   )
 }

@@ -1,9 +1,11 @@
 import {
+  YES,
   buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -29,14 +31,15 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
-  YES,
 } from '../lib/constants'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getCategoriesOptions,
   getTypesOptions,
 } from '../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../lib/messages'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -80,7 +83,9 @@ export const IncomePlanForm: Form = buildForm({
                 return {
                   ...baseMessage,
                   values: {
-                    incomePlanYear: incomePlanConditions.incomePlanYear,
+                    incomePlanYear:
+                      incomePlanConditions?.incomePlanYear ??
+                      new Date().getFullYear(),
                   },
                 }
               },
@@ -625,13 +630,25 @@ export const IncomePlanForm: Form = buildForm({
           description: incomePlanFormMessage.info.tableDescription,
           children: [
             buildCustomField({
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
+            }),
+            buildSelectField({
+              id: 'temporaryCalculation.month',
+              title: socialInsuranceAdministrationMessage.period.month,
+              width: 'half',
+              options: MONTHS,
+              defaultValue: MONTHS[new Date().getMonth()].value,
+              condition: (answers) =>
+                getApplicationAnswers(answers).temporaryCalculationShow,
+            }),
+            buildCustomField({
               id: 'temporaryCalculationTable',
-              title: '',
               component: 'TemporaryCalculationTable',
             }),
             buildDescriptionField({
               id: 'assumptions',
-              title: '',
               description: incomePlanFormMessage.info.assumptions,
             }),
           ],
@@ -644,7 +661,6 @@ export const IncomePlanForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(
@@ -681,7 +697,7 @@ export const IncomePlanForm: Form = buildForm({
       expandableIntro: '',
       bottomButtonMessage:
         incomePlanFormMessage.conclusionScreen.bottomButtonMessage,
-      bottomButtonLink: '/minarsidur/framfaersla/tekjuaaetlun',
+      bottomButtonLink: '/minarsidur/umsoknir',
     }),
   ],
 })

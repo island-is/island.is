@@ -1,61 +1,61 @@
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
-
 import { format as formatNationalId } from 'kennitala'
-import { m } from '../../lib/messages'
 import { sectionColumn } from './overviewStyles.css'
-import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { ValueLine } from './ValueLine'
+import { FormValue } from '@island.is/application/types'
+import { getAboutOverviewNumbers } from '../../utils/overviewUtils'
+import { m } from '../../lib/messages'
 
-export const AboutOverview = ({
-  answers,
-}: {
-  answers: FinancialStatementCemetery
-}) => {
+type Props = {
+  answers: FormValue
+}
+
+export const AboutOverview = ({ answers }: Props) => {
+  const {
+    fullName,
+    nationalId,
+    powerOfAttorneyName,
+    powerOfAttorneyNationalId,
+    email,
+    phoneNumber,
+  } = getAboutOverviewNumbers(answers)
   return (
     <>
       <GridRow>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
-          <ValueLine label={m.fullName} value={answers.about.fullName} />
+          <ValueLine label={m.fullName} value={fullName} />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine
             label={m.nationalId}
-            value={
-              answers.about?.nationalId
-                ? formatNationalId(answers.about.nationalId)
-                : '-'
-            }
+            value={nationalId ? nationalId : '-'}
           />
         </GridColumn>
       </GridRow>
       <GridRow>
-        {answers.about.powerOfAttorneyName ? (
+        {powerOfAttorneyName ? (
           <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <ValueLine
               label={m.powerOfAttorneyName}
-              value={answers.about.powerOfAttorneyName}
+              value={powerOfAttorneyName}
             />
           </GridColumn>
         ) : null}
-        {answers.about.powerOfAttorneyNationalId ? (
+        {powerOfAttorneyNationalId ? (
           <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <ValueLine
               label={m.powerOfAttorneyNationalId}
-              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+              value={powerOfAttorneyNationalId}
             />
           </GridColumn>
         ) : null}
       </GridRow>
       <GridRow>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
-          <ValueLine label={m.email} value={answers.about.email} />
+          <ValueLine label={m.email} value={email} />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
-          <ValueLine
-            label={m.phoneNumber}
-            value={formatPhoneNumber(answers.about.phoneNumber)}
-          />
+          <ValueLine label={m.phoneNumber} value={phoneNumber} />
         </GridColumn>
       </GridRow>
     </>

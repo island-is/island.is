@@ -9,7 +9,7 @@ import { Logo } from '../../assets/Logo'
 import { MAX_CNT_APPLICANTS } from '../../shared'
 import { SupportingDocumentsSection } from './SupportingDocumentsSection'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeItemCodes } from '../../utils'
+import { getChargeItems } from '../../utils'
 
 const buildSupportingDocumentsSections = (): Section[] => {
   return [...Array(MAX_CNT_APPLICANTS)].map((_key, index) => {
@@ -19,7 +19,6 @@ const buildSupportingDocumentsSections = (): Section[] => {
 
 export const CitizenshipForm: Form = buildForm({
   id: 'CitizenshipFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
@@ -38,8 +37,9 @@ export const CitizenshipForm: Form = buildForm({
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (_) =>
-        getChargeItemCodes().map((x) => ({
-          chargeItemCode: x,
+        getChargeItems().map((item) => ({
+          chargeItemCode: item.code,
+          chargeItemQuantity: item.quantity,
         })),
     }),
     buildSection({

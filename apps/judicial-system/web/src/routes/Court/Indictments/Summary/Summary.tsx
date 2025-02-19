@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -8,6 +8,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
   ConnectedCaseFilesAccordionItem,
+  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -19,11 +20,9 @@ import {
   PageTitle,
   RenderFiles,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Defendants,
-  Prosecutor,
-} from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import {
   CaseFile,
   CaseFileCategory,
@@ -31,28 +30,55 @@ import {
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  formatDateForServer,
   useCase,
   useFileList,
+  useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Summary.strings'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
-  const { transitionCase, isTransitioningCase } = useCase()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+  } = useContext(FormContext)
+  const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
+    useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
+  const { user } = useContext(UserContext)
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
 
+  const initialize = useCallback(() => {
+    if (!workingCase.courtEndTime) {
+      const now = new Date()
+      setAndSendCaseToServer(
+        [
+          {
+            courtEndTime: formatDateForServer(now),
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [workingCase, setWorkingCase, setAndSendCaseToServer])
+
+  useOnceOn(isCaseUpToDate, initialize)
+
   const handleNavigationTo = (destination: string) => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleNextButtonClick = async () => {
+  const handleModalPrimaryButtonClick = async () => {
     const transitionSuccess = await transitionCase(
       workingCase.id,
       CaseTransition.COMPLETE,
@@ -63,8 +89,26 @@ const Summary: FC = () => {
       return
     }
 
-    setModalVisible('CONFIRM_INDICTMENT')
+    router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
+
+  const handleCourtEndTimeChange = useCallback(
+    (date: Date | undefined | null, valid = true) => {
+      if (date && valid) {
+        setAndSendCaseToServer(
+          [
+            {
+              courtEndTime: formatDateForServer(date),
+              force: true,
+            },
+          ],
+          workingCase,
+          setWorkingCase,
+        )
+      }
+    },
+    [setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
 
   const [courtRecordFiles, rulingFiles] = (workingCase.caseFiles || []).reduce(
     (acc, cf) => {
@@ -89,6 +133,13 @@ const Summary: FC = () => {
   const indictmentRulingTag = getIndictmentRulingDecisionTag(
     workingCase.indictmentRulingDecision,
   )
+
+  const canUserCompleteCase =
+    (workingCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.RULING &&
+      workingCase.indictmentRulingDecision !==
+        CaseIndictmentRulingDecision.DISMISSAL) ||
+    workingCase.judge?.id === user?.id
 
   return (
     <PageLayout
@@ -120,8 +171,7 @@ const Summary: FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={2}>
-          <Prosecutor workingCase={workingCase} />
-          <Defendants workingCase={workingCase} />
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
@@ -152,26 +202,51 @@ const Summary: FC = () => {
             )}
           </Box>
         )}
+        <Box marginBottom={8} component="section">
+          <SectionHeading
+            title={formatMessage(strings.courtEndTimeTitle)}
+            description={formatMessage(strings.courtEndTimeDescription)}
+          />
+          <DateTime
+            name="courtEndDate"
+            selectedDate={workingCase.courtEndTime}
+            onChange={handleCourtEndTimeChange}
+            blueBox={true}
+            datepickerLabel="Dagsetning lykta"
+            dateOnly
+            required
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={async () => await handleNextButtonClick()}
-          nextIsDisabled={isTransitioningCase}
+          onNextButtonClick={() => setModalVisible('CONFIRM_INDICTMENT')}
+          hideNextButton={!canUserCompleteCase}
+          infoBoxText={
+            canUserCompleteCase
+              ? ''
+              : formatMessage(strings.onlyAssignedJudgeCanComplete)
+          }
         />
       </FormContentContainer>
       {modalVisible === 'CONFIRM_INDICTMENT' && (
         <Modal
-          title={formatMessage(strings.completedCaseModalTitle)}
-          text={formatMessage(strings.completedCaseModalBody)}
-          primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() =>
-            router.push(
-              `${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`,
-            )
+          title={formatMessage(strings.completeCaseModalTitle)}
+          text={formatMessage(strings.completeCaseModalBody)}
+          primaryButtonText={formatMessage(
+            strings.completeCaseModalPrimaryButton,
+          )}
+          onPrimaryButtonClick={async () =>
+            await handleModalPrimaryButtonClick()
           }
+          secondaryButtonText={formatMessage(
+            strings.completeCaseModalSecondaryButton,
+          )}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
+          isPrimaryButtonLoading={isTransitioningCase}
         />
       )}
     </PageLayout>

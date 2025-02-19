@@ -10,7 +10,7 @@ import React, {
 import { ApolloError, useMutation } from '@apollo/client'
 import {
   coreMessages,
-  formatText,
+  formatTextWithLocale,
   mergeAnswers,
 } from '@island.is/application/core'
 import {
@@ -22,7 +22,6 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
-  FormText,
 } from '@island.is/application/types'
 import {
   Box,
@@ -54,7 +53,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
-import { MessageDescriptor } from 'react-intl'
+import { Locale } from '@island.is/shared/types'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -75,6 +74,7 @@ type ScreenProps = {
   renderLastScreenBackButton?: boolean
   goToScreen: (id: string) => void
   setUpdateForbidden: (value: boolean) => void
+  canGoBack: boolean
 }
 
 const getServerValidationErrors = (error: ApolloError | undefined) => {
@@ -106,6 +106,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   renderLastScreenBackButton,
   screen,
   sections,
+  canGoBack,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -185,8 +186,27 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
+    let event: string | undefined
+    if (submitField !== undefined) {
+      const finalAnswers = { ...formValue, ...data }
+      if (submitField.placement === 'screen') {
+        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+      } else {
+        if (submitField.actions.length === 1) {
+          const actionEvent = submitField.actions[0].event
+          event =
+            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+        } else {
+          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+        }
+      }
+    }
+
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue, possibleError] = await beforeSubmitCallback.current()
+      const [canContinue, possibleError] = await beforeSubmitCallback.current(
+        event,
+      )
 
       if (!canContinue) {
         setIsSubmitting(false)
@@ -200,19 +220,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-      let event: string
-      if (submitField.placement === 'screen') {
-        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
-      } else {
-        if (submitField.actions.length === 1) {
-          const actionEvent = submitField.actions[0].event
-          event =
-            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
-        } else {
-          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
-          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
-        }
-      }
 
       response = await submitApplication({
         variables: {
@@ -227,7 +234,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       if (response?.data) {
         addExternalData(response.data?.submitApplication.externalData)
 
-        if (submitField.refetchApplicationAfterSubmit) {
+        if (
+          submitField.refetchApplicationAfterSubmit === true ||
+          (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
+            submitField.refetchApplicationAfterSubmit(event))
+        ) {
           refetch()
         }
       }
@@ -345,7 +356,12 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             marginBottom={1}
             {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
           >
-            {formatText(screen.title, application, formatMessage)}
+            {formatTextWithLocale(
+              screen.title ?? '',
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
           </Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
@@ -393,6 +409,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                   goToScreen={goToScreen}
                   refetch={refetch}
                   setSubmitButtonDisabled={setSubmitButtonDisabled}
+                  answerQuestions={answerQuestions}
                 />
               </Box>
             )}
@@ -409,6 +426,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           numberOfScreens={numberOfScreens}
           mode={mode}
           goBack={goBack}
+          canGoBack={canGoBack}
           submitField={submitField}
           loading={loading}
           canProceed={!isLoadingOrPending}

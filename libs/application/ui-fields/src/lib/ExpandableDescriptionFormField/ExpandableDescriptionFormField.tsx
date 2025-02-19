@@ -1,4 +1,4 @@
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { AccordionCard, Box, BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
@@ -7,6 +7,7 @@ import {
   FieldBaseProps,
 } from '@island.is/application/types'
 import { Markdown } from '@island.is/shared/components'
+import { Locale } from '@island.is/shared/types'
 interface Props extends FieldBaseProps {
   field: ExpandableDescriptionField
 }
@@ -14,14 +15,20 @@ interface Props extends FieldBaseProps {
 export const ExpandableDescriptionFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
+  const { marginTop = 2, marginBottom = 2 } = field
 
   return (
-    <Box marginY={2}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       <AccordionCard
         startExpanded={field.startExpanded}
         id={`BulletPointFormField-${field.id}`}
-        label={formatText(field.title, application, formatMessage)}
+        label={formatTextWithLocale(
+          field.title ?? '',
+          application,
+          locale as Locale,
+          formatMessage,
+        )}
         labelVariant="h3"
       >
         {field.introText && (
@@ -33,7 +40,12 @@ export const ExpandableDescriptionFormField: FC<
         )}
         <BulletList space="gutter" type="ul">
           <Markdown>
-            {formatText(field.description, application, formatMessage)}
+            {formatTextWithLocale(
+              field.description,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
           </Markdown>
         </BulletList>
       </AccordionCard>

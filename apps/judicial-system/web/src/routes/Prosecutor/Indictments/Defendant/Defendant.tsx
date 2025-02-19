@@ -9,11 +9,13 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
+  Feature,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -30,16 +32,15 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  UpdateIndictmentCount,
   useCase,
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { DefendantInfo } from '../../components'
+import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
+import { getIncidentDescription } from '../Indictment/lib/getIncidentDescription'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -115,7 +116,7 @@ const Defendant = () => {
   } = useDefendants()
   const router = useRouter()
 
-  const { updateIndictmentCount } = useIndictmentCounts()
+  const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
 
@@ -249,6 +250,12 @@ const Defendant = () => {
       workingCase,
       setWorkingCase,
     )
+
+    const indictmentCountId = workingCase.indictmentCounts?.[index]?.id
+
+    if (indictmentCountId) {
+      deleteIndictmentCount(workingCase.id, indictmentCountId)
+    }
   }
 
   const handleUpdatePoliceCase = (
@@ -279,20 +286,32 @@ const Defendant = () => {
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => {
     if (workingCase.indictmentCounts) {
       workingCase.indictmentCounts
-        .filter((ic) => ic.policeCaseNumber === policeCaseNumber)
-        .forEach((ic) => {
-          const incidentDescription = getIncidentDescription(
-            ic,
+        .filter(
+          (indictmentCount) =>
+            indictmentCount.policeCaseNumber === policeCaseNumber,
+        )
+        .forEach((indictmentCount) => {
+          const updatedIndictmentCount = {
+            ...indictmentCount,
+            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+          }
+          const incidentDescription = getIncidentDescription({
+            indictmentCount: updatedIndictmentCount,
             formatMessage,
             crimeScene,
-          )
+            subtypesRecord: subtypes,
+          })
 
-          updateIndictmentCount(workingCase.id, ic.id, {
+          updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-          } as UpdateIndictmentCount)
+            ...(subtypes && {
+              indictmentCountSubtypes: subtypes[policeCaseNumber],
+            }),
+          })
         })
     }
   }
@@ -351,7 +370,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -361,7 +380,7 @@ const Defendant = () => {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
-                nationalId: defendant.nationalId,
+                nationalId: defendant.nationalId || null,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               })
@@ -370,7 +389,6 @@ const Defendant = () => {
           router.push(`${destination}/${createdCase.id}`)
         } else {
           toast.error(formatMessage(errors.createCase))
-          return
         }
       } else {
         router.push(`${destination}/${workingCase.id}`)
@@ -416,14 +434,7 @@ const Defendant = () => {
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
-      const defendantId = await createDefendant({
-        caseId: workingCase.id,
-        gender: undefined,
-        name: '',
-        address: '',
-        nationalId: '',
-        citizenship: '',
-      })
+      const defendantId = await createDefendant({ caseId: workingCase.id })
 
       createEmptyDefendant(defendantId)
     } else {
@@ -438,14 +449,7 @@ const Defendant = () => {
       ...prevWorkingCase,
       defendants: prevWorkingCase.defendants && [
         ...prevWorkingCase.defendants,
-        {
-          id: defendantId || uuid(),
-          gender: undefined,
-          name: '',
-          nationalId: '',
-          address: '',
-          citizenship: '',
-        } as TDefendant,
+        { id: defendantId || uuid() },
       ],
     }))
   }
@@ -465,6 +469,9 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
+        <Box component="section" marginBottom={5}>
+          <ProsecutorSection />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
@@ -521,6 +528,11 @@ const Defendant = () => {
                         workingCase.origin === CaseOrigin.LOKE && index === 0
                       }
                       updateIndictmentCount={handleUpdateIndictmentCount}
+                      indictmentCount={workingCase.indictmentCounts?.find(
+                        (indictmentCount) =>
+                          indictmentCount.policeCaseNumber ===
+                          workingCase.policeCaseNumbers?.[index],
+                      )}
                     />
                   )}
                 </Box>

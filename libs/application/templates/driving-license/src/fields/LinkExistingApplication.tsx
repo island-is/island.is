@@ -2,15 +2,20 @@ import React, { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import {
+  getValueViaPath,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import { FieldBaseProps, Application } from '@island.is/application/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
+import { Locale } from '@island.is/shared/types'
 
 export const LinkExistingApplication: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { description } = field
   const navigate = useNavigate()
 
@@ -28,7 +33,14 @@ export const LinkExistingApplication: FC<
     <>
       {description && (
         <Box marginBottom={4}>
-          <Text>{formatText(description, application, formatMessage)}</Text>
+          <Text>
+            {formatTextWithLocale(
+              description,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
+          </Text>
         </Box>
       )}
       <Box>

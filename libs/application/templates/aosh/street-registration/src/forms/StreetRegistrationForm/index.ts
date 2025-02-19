@@ -1,14 +1,5 @@
-import {
-  buildForm,
-  buildSection,
-  getValueViaPath,
-} from '@island.is/application/core'
-import {
-  Application,
-  Form,
-  FormModes,
-  StaticText,
-} from '@island.is/application/types'
+import { buildForm, buildSection } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'
 import {
@@ -16,11 +7,10 @@ import {
   buildFormPaymentChargeOverviewSection,
 } from '@island.is/application/ui-forms'
 import { conclusion, externalData, payment } from '../../lib/messages'
-import { getChargeItemCodes } from '../../utils'
+import { getChargeItems } from '../../utils'
 
 export const StreetRegistrationForm: Form = buildForm({
   id: 'StreetRegistrationFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
@@ -35,8 +25,9 @@ export const StreetRegistrationForm: Form = buildForm({
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.title,
       getSelectedChargeItems: (_) =>
-        getChargeItemCodes().map((x) => ({
-          chargeItemCode: x,
+        getChargeItems().map((item) => ({
+          chargeItemCode: item.code,
+          chargeItemQuantity: item.quantity,
         })),
     }),
     buildFormConclusionSection({

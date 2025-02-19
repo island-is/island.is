@@ -1,4 +1,3 @@
-import { Button, Typography, NavigationBarSheet, LinkText } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import {
@@ -15,6 +14,8 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
+import { Button, Typography, NavigationBarSheet, LinkText } from '../../ui'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
 import externalLink from '../../assets/icons/external-link.png'
@@ -149,7 +150,10 @@ export const PasskeyScreen: NavigationFunctionComponent<{
             <TouchableOpacity
               style={{ flexWrap: 'wrap' }}
               onPress={() =>
-                openBrowser('https://island.is/adgangslyklar', componentId)
+                openBrowser(
+                  'https://island.is/innskraning-umbod-og-adgangsstyring-a-island-is#innskraning-med-adgangslykli-i-island-is-appinu',
+                  componentId,
+                )
               }
             >
               <LinkText>
@@ -162,8 +166,9 @@ export const PasskeyScreen: NavigationFunctionComponent<{
             <Image
               source={illustrationSrc}
               style={{
-                width: isSmallDevice ? 120 : 174,
-                height: isSmallDevice ? 140 : 204,
+                flex: 1,
+                maxWidth: 174,
+                maxHeight: 204,
               }}
               resizeMode="contain"
             />

@@ -4,8 +4,9 @@ import {
   buildDescriptionField,
   buildRadioField,
   buildSelectField,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { NationalRegistryMaritalStatus as MaritalStatus } from '../types/schema'
 
@@ -30,11 +31,14 @@ export const fakeDataSection = buildSection({
                     forsendugögn í staging umhverfi (dev x-road) hjá Þjóðskrá.
                     Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
                     til að hægt sé að prófa ferlið.
+                    \n\n
+                    **Athugið einnig, gervimenn 3019 og 2399 teljast hafa fæðingarvottorð,
+                    aðrir gervimenn ekki. Gervigögn fyrir rafræn skilríki, öll símanúmer sem enda á 
+                    9 komast í gegn.**
                   `.replace(/\s{1,}/g, ' '),
         }),
         buildRadioField({
           id: 'fakeData.useFakeData',
-          title: '',
           width: 'half',
           options: [
             {

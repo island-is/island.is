@@ -1,11 +1,14 @@
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
 import isThisMonth from 'date-fns/isThisMonth'
 import isValid from 'date-fns/isValid'
 import {
   AnswerValidationError,
+  NO,
   NO_ANSWER,
+  YES,
   buildValidationError,
 } from '@island.is/application/core'
 import {
@@ -15,8 +18,6 @@ import {
 } from '@island.is/application/types'
 import {
   StartDateOptions,
-  YES,
-  NO,
   MINIMUM_PERIOD_LENGTH,
 } from '../../constants'
 import { getExpectedDateOfBirthOrAdoptionDateOrBirthDate } from '../parentalLeaveUtils'
@@ -141,7 +142,7 @@ export const validatePeriod = (
     -minimumPeriodStartBeforeExpectedDateOfBirth,
   )
 
-  const maximumStartDate = addMonths(dob, usageMaxMonths - usageMinMonths)
+  const maximumStartDate = addDays(addMonths(dob, usageMaxMonths), -15)
   const maximumEndDate = addMonths(dob, usageMaxMonths)
 
   const { firstPeriodStart, startDate, useLength, endDate, ratio } = period

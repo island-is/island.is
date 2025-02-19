@@ -15,6 +15,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Hyphen,
   Icon,
   type IconProps,
   Inline,
@@ -24,12 +25,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Locale } from '@island.is/shared/types'
+import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
   GenericListItemResponse,
   GenericTag,
+  GetGenericListItemsInputOrderBy,
   GetGenericListItemsQueryVariables,
+  Image as ImageSchema,
   Query,
 } from '@island.is/web/graphql/schema'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -49,25 +52,6 @@ import * as styles from './GenericList.css'
 const DEBOUNCE_TIME_IN_MS = 300
 const ITEMS_PER_PAGE = 10
 
-const getResultsFoundText = (totalItems: number, locale: Locale) => {
-  const singular = locale === 'is' ? 'niðurstaða fannst' : 'result found'
-  const plural = locale === 'is' ? 'niðurstöður fundust' : 'results found'
-
-  if (locale !== 'is') {
-    if (totalItems === 1) {
-      return singular
-    }
-    return plural
-  }
-
-  // Handle Icelandic locale specifically
-  if (totalItems % 10 === 1 && totalItems % 100 !== 11) {
-    return singular
-  }
-
-  return plural
-}
-
 interface ItemProps {
   item: GenericListItem
 }
@@ -85,9 +69,11 @@ export const NonClickableItem = ({ item }: ItemProps) => {
       <Stack space={3}>
         <Stack space={0}>
           <Stack space={0}>
-            <Text variant="eyebrow" color="purple400">
-              {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-            </Text>
+            {item.date && (
+              <Text variant="eyebrow" color="purple400">
+                {format(new Date(item.date), 'do MMMM yyyy')}
+              </Text>
+            )}
             <Text variant="h3" as="span" color="dark400">
               {item.title}
             </Text>
@@ -140,6 +126,27 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
 
   const filterTags = item.filterTags ?? []
 
+  if (item.image) {
+    return (
+      <NewsCard
+        title={item.title}
+        introduction={
+          item.cardIntro?.length > 0 && (
+            <Box>{webRichText(item.cardIntro ?? [])}</Box>
+          )
+        }
+        href={href ?? ''}
+        image={item.image as ImageSchema}
+        readMoreText=""
+        titleAs="h3"
+        titleVariant="h3"
+        titleTextColor="blue400"
+        date={item.date ?? ''}
+        dateTextColor="purple400"
+      />
+    )
+  }
+
   return (
     <FocusableBox
       padding={[2, 2, 3]}
@@ -153,24 +160,48 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
         <Stack space={3}>
           <Box width="full">
             <Box width="full">
-              <Box className={styles.clickableItemTopRowContainer}>
-                <Inline space={2} justifyContent="spaceBetween">
-                  <Text variant="eyebrow" color="purple400">
-                    {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+              {item.date && (
+                <Box className={styles.clickableItemTopRowContainer}>
+                  <Inline space={2} justifyContent="spaceBetween">
+                    <Text variant="eyebrow" color="purple400">
+                      {format(new Date(item.date), 'do MMMM yyyy')}
+                    </Text>
+                    {icon && (
+                      <Icon
+                        size="medium"
+                        type="outline"
+                        color="blue400"
+                        icon={icon}
+                      />
+                    )}
+                  </Inline>
+                </Box>
+              )}
+              <GridRow>
+                <GridColumn
+                  span={
+                    !item.date && icon
+                      ? ['10/12', '10/12', '10/12', '10/12', '11/12']
+                      : '1/1'
+                  }
+                >
+                  <Text variant="h3" as="span" color="blue400">
+                    <Hyphen>{item.title}</Hyphen>
                   </Text>
-                  {icon && (
-                    <Icon
-                      size="medium"
-                      type="outline"
-                      color="blue400"
-                      icon={icon}
-                    />
-                  )}
-                </Inline>
-              </Box>
-              <Text variant="h3" as="span" color="blue400">
-                {item.title}
-              </Text>
+                </GridColumn>
+                {!item.date && icon && (
+                  <GridColumn span={['2/12', '2/12', '2/12', '2/12', '1/12']}>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Icon
+                        size="medium"
+                        type="outline"
+                        color="blue400"
+                        icon={icon}
+                      />
+                    </Box>
+                  </GridColumn>
+                )}
+              </GridRow>
             </Box>
             {item.cardIntro?.length > 0 && (
               <Box>{webRichText(item.cardIntro ?? [])}</Box>
@@ -211,6 +242,7 @@ interface GenericListProps {
   loading: boolean
   totalItems: number
   displayError: boolean
+  showSearchInput?: boolean
 }
 
 export const GenericList = ({
@@ -224,6 +256,7 @@ export const GenericList = ({
   loading,
   displayError,
   children,
+  showSearchInput = true,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
@@ -279,10 +312,6 @@ export const GenericList = ({
   const noResultsFoundText =
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
 
-  const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
-
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
-
   const filterInputComponent = (
     <FilterInput
       name="list-search"
@@ -311,6 +340,7 @@ export const GenericList = ({
               key={value}
               active={true}
               onClick={() => {
+                setPage(null)
                 setParameters((prevParameters) => {
                   const updatedParameters = {
                     ...prevParameters,
@@ -344,143 +374,147 @@ export const GenericList = ({
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={4}>
-          <Box ref={ref}>
-            {filterCategories.length > 1 && (
-              <Stack space={4}>
-                <Stack space={3}>
-                  {isMobile && filterInputComponent}
-                  <Filter
-                    resultCount={totalItems}
-                    labelClear={
-                      activeLocale === 'is' ? 'Hreinsa síu' : 'Clear filter'
-                    }
-                    labelClearAll={
-                      activeLocale === 'is'
-                        ? 'Hreinsa allar síur'
-                        : 'Clear all filters'
-                    }
-                    labelOpen={
-                      activeLocale === 'is'
-                        ? 'Sía niðurstöður'
-                        : 'Filter results'
-                    }
-                    labelClose={
-                      activeLocale === 'is' ? 'Loka síu' : 'Close filter menu'
-                    }
-                    labelResult={
-                      activeLocale === 'is'
-                        ? 'Skoða niðurstöður'
-                        : 'See results'
-                    }
-                    labelTitle={
-                      activeLocale === 'is'
-                        ? 'Sía niðurstöður'
-                        : 'Filter results'
-                    }
-                    variant={isMobile ? 'dialog' : 'popover'}
-                    onFilterClear={() => {
-                      setParameters(null)
-                      setPage(null)
-                    }}
-                    filterInput={filterInputComponent}
-                  >
-                    <FilterMultiChoice
+          {showSearchInput && (
+            <Box ref={ref}>
+              {filterCategories.length > 1 && (
+                <Stack space={4}>
+                  <Stack space={3}>
+                    {isMobile && filterInputComponent}
+                    <Filter
+                      resultCount={totalItems}
                       labelClear={
-                        activeLocale === 'is'
-                          ? 'Hreinsa val'
-                          : 'Clear selection'
+                        activeLocale === 'is' ? 'Hreinsa síu' : 'Clear filter'
                       }
-                      onChange={({ categoryId, selected }) => {
+                      labelClearAll={
+                        activeLocale === 'is'
+                          ? 'Hreinsa allar síur'
+                          : 'Clear all filters'
+                      }
+                      labelOpen={
+                        activeLocale === 'is'
+                          ? 'Sía niðurstöður'
+                          : 'Filter results'
+                      }
+                      labelClose={
+                        activeLocale === 'is' ? 'Loka síu' : 'Close filter menu'
+                      }
+                      labelResult={
+                        activeLocale === 'is'
+                          ? 'Skoða niðurstöður'
+                          : 'See results'
+                      }
+                      labelTitle={
+                        activeLocale === 'is'
+                          ? 'Sía niðurstöður'
+                          : 'Filter results'
+                      }
+                      variant={isMobile ? 'dialog' : 'popover'}
+                      onFilterClear={() => {
+                        setParameters(null)
                         setPage(null)
-                        setParameters((prevParameters) => {
-                          // Make sure we clear out the query params from the url when there is nothing selected
-                          if (
-                            selected.length === 0 &&
-                            prevParameters !== null &&
-                            Object.values(prevParameters).every(
-                              (s) => !s || s.length === 0,
-                            )
-                          ) {
-                            return null
-                          }
-
-                          return {
-                            ...prevParameters,
-                            [categoryId]: selected,
-                          }
-                        })
                       }}
-                      onClear={(categoryId) => {
-                        setPage(null)
-                        setParameters((prevParameters) => {
-                          const updatedParameters = {
-                            ...prevParameters,
-                            [categoryId]: [],
-                          }
-
-                          // Make sure we clear out the query params from the url when there is nothing selected
-                          if (
-                            Object.values(updatedParameters).every(
-                              (s) => !s || s.length === 0,
-                            )
-                          ) {
-                            return null
-                          }
-
-                          return updatedParameters
-                        })
-                      }}
-                      categories={filterCategories}
-                    />
-                  </Filter>
-                </Stack>
-                {selectedFiltersComponent}
-              </Stack>
-            )}
-
-            {filterCategories.length <= 1 && (
-              <Stack space={4}>
-                <Stack space={3}>
-                  {filterInputComponent}
-                  {selectedFilters.length > 0 && selectedFiltersComponent}
-                </Stack>
-                <Inline space={1}>
-                  {filterTags
-                    ?.filter((tag) => {
-                      const isActive = Boolean(
-                        selectedFilters.find(
-                          (filter) => filter.value === tag.slug,
-                        ),
-                      )
-                      return !isActive
-                    })
-                    .map((tag) => {
-                      const category = tag.genericTagGroup?.slug
-                      const value = tag.slug
-                      const label = tag.title
-                      return (
-                        <Tag
-                          key={tag.id}
-                          onClick={() => {
-                            if (!category) {
-                              return
+                      filterInput={filterInputComponent}
+                    >
+                      <FilterMultiChoice
+                        labelClear={
+                          activeLocale === 'is'
+                            ? 'Hreinsa val'
+                            : 'Clear selection'
+                        }
+                        onChange={({ categoryId, selected }) => {
+                          setPage(null)
+                          setParameters((prevParameters) => {
+                            // Make sure we clear out the query params from the url when there is nothing selected
+                            if (
+                              selected.length === 0 &&
+                              prevParameters !== null &&
+                              Object.values(prevParameters).every(
+                                (s) => !s || s.length === 0,
+                              )
+                            ) {
+                              return null
                             }
-                            setParameters((prevParameters) => ({
+
+                            return {
                               ...prevParameters,
-                              [category]: (
-                                prevParameters?.[category] ?? []
-                              ).concat(value),
-                            }))
-                          }}
-                        >
-                          {label}
-                        </Tag>
-                      )
-                    })}
-                </Inline>
-              </Stack>
-            )}
-          </Box>
+                              [categoryId]: selected,
+                            }
+                          })
+                        }}
+                        onClear={(categoryId) => {
+                          setPage(null)
+                          setParameters((prevParameters) => {
+                            const updatedParameters = {
+                              ...prevParameters,
+                              [categoryId]: [],
+                            }
+
+                            // Make sure we clear out the query params from the url when there is nothing selected
+                            if (
+                              Object.values(updatedParameters).every(
+                                (s) => !s || s.length === 0,
+                              )
+                            ) {
+                              return null
+                            }
+
+                            return updatedParameters
+                          })
+                        }}
+                        categories={filterCategories}
+                      />
+                    </Filter>
+                  </Stack>
+                  {selectedFiltersComponent}
+                </Stack>
+              )}
+
+              {filterCategories.length <= 1 && (
+                <Stack space={4}>
+                  <Stack space={3}>
+                    {filterInputComponent}
+                    {selectedFilters.length > 0 && selectedFiltersComponent}
+                  </Stack>
+                  <Inline space={1}>
+                    {filterTags
+                      ?.filter((tag) => {
+                        const isActive = Boolean(
+                          selectedFilters.find(
+                            (filter) => filter.value === tag.slug,
+                          ),
+                        )
+                        return !isActive
+                      })
+                      .map((tag) => {
+                        const category = tag.genericTagGroup?.slug
+                        const value = tag.slug
+                        const label = tag.title
+                        return (
+                          <Tag
+                            key={tag.id}
+                            onClick={() => {
+                              if (!category) {
+                                return
+                              }
+                              setPage(null)
+                              setParameters((prevParameters) => ({
+                                ...prevParameters,
+                                [category]: (
+                                  prevParameters?.[category] ?? []
+                                ).concat(value),
+                              }))
+                            }}
+                          >
+                            {label}
+                          </Tag>
+                        )
+                      })}
+                  </Inline>
+                </Stack>
+              )}
+            </Box>
+          )}
+
           {displayError && (
             <AlertMessage
               type="warning"
@@ -495,23 +529,7 @@ export const GenericList = ({
           {totalItems === 0 && !displayError && !loading && (
             <Text>{noResultsFoundText}</Text>
           )}
-          {totalItems > 0 && (
-            <Stack space={3}>
-              <Inline space={2} justifyContent="spaceBetween" alignY="center">
-                <Text>
-                  {totalItems} {resultsFoundText}
-                </Text>
-                {totalPages > 1 && (
-                  <Text>
-                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page ?? 1}{' '}
-                    {activeLocale === 'is' ? 'af' : 'of'} {totalPages}
-                  </Text>
-                )}
-              </Inline>
-              {children}
-            </Stack>
-          )}
-
+          {totalItems > 0 && children}
           {totalItems > ITEMS_PER_PAGE && (
             <Pagination
               page={page ?? 1}
@@ -549,6 +567,8 @@ interface GenericListWrapperProps {
   searchInputPlaceholder?: string | null
   itemType?: string | null
   filterTags?: GenericTag[] | null
+  defaultOrder?: GetGenericListItemsInputOrderBy | null
+  showSearchInput?: boolean
 }
 
 export const GenericListWrapper = ({
@@ -556,6 +576,8 @@ export const GenericListWrapper = ({
   filterTags,
   itemType,
   searchInputPlaceholder,
+  defaultOrder,
+  showSearchInput,
 }: GenericListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -618,6 +640,7 @@ export const GenericListWrapper = ({
               queryString: searchValue,
               tags,
               tagGroups,
+              orderBy: defaultOrder,
             },
           },
         })
@@ -627,6 +650,7 @@ export const GenericListWrapper = ({
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
+      showSearchInput={showSearchInput}
     >
       <GridContainer>
         <GridRow rowGap={3}>

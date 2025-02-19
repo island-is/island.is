@@ -1,8 +1,36 @@
-node_modules/
-dist/
-scripts/ci/
+# vi: ft=gitignore
+
+# Known ignores
+/.github/
+/.git/
+/scripts/ci/
+/.env.*
+/.envrc*
+/.nx/
+
+# Cache and packages
+**/node_modules/
+# Ignoring _all_ cache folders dosen't work, because we have libraries named `cache`
+# **/cache/
+/.yarn/cache/
+# Ignores e.g. `cache/` and `cache_outptut/`
 /cache*
-cache/
-.git/
-log/
-*.log
+/.cache*/
+
+# Logs and temporaries
+**/log/
+**/*.log
+**/tmp/
+**/temp/
+**/.next/
+
+# Outputs
+**/out/
+
+# Docker-stuff
+**/Dockerfile
+**/Dockerfile.*
+**/Containerfile
+**/Containerfile.*
+**/*-compose.yaml
+**/*-compose.yml

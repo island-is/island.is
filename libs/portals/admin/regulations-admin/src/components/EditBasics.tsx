@@ -29,6 +29,7 @@ import { ReferenceText } from './impacts/ReferenceText'
 import { DraftChangeForm, DraftImpactForm } from '../state/types'
 import { makeDraftAppendixForm } from '../state/makeFields'
 import { hasAnyChange } from '../utils/formatAmendingUtils'
+import { usePristineRegulations } from '../utils/hooks'
 
 const updateText =
   'Ósamræmi er í texta stofnreglugerðar og breytingareglugerðar. Texti breytingareglugerðar þarf að samræmast breytingum sem gerðar hafa verið á stofnreglugerð, eigi breytingarnar að færast inn með réttum hætti.'
@@ -38,12 +39,13 @@ export const EditBasics = () => {
   const { draft, actions, ministries } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
-  const [hasUpdated, setHasUpdated] = useState<boolean>(false)
   const [hasUpdatedAppendix, setHasUpdatedAppendix] = useState<boolean>(false)
   const [references, setReferences] = useState<DraftImpactForm[]>()
   const [isModalVisible, setIsModalVisible] = useState<boolean>(true)
   const [hasConfirmed, setHasConfirmed] = useState<boolean>(false)
   const [hasSeenModal, setHasSeenModal] = useState<boolean>(false)
+  const { removePristineRegulation, isPristineRegulation } =
+    usePristineRegulations()
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -120,13 +122,6 @@ export const EditBasics = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
 
-  useEffect(() => {
-    if (!hasUpdatedAppendix && hasUpdated) {
-      updateAppendixes()
-      setHasUpdatedAppendix(true)
-    }
-  }, [hasUpdated, hasUpdatedAppendix])
-
   const updateAppendixes = () => {
     // FORMAT AMENDING REGULATION APPENDIXES
     const impactArray = Object.values(draft.impacts).flat()
@@ -167,9 +162,17 @@ export const EditBasics = () => {
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
 
-    setHasUpdated(true)
+    // Update appendixes
+    if (!hasUpdatedAppendix) {
+      updateAppendixes()
+      setHasUpdatedAppendix(true)
+    }
+
+    // Remove from session storage
+    removePristineRegulation(draft.id)
   }
 
+  const shouldShowModal = isPristineRegulation(draft.id)
   return (
     <>
       <Box marginBottom={3}>
@@ -328,7 +331,7 @@ export const EditBasics = () => {
             )}
           </AccordionItem>
         </Accordion>
-        {!hasUpdated ? (
+        {shouldShowModal ? (
           <ConfirmModal
             isVisible={
               draft.type.value === RegulationDraftTypes.amending &&

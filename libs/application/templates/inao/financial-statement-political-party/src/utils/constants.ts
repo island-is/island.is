@@ -5,6 +5,7 @@ export const TOTAL = 'total'
 export const LESS = 'less'
 export const GREATER = 'greater'
 export const ELECTIONLIMIT = 550000
+export const POLITICALPARTY_USER_TYPE = 150000001 // Number that comes from the INAO API
 
 export const ABOUTIDS = {
   operatingYear: 'conditionalAbout.operatingYear',
@@ -50,17 +51,21 @@ export const EQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'asset',
   currentAssets: 'asset.currentAssets',
   fixedAssetsTotal: 'asset.fixedAssetsTotal',
-  assetTotal: 'asset.total',
   liabilityPrefix: 'liability',
   longTerm: 'liability.longTerm',
   shortTerm: 'liability.shortTerm',
   asset: 'liability.asset',
-  totalLiability: 'liability.total',
   operationResult: 'equity.operationResult',
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
   totalCash: 'equity.total',
-  totalEquityAndLiabilities: 'equityAndLiabilities.total',
+}
+
+export const EQUITYANDLIABILITIESTOTALS = {
+  assetsTotal: 'equityAndLiabilitiesTotals.assetsTotal',
+  liabilitiesTotal: 'equityAndLiabilitiesTotals.liabilitiesTotal',
+  equityAndLiabilitiesTotal:
+    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
 }
 
 // Error helpers

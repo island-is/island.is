@@ -105,12 +105,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       category: [defaultSearchParams.malaflokkur],
       involvedParty: [defaultSearchParams.stofnun],
       type: [defaultSearchParams.tegund],
-      dateFrom: defaultSearchParams.dagsFra
-        ? new Date(defaultSearchParams.dagsFra)
-        : undefined,
-      dateTo: defaultSearchParams.dagsTil
-        ? new Date(defaultSearchParams.dagsTil)
-        : undefined,
+      dateFrom: defaultSearchParams.dagsFra,
+      dateTo: defaultSearchParams.dagsTil,
       search: defaultSearchParams.q,
       page: defaultSearchParams.sida,
       pageSize: defaultSearchParams.staerd,
@@ -176,12 +172,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           category: [searchValues.malaflokkur],
           involvedParty: [searchValues.stofnun],
           type: [searchValues.tegund],
-          dateFrom: searchValues.dagsFra
-            ? new Date(searchValues.dagsFra)
-            : undefined,
-          dateTo: searchValues.dagsTil
-            ? new Date(searchValues.dagsTil)
-            : undefined,
+          dateFrom: searchValues.dagsFra,
+          dateTo: searchValues.dagsTil,
           search: searchValues.q,
           page: searchValues.sida,
           pageSize: searchValues.staerd,
@@ -596,12 +588,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           category: [defaultParams.malaflokkur],
-          dateFrom: defaultParams.dagsFra
-            ? new Date(defaultParams.dagsFra)
-            : undefined,
-          dateTo: defaultParams.dagsTil
-            ? new Date(defaultParams.dagsTil)
-            : undefined,
+          dateFrom: defaultParams.dagsFra,
+          dateTo: defaultParams.dagsTil,
           department: [defaultParams.deild],
           involvedParty: [defaultParams.stofnun],
           page: defaultParams.sida,

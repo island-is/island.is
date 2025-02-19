@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   Application,
   ApplicationLifecycle,
@@ -42,7 +42,6 @@ import {
   AttachmentTypes,
   FileType,
   MANUAL,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -56,7 +55,6 @@ import {
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
@@ -78,9 +76,9 @@ import {
   PregnancyStatusAndRightsResults,
   SelectOption,
   VMSTPeriod,
-  YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
+import { ApplicationRights } from '@island.is/clients/vmst'
 
 export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
@@ -351,6 +349,18 @@ export const getAdditionalSingleParentRightsInDays = (
 }
 
 export const getAvailableRightsInDays = (application: Application) => {
+  const { VMSTApplicationRights } = getApplicationExternalData(
+    application.externalData,
+  )
+  if (VMSTApplicationRights) {
+    const VMSTDays = VMSTApplicationRights.reduce(
+      (acc, right) => acc + Number(right.days),
+      0,
+    )
+
+    return VMSTDays
+  }
+
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -618,6 +628,11 @@ export const getApplicationExternalData = (
     'VMSTPeriods.data',
   ) as VMSTPeriod[]
 
+  const VMSTApplicationRights = getValueViaPath(
+    externalData,
+    'VMSTApplicationRights.data',
+  ) as ApplicationRights[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -629,6 +644,7 @@ export const getApplicationExternalData = (
     userPhoneNumber,
     dateOfBirth,
     VMSTPeriods,
+    VMSTApplicationRights,
   }
 }
 
@@ -1429,8 +1445,17 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   let endDate = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
   const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
 
-  // If startDay is first day of the month and daysToAdd = 0
   if (daysToAdd === 0) {
+    if (start.getDate() === 31) {
+      endDate = addDays(endDate, 1)
+    }
+    if (
+      start.getDate() > 28 &&
+      daysInMonth === 28 &&
+      endDate.getDate() !== 28
+    ) {
+      endDate = addDays(endDate, 1)
+    }
     return endDate
   }
 
@@ -1443,14 +1468,13 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   if (!isSameMonth(lastMonthBeforeEndDate, endDate)) {
     if (daysInMonth === 31) {
       endDate = addDays(endDate, 1)
-    } else if (daysInMonth === 28) {
-      endDate = addDays(endDate, -2)
     } else if (daysInMonth === 29) {
       endDate = addDays(endDate, -1)
     }
   } else {
-    // startDate is 16 and months with 31 days
-    if (start.getDate() === 16 && daysInMonth === 31) {
+    // startDate is 16 or 17 and months with 31 days
+    const startDay = start.getDate()
+    if ((startDay === 16 || startDay === 17) && daysInMonth === 31) {
       endDate = addDays(endDate, 1)
     }
   }
@@ -1466,9 +1490,10 @@ export const calculatePeriodLengthInMonths = (
   const end = parseISO(endDate)
 
   const diffMonths = differenceInMonths(end, start)
-  const diffDays = differenceInDays(addMonths(end, -diffMonths), start)
+  const diffDays = differenceInDays(end, addMonths(start, diffMonths))
 
-  const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
+  const roundedDays =
+    Math.min((diffDays / getDaysInMonth(end)) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
 }
@@ -1593,33 +1618,30 @@ export const synchronizeVMSTPeriods = (
       firstPeriodStart = 'specificDate'
     }
 
-    if (!period.rightsCodePeriod.includes('DVAL')) {
-      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-      const obj = {
-        startDate: period.from,
-        endDate: period.to,
-        ratio: period.ratio.split(',')[0],
-        rawIndex: index,
-        firstPeriodStart: firstPeriodStart,
-        useLength: NO as YesOrNo,
-        rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days,
-        paid: period.paid,
-        approved: period.approved,
-      }
-
-      if (period.paid) {
-        newPeriods.push(obj)
-      } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDate() >= 20) {
-          newPeriods.push(obj)
-        }
-      } else if (new Date(period.from).getTime() <= today.getTime()) {
-        newPeriods.push(obj)
-      }
-      temptVMSTPeriods.push(obj)
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: NO as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+      daysToUse: period.days,
+      paid: period.paid,
+      approved: period.approved,
     }
+
+    if (period.paid) {
+      newPeriods.push(obj)
+    } else if (isThisMonth(new Date(period.from))) {
+      if (today.getDate() >= 20) {
+        newPeriods.push(obj)
+      }
+    } else if (new Date(period.from).getTime() <= today.getTime()) {
+      newPeriods.push(obj)
+    }
+    temptVMSTPeriods.push(obj)
   })
 
   let index = newPeriods.length

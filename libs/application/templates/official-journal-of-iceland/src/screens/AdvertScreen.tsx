@@ -5,18 +5,11 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { useState } from 'react'
 import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
-import { Signatures } from '../fields/Signatures'
+import { SignaturesField } from '../fields/Signatures'
 import { AdvertModal } from '../fields/AdvertModal'
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const [modalVisible, setModalVisability] = useState(false)
-
-  const generateTimestamp = () => new Date().toISOString()
-
-  /**
-   * This state here is for force rerendering of the HTML editor when a value is received from the modal
-   */
-  const [timestamp, setTimestamp] = useState(generateTimestamp())
 
   return (
     <FormScreen
@@ -34,13 +27,17 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
         </Button>
       }
     >
-      <Advert {...props} timeStamp={timestamp} />
-      <Signatures {...props} />
+      <Advert {...props} />
+      <SignaturesField {...props} />
       <AdvertModal
         applicationId={props.application.id}
         visible={modalVisible}
         setVisible={setModalVisability}
-        onConfirmChange={() => setTimestamp(generateTimestamp())}
+        onConfirmChange={() => {
+          setTimeout(() => {
+            props.refetch && props.refetch()
+          }, 300)
+        }}
       />
     </FormScreen>
   )

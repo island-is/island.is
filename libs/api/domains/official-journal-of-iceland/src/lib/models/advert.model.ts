@@ -18,6 +18,12 @@ export class AdvertMainCategory {
 
   @Field(() => String)
   description!: string
+
+  @Field(() => [AdvertCategory])
+  categories!: AdvertCategory[]
+
+  @Field(() => String)
+  departmentId?: string
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertCategory')
@@ -36,6 +42,30 @@ export class AdvertCategory {
 
   @Field(() => AdvertMainCategory, { nullable: true })
   mainCategory?: AdvertMainCategory | null
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertCorrections')
+export class AdvertCorrections {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  description!: string
+
+  @Field(() => String)
+  advertId!: string
+
+  @Field(() => String, { nullable: true })
+  documentPdfUrl?: string
+
+  @Field(() => String)
+  createdDate!: string
+
+  @Field(() => String)
+  updatedDate!: string
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertEntity')
@@ -132,4 +162,52 @@ export class Advert {
 
   @Field(() => AdvertDocument)
   document!: AdvertDocument
+
+  @Field(() => [AdvertCorrections], { nullable: true })
+  corrections?: AdvertCorrections[]
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertSimilar')
+export class AdvertSimilar {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
+
+  @Field(() => String)
+  subject?: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => AdvertPublicationNumber)
+  publicationNumber!: AdvertPublicationNumber | null
+
+  @Field(() => String)
+  publicationDate!: string | null
+
+  @Field(() => [AdvertEntity])
+  categories!: AdvertCategory[]
+
+  @Field(() => AdvertEntity)
+  involvedParty!: AdvertEntity
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertsMainType')
+export class AdvertMainType {
+  @Field()
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field()
+  slug!: string
+
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
+
+  @Field(() => [AdvertType])
+  types!: AdvertType[]
 }

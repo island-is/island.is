@@ -310,6 +310,46 @@
         }
       }
     },
+    "/v1/aidsandnutrition/{iso}/renew": {
+      "get": {
+        "tags": ["aidsandnutrition"],
+        "operationId": "RenewAidOrNutrition",
+        "parameters": [
+          {
+            "name": "iso",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/application": {
       "post": {
         "tags": ["application"],
@@ -2416,13 +2456,7 @@
   "components": {
     "schemas": {
       "Minarsidur.API.Models.AccidentReports.AccidentDTO": {
-        "required": [
-          "datetime",
-          "dateTimeOfDoctorVisit",
-          "description",
-          "symptoms",
-          "type"
-        ],
+        "required": ["datetime", "description", "type"],
         "type": "object",
         "properties": {
           "type": {
@@ -2448,7 +2482,8 @@
           },
           "dateTimeOfDoctorVisit": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "fatal": {
             "type": "boolean",
@@ -2611,33 +2646,11 @@
           "employer": {
             "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.EmployerDTO"
           },
-          "club": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ClubDTO"
-          },
           "attachments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentDTO"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Minarsidur.API.Models.AccidentReports.ClubDTO": {
-        "required": ["accidentType", "name", "nationalId"],
-        "type": "object",
-        "properties": {
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "accidentType": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -2912,9 +2925,17 @@
           "expiring": {
             "type": "boolean",
             "nullable": true
+          },
+          "renewalStatus": {
+            "$ref": "#/components/schemas/Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO_RenewalStatusEnum"
           }
         },
         "additionalProperties": false
+      },
+      "Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO_RenewalStatusEnum": {
+        "enum": [0, 1, 2, 3],
+        "type": "integer",
+        "format": "int32"
       },
       "Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionRefundDTO": {
         "type": "object",
@@ -4132,6 +4153,10 @@
           },
           "region": {
             "type": "string",
+            "nullable": true
+          },
+          "canRegister": {
+            "type": "boolean",
             "nullable": true
           },
           "waitlistRegistration": {

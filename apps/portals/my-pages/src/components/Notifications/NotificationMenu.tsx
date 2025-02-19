@@ -8,16 +8,16 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkResolver } from '@island.is/service-portal/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import {
   GetUserNotificationsOverviewQuery,
   InformationPaths,
-} from '@island.is/service-portal/information'
+} from '@island.is/portals/my-pages/information'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 import NotificationLine from './NotificationLine'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
@@ -40,6 +40,7 @@ const NotificationMenu = ({
   const { width } = useWindowSize()
 
   const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   const onClose = () => {
     closeNotificationMenu()
@@ -51,7 +52,7 @@ const NotificationMenu = ({
       onClick={onClose}
       aria-label={formatMessage(sharedMessages.close)}
     >
-      <Icon icon="close" color="blue400" />
+      <Icon icon="close" color="blue600" />
     </button>
   )
 
@@ -60,17 +61,17 @@ const NotificationMenu = ({
       <Box
         position="relative"
         background="white"
-        padding={2}
+        padding={isMobile || isTablet ? 0 : 2}
         borderRadius="large"
         display="flex"
         flexDirection="column"
         height={isMobile ? 'full' : undefined}
         className={cn(
-          isMobile ? mStyles.fullScreen : mStyles.dropdown,
+          isMobile || isTablet ? mStyles.fullScreen : mStyles.dropdown,
           mStyles.container,
         )}
         style={
-          !isMobile
+          !isMobile && !isTablet
             ? {
                 left: rightPosition ?? '75%',
                 transform: 'translateX(-100%)',
@@ -85,15 +86,17 @@ const NotificationMenu = ({
             alignItems="center"
             marginBottom={1}
             marginTop={2}
+            marginRight={2}
+            marginLeft={2}
           >
             <Box
-              borderRadius="circle"
+              borderRadius="full"
               background="blue100"
               display="flex"
               justifyContent="center"
               alignItems="center"
               className={mStyles.overviewIcon}
-              marginRight={1}
+              marginRight="p2"
             >
               <Icon
                 icon="notifications"
@@ -113,8 +116,8 @@ const NotificationMenu = ({
               />
             ))}
             <Box
-              paddingTop={2}
-              paddingBottom={1}
+              paddingTop={3}
+              paddingBottom={2}
               textAlign="center"
               width="full"
             >
@@ -125,7 +128,7 @@ const NotificationMenu = ({
                 <Button
                   icon="arrowForward"
                   iconType="filled"
-                  size="medium"
+                  size="small"
                   type="text"
                   variant="text"
                   unfocusable

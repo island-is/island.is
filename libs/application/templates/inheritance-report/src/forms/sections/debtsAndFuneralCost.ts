@@ -31,7 +31,6 @@ export const debtsAndFuneralCost = buildSection({
             }),
             buildDescriptionField({
               id: 'debts.domesticAndForeignDebts.total',
-              title: '',
             }),
             buildCustomField(
               {
@@ -67,26 +66,28 @@ export const debtsAndFuneralCost = buildSection({
                 ],
                 hideDeceasedShare: true,
                 repeaterButtonText: m.debtsRepeaterButton,
-                fromExternalData: 'otherDebts',
                 sumField: 'propertyValuation',
                 selections: [
                   {
-                    label: DebtTypes.Overdraft,
-                  },
-                  {
-                    label: DebtTypes.CreditCard,
+                    label: DebtTypes.PublicCharges,
                   },
                   {
                     label: DebtTypes.Loan,
                   },
                   {
-                    label: DebtTypes.InsuranceCompany,
+                    label: DebtTypes.CreditCard,
+                  },
+                  {
+                    label: DebtTypes.Overdraft,
                   },
                   {
                     label: DebtTypes.PropertyFees,
                   },
                   {
-                    label: DebtTypes.PropertyFees,
+                    label: DebtTypes.OtherDebts,
+                  },
+                  {
+                    label: DebtTypes.InsuranceInstitute,
                   },
                 ],
               },
@@ -156,6 +157,10 @@ export const debtsAndFuneralCost = buildSection({
                     id: 'tombstone',
                     title: m.funeralTombstoneCost,
                   },
+                  {
+                    id: 'service',
+                    title: m.funeralServiceCost,
+                  },
                 ],
               },
             ),
@@ -173,28 +178,29 @@ export const debtsAndFuneralCost = buildSection({
           description: m.overviewDescription,
           children: [
             buildCustomField({
-              title: '',
               description: '',
               id: 'overviewDebts',
               component: 'OverviewDebts',
             }),
             buildCustomField({
-              title: '',
               id: 'debts.debtsTotal',
               doesNotRequireAnswer: true,
               component: 'CalculateTotalDebts',
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               marginBottom: 'containerGutter',
             }),
             buildCheckboxField({
               id: 'debtsConfirmation',
-              title: '',
               large: false,
               backgroundColor: 'white',
               options: [{ value: YES, label: m.debtsOverviewConfirmation }],
+            }),
+            buildCustomField({
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
             }),
           ],
         }),

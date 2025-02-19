@@ -22,7 +22,7 @@ import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
 import { DefenseChoice } from '../models/defenseChoice.model'
 import { Lawyers } from '../models/lawyers.model'
-import { Subpoena } from '../models/subpoena.model'
+import { Subpoena } from '../models/summon.model'
 import { LawAndOrderService } from './law-and-order.service'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
@@ -31,7 +31,6 @@ const LOG_CATEGORY = 'law-and-order-resolver'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/law-and-order' })
-@FeatureFlag(Features.servicePortalLawAndOrderModuleEnabled)
 @Scopes(ApiScope.lawAndOrder)
 export class LawAndOrderResolver {
   constructor(
@@ -83,7 +82,7 @@ export class LawAndOrderResolver {
     return this.auditAndHandle(
       'getSubpoena',
       input.id,
-      this.lawAndOrderService.getSubpoena(user, input.id, locale),
+      this.lawAndOrderService.getSummon(user, input.id, locale),
       user,
     )
   }

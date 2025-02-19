@@ -21,8 +21,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
     import('@island.is/application/templates/health-insurance'),
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
-    import('@island.is/application/templates/children-residence-change'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: () =>
     import('@island.is/application/templates/children-residence-change-v2'),
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
@@ -93,17 +91,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
     ),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-company-card'
-    ),
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: () =>
     import(
       '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
-    ),
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: () =>
-    import(
-      '@island.is/application/templates/transport-authority/digital-tachograph-workshop-card'
     ),
   [ApplicationTypes.LICENSE_PLATE_RENEWAL]: () =>
     import(
@@ -197,6 +187,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/street-registration'),
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
     import('@island.is/application/templates/aosh/request-for-inspection'),
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: () =>
+    import('@island.is/application/templates/aosh/work-accident-notification'),
   [ApplicationTypes.ID_CARD]: () =>
     import('@island.is/application/templates/id-card'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
@@ -209,6 +201,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.SECONDARY_SCHOOL]: () =>
+    import('@island.is/application/templates/secondary-school'),
 }
 
 export default templates

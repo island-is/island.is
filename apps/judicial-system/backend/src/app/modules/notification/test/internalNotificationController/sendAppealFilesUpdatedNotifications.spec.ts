@@ -8,7 +8,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -21,22 +24,17 @@ interface Then {
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal case files updated notifications', () => {
+  const { assistant, judge1, judge2, judge3 } = createTestUsers([
+    'assistant',
+    'judge1',
+    'judge2',
+    'judge3',
+  ])
   const userId = uuid()
   const caseId = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
   const receivedDate = new Date()
-  const assistantName = uuid()
-  const assistantEmail = uuid()
-  const judgeName1 = uuid()
-  const judgeEmail1 = uuid()
-  const judgeId1 = uuid()
-  const judgeName2 = uuid()
-  const judgeEmail2 = uuid()
-  const judgeId2 = uuid()
-  const judgeName3 = uuid()
-  const judgeEmail3 = uuid()
-  const judgeId3 = uuid()
 
   let mockEmailService: EmailService
   let givenWhenThen: GivenWhenThen
@@ -59,27 +57,26 @@ describe('InternalNotificationController - Send appeal case files updated notifi
             appealCaseNumber,
             appealReceivedByCourtDate: receivedDate,
             appealAssistant: {
-              name: assistantName,
-              email: assistantEmail,
+              name: assistant.name,
+              email: assistant.email,
               role: UserRole.COURT_OF_APPEALS_ASSISTANT,
             },
             appealJudge1: {
-              name: judgeName1,
-              email: judgeEmail1,
-              id: judgeId1,
+              name: judge1.name,
+              email: judge1.email,
+              id: judge1.id,
               role: UserRole.COURT_OF_APPEALS_JUDGE,
             },
-            appealJudge1Id: judgeId1,
             appealJudge2: {
-              name: judgeName2,
-              email: judgeEmail2,
-              id: judgeId2,
+              name: judge2.name,
+              email: judge2.email,
+              id: judge2.id,
               role: UserRole.COURT_OF_APPEALS_JUDGE,
             },
             appealJudge3: {
-              name: judgeName3,
-              email: judgeEmail3,
-              id: judgeId3,
+              name: judge3.name,
+              email: judge3.email,
+              id: judge3.id,
               role: UserRole.COURT_OF_APPEALS_JUDGE,
             },
           } as Case,
@@ -104,7 +101,7 @@ describe('InternalNotificationController - Send appeal case files updated notifi
     it('should send notification to the assigned court of appeal judges and assistant', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: assistantName, address: assistantEmail }],
+          to: [{ name: assistant.name, address: assistant.email }],
           subject: `Ný gögn í máli ${courtCaseNumber} (${appealCaseNumber})`,
           html: `Ný gögn hafa borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -113,8 +110,8 @@ describe('InternalNotificationController - Send appeal case files updated notifi
         expect.objectContaining({
           to: [
             {
-              name: judgeName1,
-              address: judgeEmail1,
+              name: judge1.name,
+              address: judge1.email,
             },
           ],
           subject: `Ný gögn í máli ${courtCaseNumber} (${appealCaseNumber})`,
@@ -123,14 +120,14 @@ describe('InternalNotificationController - Send appeal case files updated notifi
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName2, address: judgeEmail2 }],
+          to: [{ name: judge2.name, address: judge2.email }],
           subject: `Ný gögn í máli ${courtCaseNumber} (${appealCaseNumber})`,
           html: `Ný gögn hafa borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName3, address: judgeEmail3 }],
+          to: [{ name: judge3.name, address: judge3.email }],
           subject: `Ný gögn í máli ${courtCaseNumber} (${appealCaseNumber})`,
           html: `Ný gögn hafa borist vegna kæru í máli ${courtCaseNumber} (Landsréttarmál nr. ${appealCaseNumber}). Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),

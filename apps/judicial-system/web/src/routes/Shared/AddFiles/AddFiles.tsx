@@ -2,7 +2,6 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isDefenceUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -13,6 +12,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -118,11 +118,7 @@ const AddFiles: FC = () => {
         title={formatMessage(titles.prosecutor.indictments.overview)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <SectionHeading
           title={formatMessage(strings.uploadFilesHeading)}

@@ -172,6 +172,12 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: 'phone',
   },
+  phoneElectronicIdError: {
+    id: 'mac.application:phoneElectronicIdError',
+    defaultMessage:
+      'Rafræn skilríki ekki til staðar fyrir símanúmer og kennitölu',
+    description: 'phone',
+  },
   email: {
     id: 'mac.application:email',
     defaultMessage: 'Netfang',
@@ -237,7 +243,7 @@ export const m = defineMessages({
   ceremonyPeriodDescription: {
     id: 'mac.application:ceremonyPeriodDescription',
     defaultMessage:
-      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu.',
+      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu:',
     description: '',
   },
   ceremonyPeriodFrom: {
@@ -281,6 +287,36 @@ export const m = defineMessages({
     description: '',
   },
 
+  /* Missing information */
+  missingInformation: {
+    id: 'mac.application:missingInformation',
+    defaultMessage: 'Gögn vantar',
+    description: '',
+  },
+  missingInformationTitle: {
+    id: 'mac.application:missingInformationTitle',
+    defaultMessage: 'Athugið',
+    description: '',
+  },
+  missingInformationDescription: {
+    id: 'mac.application:missingInformationDescription',
+    defaultMessage:
+      'Því miður reyndist gagnaöflun ófullnægjandi. Vinsamlegast hafðu samband við næsta sýslumann.',
+    description: '',
+  },
+  missingInformationAlertDescription: {
+    id: 'mac.application:missingInformationAlertDescription',
+    defaultMessage:
+      'Skila þarf inn fæðingarvottorði til að fullnægja kröfum um að fá staðfestingu á hjónavígslu.',
+    description: '',
+  },
+  applicantConfirmMissingInformation: {
+    id: 'mac.application:applicantConfirmMissingInformation',
+    defaultMessage:
+      'Ég skil að ég þarf að skila inn fæðingarvottorði til syslumanns.',
+    description: '',
+  },
+
   /* Spouse confirmation screens */
   entrance: {
     id: 'mac.application:entrance',
@@ -317,6 +353,11 @@ export const m = defineMessages({
   birthCertificates: {
     id: 'mac.application:birthCertificates',
     defaultMessage: 'Tvö fæðingarvottorð frá Þjóðskrá Íslands',
+    description: '',
+  },
+  birthCertificatesWithParameters: {
+    id: 'mac.application:birthCertificatesWithParameters',
+    defaultMessage: '{nrOfBirthCerts} fæðingarvottorð frá Þjóðskrá Íslands',
     description: '',
   },
   surveyCertificate: {
@@ -406,6 +447,12 @@ export const m = defineMessages({
       'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
     description: '',
   },
+  nextStepsDescriptionWithSpouseName: {
+    id: 'mac.application:nextStepsDescriptionWithSpouseName#markdown',
+    defaultMessage:
+      'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á **{spouseName}**.',
+    description: '',
+  },
   nextSteps: {
     id: 'mac.application:nextSteps',
     defaultMessage: 'Næstu skref',
@@ -492,10 +539,22 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
     description: 'Error message if date is empty',
   },
-  nationalIdDuplicateError: {
-    id: 'mac.application:nationalIdDuplicateError',
+  nationalIdDuplicateErrorSpouse: {
+    id: 'mac.application:nationalIdDuplicateErrorSpouse',
     defaultMessage:
       'Kennitala hjá hjónaefni 2 má ekki vera sú sama og hjá hjónaefni 1',
+    description: '',
+  },
+  nationalIdDuplicateErrorWitness: {
+    id: 'mac.application:nationalIdDuplicateErrorWitness',
+    defaultMessage:
+      'Kennitala hjá svaramanni 2 má ekki vera sú sama og hjá svaramanni 1',
+    description: '',
+  },
+  nationalIdDuplicateErrorMaritalSideVsWitness: {
+    id: 'mac.application:nationalIdDuplicateErrorMaritalSideVsWitness',
+    defaultMessage:
+      'Kennitala hjá svaramanni má ekki vera sú sama og hjá hjónaefni',
     description: '',
   },
   nationalIdWitnessUnderageError: {

@@ -1,12 +1,3 @@
-import {
-  Badge,
-  badgeColorSchemes,
-  EmptyList,
-  Problem,
-  StatusCard,
-  StatusCardSkeleton,
-  TopLine,
-} from '@ui'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -18,6 +9,16 @@ import {
   View,
 } from 'react-native'
 import { useTheme } from 'styled-components'
+
+import {
+  Badge,
+  badgeColorSchemes,
+  EmptyList,
+  Problem,
+  StatusCard,
+  StatusCardSkeleton,
+  TopLine,
+} from '../../../ui'
 import illustrationSrc from '../../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,

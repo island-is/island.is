@@ -7,3 +7,6 @@ export {
   TemplateApiModuleActionProps,
 } from './types'
 export { AttachmentS3Service } from './modules/shared/services'
+export { NotificationsService } from './notification/notifications.service'
+export { ApplicationsNotificationsModule } from './notification/notifications.module'
+export { NotificationType } from './notification/notificationsTemplates'

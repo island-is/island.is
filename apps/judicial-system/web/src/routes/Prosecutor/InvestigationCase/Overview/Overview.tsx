@@ -32,6 +32,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
   UserContext,
@@ -43,7 +44,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
 import * as styles from './Overview.css'
 
@@ -154,11 +155,7 @@ export const Overview = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&

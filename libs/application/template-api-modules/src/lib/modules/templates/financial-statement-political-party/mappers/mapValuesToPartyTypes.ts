@@ -4,46 +4,59 @@ import { FormValue } from '@island.is/application/types'
 export const mapValuesToPartyTypes = (answers: FormValue) => {
   return {
     contributionsFromTheTreasury: Number(
-      getValueViaPath(answers, 'partyIncome.contributionsFromTheTreasury'),
+      getValueViaPath<string>(
+        answers,
+        'partyIncome.contributionsFromTheTreasury',
+      ),
     ),
     parliamentaryPartySupport: Number(
-      getValueViaPath(answers, 'partyIncome.parliamentaryPartySupport'),
+      getValueViaPath<string>(answers, 'partyIncome.parliamentaryPartySupport'),
     ),
     municipalContributions: Number(
-      getValueViaPath(answers, 'partyIncome.municipalContributions'),
+      getValueViaPath<string>(answers, 'partyIncome.municipalContributions'),
     ),
     contributionsFromLegalEntities: Number(
-      getValueViaPath(answers, 'partyIncome.contributionsFromLegalEntities'),
+      getValueViaPath<string>(
+        answers,
+        'partyIncome.contributionsFromLegalEntities',
+      ),
     ),
     contributionsFromIndividuals: Number(
-      getValueViaPath(answers, 'partyIncome.contributionsFromIndividuals'),
+      getValueViaPath<string>(
+        answers,
+        'partyIncome.contributionsFromIndividuals',
+      ),
     ),
     generalMembershipFees: Number(
-      getValueViaPath(answers, 'partyIncome.generalMembershipFees'),
+      getValueViaPath<string>(answers, 'partyIncome.generalMembershipFees'),
     ),
-    otherIncome: Number(getValueViaPath(answers, 'partyIncome.otherIncome')),
-    capitalIncome: Number(
-      getValueViaPath(answers, 'capitalNumbers.capitalIncome'),
+    otherIncome: Number(
+      getValueViaPath<string>(answers, 'partyIncome.otherIncome'),
     ),
     officeOperations: Number(
-      getValueViaPath(answers, 'partyExpense.electionOffice'),
+      getValueViaPath<string>(answers, 'partyExpense.electionOffice'),
     ),
     otherOperatingExpenses: Number(
-      getValueViaPath(answers, 'partyExpense.otherCost'),
+      getValueViaPath<string>(answers, 'partyExpense.otherCost'),
+    ),
+    capitalIncome: Number(
+      getValueViaPath<string>(answers, 'capitalNumbers.capitalIncome'),
     ),
     financialExpenses: Number(
-      getValueViaPath(answers, 'capitalNumbers.capitalCost'),
+      getValueViaPath<string>(answers, 'capitalNumbers.capitalCost'),
     ),
     fixedAssetsTotal: Number(
-      getValueViaPath(answers, 'asset.fixedAssetsTotal'),
+      getValueViaPath<string>(answers, 'asset.fixedAssetsTotal'),
     ),
-    currentAssets: Number(getValueViaPath(answers, 'asset.currentAssets')),
+    currentAssets: Number(
+      getValueViaPath<string>(answers, 'asset.currentAssets'),
+    ),
     longTermLiabilitiesTotal: Number(
-      getValueViaPath(answers, 'liability.longTerm'),
+      getValueViaPath<string>(answers, 'liability.longTerm'),
     ),
     shortTermLiabilitiesTotal: Number(
-      getValueViaPath(answers, 'liability.shortTerm'),
+      getValueViaPath<string>(answers, 'liability.shortTerm'),
     ),
-    equityTotal: Number(getValueViaPath(answers, 'equity.totalEquity')),
+    equityTotal: Number(getValueViaPath<string>(answers, 'equity.totalEquity')),
   }
 }

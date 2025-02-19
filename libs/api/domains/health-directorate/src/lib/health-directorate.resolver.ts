@@ -22,9 +22,12 @@ import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
 import type { Locale } from '@island.is/shared/types'
 import { Vaccinations } from './models/vaccinations.model'
 import { HealthDirectorateService } from './health-directorate.service'
-
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)
 export class HealthDirectorateResolver {
@@ -35,6 +38,8 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
+  @Scopes(ApiScope.healthOrganDonation)
+  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -43,6 +48,7 @@ export class HealthDirectorateResolver {
     const data = await this.api.getDonorStatus(user, locale)
     return { donor: data, locale: locale }
   }
+
   @ResolveField('organList', () => [Organ], {
     nullable: true,
   })
@@ -58,6 +64,8 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
+  @Scopes(ApiScope.healthOrganDonation)
+  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
     @Args('locale', { type: () => String, nullable: true })
@@ -72,7 +80,13 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  getVaccinations(@CurrentUser() user: User): Promise<Vaccinations | null> {
-    return this.api.getVaccinations(user)
+  @Scopes(ApiScope.healthVaccinations)
+  @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
+  getVaccinations(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Vaccinations | null> {
+    return this.api.getVaccinations(user, locale)
   }
 }

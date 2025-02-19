@@ -1,13 +1,24 @@
-import { buildForm } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildForm,
+  buildMultiField,
+  buildSection,
+  buildSubmitField,
+} from '@island.is/application/core'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  Application,
+} from '@island.is/application/types'
+
 import * as m from '../../lib/messages'
-import { Application, Form, FormModes } from '@island.is/application/types'
-import { financesSection } from './financesSection'
-import { contactInfoSection } from './contactInfoSection'
-import { summarySection } from './summarySection'
-import { confirmationSection } from './confirmationSection'
-import { Logo } from '../../components/Logo/Logo'
-import { createElement } from 'react'
+import { Routes } from '../../lib/constants'
 import { personalInterestSection } from './personalInterestSection'
+import { createElement } from 'react'
+import { Logo } from '../../components/Logo/Logo'
+import { financeSection } from './financeSection'
+import { contactInfoSection } from './contactInfoSection'
 
 export const ApplicationForm: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -19,9 +30,45 @@ export const ApplicationForm: Form = buildForm({
   },
   children: [
     personalInterestSection,
-    financesSection,
+    financeSection,
     contactInfoSection,
-    summarySection,
-    confirmationSection,
+    buildSection({
+      id: Routes.SUMMARY,
+      title: m.summaryForm.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: Routes.SUMMARY,
+          title: m.summaryForm.general.pageTitle,
+          children: [
+            buildCustomField({
+              id: Routes.SUMMARY,
+              title: m.summaryForm.general.pageTitle,
+              component: 'SummaryForm',
+            }),
+            buildSubmitField({
+              id: 'submitApplication',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.summaryForm.general.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: Routes.CONFIRMATION,
+      title: m.confirmation.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.CONFIRMATION,
+          title: m.confirmation.general.pageTitle,
+          component: 'ApplicantConfirmation',
+        }),
+      ],
+    }),
   ],
 })

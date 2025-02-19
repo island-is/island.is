@@ -34,7 +34,6 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -50,11 +49,14 @@ import {
   CurrentCase,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
+import { CivilClaimantExistsGuard, DefendantExistsGuard } from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
+import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
@@ -63,9 +65,9 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
+@UseGuards(JwtAuthGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -82,6 +84,7 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Post('file/url')
   @ApiCreatedResponse({
@@ -108,6 +111,7 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Post('file')
   @ApiCreatedResponse({
@@ -123,6 +127,70 @@ export class FileController {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     return this.fileService.createCaseFile(theCase, createFile, user)
+  }
+
+  // TODO: Add tests for this endpoint
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    DefendantExistsGuard,
+    CaseWriteGuard,
+    CreateDefendantCaseFileGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Post('defendant/:defendantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file connected to a defendant',
+  })
+  async createDefendantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} for defendant ${defendantId}`,
+    )
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, defendantId },
+      user,
+    )
+  }
+
+  // TODO: Add tests for this endpoint
+  @UseGuards(
+    RolesGuard,
+    CaseExistsGuard,
+    CivilClaimantExistsGuard,
+    CaseWriteGuard,
+    CreateCivilClaimantCaseFileGuard,
+  )
+  @RolesRules() // This endpoint is not used by any role at the moment
+  @Post('civilClaimant/:civilClaimantId/file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file connected to a civil claimant',
+  })
+  async createCivilClaimantCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Creating a file for case ${caseId} for civil claimant ${civilClaimantId}`,
+    )
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, civilClaimantId },
+      user,
+    )
   }
 
   @UseGuards(
@@ -143,7 +211,6 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
-    prisonSystemStaffRule,
   )
   @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
@@ -198,7 +265,11 @@ export class FileController {
     CaseReceivedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,

@@ -1,17 +1,20 @@
 import { ConfigType } from '@island.is/nest/config'
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { HttpStatus, INestApplication } from '@nestjs/common'
+import type { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
 import {
-  mockedTokensResponse as tokensResponse,
-  SID_VALUE,
-  SESSION_COOKIE_NAME,
   ALGORITM_TYPE,
+  SESSION_COOKIE_NAME,
+  SID_VALUE,
   getLoginSearchParmsFn,
+  mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import { IdsService } from '../ids/ids.service'
 import { ParResponse } from '../ids/ids.types'
 
@@ -58,17 +61,9 @@ const parResponse: ParResponse = {
 const allowedTargetLinkUri = 'http://test-client.com/testclient'
 
 const mockIdsService = {
-  getPar: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: parResponse,
-  }),
-  getTokens: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: tokensResponse,
-  }),
-  revokeToken: jest.fn().mockResolvedValue({
-    type: 'success',
-  }),
+  getPar: jest.fn().mockResolvedValue(parResponse),
+  getTokens: jest.fn().mockResolvedValue(tokensResponse),
+  revokeToken: jest.fn().mockResolvedValue(undefined),
   getLoginSearchParams: jest.fn().mockImplementation(getLoginSearchParmsFn),
 }
 
@@ -77,6 +72,19 @@ describe('AuthController', () => {
   let server: request.SuperTest<request.Test>
   let mockConfig: ConfigType<typeof BffConfig>
   let baseUrlWithKey: string
+  let sessionCookieService: SessionCookieService
+  let hashedSid: string
+
+  // Mock Response object
+  const mockResponse: Partial<Response> = {
+    cookie: jest.fn(),
+    clearCookie: jest.fn(),
+  }
+
+  // Mock Request object
+  const mockRequest: Partial<Request> = {
+    cookies: {},
+  }
 
   beforeAll(async () => {
     const app = await setupTestServer({
@@ -88,8 +96,24 @@ describe('AuthController', () => {
           .useValue(mockIdsService),
     })
 
+    sessionCookieService = app.get<SessionCookieService>(SessionCookieService)
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
-    baseUrlWithKey = `${mockConfig.clientBaseUrl}${process.env.BFF_CLIENT_KEY_PATH}`
+
+    baseUrlWithKey = `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`
+
+    // Set the hashed SID
+    sessionCookieService.set({
+      res: mockResponse as Response,
+      value: SID_VALUE,
+    })
+
+    // Capture the hashed value from the mock cookie call
+    hashedSid = (mockResponse.cookie as jest.Mock).mock.calls[0][1]
+
+    // Set up the mock request cookies for subsequent get() calls
+    mockRequest.cookies = {
+      [SESSION_COOKIE_NAME]: hashedSid,
+    }
 
     server = request(app.getHttpServer())
   })
@@ -121,11 +145,10 @@ describe('AuthController', () => {
 
       const [key, value] = setSpy.mock.calls[0]
 
-      expect(key).toEqual(`attempt_${SID_VALUE}`)
+      expect(key).toEqual(`attempt::${mockConfig.name}::${SID_VALUE}`)
       expect(value).toMatchObject({
-        originUrl: baseUrlWithKey,
         codeVerifier: expect.any(String),
-        targetLinkUri: allowedTargetLinkUri,
+        targetLinkUri: allowedTargetLinkUri ?? baseUrlWithKey,
       })
     })
 
@@ -177,8 +200,8 @@ describe('AuthController', () => {
       const invalidTargetLinkUri = 'http://test-client.com/invalid'
 
       const searchParams = new URLSearchParams({
-        bff_error_code: '400',
-        bff_error_description: 'Login failed!',
+        bff_error_status_code: '400',
+        bff_error_message: 'Login failed!',
       })
 
       const errorUrl = `${baseUrlWithKey}?${searchParams.toString()}`
@@ -254,8 +277,8 @@ describe('AuthController', () => {
       // Arrange
       const idsError = 'Invalid request'
       const searchParams = new URLSearchParams({
-        bff_error_code: '500',
-        bff_error_description: idsError,
+        bff_error_status_code: '500',
+        bff_error_message: idsError,
       })
 
       const errorUrl = `${baseUrlWithKey}?${searchParams.toString()}`
@@ -273,8 +296,8 @@ describe('AuthController', () => {
     it('should validate query string params and redirect with error if invalid', async () => {
       // Arrange
       const searchParams = new URLSearchParams({
-        bff_error_code: '400',
-        bff_error_description: 'Login failed!',
+        bff_error_status_code: '400',
+        bff_error_message: 'Login failed!',
       })
       const errorUrl = `${baseUrlWithKey}?${searchParams.toString()}`
 
@@ -289,7 +312,7 @@ describe('AuthController', () => {
     const scenarios = [
       {
         description:
-          'should successfully finish callback login and redirect to fallback originUrl',
+          'should successfully finish callback login and redirect to fallback targetLinkUri',
         targetLinkUri: undefined,
         expectedLocation: 'http://test-client.com/testclient',
       },
@@ -319,25 +342,27 @@ describe('AuthController', () => {
         const loginAttempt = setCacheSpy.mock.calls[0]
 
         // Assert - First request should cache the login attempt
-        expect(setCacheSpy.mock.calls[0]).toContain(`attempt_${SID_VALUE}`)
+        expect(loginAttempt[0]).toContain(
+          `attempt::${mockConfig.name}::${SID_VALUE}`,
+        )
         expect(loginAttempt[1]).toMatchObject({
-          originUrl: baseUrlWithKey,
           codeVerifier: expect.any(String),
-          targetLinkUri,
+          targetLinkUri: targetLinkUri ?? baseUrlWithKey,
         })
 
         // Then make a callback to the login endpoint
         const res = await server
           .get('/callbacks/login')
-          .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+          .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
           .query({ code, state: SID_VALUE })
 
         const currentLogin = setCacheSpy.mock.calls[1]
 
         // Assert
         expect(setCacheSpy).toHaveBeenCalled()
-
-        expect(currentLogin[0]).toContain(`current_${SID_VALUE}`)
+        expect(currentLogin[0]).toBe(
+          `current::${mockConfig.name}::${hashedSid}`,
+        )
         // Check if the cache contains the correct values for the current login
         expect(currentLogin[1]).toMatchObject(tokensResponse)
 
@@ -362,7 +387,7 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
       const res = await server.get('/logout')
 
@@ -382,8 +407,8 @@ describe('AuthController', () => {
     it('should redirect to logout redirect uri with error params if cookie and session state do not match', async () => {
       // Arrange
       const searchParams = new URLSearchParams({
-        bff_error_code: '400',
-        bff_error_description: 'Logout failed!',
+        bff_error_status_code: '400',
+        bff_error_message: 'Logout failed!',
       })
 
       const errorUrl = `${allowedTargetLinkUri}?${searchParams.toString()}`
@@ -415,13 +440,13 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
         .get('/logout')
         .query({ sid: SID_VALUE })
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
 
       // Assert
       expect(revokeRefreshTokenSpy).toHaveBeenCalled()
@@ -450,14 +475,14 @@ describe('AuthController', () => {
 
     it('should throw 400 if logout_token is missing from body', async () => {
       // Act
-      const res = await await server.post('/callbacks/logout')
+      const res = await server.post('/callbacks/logout')
 
       // Assert
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST)
       // Expect error to be
       expect(res.body).toMatchObject({
-        statusCode: 400,
-        message: 'No param "logout_token" provided!',
+        status: 400,
+        detail: 'No param "logout_token" provided!',
       })
     })
 
@@ -519,7 +544,7 @@ describe('AuthController', () => {
 
       await server
         .get('/callbacks/login')
-        .set('Cookie', [`${SESSION_COOKIE_NAME}=${SID_VALUE}`])
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
         .query({ code: 'some_code', state: SID_VALUE })
 
       const res = await server
@@ -534,6 +559,46 @@ describe('AuthController', () => {
         status: 'success',
         message: 'Logout successful!',
       })
+    })
+
+    it('should detect double session when attempt data exists in current session', async () => {
+      // Arrange
+      const code = 'testcode'
+      const getCacheSpy = jest.spyOn(mockCacheManagerValue, 'get')
+      const searchParams = new URLSearchParams({
+        bff_error_status_code: '409',
+        bff_error_message: 'Multiple sessions detected!',
+        bff_error_code: LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION,
+      })
+      const errorUrl = `${baseUrlWithKey}?${searchParams.toString()}`
+
+      // First login - create initial session with attempt data
+      await server.get('/login')
+
+      const currentKey = `current::${mockConfig.name}::${hashedSid}`
+
+      mockCacheManagerValue.set(currentKey, tokensResponse)
+
+      getCacheSpy.mockImplementation((key) => {
+        if (key === currentKey) {
+          return Promise.resolve(tokensResponse)
+        }
+
+        return Promise.resolve(null)
+      })
+
+      // Second login attempt (user pressed back)
+      await server.get('/login')
+
+      // Act - Try to complete second login
+      const res = await server
+        .get('/callbacks/login')
+        .set('Cookie', [`${SESSION_COOKIE_NAME}=${hashedSid}`])
+        .query({ code, state: SID_VALUE })
+
+      // Assert
+      expect(res.status).toEqual(HttpStatus.FOUND)
+      expect(res.headers.location).toEqual(errorUrl)
     })
   })
 })

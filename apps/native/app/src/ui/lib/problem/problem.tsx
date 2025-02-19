@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
+
 import { useTranslate } from '../../../hooks/use-translate'
 import { useOfflineStore } from '../../../stores/offline-store'
 import { ProblemTemplate, ProblemTemplateBaseProps } from './problem-template'
+import { getOrganizationSlugFromError } from '../../../utils/get-organization-slug-from-error'
+import { ThirdPartyServiceError } from './third-party-service-error'
 
 enum ProblemTypes {
   error = 'error',
@@ -20,7 +23,7 @@ type ProblemBaseProps = {
   title?: string
   message?: string
   logError?: boolean
-} & Pick<ProblemTemplateBaseProps, 'withContainer'>
+} & Pick<ProblemTemplateBaseProps, 'withContainer' | 'size'>
 
 interface ErrorProps extends ProblemBaseProps {
   type?: 'error'
@@ -61,6 +64,7 @@ export const Problem = ({
   logError = false,
   withContainer,
   showIcon,
+  size = 'large',
 }: ProblemProps) => {
   const t = useTranslate()
   const { isConnected } = useOfflineStore()
@@ -73,6 +77,7 @@ export const Problem = ({
     message: message ?? t('problem.error.message'),
     tag: tag ?? t('problem.error.tag'),
     variant: 'error',
+    size: size ?? 'large',
   } as const
 
   useEffect(() => {
@@ -90,6 +95,7 @@ export const Problem = ({
         variant="warning"
         title={title ?? t('problem.offline.title')}
         message={message ?? t('problem.offline.message')}
+        size={size}
       />
     )
   }
@@ -99,6 +105,18 @@ export const Problem = ({
 
   switch (type) {
     case ProblemTypes.error:
+      if (error) {
+        const organizationSlug = getOrganizationSlugFromError(error)
+
+        if (organizationSlug) {
+          return (
+            <ThirdPartyServiceError
+              organizationSlug={organizationSlug}
+              size={size}
+            />
+          )
+        }
+      }
       return <ProblemTemplate {...fallbackProps} />
 
     case ProblemTypes.noData:
@@ -109,6 +127,7 @@ export const Problem = ({
           variant="info"
           title={title ?? t('problem.noData.title')}
           message={message ?? t('problem.noData.message')}
+          size={size}
         />
       )
 

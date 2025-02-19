@@ -45,6 +45,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
+      isSentToPrisonAdmin
+      sentToPrisonAdminDate
+      openedByPrisonAdminDate
+      punishmentType
       subpoenas {
         id
         created
@@ -54,6 +58,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         comment
         defenderNationalId
         caseId
+        defendantId
         subpoenaId
       }
     }
@@ -198,7 +203,15 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
+      offenses {
+        id
+        indictmentCountId
+        created
+        modified
+        offense
+        substances
+      }
+      deprecatedOffenses
       substances
       lawsBroken
       incidentDescription
@@ -224,6 +237,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       }
       policeCaseNumbers
       indictmentSubtypes
+      court {
+        id
+        name
+      }
+      judge {
+        id
+        name
+      }
+      prosecutorsOffice {
+        id
+        name
+      }
     }
     hasCivilClaims
     civilClaimants {
@@ -240,5 +265,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
     }
+    isCompletedWithoutRuling
+    caseSentToCourtDate
   }
 }

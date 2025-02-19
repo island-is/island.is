@@ -8,4 +8,8 @@ export interface Identity {
   familyName?: string | null
   address?: Address
   type: IdentityType
+  actor?: {
+    nationalId: string
+    name: string
+  }
 }

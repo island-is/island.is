@@ -1,4 +1,9 @@
-import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  json,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import {
   EnvironmentVariables,
   Secrets,
@@ -63,6 +68,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .namespace(namespace)
     .image(imageId)
     .serviceAccount(serviceId)
+    .codeOwner(CodeOwners.Aranja)
     .env(envVariables)
     .secrets(secrets)
     .xroad(Base, Client, NationalRegistryB2C)

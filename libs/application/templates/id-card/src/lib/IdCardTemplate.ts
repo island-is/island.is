@@ -36,7 +36,8 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes, hasReviewer, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewer, hasReviewerApproved } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
@@ -83,6 +84,7 @@ const IdCardTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ID_CARD,
   name: applicationMessage.name, // TODO make dynamic if possible
+  codeOwner: CodeOwners.Origo,
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   translationNamespaces: [ApplicationConfigurations.IdCard.translation],
@@ -172,7 +174,7 @@ const IdCardTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,

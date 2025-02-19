@@ -5,7 +5,6 @@ import {
   Get,
   Header,
   Inject,
-  InternalServerErrorException,
   Param,
   Query,
   Res,
@@ -16,11 +15,16 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases, SubpoenaType } from '@island.is/judicial-system/types'
+import {
+  indictmentCases,
+  SubpoenaType,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -47,7 +51,10 @@ import {
   SubpoenaExistsOptionalGuard,
 } from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
+import { SubpoenaService } from './subpoena.service'
 
+@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
+@ApiTags('subpoenas')
 @UseGuards(
   JwtAuthGuard,
   RolesGuard,
@@ -56,13 +63,39 @@ import { Subpoena } from './models/subpoena.model'
   CaseReadGuard,
   DefendantExistsGuard,
 )
-@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
-@ApiTags('subpoenas')
 export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
+    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtAssistantRule,
+    districtCourtRegistrarRule,
+  )
+  @Get(':subpoenaId')
+  @UseGuards(SubpoenaExistsGuard)
+  @ApiOkResponse({
+    type: Subpoena,
+    description: 'Gets the subpoena for a given defendant',
+  })
+  getSubpoena(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @CurrentHttpUser() user: User,
+  ): Promise<Subpoena> {
+    this.logger.debug(
+      `Gets subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.getSubpoena(subpoena, user)
+  }
 
   @RolesRules(
     prosecutorRule,
@@ -72,7 +105,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(['', ':subpoenaId'])
+  @Get(['', ':subpoenaId/pdf'])
   @UseGuards(SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({

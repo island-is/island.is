@@ -17,6 +17,8 @@ import { UserService } from '../user/user.service'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { ExplicitFlight } from './dto/ExplicitFlight.dto'
 import { CreateSuperExplicitDiscountCodeParams } from './dto'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 interface CachedDiscount {
   user: User
@@ -47,6 +49,8 @@ export class DiscountService {
 
     @InjectModel(ExplicitCode)
     private explicitModel: typeof ExplicitCode,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
 
     private readonly userService: UserService,
   ) {}
@@ -197,13 +201,19 @@ export class DiscountService {
     unConnectedFlights: Flight[] | ExplicitFlight[],
     isExplicit: boolean,
     flightLegs = 1,
+    isManual?: boolean,
   ): Promise<Array<Discount> | null> {
     const user = await this.userService.getUserInfoByNationalId(
       nationalId,
       auth,
+      isExplicit,
+      isManual,
     )
 
     if (!user) {
+      this.logger.warn('User by national id not found for explicit discount.', {
+        category: 'ads-backend',
+      })
       return null
     }
     // overwrite credit since validation may return 0 depending on what the problem is
@@ -212,10 +222,19 @@ export class DiscountService {
         user.fund.credit = 2 //making sure we can get flight from and to
         user.fund.total = 2
       } else {
+        this.logger.warn(
+          `User fund used requirements not met: ${user.fund.used}.`,
+          {
+            category: 'ads-backend',
+          },
+        )
         return null
       }
     }
     if (user.fund.credit === 0 && user.fund.total !== undefined) {
+      this.logger.warn(`User fund no credit, has total: ${user.fund.total}.`, {
+        category: 'ads-backend',
+      })
       return null
     }
 
@@ -477,6 +496,7 @@ export class DiscountService {
       ],
     }
 
+    const isManual = true
     const discount = await this.createExplicitDiscountCode(
       auth,
       body.nationalId,
@@ -487,6 +507,7 @@ export class DiscountService {
       body.needsConnectionFlight ? [flight] : [],
       isExplicit,
       1,
+      isManual,
     )
     if (!discount) {
       throw new Error(`Could not create explicit discount`)

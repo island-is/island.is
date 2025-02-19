@@ -3,6 +3,7 @@ import { LoggedInState } from './bff.state'
 
 export const createMockedInitialState = (
   user?: Partial<BffUser>,
+  issuer = 'https://identity-server.dev01.devland.is',
 ): LoggedInState => ({
   userInfo: {
     profile: {
@@ -10,6 +11,7 @@ export const createMockedInitialState = (
       locale: 'is',
       nationalId: '0000000000',
       ...user?.profile,
+      iss: issuer,
     } as BffUser['profile'],
     scopes: user?.scopes ?? [],
   },

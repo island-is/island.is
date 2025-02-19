@@ -1,0 +1,5 @@
+mutation ExportList($input: ExportEndorsementListInput!) {
+  endorsementSystemExportList(input: $input) {
+    url
+  }
+}

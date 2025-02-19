@@ -7,6 +7,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
+  districtCourtAbbreviation,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
@@ -57,44 +58,35 @@ export const CategoryCard: FC<PropsWithChildren<CategoryCardProps>> = ({
 interface Props {
   theCase: CaseListEntry
   onClick: () => void
-  isCourtRole: boolean
   isLoading?: boolean
 }
 
 const MobileCase: FC<PropsWithChildren<Props>> = ({
   theCase,
   onClick,
-  isCourtRole,
   children,
   isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
+  const courtAbbreviation = districtCourtAbbreviation(theCase.court?.name)
 
   return (
     <CategoryCard
       heading={displayCaseType(formatMessage, theCase.type, theCase.decision)}
       onClick={onClick}
-      tags={[
-        <TagCaseState
-          key={theCase.id}
-          caseState={theCase.state}
-          caseType={theCase.type}
-          isCourtRole={isCourtRole}
-          isValidToDateInThePast={theCase.isValidToDateInThePast}
-          courtDate={theCase.courtDate}
-          indictmentRulingDecision={theCase.indictmentRulingDecision}
-          indictmentDecision={theCase.indictmentDecision}
-        />,
-      ]}
+      tags={[<TagCaseState key={theCase.id} theCase={theCase} />]}
       isLoading={isLoading}
     >
       <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
-      {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
-      <br />
+      {theCase.courtCaseNumber && (
+        <Text>{`${courtAbbreviation ? `${courtAbbreviation}: ` : ''}${
+          theCase.courtCaseNumber
+        }`}</Text>
+      )}
       {theCase.defendants && theCase.defendants.length > 0 && (
-        <>
+        <Box marginTop={3}>
           <Text>{theCase.defendants[0].name ?? ''}</Text>
           {theCase.defendants.length === 1 ? (
             <Text>
@@ -106,18 +98,17 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>
           )}
-        </>
+        </Box>
       )}
-      {theCase.created && (
-        <>
-          <br />
-          <Text variant="small" fontWeight={'medium'}>
-            {`${formatMessage(tables.created)} ${format(
-              parseISO(theCase.created),
+      {theCase.caseSentToCourtDate && (
+        <Box marginTop={3}>
+          <Text variant="small" fontWeight="medium">
+            {`${formatMessage(tables.sentToCourtDate)} ${format(
+              parseISO(theCase.caseSentToCourtDate),
               'd.M.y',
             )}`}
           </Text>
-        </>
+        </Box>
       )}
       <Box marginTop={1}>{children}</Box>
     </CategoryCard>

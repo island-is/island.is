@@ -162,6 +162,17 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/vaccinations', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.VaccinationsScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {

@@ -5,11 +5,10 @@ import { PersonalSection } from './personalSection'
 import { SelectLicenseSection } from './selectLicenseSection'
 import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeItemCodesAndExtraLabel } from '../../utils'
+import { getChargeItemsWithExtraLabel } from '../../utils'
 
 export const HealthcareLicenseCertificateForm: Form = buildForm({
   id: 'HealthcareLicenseCertificateForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
@@ -24,7 +23,7 @@ export const HealthcareLicenseCertificateForm: Form = buildForm({
     SelectLicenseSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: getChargeItemCodesAndExtraLabel,
+      getSelectedChargeItems: getChargeItemsWithExtraLabel,
     }),
     buildSection({
       id: 'confirmation',

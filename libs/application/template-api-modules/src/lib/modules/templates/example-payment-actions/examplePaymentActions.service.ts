@@ -40,7 +40,7 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
       auth,
       id,
       SYSLUMADUR_NATIONAL_ID,
-      [chargeItemCode],
+      [{ code: chargeItemCode }],
     )
 
     // last chance to validate before the user receives a dummy

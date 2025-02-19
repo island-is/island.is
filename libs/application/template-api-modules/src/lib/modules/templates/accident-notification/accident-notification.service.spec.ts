@@ -8,7 +8,6 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { S3 } from 'aws-sdk'
 import { S3Service } from '@island.is/nest/aws'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
@@ -49,13 +48,6 @@ class MockSmsService {
   sendSms() {
     return sendMail()
   }
-}
-
-const S3Instance = {
-  upload: jest.fn().mockReturnThis(),
-  promise: jest.fn(),
-  deleteObject: jest.fn().mockReturnThis(),
-  getObject: jest.fn().mockReturnThis(),
 }
 
 describe('AccidentNotificationService', () => {
@@ -108,10 +100,6 @@ describe('AccidentNotificationService', () => {
             getAttachmentStatus: jest.fn().mockResolvedValue({ status: 'ok' }),
             withMiddleware: jest.fn().mockReturnThis(),
           })),
-        },
-        {
-          provide: S3,
-          useFactory: () => S3Instance,
         },
         {
           provide: ConfigService,

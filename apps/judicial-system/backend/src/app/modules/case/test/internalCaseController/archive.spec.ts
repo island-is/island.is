@@ -15,6 +15,7 @@ import {
   IndictmentCount,
   IndictmentCountService,
 } from '../../../indictment-count'
+import { Offense } from '../../../indictment-count/models/offense.model'
 import { caseModuleConfig } from '../../case.config'
 import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
@@ -271,7 +272,16 @@ describe('InternalCaseController - Archive', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include: [
           { model: Defendant, as: 'defendants' },
-          { model: IndictmentCount, as: 'indictmentCounts' },
+          {
+            model: IndictmentCount,
+            as: 'indictmentCounts',
+            include: [
+              {
+                model: Offense,
+                as: 'offenses',
+              },
+            ],
+          },
           { model: CaseFile, as: 'caseFiles' },
           { model: CaseString, as: 'caseStrings' },
         ],
@@ -287,13 +297,13 @@ describe('InternalCaseController - Archive', () => {
         ],
         where: archiveFilter,
       })
-      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId1,
         { nationalId: '', name: '', address: '' },
         transaction,
       )
-      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId2,
         { nationalId: '', name: '', address: '' },

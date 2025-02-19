@@ -25,15 +25,14 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "tags": ["Frigg"]
       }
     },
     "/forms/types": {
       "get": {
-        "operationId": "getFormTypes",
-        "summary": "Get list of types of forms",
         "description": "Get types.",
+        "operationId": "getFormTypes",
         "parameters": [],
         "responses": {
           "200": {
@@ -45,48 +44,15 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
-      }
-    },
-    "/forms/reviews/{reviewId}/{action}": {
-      "post": {
-        "operationId": "updateReview",
-        "summary": "Review form",
-        "description": "Review form.",
-        "parameters": [
-          {
-            "name": "reviewId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "action",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/SuccessModel" }
-              }
-            }
-          }
-        },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": "Get list of types of forms",
+        "tags": ["Frigg"]
       }
     },
     "/key-options": {
       "get": {
-        "operationId": "getAllKeyOptions",
-        "summary": "Get all key options.",
         "description": "Get all key options, can be filtered by type. If type input is not valid, all key options will be returned.",
+        "operationId": "getAllKeyOptions",
         "parameters": [
           {
             "name": "type",
@@ -109,14 +75,14 @@
             }
           }
         },
+        "summary": "Get all key options.",
         "tags": ["Frigg"]
       }
     },
     "/key-options/types": {
       "get": {
-        "operationId": "getKeyOptionsTypes",
-        "summary": "Get list of types of key options",
         "description": "Get types.",
+        "operationId": "getKeyOptionsTypes",
         "parameters": [],
         "responses": {
           "200": {
@@ -128,6 +94,7 @@
             }
           }
         },
+        "summary": "Get list of types of key options",
         "tags": ["Frigg"]
       }
     },
@@ -141,10 +108,42 @@
     },
     "/schools": {
       "get": {
-        "operationId": "getAllSchoolsByMunicipality",
-        "summary": "Get all schools.",
         "description": "Returns a paginated collection of schools.",
-        "parameters": [],
+        "operationId": "getAllSchoolsByMunicipality",
+        "parameters": [
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Identifies the sort criteria to be used for the records in the response message. Use with the orderBy parameter. The sort order should follow the [UNICODE, 16] standard.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "The form of ordering for response to the sorted request i.e. ascending (asc) or descending (desc). The sort order should follow the [UNICODE, 16] standard.",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "To define the download segmentation value i.e. the maximum number of records to be contained in the response.",
+            "schema": { "default": 100, "type": "number", "minimum": 1 }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "The number of the first record to be supplied in the segmented response message.",
+            "schema": { "default": 0, "type": "number", "minimum": 0 }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -156,16 +155,25 @@
                 }
               }
             }
+          },
+          "default": {
+            "headers": {
+              "x-total-count": {
+                "description": "The total number of resources that are available to be returned",
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
           }
         },
+        "summary": "Get all schools.",
         "tags": ["Frigg"]
       }
     },
     "/students/{nationalId}": {
       "get": {
-        "operationId": "getUserBySourcedId",
-        "summary": "Get user by nationalId",
         "description": "Get user by Id.",
+        "operationId": "getUserBySourcedId",
         "parameters": [
           {
             "name": "nationalId",
@@ -184,8 +192,115 @@
             }
           }
         },
-        "tags": ["Frigg"],
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": "Get user by nationalId",
+        "tags": ["Frigg"]
+      }
+    },
+    "/registrations/{orgId}": {
+      "get": {
+        "description": "Get registration",
+        "operationId": "getRegistration",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Identifies the sort criteria to be used for the records in the response message. Use with the orderBy parameter. The sort order should follow the [UNICODE, 16] standard.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "The form of ordering for response to the sorted request i.e. ascending (asc) or descending (desc). The sort order should follow the [UNICODE, 16] standard.",
+            "schema": {
+              "default": "asc",
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "To define the download segmentation value i.e. the maximum number of records to be contained in the response.",
+            "schema": { "default": 100, "type": "number", "minimum": 1 }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "The number of the first record to be supplied in the segmented response message.",
+            "schema": { "default": 0, "type": "number", "minimum": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RegistrationModel" }
+                }
+              }
+            }
+          },
+          "default": {
+            "headers": {
+              "x-total-count": {
+                "description": "The total number of resources that are available to be returned",
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Registration",
+        "tags": ["Frigg"]
+      }
+    },
+    "/registrations/{id}/{orgId}": {
+      "get": {
+        "description": "Get registration by ID",
+        "operationId": "getRegistrationById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationDetailModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Registration by ID",
+        "tags": ["Frigg"]
       }
     }
   },
@@ -261,35 +376,77 @@
           },
           "requestingMeeting": { "type": "boolean", "default": false },
           "expectedStartDate": { "format": "date-time", "type": "string" },
+          "expectedEndDate": { "format": "date-time", "type": "string" },
           "reason": { "type": "string" },
-          "movingAbroadCountry": { "type": "string" },
           "newDomicile": { "$ref": "#/components/schemas/AddressDto" }
         },
-        "required": ["defaultOrg", "reason"]
+        "required": ["defaultOrg"]
       },
       "HealthDto": {
         "type": "object",
         "properties": {
-          "usesEpipen": { "type": "boolean", "default": false },
+          "foodAllergiesOrIntolerances": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "allergies": { "type": "array", "items": { "type": "string" } },
-          "intolerances": { "type": "array", "items": { "type": "string" } }
+          "usesEpipen": { "type": "boolean", "default": false },
+          "hasConfirmedMedicalDiagnoses": {
+            "type": "boolean",
+            "default": false
+          },
+          "requestsMedicationAdministration": {
+            "type": "boolean",
+            "default": false
+          }
         }
+      },
+      "CaseManagerDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["name", "email"]
       },
       "SocialDto": {
         "type": "object",
         "properties": {
           "hasHadSupport": { "type": "boolean", "default": false },
-          "hasDiagnoses": { "type": "boolean", "default": false }
+          "hasDiagnoses": { "type": "boolean", "default": false },
+          "hasIntegratedServices": { "type": "boolean", "default": false },
+          "hasCaseManager": { "type": "boolean", "default": false },
+          "caseManager": { "$ref": "#/components/schemas/CaseManagerDto" }
         }
       },
       "LanguageDto": {
         "type": "object",
         "properties": {
-          "nativeLanguage": { "type": "string" },
-          "noIcelandic": { "type": "boolean" },
-          "otherLanguages": { "type": "array", "items": { "type": "string" } }
+          "languageEnvironment": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "guardianRequiresInterpreter": { "type": "boolean" },
+          "firstLanguage": { "type": "string" },
+          "secondLanguage": { "type": "string" },
+          "thirdLanguage": { "type": "string" },
+          "fourthLanguage": { "type": "string" }
         },
-        "required": ["nativeLanguage", "noIcelandic"]
+        "required": [
+          "languageEnvironment",
+          "preferredLanguage",
+          "signLanguage",
+          "guardianRequiresInterpreter",
+          "firstLanguage"
+        ]
+      },
+      "SchoolMealDto": {
+        "type": "object",
+        "properties": {
+          "acceptFreeSchoolLunch": { "type": "boolean" },
+          "hasSpecialNeeds": { "type": "boolean" },
+          "specialNeeds": { "type": "string" }
+        },
+        "required": ["acceptFreeSchoolLunch"]
       },
       "FormDto": {
         "type": "object",
@@ -303,7 +460,8 @@
           "registration": { "$ref": "#/components/schemas/RegistrationDto" },
           "health": { "$ref": "#/components/schemas/HealthDto" },
           "social": { "$ref": "#/components/schemas/SocialDto" },
-          "language": { "$ref": "#/components/schemas/LanguageDto" }
+          "language": { "$ref": "#/components/schemas/LanguageDto" },
+          "schoolMeal": { "$ref": "#/components/schemas/SchoolMealDto" }
         },
         "required": ["type", "user"]
       },
@@ -312,16 +470,9 @@
         "properties": {
           "formId": { "type": "string", "description": "Id of form created" },
           "reviewId": { "type": "string", "description": "Id of review" },
-          "status": { "type": "string", "description": "Status of form" }
+          "state": { "type": "string", "description": "Status of form" }
         },
-        "required": ["formId", "reviewId", "status"]
-      },
-      "SuccessModel": {
-        "type": "object",
-        "properties": {
-          "success": { "type": "boolean", "description": "Submission response" }
-        },
-        "required": ["success"]
+        "required": ["formId", "reviewId", "state"]
       },
       "Value": {
         "type": "object",
@@ -376,12 +527,12 @@
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "street": { "type": "string" },
+          "address": { "type": "string" },
           "municipality": { "type": "object", "nullable": true },
-          "zip": { "type": "string" },
+          "postCode": { "type": "string" },
           "country": { "type": "object", "nullable": true }
         },
-        "required": ["id", "street", "municipality", "zip", "country"]
+        "required": ["id", "address", "municipality", "postCode", "country"]
       },
       "OrganizationModel": {
         "type": "object",
@@ -471,8 +622,8 @@
           "id": { "type": "string" },
           "nationalId": { "type": "string" },
           "name": { "type": "string" },
-          "phone": { "type": "string" },
-          "email": { "type": "string" },
+          "phone": { "type": "object" },
+          "email": { "type": "object" },
           "role": { "type": "string" },
           "domicile": {
             "nullable": true,
@@ -532,6 +683,160 @@
           "primaryOrgId",
           "memberships",
           "agents"
+        ]
+      },
+      "RegistrationModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nameOfChild": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "defaultOrganization": {
+            "$ref": "#/components/schemas/MembershipOrganizationModel"
+          },
+          "selectedOrganization": {
+            "$ref": "#/components/schemas/MembershipOrganizationModel"
+          },
+          "requestingMeeting": { "type": "boolean" },
+          "expectedStartDate": { "format": "date-time", "type": "string" },
+          "expectedEndDate": { "format": "date-time", "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "nameOfChild",
+          "nationalId",
+          "defaultOrganization",
+          "selectedOrganization",
+          "requestingMeeting",
+          "expectedStartDate",
+          "reason"
+        ]
+      },
+      "ReviewActionModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "action": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pendingAction",
+              "pendingActionBefore",
+              "pendingActionAfter",
+              "pending",
+              "approvedAction",
+              "approved",
+              "rejectedAction",
+              "rejected"
+            ]
+          },
+          "order": { "type": "number" },
+          "organization": {
+            "$ref": "#/components/schemas/MembershipOrganizationModel"
+          },
+          "actionAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "nextActionId": { "type": "object" }
+        },
+        "required": [
+          "id",
+          "action",
+          "status",
+          "order",
+          "organization",
+          "actionAt",
+          "nextActionId"
+        ]
+      },
+      "ReviewModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "state": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected"]
+          },
+          "displayStatus": { "type": "string" },
+          "actions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReviewActionModel" }
+          },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "id",
+          "state",
+          "displayStatus",
+          "actions",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "LanguageModel": {
+        "type": "object",
+        "properties": {
+          "languageEnvironment": { "type": "string" },
+          "preferredLanguage": { "type": "string" },
+          "signLanguage": { "type": "boolean" },
+          "guardianRequiresInterpreter": { "type": "boolean" },
+          "firstLanguage": { "type": "string" },
+          "secondLanguage": { "type": "string" },
+          "thirdLanguage": { "type": "string" },
+          "fourthLanguage": { "type": "string" }
+        },
+        "required": [
+          "languageEnvironment",
+          "preferredLanguage",
+          "signLanguage",
+          "guardianRequiresInterpreter",
+          "firstLanguage"
+        ]
+      },
+      "RegistrationDetailModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nameOfChild": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "defaultOrganization": {
+            "$ref": "#/components/schemas/MembershipOrganizationModel"
+          },
+          "selectedOrganization": {
+            "$ref": "#/components/schemas/MembershipOrganizationModel"
+          },
+          "requestingMeeting": { "type": "boolean" },
+          "expectedStartDate": { "format": "date-time", "type": "string" },
+          "expectedEndDate": { "format": "date-time", "type": "string" },
+          "reason": { "type": "string" },
+          "review": { "$ref": "#/components/schemas/ReviewModel" },
+          "user": { "$ref": "#/components/schemas/UserModel" },
+          "agents": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentModel" }
+          },
+          "language": { "$ref": "#/components/schemas/LanguageModel" }
+        },
+        "required": [
+          "id",
+          "nameOfChild",
+          "nationalId",
+          "defaultOrganization",
+          "selectedOrganization",
+          "requestingMeeting",
+          "expectedStartDate",
+          "reason",
+          "review",
+          "user",
+          "agents",
+          "language"
         ]
       }
     }

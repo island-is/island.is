@@ -6,8 +6,6 @@ import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 import { ENHANCED_FETCH_PROVIDER_KEY } from '../enhancedFetch/enhanced-fetch.provider'
 import {
-  ApiResponse,
-  ErrorRes,
   GetLoginSearchParamsReturnValue,
   ParResponse,
   TokenResponse,
@@ -35,59 +33,28 @@ export class IdsService {
   private async postRequest<T>(
     endpoint: string,
     body: Record<string, string>,
-  ): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.enhancedFetch(
-        `${this.issuerUrl}${endpoint}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams(body).toString(),
-        },
-      )
+  ): Promise<T> {
+    const response = await this.enhancedFetch(`${this.issuerUrl}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: this.createPARAuthorizationHeader(),
+      },
+      body: new URLSearchParams(body).toString(),
+    })
 
-      const contentType = response.headers.get('content-type') || ''
+    const contentType = response.headers.get('content-type') || ''
 
-      if (contentType.includes('application/json')) {
-        const data = await response.json()
+    if (contentType.includes('application/json')) {
+      const data = await response.json()
 
-        if (!response.ok) {
-          // If error response from Ids is not in the expected format, throw the data as is
-          if (!data.error || !data.error_description) {
-            throw data
-          }
-
-          return {
-            type: 'error',
-            data: {
-              error: data.error,
-              error_description: data.error_description,
-            },
-          } as ErrorRes
-        }
-
-        return {
-          type: 'success',
-          data: data as T,
-        }
-      }
-
-      // Handle plain text responses
-      const textResponse = await response.text()
-
-      if (!response.ok) {
-        throw textResponse
-      }
-
-      return {
-        type: 'success',
-        data: textResponse,
-      } as ApiResponse<T>
-    } catch (error) {
-      throw new Error(error)
+      return data
     }
+
+    // Handle plain text responses
+    const textResponse = await response.text()
+
+    return textResponse as T
   }
 
   public getLoginSearchParams({
@@ -102,6 +69,7 @@ export class IdsService {
     prompt?: string
   }): GetLoginSearchParamsReturnValue {
     const { ids } = this.config
+
     return {
       client_id: ids.clientId,
       redirect_uri: this.config.callbacksRedirectUris.login,
@@ -123,6 +91,22 @@ export class IdsService {
   }
 
   /**
+   * Creates a Basic Authorization header for the PAR (Pushed Authorization Requests)
+   * The client ID and secret are url encoded and concatenated with a colon and then base64 encoded
+   *
+   * @see https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1
+   */
+  createPARAuthorizationHeader() {
+    const { ids } = this.config
+    const basicAuth = `${encodeURIComponent(ids.clientId)}:${encodeURIComponent(
+      ids.secret,
+    )}`
+    const base64Auth = Buffer.from(basicAuth).toString('base64')
+
+    return `Basic ${base64Auth}`
+  }
+
+  /**
    * Fetches the PAR (Pushed Authorization Requests) from the Ids
    */
   public async getPar(args: {
@@ -131,10 +115,10 @@ export class IdsService {
     loginHint?: string
     prompt?: string
   }) {
-    return this.postRequest<ParResponse>('/connect/par', {
-      client_secret: this.config.ids.secret,
-      ...this.getLoginSearchParams(args),
-    })
+    return this.postRequest<ParResponse>(
+      '/connect/par',
+      this.getLoginSearchParams(args),
+    )
   }
 
   /**
@@ -150,13 +134,9 @@ export class IdsService {
     code: string
     codeVerifier: string
   }) {
-    const { ids } = this.config
-
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'authorization_code',
       code,
-      client_secret: ids.secret,
-      client_id: ids.clientId,
       redirect_uri: this.config.callbacksRedirectUris.login,
       code_verifier: codeVerifier,
     })
@@ -169,13 +149,10 @@ export class IdsService {
    */
   public async refreshToken(refreshToken: string) {
     const decryptedRefreshToken = this.cryptoService.decrypt(refreshToken)
-    const { ids } = this.config
 
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'refresh_token',
       refresh_token: decryptedRefreshToken,
-      client_secret: ids.secret,
-      client_id: ids.clientId,
     })
   }
 
@@ -190,13 +167,10 @@ export class IdsService {
     tokenTypeHint: 'access_token' | 'refresh_token',
   ) {
     const decryptedToken = this.cryptoService.decrypt(token)
-    const { ids } = this.config
 
     return this.postRequest('/connect/revocation', {
       token: decryptedToken,
       token_type_hint: tokenTypeHint,
-      client_secret: ids.secret,
-      client_id: ids.clientId,
     })
   }
 }

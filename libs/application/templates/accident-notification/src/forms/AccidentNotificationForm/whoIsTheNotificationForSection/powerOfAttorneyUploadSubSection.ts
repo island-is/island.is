@@ -5,12 +5,13 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { error, powerOfAttorney } from '../../../lib/messages'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../constants'
-import { isUploadNow } from '../../../utils/isUploadNow'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
+import { isUploadNow } from '../../../utils/documentUtils'
 
 export const powerOfAttorneyUploadSubSection = buildSubSection({
   id: 'powerOfAttorney.upload.section',
   title: powerOfAttorney.upload.sectionTitle,
+  condition: (formValue) => isUploadNow(formValue),
   children: [
     buildMultiField({
       id: 'powerOfAttorney',
@@ -21,11 +22,9 @@ export const powerOfAttorneyUploadSubSection = buildSubSection({
           id: 'attachments.powerOfAttorney.fileLink',
           component: 'ProxyDocument',
           doesNotRequireAnswer: true,
-          title: '',
         }),
         buildFileUploadField({
           id: 'attachments.powerOfAttorneyFile.file',
-          title: '',
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: error.attachmentMaxSizeError,
@@ -37,5 +36,4 @@ export const powerOfAttorneyUploadSubSection = buildSubSection({
       ],
     }),
   ],
-  condition: (formValue) => isUploadNow(formValue),
 })

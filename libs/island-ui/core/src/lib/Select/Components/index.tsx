@@ -21,6 +21,7 @@ import {
   GroupBase,
   MultiValueProps,
   MultiValueGenericProps,
+  ClearIndicatorProps,
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
@@ -79,10 +80,13 @@ export const Option = <
   props: OptionProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
+
   const description = props.data?.description
   // Truncate description by default
   const descriptionTruncated =
     !!description && props.data?.descriptionTruncated !== false
+
+  const showCheckmark = props.data?.withCheckmark
 
   return (
     <components.Option
@@ -92,6 +96,32 @@ export const Option = <
       {...props}
     >
       <>
+        {showCheckmark && (
+          <>
+            <input
+              type="checkbox"
+              checked={props.isSelected && props.data?.isSelected}
+              onChange={() => null}
+              className={cn(styles.inputCheckbox)}
+            />
+            <div
+              className={cn(styles.checkbox, {
+                [styles.checkboxChecked]:
+                  props.isSelected && props.data?.isSelected,
+              })}
+            >
+              <Icon
+                icon="checkmark"
+                color={
+                  props.isSelected && props.data?.isSelected
+                    ? 'white'
+                    : 'transparent'
+                }
+                ariaHidden
+              />
+            </div>
+          </>
+        )}
         {props.children}
         {!!description && (
           <div
@@ -295,6 +325,20 @@ export const Control = <
   } else {
     return component(label)
   }
+}
+
+export const ClearIndicator = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>,
+>(
+  props: ClearIndicatorProps<OptionType<Value>, IsMulti, Group>,
+) => {
+  return (
+    <components.ClearIndicator {...props}>
+      <Icon icon="close" color="blue400" />
+    </components.ClearIndicator>
+  )
 }
 
 export const customStyles = <

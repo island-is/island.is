@@ -280,7 +280,7 @@ function AsideIcons({
   return (
     <div className={styles.aside}>
       {loading ? (
-        <Box className={styles.spinner} flexShrink={0} borderRadius="circle" />
+        <Box className={styles.spinner} flexShrink={0} borderRadius="full" />
       ) : displayedIcon ? (
         <div
           className={styles.iconWrapper({ size })}

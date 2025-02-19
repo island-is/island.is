@@ -406,7 +406,6 @@ describe('CaseController - Update', () => {
       const caseToUpdate = { courtCaseNumber }
       const policeCaseNumber1 = uuid()
       const policeCaseNumber2 = uuid()
-      const indictmentId = uuid()
       const criminalRecordId = uuid()
       const costBreakdownId = uuid()
       const uncategorisedId = uuid()
@@ -415,12 +414,6 @@ describe('CaseController - Update', () => {
         type,
         policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
         caseFiles: [
-          {
-            id: indictmentId,
-            key: uuid(),
-            state: CaseFileState.STORED_IN_RVG,
-            category: CaseFileCategory.INDICTMENT,
-          },
           {
             id: criminalRecordId,
             key: uuid(),
@@ -459,23 +452,6 @@ describe('CaseController - Update', () => {
       it('should post to queue', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
-            user,
-            caseId,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-            user,
-            caseId,
-            elementId: defendantId2,
-          },
-          {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
             user,
             caseId,
@@ -486,12 +462,6 @@ describe('CaseController - Update', () => {
             user,
             caseId,
             elementId: policeCaseNumber2,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId,
-            elementId: indictmentId,
           },
           {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
@@ -510,6 +480,11 @@ describe('CaseController - Update', () => {
             user,
             caseId,
             elementId: uncategorisedId,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+            user,
+            caseId,
           },
         ])
       })
@@ -880,6 +855,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.INDICTMENT,
+      origin: CaseOrigin.LOKE,
       dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
       defendants: [
         { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
@@ -909,13 +885,37 @@ describe('CaseController - Update', () => {
       ])
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
           user,
           caseId: theCase.id,
           elementId: [defendantId1, subpoenaId1],
         },
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],

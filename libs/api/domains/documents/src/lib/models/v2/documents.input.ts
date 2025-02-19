@@ -17,7 +17,8 @@ import {
 } from 'class-validator'
 
 export enum DocumentPageSort {
-  Date = 'Date',
+  Date = 'Date', // Date is document date
+  Publication = 'Publication', // Publication is document publication date (default)
   Category = 'Category',
   Type = 'Type',
   Sender = 'Sender',
@@ -79,7 +80,10 @@ export class DocumentsInput {
   @IsBoolean()
   readonly opened?: boolean
 
-  @Field(() => DocumentPageSort, { nullable: true, defaultValue: 'Date' })
+  @Field(() => DocumentPageSort, {
+    nullable: true,
+    defaultValue: 'Publication',
+  })
   @IsOptional()
   @IsEnum(DocumentPageSort)
   readonly sortBy?: DocumentPageSort

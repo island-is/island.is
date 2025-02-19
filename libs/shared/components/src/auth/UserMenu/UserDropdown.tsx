@@ -103,7 +103,7 @@ export const UserDropdown = ({
           >
             {isDelegationCompany ? (
               <Box
-                borderRadius="circle"
+                borderRadius="full"
                 background="blue100"
                 display="flex"
                 alignItems="center"

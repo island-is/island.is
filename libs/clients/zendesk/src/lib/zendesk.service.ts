@@ -2,8 +2,8 @@ import { Inject } from '@nestjs/common'
 import axios from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-export const ZENDESK_OPTIONS = 'ZENDESK_OPTIONS'
+import { ZendeskServiceConfig } from './zendesk.config'
+import type { ConfigType } from '@island.is/nest/config'
 
 export enum TicketStatus {
   Open = 'open',
@@ -12,6 +12,23 @@ export enum TicketStatus {
   Closed = 'closed',
   New = 'new',
   OnHold = 'on-hold',
+}
+
+export type UpdateTicketBody = {
+  status?: TicketStatus
+  comment?: Comment
+  custom_fields?: Array<UpdateCustomField>
+}
+
+export type Comment = {
+  body?: string
+  public?: boolean
+  html_body?: string
+}
+
+export type UpdateCustomField = {
+  id: number
+  value: string | boolean
 }
 
 export type SubmitTicketInput = {
@@ -45,16 +62,16 @@ export class ZendeskService {
   params: object
 
   constructor(
-    @Inject(ZENDESK_OPTIONS)
-    private readonly options: ZendeskServiceOptions,
+    @Inject(ZendeskServiceConfig.KEY)
+    private readonly config: ConfigType<typeof ZendeskServiceConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
     const token = Buffer.from(
-      `${this.options.email}/token:${this.options.token}`,
+      `${this.config.formEmail}/token:${this.config.formToken}`,
     ).toString('base64')
 
-    this.api = `https://${options.subdomain}.zendesk.com/api/v2`
+    this.api = `https://${config.subdomain}.zendesk.com/api/v2`
 
     this.params = {
       headers: {
@@ -180,5 +197,33 @@ export class ZendeskService {
 
       throw new Error(`${errMsg}: ${description}`)
     }
+  }
+
+  async updateTicket(
+    ticketId: string,
+    values: UpdateTicketBody,
+  ): Promise<boolean> {
+    const updatedTicket = JSON.stringify({
+      ticket: values,
+    })
+
+    try {
+      await axios.put(
+        `${this.api}/tickets/${ticketId}.json`,
+        updatedTicket,
+        this.params,
+      )
+    } catch (e) {
+      const errMsg = 'Failed to update Zendesk ticket'
+      const description = e.response.data.description
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      throw new Error(`${errMsg}: ${description}`)
+    }
+
+    return true
   }
 }

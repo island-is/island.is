@@ -12,22 +12,15 @@ import {
   mapGenericOverviewPage,
 } from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
-import {
-  AdgerdirFrontpage,
-  mapAdgerdirFrontpage,
-} from './models/adgerdirFrontpage.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
+
 import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { AnchorPage, mapAnchorPage } from './models/anchorPage.model'
-import { AdgerdirTags } from './models/adgerdirTags.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
-import { mapAdgerdirTag } from './models/adgerdirTag.model'
 import { mapOrganization } from './models/organization.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { mapOrganizationTag } from './models/organizationTag.model'
@@ -77,13 +70,27 @@ import { mapImage } from './models/image.model'
 import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { mapTabSection, TabSection } from './models/tabSection.model'
-import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
+import { Grant, mapGrant } from './models/grant.model'
 import { mapManual } from './models/manual.model'
 import { mapServiceWebPage } from './models/serviceWebPage.model'
 import { mapEvent } from './models/event.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import { mapOrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import {
+  GetOrganizationPageStandaloneSitemapLevel1Input,
+  GetOrganizationPageStandaloneSitemapLevel2Input,
+} from './dto/getOrganizationPageStandaloneSitemap.input'
+import {
+  OrganizationPageStandaloneSitemap,
+  OrganizationPageStandaloneSitemapLevel2,
+} from './models/organizationPageStandaloneSitemap.model'
+import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
+import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -132,39 +139,6 @@ const ArticleFields = (
 @Injectable()
 export class CmsContentfulService {
   constructor(private contentfulRepository: ContentfulRepository) {}
-
-  async getAdgerdirFrontpage(lang = 'is-IS'): Promise<AdgerdirFrontpage> {
-    const params = {
-      ['content_type']: 'vidspyrna-frontpage',
-      include: 10,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaFrontpageFields>(lang, params)
-      .catch(errorHandler('getVidspyrnaFrontpage'))
-
-    return (
-      (result.items as types.IVidspyrnaFrontpage[]).map(
-        mapAdgerdirFrontpage,
-      )[0] ?? null
-    )
-  }
-
-  async getAdgerdirPages(lang = 'is-IS'): Promise<AdgerdirPages> {
-    const params = {
-      ['content_type']: 'vidspyrnaPage',
-      include: 10,
-      limit: 100,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
-      .catch(errorHandler('getAdgerdirPages'))
-
-    return {
-      items: (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage),
-    }
-  }
 
   async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
     const organizationTitles = input?.organizationTitles && {
@@ -286,22 +260,6 @@ export class CmsContentfulService {
     })
   }
 
-  async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
-    const params = {
-      ['content_type']: 'vidspyrnaTag',
-      include: 10,
-      limit: 100,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaTagFields>(lang, params)
-      .catch(errorHandler('getAdgerdirTags'))
-
-    return {
-      items: (result.items as types.IVidspyrnaTag[]).map(mapAdgerdirTag),
-    }
-  }
-
   async getOrganizationTags(lang = 'is-IS'): Promise<OrganizationTags> {
     const params = {
       ['content_type']: 'organizationTag',
@@ -318,34 +276,20 @@ export class CmsContentfulService {
     }
   }
 
-  async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
-    const params = {
-      ['content_type']: 'vidspyrnaPage',
-      include: 10,
-      'fields.slug': slug,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
-      .catch(errorHandler('getAdgerdirPage'))
-
-    return (
-      (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage)[0] ?? null
-    )
-  }
-
-  async getOrganization(
-    slug: string,
+  private async getOrganizationBy(
+    fieldName: string,
+    fieldValue: string,
     lang: string,
+    requireFieldValue = false,
   ): Promise<Organization | null> {
-    if (!slug) {
+    if (requireFieldValue && !fieldValue) {
       return null
     }
 
     const params = {
       ['content_type']: 'organization',
       include: 10,
-      'fields.slug': slug,
+      [`fields.${fieldName}`]: fieldValue,
       limit: 1,
     }
 
@@ -358,42 +302,32 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganization(
+    slug: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('slug', slug, lang, true)
+  }
+
   async getOrganizationByTitle(
     title: string,
     lang: string,
-  ): Promise<Organization> {
-    const params = {
-      ['content_type']: 'organization',
-      include: 10,
-      'fields.title[match]': title,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
-      .catch(errorHandler('getOrganization'))
-
-    return (
-      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
-    )
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('title[match]', title, lang)
   }
 
   async getOrganizationByReferenceId(
     referenceId: string,
     lang: string,
-  ): Promise<Organization> {
-    const params = {
-      ['content_type']: 'organization',
-      include: 10,
-      'fields.referenceIdentifier': referenceId,
-    }
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('referenceIdentifier', referenceId, lang)
+  }
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
-      .catch(errorHandler('getOrganization'))
-
-    return (
-      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
-    )
+  async getOrganizationByNationalId(
+    nationalId: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    return this.getOrganizationBy('kennitala', nationalId, lang, true)
   }
 
   async getOrganizationPage(
@@ -597,6 +531,19 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getGrant(lang: string, id: string): Promise<Grant | null> {
+    const params = {
+      ['content_type']: 'grant',
+      'fields.grantApplicationId': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGrantFields>(lang, params)
+      .catch(errorHandler('getGrant'))
+
+    return (result.items as types.IGrant[]).map(mapGrant)[0] ?? null
   }
 
   async getSingleEvent(lang: string, slug: string) {
@@ -1109,5 +1056,301 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
+  }
+
+  async getGenericTagsInTagGroups({
+    lang = 'is',
+    tagGroupSlugs,
+  }: GetGenericTagsInTagGroupsInput): Promise<Array<GenericTag> | null> {
+    let params
+    if (tagGroupSlugs) {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.fields.slug[in]': tagGroupSlugs.join(','),
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    } else {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericTagFields>(lang, params)
+      .catch(errorHandler('getGenericTag'))
+
+    return (result.items as types.IGenericTag[]).map(mapGenericTag)
+  }
+
+  async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {
+    const params = {
+      content_type: 'organizationParentSubpage',
+      'fields.slug': input.slug,
+      'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
+      'fields.organizationPage.fields.slug': input.organizationPageSlug,
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        params,
+      )
+      .catch(errorHandler('getOrganizationParentSubpage'))
+
+    return (
+      (response.items as types.IOrganizationParentSubpage[]).map(
+        mapOrganizationParentSubpage,
+      )[0] ?? null
+    )
+  }
+
+  async getOrganizationPageStandaloneSitemapLevel1(
+    input: GetOrganizationPageStandaloneSitemapLevel1Input,
+  ): Promise<OrganizationPageStandaloneSitemap | null> {
+    const params = {
+      content_type: 'organizationPage',
+      'fields.slug': input.organizationPageSlug,
+      select: 'fields.sitemap',
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationPageFields>(input.lang, params)
+      .catch(errorHandler('getOrganizationPageStandaloneSitemapLevel1'))
+
+    const tree = response.items?.[0]?.fields.sitemap?.fields.tree as SitemapTree
+
+    if (!tree) {
+      return null
+    }
+
+    const category = tree.childNodes.find(
+      (node) =>
+        node.type === SitemapTreeNodeType.CATEGORY &&
+        node.slug === input.categorySlug,
+    )
+
+    if (!category) {
+      return null
+    }
+
+    const entryNodes = new Map<string, { label: string; href: string }[]>()
+
+    const result = {
+      childLinks: category.childNodes.map((node) => {
+        if (node.type === SitemapTreeNodeType.CATEGORY) {
+          return {
+            label: node.label,
+            href: `/${getOrganizationPageUrlPrefix(input.lang)}/${
+              input.organizationPageSlug
+            }/${input.categorySlug}/${node.slug}`,
+            description: node.description,
+          }
+        }
+        if (node.type === SitemapTreeNodeType.URL) {
+          return {
+            label: node.label,
+            href: node.url,
+          }
+        }
+
+        // We need to fetch the label and href for all entry nodes, so we store them in a map
+        const entryNode = {
+          label: '',
+          href: '',
+          entryId: node.entryId,
+        }
+        const nodeList = entryNodes.get(node.entryId) ?? []
+        nodeList.push(entryNode)
+        entryNodes.set(node.entryId, nodeList)
+        return entryNode
+      }),
+    }
+
+    const parentSubpageResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        {
+          content_type: 'organizationParentSubpage',
+          'sys.id[in]': Array.from(entryNodes.keys()).join(','),
+          limit: 1000,
+        },
+        1,
+      )
+
+    for (const parentSubpage of parentSubpageResponse.items) {
+      const nodeList = entryNodes.get(parentSubpage.sys.id)
+      if (
+        !nodeList ||
+        !parentSubpage.fields.slug ||
+        !parentSubpage.fields.title
+      ) {
+        continue
+      }
+      for (const node of nodeList) {
+        node.label = parentSubpage.fields.title
+        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
+          input.organizationPageSlug
+        }/${parentSubpage.fields.slug}`
+      }
+    }
+
+    // Prune empty values
+    result.childLinks = result.childLinks.filter(
+      (link) => link.label && link.href,
+    )
+
+    return result
+  }
+
+  async getOrganizationPageStandaloneSitemapLevel2(
+    input: GetOrganizationPageStandaloneSitemapLevel2Input,
+  ): Promise<OrganizationPageStandaloneSitemapLevel2 | null> {
+    const params = {
+      content_type: 'organizationPage',
+      'fields.slug': input.organizationPageSlug,
+      select: 'fields.sitemap',
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationPageFields>(input.lang, params)
+      .catch(errorHandler('getOrganizationPageStandaloneSitemapLevel2'))
+
+    const tree = response.items?.[0]?.fields.sitemap?.fields.tree as SitemapTree
+
+    if (!tree) {
+      return null
+    }
+
+    const category = tree.childNodes.find(
+      (node) =>
+        node.type === SitemapTreeNodeType.CATEGORY &&
+        node.slug === input.categorySlug,
+    )
+
+    if (!category) {
+      return null
+    }
+
+    const subcategory = category.childNodes.find(
+      (node) =>
+        node.type === SitemapTreeNodeType.CATEGORY &&
+        node.slug === input.subcategorySlug,
+    )
+
+    if (!subcategory || subcategory.type !== SitemapTreeNodeType.CATEGORY) {
+      return null
+    }
+
+    const entryNodes = new Map<
+      string,
+      { label: string; href: string; entryId: string }[]
+    >()
+
+    const result: OrganizationPageStandaloneSitemapLevel2 = {
+      label: subcategory.label,
+      childCategories: subcategory.childNodes.map((node) => {
+        if (node.type === SitemapTreeNodeType.CATEGORY) {
+          return {
+            label: node.label,
+            childLinks: node.childNodes.map((childNode) => {
+              if (childNode.type === SitemapTreeNodeType.CATEGORY) {
+                // Category at depth 3 should be empty so it gets pruned at a later stage
+                return {
+                  label: '',
+                  href: '',
+                  childLinks: [],
+                }
+              }
+              if (childNode.type === SitemapTreeNodeType.URL) {
+                return {
+                  label: childNode.label,
+                  href: childNode.url,
+                  childLinks: [],
+                }
+              }
+
+              const entryNode = {
+                label: '',
+                href: '',
+                entryId: childNode.entryId,
+                childLinks: [],
+              }
+
+              const nodeList = entryNodes.get(childNode.entryId) ?? []
+              nodeList.push(entryNode)
+              entryNodes.set(childNode.entryId, nodeList)
+
+              return entryNode
+            }),
+          }
+        }
+
+        if (node.type === SitemapTreeNodeType.URL) {
+          return {
+            label: node.label,
+            href: node.url,
+            childLinks: [],
+          }
+        }
+
+        const entryNode = {
+          label: '',
+          href: '',
+          entryId: node.entryId,
+          childLinks: [],
+        }
+
+        const nodeList = entryNodes.get(node.entryId) ?? []
+        nodeList.push(entryNode)
+        entryNodes.set(node.entryId, nodeList)
+
+        return entryNode
+      }),
+    }
+
+    const parentSubpageResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        {
+          content_type: 'organizationParentSubpage',
+          'sys.id[in]': Array.from(entryNodes.keys()).join(','),
+          limit: 1000,
+        },
+        1,
+      )
+
+    for (const parentSubpage of parentSubpageResponse.items) {
+      const nodeList = entryNodes.get(parentSubpage.sys.id)
+      if (
+        !nodeList ||
+        !parentSubpage.fields.slug ||
+        !parentSubpage.fields.title
+      ) {
+        continue
+      }
+
+      for (const node of nodeList) {
+        node.label = parentSubpage.fields.title
+        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
+          input.organizationPageSlug
+        }/${parentSubpage.fields.slug}`
+      }
+    }
+
+    // Prune empty values
+    result.childCategories = result.childCategories.filter((childCategory) => {
+      childCategory.childLinks = childCategory.childLinks.filter(
+        (childLink) => {
+          return childLink.href && childLink.label
+        },
+      )
+      return childCategory.label && childCategory.childLinks.length > 0
+    })
+
+    return result
   }
 }

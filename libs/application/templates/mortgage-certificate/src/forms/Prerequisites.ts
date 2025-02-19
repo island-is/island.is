@@ -11,13 +11,13 @@ import {
   IdentityApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { confirmation, externalData, payment, property } from '../lib/messages'
 import Logo from '../assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenBackButton: true,
@@ -35,7 +35,6 @@ export const PrerequisitesForm: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -58,6 +57,10 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockableSyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],

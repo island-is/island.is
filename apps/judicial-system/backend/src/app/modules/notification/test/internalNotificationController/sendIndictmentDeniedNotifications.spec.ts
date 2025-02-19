@@ -8,7 +8,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
@@ -29,8 +32,10 @@ type GivenWhenThen = (
 describe('InternalNotificationController - Send indictment denied notification', () => {
   const userId = uuid()
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
+
+  const { prosecutor } = createTestUsers(['prosecutor'])
+  const prosecutorName = prosecutor.name
+  const prosecutorEmail = prosecutor.email
   const policeCaseNumbers = [uuid(), uuid()]
 
   let mockEmailService: EmailService

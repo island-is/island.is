@@ -1,10 +1,10 @@
-import { EmptyCard, StatusCardSkeleton } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import styled from 'styled-components'
 import { Image, SafeAreaView, View } from 'react-native'
 import { ApolloError } from '@apollo/client'
 
+import { EmptyCard, StatusCardSkeleton } from '../../ui'
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -36,7 +36,10 @@ const validateApplicationsInitialData = ({
     return true
   }
   // Only show widget initially if there are applications
-  if (data?.applicationApplications?.length !== 0) {
+  if (
+    data?.applicationApplications?.length &&
+    data?.applicationApplications?.length !== 0
+  ) {
     return true
   }
   return false

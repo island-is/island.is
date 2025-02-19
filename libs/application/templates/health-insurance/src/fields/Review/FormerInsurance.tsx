@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import { formatText, getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   GridColumn,
   GridRow,
@@ -25,7 +25,7 @@ import {
   extractKeyFromStringObject,
 } from '../../healthInsuranceUtils'
 import { FileUploadController } from '@island.is/application/ui-components'
-import { FILE_SIZE_LIMIT, NO, YES } from '../../utils/constants'
+import { FILE_SIZE_LIMIT } from '../../utils/constants'
 
 export const FormerInsurance = ({
   application,

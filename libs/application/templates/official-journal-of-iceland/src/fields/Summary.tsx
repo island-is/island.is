@@ -1,4 +1,3 @@
-import { useUserInfo } from '@island.is/auth/react'
 import {
   AlertMessage,
   Box,
@@ -10,25 +9,23 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Property } from '../components/property/Property'
-import { advert, error, publishing, summary } from '../lib/messages'
-import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { MINIMUM_WEEKDAYS, Routes } from '../lib/constants'
-import { addWeekdays, getFastTrack, parseZodIssue } from '../lib/utils'
-import { useCategories } from '../hooks/useCategories'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { useEffect } from 'react'
+import { ZodCustomIssue } from 'zod'
+import { Property } from '../components/property/Property'
+import { usePrice } from '../hooks/usePrice'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { Routes } from '../lib/constants'
 import {
   advertValidationSchema,
   publishingValidationSchema,
-  signatureValidationSchema,
+  signatureValidator,
 } from '../lib/dataSchema'
-import { useApplication } from '../hooks/useUpdateApplication'
-import { ZodCustomIssue } from 'zod'
-import { useType } from '../hooks/useType'
-import { useDepartment } from '../hooks/useDepartment'
-import { usePrice } from '../hooks/usePrice'
-import { useEffect } from 'react'
+import { advert, error, publishing, summary } from '../lib/messages'
 import { signatures } from '../lib/messages/signatures'
+import { OJOIFieldBaseProps } from '../lib/types'
+import { getFastTrack, parseZodIssue } from '../lib/utils'
 
 export const Summary = ({
   application,
@@ -42,35 +39,19 @@ export const Summary = ({
 
   const user = useUserInfo()
 
-  const { type, loading: loadingType } = useType({
-    typeId: currentApplication.answers.advert?.typeId,
-  })
-
   const { price, loading: loadingPrice } = usePrice({
     applicationId: application.id,
   })
 
-  const { department, loading: loadingDepartment } = useDepartment({
-    departmentId: currentApplication.answers.advert?.departmentId,
-  })
-
-  const { categories, loading: loadingCategories } = useCategories()
-
-  const selectedCategories = categories?.filter((c) =>
-    currentApplication.answers?.advert?.categories?.includes(c.id),
-  )
-
-  const today = new Date()
-  const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
+  const selectedCategories = application.answers?.advert?.categories
 
   const advertValidationCheck = advertValidationSchema.safeParse(
     currentApplication.answers,
   )
 
-  const signatureValidationCheck = signatureValidationSchema.safeParse({
-    signatures: currentApplication.answers.signatures,
-    misc: currentApplication.answers.misc,
-  })
+  const signatureValidationCheck = signatureValidator(
+    application.answers.misc?.signatureType ?? 'regular',
+  ).safeParse(currentApplication.answers.signature)
 
   const publishingCheck = publishingValidationSchema.safeParse(
     currentApplication.answers.advert,
@@ -85,6 +66,10 @@ export const Summary = ({
       setSubmitButtonDisabled && setSubmitButtonDisabled(false)
     } else {
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+    }
+
+    return () => {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
     }
   }, [
     advertValidationCheck,
@@ -227,18 +212,16 @@ export const Summary = ({
           value={user.profile.name}
         />
         <Property
-          loading={loadingType}
           name={f(summary.properties.type)}
-          value={type?.title}
+          value={currentApplication.answers?.advert?.type?.title}
         />
         <Property
           name={f(summary.properties.title)}
           value={currentApplication.answers?.advert?.title}
         />
         <Property
-          loading={loadingDepartment}
           name={f(summary.properties.department)}
-          value={department?.title}
+          value={currentApplication.answers?.advert?.department?.title}
         />
         <Property
           name={f(summary.properties.submissionDate)}
@@ -246,7 +229,7 @@ export const Summary = ({
         />
         <Property
           name={f(summary.properties.estimatedDate)}
-          value={formatDate(estimatedDate)}
+          value={formatDate(currentApplication.answers.advert?.requestedDate)}
         />
         <Property
           name={f(summary.properties.fastTrack)}
@@ -266,7 +249,6 @@ export const Summary = ({
           value={`${formatNumber(price)}. kr`}
         />
         <Property
-          loading={loadingCategories}
           name={f(summary.properties.classification)}
           value={selectedCategories?.map((c) => c.title).join(', ')}
         />
@@ -289,7 +271,6 @@ export const Summary = ({
           }
         />
         <Property
-          loading={loadingCategories}
           name={f(summary.properties.message)}
           value={currentApplication.answers?.advert?.message}
         />

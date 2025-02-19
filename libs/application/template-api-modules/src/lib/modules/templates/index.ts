@@ -4,8 +4,6 @@ import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-
 import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 import { ChildrenResidenceChangeModuleV2 } from './children-residence-change-v2/children-residence-change.module'
 import { ChildrenResidenceChangeServiceV2 } from './children-residence-change-v2/children-residence-change.service'
-import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
-import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
@@ -86,12 +84,8 @@ import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-ow
 import { ChangeCoOwnerOfVehicleService } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.service'
 import { ChangeOperatorOfVehicleModule } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.module'
 import { ChangeOperatorOfVehicleService } from './transport-authority/change-operator-of-vehicle/change-operator-of-vehicle.service'
-import { DigitalTachographCompanyCardModule } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.module'
-import { DigitalTachographCompanyCardService } from './transport-authority/digital-tachograph-company-card/digital-tachograph-company-card.service'
 import { DigitalTachographDriversCardModule } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.module'
 import { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
-import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
-import { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
 import { LicensePlateRenewalModule } from './transport-authority/license-plate-renewal/license-plate-renewal.module'
 import { LicensePlateRenewalService } from './transport-authority/license-plate-renewal/license-plate-renewal.service'
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
@@ -136,12 +130,16 @@ import { HealthInsuranceDeclarationModule } from './health-insurance-declaration
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
+import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
+import { WorkAccidentNotificationTemplateService } from './aosh/work-accident-notification/work-accident-notification.service'
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
 import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
+import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
+import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -179,9 +177,7 @@ export const modules = [
   AnonymityInVehicleRegistryModule,
   ChangeCoOwnerOfVehicleModule,
   ChangeOperatorOfVehicleModule,
-  DigitalTachographCompanyCardModule,
   DigitalTachographDriversCardModule,
-  DigitalTachographWorkshopCardModule,
   LicensePlateRenewalModule,
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
@@ -211,11 +207,12 @@ export const modules = [
   IdCardModule,
   HealthInsuranceDeclarationModule,
   NewPrimarySchoolModule,
+  WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
   ParentalLeaveModule,
-  ChildrenResidenceChangeModule,
   SocialInsuranceAdministrationModule,
+  SecondarySchoolModule,
 ]
 
 export const services = [
@@ -227,7 +224,6 @@ export const services = [
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,
-  ChildrenResidenceChangeService,
   ChildrenResidenceChangeServiceV2,
   LoginServiceService,
   FundingGovernmentProjectsService,
@@ -255,9 +251,7 @@ export const services = [
   AnonymityInVehicleRegistryService,
   ChangeCoOwnerOfVehicleService,
   ChangeOperatorOfVehicleService,
-  DigitalTachographCompanyCardService,
   DigitalTachographDriversCardService,
-  DigitalTachographWorkshopCardService,
   LicensePlateRenewalService,
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
@@ -288,6 +282,8 @@ export const services = [
   IdCardService,
   HealthInsuranceDeclarationService,
   NewPrimarySchoolService,
+  WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
+  SecondarySchoolService,
 ]

@@ -42,8 +42,8 @@ export class CreateFlightLegBody {
   readonly date!: Date
 
   @IsOptional()
-  @IsEnum([Airlines.norlandair])
-  @ApiProperty({ enum: [Airlines.norlandair] })
+  @IsEnum([Airlines.norlandair, Airlines.myflug])
+  @ApiProperty({ enum: [Airlines.norlandair, Airlines.myflug] })
   readonly cooperation?: string
 }
 export class CheckFlightLegBody {

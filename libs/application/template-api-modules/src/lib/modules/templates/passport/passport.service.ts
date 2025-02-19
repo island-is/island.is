@@ -3,10 +3,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import {
-  YES,
-  YesOrNo,
   DiscountCheck,
   DistrictCommissionerAgencies,
 } from './constants'
@@ -97,7 +95,7 @@ export class PassportService extends BaseTemplateApiService {
       auth,
       id,
       InstitutionNationalIds.SYSLUMENN,
-      [chargeItemCode],
+      [{ code: chargeItemCode }],
     )
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {

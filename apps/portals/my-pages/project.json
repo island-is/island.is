@@ -62,7 +62,8 @@
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
-        "buildTarget": "service-portal:build"
+        "buildTarget": "service-portal:build",
+        "proxyConfig": "apps/portals/my-pages/proxy.config.json"
       },
       "configurations": {
         "production": {
@@ -101,11 +102,28 @@
         "parallel": false
       }
     },
+    "start-bff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn infra run-local-env services-bff-portals-my-pages"],
+        "cwd": "infra"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start service-portal"],
+        "commands": [
+          "yarn nx run service-portal:start-bff",
+          "yarn start service-portal",
+          "yarn dev api"
+        ],
         "parallel": true
+      }
+    },
+    "mock": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["API_MOCKS=true yarn start service-portal"]
       }
     },
     "docker-static": {

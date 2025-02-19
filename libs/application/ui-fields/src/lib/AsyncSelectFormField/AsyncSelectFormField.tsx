@@ -1,6 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { buildFieldRequired, formatText } from '@island.is/application/core'
+import {
+  buildFieldRequired,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -12,6 +16,8 @@ import { useApolloClient } from '@apollo/client/react'
 import { Option } from '@island.is/application/types'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
@@ -24,7 +30,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     description,
     loadOptions,
     loadingError,
@@ -35,31 +41,65 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isSearchable,
     isMulti,
     required = false,
+    clearOnChange,
+    updateOnSelect,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const apolloClient = useApolloClient()
   const [options, setOptions] = useState<Option[]>([])
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
+  const { watch } = useFormContext()
+  const [lastUpdateOnSelectValue, setLastUpdateOnSelectValue] =
+    useState<string>('')
+
+  const watchUpdateOnSelect = updateOnSelect ? watch(updateOnSelect) : ''
+  const load = async (selectedValue?: string | string[]) => {
+    try {
+      setHasLoadingError(false)
+      const loaded = await loadOptions({
+        application,
+        apolloClient,
+        selectedValue,
+      })
+      setOptions(loaded)
+    } catch {
+      setHasLoadingError(true)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setHasLoadingError(false)
-        const loaded = await loadOptions({ application, apolloClient })
-        setOptions(loaded)
-      } catch {
-        setHasLoadingError(true)
+    if (watchUpdateOnSelect) {
+      setLastUpdateOnSelectValue(watchUpdateOnSelect)
+    }
+  }, [watchUpdateOnSelect])
+
+  useEffect(() => {
+    if (updateOnSelect) {
+      if (watchUpdateOnSelect !== undefined) {
+        load(watchUpdateOnSelect)
+        setLastUpdateOnSelectValue(watchUpdateOnSelect)
+      } else {
+        load()
       }
     }
+  }, [lastUpdateOnSelectValue])
 
-    load()
-  }, [loadOptions])
+  useEffect(() => {
+    if (!updateOnSelect) {
+      load()
+    }
+  }, [])
 
   return (
-    <div>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 
@@ -68,7 +108,12 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           required={buildFieldRequired(application, required)}
           dataTestId={field.dataTestId}
           defaultValue={getDefaultValue(field, application)}
-          label={formatText(title, application, formatMessage)}
+          label={formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           name={id}
           disabled={disabled}
           error={
@@ -96,8 +141,9 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           backgroundColor={backgroundColor}
           isSearchable={isSearchable}
           isMulti={isMulti}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

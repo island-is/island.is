@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
+import { AttachmentS3Service } from '../../../shared/services'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
@@ -32,6 +33,7 @@ import { ApplicantInformation } from './types'
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentService: AttachmentS3Service,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
@@ -223,10 +225,8 @@ export class CitizenshipService extends BaseTemplateApiService {
       | undefined
     const residenceInIcelandLastChangeDate = application.externalData
       .residenceInIcelandLastChangeDate?.data as Date | null
-    const nationalRegistryBirthplace = application.externalData
-      .nationalRegistryBirthplace?.data as
-      | NationalRegistryBirthplace
-      | undefined
+    const nationalRegistryBirthplace = application.externalData.birthplace
+      ?.data as NationalRegistryBirthplace | undefined
     const spouseDetails = application.externalData.spouseDetails?.data as
       | NationalRegistrySpouse
       | undefined
@@ -281,6 +281,7 @@ export class CitizenshipService extends BaseTemplateApiService {
           })
       }
     }
+    const nonNullPassports = answers.childrenPassport?.filter((x) => !!x)
 
     // Submit the application
     await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
@@ -329,7 +330,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         phone: answers.userInformation?.phone,
         citizenshipCode: individual?.citizenship?.code,
         residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
-        birthCountry: nationalRegistryBirthplace?.location,
+        birthCountry: nationalRegistryBirthplace?.municipalityName,
         maritalStatus: individual?.maritalTitle?.description || '',
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId
@@ -390,14 +391,14 @@ export class CitizenshipService extends BaseTemplateApiService {
             familyName: c.familyName,
           })) || [],
         childrenPassport: await Promise.all(
-          answers.childrenPassport?.map(async (p) => ({
-            nationalId: p.nationalId,
-            dateOfIssue: new Date(p.publishDate),
-            dateOfExpiry: new Date(p.expirationDate),
-            passportNumber: p.passportNumber,
-            passportTypeId: parseInt(p.passportTypeId),
-            countryIdOfIssuer: p.countryOfIssuerId,
-            file: await this.getUrlForAttachment(application, p.attachment),
+          nonNullPassports?.map(async (p) => ({
+            nationalId: p?.nationalId ?? '',
+            dateOfIssue: new Date(p?.publishDate ?? ''),
+            dateOfExpiry: new Date(p?.expirationDate ?? ''),
+            passportNumber: p?.passportNumber ?? '',
+            passportTypeId: parseInt(p?.passportTypeId ?? ''),
+            countryIdOfIssuer: p?.countryOfIssuerId ?? '',
+            file: await this.getUrlForAttachment(application, p?.attachment),
           })) || [],
         ),
         childrenSupportingDocuments: await Promise.all(
@@ -431,7 +432,7 @@ export class CitizenshipService extends BaseTemplateApiService {
   ): Promise<{ filename: string; fileUrl: string; countryId: string }[]> {
     return await Promise.all(
       attachments?.map(async (file) => {
-        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl(
+        const fileUrl = await this.attachmentService.getAttachmentUrl(
           application,
           file.key,
           300000,

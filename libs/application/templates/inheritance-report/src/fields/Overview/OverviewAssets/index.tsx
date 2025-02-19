@@ -11,7 +11,6 @@ import { FC, Fragment } from 'react'
 import { m } from '../../../lib/messages'
 import {
   getBankAccountsDataRow,
-  getClaimsDataRow,
   getGunsDataRow,
   getInventoryDataRow,
   getMoneyDataRow,
@@ -109,14 +108,12 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     })
 
     // Claims
-    const claimsDataRow = getClaimsDataRow(answers)
     const claimsDataTotal = formatCurrency(
       String(getValueViaPath(answers, 'assets.claims.total')) ?? '',
     )
 
     sections.push({
       title: m.claimsTitle,
-      data: claimsDataRow,
       total: claimsDataTotal,
       totalTitle: m.totalValue,
     })
@@ -175,7 +172,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 <Text variant="h3">{formatMessage(title)}</Text>
               </Box>
               {showTotalFirst && totalRow}
-              {data.map((row, index) => (
+              {data?.map((row, index) => (
                 <Row key={index} row={row} />
               ))}
               {!showTotalFirst && totalRow}

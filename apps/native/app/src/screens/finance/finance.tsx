@@ -1,8 +1,9 @@
-import { Heading, Skeleton, TableViewCell, Typography } from '@ui'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { SafeAreaView, ScrollView } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
+
+import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import externalLink from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
@@ -10,8 +11,7 @@ import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/use-browser'
-import { FinanceStatusCardContainer } from './components/finance-status-card-container'
-import { LightButton } from './components/light-button'
+import { FinanceStatusCard } from './components/finance-status-card'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -154,16 +154,17 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           alignItems: 'flex-start',
         }}
       >
-        <LightButton
-          title={
-            <FormattedMessage
-              id="finance.statusCard.schedulePaymentPlan"
-              defaultMessage="Gera greiðsluáætlun"
-            />
-          }
-          disabled={!scheduleButtonVisible}
+        <Button
+          title={intl.formatMessage({
+            id: 'finance.statusCard.schedulePaymentPlan',
+          })}
+          isOutlined
+          isUtilityButton
           icon={externalLink}
-          onPress={() => {
+          disabled={!scheduleButtonVisible}
+          iconStyle={{ tintColor: theme.color.dark300 }}
+          style={{ flex: 1 }}
+          onPress={() =>
             openBrowser(
               `${getConfig().apiUrl.replace(
                 /\/api/,
@@ -171,7 +172,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
               )}/umsoknir/greidsluaaetlun`,
               componentId,
             )
-          }}
+          }
         />
       </SafeAreaView>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
@@ -180,10 +181,11 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           : organizations.length > 0 || financeStatusZero
           ? organizations.map((org, i) =>
               (org.chargeTypes ?? []).map((chargeType, ii: number) => (
-                <FinanceStatusCardContainer
+                <FinanceStatusCard
                   key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                   chargeType={chargeType}
                   org={org}
+                  componentId={componentId}
                 />
               )),
             )

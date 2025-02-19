@@ -6,7 +6,13 @@ const customResolver = path.join(__dirname, 'jest.resolver.js')
 module.exports = {
   ...nxPresetRest,
   testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
+  testPathIgnorePatterns: ['<rootDir>/apps/.*/e2e'],
   resolver: customResolver,
+  testTimeout: 20000,
+  detectOpenHandles: true,
+  runInBand: false,
+  detectLeaks: true,
+  passWithNoTests: true,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],
   collectCoverageFrom: [

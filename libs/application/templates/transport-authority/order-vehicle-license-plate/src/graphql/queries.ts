@@ -32,3 +32,15 @@ export const GET_VEHICLE_INFORMATION = `
     }
   }
 `
+
+export const VALIDATE_VEHICLE_PLATE_ORDER = `
+  query GetVehiclePlateOrderValidation($answers: PlateOrderAnswers!) {
+    vehiclePlateOrderValidation(answers: $answers) {
+      hasError
+      errorMessages {
+        errorNo
+        defaultMessage
+      }
+    }
+  } 
+`

@@ -1,23 +1,20 @@
 import { z } from 'zod'
-import { redirect } from 'react-router-dom'
 
 import {
   RawRouterActionResponse,
   WrappedActionFn,
 } from '@island.is/portals/core'
 import {
-  replaceParams,
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { maskString, isSearchTermValid } from '@island.is/shared/utils'
+import { isSearchTermValid } from '@island.is/shared/utils'
 
 import {
   GetPaginatedUserProfilesDocument,
   GetPaginatedUserProfilesQuery,
   type GetPaginatedUserProfilesQueryVariables,
 } from './Users.generated'
-import { ServiceDeskPaths } from '../../lib/paths'
 
 export enum ErrorType {
   // Add more error types here when needed
@@ -76,22 +73,6 @@ export const UsersAction: WrappedActionFn =
 
       if (res.error) {
         throw res.error
-      }
-
-      const { data: respData, totalCount } = res.data.UserProfileAdminProfiles
-
-      if (totalCount === 1) {
-        return redirect(
-          replaceParams({
-            href: ServiceDeskPaths.User,
-            params: {
-              nationalId: (await maskString(
-                respData[0].nationalId,
-                userInfo.profile.nationalId,
-              )) as string,
-            },
-          }),
-        )
       }
 
       return {

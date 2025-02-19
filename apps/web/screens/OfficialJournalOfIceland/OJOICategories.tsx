@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
+import flatMap from 'lodash/flatMap'
+import uniqBy from 'lodash/uniqBy'
 import { useRouter } from 'next/router'
 
 import {
@@ -16,7 +18,6 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
@@ -38,6 +39,8 @@ import {
   emptyOption,
   EntityOption,
   findValueOption,
+  getStringArrayFromQueryString,
+  getStringFromQueryString,
   mapEntityToOptions,
   OJOIWrapper,
   removeEmptyFromObject,
@@ -60,13 +63,6 @@ type MalaflokkarType = Array<{
   categories: EntityOption[]
 }>
 
-const initialState = {
-  q: '',
-  stafur: '',
-  deild: '',
-  yfirflokkur: '',
-}
-
 const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
   mainCategories,
   categories,
@@ -82,84 +78,6 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
   const searchUrl = linkResolver('ojoisearch', [], locale).href
   const categoriesUrl = linkResolver('ojoicategories', [], locale).href
 
-  const [searchState, setSearchState] = useState(initialState)
-
-  const categoriesOptions = mapEntityToOptions(categories)
-
-  const sortedCategories = useMemo(() => {
-    return sortCategories(categoriesOptions)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoriesOptions])
-
-  const filterCategories = useCallback(
-    (initial?: boolean) => {
-      const filtered: MalaflokkarType = []
-      sortedCategories.forEach((cat) => {
-        const letter = cat.label.slice(0, 1).toUpperCase()
-
-        const qMatch =
-          !initial && searchState.q
-            ? cat.label.toLowerCase().includes(searchState.q.toLowerCase())
-            : true
-        const letterMatch =
-          !initial && searchState.stafur
-            ? searchState.stafur.split('').includes(letter)
-            : true
-        const deildMatch =
-          !initial && searchState.deild
-            ? cat.department?.slug === searchState.deild
-            : true
-        const flokkurMatch =
-          !initial && searchState.yfirflokkur
-            ? cat.mainCategory?.slug === searchState.yfirflokkur
-            : true
-
-        if (qMatch && letterMatch && deildMatch && flokkurMatch) {
-          if (!filtered.find((f) => f.letter === letter)) {
-            filtered.push({ letter, categories: [cat] })
-          } else {
-            filtered.find((f) => f.letter === letter)?.categories.push(cat)
-          }
-        }
-      })
-
-      return filtered
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [searchState, sortedCategories],
-  )
-
-  const initialCategories = useMemo(() => {
-    return filterCategories(true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedCategories])
-
-  const [activeCategories, setCategories] = useState(initialCategories)
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(document.location.search)
-    setSearchState({
-      q: searchParams.get('q') ?? '',
-      stafur: searchParams.get('stafur') ?? '',
-      deild: searchParams.get('deild') ?? '',
-      yfirflokkur: searchParams.get('yfirflokkur') ?? '',
-    })
-  }, [])
-
-  useEffect(() => {
-    if (
-      searchState.q ||
-      searchState.stafur ||
-      searchState.deild ||
-      searchState.yfirflokkur
-    ) {
-      setCategories(filterCategories())
-    } else {
-      setCategories(initialCategories)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchState])
-
   const breadcrumbItems = [
     {
       title: formatMessage(m.breadcrumb.frontpage),
@@ -174,45 +92,179 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
     },
   ]
 
-  const updateSearchParams = useMemo(() => {
-    return debounce((state: Record<string, string>) => {
-      router.replace(
-        categoriesUrl,
-        {
-          query: removeEmptyFromObject(state),
-        },
-        { shallow: true },
-      )
-    }, debounceTime.search)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const [search, setSearch] = useState(getStringFromQueryString(router.query.q))
+  const [queryLetters, setQueryLetters] = useState(
+    getStringArrayFromQueryString(router.query.stafur),
+  )
+  const [queryDepartment, setQueryDepartment] = useState(
+    getStringFromQueryString(router.query.deild),
+  )
+  const [queryMainCateogry, setQueryMainCategory] = useState(
+    getStringFromQueryString(router.query.yfirflokkur),
+  )
 
-  const updateSearchState = (key: string, value: string) => {
-    const newState = {
-      ...searchState,
-      [key]: value,
+  const filteredData = useMemo(() => {
+    let filtered = categories
+    let filteredMain = mainCategories
+
+    if (queryDepartment) {
+      const found = departments?.find((c) => c.slug === queryDepartment)
+      filteredMain = mainCategories?.filter(
+        (category) => category.departmentId === found?.id,
+      )
+      const filteredMainCategories: OfficialJournalOfIcelandAdvertCategory[] =
+        uniqBy(flatMap(filteredMain, 'categories'), 'id')
+
+      if (filteredMainCategories.length) {
+        filtered = filteredMainCategories
+      }
     }
-    setSearchState(newState)
-    updateSearchParams(newState)
+
+    if (queryMainCateogry) {
+      const found = filteredMain?.find((c) => c.slug === queryMainCateogry)
+
+      if (found) {
+        const subCategorySlugs = found.categories?.map((c) => c.slug)
+        filtered = filtered.filter((c) => subCategorySlugs?.includes(c.slug))
+      }
+    }
+
+    if (search) {
+      filtered = filtered.filter((c) =>
+        c.title.toLowerCase().includes(search.toLowerCase()),
+      )
+    }
+
+    if (queryLetters.length > 0) {
+      filtered = filtered.filter((c) =>
+        queryLetters.includes(c.title.charAt(0)),
+      )
+    }
+
+    const letters = categories
+      .map((c) => c.title.charAt(0))
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .sort()
+
+    const groupedByLetter = letters.reduce((acc, letter) => {
+      const letterCategories = filtered.filter(
+        (c) => c.title.charAt(0) === letter,
+      )
+      acc.push({
+        letter,
+        categories: sortCategories(
+          letterCategories.map((c) => ({ label: c.title, value: c.slug })),
+        ),
+      })
+      return acc
+    }, [] as MalaflokkarType)
+
+    return {
+      categories: filtered.map((c) => ({
+        ...c,
+        letter: c.title.charAt(0),
+      })),
+      mainCategories: filteredMain,
+      group: groupedByLetter,
+      letters: letters,
+    }
+  }, [
+    categories,
+    mainCategories,
+    search,
+    queryLetters,
+    queryDepartment,
+    queryMainCateogry,
+  ])
+
+  const onDepartmentChange = (value?: string) => {
+    setQueryDepartment(value)
+    router.replace(
+      {
+        pathname: categoriesUrl,
+        query: removeEmptyFromObject({
+          ...router.query,
+          deild: value,
+        }),
+      },
+      undefined,
+      { shallow: true },
+    )
+  }
+
+  const onMainCategoryChange = (value?: string) => {
+    setQueryMainCategory(value)
+    router.replace(
+      {
+        pathname: categoriesUrl,
+        query: removeEmptyFromObject({
+          ...router.query,
+          yfirflokkur: value,
+        }),
+      },
+      undefined,
+      { shallow: true },
+    )
   }
 
   const toggleLetter = (letter: string) => {
-    let letters = searchState.stafur.split('')
-    if (letters.includes(letter)) {
-      letters = letters.filter((l) => l !== letter)
+    const found = queryLetters.includes(letter)
+    if (found) {
+      setQueryLetters(queryLetters.filter((l) => l !== letter))
+      router.replace(
+        {
+          pathname: categoriesUrl,
+          query: removeEmptyFromObject({
+            ...router.query,
+            stafur: queryLetters.filter((l) => l !== letter).join(','),
+          }),
+        },
+        undefined,
+        { shallow: true },
+      )
     } else {
-      letters.push(letter)
+      setQueryLetters([...queryLetters, letter])
+      router.replace(
+        {
+          pathname: categoriesUrl,
+          query: removeEmptyFromObject({
+            ...router.query,
+            stafur: [...queryLetters, letter].join(','),
+          }),
+        },
+        undefined,
+        { shallow: true },
+      )
     }
-    updateSearchState('stafur', letters.join(''))
   }
 
+  const onDebouncedSearchChange = debounce((value: string) => {
+    router.replace(
+      {
+        pathname: categoriesUrl,
+        query: removeEmptyFromObject({
+          ...router.query,
+          q: value,
+        }),
+      },
+      undefined,
+      { shallow: true },
+    )
+  }, 300)
+
   const resetFilter = () => {
-    setSearchState(initialState)
-    updateSearchParams(initialState)
+    setSearch('')
+    setQueryLetters([])
+    setQueryDepartment('')
+    setQueryMainCategory('')
+
+    router.replace(categoriesUrl, undefined, { shallow: true })
   }
 
   const departmentsOptions = mapEntityToOptions(departments)
-  const mainCategoriesOptions = mapEntityToOptions(mainCategories)
+  const mainCategoriesOptions = mapEntityToOptions(
+    filteredData.mainCategories ?? mainCategories,
+  )
 
   return (
     <OJOIWrapper
@@ -236,8 +288,11 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
               name="q"
               placeholder={formatMessage(m.categories.searchPlaceholder)}
               size="xs"
-              value={searchState.q}
-              onChange={(e) => updateSearchState('q', e.target.value)}
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                onDebouncedSearchChange(e.target.value)
+              }}
             />
 
             <Divider weight={'blueberry200'} />
@@ -267,8 +322,8 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
                 ...departmentsOptions,
               ]}
               isClearable
-              value={findValueOption(departmentsOptions, searchState.deild)}
-              onChange={(v) => updateSearchState('deild', v?.value ?? '')}
+              value={findValueOption(departmentsOptions, queryDepartment)}
+              onChange={(v) => onDepartmentChange(v?.value)}
             />
 
             <Select
@@ -281,11 +336,8 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
                 ...mainCategoriesOptions,
               ]}
               isClearable
-              value={findValueOption(
-                mainCategoriesOptions,
-                searchState.yfirflokkur,
-              )}
-              onChange={(v) => updateSearchState('yfirflokkur', v?.value ?? '')}
+              value={findValueOption(mainCategoriesOptions, queryMainCateogry)}
+              onChange={(v) => onMainCategoryChange(v?.value)}
             />
           </Stack>
         </Box>
@@ -294,59 +346,61 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
     >
       <Stack space={[3, 4, 6]}>
         <Inline space={1}>
-          {initialCategories.map((c) => (
-            <Tag
-              key={c.letter}
-              active={searchState.stafur.includes(c.letter)}
-              onClick={() => {
-                toggleLetter(c.letter)
-              }}
-              variant={
-                searchState.stafur.includes(c.letter)
-                  ? 'blue'
-                  : !activeCategories.find((cat) => cat.letter === c.letter)
-                  ? 'disabled'
-                  : 'white'
-              }
-              outlined={searchState.stafur.includes(c.letter) ? false : true}
-            >
-              {'\u00A0'}
-              {c.letter}
-              {'\u00A0'}
-            </Tag>
-          ))}
+          {filteredData.letters.map((letter) => {
+            const isActive = queryLetters.includes(letter)
+            const isDisabled = !filteredData.categories.find(
+              (cat) => cat.letter === letter,
+            )
+            return (
+              <Tag
+                key={letter}
+                active={isActive}
+                onClick={() => {
+                  toggleLetter(letter)
+                }}
+                variant={isActive ? 'blue' : isDisabled ? 'disabled' : 'white'}
+                outlined={!isActive}
+              >
+                {'\u00A0'}
+                {letter.toUpperCase()}
+                {'\u00A0'}
+              </Tag>
+            )
+          })}
         </Inline>
-        {activeCategories.length === 0 ? (
+        {filteredData.categories.length === 0 ? (
           <p>{formatMessage(m.categories.notFoundMessage)}</p>
         ) : (
-          activeCategories.map((c) => {
-            const groups = splitArrayIntoGroups(c.categories, 3)
+          filteredData.group?.map((group) => {
+            const groups = splitArrayIntoGroups(group.categories, 3)
             return (
-              <T.Table key={c.letter}>
-                <T.Head>
-                  <T.Row>
-                    <T.HeadData colSpan={3}>{c.letter}</T.HeadData>
-                  </T.Row>
-                </T.Head>
-                <T.Body>
-                  {groups.map((group) => (
-                    <T.Row key={group[0].label}>
-                      {group.map((cat) => (
-                        <T.Data key={cat.label}>
-                          <LinkV2
-                            color="blue400"
-                            underline={'normal'}
-                            underlineVisibility="always"
-                            href={`${searchUrl}?malaflokkur=${cat.value}`}
-                          >
-                            {cat.label}
-                          </LinkV2>
-                        </T.Data>
-                      ))}
+              group.categories.length > 0 && (
+                <T.Table key={group.letter}>
+                  <T.Head>
+                    <T.Row>
+                      <T.HeadData colSpan={3}>{group.letter}</T.HeadData>
                     </T.Row>
-                  ))}
-                </T.Body>
-              </T.Table>
+                  </T.Head>
+                  <T.Body>
+                    {groups.map((grp, i) => (
+                      <T.Row key={i}>
+                        {grp.map((cat) => (
+                          <T.Data key={`d-${cat.value}`}>
+                            <LinkV2
+                              color="blue400"
+                              underline={'normal'}
+                              underlineVisibility="always"
+                              href={`${searchUrl}?malaflokkur=${cat.value}`}
+                            >
+                              {cat.label}
+                            </LinkV2>
+                          </T.Data>
+                        ))}
+                      </T.Row>
+                    ))}
+                  </T.Body>
+                </T.Table>
+              )
             )
           })
         )}
@@ -357,8 +411,8 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
 
 interface OJOICategoriesProps {
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
-  categories?: Array<OfficialJournalOfIcelandAdvertCategory>
-  departments?: Array<OfficialJournalOfIcelandAdvertEntity>
+  categories: Array<OfficialJournalOfIcelandAdvertCategory>
+  departments: Array<OfficialJournalOfIcelandAdvertEntity>
   organization?: Query['getOrganization']
   locale: Locale
 }
@@ -403,13 +457,19 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
-        params: {},
+        params: {
+          pageSize: 1000,
+          page: 1,
+        },
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
-        params: {},
+        params: {
+          pageSize: 1000,
+          page: 1,
+        },
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({

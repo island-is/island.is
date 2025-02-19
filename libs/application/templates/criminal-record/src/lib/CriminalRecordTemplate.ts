@@ -26,7 +26,8 @@ import {
   CriminalRecordApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes } from '../utils'
+import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -39,6 +40,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CRIMINAL_RECORD,
   name: m.name,
+  codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
   dataSchema: CriminalRecordSchema,
@@ -91,7 +93,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

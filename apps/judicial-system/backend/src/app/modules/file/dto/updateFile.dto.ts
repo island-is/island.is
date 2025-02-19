@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
   Min,
   ValidateIf,
   ValidateNested,
@@ -22,6 +23,7 @@ export class UpdateFileDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly userGeneratedFilename?: string
 

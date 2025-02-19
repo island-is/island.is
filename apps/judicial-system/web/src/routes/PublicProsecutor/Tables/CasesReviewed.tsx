@@ -1,11 +1,18 @@
 import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Tag, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  districtCourtAbbreviation,
+} from '@island.is/judicial-system/formatters'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
-import { SectionHeading } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseTag,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   CourtCaseNumber,
@@ -15,6 +22,7 @@ import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
   CaseListEntry,
   IndictmentCaseReviewDecision,
@@ -31,31 +39,59 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
-  const decisionMapping = {
-    [IndictmentCaseReviewDecision.ACCEPT]: formatMessage(
-      strings.reviewTagAccepted,
-    ),
-    [IndictmentCaseReviewDecision.APPEAL]: formatMessage(
-      strings.reviewTagAppealed,
-    ),
+  const indictmentReviewDecisionMapping = (
+    reviewDecision: IndictmentCaseReviewDecision,
+    isFine: boolean,
+  ) => {
+    if (reviewDecision === IndictmentCaseReviewDecision.ACCEPT) {
+      return formatMessage(strings.reviewTagAccepted)
+    } else if (reviewDecision === IndictmentCaseReviewDecision.APPEAL) {
+      return formatMessage(
+        isFine ? strings.reviewTagFineAppealed : strings.reviewTagAppealed,
+      )
+    } else {
+      return null
+    }
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
-    const variant = !row.indictmentVerdictViewedByAll
-      ? 'red'
-      : row.indictmentVerdictAppealDeadlineExpired
-      ? 'mint'
-      : 'blue'
-    const message = !row.indictmentVerdictViewedByAll
-      ? strings.tagVerdictUnviewed
-      : row.indictmentVerdictAppealDeadlineExpired
-      ? strings.tagVerdictViewComplete
-      : strings.tagVerdictViewOnDeadline
+    let variant: 'red' | 'mint' | 'blue'
+    let message: MessageDescriptor
+
+    const someDefendantIsSentToPrisonAdmin = Boolean(
+      row.defendants?.length &&
+        row.defendants.some((defendant) => defendant.isSentToPrisonAdmin),
+    )
+
+    if (someDefendantIsSentToPrisonAdmin) {
+      variant = 'red'
+      message = strings.tagVerdictViewSentToPrisonAdmin
+    } else if (
+      row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return null
+    } else if (!row.indictmentVerdictViewedByAll) {
+      variant = 'red'
+      message = strings.tagVerdictUnviewed
+    } else if (row.indictmentVerdictAppealDeadlineExpired) {
+      variant = 'mint'
+      message = strings.tagVerdictViewComplete
+    } else {
+      variant = 'blue'
+      message = strings.tagVerdictViewOnDeadline
+    }
+
     return (
       <Tag variant={variant} outlined disabled truncate>
         {formatMessage(message)}
       </Tag>
     )
+  }
+
+  const hasDefendantAppealedVerdict = (
+    defendants: CaseListEntry['defendants'],
+  ) => {
+    return defendants?.some((defendant) => Boolean(defendant.verdictAppealDate))
   }
 
   return (
@@ -68,40 +104,81 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortBy: 'courtCaseNumber',
                 },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
+                { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.reviewDecision) },
                 { title: formatMessage(tables.verdictViewState) },
                 { title: formatMessage(tables.prosecutorName) },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
-              }}
+              generateContextMenuItems={(row) => [
+                openCaseInNewTabMenuItem(row.id),
+              ]}
               columns={[
                 {
-                  cell: (row) => (
-                    <CourtCaseNumber
-                      courtCaseNumber={row.courtCaseNumber ?? ''}
-                      policeCaseNumbers={row.policeCaseNumbers ?? []}
-                      appealCaseNumber={row.appealCaseNumber ?? ''}
-                    />
-                  ),
+                  cell: (row) => {
+                    const courtAbbreviation = districtCourtAbbreviation(
+                      row.court?.name,
+                    )
+
+                    return (
+                      <CourtCaseNumber
+                        courtCaseNumber={`${
+                          courtAbbreviation ? `${courtAbbreviation}: ` : ''
+                        }${row.courtCaseNumber ?? ''}`}
+                        policeCaseNumbers={row.policeCaseNumbers ?? []}
+                        appealCaseNumber={row.appealCaseNumber ?? ''}
+                      />
+                    )
+                  },
                 },
                 {
                   cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
                   cell: (row) => (
-                    <Tag variant="darkerBlue" outlined disabled truncate>
-                      {row.indictmentReviewDecision &&
-                        decisionMapping[row.indictmentReviewDecision]}
-                    </Tag>
+                    <CaseTag
+                      color="darkerBlue"
+                      text={formatMessage(
+                        row.indictmentRulingDecision ===
+                          CaseIndictmentRulingDecision.FINE
+                          ? tables.fineTag
+                          : tables.rulingTag,
+                      )}
+                    />
+                  ),
+                },
+                {
+                  cell: (row) => (
+                    <TagContainer>
+                      <CaseTag
+                        color="darkerBlue"
+                        text={
+                          (row.indictmentReviewDecision &&
+                            indictmentReviewDecisionMapping(
+                              row.indictmentReviewDecision,
+                              row.indictmentRulingDecision ===
+                                CaseIndictmentRulingDecision.FINE,
+                            )) ||
+                          ''
+                        }
+                      />
+                      {hasDefendantAppealedVerdict(row.defendants) && (
+                        <CaseTag
+                          color="red"
+                          text={formatMessage(
+                            strings.tagDefendantAppealedVerdict,
+                          )}
+                        />
+                      )}
+                    </TagContainer>
                   ),
                 },
                 {

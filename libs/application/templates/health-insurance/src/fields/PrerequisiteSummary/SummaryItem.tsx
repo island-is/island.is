@@ -53,7 +53,7 @@ export const SummaryItem = ({
           alignItems="center"
           justifyContent="center"
           position="absolute"
-          borderRadius="circle"
+          borderRadius="full"
           className={styles.sectionNumber}
         >
           {prerequisiteMet ? (

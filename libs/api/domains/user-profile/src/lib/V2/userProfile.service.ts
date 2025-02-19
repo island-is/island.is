@@ -1,22 +1,24 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
-  ConfirmationDtoResponse,
-  UserProfileControllerFindUserProfileClientTypeEnum,
   PostNudgeDtoNudgeTypeEnum,
+  UserProfileControllerFindUserProfileClientTypeEnum,
   V2MeApi,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
-import { IslykillService } from '../islykill.service'
-import { UserProfile } from '../userProfile.model'
-import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
-import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
-import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
-import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
-import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
+import { ApolloError } from 'apollo-server-express'
 import { AdminUserProfile } from '../adminUserProfile.model'
+import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
+import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
+import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
+import { DeleteIslykillValueInput } from '../dto/deleteIslykillValueInput'
+import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
+import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
+import { IslykillService } from '../islykill.service'
+import { DeleteIslykillSettings } from '../models/deleteIslykillSettings.model'
+import { UserProfile } from '../userProfile.model'
 
 @Injectable()
 export class UserProfileServiceV2 {
@@ -43,10 +45,10 @@ export class UserProfileServiceV2 {
   }
 
   async createUserProfile(input: UpdateUserProfileInput, user: User) {
-    return this.updateUserProfile(input, user)
+    return this.updateMeUserProfile(input, user)
   }
 
-  async updateUserProfile(
+  async updateMeUserProfile(
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
@@ -134,24 +136,6 @@ export class UserProfileServiceV2 {
     })
   }
 
-  async confirmSms(): Promise<ConfirmationDtoResponse> {
-    throw new BadRequestException(
-      'For User Profile V2 call updateUserProfile instead with mobilePhoneNumberVerificationCode',
-    )
-  }
-
-  async confirmEmail(): Promise<ConfirmationDtoResponse> {
-    throw new BadRequestException(
-      'For User Profile V2 call updateUserProfile instead with emailVerificationCode',
-    )
-  }
-
-  async resendEmailVerification(): Promise<void> {
-    throw new BadRequestException(
-      'For User Profile V2 call createEmailVerification instead with email again',
-    )
-  }
-
   async getUserProfiles(user: User, search: string) {
     return this.v2UserProfileApiWithAuth(
       user,
@@ -170,5 +154,40 @@ export class UserProfileServiceV2 {
       clientType: UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
       xParamNationalId: nationalId,
     })
+  }
+
+  async updateUserProfile(
+    input: UpdateUserProfileInput,
+    user: User,
+    nationalId: string,
+  ): Promise<AdminUserProfile> {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).userProfileControllerPatchUserProfile({
+      xParamNationalId: nationalId,
+      patchUserProfileDto: input,
+    })
+  }
+
+  async deleteIslykillValue(
+    input: DeleteIslykillValueInput,
+    user: User,
+  ): Promise<DeleteIslykillSettings> {
+    const { nationalId } = await this.updateMeUserProfile(
+      {
+        ...(input.email && { email: '' }),
+        ...(input.mobilePhoneNumber && { mobilePhoneNumber: '' }),
+      },
+      user,
+    )
+
+    if (!nationalId) {
+      throw new ApolloError('Failed to update user profile')
+    }
+
+    return {
+      nationalId,
+      valid: true,
+    }
   }
 }

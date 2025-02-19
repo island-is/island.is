@@ -49,7 +49,9 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   VehiclesMileage,
+  WorkAccidents,
   WorkMachines,
+  SecondarySchool,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -190,11 +192,6 @@ export const serviceSetup = (services: {
       },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
-      ELECTRONIC_REGISTRATION_STATISTICS_API_URL: {
-        dev: 'https://api-staging.thinglysing.is/business/tolfraedi',
-        staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
-        prod: 'https://api.thinglysing.is/business/tolfraedi',
-      },
       FORM_SYSTEM_API_BASE_PATH: {
         dev: 'https://profun.island.is/umsoknarkerfi',
         staging: '',
@@ -277,6 +274,11 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
+        dev: 'island-is-assistant-feedback',
+        staging: 'island-is-assistant-feedback',
+        prod: 'island-is-assistant-feedback',
+      },
     })
 
     .secrets({
@@ -440,6 +442,8 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
+      WorkAccidents,
+      SecondarySchool,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -470,5 +474,7 @@ export const serviceSetup = (services: {
       'application-system',
       'consultation-portal',
       'portals-admin',
+      'service-portal',
+      'portals-my-pages',
     )
 }

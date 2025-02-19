@@ -1,4 +1,8 @@
-import { coreMessages, formatText } from '@island.is/application/core'
+import {
+  coreMessages,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   TableRepeaterField,
@@ -18,8 +22,13 @@ import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { handleCustomMappedValues } from './utils'
+import {
+  buildDefaultTableHeader,
+  buildDefaultTableRows,
+  handleCustomMappedValues,
+} from './utils'
 import { Item } from './TableRepeaterItem'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -39,9 +48,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     marginTop = 6,
     marginBottom,
     getStaticTableData,
-    title,
+    title = '',
     titleVariant = 'h4',
     addItemButtonText = coreMessages.buttonAdd,
+    cancelButtonText = coreMessages.buttonCancel,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
     editButtonTooltipText = coreMessages.editFieldText,
@@ -54,20 +64,21 @@ export const TableRepeaterFormField: FC<Props> = ({
     ...rawItems[key],
   }))
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const methods = useFormContext()
   const [activeIndex, setActiveIndex] = useState(-1)
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: data.id,
   })
+  const [isEditing, setIsEditing] = useState(false)
 
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
   const savedFields = fields.filter((_, index) => index !== activeIndex)
   const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader = table?.header ?? tableItems.map((item) => item.label)
-  const tableRows = table?.rows ?? tableItems.map((item) => item.id)
+  const tableHeader = table?.header ?? buildDefaultTableHeader(tableItems)
+  const tableRows = table?.rows ?? buildDefaultTableRows(tableItems)
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
@@ -82,6 +93,15 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (isValid) {
       setActiveIndex(-1)
     }
+    setIsEditing(false)
+  }
+
+  const handleCancelItem = (index: number) => {
+    setActiveIndex(-1)
+    if (!isEditing) {
+      remove(index)
+    }
+    setIsEditing(false)
   }
 
   const handleNewItem = () => {
@@ -98,9 +118,11 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const handleEditItem = (index: number) => {
     setActiveIndex(index)
+    setIsEditing(true)
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {
+    item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn ? formatFn(item[key]) : item[key]
     return typeof formatted === 'string'
@@ -112,12 +134,22 @@ export const TableRepeaterFormField: FC<Props> = ({
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
         <Text variant={titleVariant} marginBottom={2}>
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
       <Box marginTop={description ? 3 : 0}>
@@ -224,14 +256,24 @@ export const TableRepeaterFormField: FC<Props> = ({
                   />
                 ))}
               </GridRow>
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => handleSaveItem(activeIndex)}
-                >
-                  {formatText(saveItemButtonText, application, formatMessage)}
-                </Button>
+              <Box display="flex" alignItems="center" justifyContent="flexEnd">
+                <Box>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => handleCancelItem(activeIndex)}
+                  >
+                    {formatText(cancelButtonText, application, formatMessage)}
+                  </Button>
+                </Box>
+                <Box marginLeft={2}>
+                  <Button
+                    type="button"
+                    onClick={() => handleSaveItem(activeIndex)}
+                  >
+                    {formatText(saveItemButtonText, application, formatMessage)}
+                  </Button>
+                </Box>
               </Box>
             </Stack>
           ) : (

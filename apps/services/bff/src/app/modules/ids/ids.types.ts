@@ -47,18 +47,6 @@ export type TokenResponse = {
   scope: string
 }
 
-export interface SuccessResponse<T> {
-  type: 'success'
-  data: T
-}
-
-export interface ErrorRes {
-  type: 'error'
-  data: ErrorResponse
-}
-
-export type ApiResponse<T> = SuccessResponse<T> | ErrorRes
-
 export type LogoutTokenPayload = {
   // Issuer of the token
   iss: string

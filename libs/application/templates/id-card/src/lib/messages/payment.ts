@@ -13,18 +13,6 @@ export const payment = {
       description: 'Payment page title',
     },
   }),
-  paymentChargeOverview: defineMessages({
-    forPayment: {
-      id: 'id.application:payment.paymentChargeOverview.forPayment',
-      defaultMessage: 'Til greiðslu',
-      description: 'For payment label',
-    },
-    total: {
-      id: 'id.application:payment.paymentChargeOverview.total',
-      defaultMessage: 'Samtals',
-      description: 'Total amount label',
-    },
-  }),
   confirmation: defineMessages({
     confirm: {
       id: 'id.application:payment.confirmation.confirm',

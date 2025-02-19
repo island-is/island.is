@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -31,6 +32,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -43,7 +45,7 @@ const pruneAfter = (time: number) => {
   }
 }
 
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -52,7 +54,7 @@ const getCodes = (application: Application) => {
     throw new Error('chargeItemCode missing in request')
   }
 
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 const configuration =
@@ -65,6 +67,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OPERATING_LICENSE,
   name: m.formName.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
@@ -127,7 +130,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

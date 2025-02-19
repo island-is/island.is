@@ -132,6 +132,7 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
         (state) => {
           const accessibleCaseIndictmentRulingDecisions = [
             CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
           ]
 
           describe.each(
@@ -191,14 +192,29 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
               describe.each(accessibleIndictmentCaseReviewDecisions)(
                 'accessible indictment case review decision %s',
                 (indictmentReviewDecision) => {
-                  const theCase = {
-                    type,
-                    state,
-                    indictmentRulingDecision,
-                    indictmentReviewDecision,
-                  } as Case
+                  describe('no defendant has been sent to the prison admin', () => {
+                    const theCase = {
+                      type,
+                      state,
+                      indictmentRulingDecision,
+                      indictmentReviewDecision,
+                      defendants: [{}],
+                    } as Case
 
-                  verifyReadAccess(theCase, user)
+                    verifyNoAccess(theCase, user)
+                  })
+
+                  describe('a defendant has been sent to the prison admin', () => {
+                    const theCase = {
+                      type,
+                      state,
+                      indictmentRulingDecision,
+                      indictmentReviewDecision,
+                      defendants: [{ isSentToPrisonAdmin: true }],
+                    } as Case
+
+                    verifyReadAccess(theCase, user)
+                  })
                 },
               )
             },

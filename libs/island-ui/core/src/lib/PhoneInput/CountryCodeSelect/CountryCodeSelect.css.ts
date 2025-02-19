@@ -292,6 +292,7 @@ export const dropdownIndicator = style(
 )
 export const menu = style(
   {
+    zIndex: theme.zIndex.belowModal,
     marginTop: -3,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,

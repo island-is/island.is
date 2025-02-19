@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Checkbox,
+  DatePicker,
   Input,
   InputFileUpload,
   RadioButton,
@@ -28,6 +29,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
@@ -58,6 +60,7 @@ export enum FormFieldType {
   TEXT = 'text',
   DROPDOWN = 'dropdown',
   RADIO = 'radio',
+  DATE = 'date',
 }
 
 interface FormFieldProps {
@@ -220,6 +223,23 @@ export const FormField = ({
       )
     case FormFieldType.INFORMATION:
       return <Text>{field.informationText}</Text>
+    case FormFieldType.DATE: {
+      const currentYear = new Date().getFullYear()
+      return (
+        <DatePicker
+          required={field.required}
+          label={field.title}
+          placeholderText={field.placeholder}
+          handleChange={(date) => {
+            onChange(slug, date.toISOString())
+          }}
+          selected={value ? new Date(value) : null}
+          hasError={!!error}
+          minYear={currentYear - 100}
+          maxYear={currentYear + 10}
+        />
+      )
+    }
     default:
       return null
   }
@@ -232,6 +252,7 @@ type ErrorData = {
 
 export const Form = ({ form }: FormProps) => {
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
 
   const { data: namespaceResponse } = useQuery<Query, QueryGetNamespaceArgs>(
     GET_NAMESPACE_QUERY,
@@ -465,6 +486,12 @@ export const Form = ({ form }: FormProps) => {
               json.join(', ') ?? 'Ekkert svar'
             }\n\n`
           }
+          if (field.type === FormFieldType.DATE) {
+            const date = value
+              ? format(new Date(value), 'do MMMM yyyy')
+              : 'Ekkert svar'
+            return `${field.title}\nSvar: ${date}\n\n`
+          }
 
           return `${field.title}\nSvar: ${value ?? 'Ekkert svar'}\n\n`
         })
@@ -600,7 +627,6 @@ export const Form = ({ form }: FormProps) => {
           ),
         }
         setData(_data)
-
         submit({
           variables: {
             input: {
@@ -613,6 +639,7 @@ export const Form = ({ form }: FormProps) => {
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),
+              lang: activeLocale,
             },
           },
         }).then(() => {

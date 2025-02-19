@@ -3,11 +3,7 @@ import { createIntl } from 'react-intl'
 import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 import { IndictmentCountOffense as offense } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  getIncidentDescriptionReason,
-  getLegalArguments,
-  getRelevantSubstances,
-} from './IndictmentCount'
+import { getLegalArguments, getRelevantSubstances } from './IndictmentCount'
 
 const formatMessage = createIntl({
   locale: 'is',
@@ -16,7 +12,7 @@ const formatMessage = createIntl({
 
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {
-    const offenses = [
+    const deprecatedOffenses = [
       offense.DRUNK_DRIVING,
       offense.ILLEGAL_DRUGS_DRIVING,
       offense.PRESCRIPTION_DRUGS_DRIVING,
@@ -28,7 +24,7 @@ describe('getRelevantSubstances', () => {
       [Substance.ALCOHOL]: '1.10',
     }
 
-    const result = getRelevantSubstances(offenses, substances)
+    const result = getRelevantSubstances(deprecatedOffenses, substances)
 
     expect(result).toEqual([
       ['ALCOHOL', '1.10'],
@@ -112,83 +108,19 @@ describe('getLegalArguments', () => {
       'Telst háttsemi þessi varða við 1., sbr. 2. mgr. 48. gr., 1., sbr. 3. mgr. 49. gr. og 1., sbr. 2. mgr. 50. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
     )
   })
-})
 
-describe('getIncidentDescriptionReason', () => {
-  test('should return a description for one offense', () => {
-    const offenses = [offense.DRIVING_WITHOUT_LICENCE]
-
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
-
-    expect(result).toBe('sviptur ökurétti')
-  })
-
-  test('should return a description for two offense', () => {
-    const offenses = [offense.DRIVING_WITHOUT_LICENCE, offense.DRUNK_DRIVING]
-
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
-
-    expect(result).toBe('sviptur ökurétti og undir áhrifum áfengis')
-  })
-
-  test('should return a description with prescription drugs', () => {
-    const offenses = [offense.DRUNK_DRIVING, offense.PRESCRIPTION_DRUGS_DRIVING]
-
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
-
-    expect(result).toBe(
-      'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa slævandi lyfja',
-    )
-  })
-
-  test('should return a description with illegal drugs', () => {
-    const offenses = [offense.DRUNK_DRIVING, offense.ILLEGAL_DRUGS_DRIVING]
-
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
-
-    expect(result).toBe(
-      'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
-    )
-  })
-
-  test('should return a description with illegal drugs as third offence', () => {
-    const offenses = [
-      offense.DRIVING_WITHOUT_LICENCE,
-      offense.DRUNK_DRIVING,
-      offense.ILLEGAL_DRUGS_DRIVING,
+  test('should format legal arguments with speeding', () => {
+    const lawsBroken = [
+      [37, 0],
+      [49, 1],
+      [49, 2],
+      [95, 1],
     ]
 
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
+    const result = getLegalArguments(lawsBroken, formatMessage)
 
-    expect(result).toBe(
-      'sviptur ökurétti, undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
-    )
-  })
-
-  test('should return a description with illegal and prescription drugs', () => {
-    const offenses = [
-      offense.DRUNK_DRIVING,
-      offense.ILLEGAL_DRUGS_DRIVING,
-      offense.PRESCRIPTION_DRUGS_DRIVING,
-    ]
-
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
-
-    expect(result).toBe(
-      'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
-    )
-  })
-
-  test('should return a description with only illegal and prescription drugs', () => {
-    const offenses = [
-      offense.ILLEGAL_DRUGS_DRIVING,
-      offense.PRESCRIPTION_DRUGS_DRIVING,
-    ]
-
-    const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
-
-    expect(result).toBe(
-      'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
+    expect(result).toEqual(
+      'Telst háttsemi þessi varða við 37. gr. og 1., sbr. 2. mgr. 49. gr., sbr. 1. mgr. 95. gr. umferðarlaga nr. 77/2019.',
     )
   })
 })

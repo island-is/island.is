@@ -450,6 +450,8 @@
         "type": "object",
         "properties": {
           "title": { "type": "string" },
+          "subpoenaInfoText": { "type": "string" },
+          "subpoenaNotificationDeadline": { "type": "string" },
           "subtitle": { "type": "string" },
           "groups": {
             "type": "array",
@@ -468,6 +470,8 @@
         },
         "required": [
           "title",
+          "subpoenaInfoText",
+          "subpoenaNotificationDeadline",
           "subtitle",
           "groups",
           "alerts",

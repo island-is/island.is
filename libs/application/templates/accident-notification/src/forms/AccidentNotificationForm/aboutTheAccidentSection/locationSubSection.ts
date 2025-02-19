@@ -4,6 +4,8 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   accidentLocation,
@@ -11,19 +13,6 @@ import {
   locationAndPurpose,
   sportsClubInfo,
 } from '../../../lib/messages'
-import {
-  hideLocationAndPurpose,
-  isAgricultureAccident,
-  isFishermanAccident,
-  isGeneralWorkplaceAccident,
-  isHomeActivitiesAccident,
-  isInternshipStudiesAccident,
-  isProfessionalAthleteAccident,
-  isRescueWorkAccident,
-  isStudiesAccident,
-} from '../../../utils'
-import { NO, YES } from '../../../constants'
-import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmployee'
 import {
   AgricultureAccidentLocationEnum,
   FishermanWorkplaceAccidentLocationEnum,
@@ -33,6 +22,20 @@ import {
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
 } from '../../../types'
+import {
+  isAgricultureAccident,
+  isFishermanAccident,
+  isGeneralWorkplaceAccident,
+  isInternshipStudiesAccident,
+  isProfessionalAthleteAccident,
+  isSportAccidentAndEmployee,
+} from '../../../utils/occupationUtils'
+import {
+  isHomeActivitiesAccident,
+  isRescueWorkAccident,
+  isStudiesAccident,
+} from '../../../utils/accidentUtils'
+import { hideLocationAndPurpose } from '../../../utils/miscUtils'
 
 // Location Subsection
 export const locationSubSection = buildSubSection({
@@ -47,7 +50,6 @@ export const locationSubSection = buildSubSection({
         buildRadioField({
           id: 'onPayRoll.answer',
           width: 'half',
-          title: '',
           options: [
             {
               value: YES,
@@ -123,7 +125,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
@@ -152,7 +153,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: RescueWorkAccidentLocationEnum.DURINGRESCUE,
@@ -180,7 +180,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: StudiesAccidentLocationEnum.ATTHESCHOOL,
@@ -203,7 +202,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
@@ -233,7 +231,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value:
@@ -266,7 +263,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
@@ -293,7 +289,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'shipLocation.answer',
-          title: '',
           backgroundColor: 'blue',
           options: [
             {

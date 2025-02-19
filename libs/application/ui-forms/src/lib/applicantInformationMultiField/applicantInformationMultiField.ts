@@ -18,10 +18,15 @@ export const applicantInformationMultiField = (
   // Email disabled is default false for all applications
   // Option to add description
   const {
+    phoneCondition,
     phoneRequired = false,
+    phoneDisabled = false,
+    phoneEnableCountrySelector,
+    emailCondition,
     emailRequired = true,
     emailDisabled = false,
     applicantInformationDescription = '',
+    readOnly = false,
   } = props ?? {}
   return buildMultiField({
     id: 'applicant',
@@ -32,10 +37,11 @@ export const applicantInformationMultiField = (
         id: 'applicant.name',
         title: applicantInformation.labels.name,
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.fullName ??
-          application.externalData?.identityRegistry?.data?.name ??
+          application.externalData?.identity?.data?.name ??
           '',
       }),
       buildTextField({
@@ -44,10 +50,11 @@ export const applicantInformationMultiField = (
         format: '######-####',
         width: 'half',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.nationalId ??
-          application.externalData?.identityRegistry?.data?.nationalId ??
+          application.externalData?.identity?.data?.nationalId ??
           '',
       }),
       buildTextField({
@@ -55,12 +62,12 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.address,
         width: 'half',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address
             ?.streetAddress ??
-          application.externalData?.identityRegistry?.data?.address
-            ?.streetAddress ??
+          application.externalData?.identity?.data?.address?.streetAddress ??
           '',
       }),
       buildTextField({
@@ -69,13 +76,13 @@ export const applicantInformationMultiField = (
         width: 'half',
         format: '###',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) => {
           return (
             application.externalData?.nationalRegistry?.data?.address
               ?.postalCode ??
-            application.externalData?.identityRegistry?.data?.address
-              ?.postalCode ??
+            application.externalData?.identity?.data?.address?.postalCode ??
             ''
           )
         },
@@ -85,10 +92,11 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.city,
         width: 'half',
         backgroundColor: 'white',
-        disabled: true,
+        disabled: !readOnly,
+        readOnly: readOnly,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.nationalRegistry?.data?.address?.city ??
-          application.externalData?.identityRegistry?.data?.address?.city ??
+          application.externalData?.identity?.data?.address?.city ??
           '',
       }),
       buildTextField({
@@ -97,6 +105,7 @@ export const applicantInformationMultiField = (
         width: 'half',
         variant: 'email',
         backgroundColor: 'blue',
+        condition: emailCondition,
         required: emailRequired,
         disabled: emailDisabled,
         defaultValue: (application: ApplicantInformationInterface) =>
@@ -108,9 +117,12 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.tel,
         width: 'half',
         backgroundColor: 'blue',
+        condition: phoneCondition,
+        required: phoneRequired,
+        disabled: phoneDisabled,
+        enableCountrySelector: phoneEnableCountrySelector,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
-        required: phoneRequired,
       }),
     ],
   })

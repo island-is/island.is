@@ -25,14 +25,37 @@ import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
-@UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal files')
+@UseGuards(TokenGuard)
 export class InternalFileController {
   constructor(
     private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  // TODO: Add tests for this endpoint
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
+  @Post(`${messageEndpoint[MessageType.DELIVERY_TO_POLICE_CASE_FILE]}/:fileId`)
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Delivers a case file to police',
+  })
+  deliverCaseFileToPolice(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering file ${fileId} of case ${caseId} to police`)
+
+    return this.fileService.deliverCaseFileToPolice(
+      theCase,
+      caseFile,
+      deliverDto.user,
+    )
+  }
 
   @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
   @Post(`${messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILE]}/:fileId`)

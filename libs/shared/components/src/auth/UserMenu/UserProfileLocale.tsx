@@ -1,8 +1,8 @@
-import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
-import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
-import { useGetUserProfileLocaleLazyQuery } from '../../../gen/schema'
+import { isLocale, useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useGetUserProfileLocaleLazyQuery } from '../../../gen/schema'
 
 /**
  * If the user has set a preferred language in his user

@@ -1,20 +1,20 @@
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
-import { join } from 'path'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
+import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import {
-  EinstaklingurDTONafnAllt,
+  EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
+  ActorProfileDto,
   UserProfileDto,
   V2UsersApi,
-  ActorProfileDto,
 } from '@island.is/clients/user-profile'
-import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,20 +28,17 @@ import { type ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 
-import { UserNotificationsConfig } from '../../../../config'
-import { MessageProcessorService } from '../messageProcessor.service'
-import { NotificationDispatchService } from '../notificationDispatch.service'
-import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
-import { NotificationsService } from '../notifications.service'
-import { HnippTemplate } from '../dto/hnippTemplate.response'
-import { Notification } from '../notification.model'
 import {
   CompanyExtendedInfo,
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
-
-const WORK_STARTING_HOUR = 8 // 8 AM
-const WORK_ENDING_HOUR = 23 // 11 PM
+import { UserNotificationsConfig } from '../../../../config'
+import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
+import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { MessageProcessorService } from '../messageProcessor.service'
+import { Notification } from '../notification.model'
+import { NotificationDispatchService } from '../notificationDispatch.service'
+import { NotificationsService } from '../notifications.service'
 
 type HandleNotification = {
   profile: {
@@ -57,7 +54,7 @@ type HandleNotification = {
 }
 
 @Injectable()
-export class NotificationsWorkerService implements OnApplicationBootstrap {
+export class NotificationsWorkerService {
   constructor(
     private readonly notificationDispatch: NotificationDispatchService,
     private readonly messageProcessor: MessageProcessorService,
@@ -84,12 +81,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
   ) {}
-
-  onApplicationBootstrap() {
-    if (this.config.isWorker) {
-      void this.run()
-    }
-  }
 
   async handleDocumentNotification({
     profile,
@@ -275,7 +266,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       const nationalIdOfOriginalRecipient =
         message.onBehalfOf?.nationalId ?? profile.nationalId
 
-      fullName = await this.getFullName(nationalIdOfOriginalRecipient)
+      fullName = await this.getName(nationalIdOfOriginalRecipient)
     }
 
     const isEnglish = profile.locale === 'en'
@@ -313,36 +304,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
   }
 
-  async sleepOutsideWorkingHours(messageId: string): Promise<void> {
-    const now = new Date()
-    const currentHour = now.getHours()
-    const currentMinutes = now.getMinutes()
-    const currentSeconds = now.getSeconds()
-    // Is it outside working hours?
-    if (currentHour >= WORK_ENDING_HOUR || currentHour < WORK_STARTING_HOUR) {
-      // If it's past the end hour or before the start hour, sleep until the start hour.
-      const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
-      const sleepDurationMilliSeconds =
-        (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000
-      this.logger.info(
-        `Worker will sleep until 8 AM. Sleep duration: ${sleepDurationMilliSeconds} ms`,
-        { messageId },
-      )
-      await new Promise((resolve) =>
-        setTimeout(resolve, sleepDurationMilliSeconds),
-      )
-      this.logger.info('Worker waking up after sleep.', { messageId })
-    }
-  }
-
-  async run() {
+  public async run() {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })
-
-        // check if we are within operational hours or wait until we are
-        await this.sleepOutsideWorkingHours(messageId)
 
         const notification = { messageId, ...message }
         let dbNotification = await this.notificationModel.findOne({
@@ -439,7 +405,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               let recipientName = ''
 
               if (delegations.data.length > 0) {
-                recipientName = await this.getFullName(message.recipient)
+                recipientName = await this.getName(message.recipient)
               }
 
               await Promise.all(
@@ -468,16 +434,23 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     )
   }
 
-  private async getFullName(nationalId: string): Promise<string> {
-    let identity: CompanyExtendedInfo | EinstaklingurDTONafnAllt | null
+  private async getName(nationalId: string): Promise<string> {
+    try {
+      let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
 
-    if (isCompany(nationalId)) {
-      identity = await this.companyRegistryService.getCompany(nationalId)
-      return identity?.name ?? ''
+      if (isCompany(nationalId)) {
+        identity = await this.companyRegistryService.getCompany(nationalId)
+        return identity?.name || ''
+      }
+
+      identity = await this.nationalRegistryService.getName(nationalId)
+      return identity?.birtNafn || identity?.fulltNafn || ''
+    } catch (error) {
+      this.logger.error('Error getting name from national registry', {
+        error,
+      })
+      return ''
     }
-
-    identity = await this.nationalRegistryService.getName(nationalId)
-    return identity?.fulltNafn ?? ''
   }
 
   /* Private methods */
@@ -501,8 +474,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     return shouldUseThirdPartyLogin
       ? `${
-          this.config.servicePortalClickActionUrl
-        }/login?login_hint=${subjectId}&target_link_uri=${encodeURI(
+          this.config.servicePortalBffLoginUrl
+        }?login_hint=${subjectId}&target_link_uri=${encodeURI(
           formattedTemplate.clickActionUrl,
         )}`
       : formattedTemplate.clickActionUrl

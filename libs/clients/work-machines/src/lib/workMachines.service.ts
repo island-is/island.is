@@ -2,6 +2,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   ApiMachineModelsGetRequest,
+  ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
   ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
@@ -247,6 +248,15 @@ export class WorkMachinesClientService {
     )
   }
 
+  async deleteOwnerChange(
+    auth: Auth,
+    deleteChange: ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
+  ) {
+    await this.machineOwnerChangeApiWithAuth(
+      auth,
+    ).apiMachineOwnerChangeOwnerchangeIdDelete(deleteChange)
+  }
+
   async changeMachineSupervisor(
     auth: Auth,
     supervisorChange: SupervisorChange,
@@ -290,6 +300,12 @@ export class WorkMachinesClientService {
     return await this.machineStreetApiWithAuth(
       auth,
     ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet({})
+  }
+
+  async getAvailableRegistrationTypes(auth: Auth) {
+    return await this.machineStreetApiWithAuth(
+      auth,
+    ).apiMachineStreetRegistrationMayStreetRegisterGet({})
   }
 
   async getMachineTypes(auth: Auth): Promise<MachineTypeDto[]> {

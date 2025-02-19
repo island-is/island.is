@@ -2,20 +2,20 @@ import { FC, useContext } from 'react'
 
 import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
-import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
 export interface Props {
-  defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
+  displaySentToPrisonAdminDate?: boolean
 }
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
 
   const {
+    showItem,
     defendants,
     policeCaseNumbers,
     courtCaseNumber,
@@ -24,17 +24,18 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     court,
     prosecutor,
     judge,
-    offence,
+    offense,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    indictmentCreated,
     civilClaimants,
   } = useInfoCardItems()
 
   const {
-    defendantInfoActionButton,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
+    displaySentToPrisonAdminDate,
   } = props
 
   const reviewedDate = workingCase.eventLogs?.find(
@@ -50,8 +51,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             defendants(
               workingCase.type,
               displayAppealExpirationInfo,
-              defendantInfoActionButton,
               displayVerdictViewDate,
+              displaySentToPrisonAdminDate,
             ),
           ],
         },
@@ -61,14 +62,15 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
+            indictmentCreated,
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(workingCase.mergeCase ? [mergeCase] : []),
+            ...(showItem(mergeCase) ? [mergeCase] : []),
             court,
             prosecutor(workingCase.type),
             judge,
-            offence,
+            offense,
           ],
           columns: 2,
         },
@@ -81,7 +83,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(indictmentReviewedDate
+                  ...(reviewedDate
                     ? [indictmentReviewedDate(reviewedDate)]
                     : []),
                 ],

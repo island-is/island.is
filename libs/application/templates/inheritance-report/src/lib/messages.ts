@@ -67,9 +67,14 @@ export const m = defineMessages({
     description: '',
   },
   // Application begin
-  applicationName: {
-    id: 'ir.application:applicationName',
-    defaultMessage: 'Erfðafjárskýrsla eftir andlát',
+  selectEstate: {
+    id: 'ir.application:selectEstate',
+    defaultMessage: 'Veldu dánarbú',
+    description: '',
+  },
+  selectEstateDescription: {
+    id: 'ir.application:selectEstateDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: '',
   },
   applicationNamePrepaid: {
@@ -227,6 +232,18 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
+  applicantsInfoPrePaidSubtitle: {
+    id: 'ir.application:applicantsInfoPrePaidSubtitle',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og staðfestu hvort þær séu réttar.',
+    description: '',
+  },
+  applicantsPrePaidInfoSubtitle: {
+    id: 'ir.application:applicantsPrePaidInfoSubtitle',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: 'Subtitle text shown above prepaid applicant information form',
+  },
   name: {
     id: 'ir.application:name',
     defaultMessage: 'Nafn',
@@ -334,6 +351,11 @@ export const m = defineMessages({
       'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki fasteign vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
+  propertiesDescriptionPrePaidAssets: {
+    id: 'ir.application:propertiesDescriptionPrePaidAssets#markdown',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
+    description: '',
+  },
   propertiesDescriptionInventory: {
     id: 'ir.application:propertiesDescriptionInventory#markdown',
     defaultMessage:
@@ -384,11 +406,6 @@ export const m = defineMessages({
   },
 
   // Estate Properties - Prepaid
-  propertiesDescriptionPrePaidAssets: {
-    id: 'ir.application:propertiesDescriptionPrePaidAssets#markdown',
-    defaultMessage: 'Lorem ipsum lorem ipsum',
-    description: '',
-  },
   propertiesDescriptionPrePaidStocks: {
     id: 'ir.application:propertiesDescriptionPrePaidStocks#markdown',
     defaultMessage: 'Lorem ipsum lorem ipsum',
@@ -691,11 +708,21 @@ export const m = defineMessages({
   },
   stocksFaceValue: {
     id: 'ir.application:stocksFaceValue',
+    defaultMessage: 'Nafnverð á dánardegi',
+    description: '',
+  },
+  stocksFaceValuePrePaid: {
+    id: 'ir.application:stocksFaceValuePrePaid',
     defaultMessage: 'Nafnverð',
     description: '',
   },
   stocksRateOfChange: {
     id: 'ir.application:stocksRateOfChange',
+    defaultMessage: 'Gengi á dánardegi',
+    description: '',
+  },
+  stocksRateOfChangePrePaid: {
+    id: 'ir.application:stocksRateOfChangePrePaid',
     defaultMessage: 'Gengi',
     description: '',
   },
@@ -840,6 +867,12 @@ export const m = defineMessages({
   assetsOverviewConfirmation: {
     id: 'ir.application:assetsOverviewConfirmation',
     defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir á dánardegi eftir minni bestu vitund.',
+    description: '',
+  },
+  assetsOverviewConfirmationPrePaid: {
+    id: 'ir.application:assetsOverviewConfirmationPrePaid',
+    defaultMessage:
       'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
     description: '',
   },
@@ -976,6 +1009,11 @@ export const m = defineMessages({
   funeralTombstoneCost: {
     id: 'ir.application:funeralTombstoneCost',
     defaultMessage: 'Legsteinn (áætlaður kostnaður)',
+    description: '',
+  },
+  funeralServiceCost: {
+    id: 'ir.application:funeralServiceCost',
+    defaultMessage: 'Útfararþjónusta',
     description: '',
   },
   funeralOtherCostQuestion: {
@@ -1177,7 +1215,7 @@ export const m = defineMessages({
 
   // Assets to share
   assetsToShareDescription: {
-    id: 'ir.application:assetsToShareDescription',
+    id: 'ir.application:assetsToShareDescription#markdown',
     defaultMessage:
       'Frá dregst búshluti eftirlifandi maka samkvæmt reglum hjúskaparlaga nr. 31/1993.',
     description: '',
@@ -1232,6 +1270,11 @@ export const m = defineMessages({
   share: {
     id: 'ir.application:share',
     defaultMessage: 'Séreign',
+    description: '',
+  },
+  deceasedSharePercentage: {
+    id: 'ir.application:deceasedSharePercentage',
+    defaultMessage: 'Búshluti maka',
     description: '',
   },
   deceasedShare: {
@@ -1360,9 +1403,20 @@ export const m = defineMessages({
     description: '',
   },
   heirsAndPartitionDescription: {
-    id: 'ir.application:heirsAndPartitionDescription',
+    id: 'ir.application:heirsAndPartitionDescription#markdown',
     defaultMessage:
       'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004.',
+    description: '',
+  },
+  heirsAndPartitionPrePaidDescription: {
+    id: 'ir.application:heirsAndPartitionPrePaidDescription',
+    defaultMessage:
+      'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004.',
+    description: '',
+  },
+  heirsReminderToFillInSpouse: {
+    id: 'ir.application:heirsReminderToFillInSpouse',
+    defaultMessage: 'Athugið að passa þarf að skrá inn upplýsingar um maka.',
     description: '',
   },
   heirsName: {
@@ -1627,6 +1681,12 @@ export const m = defineMessages({
   },
   heirAdditionalInfoDescription: {
     id: 'ir.application:heirAdditionalInfoDescription',
+    defaultMessage:
+      'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
+    description: '',
+  },
+  heirAdditionalInfoPrePaidDescription: {
+    id: 'ir.application:heirAdditionalInfoPrePaidDescription',
     defaultMessage:
       'Skýringar og athugasemdir erfingja og/eða þess sem skilar inn erfðafjárskýrslu.',
     description: '',

@@ -7,11 +7,14 @@ import {
   buildFileUploadField,
   buildSelectField,
   getValueViaPath,
-  buildCustomField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { getSelectedIndividualName } from '../../../utils'
+import {
+  getSelectedCustodyChild,
+  getSelectedIndividualName,
+} from '../../../utils'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED } from '../../../shared'
@@ -45,16 +48,17 @@ export const ChildrenPassportSubSection = (index: number) =>
             title: supportingDocuments.labels.passport.title,
             titleVariant: 'h5',
           }),
-          buildCustomField(
-            {
-              id: `${Routes.CHILDRENPASSPORT}[${index}].nationalId`,
-              title: '',
-              component: 'HiddenTextInput',
+          buildHiddenInput({
+            id: `${Routes.CHILDRENPASSPORT}[${index}].nationalId`,
+            defaultValue: (application: Application) => {
+              const selectedChild = getSelectedCustodyChild(
+                application.externalData,
+                application.answers,
+                index,
+              )
+              return selectedChild?.nationalId
             },
-            {
-              index: index,
-            },
-          ),
+          }),
           buildDateField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].publishDate`,
             title: supportingDocuments.labels.passport.publishDate,

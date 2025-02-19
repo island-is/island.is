@@ -1,8 +1,9 @@
 import { text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
-import { LinkText } from '@ui'
 import React from 'react'
 import { Image, View } from 'react-native'
+
+import { LinkText } from '../link/link-text'
 import illustrationSrc from '../../assets/empty-list/LE-Company-S3.png'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { EmptyCard } from './empty-card'

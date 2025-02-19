@@ -9,7 +9,6 @@ import {
   Box,
   Button,
   RadioButton,
-  Text,
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -27,6 +26,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   ServiceAnnouncement,
@@ -188,26 +188,29 @@ const Overview: FC = () => {
             ></AlertMessage>
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title={formatMessage(strings.indictmentCancelledTitle)}
+              message={formatMessage(strings.indictmentCancelledMessage)}
+              type="warning"
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map(
-            (subpoena) =>
-              subpoena.subpoenaId && (
-                <ServiceAnnouncement
-                  key={`${subpoena.id}-${subpoena.created}`}
-                  subpoena={subpoena}
-                  defendantName={defendant.name}
-                />
-              ),
-          ),
+          defendant.subpoenas?.map((subpoena) => (
+            <ServiceAnnouncement
+              key={`${subpoena.id}-${subpoena.created}`}
+              subpoena={subpoena}
+              defendantName={defendant.name}
+            />
+          )),
         )}
         {workingCase.court &&
           latestDate?.date &&
+          workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
@@ -225,7 +228,7 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          <InfoCardActiveIndictment displayVerdictViewDate />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
@@ -287,20 +290,20 @@ const Overview: FC = () => {
                 <RadioButton
                   large
                   name="indictmentConfirmationRequest"
-                  id="confirmIndictment"
-                  backgroundColor="white"
-                  label={formatMessage(strings.confirmIndictment)}
-                  checked={indictmentConfirmationDecision === 'confirm'}
-                  onChange={() => setIndictmentConfirmationDecision('confirm')}
-                />
-                <RadioButton
-                  large
-                  name="indictmentConfirmationRequest"
                   id="denyIndictment"
                   backgroundColor="white"
                   label={formatMessage(strings.denyIndictment)}
                   checked={indictmentConfirmationDecision === 'deny'}
                   onChange={() => setIndictmentConfirmationDecision('deny')}
+                />
+                <RadioButton
+                  large
+                  name="indictmentConfirmationRequest"
+                  id="confirmIndictment"
+                  backgroundColor="white"
+                  label={formatMessage(strings.confirmIndictment)}
+                  checked={indictmentConfirmationDecision === 'confirm'}
+                  onChange={() => setIndictmentConfirmationDecision('confirm')}
                 />
               </div>
             </BlueBox>
@@ -313,7 +316,7 @@ const Overview: FC = () => {
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
+              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             userCanSendIndictmentToCourt

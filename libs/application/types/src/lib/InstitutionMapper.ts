@@ -49,11 +49,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
     contentfulId: InstitutionContentfulIds.SJUKRATRYGGINGAR_ISLANDS,
   },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
-  },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
@@ -214,17 +209,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
@@ -398,5 +383,15 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.SECONDARY_SCHOOL]: {
+    nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
 }

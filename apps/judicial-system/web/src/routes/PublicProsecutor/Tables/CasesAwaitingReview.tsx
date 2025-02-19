@@ -17,8 +17,12 @@ import Table, {
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
-} from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+} from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
+import {
+  CaseIndictmentRulingDecision,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesAwaitingReview.strings'
 
@@ -46,21 +50,19 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
+                { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: {
-                    isSortable: true,
-                    key: 'indictmentAppealDeadline',
-                  },
+                  sortBy: 'indictmentAppealDeadline',
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
-              }}
+              generateContextMenuItems={(row) => [
+                openCaseInNewTabMenuItem(row.id),
+              ]}
               columns={[
                 {
                   cell: (row) => (
@@ -76,12 +78,21 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
+                    <TagIndictmentRulingDecision
+                      isFine={
+                        row.indictmentRulingDecision ===
+                        CaseIndictmentRulingDecision.FINE
+                      }
+                    />
+                  ),
+                },
+                {
+                  cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
                     />
                   ),
                 },

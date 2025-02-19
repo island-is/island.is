@@ -5,11 +5,10 @@ import { PersonalSection } from './personalSection'
 import { SelectWorkPermitSection } from './selectWorkPermitSection'
 import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeItemCodesAndExtraLabel } from '../../utils'
+import { getChargeItemsWithExtraLabel } from '../../utils'
 
 export const HealthcareWorkPermitForm: Form = buildForm({
   id: 'HealthcareWorkPermitForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
@@ -24,7 +23,7 @@ export const HealthcareWorkPermitForm: Form = buildForm({
     SelectWorkPermitSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: getChargeItemCodesAndExtraLabel,
+      getSelectedChargeItems: getChargeItemsWithExtraLabel,
     }),
     buildSection({
       id: 'confirmation',

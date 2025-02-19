@@ -3,6 +3,7 @@ import React, { FC, useMemo } from 'react'
 import {
   buildFieldRequired,
   formatText,
+  formatTextWithLocale,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -18,6 +19,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: DateField
@@ -31,7 +33,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     required,
     placeholder,
@@ -39,8 +41,13 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     excludeDates,
     minDate,
     maxDate,
+    minYear,
+    maxYear,
     onChange,
     readOnly,
+    marginTop,
+    marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang } = useLocale()
 
@@ -111,10 +118,15 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            lang as Locale,
+            formatMessage,
+          )}
         />
       )}
 
@@ -132,9 +144,11 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
           maxDate={finalMaxDate}
+          minYear={minYear}
+          maxYear={maxYear}
           backgroundColor={backgroundColor}
           readOnly={readOnly}
-          label={formatText(title, application, formatMessage)}
+          label={formatTextWithLocale(title, application, lang, formatMessage)}
           placeholder={
             placeholder
               ? formatText(placeholder, application, formatMessage)
@@ -142,8 +156,9 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           error={error}
           onChange={onChange}
+          clearOnChange={clearOnChange}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

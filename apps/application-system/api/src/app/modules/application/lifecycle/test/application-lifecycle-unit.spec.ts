@@ -15,6 +15,7 @@ let s3Service: S3Service
 export const createApplications = () => {
   return [
     createApplication({
+      state: 'draft',
       answers: {
         question: 'yes',
         isAnotherQuestion: 'yes',

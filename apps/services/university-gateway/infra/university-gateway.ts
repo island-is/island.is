@@ -1,4 +1,8 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -21,6 +25,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     .serviceAccount(serviceName)
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Origo)
     .command('node')
     .redis()
     .args('main.js')
@@ -79,6 +84,7 @@ export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
     .serviceAccount(serviceWorkerName)
     .namespace(namespace)
     .image(imageName)
+    .codeOwner(CodeOwners.Origo)
     .command('node')
     .redis()
     .args('main.js', '--job', 'worker')

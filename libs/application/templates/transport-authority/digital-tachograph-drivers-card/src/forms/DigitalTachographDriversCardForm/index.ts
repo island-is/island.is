@@ -6,11 +6,10 @@ import { applicantSection } from './ApplicantSection'
 import { prerequisitesSection } from './prerequisitesSection'
 import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeItemCodes } from '../../utils'
+import { getChargeItems } from '../../utils'
 
 export const DigitalTachographDriversCardForm: Form = buildForm({
   id: 'DigitalTachographDriversCardFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
@@ -22,8 +21,9 @@ export const DigitalTachographDriversCardForm: Form = buildForm({
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (application) =>
-        getChargeItemCodes(application).map((x) => ({
-          chargeItemCode: x,
+        getChargeItems(application).map((item) => ({
+          chargeItemCode: item.code,
+          chargeItemQuantity: item.quantity,
         })),
     }),
     buildSection({

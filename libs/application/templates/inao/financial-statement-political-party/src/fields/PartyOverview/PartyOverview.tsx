@@ -171,52 +171,6 @@ export const PartyOverview = ({
           <Divider />
         </>
       ) : null}
-      <Box paddingY={3}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.overview)}
-        </Text>
-      </Box>
-      <Box background="blue100">
-        <Controller
-          name="applicationApprove"
-          defaultValue={approveOverview}
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <Checkbox
-                onChange={(e) => {
-                  onChange(e.target.checked)
-                  setApproveOverview(e.target.checked)
-                  setValue('applicationApprove' as string, e.target.checked)
-                }}
-                checked={value}
-                name="applicationApprove"
-                id="applicationApprove"
-                label={formatMessage(m.overviewCorrect)}
-                large
-              />
-            )
-          }}
-        />
-      </Box>
-      {errors && getErrorViaPath(errors, 'applicationApprove') ? (
-        <InputError errorMessage={formatMessage(m.errorApproval)} />
-      ) : null}
-      {submitError ? (
-        <Box paddingY={2}>
-          <AlertBanner
-            title={formatMessage(m.submitErrorTitle)}
-            description={formatMessage(m.submitErrorMessage)}
-            variant="error"
-            dismissable
-          />
-        </Box>
-      ) : null}
-      <BottomBar
-        loading={loading}
-        onSendButtonClick={onSendButtonClick}
-        onBackButtonClick={onBackButtonClick}
-      />
     </Box>
   )
 }

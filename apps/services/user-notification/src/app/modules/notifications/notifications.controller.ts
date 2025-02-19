@@ -3,10 +3,13 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
+  HttpStatus,
   Inject,
   Param,
   Post,
   Query,
+  UseGuards,
   Version,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -19,6 +22,12 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
 import type { Locale } from '@island.is/shared/types'
+import {
+  ExtendedPaginationDto,
+  PaginatedNotificationDto,
+} from './dto/notification.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Controller('notifications')
 @ApiTags('notifications')
@@ -85,6 +94,20 @@ export class NotificationsController {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(AdminPortalScope.serviceDesk)
+  @Get('/')
+  @Documentation({
+    summary: 'Returns a paginated list of notifications for a national id',
+    response: { status: HttpStatus.OK, type: PaginatedNotificationDto },
+  })
+  findMany(
+    @Headers('X-Query-National-Id') nationalId: string,
+    @Query() query: ExtendedPaginationDto,
+  ): Promise<PaginatedNotificationDto> {
+    return this.notificationsService.findMany(nationalId, query)
+  }
+
   @Documentation({
     summary: 'Creates a new notification and adds to queue',
     includeNoContentResponse: true,
@@ -105,6 +128,8 @@ export class NotificationsController {
       messageId: id,
       ...flattenedArgs,
       ...body,
+      args: {}, // Remove args, since they're in a better format in `flattenedArgs`
+      queue: { url: this.queue.url, name: this.queue.queueName },
     })
 
     return {

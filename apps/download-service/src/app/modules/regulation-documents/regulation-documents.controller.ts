@@ -55,6 +55,22 @@ export class RegulationDocumentsController {
       return res.status(500).end('Unable to generate pdf')
     }
 
+    function updateMinistryName(ministryRaw?: string): string | undefined {
+      if (!ministryRaw) {
+        return undefined
+      }
+      const suffix = 'ráðuneyti'
+      const newSuffix = 'ráðuneytinu'
+
+      if (ministryRaw.endsWith(suffix)) {
+        return ministryRaw.slice(0, -suffix.length) + newSuffix
+      }
+
+      return ministryRaw
+    }
+
+    const draftMinistry = updateMinistryName(draftRegulation.ministry)
+
     const input: RegulationPdfInput = {
       title: draftRegulation.title,
       text: draftRegulation.text,
@@ -62,7 +78,7 @@ export class RegulationDocumentsController {
       comments: draftRegulation.comments,
       name: draftRegulation.name,
       publishedDate: draftRegulation.idealPublishDate,
-      ministry: draftRegulation.ministry,
+      ministry: draftMinistry,
     }
 
     const documentResponse =

@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -9,6 +9,8 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
+  MinLength,
   ValidateNested,
 } from 'class-validator'
 
@@ -35,6 +37,8 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { nationalIdTransformer } from '../../../transformers'
+
 class UpdateDateLog {
   @IsOptional()
   @Type(() => Date)
@@ -44,6 +48,7 @@ class UpdateDateLog {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly location?: string
 }
@@ -61,6 +66,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly description?: string
 
@@ -68,26 +74,33 @@ export class UpdateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
+  @MaxLength(255, { each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
@@ -108,6 +121,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string
 
@@ -125,6 +139,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly translator?: string
 
@@ -208,6 +223,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly courtCaseNumber?: string
 
@@ -230,6 +246,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly courtLocation?: string
 
@@ -408,6 +425,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly appealCaseNumber?: string
 
@@ -517,10 +535,20 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  readonly mergeCaseNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   readonly civilDemands?: string
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly hasCivilClaims?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isCompletedWithoutRuling?: boolean
 }

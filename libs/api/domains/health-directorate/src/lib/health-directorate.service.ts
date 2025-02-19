@@ -10,7 +10,8 @@ import { Auth } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
-import { Info, Vaccination, Vaccinations } from './models/vaccinations.model'
+import { Vaccination, Vaccinations } from './models/vaccinations.model'
+import { mapVaccinationStatus } from './utils/mappers'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -27,14 +28,20 @@ export class HealthDirectorateService {
     if (data === null) {
       return null
     }
+    const hasExceptionComment: boolean =
+      data.exceptionComment !== undefined && data.exceptionComment.length > 0
+    const hasExceptions: boolean =
+      data.exceptions !== undefined && data.exceptions.length > 0
     const donorStatus: Donor = {
-      isDonor: data?.isDonor ?? true,
+      isDonor: data.isDonor,
       limitations: {
         hasLimitations:
-          ((data?.exceptions?.length ?? 0) > 0 && data?.isDonor) ?? false,
-        limitedOrgansList: data?.exceptions,
-        comment: data?.exceptionComment,
+          ((hasExceptionComment || hasExceptions) && data.isDonor) ?? false,
+        limitedOrgansList: data.exceptions,
+        comment: data.exceptionComment,
       },
+      isMinor: data.isMinor ?? false,
+      isTemporaryResident: data.isTemporaryResident ?? false,
     }
     return donorStatus
   }
@@ -61,22 +68,33 @@ export class HealthDirectorateService {
     input: DonorInput,
     locale: Locale,
   ): Promise<void> {
+    const filteredList =
+      input.organLimitations?.filter((item) => item !== 'other') ?? []
+
     return await this.organDonationApi.updateOrganDonation(
       auth,
       {
         isDonor: input.isDonor,
-        exceptions: input.organLimitations ?? [],
+        exceptions: filteredList,
+        exceptionComment: input.comment,
       },
       locale === 'is' ? organLocale.Is : organLocale.En,
     )
   }
 
   /* Vaccinations */
-  async getVaccinations(auth: Auth): Promise<Vaccinations | null> {
-    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(auth)
+  async getVaccinations(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Vaccinations | null> {
+    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(
+      auth,
+      locale === 'is' ? 'is' : 'en',
+    )
     if (data === null) {
       return null
     }
+
     const vaccinations: Array<Vaccination> =
       data?.map((item) => {
         return {
@@ -84,7 +102,7 @@ export class HealthDirectorateService {
           name: item.diseaseName,
           description: item.diseaseDescription,
           isFeatured: item.isFeatured,
-          status: item.vaccinationStatus,
+          status: mapVaccinationStatus(item.vaccinationStatus),
           statusName: item.vaccinationStatusName,
           statusColor: item.vaccinationStatusColor,
           lastVaccinationDate: item.lastVaccinationDate ?? null,

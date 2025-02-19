@@ -12,8 +12,6 @@ import {
 } from '@island.is/application/types'
 
 import {
-  NO,
-  YES,
   MANUAL,
   SINGLE,
   SPOUSE,
@@ -58,6 +56,7 @@ import {
   getActionName,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
+import { NO, YES } from '@island.is/application/core'
 
 const buildApplication = (data?: {
   answers?: FormValue
@@ -1435,16 +1434,22 @@ describe('calculateEndDateForPeriodWithStartAndLength', () => {
     ).toEqual(new Date(2021, 6, 14))
 
     expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-02-28', 1),
+    ).toEqual(new Date(2021, 2, 27))
+  })
+
+  it('should calculate month + n for whole months when startDate is 31', () => {
+    expect(
       calculateEndDateForPeriodWithStartAndLength('2021-01-31', 1),
-    ).toEqual(new Date(2021, 1, 27))
+    ).toEqual(new Date(2021, 1, 28))
 
     expect(
       calculateEndDateForPeriodWithStartAndLength('2021-03-31', 1),
-    ).toEqual(new Date(2021, 3, 29))
+    ).toEqual(new Date(2021, 3, 30))
 
     expect(
-      calculateEndDateForPeriodWithStartAndLength('2021-02-28', 1),
-    ).toEqual(new Date(2021, 2, 27))
+      calculateEndDateForPeriodWithStartAndLength('2020-12-31', 1),
+    ).toEqual(new Date(2021, 0, 31))
   })
 
   it('should calculate month + n and multiply remainder with 28', () => {
@@ -1507,11 +1512,11 @@ describe('calculatePeriodLengthInMonths', () => {
   })
 
   it('should calculate half months correctly', () => {
-    expect(calculatePeriodLengthInMonths('2021-01-01', '2021-01-14')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-01', '2021-01-15')).toBe(0.5)
     expect(calculatePeriodLengthInMonths('2021-01-14', '2021-01-28')).toBe(0.5)
     expect(calculatePeriodLengthInMonths('2021-01-31', '2021-02-13')).toBe(0.5)
-    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-13')).toBe(0.5)
-    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-27')).toBe(1)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-14')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-28')).toBe(1)
     expect(calculatePeriodLengthInMonths('2021-02-28', '2021-04-13')).toBe(1.5)
     expect(calculatePeriodLengthInMonths('2021-02-28', '2021-05-13')).toBe(2.5)
     expect(calculatePeriodLengthInMonths('2021-02-28', '2021-07-13')).toBe(4.5)

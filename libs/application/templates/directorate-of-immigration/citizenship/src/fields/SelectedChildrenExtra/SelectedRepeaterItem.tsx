@@ -19,8 +19,6 @@ import {
 import {
   FieldBaseProps,
   GenericFormField,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { information, personal, selectChildren } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -28,7 +26,7 @@ import { HiddenTextInput } from '../HiddenTextInput'
 import debounce from 'lodash/debounce'
 import { ChildrenOfApplicant } from '../../shared'
 import { getSelectedCustodyChild } from '../../utils'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, NO, YES } from '@island.is/application/core'
 
 interface Props {
   index: number
@@ -99,6 +97,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
     application.externalData,
     application.answers,
     index,
+    repeaterField.nationalId || '',
   )
 
   useEffect(() => {
@@ -124,7 +123,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
   }, [showMoreQuestions, wasRemovedField, setValue])
 
   return (
-    <Box>
+    <Box key={`child-${index}`}>
       <Text variant="h4" as="h3" paddingBottom={1}>
         {formatMessage(selectChildren.extraInformation.areaSeparator, {
           fullName: child?.fullName,
@@ -161,7 +160,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
           ...field,
           id: `selectedChildrenExtraData[${index}].nationalId`,
           props: {
-            index: index,
+            nationalId: repeaterField.nationalId || '',
           },
         }}
       />

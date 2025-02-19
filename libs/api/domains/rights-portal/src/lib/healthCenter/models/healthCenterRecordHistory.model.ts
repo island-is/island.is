@@ -11,4 +11,7 @@ export class HealthCenterRegistrationHistory {
 
   @Field(() => Boolean, { nullable: true })
   canRegister?: boolean
+
+  @Field({ nullable: true })
+  neighborhoodCenter?: string
 }

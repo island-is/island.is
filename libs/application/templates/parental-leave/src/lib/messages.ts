@@ -736,6 +736,18 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Upplýsingar um laun.',
       description: 'Salary information.',
     },
+    taxInformationTitle: {
+      id: 'pl.application:permission.taxInformation.title',
+      defaultMessage: 'Upplýsingar vegna eftirlits',
+      description: 'Monitoring information',
+    },
+    taxInformationSubTitle: {
+      id: 'pl.application:permission.taxInformation.subtitle',
+      defaultMessage:
+        'Skattayfirvöld skulu veita upplýsingar um tekjur foreldra úr skattframtölum, staðgreiðsluskrá og tryggingagjaldsskrá sem nauðsynlegar eru vegna eftirlits með framkvæmd laga nr. 144/2020.',
+      description:
+        'The tax authorities shall provide information on the income of parents from tax returns, withholding tax and social security for the purposes of monitoring by the implementation of Act No. 144/2020.',
+    },
     salaryTitle: {
       id: 'pl.application:salary.title',
       defaultMessage: 'Áætlaður fæðingardagur barns',
@@ -1360,6 +1372,13 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:end.date.placeholder',
       defaultMessage: 'Veldu lokadag tímabilsins',
       description: 'Pick the end date',
+    },
+    adjustPeriodLength: {
+      id: 'pl.application:end.date.adjust.period.length',
+      defaultMessage:
+        'Ef barnið fæðist á annarri dagsetningu en áætlað er óska ég eftir að lengd tímabilsins aðlagist út frá raunverulegum fæðingardegi barnsins.',
+      description:
+        "If the child is born on a different date than estimated, I request that the period length be adjusted based on the child's actual date of birth.",
     },
   }),
 

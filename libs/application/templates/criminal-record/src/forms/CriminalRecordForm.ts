@@ -12,11 +12,10 @@ import {
   CriminalRecordApi,
 } from '../dataProviders'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeItemCodes } from '../utils'
+import { getChargeItems } from '../utils'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
@@ -51,8 +50,9 @@ export const CriminalRecordForm: Form = buildForm({
     buildFormPaymentChargeOverviewSection({
       sectionTitle: m.payment,
       getSelectedChargeItems: (_) =>
-        getChargeItemCodes().map((x) => ({
-          chargeItemCode: x,
+        getChargeItems().map((item) => ({
+          chargeItemCode: item.code,
+          chargeItemQuantity: item.quantity,
         })),
     }),
     buildSection({

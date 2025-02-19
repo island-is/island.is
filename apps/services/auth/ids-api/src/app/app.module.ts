@@ -13,6 +13,7 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -70,6 +71,7 @@ import { UsersModule } from './users/users.module'
         NationalRegistryV3ClientConfig,
         smsModuleConfig,
         SyslumennClientConfig,
+        ZendeskServiceConfig,
       ],
     }),
   ],

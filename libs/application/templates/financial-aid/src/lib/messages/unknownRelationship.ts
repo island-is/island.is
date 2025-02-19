@@ -52,7 +52,7 @@ export const unknownRelationship = {
     },
     spouseNationalIdPlaceholder: {
       id: 'fa.application:section.personalInterest.unknownRelationship.inputs.spouseNationalIdPlaceholder',
-      defaultMessage: 'Sláðu inn kennitölu maka',
+      defaultMessage: 'Sláðu inn netfang maka',
       description: 'Spouse national id input placeholder',
     },
     spouseEmail: {

@@ -13,7 +13,6 @@ import { AnchorPageSyncService } from './importers/anchorPage.service'
 import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
-import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
@@ -33,6 +32,7 @@ import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import { MappingService } from './mapping.service'
+import { GrantsSyncService } from './importers/grants.service'
 
 @Module({
   imports: [
@@ -52,8 +52,8 @@ import { MappingService } from './mapping.service'
     LifeEventPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
-    AdgerdirPageSyncService,
     MenuSyncService,
+    GrantsSyncService,
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,

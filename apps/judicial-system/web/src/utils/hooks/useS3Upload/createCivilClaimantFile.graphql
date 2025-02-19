@@ -1,0 +1,5 @@
+mutation CreateCivilClaimantFile($input: CreateCivilClaimantFileInput!) {
+  createCivilClaimantFile(input: $input) {
+    id
+  }
+}

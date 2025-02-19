@@ -12,3 +12,8 @@ export interface EmailRecipient {
   role: EmailRole
   approved?: boolean
 }
+
+export enum RejectType {
+  REJECT,
+  DELETE,
+}

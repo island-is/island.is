@@ -20,7 +20,7 @@ const devConfig = {
     sender: 'devland.is',
     address: 'development@island.is',
   },
-  exportsBucketName: process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
+  exportsBucketName: 'island-is-dev-exports-endorsement-system',
 }
 
 const prodConfig = {

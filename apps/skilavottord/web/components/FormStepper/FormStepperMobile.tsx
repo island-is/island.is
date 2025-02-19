@@ -48,7 +48,7 @@ export const FormStepperMobile = ({
               className={styles.inProgressIcon}
               display="flex"
               background="purple200"
-              borderRadius="circle"
+              borderRadius="full"
               marginRight={1}
             ></Box>
           )}
@@ -68,7 +68,7 @@ const IconBackground = ({ children }: IconBackgroundProps) => (
     className={styles.activeIcon}
     display="flex"
     background="purple400"
-    borderRadius="circle"
+    borderRadius="full"
     justifyContent="center"
     alignItems="center"
     marginRight={1}

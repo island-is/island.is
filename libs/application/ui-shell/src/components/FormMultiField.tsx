@@ -18,7 +18,7 @@ import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
 import { FieldDef, MultiFieldScreen } from '../types'
 
-const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
+const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO, FieldTypes.CHECKBOX]
 
 const FormMultiField: FC<
   React.PropsWithChildren<{
@@ -106,6 +106,7 @@ const FormMultiField: FC<
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
+                answerQuestions={answerQuestions}
               />
             </Box>
           </GridColumn>

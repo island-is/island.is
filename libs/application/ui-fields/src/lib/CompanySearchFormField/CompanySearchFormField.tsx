@@ -6,12 +6,14 @@ import React, { FC } from 'react'
 import {
   buildFieldRequired,
   formatText,
+  formatTextWithLocale,
   getValueViaPath,
 } from '@island.is/application/core'
 
 import { Box } from '@island.is/island-ui/core'
 import { CompanySearchController } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField
@@ -24,14 +26,16 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     placeholder,
     setLabelToDataSchema = true,
     shouldIncludeIsatNumber,
     checkIfEmployerIsOnForbiddenList,
     required,
+    marginTop = [2, 4],
+    marginBottom,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const searchField = getValueViaPath(application.answers, id, {
     nationalId: '',
@@ -47,7 +51,7 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box marginTop={[2, 4]}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       <CompanySearchController
         required={buildFieldRequired(application, required)}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}
@@ -56,7 +60,12 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
         error={error}
         defaultValue={initialValue}
         name={id}
-        label={formatText(title, application, formatMessage)}
+        label={formatTextWithLocale(
+          title,
+          application,
+          locale as Locale,
+          formatMessage,
+        )}
         placeholder={
           placeholder !== undefined
             ? formatText(placeholder as string, application, formatMessage)

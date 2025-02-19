@@ -19,6 +19,7 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -249,6 +250,8 @@ export const en: TranslatedMessages = {
   'wallet.emptyListTitle': 'There are currently no documents',
   'wallet.emptyListDescription':
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
+  'wallet.lastUpdated': 'Last updated: {date}',
+  'wallet.update': 'Update',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -259,6 +262,22 @@ export const en: TranslatedMessages = {
     'At the moment it is not possible to add driving licenses to the phone.',
   'walletPass.moreInfo': 'More information',
   'walletPass.alertClose': 'Cancel',
+  'walletPass.errorCannotAddPasses':
+    'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+  'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'You cannot add passes on this device.',
+
+  'walletPass.barcodeErrorNotConnected':
+    'Not possible to scan barcode if the device is not connected to the internet.',
+  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorBadSession':
+    'Too little time since license was accessed on another device',
+  'walletPass.validLicense': 'Valid',
+  'walletPass.expiredLicense': 'Expired',
+  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
+  'walletPass.licenseNumber': 'License number: {licenseNumber}',
+  'walletPass.errorFetchingLicense': 'Could not update license',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -587,6 +606,9 @@ export const en: TranslatedMessages = {
   'problem.offline.title': 'No internet connection',
   'problem.offline.message':
     'An error occurred while communicating with the service provider',
+  'problem.thirdParty.title': 'Service unreachable',
+  'problem.thirdParty.message':
+    'An error occurred while communicating with the service provider',
 
   // passkeys
   'passkeys.headingTitle': 'Sign in with Island.is app',
@@ -609,7 +631,7 @@ export const en: TranslatedMessages = {
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
 
-  // health
+  // health - overview
   'health.overview.screenTitle': 'Health',
   'health.overview.title': 'My health',
   'health.overview.description':
@@ -628,5 +650,42 @@ export const en: TranslatedMessages = {
   'health.overview.paymentCredit': 'Credit',
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
+  'health.overview.vaccinations': 'Vaccinations',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
+  'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.period': 'Period',
+  'health.overview.levelStatus': 'Medicine step',
+  'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'A new payment period begins with the next medicine purchase',
+
+  // health - vaccinations
+  'health.vaccinations.screenTitle': 'Vaccinations',
+  'health.vaccinations.title': 'Vaccinations',
+  'health.vaccinations.description':
+    'Here you can see a list of vaccines you have received, vaccination status and other information.',
+  'health.vaccinations.generalVaccinations': 'General vaccinations',
+  'health.vaccinations.otherVaccinations': 'Other vaccinations',
+  'health.vaccinations.number': 'No.',
+  'health.vaccinations.date': 'Date',
+  'health.vaccinations.age': 'Age',
+  'health.vaccinations.vaccine': 'Vaccine',
+  'health.vaccinations.noVaccinations': 'No vaccinations recorded',
+  'health.vaccinations.noVaccinationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'health.vaccinations.directorateOfHealth': 'The directorate of Health',
+
+  // health - organ donation
+  'health.organDonation': 'Organ Donation',
+  'health.organDonation.change': 'Change selection',
+  'health.organDonation.isDonor': 'I am an organ donor',
+  'health.organDonation.isDonorWithLimitations':
+    'I allow organ donation, with restrictions.',
+  'health.organDonation.isNotDonor': 'I forbid organ donation',
+  'health.organDonation.isDonorDescription':
+    'My organs can all be used for transplantation.',
+  'health.organDonation.isNotDonorDescription':
+    'No organs can be used for transplantation.',
+  'health.organDonation.isDonorWithLimitationsDescription':
+    'All organs can be used for transplantation except: {limitations}.',
 }

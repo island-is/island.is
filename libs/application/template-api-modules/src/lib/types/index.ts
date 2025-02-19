@@ -75,7 +75,7 @@ export type AttachmentEmailTemplateGenerator = (
 
 @Injectable()
 export abstract class BaseTemplateApiApplicationService {
-  abstract saveAttachmentToApplicaton(
+  abstract saveAttachmentToApplication(
     application: ApplicationWithAttachments,
     fileName: string,
     buffer: Buffer,

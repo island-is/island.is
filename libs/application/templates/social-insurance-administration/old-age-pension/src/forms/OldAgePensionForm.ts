@@ -12,6 +12,8 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
@@ -36,13 +38,8 @@ import {
   Form,
   FormModes,
   FormValue,
-  NO,
-  YES,
 } from '@island.is/application/types'
-import {
-  applicantInformationMultiField,
-  buildFormConclusionSection,
-} from '@island.is/application/ui-forms'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import { ApplicationType, Employment, RatioType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
@@ -112,7 +109,6 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -348,7 +344,6 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'onePaymentPerYear.question',
-                  title: '',
                   options: getYesNoOptions(),
                   defaultValue: NO,
                   width: 'half',
@@ -384,7 +379,6 @@ export const OldAgePensionForm: Form = buildForm({
                 buildCustomField({
                   id: 'residenceHistory.table',
                   doesNotRequireAnswer: true,
-                  title: '',
                   component: 'ResidenceHistory',
                   condition: (_, externalData) => {
                     const { residenceHistory } =
@@ -510,7 +504,6 @@ export const OldAgePensionForm: Form = buildForm({
                     }),
                     buildRadioField({
                       id: 'ratioType',
-                      title: '',
                       width: 'half',
                       space: 3,
                       options: [
@@ -536,13 +529,12 @@ export const OldAgePensionForm: Form = buildForm({
 
                         return currentEmployer?.ratioType === RatioType.YEARLY
                       },
-                      placeholder: '1%',
+                      placeholder: '1-50%',
                       variant: 'number',
                       width: 'full',
                     }),
                     buildCustomField({
                       id: 'ratioMonthly',
-                      title: '',
                       component: 'EmployersRatioMonthly',
                       condition: (answers) => {
                         const { rawEmployers } = getApplicationAnswers(answers)
@@ -632,28 +624,6 @@ export const OldAgePensionForm: Form = buildForm({
       title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [
         buildSubSection({
-          condition: (answers, externalData) => {
-            const earlyRetirement = isEarlyRetirement(answers, externalData)
-            return earlyRetirement
-          },
-          id: 'fileUpload.earlyRetirement.section',
-          title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.earlyRetirement',
-              title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
-              description:
-                oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
-              introduction:
-                oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
-              ...fileUploadSharedProps,
-              condition: (answers, externalData) => {
-                return isEarlyRetirement(answers, externalData)
-              },
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'fileUpload.pension.section',
           title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
           children: [
@@ -699,26 +669,6 @@ export const OldAgePensionForm: Form = buildForm({
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
         buildSubSection({
-          id: 'fileUploadAdditionalFiles',
-          title:
-            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileTitle,
-              description:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileDescription,
-              introduction:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileDescription,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'commentSection',
           title:
             socialInsuranceAdministrationMessage.additionalInfo.commentSection,
@@ -747,7 +697,6 @@ export const OldAgePensionForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(
@@ -787,27 +736,31 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    buildFormConclusionSection({
-      multiFieldTitle:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .receivedAwaitingIncomePlanTitle,
-      alertTitle:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .receivedAwaitingIncomePlanTitle,
-      alertMessage:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .incomePlanAlertMessage,
-      alertType: 'warning',
-      expandableDescription:
-        oldAgePensionFormMessage.conclusionScreen.bulletList,
-      expandableIntro: oldAgePensionFormMessage.conclusionScreen.nextStepsText,
-      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
-      bottomButtonLabel:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .incomePlanCardLabel,
-      bottomButtonMessage:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .incomePlanCardText,
+    buildSection({
+      id: 'conclusionSection',
+      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
+      children: [
+        buildMultiField({
+          id: 'conclusion.multifield',
+          title: (application: Application) => {
+            const { hasIncomePlanStatus } = getApplicationExternalData(
+              application.externalData,
+            )
+            return hasIncomePlanStatus
+              ? socialInsuranceAdministrationMessage.conclusionScreen
+                  .receivedTitle
+              : socialInsuranceAdministrationMessage.conclusionScreen
+                  .receivedAwaitingIncomePlanTitle
+          },
+          children: [
+            buildCustomField({
+              component: 'Conclusion',
+              id: 'conclusion',
+              description: '',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })

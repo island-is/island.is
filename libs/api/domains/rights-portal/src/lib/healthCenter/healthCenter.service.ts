@@ -97,6 +97,7 @@ export class HealthCenterService {
         healthCenterName: healthCenterRes.healthCenter ?? undefined,
       },
       history,
+      neighborhoodCenter: healthCenterRes.neighborhoodCenter ?? undefined,
     }
   }
 

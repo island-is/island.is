@@ -162,6 +162,8 @@ const caseTypes: CaseTypes = {
   RESTRAINING_ORDER: 'nálgunarbann',
   RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME:
     'nálgunarbann og brottvísun af heimili',
+  STATEMENT_FROM_MINOR: 'Skýrslutaka brotaþola yngri en 18 ára',
+  STATEMENT_IN_COURT: 'Skýrslutaka fyrir dómi',
   EXPULSION_FROM_HOME: 'brottvísun af heimili',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
@@ -216,6 +218,29 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
+}
+
+export const districtCourtAbbreviation = (courtName?: string | null) => {
+  switch (courtName) {
+    case 'Héraðsdómur Reykjavíkur':
+      return 'HDR'
+    case 'Héraðsdómur Reykjaness':
+      return 'HDRN'
+    case 'Héraðsdómur Vesturlands':
+      return 'HDV'
+    case 'Héraðsdómur Suðurlands':
+      return 'HDS'
+    case 'Héraðsdómur Norðurlands eystra':
+      return 'HDNE'
+    case 'Héraðsdómur Norðurlands vestra':
+      return 'HDNV'
+    case 'Héraðsdómur Austurlands':
+      return 'HDA'
+    case 'Héraðsdómur Vestfjarða':
+      return 'HDVF'
+    default:
+      return ''
+  }
 }
 
 export const getAppealResultTextByValue = (
@@ -440,4 +465,13 @@ export const getWordByGender = (word: Word, gender?: Gender): string | null => {
     default:
       return null
   }
+}
+
+// þgf to dómur
+export const applyDativeCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName?.replace(target, 'dómi')
+  }
+  return courtName
 }

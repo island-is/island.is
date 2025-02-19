@@ -61,6 +61,7 @@ export * from './lib/delegations/utils/scopes'
 export * from './lib/delegations/admin/delegation-admin-custom.service'
 export * from './lib/delegations/constants/names'
 export * from './lib/delegations/constants/zendesk'
+export * from './lib/delegations/national-registry-v3-feature.service'
 
 // Resources module
 export * from './lib/resources/resources.module'
@@ -157,6 +158,12 @@ export * from './lib/grant-type/grant-type.module'
 export * from './lib/grant-type/grant-type.service'
 export * from './lib/grant-type/dto/grant-type.dto'
 export * from './lib/grant-type/models/grant-type.model'
+
+// Identity Confirmation Module
+export * from './lib/identity-confirmation/identity-confirmation.module'
+export * from './lib/identity-confirmation/identity-confirmation.service'
+export * from './lib/identity-confirmation/dto/IdentityConfirmationInput.dto'
+export * from './lib/identity-confirmation/models/Identity-Confirmation.model'
 
 // Personal Representative Module
 export * from './lib/personal-representative/personal-representative.module'

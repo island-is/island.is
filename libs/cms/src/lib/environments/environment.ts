@@ -8,7 +8,7 @@ export default {
     'articleCategory',
     'news',
     'page',
-    'vidspyrnaPage',
+    'grant',
     'menu',
     'groupedMenu',
     'organizationPage',

@@ -242,7 +242,7 @@ export const m = defineMessages({
   },
   capitalNumbersSectionTitle: {
     id: 'fspp.application:income.capitalNumbersSectionTitle',
-    defaultMessage: 'Lykiltölur Fjármagnsliðir',
+    defaultMessage: 'Lykiltölur - Fjármagnsliðir',
     description: 'capital numbers',
   },
   capitalIncome: {
@@ -267,12 +267,12 @@ export const m = defineMessages({
   },
   keyNumbersDebt: {
     id: 'fspp.application:keyNumbers.debt',
-    defaultMessage: 'Lykiltölur - Eignir, Skuldir og eigið fé',
+    defaultMessage: 'Lykiltölur - Eignir, skuldir og eigið fé',
     description: 'Statement debts',
   },
   equityDebtsAssetsValidatorError: {
     id: 'fspp.application:equityValidatorError',
-    defaultMessage: 'Skuldir og eigið fé þarf að vera jafnt og eignir samtals',
+    defaultMessage: 'Skuldir og eigið fé þurfa að vera jöfn og eignum samtals',
     description: 'Equity + debts shout equal assets',
   },
   properties: {
@@ -304,6 +304,11 @@ export const m = defineMessages({
     id: 'fspp.application:totalAssets',
     defaultMessage: 'Eignir samtals',
     description: 'Total assets',
+  },
+  debts: {
+    id: 'fspp.application:keyNumbers.debts',
+    defaultMessage: 'Skuldir',
+    description: 'debts',
   },
   debtsAndEquity: {
     id: 'fspp.application:keyNumbers.debtsAndEquity',
@@ -557,5 +562,23 @@ export const m = defineMessages({
     id: 'fspp.application:error.negativeNumberError',
     defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
     description: 'Error message when a required field has not been filled',
+  },
+  notAllowedTitle: {
+    id: 'fspp.application:notAllowedTitle',
+    defaultMessage:
+      'Þessi kennitala er ekki skráð sem stjórnmálasamtök hjá Ríkisendurskoðun',
+    description: 'Title when user is not allowed to apply',
+  },
+  notAllowedDescription: {
+    id: 'fspp.application:notAllowedDescription',
+    defaultMessage:
+      'Ef þú telur að þessi kennitala ætti að vera skráð sem stjórnmálasamtök þá bendum við þér á að hafa samband við Ríkisendurskoðun í síma 448 8800',
+    description: 'Descriptionwhen user is not allowed to apply',
+  },
+  conclusionAlertMessage: {
+    id: 'fspp.application:conclusionAlertMessage',
+    defaultMessage:
+      'Ársreikning fyrir rekstrarárið {value1} hefur verið skilað',
+    description: 'Conclusion alert message',
   },
 })

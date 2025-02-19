@@ -161,6 +161,10 @@ dependencies:
   - name: api-template
     repository: file://libs/api-template
     version: 0.0.1
+    alias: services-form-system-api
+  - name: api-template
+    repository: file://libs/api-template
+    version: 0.0.1
     alias: services-bff
 type: application
 version: 0.0.9

@@ -11,14 +11,10 @@ import {
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import {
-  BasicVehicleInformation,
   EnergyFundVehicleDetailsWithGrant,
   MachineDetails,
-  VehicleOperatorChangeChecksByPermno,
-  VehicleOwnerchangeChecksByPermno,
-  VehiclePlateOrderChecksByPermno,
-  VehicleValidationErrorMessage,
 } from '@island.is/api/schema'
+import { VehicleDetails } from './types'
 import { FieldBaseProps, FindVehicleField } from '@island.is/application/types'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
@@ -27,114 +23,13 @@ import format from 'date-fns/format'
 import { formatCurrency } from '@island.is/application/ui-components'
 import {
   energyFundsLabel,
+  extractDetails,
+  isInvalidRegistrationType,
   mustInspectBeforeStreetRegistration,
-} from './FindVehicleFormField.util'
-
-interface VehicleDetails {
-  permno: string
-  make: string
-  color: string
-  isDebtLess?: boolean
-  validationErrorMessages?: VehicleValidationErrorMessage[]
-  requireMileage?: boolean
-  mileageReading: string
-}
+} from './utils'
 
 interface Props extends FieldBaseProps {
   field: FindVehicleField
-}
-
-const extractCommonVehicleInfo = function (
-  basicInfo: BasicVehicleInformation | null | undefined,
-): VehicleDetails {
-  if (!basicInfo) {
-    throw new Error('Missing basic vehicle information')
-  }
-
-  return {
-    permno: basicInfo.permno || '',
-    make: basicInfo.make || '',
-    color: basicInfo.color || '',
-    requireMileage: basicInfo.requireMileage || false,
-    mileageReading: (basicInfo?.mileageReading || '') as string,
-  }
-}
-
-const isVehicleType = function <T>(
-  response: unknown,
-  typeName: string,
-): response is T {
-  return (
-    response !== null &&
-    typeof response === 'object' &&
-    '__typename' in response &&
-    response['__typename'] === typeName
-  )
-}
-
-export const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
-const extractDetails = function (
-  response:
-    | VehicleOwnerchangeChecksByPermno
-    | VehiclePlateOrderChecksByPermno
-    | VehicleOperatorChangeChecksByPermno
-    | MachineDetails
-    | EnergyFundVehicleDetailsWithGrant
-    | unknown,
-): VehicleDetails | MachineDetails | EnergyFundVehicleDetailsWithGrant {
-  // Use type guards to determine the response type and access properties safely
-  if (
-    isVehicleType<VehicleOwnerchangeChecksByPermno>(
-      response,
-      'VehicleOwnerchangeChecksByPermno',
-    )
-  ) {
-    return {
-      ...extractCommonVehicleInfo(response.basicVehicleInformation),
-      isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response?.validationErrorMessages ?? [],
-    }
-  } else if (
-    isVehicleType<VehiclePlateOrderChecksByPermno>(
-      response,
-      'VehiclePlateOrderChecksByPermno',
-    )
-  ) {
-    return {
-      ...extractCommonVehicleInfo(response.basicVehicleInformation),
-      isDebtLess: true,
-      validationErrorMessages: response?.validationErrorMessages ?? [],
-    }
-  } else if (
-    isVehicleType<VehicleOperatorChangeChecksByPermno>(
-      response,
-      'VehicleOperatorChangeChecksByPermno',
-    )
-  ) {
-    return {
-      ...extractCommonVehicleInfo(response.basicVehicleInformation),
-      isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response?.validationErrorMessages ?? [],
-    }
-  } else if (isVehicleType<MachineDetails>(response, 'MachineDetails')) {
-    return {
-      ...response,
-    }
-  } else if (
-    isVehicleType<EnergyFundVehicleDetailsWithGrant>(
-      response,
-      'EnergyFundVehicleDetailsWithGrant',
-    )
-  ) {
-    return {
-      ...response,
-    }
-  } else {
-    // Handle unexpected response types
-    throw new Error('Unexpected response type')
-  }
 }
 
 export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
@@ -159,6 +54,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     isMachine,
     isEnergyFunds,
     energyFundsMessages,
+    clearOnChange,
   } = field
 
   const [plate, setPlate] = useState<string>(
@@ -197,18 +93,19 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         | VehicleDetails
         | MachineDetails
         | EnergyFundVehicleDetailsWithGrant = extractDetails(response)
+
       setValues(details)
 
       const isVehicleFound = !!details
       setVehicleNotFound(!isVehicleFound)
-      setSubmitButtonDisabled && setSubmitButtonDisabled(!isVehicleFound)
+      setSubmitButtonDisabled?.(!isVehicleFound)
     } catch (error) {
       console.error('error', error)
       setVehicleNotFound(true)
       setVehicleDetails(null)
       setMachineDetails(null)
       setEnergyDetails(null)
-      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+      setSubmitButtonDisabled?.(true)
     } finally {
       setIsLoading(false)
     }
@@ -229,41 +126,66 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     }
   }
   const setVehicleValues = (vehicleDetails: VehicleDetails) => {
-    setValue('findVehicle', true)
-    setValue(`${field.id}.type`, vehicleDetails.make)
-    setValue(`${field.id}.make`, vehicleDetails.make)
-    setValue(`${field.id}.plate`, plate)
-    setValue(`${field.id}.color`, vehicleDetails.color || undefined)
-    setValue(`${field.id}.requireMileage`, vehicleDetails.requireMileage)
-    setValue(`${field.id}.mileageReading`, vehicleDetails.mileageReading)
+    const vehicleDisabled =
+      additionalErrors &&
+      (!vehicleDetails?.isDebtLess ||
+        !!vehicleDetails?.validationErrorMessages?.length)
+
+    const permno = vehicleDisabled ? '' : vehicleDetails?.permno || ''
+
+    setValue(`${field.id}.findVehicle`, true)
+
+    setValue(`${field.id}.plate`, permno)
+    setValue(`${field.id}.type`, vehicleDetails?.make)
+    setValue(`${field.id}.make`, vehicleDetails?.make)
+    setValue(`${field.id}.color`, vehicleDetails?.color || undefined)
+    setValue(`${field.id}.requireMileage`, vehicleDetails?.requireMileage)
+    setValue(`${field.id}.mileageReading`, vehicleDetails?.mileageReading)
+
     setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
     setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
-    setValue('vehicleInfo.plate', plate)
-    setValue('vehicleInfo.type', vehicleDetails.make)
+
+    if (permno) setValue('vehicleInfo.plate', permno)
+    if (permno) setValue('vehicleInfo.type', vehicleDetails?.make)
+
+    setSubmitButtonDisabled?.(!vehicleDisabled || false)
+
     setVehicleDetails(vehicleDetails)
   }
 
   const setMachineValues = (machineDetails: MachineDetails) => {
+    const machineDisabled = machineDetails.disabled
+
     if (application.typeId === 'StreetRegistration') {
+      const isUnavailableTypeForRegistration = isInvalidRegistrationType(
+        application?.externalData,
+        machineDetails.regNumber || '',
+      )
       const mustInspect = mustInspectBeforeStreetRegistration(
         application?.externalData,
         machineDetails.regNumber || '',
       )
-      if (mustInspect && !machineDetails.disabled) {
+      const statusKey = mustInspect
+        ? 'inspectBeforeRegistration'
+        : isUnavailableTypeForRegistration
+        ? 'unavailableTypeForRegistration'
+        : null
+
+      if (
+        statusKey === 'inspectBeforeRegistration' ||
+        statusKey === 'unavailableTypeForRegistration'
+      ) {
         machineDetails = {
           ...machineDetails,
           disabled: true,
           status:
             validationErrors &&
-            formatText(
-              validationErrors.inspectBeforeRegistration,
-              application,
-              formatMessage,
-            ),
+            formatText(validationErrors[statusKey], application, formatMessage),
         }
       }
     }
-    setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
+
     setValue(
       `${field.id}.paymentRequiredForOwnerChange`,
       machineDetails.paymentRequiredForOwnerChange,
@@ -275,18 +197,21 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.plate`, machineDetails.plate || '')
     setValue(`${field.id}.ownerNumber`, machineDetails.ownerNumber || '')
     setValue(`${field.id}.id`, machineDetails.id)
-    setValue('pickMachine.id', machineDetails.id)
     setValue(`${field.id}.date`, new Date().toISOString())
-    setValue('pickMachine.isValid', machineDetails.disabled ? undefined : true)
-    setSubmitButtonDisabled &&
-      setSubmitButtonDisabled(!machineDetails.disabled || false)
+
+    setValue('pickMachine.id', machineDetails.id)
+    setValue('pickMachine.isValid', machineDisabled ? undefined : true)
+
+    setSubmitButtonDisabled?.(!machineDisabled || false)
+
     setMachineDetails(machineDetails)
   }
 
   const setEnergyFundsValues = (
     vehicleDetailsWithGrant: EnergyFundVehicleDetailsWithGrant,
   ) => {
-    setValue('findVehicle', true)
+    setValue(`${field.id}.findVehicle`, true)
+
     setValue(`${field.id}.type`, vehicleDetailsWithGrant.make)
     setValue(`${field.id}.plate`, plate)
     setValue(`${field.id}.color`, vehicleDetailsWithGrant.color || undefined)
@@ -304,31 +229,33 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       `${field.id}.grantItemCode`,
       vehicleDetailsWithGrant.vehicleGrantItemCode,
     )
+
     setEnergyDetails(vehicleDetailsWithGrant)
   }
 
-  const isDisabled =
+  const vehicleDisabled =
     additionalErrors &&
-    vehicleDetails &&
-    (!vehicleDetails.isDebtLess ||
-      !!vehicleDetails.validationErrorMessages?.length)
+    (!vehicleDetails?.isDebtLess ||
+      !!vehicleDetails?.validationErrorMessages?.length)
+
+  const machineDisabled = machineDetails?.disabled
 
   useEffect(() => {
     if (!submitButtonDisabledCalled) {
-      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+      setSubmitButtonDisabled?.(true)
       setSubmitButtonDisabledCalled(true)
     }
     if (plate.length === 5 || plate.length === 6 || plate.length === 7) {
       setButtonDisabled(false)
     }
-    if (machineDetails && machineDetails.disabled) {
-      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+    if (vehicleDisabled || machineDisabled) {
+      setSubmitButtonDisabled?.(true)
     }
     setFieldLoadingState?.(isLoading)
   }, [isLoading])
 
   return (
-    <Box>
+    <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Box display="flex" alignItems="center">
         <Box flexGrow={1} marginRight={2}>
           <InputController
@@ -359,6 +286,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
               },
             }}
             maxLength={isMachine ? 7 : 5}
+            clearOnChange={clearOnChange}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>
@@ -389,7 +317,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             )}
             {vehicleDetails && !vehicleNotFound && (
               <ActionCard
-                backgroundColor={isDisabled ? 'red' : 'blue'}
+                backgroundColor={vehicleDisabled ? 'red' : 'blue'}
                 heading={vehicleDetails.make || ''}
                 text={`${vehicleDetails.color} - ${vehicleDetails.permno}`}
                 focused={true}
@@ -397,7 +325,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             )}
             {machineDetails && !vehicleNotFound && (
               <ActionCard
-                backgroundColor={machineDetails.disabled ? 'red' : 'blue'}
+                backgroundColor={machineDisabled ? 'red' : 'blue'}
                 heading={machineDetails.regNumber || ''}
                 text={`${machineDetails.type} ${machineDetails.subType}`}
                 focused={true}
@@ -441,7 +369,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                 }}
               />
             )}
-            {vehicleDetails && isDisabled && (
+            {vehicleDetails && vehicleDisabled && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -497,7 +425,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                 />
               </Box>
             )}
-            {machineDetails && machineDetails.disabled && (
+            {machineDetails && machineDisabled && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -517,20 +445,18 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                 />
               </Box>
             )}
-            {!isLoading &&
-              plate.length === 0 &&
-              (errors as any)?.pickVehicle && (
-                <InputError
-                  errorMessage={
-                    requiredValidVehicleErrorMessage &&
-                    formatText(
-                      requiredValidVehicleErrorMessage,
-                      application,
-                      formatMessage,
-                    )
-                  }
-                />
-              )}
+            {!isLoading && !plate.length && !!errors?.[field.id] && (
+              <InputError
+                errorMessage={
+                  requiredValidVehicleErrorMessage &&
+                  formatText(
+                    requiredValidVehicleErrorMessage,
+                    application,
+                    formatMessage,
+                  )
+                }
+              />
+            )}
           </Box>
         )}
       </Box>

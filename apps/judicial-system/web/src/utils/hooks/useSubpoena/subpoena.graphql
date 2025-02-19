@@ -1,0 +1,14 @@
+query Subpoena($input: SubpoenaQueryInput!) {
+  subpoena(input: $input) {
+    id
+    created
+    serviceStatus
+    serviceDate
+    servedBy
+    comment
+    defenderNationalId
+    caseId
+    defendantId
+    subpoenaId
+  }
+}

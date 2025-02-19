@@ -3,7 +3,11 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
-import { VehiclePlateOrderingClient } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
+import {
+  SGS_DELIVERY_STATION_CODE,
+  SGS_DELIVERY_STATION_TYPE,
+  VehiclePlateOrderingClient,
+} from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehiclePlateRenewalClient } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
 import {
@@ -14,6 +18,7 @@ import {
   OwnerChangeAnswers,
   OperatorChangeAnswers,
   CheckTachoNetInput,
+  PlateOrderAnswers,
 } from './graphql/dto'
 import {
   OwnerChangeValidation,
@@ -22,6 +27,8 @@ import {
   VehicleOwnerchangeChecksByPermno,
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
+  PlateOrderValidation,
+  BasicVehicleInformation,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
@@ -78,12 +85,21 @@ export class TransportAuthorityApi {
 
     const vehicle = result.data[0]
 
+    return { vehicle }
+  }
+
+  private async fetchVehicleDataAndMileageForOwnerCoOwner(
+    auth: User,
+    permno: string,
+  ) {
+    const vehicle = await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+
     // Get mileage reading
     const mileageReadings = await this.mileageReadingApiWithAuth(
       auth,
     ).getMileageReading({ permno: permno })
 
-    return { vehicle, mileageReadings }
+    return { ...vehicle, mileageReadings }
   }
 
   async getVehicleOwnerchangeChecksByPermno(
@@ -93,7 +109,7 @@ export class TransportAuthorityApi {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
-      await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+      await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
     // Get debt status
     const debtStatus =
@@ -109,6 +125,7 @@ export class TransportAuthorityApi {
     return {
       basicVehicleInformation: {
         permno: vehicle.permno,
+        // Note: subModel (vehcom+speccom) has already been added to this field
         make: vehicle.make,
         color: vehicle.colorName,
         requireMileage: vehicle.requiresMileageRegistration,
@@ -133,12 +150,6 @@ export class TransportAuthorityApi {
     // Note: Since we dont have application.created here, we will just use
     // the current timestamp
     const todayStr = new Date().toISOString()
-
-    // No need to continue with this validation in user is neither seller nor buyer
-    // (only time application data changes is on state change from these roles)
-    if (user.nationalId !== sellerSsn && user.nationalId !== buyerSsn) {
-      return null
-    }
 
     const filteredBuyerCoOwnerAndOperator =
       answers?.buyerCoOwnerAndOperator?.filter(
@@ -259,7 +270,7 @@ export class TransportAuthorityApi {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
-      await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+      await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
     // Get debt status
     const debtStatus =
@@ -279,6 +290,7 @@ export class TransportAuthorityApi {
         : null,
       basicVehicleInformation: {
         color: vehicle.colorName,
+        // Note: subModel (vehcom+speccom) has already been added to this field
         make: vehicle.make,
         permno: vehicle.permno,
         requireMileage: vehicle.requiresMileageRegistration,
@@ -291,13 +303,6 @@ export class TransportAuthorityApi {
     user: User,
     answers: OperatorChangeAnswers,
   ): Promise<OperatorChangeValidation | null> {
-    // No need to continue with this validation in user is not owner
-    // (only time application data changes is on state change from that role)
-    const ownerSsn = answers?.owner?.nationalId
-    if (user.nationalId !== ownerSsn) {
-      return null
-    }
-
     const permno = answers?.pickVehicle?.plate
 
     const filteredOldOperators = answers?.oldOperators?.filter(
@@ -347,12 +352,13 @@ export class TransportAuthorityApi {
     })
 
     // Get validation
-    const validation = await this.vehiclePlateOrderingClient.validatePlateOrder(
-      auth,
-      permno,
-      vehicleInfo?.platetypefront || '',
-      vehicleInfo?.platetyperear || '',
-    )
+    const validation =
+      await this.vehiclePlateOrderingClient.validateVehicleForPlateOrder(
+        auth,
+        permno,
+        vehicleInfo?.platetypefront || '',
+        vehicleInfo?.platetyperear || '',
+      )
 
     return {
       validationErrorMessages: validation?.hasError
@@ -360,10 +366,55 @@ export class TransportAuthorityApi {
         : null,
       basicVehicleInformation: {
         color: vehicleInfo.color,
-        make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
+        make: `${vehicleInfo.make} ${this.getVehicleSubModel(vehicleInfo)}`,
         permno: vehicleInfo.permno,
       },
     }
+  }
+
+  private getVehicleSubModel(vehicle: BasicVehicleInformationDto) {
+    return [vehicle.vehcom, vehicle.speccom].filter(Boolean).join(' ')
+  }
+
+  async validateApplicationForPlateOrder(
+    user: User,
+    answers: PlateOrderAnswers,
+  ): Promise<PlateOrderValidation | null> {
+    const YES = 'yes'
+
+    const includeRushFee =
+      answers?.plateDelivery?.includeRushFee?.includes(YES) || false
+
+    // Check if used selected delivery method: Pick up at delivery station
+    const deliveryStationTypeCode =
+      answers?.plateDelivery?.deliveryStationTypeCode
+    let deliveryStationType: string
+    let deliveryStationCode: string
+    if (
+      answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES &&
+      deliveryStationTypeCode
+    ) {
+      // Split up code+type (was merged when we fetched that data)
+      deliveryStationType = deliveryStationTypeCode.split('_')[0]
+      deliveryStationCode = deliveryStationTypeCode.split('_')[1]
+    } else {
+      // Otherwise we will default to option "Pick up at Samgöngustofa"
+      deliveryStationType = SGS_DELIVERY_STATION_TYPE
+      deliveryStationCode = SGS_DELIVERY_STATION_CODE
+    }
+
+    const result =
+      await this.vehiclePlateOrderingClient.validateAllForPlateOrder(
+        user,
+        answers?.pickVehicle?.plate,
+        answers?.plateSize?.frontPlateSize?.[0] || '',
+        answers?.plateSize?.rearPlateSize?.[0] || '',
+        deliveryStationType,
+        deliveryStationCode,
+        includeRushFee,
+      )
+
+    return result
   }
 
   async getMyPlateOwnershipChecksByRegno(
@@ -383,5 +434,19 @@ export class TransportAuthorityApi {
 
   async getPlateAvailability(regno: string) {
     return this.vehiclePlateRenewalClient.getPlateAvailability(regno)
+  }
+
+  async getBasicVehicleInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null | ApolloError> {
+    const { vehicle } = await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
+
+    return {
+      permno: vehicle.permno,
+      // Note: subModel (vehcom+speccom) has already been added to this field
+      make: vehicle.make,
+      color: vehicle.colorName,
+    }
   }
 }

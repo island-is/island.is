@@ -15,6 +15,7 @@ import {
   JurisdictionApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -34,6 +35,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -45,7 +47,7 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -54,7 +56,7 @@ const getCodes = (application: Application) => {
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in answers')
   }
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 const configuration =
@@ -67,6 +69,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {
@@ -142,7 +145,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

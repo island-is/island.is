@@ -2,7 +2,7 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/health/messages'
+import { messages } from '@island.is/portals/my-pages/health/messages'
 import { disableI18n } from '../../../../support/disablers'
 import { setupXroadMocks } from './setup-xroad.mocks'
 

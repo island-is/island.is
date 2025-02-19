@@ -14,15 +14,18 @@ import { DEFAULT_LOCALE } from '../../constants'
 
 const RETRY_COUNT = 5
 
-const getSubpageContentTypeId = (pageContentTypeId?: string) => {
-  if (pageContentTypeId === 'organizationPage') return 'organizationSubpage'
-  if (pageContentTypeId === 'projectPage') return 'projectSubpage'
+const getSubpageContentTypeIds = (
+  pageContentTypeId?: string,
+): string[] | null => {
+  if (pageContentTypeId === 'organizationPage')
+    return ['organizationParentSubpage', 'organizationSubpage']
+  if (pageContentTypeId === 'projectPage') return ['projectSubpage']
   return null
 }
 
 interface SubpageData {
   pageAbove: EntryProps | null
-  subpageContentType: ContentTypeProps | null
+  subpageContentType: ContentTypeProps[] | null
   loading: boolean
 }
 
@@ -48,20 +51,25 @@ const useSubpageData = (): SubpageData => {
 
       if (pageAboveResponse.items.length > 0) {
         const pageAboveEntry = pageAboveResponse.items[0]
-
-        const subpageContentTypeId = getSubpageContentTypeId(
+        const subpageContentTypeIds = getSubpageContentTypeIds(
           pageAboveEntry.sys.contentType.sys.id,
         )
+
+        const subpageContentTypes = subpageContentTypeIds
+          ? await Promise.all(
+              subpageContentTypeIds.map((id) =>
+                cma.contentType.get({ contentTypeId: id }),
+              ),
+            )
+          : []
 
         setData({
           loading: false,
           pageAbove: pageAboveEntry,
-          subpageContentType: subpageContentTypeId
-            ? await cma.contentType.get({
-                contentTypeId: subpageContentTypeId,
-              })
-            : null,
+          subpageContentType:
+            subpageContentTypes.length > 0 ? subpageContentTypes : null,
         })
+
         return true
       }
       return false
@@ -154,7 +162,8 @@ const LinkGroupLinkField = () => {
     let fields = {}
 
     if (
-      contentTypeId === 'organizationSubpage' &&
+      (contentTypeId === 'organizationSubpage' ||
+        contentTypeId === 'organizationParentSubpage') &&
       pageAbove?.sys?.contentType?.sys?.id === 'organizationPage'
     ) {
       fields = {
@@ -209,7 +218,7 @@ const LinkGroupLinkField = () => {
   }
 
   const handleLinkExisting = (props: LinkActionsProps) => {
-    const contentTypeToSelect = getSubpageContentTypeId(
+    const contentTypesToSelect = getSubpageContentTypeIds(
       pageAbove?.sys?.contentType?.sys?.id,
     )
 
@@ -219,8 +228,8 @@ const LinkGroupLinkField = () => {
         : sdk.dialogs.selectMultipleEntries
 
     selectEntriesFunction({
-      contentTypes: contentTypeToSelect
-        ? [contentTypeToSelect, 'link']
+      contentTypes: contentTypesToSelect
+        ? [...contentTypesToSelect, 'link']
         : ['link'],
     }).then((entries: EntryProps[]) => {
       entries = Array.isArray(entries) ? entries : [entries]
@@ -238,7 +247,7 @@ const LinkGroupLinkField = () => {
   }
 
   const selectableContentTypes = subpageContentType
-    ? [subpageContentType, linkContentType]
+    ? [...subpageContentType, linkContentType]
     : [linkContentType]
 
   if (sdk.ids.field === 'primaryLink') {

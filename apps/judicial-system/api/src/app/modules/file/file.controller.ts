@@ -177,7 +177,12 @@ export class FileController {
     )
   }
 
-  @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
+  @Get([
+    'subpoena/:defendantId',
+    'subpoena/:defendantId/:fileName',
+    'subpoena/:defendantId/:subpoenaId',
+    'subpoena/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
@@ -196,7 +201,7 @@ export class FileController {
       } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 
-    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}` : ''
+    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}/pdf` : ''
     const queryInjection = arraignmentDate
       ? `?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`
       : ''

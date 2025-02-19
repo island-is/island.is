@@ -60,6 +60,15 @@ export const m = {
       id: 'web.ojoi:search.errorFetchingAdvertsTitle',
       defaultMessage: 'Ekki tókst að sækja auglýsingar',
     },
+    errorFetchingCategoriesTitle: {
+      id: 'web.ojoi:search.errorFetchingCategoriesTitle',
+      defaultMessage: 'Ekki tókst að sækja málaflokka',
+    },
+    errorFetchingCategoriesMessage: {
+      id: 'web.ojoi:search.errorFetchingCategoriesMessage',
+      defaultMessage:
+        'Ekki náðist samband við vefþjónustur Stjórnartíðinda, reynið aftur síðar.',
+    },
     errorFetchingAdvertsMessage: {
       id: 'web.ojoi:search.errorFetchingAdvertsMessage',
       defaultMessage:
@@ -251,6 +260,16 @@ export const m = {
       id: 'web.ojoi:advert.sidebarTitle',
       defaultMessage: 'Upplýsingar um auglýsingu',
     },
+
+    sidebarCorrectionTitle: {
+      id: 'web.ojoi:advert.sidebarCorrectionTitle',
+      defaultMessage: 'Leiðréttingar',
+    },
+
+    similarTitle: {
+      id: 'web.ojoi:advert.similarTitle',
+      defaultMessage: 'Tengd mál',
+    },
     sidebarDepartment: {
       id: 'web.ojoi:advert.sidebarDepartment',
       defaultMessage: 'Deild',
@@ -270,6 +289,18 @@ export const m = {
     publicationDate: {
       id: 'web.ojoi:advert.publicationDate',
       defaultMessage: 'Útgáfudagur',
+    },
+    correctedDate: {
+      id: 'web.ojoi:advert.correctedDate',
+      defaultMessage: 'Leiðrétt',
+    },
+    correctionSingular: {
+      id: 'web.ojoi:advert.correctionSingular',
+      defaultMessage: 'Leiðrétting',
+    },
+    correctionDoc: {
+      id: 'web.ojoi:advert.correctionDoc',
+      defaultMessage: 'Leiðrétt skjal',
     },
     getPdf: {
       id: 'web.ojoi:advert.getPdf',

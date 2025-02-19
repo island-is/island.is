@@ -12,7 +12,15 @@ import {
   getValueViaPath,
   buildDateField,
   buildExternalDataProvider,
+  buildNationalIdWithNameField,
+  buildPhoneField,
+  buildHiddenInputWithWatchedValue,
   buildAlertMessageField,
+  buildImageField,
+  buildCheckboxField,
+  buildHiddenInput,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Form,
@@ -26,8 +34,6 @@ import { Individual } from '../types'
 import { m } from '../lib/messages'
 import {
   DistrictCommissionerAgencies,
-  NO,
-  YES,
   CeremonyPlaces,
   Religion,
 } from '../lib/constants'
@@ -35,11 +41,11 @@ import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import DigitalServices from '../assets/DigitalServices'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
@@ -55,8 +61,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.introSectionDescription,
             children: [
               buildDescriptionField({
-                id: 'space',
-                title: '',
+                id: 'introSpace',
               }),
             ],
           }),
@@ -117,12 +122,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
-                  buildTextField({
+                  buildPhoneField({
                     id: 'applicant.phone',
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
-                    format: '###-####',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -135,10 +140,22 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
                       return data.email ?? ''
+                    },
+                  }),
+                  buildHiddenInput({
+                    id: 'applicant.hasBirthCertificate',
+                    defaultValue: (application: Application) => {
+                      const data = (
+                        application.externalData.birthCertificate.data as {
+                          hasBirthCertificate?: boolean
+                        }
+                      )?.hasBirthCertificate
+                      return data ?? false
                     },
                   }),
                   buildDescriptionField({
@@ -147,38 +164,42 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     titleVariant: 'h4',
                     space: 'containerGutter',
                   }),
-                  buildAlertMessageField({
-                    id: 'alert',
-                    title: '',
-                    alertType: 'info',
-                    message: m.informationAlertMessage,
-                  }),
-                  buildCustomField({
+                  buildNationalIdWithNameField({
                     id: 'spouse.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                    required: true,
+                    minAgePerson: 18,
                   }),
-                  buildTextField({
-                    id: 'spouse.phone',
-                    title: m.phone,
-                    width: 'half',
-                    backgroundColor: 'blue',
-                    format: '###-####',
-                    defaultValue: (application: Application) => {
-                      const info = application.answers.spouse as Individual
-                      return removeCountryCode(info?.phone ?? '')
+                  buildHiddenInputWithWatchedValue({
+                    id: 'spouse.nationalIdValidatorApplicant',
+                    watchValue: 'applicant.person.nationalId',
+                  }),
+                  buildCustomField(
+                    {
+                      id: 'spouse.phone',
+                      title: m.phone,
+                      component: 'PhoneWithElectronicId',
+                      width: 'half',
                     },
-                  }),
+                    {
+                      nationalIdPath: 'spouse.person.nationalId',
+                    },
+                  ),
                   buildTextField({
                     id: 'spouse.email',
                     title: m.email,
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return info?.email ?? ''
                     },
+                  }),
+                  buildDescriptionField({
+                    id: 'info',
+                    space: 'gutter',
+                    description: m.informationAlertMessage,
                   }),
                 ],
               }),
@@ -229,9 +250,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                   }),
                   buildDescriptionField({
-                    id: 'space',
+                    id: 'statusSpace',
                     space: 'containerGutter',
-                    title: '',
                   }),
                 ],
               }),
@@ -256,13 +276,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         label: 'Nei',
                       },
                     ],
-                    largeButtons: false,
+                    largeButtons: true,
                     width: 'half',
                   }),
                   buildDescriptionField({
                     id: 'ceremonyPeriodDescription',
                     space: 'gutter',
-                    title: '',
                     description: m.ceremonyPeriodDescription,
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
@@ -273,6 +292,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
                     minDate: new Date(),
+                    // 12 weeks from now
+                    maxDate: new Date(
+                      new Date().setDate(new Date().getDate() + 12 * 7),
+                    ),
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
@@ -282,6 +305,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
                     minDate: new Date(),
+                    // 12 weeks from now
+                    maxDate: new Date(
+                      new Date().setDate(new Date().getDate() + 12 * 7),
+                    ),
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.hasDate') === NO,
                   }),
@@ -289,9 +316,9 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
-                    width: 'half',
+                    width: 'full',
                     minDate: new Date(),
-                    // max date is set to 12 weeks from now
+                    // 12 weeks from now
                     maxDate: new Date(
                       new Date().setDate(new Date().getDate() + 12 * 7),
                     ),
@@ -299,9 +326,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       getValueViaPath(answers, 'ceremony.hasDate') === YES,
                   }),
                   buildDescriptionField({
-                    id: 'space',
-                    space: 'containerGutter',
-                    title: '',
+                    id: 'dateSpace',
+                    space: 'gutter',
+                  }),
+                  buildDescriptionField({
+                    id: 'dateSpace1',
+                    space: 'gutter',
                   }),
                   buildRadioField({
                     id: 'ceremony.place.ceremonyPlace',
@@ -386,24 +416,37 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.informationWitness1,
                     titleVariant: 'h4',
                   }),
-                  buildCustomField({
+                  buildNationalIdWithNameField({
                     id: 'witness1.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                    required: true,
+                    minAgePerson: 18,
                   }),
-                  buildTextField({
-                    id: 'witness1.phone',
-                    title: m.phone,
-                    width: 'half',
-                    backgroundColor: 'blue',
-                    format: '###-####',
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness1.nationalIdValidatorApplicant',
+                    watchValue: 'applicant.person.nationalId',
                   }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness1.nationalIdValidatorSpouse',
+                    watchValue: 'spouse.person.nationalId',
+                  }),
+                  buildCustomField(
+                    {
+                      id: 'witness1.phone',
+                      title: m.phone,
+                      component: 'PhoneWithElectronicId',
+                      width: 'half',
+                    },
+                    {
+                      nationalIdPath: 'witness1.person.nationalId',
+                    },
+                  ),
                   buildTextField({
                     id: 'witness1.email',
                     title: m.email,
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                   }),
                   buildDescriptionField({
                     id: 'header4',
@@ -411,25 +454,90 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     titleVariant: 'h4',
                     space: 'containerGutter',
                   }),
-                  buildCustomField({
+                  buildNationalIdWithNameField({
                     id: 'witness2.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                    required: true,
+                    minAgePerson: 18,
                   }),
-                  buildTextField({
-                    id: 'witness2.phone',
-                    title: m.phone,
-                    width: 'half',
-                    backgroundColor: 'blue',
-                    format: '###-####',
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness2.nationalIdValidatorApplicant',
+                    watchValue: 'applicant.person.nationalId',
                   }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness2.nationalIdValidatorSpouse',
+                    watchValue: 'spouse.person.nationalId',
+                  }),
+                  buildHiddenInputWithWatchedValue({
+                    id: 'witness2.nationalIdValidatorWitness',
+                    watchValue: 'witness1.person.nationalId',
+                  }),
+                  buildCustomField(
+                    {
+                      id: 'witness2.phone',
+                      title: m.phone,
+                      component: 'PhoneWithElectronicId',
+                      width: 'half',
+                    },
+                    {
+                      nationalIdPath: 'witness2.person.nationalId',
+                    },
+                  ),
                   buildTextField({
                     id: 'witness2.email',
                     title: m.email,
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                   }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        condition: (_, externalData) => {
+          const data = (
+            externalData?.birthCertificate?.data as {
+              hasBirthCertificate?: boolean
+            }
+          )?.hasBirthCertificate
+          return !data
+        },
+        id: 'missingInformation',
+        title: m.missingInformation,
+        children: [
+          buildMultiField({
+            id: 'missingInfo',
+            title: m.missingInformationTitle,
+            description: m.missingInformationDescription,
+            children: [
+              buildImageField({
+                id: 'image',
+                image: DigitalServices,
+                imageWidth: '50%',
+                imagePosition: 'center',
+              }),
+              buildDescriptionField({
+                id: 'imageSpace',
+                space: 'gutter',
+              }),
+              buildAlertMessageField({
+                id: 'missingInfoAlert',
+                title: m.missingInformation,
+                message: m.missingInformationAlertDescription,
+                alertType: 'warning',
+              }),
+              buildCheckboxField({
+                id: 'applicantConfirmMissingInfo',
+                large: true,
+                defaultValue: [],
+                options: [
+                  {
+                    value: YES,
+                    label: m.applicantConfirmMissingInformation,
+                  },
                 ],
               }),
             ],
@@ -447,51 +555,16 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             children: [
               buildCustomField({
                 id: 'overview',
-                title: '',
                 component: 'ApplicationOverview',
               }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
-        id: 'paymentTotal',
-        title: m.payment,
-        children: [
-          buildMultiField({
-            id: 'payment',
-            title: '',
-            children: [
-              buildCustomField(
-                {
-                  id: 'payment',
-                  title: '',
-                  component: 'PaymentInfo',
-                },
-                {
-                  allowFakeData,
-                  // TODO: When/if real data enters the payment catalog, remove this
-                  fakePayments: [
-                    {
-                      priceAmount: 2800,
-                      chargeItemCode: 'AY153',
-                    },
-                    {
-                      priceAmount: 2700,
-                      chargeItemCode: 'AY154',
-                    },
-                  ],
-                },
-              ),
               buildSubmitField({
-                id: 'submitPayment',
-                title: '',
+                id: 'submitApplication',
                 placement: 'footer',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
-                    event: DefaultEvents.PAYMENT,
-                    name: m.proceedToPayment,
+                    event: DefaultEvents.SUBMIT,
+                    name: m.submitApplication,
                     type: 'primary',
                   },
                 ],

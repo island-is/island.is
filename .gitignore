@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# developer files
+scripts/ci/docker-build-local.sh
+
 # compiled output
 dist/
 tmp/
@@ -70,6 +73,7 @@ libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 /generated_files.tar.gz
+generated_files_list.txt
 *openapi.yaml
 api.graphql
 schema.d.ts
@@ -81,6 +85,7 @@ fragmentTypes.json
 **/gen/graphql.ts
 *.generated.ts
 /apps/**/src/index.html
+nx_cloud_access_token.txt
 
 # IDE - Visual Studio
 *.suo
@@ -98,3 +103,75 @@ apps/**/index.html
 
 .nx/
 .zed/
+
+# E2E outputs
+test-results/
+playwright-report/
+tmp-sessions/
+
+# React Native
+
+# Xcode
+#
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.dSYM.zip
+*.xcuserstate
+**/.xcode.env.local
+ios/*.cer
+ios/*.certSigningRequest
+ios/*.mobileprovision
+ios/*.p12
+
+# Android/IntelliJ
+#
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
+google-services.json
+service-account.json
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# Bundle artifact
+*.jsbundle
+
+# Ruby / CocoaPods
+**/Pods/
+**/vendor/bundle/
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*
+
+# testing
+/coverage
+

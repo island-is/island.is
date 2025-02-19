@@ -15,6 +15,7 @@ import {
   CheckTachoNetInput,
   OperatorChangeAnswers,
   PlateAvailabilityInput,
+  PlateOrderAnswers,
 } from './dto'
 import {
   CheckTachoNetExists,
@@ -25,6 +26,8 @@ import {
   VehiclePlateOrderChecksByPermno,
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
+  PlateOrderValidation,
+  BasicVehicleInformation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -123,6 +126,18 @@ export class MainResolver {
     )
   }
 
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => PlateOrderValidation, { nullable: true })
+  vehiclePlateOrderValidation(
+    @CurrentUser() user: User,
+    @Args('answers') answers: PlateOrderAnswers,
+  ) {
+    return this.transportAuthorityApi.validateApplicationForPlateOrder(
+      user,
+      answers,
+    )
+  }
+
   @Scopes(ApiScope.internal)
   @Query(() => MyPlateOwnershipChecksByRegno, {
     name: 'myPlateOwnershipChecksByRegno',
@@ -142,5 +157,20 @@ export class MainResolver {
   @Query(() => PlateAvailability)
   async plateAvailable(@Args('input') input: PlateAvailabilityInput) {
     return this.transportAuthorityApi.getPlateAvailability(input.regno)
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => BasicVehicleInformation, {
+    name: 'vehicleBasicInfoByPermno',
+    nullable: true,
+  })
+  async getBasicVehicleInfoByPermno(
+    @Args('permno', { type: () => String }) permno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getBasicVehicleInfoByPermno(
+      user,
+      permno,
+    )
   }
 }

@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
+  type: 'accordion' | 'accordion_minimal' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -770,6 +770,8 @@ export interface ICustomPageFields {
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
+    | 'Grants'
+    | 'DirectorateOfLabourMyPages'
     | undefined
 
   /** Alert Banner */
@@ -1253,6 +1255,34 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedLinksFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Links */
+  links?: IFeatured[] | undefined
+}
+
+export interface IFeaturedLinks extends Entry<IFeaturedLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredLinks'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
@@ -1549,6 +1579,39 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
   }
 }
 
+export interface IFundFields {
+  /** Title */
+  fundTitle: string
+
+  /** Link */
+  fundLink?: ILinkUrl | undefined
+
+  /** Featured Image */
+  fundFeaturedImage: Asset
+
+  /** Parent Organization */
+  fundParentOrganization: IOrganization
+}
+
+/** Fund is a part of "Styrkjatorg". */
+
+export interface IFund extends Entry<IFundFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'fund'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IGenericListFields {
   /** Internal Title */
   internalTitle: string
@@ -1564,6 +1627,12 @@ export interface IGenericListFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Order By */
+  orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1596,7 +1665,7 @@ export interface IGenericListItemFields {
   title: string
 
   /** Date */
-  date: string
+  date?: string | undefined
 
   /** Card Intro */
   cardIntro?: Document | undefined
@@ -1615,6 +1684,12 @@ export interface IGenericListItemFields {
 
   /** External Link */
   externalLink?: ILinkUrl | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1749,6 +1824,9 @@ export interface IGenericTagGroupFields {
 
   /** Slug */
   slug: string
+
+  /** Items */
+  items?: Record<string, any> | undefined
 }
 
 /** A way to group together generic tags */
@@ -1763,6 +1841,134 @@ export interface IGenericTagGroup extends Entry<IGenericTagGroupFields> {
     contentType: {
       sys: {
         id: 'genericTagGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantFields {
+  /** Title */
+  grantName: string
+
+  /** Description  */
+  grantDescription?: string | undefined
+
+  /** Grant reference ID */
+  grantApplicationId?: string | undefined
+
+  /** Fund */
+  grantFund: IFund
+
+  /** Special emphasis */
+  grantSpecialEmphasis?: Document | undefined
+
+  /** Who can apply? */
+  grantWhoCanApply?: Document | undefined
+
+  /** How to apply? */
+  grantHowToApply?: Document | undefined
+
+  /** Application hints */
+  grantApplicationHints?: Document | undefined
+
+  /** Answering questions */
+  grantAnsweringQuestions?: Document | undefined
+
+  /** Application url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** Application button label */
+  grantButtonLabel?: string | undefined
+
+  /** Open from */
+  grantDateFrom?: string | undefined
+
+  /** Open from hour */
+  grantOpenFromHour?: number | undefined
+
+  /** Open to */
+  grantDateTo?: string | undefined
+
+  /** Open to hour */
+  grantOpenToHour?: number | undefined
+
+  /** From date is estimated */
+  grantFromDateIsEstimated?: boolean | undefined
+
+  /** Status */
+  grantStatus:
+    | 'Automatic'
+    | 'Always open'
+    | 'Open with note'
+    | 'Closed with note'
+
+  /** Status Note */
+  grantStatusNote?: string | undefined
+
+  /** Files */
+  grantFiles?: Asset[] | undefined
+
+  /** Support links */
+  grantSupportLinks?: ILink[] | undefined
+
+  /** Category tags */
+  grantCategoryTags?: IGenericTag[] | undefined
+
+  /** Type tag */
+  grantTypeTag?: IGenericTag | undefined
+}
+
+/** Grant is a part of "Styrkjatorg". */
+
+export interface IGrant extends Entry<IGrantFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grant'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantCardsListFields {
+  /** Title */
+  grantCardListTitle: string
+
+  /** Display title? */
+  grantCardsListDisplayTitle?: boolean | undefined
+
+  /** Funds */
+  grantCardListFunds?: IFund[] | undefined
+
+  /** Max number of cards */
+  grantCardsListMaxNumberOfCards?: number | undefined
+
+  /** Sorting */
+  grantCardsListSorting?:
+    | 'Alphabetical'
+    | 'Most recently updated first'
+    | undefined
+}
+
+export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grantCardsList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1935,7 +2141,7 @@ export interface IIntroLinkImageFields {
   /** Image */
   image: Asset
 
-  /** Left Image */
+  /** Image Position */
   leftImage?: boolean | undefined
 
   /** Link Title */
@@ -1949,8 +2155,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IAnchorPage
     | undefined
 
@@ -2011,10 +2215,13 @@ export interface ILatestGenericListItemsFields {
   genericList?: IGenericList | undefined
 
   /** See more page */
-  seeMorePage?: IOrganizationSubpage | undefined
+  seeMorePage: IOrganizationSubpage
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
+
+  /** Item Count */
+  itemCount?: number | undefined
 }
 
 export interface ILatestGenericListItems
@@ -2135,6 +2342,34 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
   }
 }
 
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** List */
+  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
+}
+
+/** !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List */
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILinkFields {
   /** Text */
   text: string
@@ -2205,10 +2440,21 @@ export interface ILinkGroupFields {
   name: string
 
   /** Primary Link */
-  primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
+  primaryLink:
+    | ILink
+    | IOrganizationSubpage
+    | IProjectSubpage
+    | IOrganizationParentSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
+  childrenLinks?:
+    | (
+        | ILink
+        | IProjectSubpage
+        | IOrganizationSubpage
+        | IOrganizationParentSubpage
+      )[]
+    | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -2737,6 +2983,9 @@ export interface IOneColumnTextFields {
 
   /** Show Title */
   showTitle?: boolean | undefined
+
+  /** Filter tags */
+  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2924,6 +3173,9 @@ export interface IOrganizationFields {
 
   /** Kennitala */
   kennitala?: string | undefined
+
+  /** News Bottom Slices */
+  newsBottomSlices?: IEmailSignup[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2982,6 +3234,7 @@ export interface IOrganizationPageFields {
         | IAnchorPageList
         | ISectionWithImage
         | IChartNumberBox
+        | ILatestGenericListItems
       )[]
     | undefined
 
@@ -3066,9 +3319,21 @@ export interface IOrganizationPageFields {
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
     | 'thjodskjalasafn'
+    | 'faggilding'
+    | 'standalone'
+    | 'rannis'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
+
+  /** Sitemap */
+  sitemap?: ISitemap | undefined
+
+  /** Can be found in search results */
+  canBeFoundInSearchResults?: boolean | undefined
+
+  /** Show past events option */
+  showPastEventsOption?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -3081,6 +3346,92 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
     contentType: {
       sys: {
         id: 'organizationPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageFields {
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Displayed Title */
+  title: string
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Pages */
+  pages: IOrganizationSubpage[]
+
+  /** Related Content */
+  relatedContent?: ILink[] | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage?: Asset | undefined
+
+  /** Tiny Thumbnail Image */
+  tinyThumbnailImage?: Asset | undefined
+}
+
+/** Navigation page for content that belongs in multiple organization subpages */
+
+export interface IOrganizationParentSubpage
+  extends Entry<IOrganizationParentSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageListFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Variant */
+  variant?: 'Service Card' | 'Profile Card - Title Above' | undefined
+
+  /** Page List */
+  pageList?: IOrganizationParentSubpage[] | undefined
+
+  /** See More Link */
+  seeMoreLink?: ILink | undefined
+}
+
+/** List of organization parent subpages */
+
+export interface IOrganizationParentSubpageList
+  extends Entry<IOrganizationParentSubpageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpageList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3131,6 +3482,7 @@ export interface IOrganizationSubpageFields {
         | ISectionWithVideo
         | ISectionHeading
         | ILatestEventsSlice
+        | IGenericList
       )[]
     | undefined
 
@@ -3151,6 +3503,9 @@ export interface IOrganizationSubpageFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
 }
 
 export interface IOrganizationSubpage
@@ -3194,8 +3549,11 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -3205,6 +3563,9 @@ export interface IOverviewLinksFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Link Data */
+  linkData?: Record<string, any> | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -3709,6 +4070,9 @@ export interface IServiceWebPageFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -3771,6 +4135,31 @@ export interface ISidebarCard extends Entry<ISidebarCardFields> {
   }
 }
 
+export interface ISitemapFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Tree */
+  tree?: Record<string, any> | undefined
+}
+
+export interface ISitemap extends Entry<ISitemapFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sitemap'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISliceConnectedComponentFields {
   /** Title */
   title: string
@@ -3781,7 +4170,6 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
-    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
     | 'Fiskistofa/ShipSearch'
     | 'Fiskistofa/ShipSearchSidebarInput'
@@ -3808,6 +4196,10 @@ export interface ISliceConnectedComponentFields {
     | 'SpecificHousingBenefitSupportCalculator'
     | 'GrindavikResidentialPropertyPurchaseCalculator'
     | 'Ums/CostOfLivingCalculator'
+    | 'Sveinslisti/JourneymanList'
+    | 'Starfsrettindi/ProfessionRights'
+    | 'VMST/ParentalLeaveCalculator'
+    | 'DigitalIceland/BenefitsOfDigitalProcesses'
     | undefined
 
   /** Localized JSON */
@@ -4391,6 +4783,12 @@ export interface ITeamListFields {
 
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
+
+  /** Order By */
+  orderBy?: 'A - Z' | 'Manual' | undefined
 }
 
 /** list of team members */
@@ -4732,8 +5130,6 @@ export interface IUrlFields {
     | ILifeEventPage
     | INews
     | IProjectPage
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IOrganizationPage
     | undefined
 
@@ -5063,12 +5459,15 @@ export type CONTENT_TYPE =
   | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
+  | 'fund'
   | 'genericList'
   | 'genericListItem'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
   | 'genericTagGroup'
+  | 'grant'
+  | 'grantCardsList'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'
@@ -5078,6 +5477,7 @@ export type CONTENT_TYPE =
   | 'latestGenericListItems'
   | 'latestNewsSlice'
   | 'lifeEventPage'
+  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'
@@ -5100,6 +5500,8 @@ export type CONTENT_TYPE =
   | 'openDataSubpage'
   | 'organization'
   | 'organizationPage'
+  | 'organizationParentSubpage'
+  | 'organizationParentSubpageList'
   | 'organizationSubpage'
   | 'organizationTag'
   | 'overviewLinks'
@@ -5115,6 +5517,7 @@ export type CONTENT_TYPE =
   | 'sectionWithVideo'
   | 'serviceWebPage'
   | 'sidebarCard'
+  | 'sitemap'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'
   | 'statistic'

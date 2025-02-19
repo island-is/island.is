@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 import router from 'next/router'
 
-import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -13,6 +13,7 @@ import {
   IndictmentsCaseFilesAccordionItem,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
@@ -60,11 +61,7 @@ const CaseFile = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFile)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.heading)}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
@@ -111,7 +108,7 @@ const CaseFile = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
           nextIsDisabled={editCount > 0}

@@ -38,7 +38,10 @@ export const OperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
       [],
     ) as OldOperatorInformation[],
   )
+
   const [identicalError, setIdenticalError] = useState<boolean>(false)
+  const [noOperatorChangesError, setNoOperatorChangesError] =
+    useState<boolean>(false)
 
   const filteredOperators = operators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
@@ -212,14 +215,29 @@ export const OperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
     }
   }, [operators, setValue])
 
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      setIdenticalError(checkDuplicate())
-      if (checkDuplicate()) {
-        return [false, 'Identical nationalIds']
-      }
-      return [true, null]
-    })
+  setBeforeSubmitCallback?.(async () => {
+    setIdenticalError(false)
+    setNoOperatorChangesError(false)
+
+    const hasDuplicate = await checkDuplicate()
+    if (hasDuplicate) {
+      setIdenticalError(true)
+      return [false, 'Identical nationalIds']
+    }
+
+    const operatorWasAdded =
+      operators?.filter(({ wasRemoved }) => wasRemoved !== 'true').length > 0
+    const operatorWasRemoved = !!oldOperators?.find(
+      (x) => x.wasRemoved === 'true',
+    )
+    const noOperatorChanges = !operatorWasAdded && !operatorWasRemoved
+    if (noOperatorChanges) {
+      setNoOperatorChangesError(true)
+      return [false, 'No operator has been added/removed']
+    }
+
+    return [true, null]
+  })
 
   return (
     <Box>
@@ -285,6 +303,14 @@ export const OperatorRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
           <AlertMessage
             type="error"
             title={formatMessage(information.labels.operator.identicalError)}
+          />
+        </Box>
+      )}
+      {noOperatorChangesError && (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.operator.noChangesError)}
           />
         </Box>
       )}

@@ -1,6 +1,7 @@
 import type { DistributiveOmit } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
-import { NO, ParentalRelations, YES } from './constants'
+import { ParentalRelations } from './constants'
+import { YesOrNo } from '@island.is/application/core'
 
 export interface MultipleBirths {
   hasMultipleBirths: YesOrNo
@@ -32,8 +33,6 @@ export interface PersonInformation {
     name?: string
   }
 }
-
-export type YesOrNo = typeof NO | typeof YES
 
 export interface Files {
   name: string
@@ -81,6 +80,7 @@ export interface Period {
   paid?: boolean
   approved?: boolean
   months?: number
+  endDateAdjustLength?: string[]
 }
 
 export interface Payment {

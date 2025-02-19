@@ -9,9 +9,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
-import { SharedTemplateApiService } from '../../shared'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { AttachmentS3Service } from '../../shared/services'
 
 @Injectable()
 export class DataProtectionComplaintService extends BaseTemplateApiService {
@@ -21,7 +21,7 @@ export class DataProtectionComplaintService extends BaseTemplateApiService {
     private readonly tokenMiddleware: TokenMiddleware,
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
     private readonly pdfFileProvider: PdfFileProvider,
-    private readonly sharedService: SharedTemplateApiService,
+    private readonly attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT)
   }
@@ -59,7 +59,7 @@ export class DataProtectionComplaintService extends BaseTemplateApiService {
     const nowString = now.toISOString().replace(/:/g, '-')
     const complaintPdfFileName = `kvörtun-${nowString}.pdf`
 
-    const key = await this.sharedService.addAttachment(
+    const key = await this.attachmentService.addAttachment(
       application,
       complaintPdfFileName,
       complaintPdf.fileBuffer,

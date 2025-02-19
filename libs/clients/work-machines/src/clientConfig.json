@@ -256,18 +256,40 @@
         }
       }
     },
+    "/api/MachineOwnerChange/{OwnerchangeId}": {
+      "delete": {
+        "tags": ["MachineOwnerChange"],
+        "parameters": [
+          {
+            "name": "OwnerchangeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
     "/api/MachineParentCategories": {
       "get": {
         "tags": ["MachineParentCategories"],
         "parameters": [
-          {
-            "name": "locale",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "is"
-            }
-          },
           {
             "name": "X-Correlation-ID",
             "in": "header",
@@ -1267,14 +1289,6 @@
             }
           },
           {
-            "name": "locale",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "is"
-            }
-          },
-          {
             "name": "X-Correlation-ID",
             "in": "header",
             "description": "Unique identifier associated with the request",
@@ -1415,28 +1429,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/Openapi": {
-      "get": {
-        "tags": ["Openapi"],
-        "summary": "Returns the openapi document as a json file",
-        "parameters": [
-          {
-            "name": "X-Correlation-ID",
-            "in": "header",
-            "description": "Unique identifier associated with the request",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -2157,12 +2149,10 @@
       },
       "MachineRegistrationCreateDto": {
         "required": [
-          "containerNumber",
           "countryOfProduction",
           "importer",
           "isCECertified",
           "isPreRegistered",
-          "locationOfMachine",
           "model",
           "parentCategory",
           "serialNumber",
@@ -2194,12 +2184,12 @@
             "type": "string"
           },
           "containerNumber": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "locationOfMachine": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "serialNumber": {
             "minLength": 1,
@@ -2592,6 +2582,10 @@
             "format": "int32"
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
             "type": "string",
             "nullable": true
           }

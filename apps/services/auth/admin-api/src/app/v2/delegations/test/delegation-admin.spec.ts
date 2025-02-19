@@ -24,7 +24,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { getModelToken } from '@nestjs/sequelize'
 import { faker } from '@island.is/shared/mocking'
 import { TicketStatus, ZendeskService } from '@island.is/clients/zendesk'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { ErrorCodes } from '@island.is/shared/utils'
 
 const currentUser = createCurrentUser({
@@ -36,7 +36,7 @@ describe('DelegationAdmin - With authentication', () => {
   let server: request.SuperTest<request.Test>
   let factory: FixtureFactory
   let zendeskService: ZendeskService
-  let nationalRegistryApi: NationalRegistryClientService
+  let nationalRegistryApi: NationalRegistryV3ClientService
   let delegationIndexServiceApi: DelegationsIndexService
 
   beforeEach(async () => {
@@ -51,7 +51,7 @@ describe('DelegationAdmin - With authentication', () => {
     factory = new FixtureFactory(app)
 
     zendeskService = app.get(ZendeskService)
-    nationalRegistryApi = app.get(NationalRegistryClientService)
+    nationalRegistryApi = app.get(NationalRegistryV3ClientService)
     delegationIndexServiceApi = app.get(DelegationsIndexService)
 
     jest
@@ -212,7 +212,7 @@ describe('DelegationAdmin - With authentication', () => {
 
     const mockNationalRegistryService = () => {
       nationalRegistryApiSpy = jest
-        .spyOn(nationalRegistryApi, 'getIndividual')
+        .spyOn(nationalRegistryApi, 'getAllDataIndividual')
         .mockImplementation(async (id) => {
           const user = createNationalRegistryUser({
             nationalId: id,

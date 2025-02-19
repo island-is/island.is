@@ -27,7 +27,7 @@ const PlusMinus = styled(Animated.View)`
   height: ${({ theme }) => theme.spacing[3]}px;
   width: ${({ theme }) => theme.spacing[3]}px;
   background-color: ${({ theme }) => theme.color.blue100};
-  border-radius: ${({ theme }) => theme.border.radius.circle};
+  border-radius: ${({ theme }) => theme.border.radius.full};
   justify-content: center;
   align-items: center;
 `

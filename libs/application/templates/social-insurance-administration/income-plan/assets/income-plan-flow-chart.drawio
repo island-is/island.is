@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="lqEHqnM0KQjVWkPkSSZl" name="Page-1">
-        <mxGraphModel dx="1278" dy="1873" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1268" dy="1823" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -33,19 +33,6 @@
                 </mxCell>
                 <mxCell id="23" value="Submit" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="320" y="45" width="60" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="25" value="" style="endArrow=classic;html=1;fontColor=#FFFFFF;strokeColor=#000000;" parent="1" source="5" target="4" edge="1">
-                    <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="450" y="240" as="sourcePoint"/>
-                        <mxPoint x="630" y="120" as="targetPoint"/>
-                        <Array as="points">
-                            <mxPoint x="440" y="240"/>
-                            <mxPoint x="440" y="120"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="26" value="Edit" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry x="440" y="165" width="40" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="28" value="In review" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" parent="1" vertex="1">
                     <mxGeometry x="250" y="290" width="70" height="30" as="geometry"/>

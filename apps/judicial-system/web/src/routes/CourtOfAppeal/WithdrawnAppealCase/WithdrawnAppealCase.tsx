@@ -11,6 +11,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -43,11 +44,7 @@ const WithdrawnAppealCase = () => {
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
       <FormContentContainer>
-        <Box marginBottom={6}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <CaseNumberInput />

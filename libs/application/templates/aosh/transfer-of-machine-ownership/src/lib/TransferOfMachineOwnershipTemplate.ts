@@ -30,19 +30,21 @@ import {
   UserProfileApi,
   VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 import { getExtraData } from '../utils/getExtraData'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(23, 59, 59)
+  const pruneDate = new Date(date)
+  pruneDate.setUTCHours(23, 59, 59)
   return pruneDate
 }
 
@@ -84,6 +86,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
@@ -138,6 +141,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
                 VinnueftirlitidPaymentCatalogApi,
                 MachinesApi,
               ],
@@ -199,7 +203,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.REVIEW,
         onExit: [
           defineTemplateApi({
@@ -214,6 +218,9 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,

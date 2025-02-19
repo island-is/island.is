@@ -1,0 +1,20 @@
+{
+  "name": "portals-my-pages-constants",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/constants/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/constants/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/my-pages/constants"]
+    }
+  }
+}

@@ -1,4 +1,8 @@
-import { StateLifeCycle } from '@island.is/application/types'
+import {
+  PruningApplication,
+  PruningNotification,
+  StateLifeCycle,
+} from '@island.is/application/types'
 
 export const EphemeralStateLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -16,10 +20,24 @@ export const pruneAfterDays = (Days: number): StateLifeCycle => {
 
 export const DefaultStateLifeCycle: StateLifeCycle = pruneAfterDays(30)
 
+export const defaultLifecycleWithPruneMessage = (
+  message:
+    | PruningNotification
+    | ((application: PruningApplication) => PruningNotification),
+) => ({
+  ...DefaultStateLifeCycle,
+  pruneMessage: message,
+})
+
 export const NO_ANSWER = null
 
 export const YES = 'yes'
 export const NO = 'no'
+export type YesOrNo = typeof YES | typeof NO
+export enum YesOrNoEnum {
+  YES = 'yes',
+  NO = 'no',
+}
 
 export const hasYes = (answer: any) => {
   if (Array.isArray(answer)) {

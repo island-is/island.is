@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -40,6 +40,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { formatCurrency } from '@island.is/web/utils/currency'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 
 import {
   CustomScreen,
@@ -50,6 +51,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PENSION_CALCULATION } from '../../queries/PensionCalculator'
+import { PensionCalculatorTitle } from './PensionCalculatorTitle'
 import { PensionCalculatorWrapper } from './PensionCalculatorWrapper'
 import { translationStrings } from './translationStrings'
 import {
@@ -57,7 +59,9 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
+  is2025FormPreviewActive,
   is2025PreviewActive,
+  NEW_SYSTEM_TAKES_PLACE_DATE,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
@@ -284,11 +288,36 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const highlightedItems2025 = calculation2025.highlightedItems ?? []
 
-  const title = `${formatMessage(translationStrings.mainTitle)} ${
-    dateOfCalculationsOptions.find(
+  const allCalculatorsOptions = useMemo(() => {
+    const options = [...dateOfCalculationsOptions]
+
+    if (is2025FormPreviewActive(customPageData)) {
+      options.unshift({
+        label: formatMessage(translationStrings.form2025PreviewLabel),
+        value: NEW_SYSTEM_TAKES_PLACE_DATE.toISOString(),
+      })
+    }
+
+    return options
+  }, [customPageData, dateOfCalculationsOptions, formatMessage])
+
+  const isNewSystemActive =
+    is2025FormPreviewActive(customPageData) &&
+    calculationInput.dateOfCalculations ===
+      NEW_SYSTEM_TAKES_PLACE_DATE.toISOString()
+
+  const title = `${formatMessage(
+    isNewSystemActive
+      ? translationStrings.form2025PreviewMainTitle
+      : translationStrings.mainTitle,
+  )}`
+  const titlePostfix = `${(
+    allCalculatorsOptions.find(
       (o) => o.value === calculationInput.dateOfCalculations,
-    )?.label ?? ''
-  }`
+    )?.label ?? dateOfCalculationsOptions[0].label
+  ).toLowerCase()}`
+
+  const titleVariant = isNewSystemActive ? 'h2' : 'h1'
 
   const calculationIsPresent =
     typeof calculation.groups?.length === 'number' &&
@@ -333,9 +362,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                 >
                   <Box paddingY={5}>
                     <Stack space={3}>
-                      <Text variant="h1" as="h1">
-                        {title}
-                      </Text>
+                      <PensionCalculatorTitle
+                        isNewSystemActive={isNewSystemActive}
+                        title={title}
+                        titlePostfix={titlePostfix}
+                        titleVariant={titleVariant}
+                      />
                       <Text>
                         {formatMessage(translationStrings.isTurnedOff)}
                       </Text>
@@ -356,9 +388,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                   <Box paddingY={6}>
                     <Stack space={5}>
                       <Stack space={2}>
-                        <Text variant="h1" as="h1">
-                          {title}
-                        </Text>
+                        <PensionCalculatorTitle
+                          isNewSystemActive={isNewSystemActive}
+                          title={title}
+                          titlePostfix={titlePostfix}
+                          titleVariant={titleVariant}
+                        />
                         <Box className={styles.textMaxWidth}>
                           <Text>
                             {formatMessage(
@@ -606,6 +641,14 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   )
 }
 
+const isSameYear = (
+  date1: string | null | undefined,
+  date2: string | null | undefined,
+) => {
+  if (!date1 || !date2) return false
+  return new Date(date1).getFullYear() === new Date(date2).getFullYear()
+}
+
 PensionCalculatorResults.getProps = async ({
   apolloClient,
   locale,
@@ -614,6 +657,7 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
   const [
     {
       data: { getOrganizationPage },
@@ -654,14 +698,17 @@ PensionCalculatorResults.getProps = async ({
     }),
     calculationInput.typeOfBasePension ===
       SocialInsurancePensionCalculationBasePensionType.Disability &&
-    is2025PreviewActive(customPageData)
+    is2025PreviewActive(customPageData) &&
+    isSameYear(
+      dateOfCalculationsOptions?.[0]?.value,
+      calculationInput.dateOfCalculations,
+    )
       ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
           query: GET_PENSION_CALCULATION,
           variables: {
             input: {
               ...calculationInput,
-              startYear: 2025,
-              startMonth: 9,
+              dateOfCalculations: new Date(2025, 8, 1).toISOString(),
               typeOfBasePension:
                 SocialInsurancePensionCalculationBasePensionType.NewSystem,
             },
@@ -694,14 +741,18 @@ PensionCalculatorResults.getProps = async ({
   const queryParams = convertToQueryParams(calculationInput)
   const queryParamsObject = Object.fromEntries(queryParams)
 
+  const organizationNamespace =
+    extractNamespaceFromOrganization(getOrganization)
+
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     calculation: getPensionCalculation,
     calculation2025: getPensionCalculation2025,
     calculationInput,
-    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
+    dateOfCalculationsOptions,
     queryParamString: queryParams.toString(),
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

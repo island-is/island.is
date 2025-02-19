@@ -1,8 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (services: {
-  graphql: ServiceBuilder<'api'>
-}): ServiceBuilder<'service-portal'> =>
+export const serviceSetup = (): ServiceBuilder<'service-portal'> =>
   service('service-portal')
     .namespace('service-portal')
     .liveness('/liveness')
@@ -18,18 +16,7 @@ export const serviceSetup = (services: {
     })
     .env({
       BASEPATH: '/minarsidur',
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
-      SI_PUBLIC_GRAPHQL_API: {
-        prod: '/api/graphql',
-        staging: '/api/graphql',
-        dev: '/api/graphql',
-        local: ref((h) => `http://${h.svc(services.graphql)}/api/graphql`),
-      },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',

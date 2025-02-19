@@ -27,7 +27,7 @@ export const review = {
     },
     approve: {
       id: 'ta.tvo.application:review.buttons.approve',
-      defaultMessage: `Samþykkja`,
+      defaultMessage: 'Samþykkja',
       description: 'Approve button in review process',
     },
   }),

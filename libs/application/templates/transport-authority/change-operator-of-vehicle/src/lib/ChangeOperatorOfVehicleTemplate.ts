@@ -26,21 +26,27 @@ import {
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
+import {
+  canReviewerApprove,
+  isRemovingOperatorOnly,
+  getChargeItems,
+  getExtraData,
+} from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes, getExtraData } from '../utils/getChargeItemCodes'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
   date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date.toUTCString())
-  pruneDate.setHours(23, 59, 59)
+  const pruneDate = new Date(date)
+  pruneDate.setUTCHours(23, 59, 59)
   return pruneDate
 }
 
@@ -61,7 +67,7 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -83,6 +89,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeOperatorOfVehicle.translation,
@@ -141,6 +148,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
               ],
             },
@@ -152,7 +160,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         extraData: getExtraData,
         onExit: [
           defineTemplateApi({
@@ -201,6 +209,9 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -60,6 +60,7 @@ export type SelectProps<
   // @ts-ignore make web strict
 > = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
   noOptionsMessage?: string
+  hideClearIndicator?: boolean
 } & PropsBase
 
 // The Option type needs to be generic as the react-select library is generic.
@@ -69,7 +70,19 @@ export type Option<Value> = {
   description?: string
   descriptionTruncated?: boolean
   disabled?: boolean
+  withCheckmark?: boolean
+  isSelected?: boolean
+  showClear?: boolean
 }
 
 // Utility option types
 export type StringOption = Option<string>
+
+export interface OptionTypeNew {
+  value: string
+  label: string
+}
+
+export interface CustomSelectProps extends Props<OptionTypeNew> {
+  showClear?: boolean
+}

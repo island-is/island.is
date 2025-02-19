@@ -9,8 +9,10 @@ import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
-
-export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+import { Locale } from '@island.is/shared/types'
+export type BeforeSubmitCallback = (
+  event?: string,
+) => Promise<[true, null] | [false, string]>
 
 export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
@@ -32,6 +34,13 @@ export type StaticText = StaticTextObject | string
 export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
+
+export type FormTextWithLocale =
+  | StaticText
+  | ((
+      application: Application,
+      locale: Locale,
+    ) => StaticText | null | undefined)
 
 export type FormComponent =
   | React.FC<React.PropsWithChildren<unknown>>
@@ -76,7 +85,7 @@ export interface Form {
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
-  title: StaticText
+  title?: StaticText
   type: FormItemTypes.FORM
 }
 
@@ -95,7 +104,7 @@ export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly title: FormText
+  readonly title?: FormTextWithLocale
   readonly nextButtonText?: FormText
 }
 
@@ -103,11 +112,13 @@ export interface Section extends FormItem {
   type: FormItemTypes.SECTION
   children: SectionChildren[]
   draftPageNumber?: number
+  tabTitle?: FormTextWithLocale
 }
 
 export interface SubSection extends FormItem {
   type: FormItemTypes.SUB_SECTION
   children: FormLeaf[]
+  tabTitle?: FormTextWithLocale
 }
 
 export interface Repeater extends FormItem {
@@ -144,7 +155,7 @@ export interface DataProviderItem {
   readonly id: string
   readonly action?: string
   readonly order?: number
-  readonly title: FormText
+  readonly title?: FormText
   readonly subTitle?: FormText
   readonly pageTitle?: FormText
   readonly source?: string //TODO see if we can remove this
@@ -153,7 +164,7 @@ export interface DataProviderItem {
 export interface DataProviderBuilderItem {
   id?: string
   type?: string //TODO REMOVE THIS
-  title: FormText
+  title?: FormText
   subTitle?: FormText
   pageTitle?: FormText
   source?: string
@@ -177,7 +188,9 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   field: Field
   application: Application<TAnswers>
   showFieldName?: boolean
+  clearOnChange?: string[]
   goToScreen?: (id: string) => void
+  answerQuestions?: (answers: FormValue) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState

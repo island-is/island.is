@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  BasicChargeItem,
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
@@ -30,7 +31,7 @@ import { gflPendingActionMessages } from './messages/actionCards'
 import { Features } from '@island.is/feature-flags'
 import { buildPaymentState } from '@island.is/application/utils'
 import { GeneralFishingLicenseAnswers } from '..'
-import { ChargeItemCode } from '@island.is/shared/constants'
+import { ChargeItemCode, CodeOwners } from '@island.is/shared/constants'
 
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
@@ -57,7 +58,7 @@ export const getExtraData = (application: Application): ExtraData[] => {
   ]
 }
 
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const answers = application.answers as GeneralFishingLicenseAnswers
   const chargeItemCode = getValueViaPath(
     answers,
@@ -68,15 +69,16 @@ const getCodes = (application: Application) => {
     throw new Error('Vörunúmer fyrir FJS vantar.')
   }
 
-  // If strandveiðileyfi, then we set the const to "Sérstakt gjald vegna strandleyfa", otherwise null.
-  const strandveidileyfi =
-    chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL
-      ? ChargeItemCode.GENERAL_FISHING_LICENSE_SPECIAL_COASTAL
-      : false
+  const result: BasicChargeItem[] = [{ code: chargeItemCode }]
 
-  return strandveidileyfi
-    ? [chargeItemCode, strandveidileyfi]
-    : [chargeItemCode]
+  // If strandveiðileyfi, then we add "Sérstakt gjald vegna strandleyfa"
+  if (chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL) {
+    result.push({
+      code: ChargeItemCode.GENERAL_FISHING_LICENSE_SPECIAL_COASTAL,
+    })
+  }
+
+  return result
 }
 
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
@@ -86,6 +88,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,
@@ -186,7 +189,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.FISKISTOFA,
-        chargeItemCodes: getCodes,
+        chargeItems: getCodes,
         extraData: getExtraData,
         submitTarget: States.SUBMITTED,
       }),

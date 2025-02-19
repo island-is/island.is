@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { NO, YES } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -48,7 +48,7 @@ export const dataSchema = z.object({
       bank: z.string(),
       bankAddress: z.string(),
       bankName: z.string(),
-      currency: z.string(),
+      currency: z.string().nullable(),
       iban: z.string(),
       swift: z.string(),
     })

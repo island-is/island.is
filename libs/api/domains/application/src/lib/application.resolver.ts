@@ -1,35 +1,32 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsUserGuard,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { CodeOwners } from '@island.is/shared/constants'
 import type { Locale } from '@island.is/shared/types'
+import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { CodeOwner } from '@island.is/nest/core'
+import { Application, ApplicationPayment } from './application.model'
 
 import { ApplicationService } from './application.service'
-import { Application, ApplicationPayment } from './application.model'
-import { CreateApplicationInput } from './dto/createApplication.input'
-import { UpdateApplicationInput } from './dto/updateApplication.input'
-import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
-import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
-import { SubmitApplicationInput } from './dto/submitApplication.input'
-import { AssignApplicationInput } from './dto/assignApplication.input'
-import { GeneratePdfInput } from './dto/generatePdf.input'
-import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
-import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
-import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationApplicationInput } from './dto/applicationApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
-import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
-import { PresignedUrlResponse } from './dto/presignedUrl.response'
-import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
+import { AssignApplicationInput } from './dto/assignApplication.input'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
+import { CreateApplicationInput } from './dto/createApplication.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
+import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
+import { PresignedUrlResponse } from './dto/presignedUrl.response'
+import { SubmitApplicationInput } from './dto/submitApplication.input'
+import { UpdateApplicationInput } from './dto/updateApplication.input'
+import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.NordaApplications)
 @Resolver(() => Application)
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
@@ -133,38 +130,6 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.assignApplication(input, user)
-  }
-
-  @Mutation(() => PresignedUrlResponse, { nullable: true })
-  async generatePdfPresignedUrl(
-    @Args('input') input: GeneratePdfInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.generatePdfPresignedUrl(input, user)
-  }
-
-  @Mutation(() => RequestFileSignatureResponse, { nullable: true })
-  requestFileSignature(
-    @Args('input') input: RequestFileSignatureInput,
-    @CurrentUser() user: User,
-  ): Promise<RequestFileSignatureResponse> {
-    return this.applicationService.requestFileSignature(input, user)
-  }
-
-  @Mutation(() => UploadSignedFileResponse, { nullable: true })
-  uploadSignedFile(
-    @Args('input') input: UploadSignedFileInput,
-    @CurrentUser() user: User,
-  ): Promise<UploadSignedFileResponse> {
-    return this.applicationService.uploadSignedFile(input, user)
-  }
-
-  @Query(() => PresignedUrlResponse, { nullable: true })
-  getPresignedUrl(
-    @Args('input') input: GetPresignedUrlInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.presignedUrl(input, user)
   }
 
   @Query(() => PresignedUrlResponse, { nullable: true })

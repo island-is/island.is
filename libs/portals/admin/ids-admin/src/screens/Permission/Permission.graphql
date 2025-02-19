@@ -23,6 +23,7 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
   grantToPersonalRepresentatives
 
   supportedDelegationTypes
+  automaticDelegationGrant
 }
 
 query AuthAdminScope($input: ScopeInput!) {

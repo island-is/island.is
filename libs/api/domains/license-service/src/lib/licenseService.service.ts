@@ -47,6 +47,10 @@ import {
   BarcodeService,
   TOKEN_EXPIRED_ERROR,
 } from '@island.is/services/license'
+import { UserAgent } from '@island.is/nest/core'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -70,6 +74,7 @@ export class LicenseService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
+    private readonly featureService: FeatureFlagService,
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -96,6 +101,7 @@ export class LicenseService {
     user: User,
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
+    userAgent?: UserAgent,
   ): Promise<LicenseCollection> {
     const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
@@ -107,7 +113,7 @@ export class LicenseService {
       }
 
       if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type)
+        return this.getLicensesOfType(user, locale, license.type, userAgent)
       }
 
       return null
@@ -140,6 +146,7 @@ export class LicenseService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
+    agent?: UserAgent,
   ): Promise<LicenseTypeFetchResponse | null> {
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
@@ -187,6 +194,7 @@ export class LicenseService {
     const licensesPayload = await mapper.parsePayload(
       licensesFetchResponse.data,
       locale,
+      agent,
     )
 
     const mappedLicenses: Array<GenericUserLicense> = await Promise.all(
@@ -246,11 +254,13 @@ export class LicenseService {
     locale: Locale,
     licenseType: GenericLicenseType,
     licenseId?: string,
+    agent?: UserAgent,
   ): Promise<GenericUserLicense | LicenseError | null> {
     const licensesOfType = await this.getLicensesOfType(
       user,
       locale,
       licenseType,
+      agent,
     )
 
     if (!licensesOfType) {
@@ -333,7 +343,17 @@ export class LicenseService {
       )
     }
 
-    const pkPassRes = await client.getPkPassUrl(user)
+    const useVersionV2 = await this.featureService.getValue(
+      Features.pkPassV2,
+      false,
+      user,
+    )
+
+    const pkPassRes = await client.getPkPassUrl(
+      user,
+      undefined,
+      useVersionV2 ? 'v2' : undefined,
+    )
 
     if (pkPassRes.ok) {
       return pkPassRes.data
@@ -374,7 +394,17 @@ export class LicenseService {
       )
     }
 
-    const pkPassRes = await client.getPkPassQRCode(user)
+    const useVersionV2 = await this.featureService.getValue(
+      Features.pkPassV2,
+      false,
+      user,
+    )
+
+    const pkPassRes = await client.getPkPassQRCode(
+      user,
+      undefined,
+      useVersionV2 ? 'v2' : undefined,
+    )
 
     if (pkPassRes.ok) {
       return pkPassRes.data
@@ -463,6 +493,34 @@ export class LicenseService {
     )
   }
 
+  getBarcodeSessionKey(licenseType: LicenseType, sub: string) {
+    return `${licenseType}-${sub}`
+  }
+
+  async checkBarcodeSession(
+    barcodeSessionKey: string | undefined,
+    user: User,
+    licenseType: LicenseType,
+  ) {
+    if (barcodeSessionKey) {
+      const activeBarcodeSession = await this.barcodeService.getSessionCache(
+        barcodeSessionKey,
+      )
+
+      if (activeBarcodeSession && activeBarcodeSession !== user.sid) {
+        // If the user has an active session for the license type, we should not create a new barcode
+        this.logger.info('User has an active session for license', {
+          licenseType,
+        })
+
+        throw new ProblemError({
+          type: ProblemType.BAD_SESSION,
+          title: `User has an active session for license type: ${licenseType}`,
+        })
+      }
+    }
+  }
+
   async createBarcode(
     user: User,
     genericUserLicense: GenericUserLicense,
@@ -471,6 +529,12 @@ export class LicenseService {
     const genericUserLicenseType = genericUserLicense.license.type
     const licenseType = this.mapLicenseType(genericUserLicenseType)
     const client = await this.getClient<typeof licenseType>(licenseType)
+
+    const barcodeSessionKey = user.sub
+      ? this.getBarcodeSessionKey(licenseType, user.sub)
+      : undefined
+
+    await this.checkBarcodeSession(barcodeSessionKey, user, licenseType)
 
     if (
       genericUserLicense.license.pkpassStatus !==
@@ -512,6 +576,9 @@ export class LicenseService {
         licenseType,
         extraData,
       }),
+      barcodeSessionKey &&
+        user.sid &&
+        this.barcodeService.setSessionCache(barcodeSessionKey, user.sid),
     ])
 
     return tokenPayload

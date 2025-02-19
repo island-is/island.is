@@ -3,7 +3,11 @@
 Expand the name of the chart.
 */}}
 {{- define "api-template.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.name -}}
+    {{- .Values.name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+    {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -13,14 +17,14 @@ If release name contains chart name it will be used as a full name.
 */}}
 {{- define "api-template.fullname" -}}
 {{- if .Values.fullnameOverride -}}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+    {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+    {{- $name := .Values.name | default .Chart.Name .Values.nameOverride -}}
+    {{- if contains $name .Release.Name -}}
+        {{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+    {{- else -}}
+        {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+    {{- end -}}
 {{- end -}}
 {{- end -}}
 

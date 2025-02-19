@@ -11,10 +11,8 @@ export const groupElementsByArticleTitleFromDiv = (
 
   Array.from(div.children).forEach((child) => {
     const element = child as HTMLElement
-    if (
-      element.classList.contains('article__title') ||
-      element.classList.contains('chapter__title')
-    ) {
+    const containsAnyTitle = containsAnyTitleClass(element)
+    if (containsAnyTitle) {
       if (currentGroup.length > 0) {
         result.push(currentGroup)
       }
@@ -31,13 +29,51 @@ export const groupElementsByArticleTitleFromDiv = (
   return result
 }
 
+const titleArray = ['article__title', 'subchapter__title', 'chapter__title']
+export type ArticleTitleType = 'article' | 'chapter' | 'subchapter'
+
+export const containsAnyTitleClass = (element: HTMLElement): boolean => {
+  return titleArray.some((title) => element.classList.contains(title))
+}
+
+export const getArticleTypeText = (titleType?: ArticleTitleType): string => {
+  switch (titleType) {
+    case 'chapter':
+      return 'nýr kafli'
+    case 'subchapter':
+      return 'nýr undirkafli'
+    default:
+      return 'ný grein'
+  }
+}
+
+export const getArticleTitleType = (element: HTMLElement): ArticleTitleType => {
+  if (element.classList.contains('subchapter__title')) {
+    return 'subchapter'
+  } else if (element.classList.contains('chapter__title')) {
+    return 'chapter'
+  } else {
+    return 'article'
+  }
+}
+
 /**
  * Extracts article title number (e.g., '1. gr.' or '1. gr. a') from a string, allowing for Icelandic characters.
  */
+const extractRegex =
+  /^\d+\. gr\.(?: [\p{L}]\.)?(?= |$)|^(?:\d+|[IVXLCDM]+)\.?\s*Kafli(?=\b| |$)/iu
+
 export const extractArticleTitleDisplay = (title: string): string => {
-  const grMatch = title.match(/^\d+\. gr\.(?: [\p{L}])?(?= |$)/u)
+  const grMatch = title.match(extractRegex)
   const articleTitleDisplay = grMatch ? grMatch[0] : title
   return articleTitleDisplay
+}
+
+export const hasSubtitle = (title: string): boolean => {
+  const grMatch = title.match(extractRegex)
+  const articleTitleDisplay = grMatch ? grMatch[0] : title
+  const hasSubText = title.trim() !== articleTitleDisplay.trim()
+  return hasSubText
 }
 
 export const getTextWithSpaces = (element: Node): string => {

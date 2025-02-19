@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   SharedModuleConfig,
   TemplateApiModuleActionProps,
@@ -182,12 +182,13 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     const contractLink = await this.getApplicationLink(application)
 
     if (otherParent) {
-      this.notificationsService.sendNotification({
+      await this.notificationsService.sendNotification({
         type: NotificationType.AssignCounterParty,
         messageParties: {
           recipient: otherParent.nationalId,
           sender: applicant.nationalId,
         },
+        applicationId: application.id,
         args: {
           applicantName: applicant.fullName,
           contractLink,
@@ -220,26 +221,30 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       throw new Error('Other parent was undefined')
     }
 
-    this.notificationsService.sendNotification({
-      type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
-      messageParties: {
-        recipient: applicant.nationalId,
-      },
-      args: {
-        applicationLink,
-        caseNumber: caseNumber || '',
-      },
-    })
-    this.notificationsService.sendNotification({
-      type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
-      messageParties: {
-        recipient: otherParent.nationalId,
-      },
-      args: {
-        applicationLink,
-        caseNumber: caseNumber || '',
-      },
-    })
+    await Promise.all([
+      this.notificationsService.sendNotification({
+        type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
+        messageParties: {
+          recipient: applicant.nationalId,
+        },
+        applicationId: application.id,
+        args: {
+          applicationLink,
+          caseNumber: caseNumber || '',
+        },
+      }),
+      this.notificationsService.sendNotification({
+        type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
+        messageParties: {
+          recipient: otherParent.nationalId,
+        },
+        applicationId: application.id,
+        args: {
+          applicationLink,
+          caseNumber: caseNumber || '',
+        },
+      }),
+    ])
   }
 
   async rejectedByCounterParty({ application }: Props) {
@@ -255,11 +260,12 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     const applicant = nationalRegistry.data
     const otherParent = childrenCustodyInformation.data[0].otherParent
 
-    this.notificationsService.sendNotification({
+    await this.notificationsService.sendNotification({
       type: NotificationType.RejectedByCounterParty,
       messageParties: {
         recipient: applicant.nationalId,
       },
+      applicationId: application.id,
       args: {
         counterPartyName: otherParent?.fullName || '',
       },
@@ -292,24 +298,28 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       throw new Error('Other parent was undefined')
     }
 
-    this.notificationsService.sendNotification({
-      type: NotificationType.RejectedByOrganization,
-      messageParties: {
-        recipient: applicant.nationalId,
-      },
-      args: {
-        orgName: syslumennName,
-      },
-    })
-    this.notificationsService.sendNotification({
-      type: NotificationType.RejectedByOrganization,
-      messageParties: {
-        recipient: otherParent.nationalId,
-      },
-      args: {
-        orgName: syslumennName,
-      },
-    })
+    await Promise.all([
+      this.notificationsService.sendNotification({
+        type: NotificationType.RejectedByOrganization,
+        messageParties: {
+          recipient: applicant.nationalId,
+        },
+        applicationId: application.id,
+        args: {
+          orgName: syslumennName,
+        },
+      }),
+      this.notificationsService.sendNotification({
+        type: NotificationType.RejectedByOrganization,
+        messageParties: {
+          recipient: otherParent.nationalId,
+        },
+        applicationId: application.id,
+        args: {
+          orgName: syslumennName,
+        },
+      }),
+    ])
   }
 
   private async getApplicationLink(application: CRCApplication) {

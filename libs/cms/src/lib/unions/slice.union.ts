@@ -48,6 +48,9 @@ import {
   IFeaturedEvents,
   IGenericList,
   ILatestGenericListItems,
+  IFeaturedLinks,
+  IGrantCardsList,
+  IOrganizationParentSubpageList,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -145,6 +148,15 @@ import {
   LatestGenericListItems,
   mapLatestGenericListItems,
 } from '../models/latestGenericListItems.model'
+import { FeaturedLinks, mapFeaturedLinks } from '../models/featuredLinks.model'
+import {
+  GrantCardsList,
+  mapGrantCardsList,
+} from '../models/grantCardsList.model'
+import {
+  OrganizationParentSubpageList,
+  mapOrganizationParentSubpageList,
+} from '../models/organizationParentSubpageList.model'
 
 export type SliceTypes =
   | ITimeline
@@ -191,7 +203,10 @@ export type SliceTypes =
   | IChartNumberBox
   | IFeaturedEvents
   | IGenericList
+  | IGrantCardsList
   | ILatestGenericListItems
+  | IFeaturedLinks
+  | IOrganizationParentSubpageList
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -244,6 +259,9 @@ export const SliceUnion = createUnionType({
     FeaturedEvents,
     GenericList,
     LatestGenericListItems,
+    FeaturedLinks,
+    GrantCardsList,
+    OrganizationParentSubpageList,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -341,6 +359,14 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapGenericList(slice as IGenericList)
     case 'latestGenericListItems':
       return mapLatestGenericListItems(slice as ILatestGenericListItems)
+    case 'featuredLinks':
+      return mapFeaturedLinks(slice as IFeaturedLinks)
+    case 'grantCardsList':
+      return mapGrantCardsList(slice as IGrantCardsList)
+    case 'organizationParentSubpageList':
+      return mapOrganizationParentSubpageList(
+        slice as IOrganizationParentSubpageList,
+      )
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

@@ -1,38 +1,50 @@
+import { Transform } from 'class-transformer'
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsString,
   IsUUID,
+  MaxLength,
+  MinLength,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
+import { nationalIdTransformer } from '../../../transformers'
+
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiProperty({ type: String })
   readonly nationalId!: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly name!: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly title!: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly mobileNumber!: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   @ApiProperty({ type: String })
   readonly email!: string
 

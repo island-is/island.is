@@ -1,10 +1,16 @@
 import {
+  CodeOwners,
   json,
   ref,
   service,
   ServiceBuilder,
 } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
@@ -22,6 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
+    .codeOwner(CodeOwners.Aranja)
     .db({
       name: 'servicesauth',
     })
@@ -72,10 +79,15 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       },
     })
     .secrets({
+      NOVA_URL: '/k8s/services-auth/NOVA_URL',
+      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
+      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
       ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
+      ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION',
       CLIENT_SECRET_ENCRYPTION_KEY:
         '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -84,8 +96,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
       SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .ingress({
       primary: {
         host: {

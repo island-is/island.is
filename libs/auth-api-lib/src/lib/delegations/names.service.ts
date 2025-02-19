@@ -6,7 +6,7 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
 import { DelegationConfig } from './DelegationConfig'
 
@@ -17,7 +17,7 @@ export class NamesService {
   constructor(
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
-    private nationalRegistryClient: NationalRegistryClientService,
+    private nationalRegistryClient: NationalRegistryV3ClientService,
   ) {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
   }
@@ -32,12 +32,14 @@ export class NamesService {
   }
 
   async getPersonName(nationalId: string) {
-    const person = await this.nationalRegistryClient.getIndividual(nationalId)
+    const person = await this.nationalRegistryClient.getAllDataIndividual(
+      nationalId,
+    )
     if (!person) {
       throw new BadRequestException(
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
-    return person.fullName ?? person.name
+    return person.nafn ?? ''
   }
 }

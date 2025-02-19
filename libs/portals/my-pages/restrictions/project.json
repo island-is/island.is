@@ -1,0 +1,25 @@
+{
+  "name": "portals-my-pages-restrictions",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/restrictions/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/my-pages/restrictions/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/my-pages/restrictions/codegen.yml"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/my-pages/restrictions/src/{lib,screens}/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

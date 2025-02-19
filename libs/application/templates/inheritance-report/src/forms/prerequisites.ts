@@ -15,7 +15,6 @@ export const getForm = ({
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     children: [
@@ -29,7 +28,6 @@ export const getForm = ({
             children: [
               buildRadioField({
                 id: 'applicationFor',
-                title: '',
                 largeButtons: true,
                 backgroundColor: 'blue',
                 required: true,
@@ -38,8 +36,6 @@ export const getForm = ({
                     value: ESTATE_INHERITANCE,
                     label: m.preDataCollectionApplicationForDefault,
                     disabled: !allowEstateApplication,
-                    //TODO: remove tooltip when this application is ready to go live
-                    tooltip: m.preDataCollectionApplicationForDefaultTooltip,
                   },
                   {
                     value: PREPAID_INHERITANCE,
@@ -50,7 +46,6 @@ export const getForm = ({
               }),
               buildSubmitField({
                 id: 'inheritance.submit',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
