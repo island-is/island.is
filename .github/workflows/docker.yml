@@ -81,6 +81,7 @@ jobs:
       node-image-version: ${{ steps.args-prep.outputs.node-image-version }}
       playwright-image-version: ${{ steps.args-prep.outputs.playwright-image-version }}
       build-args: ${{ steps.args-prep.outputs.build-args }}
+      matrix-chunks: ${{ steps.matrix-prep.outputs.MATRIX_CHUNKS }}
     steps:
       - uses: actions/checkout@v4
 
@@ -100,6 +101,12 @@ jobs:
           echo PLAYWRIGHT_VERSION="$playwright_image_version" | tee -a "$GITHUB_OUTPUT" # Duplicate for compatability
           echo DOCKER_IMAGE_REGISTRY="$ECR_PULLTHROUGH_CACHE" | tee -a "$GITHUB_OUTPUT"
           echo EOF | tee -a "$GITHUB_OUTPUT"
+
+      - name: Prepare matrix
+        id: matrix-prep
+        run: |
+          MATRIX_CHUNKS="$(echo "${{ inputs.projects }}" | jq -cM '. | map("\(.|tostring)")')"
+          echo "MATRIX_CHUNKS=$MATRIX_CHUNKS" >> "$GITHUB_OUTPUT"
 
       - name: Prepare docker deps
         id: docker-deps
@@ -208,7 +215,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chunk: ${{ fromJson(inputs.projects) }}
+        chunk: ${{ fromJson(needs.prepare.outputs.matrix-chunks) }}
 
     permissions:
       id-token: write # This is required for requesting the JWT for AWS/ECR login
