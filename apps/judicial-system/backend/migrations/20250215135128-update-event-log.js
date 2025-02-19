@@ -48,36 +48,14 @@ module.exports = {
     })
   },
 
-  down(queryInterface, Sequelize) {
+  down(queryInterface) {
     return queryInterface.sequelize.transaction(async (transaction) => {
       return Promise.all([
-        queryInterface.removeColumn(
-          'event_log',
-          'user_name',
-          {
-            type: Sequelize.BOOLEAN,
-            allowNull: true,
-          },
-          { transaction },
-        ),
-        queryInterface.removeColumn(
-          'event_log',
-          'user_title',
-          {
-            type: Sequelize.BOOLEAN,
-            allowNull: true,
-          },
-          { transaction },
-        ),
-        queryInterface.removeColumn(
-          'event_log',
-          'institution_name',
-          {
-            type: Sequelize.BOOLEAN,
-            allowNull: true,
-          },
-          { transaction },
-        ),
+        queryInterface.removeColumn('event_log', 'user_name', { transaction }),
+        queryInterface.removeColumn('event_log', 'user_title', { transaction }),
+        queryInterface.removeColumn('event_log', 'institution_name', {
+          transaction,
+        }),
       ])
     })
   },
