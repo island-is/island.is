@@ -28,6 +28,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    indictmentCreated,
     civilClaimants,
   } = useInfoCardItems()
 
@@ -61,6 +62,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
+            indictmentCreated,
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
