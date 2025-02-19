@@ -244,7 +244,6 @@ jobs:
           set -euo pipefail
           export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
           CHUNKS="${{ steps.build_map.outputs.CHUNKS }}"
-          echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             IMAGES="$(echo "$CHUNKS" | jq -r '[.[].project] | join(",")')"
             echo "IMAGES=$IMAGES" >> "$GITHUB_OUTPUT"
