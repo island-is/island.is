@@ -223,6 +223,11 @@ jobs:
         env:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
 
+      - name: Set AFFECTED_ALL env
+        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || env.BRANCH == 'main' }}
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -239,11 +244,6 @@ jobs:
           set -euo pipefail
           UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
           echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
-
-      - name: check pre-release
-        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || steps.set-branch-env.outputs.GIT_BRANCH == 'main' }}
-        run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
       # NOTE: only on PRs
       - name: Prepare deployment targets
@@ -449,40 +449,41 @@ jobs:
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
 
-  retag-unaffected:
-    runs-on: arc-runners
-    timeout-minutes: 5
-    if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
-    needs:
-      - pre-checks
-      - docker-build
-      - prepare
-    env:
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
-      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
-
-    steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check docker-build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-      - name: Retag unaffected Docker images
-        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
+  # retag-unaffected:
+  #   runs-on: arc-runners
+  #   timeout-minutes: 5
+  #   if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
+  #   needs:
+  #     - pre-checks
+  #     - docker-build
+  #     - prepare
+  #   env:
+  #     GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+  #     DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+  #     LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
+  #     UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
+  #
+  #   steps:
+  #     - name: Check prepare success
+  #       run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+  #     - name: Check docker-build success
+  #       run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
+  #     - uses: actions/checkout@v4
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: eu-west-1
+  #     - name: Retag unaffected Docker images
+  #       run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
+  #
   deploy:
     runs-on: arc-runners
-    if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
+    # if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
+    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' }}
     needs:
-      - retag-unaffected
+      # - retag-unaffected
       - pre-checks
       - prepare
       - helm-docker-build
@@ -537,11 +538,11 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
-      - retag-unaffected
+      # - retag-unaffected
       - deploy
     steps:
-      - name: Check retag success
-        run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
+      # - name: Check retag success
+      #   run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
@@ -558,7 +559,7 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
-      - retag-unaffected
+      # - retag-unaffected
       - deploy
     steps:
       - name: Send Slack notification
