@@ -4,9 +4,10 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const searchBox = style({
   outline: 'none',
-  paddingTop: theme.spacing[2],
-  paddingBottom: theme.spacing[1],
-  paddingLeft: theme.spacing[2],
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[1],
+  marginLeft: theme.spacing[2],
+  marginRight: -theme.spacing[2],
   fontSize: '24px',
   fontWeight: theme.typography.light,
   backgroundColor: theme.color.blue100,
@@ -15,9 +16,5 @@ export const searchBox = style({
 })
 
 export const image = style({
-  maxWidth: '318px',
-})
-
-export const largeImage = style({
-  maxWidth: '432px',
+  maxWidth: '100%',
 })

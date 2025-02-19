@@ -97,7 +97,6 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
         }
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
-        featuredImageMaxSize="large"
         offset
         quickLinks={[
           {

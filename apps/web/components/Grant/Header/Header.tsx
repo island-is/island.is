@@ -12,7 +12,6 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 
 import { Webreader } from '../../Webreader'
 import * as styles from './Header.css'
@@ -37,13 +36,11 @@ export type HeaderProps = {
 export type ImageProps = HeaderProps & {
   featuredImage: string
   featuredImageAlt: string
-  featuredImageMaxSize?: 'default' | 'large'
 }
 
 export type NoImageProps = HeaderProps & {
   featuredImage: never
   featuredImageAlt: never
-  featuredImageMaxSize: never
 }
 
 export type HeaderWithImageProps = ImageProps | NoImageProps
@@ -113,11 +110,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
       >
         <img
           src={props.featuredImage}
-          className={
-            props.featuredImageMaxSize === 'large'
-              ? styles.largeImage
-              : styles.image
-          }
+          className={styles.image}
           alt={props.featuredImageAlt}
         />
       </Box>
