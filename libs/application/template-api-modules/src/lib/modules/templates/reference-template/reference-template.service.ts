@@ -31,22 +31,21 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
       'nationalRegistry.data.fullName',
     ) as string
 
-    this.notificationsService.sendNotification({
-      type: NotificationType.ChildrenResidenceChange,
-      messageParties: {
-        recipient: auth.nationalId,
-        sender: auth.nationalId,
-      },
-      args: {
-        applicantName,
-        applicationId: application.id,
-      },
-    })
-
-    const name = getValueViaPath(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-    ) as string
+    try {
+      await this.notificationsService.sendNotification({
+        type: NotificationType.ReferenceTemplate,
+        messageParties: {
+          recipient: auth.nationalId,
+          sender: auth.nationalId,
+        },
+        args: {
+          applicationId: application.id,
+          applicantName,
+        },
+      })
+    } catch(error) {
+      console.log('Error while publishing notification for reference template', error)
+    }
 
     return {
       referenceData: {
