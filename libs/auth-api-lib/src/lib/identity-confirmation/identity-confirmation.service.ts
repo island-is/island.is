@@ -158,7 +158,7 @@ export class IdentityConfirmationService {
 
     if (!person) {
       throw new BadRequestException(
-        `A person with nationalId<${user.nationalId}> could not be found`,
+        'A person with that national id could not be found',
       )
     }
 
