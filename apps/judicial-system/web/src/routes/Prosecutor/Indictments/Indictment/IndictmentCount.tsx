@@ -91,6 +91,7 @@ const offenseLawsMap: Record<
     [48, 2],
   ],
   [IndictmentCountOffense.SPEEDING]: [[37, 0]],
+  [IndictmentCountOffense.OTHER]: [],
 }
 
 const generalLaws: [number, number][] = [[95, 1]]
@@ -120,7 +121,10 @@ const getLawsBroken = (
   offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
 ) => {
-  if (!offenses || offenses.length === 0) {
+  const hasOffenses = !offenses || offenses.length === 0
+  const hasOnlyOtherOffense = offenses?.length === 1 && offenses[0] === IndictmentCountOffense.OTHER
+
+  if (hasOffenses || hasOnlyOtherOffense) {
     return []
   }
 
