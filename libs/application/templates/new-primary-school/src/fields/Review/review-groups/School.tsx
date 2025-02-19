@@ -28,7 +28,7 @@ export const School = ({
   const { formatMessage, formatDate } = useLocale()
   const {
     applicationType,
-    startDate,
+    expectedStartDate,
     selectedSchool,
     applyForNeighbourhoodSchool,
   } = getApplicationAnswers(application.answers)
@@ -82,7 +82,7 @@ export const School = ({
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                  value={formatDate(startDate)}
+                  value={formatDate(expectedStartDate)}
                 />
               </GridColumn>
             )}

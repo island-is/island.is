@@ -22,7 +22,9 @@ export const notificationModuleConfig = defineConfig({
         'PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
         '',
       ),
-      courtsEmails: env.requiredJSON('COURTS_EMAILS', {}) as {
+      courtsEmails: env.requiredJSON('COURTS_EMAILS', {
+        'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf': 'ben10@omnitrix.is',
+      }) as {
         [key: string]: string
       },
       courtOfAppealsAssistantEmails: env.required(

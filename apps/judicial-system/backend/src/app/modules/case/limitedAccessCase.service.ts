@@ -578,7 +578,7 @@ export class LimitedAccessCaseService {
   }
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const allowedCseFileCategories = getDefenceUserCaseFileCategories(
+    const allowedCaseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
       theCase.defendants,
@@ -590,7 +590,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          allowedCseFileCategories.includes(file.category),
+          allowedCaseFileCategories.includes(file.category),
       ) ?? []
 
     const promises: Promise<void>[] = []
@@ -614,12 +614,16 @@ export class LimitedAccessCaseService {
           'Þingbók.pdf',
           filesToZip,
         ),
-        this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getRulingPdf(theCase),
-          'Úrskurður.pdf',
-          filesToZip,
-        ),
       )
+      if (!theCase.isCompletedWithoutRuling) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getRulingPdf(theCase),
+            'Úrskurður.pdf',
+            filesToZip,
+          ),
+        )
+      }
     }
 
     if (

@@ -1,9 +1,7 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.createTable(
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.createTable(
         'organization_field_type',
         {
           id: {
@@ -31,22 +29,32 @@ module.exports = {
             },
           },
           field_type_id: {
-            type: Sequelize.UUID,
+            type: Sequelize.STRING,
             allowNull: false,
-            references: {
-              model: 'field_type',
-              key: 'id',
-            },
           },
         },
         { transaction: t },
-      ),
-    )
+      )
+
+      await queryInterface.addConstraint('organization_field_type', {
+        fields: ['organization_id', 'field_type_id'],
+        type: 'unique',
+        name: 'unique_organization_id_field_type_id_pair',
+        transaction: t,
+      })
+    })
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('organization_field_type', { transaction: t }),
-    )
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.removeConstraint(
+        'organization_field_type',
+        'unique_organization_id_field_type_id_pair',
+        { transaction: t },
+      )
+      await queryInterface.dropTable('organization_field_type', {
+        transaction: t,
+      })
+    })
   },
 }
