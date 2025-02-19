@@ -193,7 +193,7 @@ export const ReligiousOrganizationList: FC<
                       )}
                       {Boolean(item.homeAddress) && (
                         <Text>
-                          {formatMessage(m.homeAddress)}: {item.homeAddress}
+                          {formatMessage(m.homeAddress)}:{' '}
                           {formatHomeAddress(item)}
                         </Text>
                       )}
