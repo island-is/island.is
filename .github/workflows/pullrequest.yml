@@ -224,7 +224,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   docker-build:
-    if: ${{ needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    # if: ${{ needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     needs:
       - prepare
     uses: ./.github/workflows/docker.yml
