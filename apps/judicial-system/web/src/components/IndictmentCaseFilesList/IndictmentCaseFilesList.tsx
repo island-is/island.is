@@ -265,35 +265,42 @@ const IndictmentCaseFilesList: FC<Props> = ({
             {formatMessage(strings.subpoenaTitle)}
           </Text>
           {workingCase.defendants?.map((defendant) =>
-            defendant.subpoenas?.map((subpoena) => (
-              <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
-                <PdfButton
-                  caseId={workingCase.id}
-                  title={formatMessage(strings.subpoenaButtonText, {
-                    name: defendant.name,
-                    date: formatDate(subpoena.created),
-                  })}
-                  pdfType="subpoena"
-                  elementId={[defendant.id, subpoena.id]}
-                  renderAs="row"
-                />
-                {!limitedAccess &&
-                  isSuccessfulServiceStatus(subpoena.serviceStatus) && (
-                    <PdfButton
-                      caseId={workingCase.id}
-                      title={formatMessage(
-                        strings.serviceCertificateButtonText,
-                        {
-                          name: defendant.name,
-                        },
-                      )}
-                      pdfType="serviceCertificate"
-                      elementId={[defendant.id, subpoena.id]}
-                      renderAs="row"
-                    />
-                  )}
-              </Box>
-            )),
+            defendant.subpoenas?.map((subpoena) => {
+              const subpoenaFileName = formatMessage(
+                strings.subpoenaButtonText,
+                {
+                  name: defendant.name,
+                  date: formatDate(subpoena.created),
+                },
+              )
+
+              return (
+                <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={subpoenaFileName}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id, subpoenaFileName]}
+                    renderAs="row"
+                  />
+                  {!limitedAccess &&
+                    isSuccessfulServiceStatus(subpoena.serviceStatus) && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        title={formatMessage(
+                          strings.serviceCertificateButtonText,
+                          {
+                            name: defendant.name,
+                          },
+                        )}
+                        pdfType="serviceCertificate"
+                        elementId={[defendant.id, subpoena.id]}
+                        renderAs="row"
+                      />
+                    )}
+                </Box>
+              )
+            }),
           )}
         </Box>
       )}
