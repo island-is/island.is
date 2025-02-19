@@ -16,3 +16,9 @@ export class CreateFormApplicantTypeDto {
   @Field(() => String)
   applicantTypeId!: string
 }
+
+@InputType('FormSystemCreateFormApplicantTypeInput')
+export class CreateFormApplicantTypeInput {
+  @Field(() => CreateFormApplicantTypeDto, { nullable: true })
+  createFormApplicantTypeDto?: CreateFormApplicantTypeDto
+}

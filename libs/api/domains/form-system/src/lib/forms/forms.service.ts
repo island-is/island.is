@@ -75,9 +75,8 @@ export class FormsService {
 
   async getAllForms(auth: User): Promise<FormResponse> {
     console.log('inside getAllForms')
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll()
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+    const response = await this.formsApiWithAuth(auth).formsControllerFindAll()
+    // .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
 
     if (!response || response instanceof ApolloError) {
       return {}

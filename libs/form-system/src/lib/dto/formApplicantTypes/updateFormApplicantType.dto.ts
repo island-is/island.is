@@ -13,3 +13,12 @@ export class UpdateFormApplicantTypeDto {
   @Field(() => LanguageType)
   name!: LanguageType
 }
+
+@InputType('FormSystemUpdateFormApplicantTypeInput')
+export class UpdateFormApplicantTypeInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => UpdateFormApplicantTypeDto, { nullable: true })
+  updateFormApplicantTypeDto?: UpdateFormApplicantTypeDto
+}
