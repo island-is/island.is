@@ -200,7 +200,12 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: test-everything
+        id: test-everything
         uses: ./.github/actions/test-everything
+
+      - name: Set test-everything env
+        run: |
+          echo "TEST_EVERYTHING=${{ steps.test-everything.outputs.TEST_EVERYTHING }} >> $GITHUB_ENV
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
