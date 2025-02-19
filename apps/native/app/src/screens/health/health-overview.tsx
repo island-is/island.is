@@ -170,6 +170,14 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       ) ?? []
     : []
 
+  // Make sure to list both selected organs and the comment if it exists
+  const organLimitationsIncludingComment = [
+    Array.isArray(organLimitations) ? organLimitations.join(', ') : '',
+    organDonationData?.limitations?.comment,
+  ]
+    .filter(Boolean)
+    .join(', ')
+
   useConnectivityIndicator({
     componentId,
     refetching,
@@ -571,7 +579,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                     },
                     {
                       limitations: isOrganDonorWithLimitations
-                        ? organLimitations?.join(', ')
+                        ? organLimitationsIncludingComment
                         : '',
                     },
                   )}`}
