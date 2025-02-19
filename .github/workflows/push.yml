@@ -247,7 +247,7 @@ jobs:
           CHUNKS="${{ steps.build_map.outputs.CHUNKS }}"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            IMAGES="$(echo "$CHUNKS" | jq -r 'map(fromjson.project) | join(",")')"
+            IMAGES="$(echo "$CHUNKS" | jq -r '[.[].project] | join(",")')"
             echo "IMAGES=$IMAGES" >> "$GITHUB_OUTPUT"
           fi
 
