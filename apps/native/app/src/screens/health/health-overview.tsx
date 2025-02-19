@@ -505,7 +505,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                   })}
                   value={
                     medicinePurchaseData?.levelNumber &&
-                    medicinePurchaseData?.levelPercentage
+                    medicinePurchaseData?.levelPercentage !== undefined
                       ? intl.formatMessage(
                           {
                             id: 'health.overview.levelStatusValue',
