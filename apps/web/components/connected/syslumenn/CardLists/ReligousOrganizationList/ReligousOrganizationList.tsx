@@ -17,7 +17,7 @@ import { SyslumennListCsvExport } from '@island.is/web/components'
 import {
   ConnectedComponent,
   Query,
-  ReligousOrganization,
+  ReligiousOrganization,
 } from '@island.is/web/graphql/schema'
 
 import {
@@ -25,12 +25,12 @@ import {
   prepareCsvString,
   textSearch,
 } from '../../utils'
-import { GET_RELIGOUS_ORGANIZATIONS_QUERY } from './queries'
+import { GET_RELIGIOUS_ORGANIZATIONS_QUERY } from './queries'
 import { m } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 10
 
-const formatHomeAddress = (item: ReligousOrganization) => {
+const formatHomeAddress = (item: ReligiousOrganization) => {
   if (!item.homeAddress) {
     if (item.municipality) return item.municipality
     else return ''
@@ -41,22 +41,22 @@ const formatHomeAddress = (item: ReligousOrganization) => {
   } ${item.postalCode ?? ''} ${item.municipality ?? ''}`
 }
 
-interface ReligousOrganizationListProps {
+interface ReligiousOrganizationListProps {
   slice: ConnectedComponent
 }
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-export const ReligousOrganizationList: FC<
-  React.PropsWithChildren<ReligousOrganizationListProps>
+export const ReligiousOrganizationList: FC<
+  React.PropsWithChildren<ReligiousOrganizationListProps>
 > = ({ slice }) => {
   const { formatMessage } = useIntl()
   const PAGE_SIZE = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
 
   const [listState, setListState] = useState<ListState>('loading')
   const [showCount, setShowCount] = useState(PAGE_SIZE)
-  const [religousOrganizations, setReligousOrganizations] = useState<
-    Query['getReligousOrganizations']['list']
+  const [religiousOrganizations, setReligiousOrganizations] = useState<
+    Query['getReligiousOrganizations']['list']
   >([])
 
   const [searchTerms, _setSearchTerms] = useState([] as string[])
@@ -68,10 +68,10 @@ export const ReligousOrganizationList: FC<
     setShowCount(PAGE_SIZE)
   }
 
-  useQuery<Query>(GET_RELIGOUS_ORGANIZATIONS_QUERY, {
+  useQuery<Query>(GET_RELIGIOUS_ORGANIZATIONS_QUERY, {
     onCompleted: (data) => {
-      setReligousOrganizations([
-        ...(data?.getReligousOrganizations?.list ?? []),
+      setReligiousOrganizations([
+        ...(data?.getReligiousOrganizations?.list ?? []),
       ])
       setListState('loaded')
     },
@@ -82,14 +82,14 @@ export const ReligousOrganizationList: FC<
 
   const csvStringProvider = () => {
     return new Promise<string>((resolve, reject) => {
-      if (religousOrganizations) {
+      if (religiousOrganizations) {
         const headerRow = [
           formatMessage(m.name),
           formatMessage(m.director),
           formatMessage(m.homeAddress),
         ]
         const dataRows = []
-        for (const item of religousOrganizations) {
+        for (const item of religiousOrganizations) {
           dataRows.push([
             item.name ?? '',
             item.director ?? '',
@@ -98,12 +98,12 @@ export const ReligousOrganizationList: FC<
         }
         return resolve(prepareCsvString(headerRow, dataRows))
       }
-      reject('Religous organization list data has not been loaded.')
+      reject('Religious organization list data has not been loaded.')
     })
   }
 
   // Filter
-  const filteredReligousOrganizations = religousOrganizations.filter((item) =>
+  const filteredReligiousOrganizations = religiousOrganizations.filter((item) =>
     // Filter by search string
     textSearch(searchTerms, [
       // Fields to search
@@ -138,7 +138,7 @@ export const ReligousOrganizationList: FC<
             <GridRow>
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
-                  name="ReligousOrganizationsSearchInput"
+                  name="ReligiousOrganizationsSearchInput"
                   placeholder={formatMessage(m.searchPlaceholder)}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
@@ -162,15 +162,15 @@ export const ReligousOrganizationList: FC<
           </GridContainer>
         </Box>
       )}
-      {listState === 'loaded' && filteredReligousOrganizations.length === 0 && (
+      {listState === 'loaded' && filteredReligiousOrganizations.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
           <Text variant="h3">{formatMessage(m.noResults)}</Text>
         </Box>
       )}
-      {listState === 'loaded' && filteredReligousOrganizations.length > 0 && (
+      {listState === 'loaded' && filteredReligiousOrganizations.length > 0 && (
         <Box>
           <Box paddingTop={[4, 4, 6]} paddingBottom={[4, 5, 10]}>
-            {filteredReligousOrganizations
+            {filteredReligiousOrganizations
               .slice(0, showCount)
               .map((item, index) => {
                 return (
@@ -208,10 +208,10 @@ export const ReligousOrganizationList: FC<
             marginY={3}
             textAlign="center"
           >
-            {showCount < filteredReligousOrganizations.length && (
+            {showCount < filteredReligiousOrganizations.length && (
               <Button onClick={() => setShowCount(showCount + PAGE_SIZE)}>
                 {formatMessage(m.loadMore)} (
-                {filteredReligousOrganizations.length - showCount})
+                {filteredReligiousOrganizations.length - showCount})
               </Button>
             )}
           </Box>

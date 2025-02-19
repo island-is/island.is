@@ -75,7 +75,7 @@ import {
   MortgageCertificateValidation,
   MortgageCertificate,
   BurningPermit,
-  ReligousOrganization,
+  ReligiousOrganization,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -593,15 +593,15 @@ export const mapBurningPermits = (permit: Brennuleyfi): BurningPermit => {
   }
 }
 
-export const mapReligousOrganization = (
-  religousOrganization: TrufelogOgLisskodunarfelogModel,
-): ReligousOrganization => {
+export const mapReligiousOrganization = (
+  religiousOrganization: TrufelogOgLisskodunarfelogModel,
+): ReligiousOrganization => {
   return {
-    director: religousOrganization.forstodumadur,
-    homeAddress: religousOrganization.heimili,
-    name: religousOrganization.nafnFelags ?? '',
-    postalCode: religousOrganization.postnumer,
-    municipality: religousOrganization.sveitarfelag,
+    director: religiousOrganization.forstodumadur,
+    homeAddress: religiousOrganization.heimili,
+    name: religiousOrganization.nafnFelags ?? '',
+    postalCode: religiousOrganization.postnumer,
+    municipality: religiousOrganization.sveitarfelag,
   }
 }
 

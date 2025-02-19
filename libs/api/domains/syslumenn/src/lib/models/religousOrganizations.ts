@@ -2,7 +2,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-class ReligousOrganization {
+class ReligiousOrganization {
   @Field(() => String, { nullable: true })
   director?: string | null
 
@@ -20,7 +20,7 @@ class ReligousOrganization {
 }
 
 @ObjectType()
-export class ReligousOrganizationsResponse {
-  @CacheField(() => [ReligousOrganization])
-  list!: ReligousOrganization[]
+export class ReligiousOrganizationsResponse {
+  @CacheField(() => [ReligiousOrganization])
+  list!: ReligiousOrganization[]
 }

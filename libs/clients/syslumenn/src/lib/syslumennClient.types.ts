@@ -421,7 +421,7 @@ export interface BurningPermit {
   size?: number | null
 }
 
-export interface ReligousOrganization {
+export interface ReligiousOrganization {
   director?: string | null
   name: string
   homeAddress?: string | null
