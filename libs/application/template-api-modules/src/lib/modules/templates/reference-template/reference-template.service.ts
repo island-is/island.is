@@ -62,27 +62,6 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     )
   }
 
-  async notifyUser({ application, auth }: TemplateApiModuleActionProps) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    
-    const applicantName = getValueViaPath(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-    ) as string
-
-    await this.notificationsService.sendNotification({
-      type: NotificationType.ReferenceTemplate,
-      messageParties: {
-        recipient: auth.nationalId,
-        sender: auth.nationalId,
-      },
-      args: {
-        applicationId: application.id,
-        applicantName,
-      },
-    })
-  }
-
   async createApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
