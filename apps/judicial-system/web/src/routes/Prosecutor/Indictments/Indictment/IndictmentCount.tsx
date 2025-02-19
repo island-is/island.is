@@ -34,6 +34,7 @@ import {
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
@@ -121,10 +122,10 @@ const getLawsBroken = (
   offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
 ) => {
-  const hasOffenses = !offenses || offenses.length === 0
+  const hasOffenses = isNonEmptyArray(offenses)
   const hasOnlyOtherOffense = offenses?.length === 1 && offenses[0] === IndictmentCountOffense.OTHER
 
-  if (hasOffenses || hasOnlyOtherOffense) {
+  if (!hasOffenses || hasOnlyOtherOffense) {
     return []
   }
 
@@ -256,7 +257,7 @@ export const IndictmentCount: FC<Props> = ({
       })),
     [lawTag, indictmentCount.lawsBroken],
   )
-  // TODO
+
   const showLegalArticleSelection = indictmentCount.offenses?.some(({offense}) => offense !== IndictmentCountOffense.OTHER)
 
   const handleIndictmentCountChanges = (
