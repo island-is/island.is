@@ -12,7 +12,7 @@ runs:
       shell: bash
       run: |
         if [[ "${{ github.event_name }}" == "pull_request" && "${{ contains(github.event.pull_request.labels.*.name, 'test everything') }}" == "true" ]]; then
-          echo "TEST_EVERYTHING=true" >> "$GITHUB_OUTPUT"
+          echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
         else
-          echo "TEST_EVERYTHING=false" >> "$GITHUB_OUTPUT"
+          echo "TEST_EVERYTHING=false" >> "$GITHUB_ENV"
         fi
