@@ -3,6 +3,7 @@ import {
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -121,6 +122,12 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                 arg: t.id?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                isExpired === undefined
+                  ? ExpiryStatus.UNKNOWN
+                  : isExpired
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.ACTIVE,
               expired: isExpired,
               expireDate: t.dateValidTo?.toISOString() ?? undefined,
               displayTag:
