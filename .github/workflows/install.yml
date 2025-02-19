@@ -165,7 +165,7 @@ jobs:
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS=$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       - name: License audit Node modules
