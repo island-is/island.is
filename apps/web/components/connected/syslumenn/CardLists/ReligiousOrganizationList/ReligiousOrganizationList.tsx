@@ -109,7 +109,7 @@ export const ReligiousOrganizationList: FC<
       // Fields to search
       item.name ?? '',
       item.director ?? '',
-      item.homeAddress ?? '',
+      formatHomeAddress(item),
     ]),
   )
 
