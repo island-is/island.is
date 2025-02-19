@@ -263,6 +263,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
+      - docker-build
     runs-on: arc-runners
     timeout-minutes: 30
     env:
