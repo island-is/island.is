@@ -7,9 +7,14 @@ import { DocumentV2 } from '../../../graphql/types/schema'
 interface ShareFileProps {
   document: DocumentV2
   pdfUrl?: string
+  fallbackUrl?: string | null
 }
 
-export const shareFile = async ({ document, pdfUrl }: ShareFileProps) => {
+export const shareFile = async ({
+  document,
+  pdfUrl,
+  fallbackUrl,
+}: ShareFileProps) => {
   if (!document || !document.subject || !document.sender) {
     return
   }
@@ -24,7 +29,7 @@ export const shareFile = async ({ document, pdfUrl }: ShareFileProps) => {
       subject: document.subject,
       message: `${document.sender.name} \n ${document.subject}`,
       type: pdfUrl ? 'application/pdf' : undefined,
-      url: pdfUrl ? `file://${pdfUrl}` : document.downloadUrl!,
+      url: pdfUrl ? `file://${pdfUrl}` : fallbackUrl ?? document.downloadUrl!,
     })
   } catch (error) {
     // noop
