@@ -169,23 +169,4 @@ export class AuthService {
       throw error
     }
   }
-
-  async logLogin(
-    eventType: EventType,
-    nationalId: string,
-    userRole?: UserRole,
-  ) {
-    await fetch(`${this.config.backendUrl}/api/eventLog/event`, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventType,
-        nationalId,
-        userRole,
-      }),
-    })
-  }
 }
