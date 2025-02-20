@@ -63,13 +63,12 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
           name="search query"
           placeholder={props.searchPlaceholder}
           backgroundColor="blue"
-          size="md"
+          size="xs"
           aria-label="Search input"
           icon={{
             name: 'search',
             type: 'outline',
           }}
-          className={styles.searchBox}
         />
       </Box>
     )
