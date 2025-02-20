@@ -45,12 +45,10 @@ export const estateWithoutAssets = buildSection({
         }),
         buildDescriptionField({
           id: 'spaceNoAssets',
-          title: '',
           space: 'containerGutter',
         }),
         buildDescriptionField({
           id: 'helper',
-          title: '',
           condition: (answers) =>
             getValueViaPath(
               answers,

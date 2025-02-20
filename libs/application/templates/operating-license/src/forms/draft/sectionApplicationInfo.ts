@@ -3,9 +3,11 @@ import {
   buildRadioField,
   buildCheckboxField,
   buildDescriptionField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { NO, ResturantCategories, YES } from '../../lib/constants'
+import { ResturantCategories } from '../../lib/constants'
 import {
   APPLICATION_TYPES,
   ResturantTypes,
@@ -73,7 +75,6 @@ export const applicationInfo = buildMultiField({
     //fake field to trigger rerender on category switch
     buildDescriptionField({
       id: 'fake_helper_field',
-      title: '',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
           APPLICATION_TYPES.HOTEL &&

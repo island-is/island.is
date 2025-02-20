@@ -19,7 +19,6 @@ export const studiesAccidentSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'studiesAccident.type',
-          title: '',
           options: [
             {
               value: StudiesAccidentTypeEnum.INTERNSHIP,

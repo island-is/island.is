@@ -6,7 +6,6 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

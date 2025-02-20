@@ -8,7 +8,6 @@ import { confirmation } from '../../lib/messages/confirmation'
 
 export const EnergyFundsForm: Form = buildForm({
   id: 'EnergyFundsFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

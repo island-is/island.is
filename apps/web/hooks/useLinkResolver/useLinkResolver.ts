@@ -219,14 +219,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  adgerdirpage: {
-    is: '/covid-adgerdir/[slug]',
-    en: '/en/covid-operations/[slug]',
-  },
-  adgerdirfrontpage: {
-    is: '/covid-adgerdir',
-    en: '/en/covid-operations',
-  },
   regulation: {
     is: '/reglugerdir/nr/[number]',
     en: '',
