@@ -1,31 +1,28 @@
 query GetMedicinePrescriptions($locale: String) {
   healthDirectoratePrescriptions(locale: $locale) {
     prescriptions {
+      id
+      name
+      type
+      form
+      url
+      quantity
       prescriberName
       issueDate
       expiryDate
-      productId
-      productName
-      productType
-      productForm
-      productUrl
-      productStrength
-      productQuantity
       category
       dosageInstructions
       indication
-      totalPrescribedAmountDisplay
-      isRegiment
+      totalPrescribedAmount
       isRenewable
       renewalBlockedReason
       renewalStatus
-      isFullyDispensed
-      amountRemainingDisplay
+      amountRemaining
       dispensations {
         id
-        dispensingAgentName
-        dispensationDate
-        dispensedItemsCount
+        agentName
+        date
+        count
       }
     }
   }
