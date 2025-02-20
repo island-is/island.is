@@ -89,87 +89,6 @@ export class PassportMapper implements GenericLicenseMapper {
         })
         .flat()
 
-    const mockChildren: Array<Payload> = [
-      ...this.mapChildDocument(
-        {
-          childNationalId: '1111111111',
-          secondParent: '9999999999',
-          secondParentName: 'Bína ÞÍ Forsjá',
-          childName: 'Stubbur ÞÍ Bínuson',
-          passports: [
-            {
-              number: '1111111',
-              type: 'P',
-              subType: 'A',
-              verboseType: 'Vegabréf: Almennt',
-              status: 'ISSUED',
-              issuingDate: new Date('2016-04-22T00:00:00'),
-              expirationDate: new Date('2026-04-22T00:00:00'),
-              mrzFirstName: 'Stubbur ÞÍ',
-              mrzLastName: 'Bínuson',
-              displayFirstName: 'Stjubbur THII',
-              displayLastName: 'Biinuson',
-            },
-          ],
-          citizenship: {
-            kodi: '1',
-            land: 'IS',
-          },
-        },
-        formatMessage,
-      ),
-      ...this.mapChildDocument(
-        {
-          childNationalId: '2222222222',
-          secondParent: '8888888888',
-          secondParentName: 'Baddi ÞÍ Forsjá',
-          childName: 'Stuttla ÞÍ Baddadóttir',
-          passports: [
-            {
-              number: '2222222',
-              type: 'P',
-              subType: 'A',
-              verboseType: 'Vegabréf: Almennt',
-              status: 'ISSUED',
-              issuingDate: new Date('2017-04-22T00:00:00'),
-              expirationDate: new Date('2027-04-22T00:00:00'),
-              displayFirstName: 'Stjuttla THII',
-              displayLastName: 'Bjaddadootir',
-              mrzFirstName: 'Stuttla ÞÍ',
-              mrzLastName: 'Baddadótir',
-            },
-          ],
-          citizenship: {
-            kodi: '1',
-            land: 'IS',
-          },
-        },
-        formatMessage,
-      ),
-      ...this.mapChildDocument(
-        {
-          childNationalId: '3333333333',
-          secondParent: '8888888888',
-          secondParentName: 'Baddi ÞÍ Forsjá',
-          childName: 'Lægða ÞÍ Baddadóttir',
-          passports: [],
-          citizenship: {
-            kodi: '1',
-            land: 'IS',
-          },
-        },
-        formatMessage,
-      ),
-    ]
-    /* */
-    mappedLicenses.push(
-      ...mockChildren.map((c) => ({
-        licenseName: formatMessage(m.passport),
-        type: 'child' as const,
-        payload: c,
-      })),
-    )
-
     if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
       mappedLicenses.push(emptyPassport)
     }
@@ -210,8 +129,8 @@ export class PassportMapper implements GenericLicenseMapper {
     formatMessage: FormatMessage,
     licenseName?: string,
   ): Payload {
-    const isExpired = document.expiryStatus === 'EXPIRED'
-    const isLost = document.expiryStatus === 'LOST'
+    const isExpired = document.expiryStatus?.toLowerCase() === 'expired'
+    const isLost = document.expiryStatus?.toLowerCase() === 'lost'
     const isExpiring = document.expiresWithinNoticeTime
     const isInvalid = document.status
       ? document.status.toLowerCase() === 'invalid'
@@ -225,7 +144,7 @@ export class PassportMapper implements GenericLicenseMapper {
             arg: formatMessage(m.sixMonths),
           })
         : formatMessage(m.valid),
-      color: isInvalid || isExpiring ? 'red' : 'blue',
+      color: isInvalid || isExpired ? 'red' : 'blue',
       icon: isInvalid
         ? GenericUserLicenseDataFieldTagType.closeCircle
         : GenericUserLicenseDataFieldTagType.checkmarkCircle,
