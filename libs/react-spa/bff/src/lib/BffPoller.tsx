@@ -48,10 +48,7 @@ export const BffPoller = ({
   const { postMessage } = useBffBroadcaster()
   const bffBaseUrl = bffUrlGenerator()
 
-  const url = useMemo(
-    () => bffUrlGenerator('/user', { refresh: 'true' }),
-    [bffUrlGenerator],
-  )
+  const url = useMemo(() => bffUrlGenerator('/user'), [bffUrlGenerator])
 
   const fetchUser = useCallback(async () => {
     const res = await fetch(url, {
