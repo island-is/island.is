@@ -4,7 +4,7 @@ import { ControlContext } from '../../../../context/ControlContext'
 import {
   FormSystemFormCertificationType,
   Maybe,
-  FormSystemFormCertificationTypeDto,
+  FormSystemCertificationType,
 } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
@@ -23,10 +23,10 @@ export const Premises = () => {
   } = useContext(ControlContext)
   const { certificationTypes } = control.form
   const [formCertificationTypes, setFormCertificationTypes] = useState<
-    FormSystemFormCertificationTypeDto[]
+    FormSystemCertificationType[]
   >(
     (certificationTypes ?? []).filter(
-      (type): type is FormSystemFormCertificationTypeDto => type !== null,
+      (type): type is FormSystemCertificationType => type !== null,
     ),
   )
   const [createCertification] = useMutation(CREATE_CERTIFICATION)

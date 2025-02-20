@@ -13,7 +13,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../lib/paths'
-import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { useMutation, useQuery } from '@apollo/client'
@@ -119,7 +118,8 @@ export const TableRow = ({
           <ColumnText text={org ?? ''} />
         </Column>
         <Column span="1/12">
-          <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} />
+          <ColumnText text="einhver staða" />
+          {/* <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} /> */}
         </Column>
         <Column span="1/12">
           <Box display="flex" justifyContent="center" alignItems="center">

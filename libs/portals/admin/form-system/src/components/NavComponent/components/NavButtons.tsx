@@ -12,7 +12,8 @@ import {
   DELETE_SCREEN,
   DELETE_SECTION,
 } from '@island.is/form-system/graphql'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system-dataTypes'
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)

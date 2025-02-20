@@ -5,7 +5,8 @@ import { useContext } from 'react'
 import { baseSettingsStep } from '../../../../lib/utils/getBaseSettingsSection'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system-enums'
 
 export const NavbarTab = () => {
   const { control, controlDispatch, inSettings, setInSettings } =

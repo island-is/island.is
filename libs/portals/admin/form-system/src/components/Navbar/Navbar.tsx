@@ -30,7 +30,8 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system-enums'
 
 type DndAction =
   | 'SECTION_OVER_SECTION'

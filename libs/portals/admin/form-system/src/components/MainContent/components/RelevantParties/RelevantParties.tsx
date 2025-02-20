@@ -7,10 +7,11 @@ import {
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { FormSystemFormApplicant } from '@island.is/api/schema'
-import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
+import { FormSystemFormApplicantType } from '@island.is/api/schema'
+import { m } from '@island.is/form-system/ui'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { FormApplicantTypes } from './components/FormApplicantTypes'
+import { ApplicantTypesEnum } from '@island.is/form-system-dataTypes'
 
 const applicantTypeGroups = {
   individual: [ApplicantTypesEnum.INDIVIDUAL],
@@ -35,10 +36,11 @@ export const RelevantParties = () => {
   const { formatMessage } = useIntl()
   const { applicantTypes: applicants, id: formId } = control.form
   const [formApplicants, setFormApplicants] = useState<
-    FormSystemFormApplicant[]
+    FormSystemFormApplicantType[]
   >(
     applicants?.filter(
-      (applicant): applicant is FormSystemFormApplicant => applicant !== null,
+      (applicant): applicant is FormSystemFormApplicantType =>
+        applicant !== null,
     ) ?? [],
   )
 
@@ -202,7 +204,8 @@ export const RelevantParties = () => {
             return (
               <Checkbox
                 key={index}
-                label={applicant?.description?.is}
+                // label={applicant?.description?.is}
+                label="bara eitthvað"
                 checked={formApplicants.some(
                   (a) => a.applicantTypeId === applicant?.id,
                 )}

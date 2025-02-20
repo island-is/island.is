@@ -16,16 +16,16 @@ import {
   List,
   HomestayOverview,
   m,
-  FieldTypesEnum,
 } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
+import { FieldTypesEnum } from '@island.is/form-system-dataTypes'
 
 interface Props {
   data: FormSystemField
 }
 
 export const Preview = ({ data }: Props) => {
-  const type = data.fieldType as unknown as FieldTypesEnum
+  const type = data.fieldType as unknown
   const { formatMessage } = useIntl()
   return (
     <Box padding={2} background="blue100">
@@ -50,7 +50,7 @@ export const Preview = ({ data }: Props) => {
         </Box>
       )}
       {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
-      {type === FieldTypesEnum.DOCUMENT && <FileUpload item={data} />}
+      {type === FieldTypesEnum.FILE && <FileUpload item={data} />}
       {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
       {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
       {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}
