@@ -30,13 +30,13 @@ jobs:
             include: [
               [
                 $chunks | map({
-                  includes: . | split(","),
-                  excludes: []
+                  includes: "\(. | split(","))",
+                  excludes: "\([])"
                 }),
                 [{
-                  includes: [],
-                  excludes: $chunks | map(split(",")) | flatten,
-                  ignores: $ignores_raw | split(",")
+                  includes: "\([])",
+                  excludes: "\($chunks | map(split(",")) | flatten)",
+                  ignores: "\($ignores_raw | split(","))"
                 }]
               ] | flatten(1)
             ]
@@ -53,8 +53,8 @@ jobs:
       matrix: ${{ fromJson(needs.language-split.outputs.matrix) }}
     steps:
       - env:
-          includes: ${{ toJson(matrix.includes) }}
-          excludes: ${{ toJson(matrix.excludes) }}
+          includes: ${{ matrix.includes }}
+          excludes: ${{ matrix.excludes }}
           matrix: ${{ toJson(matrix) }}
           outputs: ${{ toJson(needs.language-split.outputs) }}
           # matrix: ${{ needs.language-split.outputs.matrix }}
@@ -70,9 +70,9 @@ jobs:
           fetch-depth: 0
 
       - name: Set env (includes)
-        if: ${{ toJson(matrix.excludes) == '[]' }}
+        if: ${{ matrix.excludes == '[]' }}
         env:
-          includes: ${{ toJson(matrix.includes) }}
+          includes: ${{ matrix.includes }}
         run: |
           set -x
           jq -nre --argjson includes "$includes" '
@@ -82,10 +82,10 @@ jobs:
           ' | while read -r line; do echo "$line" >> "$GITHUB_ENV"; done
 
       - name: Set env (includes)
-        if: ${{ toJson(matrix.excludes) != '[]' }}
+        if: ${{ matrix.excludes != '[]' }}
         env:
-          excludes: ${{ toJson(matrix.excludes) }}
-          ignores: ${{ toJson(matrix.ignores) }}
+          excludes: ${{ matrix.excludes }}
+          ignores: ${{ matrix.ignores }}
         run: |
           set -x
           jq -nre --argjson excludes "$excludes" --argjson ignores "$ignores" '
