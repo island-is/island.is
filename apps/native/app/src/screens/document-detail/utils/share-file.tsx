@@ -1,4 +1,5 @@
 import Share from 'react-native-share'
+import RNFS from 'react-native-fs'
 
 import { isAndroid } from '../../../utils/devices'
 import { authStore } from '../../../stores/auth-store'
@@ -6,21 +7,37 @@ import { DocumentV2 } from '../../../graphql/types/schema'
 
 interface ShareFileProps {
   document: DocumentV2
+  type: 'pdf' | 'html' | 'url'
   pdfUrl?: string
-  fallbackUrl?: string | null
+  content?: string | null
 }
 
 export const shareFile = async ({
   document,
   pdfUrl,
-  fallbackUrl,
+  type,
+  content,
 }: ShareFileProps) => {
   if (!document || !document.subject || !document.sender) {
     return
   }
+  const isHtml = type === 'html'
+  let htmlUrl: string | undefined
 
   if (isAndroid) {
     authStore.setState({ noLockScreenUntilNextAppStateActive: true })
+  }
+
+  if (isHtml) {
+    const utf8Prefix = '<meta charset="UTF-8">'
+    const formattedHtml = utf8Prefix + content
+    try {
+      const path = `${RNFS.TemporaryDirectoryPath}/${document.subject}.html`
+      await RNFS.writeFile(path, formattedHtml, 'utf8')
+      htmlUrl = path
+    } catch (error) {
+      // noop
+    }
   }
 
   try {
@@ -28,8 +45,12 @@ export const shareFile = async ({
       title: document.subject,
       subject: document.subject,
       message: `${document.sender.name} \n ${document.subject}`,
-      type: pdfUrl ? 'application/pdf' : undefined,
-      url: pdfUrl ? `file://${pdfUrl}` : fallbackUrl ?? document.downloadUrl!,
+      type: pdfUrl ? 'application/pdf' : isHtml ? 'text/html' : undefined,
+      url: pdfUrl
+        ? `file://${pdfUrl}`
+        : isHtml
+        ? `file://${htmlUrl}`
+        : content ?? document.downloadUrl!,
     })
   } catch (error) {
     // noop

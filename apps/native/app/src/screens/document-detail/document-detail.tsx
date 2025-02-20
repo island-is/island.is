@@ -357,8 +357,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const onShare = () =>
     shareFile({
       document: Document as DocumentV2,
+      type: hasPdf ? 'pdf' : isHtml ? 'html' : 'url',
       pdfUrl,
-      fallbackUrl: !hasPdf && !isHtml ? Document.content?.value : undefined,
+      content: !hasPdf ? Document.content?.value : undefined,
     })
 
   useConnectivityIndicator({
