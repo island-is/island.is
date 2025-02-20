@@ -220,6 +220,9 @@ export class HealthDirectorateService {
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
           totalPrescribedAmount: item.totalPrescribedAmountDisplay,
+          category: item.category
+            ? mapPrescriptionCategory(item.category)
+            : undefined,
           isRenewable: item.isRenewable,
           renewalBlockedReason: item.renewalBlockedReason
             ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)

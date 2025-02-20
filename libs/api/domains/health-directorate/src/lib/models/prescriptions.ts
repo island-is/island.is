@@ -27,6 +27,9 @@ export class Prescription {
   quantity?: number
 
   @Field({ nullable: true })
+  category?: PrescribedItemCategoryEnum
+
+  @Field({ nullable: true })
   prescriberName?: string
 
   @Field(() => Date)
