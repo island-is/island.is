@@ -548,8 +548,8 @@ export class InternalCaseService {
           required: true,
         },
       ],
+      where: { state: { [Op.eq]: CaseState.RECEIVED } },
       order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
-      where: { state: { [Op.is]: CaseState.RECEIVED } },
     })
   }
 
@@ -691,6 +691,30 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update indictment case ${theCase.id} with assigned roles`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentArraignmentDateToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
+    return this.courtService
+      .updateIndictmentCaseWithArraignmentDate(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        arraignmentDate,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with the arraignment date`,
           { reason },
         )
 

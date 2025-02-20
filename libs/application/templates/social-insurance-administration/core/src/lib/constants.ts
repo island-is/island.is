@@ -25,6 +25,7 @@ export enum States {
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
 
+  DISMISSED = 'dismissed', // VÍSAÐ FRÁ
   REJECTED = 'rejected', // SYNJAD = 1281
   APPROVED = 'approved', // AFGREIDD = 563
   COMPLETED = 'completed',
@@ -34,7 +35,7 @@ export enum OAPEvents {
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
   INREVIEW = 'INREVIEW',
   PENDING = 'PENDING',
-  DISMISSED = 'DISMISSED',
+  DISMISS = 'DISMISS',
 }
 
 export type Events =
@@ -44,6 +45,7 @@ export type Events =
   | { type: DefaultEvents.REJECT }
   | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
   | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
+  | { type: OAPEvents.DISMISS } // EX: TR's employee dismisses the application
   | { type: DefaultEvents.ABORT }
 
 export const FILE_SIZE_LIMIT = 5000000 // 5MB
