@@ -72,24 +72,25 @@ const MedicinePrescriptions = () => {
 
   const tagLabels = [
     {
-      label: 'Öll lyf',
+      label: formatMessage(messages.allMedicine),
       id: HealthDirectoratePrescribedItemCategory.Owner,
     },
     {
-      label: 'Föst lyf',
+      label: formatMessage(messages.regularMedicine),
       id: HealthDirectoratePrescribedItemCategory.Regular,
     },
     {
-      label: 'Tímabundin lyf',
+      label: formatMessage(messages.temporaryMedicine),
       id: HealthDirectoratePrescribedItemCategory.Pn,
     },
     {
-      label: 'Lyfjakúrar',
+      label: formatMessage(messages.regimenMedicine),
       id: HealthDirectoratePrescribedItemCategory.Regimen,
     },
   ]
 
   const filteredData = filterList(activeTag)
+
   return (
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptions)}

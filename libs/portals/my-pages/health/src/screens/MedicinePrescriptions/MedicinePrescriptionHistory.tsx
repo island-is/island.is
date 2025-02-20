@@ -42,6 +42,7 @@ const MedicinePrescriptionHistory = () => {
           medicine: formatMessage(messages.medicineTitle),
           usedFor: formatMessage(messages.usedFor),
           lastDispensed: formatMessage(messages.lastDispensed),
+          processCount: formatMessage(messages.process),
         }}
         expandable
         align="left"

@@ -22,6 +22,7 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
+import { MedicineHistory } from './models/medicineHistory.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -213,7 +214,7 @@ export class HealthDirectorateService {
           type: item.productType,
           form: item.productForm,
           url: item.productUrl,
-          quantity: item.productQuantity,
+          quantity: item.productQuantity?.toString(),
           prescriberName: item.prescriberName,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
@@ -258,7 +259,8 @@ export class HealthDirectorateService {
   async getMedicineHistory(
     auth: Auth,
     locale: Locale,
-  ): Promise<Prescriptions | null> {
+  ): Promise<MedicineHistory | null> {
+    const data = await this.healthApi.getGroupedDispensations(auth, locale)
     return null
   }
 }

@@ -1249,7 +1249,6 @@ export const messages = defineMessages({
     id: 'sp.health:first-dispensations',
     defaultMessage: '{arg}. afgreiðsla',
   },
-
   publicationDate: {
     id: 'sp.health:publication-date',
     defaultMessage: 'Útgáfudagur',

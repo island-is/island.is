@@ -1,4 +1,4 @@
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
   PrescribedItemCategoryEnum,
@@ -23,8 +23,8 @@ export class Prescription {
   @Field({ nullable: true })
   url?: string
 
-  @Field(() => Int, { nullable: true })
-  quantity?: number
+  @Field({ nullable: true })
+  quantity?: string
 
   @Field(() => PrescribedItemCategoryEnum, { nullable: true })
   category?: PrescribedItemCategoryEnum
