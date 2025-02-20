@@ -49,13 +49,6 @@ export const multiValueLabel = style(
   'multiValueLabel',
 )
 
-globalStyle(
-  `${wrapper} .island-select__value-container island-select__value-container--is-multi island-select__value-container--has-value`,
-  {
-    maxWidth: '100%',
-  },
-)
-
 globalStyle(`${wrapper} .island-select__multi-value`, {
   borderRadius: theme.border.radius.large,
 })
