@@ -99,19 +99,19 @@ const MedicinePrescriptions = () => {
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
     >
-      <Box>
-        <Box display="flex" flexDirection="row" flexWrap={'wrap'}>
-          {tagLabels.map((item) => (
-            <Box marginRight={1} marginBottom={[1, 1, 1, 2, 2]}>
-              <Tag
-                onClick={() => filterList(item.id)}
-                children={item.label}
-                active={item.id === activeTag}
-              />
-            </Box>
-          ))}
-        </Box>
-        {!loading && !error && filteredData?.length > 0 && (
+      {!loading && !error && filteredData?.length > 0 && (
+        <Box>
+          <Box display="flex" flexDirection="row" flexWrap={'wrap'}>
+            {tagLabels.map((item) => (
+              <Box marginRight={1} marginBottom={[1, 1, 1, 2, 2]}>
+                <Tag
+                  onClick={() => filterList(item.id)}
+                  children={item.label}
+                  active={item.id === activeTag}
+                />
+              </Box>
+            ))}
+          </Box>
           <SortableTable
             title=""
             labels={{
@@ -128,10 +128,10 @@ const MedicinePrescriptions = () => {
             ellipsisLength={stringMaxLength}
             items={
               filteredData.map((item, i) => ({
-                id: item?.productId ?? `${i}`,
-                medicine: item?.productName ?? '',
+                id: item?.id ?? `${i}`,
+                medicine: item?.name ?? '',
                 usedFor: item?.indication ?? '',
-                process: item?.amountRemainingDisplay ?? '',
+                process: item?.amountRemaining ?? '',
                 validTo: formatDate(item?.expiryDate) ?? '',
                 status: undefined,
                 lastNode: item?.isRenewable
@@ -159,15 +159,15 @@ const MedicinePrescriptions = () => {
                         data={[
                           {
                             title: prescriptionDetail.medicine,
-                            value: item?.productName ?? '',
+                            value: item?.name ?? '',
                           },
                           {
                             title: prescriptionDetail.type,
-                            value: item?.productType ?? '',
+                            value: item?.type ?? '',
                           },
                           {
                             title: prescriptionDetail.form,
-                            value: item?.productForm ?? '',
+                            value: item?.form ?? '',
                           },
                           {
                             title: prescriptionDetail.usedFor,
@@ -176,7 +176,7 @@ const MedicinePrescriptions = () => {
 
                           {
                             title: prescriptionDetail.prescribedAmount,
-                            value: item?.totalPrescribedAmountDisplay ?? '',
+                            value: item?.totalPrescribedAmount ?? '',
                           },
                           {
                             title: prescriptionDetail.usage,
@@ -207,28 +207,22 @@ const MedicinePrescriptions = () => {
                           backgroundColor="blue"
                           label={formatMessage(messages.dispenseHistory)}
                           data={item.dispensations.map((dispensation, di) => ({
-                            date: formatDate(dispensation?.dispensationDate),
+                            date: formatDate(dispensation?.date),
                             icon: (
                               <Icon
                                 icon={
-                                  dispensation?.dispensationDate
-                                    ? 'checkmark'
-                                    : 'remove'
+                                  dispensation?.date ? 'checkmark' : 'remove'
                                 }
                                 size="medium"
                                 color={
-                                  dispensation?.dispensationDate
-                                    ? 'mint600'
-                                    : 'dark300'
+                                  dispensation?.date ? 'mint600' : 'dark300'
                                 }
                                 type="outline"
                               />
                             ),
                             number: (di + 1).toString() ?? '',
-                            pharmacy: dispensation?.dispensingAgentName ?? '',
-                            quantity:
-                              dispensation?.dispensedItemsCount.toString() ??
-                              '',
+                            pharmacy: dispensation?.agentName ?? '',
+                            quantity: dispensation?.count.toString() ?? '',
                           }))}
                         />
                       )}
@@ -239,8 +233,8 @@ const MedicinePrescriptions = () => {
               })) ?? []
             }
           />
-        )}
-      </Box>
+        </Box>
+      )}
 
       {activePrescription && (
         <RenewPrescriptionModal
