@@ -674,6 +674,7 @@ export const is = {
     'Greiðsluþrep {level}, þú greiðir {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+  'health.overview.prescriptions': 'Lyfjaávísanir',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',
@@ -704,4 +705,11 @@ export const is = {
     'Engin líffæri má nota til ígræðslu.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptions.screenTitle': 'Lyfjaávísanir',
+  'health.prescriptions.title': 'Lyfjaávísanir',
+  'health.prescriptions.description':
+    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+  'health.prescriptions.drugCertificates': 'Lyfjaskírteini',
 }

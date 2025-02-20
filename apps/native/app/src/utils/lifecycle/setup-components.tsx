@@ -28,6 +28,7 @@ import { PasskeyScreen } from '../../screens/passkey/passkey'
 import { UpdateAppScreen } from '../../screens/update-app/update-app'
 import { HealthOverviewScreen } from '../../screens/health/health-overview'
 import { VaccinationsScreen } from '../../screens/vaccinations/vaccinations'
+import { PrescriptionsScreen } from '../../screens/prescriptions/prescriptions'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
@@ -119,6 +120,7 @@ export function registerAllComponents() {
     ApplicationsIncompleteScreen,
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
+  registerComponent(CR.PrescriptionsScreen, PrescriptionsScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

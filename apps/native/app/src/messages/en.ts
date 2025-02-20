@@ -674,6 +674,7 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.prescriptions': 'Lyfjaávísanir',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -704,4 +705,11 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptions.screenTitle': 'Lyfjaávísanir',
+  'health.prescriptions.title': 'Lyfjaávísanir',
+  'health.prescriptions.description':
+    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+  'health.prescriptions.drugCertificates': 'Lyfjaskírteini',
 }
