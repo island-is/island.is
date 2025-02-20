@@ -151,7 +151,11 @@ export class FileController {
     )
   }
 
-  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
+  @Get([
+    'indictment',
+    'indictment/:fileName',
+    'mergedCase/:mergedCaseId/indictment',
+  ])
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
     @Param('id') id: string,

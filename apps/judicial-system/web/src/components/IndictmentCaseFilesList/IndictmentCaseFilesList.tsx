@@ -184,6 +184,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               connectedCaseParentId={connectedCaseParentId}
               title={formatMessage(caseFiles.indictmentTitle)}
               pdfType="indictment"
+              elementId="Ákæra"
               renderAs="row"
             />
           </Box>
