@@ -167,8 +167,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
   const permissions = useFilePermissions(workingCase, user)
+  const noFilesToShow = Object.values(filteredFiles).every(
+    (f) => f.length === 0,
+  )
 
-  return (
+  return noFilesToShow ? null : (
     <>
       {displayHeading && (
         <SectionHeading title={formatMessage(strings.title)} />
@@ -304,6 +307,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
           )}
         </Box>
       )}
+      <FileSection
+        title={formatMessage(strings.sentToPrisonAdmin)}
+        files={filteredFiles.sentToPrisonAdminFiles}
+        onOpenFile={onOpen}
+        shouldRender={permissions.canViewSentToPrisonAdminFiles}
+      />
       {filteredFiles.uploadedCaseFiles &&
         filteredFiles.uploadedCaseFiles.length > 0 && (
           <Box marginBottom={5}>
@@ -316,12 +325,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
             />
           </Box>
         )}
-      <FileSection
-        title={formatMessage(strings.sentToPrisonAdmin)}
-        files={filteredFiles.sentToPrisonAdminFiles}
-        onOpenFile={onOpen}
-        shouldRender={permissions.canViewSentToPrisonAdminFiles}
-      />
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
