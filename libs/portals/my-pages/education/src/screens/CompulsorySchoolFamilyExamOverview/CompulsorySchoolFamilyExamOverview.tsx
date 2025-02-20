@@ -1,10 +1,3 @@
-import {
-  ActionCard,
-  CardLoader,
-  IntroWrapper,
-  m,
-} from '@island.is/service-portal/core'
-import { useFamilySchoolCareerQueryQuery } from './CompulsorySchoolFamilyExamOverview.generated'
 import { EducationCompulsorySchoolStudentCareer } from '@island.is/api/schema'
 import { compulsorySchoolMessages } from '../../lib/messages'
 import {
@@ -16,6 +9,13 @@ import { Problem } from '@island.is/react-spa/shared'
 import { Stack } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
+import {
+  ActionCard,
+  CardLoader,
+  IntroWrapper,
+  m,
+} from '@island.is/portals/my-pages/core'
+import { useFamilySchoolCareerQuery } from './CompulsorySchoolFamilyExamOverview.generated'
 
 const generateActionCard = (
   name: string,
@@ -49,7 +49,7 @@ export const CompulsorySchoolFamilyExamOverview = () => {
   useNamespaces('sp.education-student-assessment')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useFamilySchoolCareerQueryQuery()
+  const { data, loading, error } = useFamilySchoolCareerQuery()
 
   const userCareer: EducationCompulsorySchoolStudentCareer | null =
     data?.userFamilyExamResults.userCareer ?? null

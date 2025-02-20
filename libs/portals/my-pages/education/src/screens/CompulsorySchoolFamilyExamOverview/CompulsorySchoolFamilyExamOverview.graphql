@@ -1,4 +1,4 @@
-query familySchoolCareerQuery {
+query familySchoolCareer {
   userFamilyExamResults {
     userCareer {
       nationalId

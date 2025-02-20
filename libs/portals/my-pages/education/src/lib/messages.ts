@@ -1,9 +1,33 @@
 import { defineMessages } from 'react-intl'
 
 export const edMessage = defineMessages({
+  gradeTableTitle: {
+    id: 'sp.education-secondary-school:grade-table-title',
+    defaultMessage: `Samræmd könnunarpróf {arg}. bekkur`,
+  },
   courseName: {
     id: 'sp.education-secondary-school:course-name',
     defaultMessage: 'Námsgrein',
+  },
+  courseCategories: {
+    id: 'sp.education-secondary-school:course-categories',
+    defaultMessage: 'Greinarþáttur',
+  },
+  weight: {
+    id: 'sp.education-secondary-school:weight',
+    defaultMessage: 'Vægi',
+  },
+  primarySchoolGrade: {
+    id: 'sp.education-secondary-school:primary-school-grade',
+    defaultMessage: 'Grunnskólaeinkunn',
+  },
+  nationalCoordinationGrade: {
+    id: 'sp.education-secondary-school:national-coordination-grade',
+    defaultMessage: 'Raðeinkunn',
+  },
+  competencyGrade: {
+    id: 'sp.education-secondary-school:competency-grade',
+    defaultMessage: 'Hæfnieinkunn',
   },
   courseId: {
     id: 'sp.education-secondary-school:course-id',
