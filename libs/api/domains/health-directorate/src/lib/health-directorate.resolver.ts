@@ -113,7 +113,7 @@ export class HealthDirectorateResolver {
   })
   @Audit()
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
-  getReferalls(
+  getReferrals(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @CurrentUser() user: User,
