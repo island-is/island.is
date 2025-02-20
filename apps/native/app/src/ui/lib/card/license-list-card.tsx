@@ -165,7 +165,7 @@ export const LicenseCardPresets: Record<GenericLicenseType, CardPreset> = {
     backgroundColor: '#F2F7FF',
   },
   Passport: {
-    title: 'Almennt vegabréf',
+    title: 'Vegabréf: Almennt',
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundPassport,
     backgroundColor: '#fff',
