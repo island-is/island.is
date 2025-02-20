@@ -3,6 +3,9 @@ fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
   name
   label
   value
+  link {
+    type
+  }
   fields {
     type
     name
