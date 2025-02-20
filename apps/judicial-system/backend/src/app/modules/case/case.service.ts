@@ -1705,46 +1705,31 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    const whereClause: WhereOptions = [
-      { isArchived: false },
-      { type: CaseType.INDICTMENT },
-      { id: { [Op.ne]: caseId } },
-      { state: CaseState.RECEIVED },
-    ]
-
-    if (defendant.noNationalId) {
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id = '${defendant.nationalId}'
-              AND name = '${defendant.name}'
-          )`),
-        },
-      })
-    } else {
-      const [normalizedNationalId, formattedNationalId] =
-        normalizeAndFormatNationalId(defendant.nationalId)
-
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id in ('${normalizedNationalId}', '${formattedNationalId}')
-          )`),
-        },
-      })
-    }
-
     return this.caseModel.findAll({
       include: [
         { model: Institution, as: 'court' },
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          where: defendant.noNationalId
+            ? { nationalId: defendant.nationalId, name: defendant.name }
+            : {
+                nationalId: {
+                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+                },
+              },
+        },
       ],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: { [Op.and]: whereClause },
+      where: {
+        [Op.and]: {
+          isArchived: false,
+          type: CaseType.INDICTMENT,
+          id: { [Op.ne]: caseId },
+          state: CaseState.RECEIVED,
+        },
+      },
     })
   }
 
