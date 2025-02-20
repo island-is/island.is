@@ -245,7 +245,8 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             # NOTE: validate the jq command to trigger failure
             echo "$CHUNKS" | jq -r 'map(.project) | join(",")'
-            echo IMAGES=$(echo "$CHUNKS" | jq -r 'map(.project) | join(",")') >> "$GITHUB_OUTPUT"
+            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.project) | join(",")')
+            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
