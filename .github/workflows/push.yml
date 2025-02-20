@@ -242,7 +242,7 @@ jobs:
           CHUNKS="${{ steps.build_map.outputs.BUILD_CHUNKS }}"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo IMAGES="$(echo "$CHUNKS" | jq -r '[.[].projects] | join(",")')" >> "$GITHUB_OUTPUT"
+            echo IMAGES="$(echo "$CHUNKS" | jq -r 'map(fromjson.projects) | join(",")')" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
