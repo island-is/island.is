@@ -155,6 +155,7 @@ export class FileController {
     'indictment',
     'indictment/:fileName',
     'mergedCase/:mergedCaseId/indictment',
+    'mergedCase/:mergedCaseId/indictment/:fileName',
   ])
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
