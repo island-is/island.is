@@ -1,5 +1,5 @@
 import { Body, Controller, Param, Post, ParseUUIDPipe } from '@nestjs/common'
-import { Callback } from '@island.is/api/domains/payment'
+import { ApiClientCallback, Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
 import { ApplicationService } from '@island.is/application/api/core'
 import { ApiTags } from '@nestjs/swagger'
@@ -40,5 +40,23 @@ export class PaymentCallbackController {
         pruneAt: oneMonthFromNow,
       })
     }
+  }
+
+  @Post('api-client-payment-callback/')
+  async apiClientPaymentCallback(
+    @Body() callback: ApiClientCallback,
+  ): Promise<void> {
+    console.log('===============================================')
+    console.log('applicationPaymentCallback')
+    console.log('===============================================')
+    console.log('callback', callback)
+    console.log('===============================================')
+    // if (callback.type === 'success') {
+    //   await this.paymentService.fulfillPayment(
+    //     callback.paymentFlowId,
+    //     callback.eventMetadata?.charge?.receptionId ?? '',
+    //     callback.paymentFlowMetadata.applicationId,
+    //   )
+    // }
   }
 }

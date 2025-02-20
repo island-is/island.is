@@ -57,9 +57,9 @@ export class PaymentService {
   async findPaymentByApplicationId(
     applicationId: string,
   ): Promise<Payment | null> {
-    console.log('===============================================')
-    console.log('findPaymentByApplicationId', applicationId)
-    console.log('===============================================')
+    // console.log('===============================================')
+    // console.log('findPaymentByApplicationId', applicationId)
+    // console.log('===============================================')
     return this.paymentModel.findOne({
       where: {
         application_id: applicationId,
@@ -93,9 +93,9 @@ export class PaymentService {
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
-    console.log('===============================================')
-    console.log('getStatus', foundPayment)
-    console.log('===============================================')
+    // console.log('===============================================')
+    // console.log('getStatus', foundPayment)
+    // console.log('===============================================')
     if (!foundPayment) {
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
@@ -182,9 +182,9 @@ export class PaymentService {
       },
       expires_at: new Date(),
     }
-    console.log('===============================================')
-    console.log('createPaymentModel', paymentModel)
-    console.log('===============================================')
+    // console.log('===============================================')
+    // console.log('createPaymentModel', paymentModel)
+    // console.log('===============================================')
     return await this.paymentModel.create(paymentModel)
   }
 
@@ -201,6 +201,7 @@ export class PaymentService {
     chargeItems: BasicChargeItem[],
     applicationId: string,
     extraData: ExtraData[] | undefined,
+    locale?: string | undefined,
   ): Promise<CreateChargeResult> {
     //1. Retrieve charge items from FJS
     const catalogChargeItems = await this.findCatalogChargeItems(
@@ -275,10 +276,10 @@ export class PaymentService {
       )
       user4 = chargeResult.user4
 
-      console.log('===============================================')
-      console.log('catalogChargeItems')
-      console.dir(catalogChargeItems, { depth: null })
-      console.log('===============================================')
+      // console.log('===============================================')
+      // console.log('catalogChargeItems')
+      // console.dir(catalogChargeItems, { depth: null })
+      // console.log('===============================================')
 
       const paymentUrl =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
@@ -300,6 +301,7 @@ export class PaymentService {
               'https://webhook.site/b60602ce-55af-4603-8571-afaae4b70d11',
             metadata: {
               applicationId,
+              paymentId: paymentModel.id,
             },
           },
         })
@@ -320,14 +322,14 @@ export class PaymentService {
     user: User,
     extraData: ExtraData[] | undefined,
   ): Promise<ChargeResponse> {
-    console.log('===============================================')
-    console.log('createNewCharge')
-    console.dir(paymentModel, { depth: null })
-    console.log('user')
-    console.dir(user, { depth: null })
-    console.log('extraData')
-    console.dir(extraData, { depth: null })
-    console.log('===============================================')
+    // console.log('===============================================')
+    // console.log('createNewCharge')
+    // console.dir(paymentModel, { depth: null })
+    // console.log('user')
+    // console.dir(user, { depth: null })
+    // console.log('extraData')
+    // console.dir(extraData, { depth: null })
+    // console.log('===============================================')
     return await this.chargeFjsV2ClientService.createCharge(
       formatCharge(
         paymentModel,
