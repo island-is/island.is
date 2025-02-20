@@ -7,7 +7,7 @@ import styled from 'styled-components/native'
 import { Alert, dynamicColor, LicenseCard, theme } from '../../ui'
 import {
   GenericLicenseType,
-  useListLicensesQuery,
+  useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -54,26 +54,23 @@ const { useNavigationOptions, getNavigationOptions } =
 export const WalletPassportScreen: NavigationFunctionComponent<{
   id: string
   cardHeight?: number
-}> = ({ id, componentId, cardHeight = 140 }) => {
+}> = ({ id, componentId, cardHeight = 96 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
 
   const intl = useIntl()
-  const { data, loading } = useListLicensesQuery({
+
+  const { data, loading } = useGetLicenseQuery({
     variables: {
       input: {
-        includedTypes: [GenericLicenseType.Passport],
+        licenseType: GenericLicenseType.Passport,
+        licenseId: id,
       },
       locale: useLocale(),
     },
   })
 
-  const passportData = data?.genericLicenseCollection?.licenses
-  const item =
-    passportData?.find(
-      (passport) => passport.payload?.metadata?.licenseNumber === id,
-    ) || null
-
+  const item = data?.genericLicense
   const isInvalid = item?.payload?.metadata?.expired
   const expireDate = item?.payload?.metadata?.expireDate
   const expireWarning = item?.payload?.metadata?.expiryStatus === 'EXPIRING'

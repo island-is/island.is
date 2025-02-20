@@ -83,7 +83,7 @@ export const WalletItem = React.memo(
               style={style}
               onPress={() => {
                 navigateTo(
-                  `/walletpassport/${item?.payload?.metadata?.licenseNumber}`,
+                  `/walletpassport/${item?.payload?.metadata?.licenseId}`,
                   {
                     fromId: `license-${GenericLicenseType.Passport}_source`,
                     toId: `license-${GenericLicenseType.Passport}_destination`,

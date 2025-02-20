@@ -50,6 +50,7 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
     rawData
     metadata {
       licenseNumber
+      licenseId
       expired
       expireDate
       expiryStatus
