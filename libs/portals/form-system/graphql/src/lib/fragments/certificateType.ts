@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 import { LanguageFields } from './languageFields'
 
 export const CertificateTypeFragment = gql`
-  fragment CertificateType on FormSystemFormCertificationType {
+  fragment CertificateType on FormSystemCertificationType {
     id
     name {
       ...LanguageFields
@@ -11,8 +11,6 @@ export const CertificateTypeFragment = gql`
       ...LanguageFields
     }
     isCommon
-    certificationTypeId
-    organizationCertificationId
   }
   ${LanguageFields}
 `

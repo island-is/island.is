@@ -4,7 +4,7 @@ import { Maybe } from 'graphql/jsutils/Maybe'
 import {
   FormSystemFieldType,
   FormSystemForm,
-  FormSystemFormApplicant,
+  FormSystemFormApplicantType,
   FormSystemFormCertificationType,
   FormSystemListType,
 } from '@island.is/api/schema'
@@ -33,7 +33,7 @@ export interface IControlContext {
   setInListBuilder: Dispatch<SetStateAction<boolean>>
   inListBuilder: boolean
   formUpdate: (updatedForm?: FormSystemForm) => void
-  applicantTypes: Maybe<Maybe<FormSystemFormApplicant>[]> | undefined
+  applicantTypes: Maybe<Maybe<FormSystemFormApplicantType>[]> | undefined
 }
 
 export const ControlContext = createContext<IControlContext>({
@@ -69,5 +69,5 @@ export const ControlContext = createContext<IControlContext>({
   formUpdate: function (): void {
     throw new Error('Function not implemented.')
   },
-  applicantTypes: [] as Maybe<Maybe<FormSystemFormApplicant>[]>,
+  applicantTypes: [] as Maybe<Maybe<FormSystemFormApplicantType>[]>,
 })

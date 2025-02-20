@@ -903,6 +903,12 @@
       "@island.is/form-system-enums": [
         "libs/form-system/src/lib/enums/index.ts"
       ],
+      "@island.is/form-system/graphql": [
+        "libs/portals/form-system/graphql/src/index.ts"
+      ],
+      "@island.is/form-system/ui": [
+        "libs/portals/form-system/ui-components/src/index.ts"
+      ],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],

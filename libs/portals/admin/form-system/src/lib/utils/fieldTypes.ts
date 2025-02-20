@@ -1,48 +1,22 @@
 import { Option } from '@island.is/island-ui/core'
-import { FieldTypesEnum } from '@island.is/form-system/ui'
-
-/* eslint-disable @typescript-eslint/naming-convention */
-enum FieldTypes {
-  BANK_ACCOUNT = 'Bankareikningur',
-  DATE_PICKER = 'Dagsetningarval',
-  DROPDOWN_LIST = 'Fellilisti',
-  PAYER = 'Greiðandi',
-  PAYMENT = 'Greiðsla',
-  CHECKBOX = 'Hakbox',
-  HOMESTAY_NUMBER = 'Heimagistingarnúmer',
-  HOMESTAY_OVERVIEW = 'Heimagistingaryfirlit',
-  NATIONAL_ID = 'Kennitala',
-  NATIONAL_ID_ALL = 'Kennitala (allt)',
-  NATIONAL_ID_ESTATE = 'Kennitala (dánarbú)',
-  TIME_INPUT = 'Klúkkuinnsláttur',
-  ISK_NUMBERBOX = 'Krónutölubox',
-  ISK_SUMBOX = 'Krónutölusumma',
-  EMAIL = 'Netfang',
-  PROPERTY_NUMBER = 'Fasteignanúmer',
-  PHONE_NUMBER = 'Símanúmer',
-  DOCUMENT = 'Skjal',
-  MESSAGE = 'Textalýsing',
-  TEXTBOX = 'Textabox',
-  NUMBERBOX = 'Tölubox',
-  RADIO_BUTTONS = 'Valhnappar',
-}
+import { FieldTypesEnum } from '@island.is/form-system-dataTypes'
 
 export const getFieldTypeValue = (type: string) => {
-  return FieldTypes[type as keyof typeof FieldTypes]
+  return FieldTypesEnum[type as keyof typeof FieldTypesEnum]
 }
 
 export const getFieldTypeKey = (value: string) => {
   return (
-    Object.keys(FieldTypes).find(
-      (key) => FieldTypes[key as keyof typeof FieldTypes] === value,
+    Object.keys(FieldTypesEnum).find(
+      (key) => FieldTypesEnum[key as keyof typeof FieldTypesEnum] === value,
     ) || ''
   )
 }
 
 export const fieldTypesSelectObject = (): readonly Option<string>[] => {
-  const fieldTypes = Object.keys(FieldTypes).map((key) => ({
-    label: FieldTypes[key as keyof typeof FieldTypes],
-    value: FieldTypesEnum[key as keyof typeof FieldTypes],
+  const fieldTypes = Object.keys(FieldTypesEnum).map((key) => ({
+    label: FieldTypesEnum[key as keyof typeof FieldTypesEnum],
+    value: FieldTypesEnum[key as keyof typeof FieldTypesEnum],
   }))
   return fieldTypes
 }
