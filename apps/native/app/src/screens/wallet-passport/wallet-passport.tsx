@@ -152,6 +152,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           nativeID={`license-${GenericLicenseType.Passport}_destination`}
           type={GenericLicenseType.Passport}
           date={expireDate ? new Date(expireDate) : undefined}
+          title={item?.payload?.metadata?.name ?? undefined}
           status={isInvalid ? 'NOT_VALID' : 'VALID'}
         />
       </SafeAreaView>
