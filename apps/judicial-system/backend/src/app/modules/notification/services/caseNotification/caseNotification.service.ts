@@ -752,7 +752,7 @@ export class CaseNotificationService extends BaseNotificationService {
       (d: Defendant) => d.defenderEmail,
     )
     uniqueDefendants.forEach((defendant) => {
-      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+      if (defendant.defenderEmail) {
         promises.push(
           this.sendPostponedCourtDateEmailNotificationForIndictmentCase(
             theCase,
@@ -1087,7 +1087,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+        if (defendant.defenderEmail) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
               theCase,
@@ -1806,6 +1806,18 @@ export class CaseNotificationService extends BaseNotificationService {
         theCase.judge?.email,
       ),
     ]
+
+    if (theCase.registrar) {
+      promises.push(
+        this.sendCaseFilesUpdatedNotification(
+          theCase.courtCaseNumber,
+          theCase.court?.name,
+          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
 
     const uniqueSpokespersons = _uniqBy(
       theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
