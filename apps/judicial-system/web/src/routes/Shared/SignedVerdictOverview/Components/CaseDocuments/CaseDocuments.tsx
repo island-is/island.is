@@ -92,7 +92,7 @@ const CaseDocuments: FC<Props> = ({
             renderAs="row"
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRequest)}
-            pdfType={'request'}
+            pdfType="request"
           />
         )}
         {showCustodyNotice(
@@ -111,7 +111,7 @@ const CaseDocuments: FC<Props> = ({
           renderAs="row"
           caseId={workingCase.id}
           title={formatMessage(core.pdfButtonRulingShortVersion)}
-          pdfType={'courtRecord'}
+          pdfType="courtRecord"
         >
           {isInvestigationCase(workingCase.type) &&
             (workingCase.courtRecordSignatory ? (
@@ -140,7 +140,7 @@ const CaseDocuments: FC<Props> = ({
             renderAs="row"
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
-            pdfType={'ruling'}
+            pdfType="ruling"
             disabled={!isRulingRequired}
           >
             {isRulingRequired && (

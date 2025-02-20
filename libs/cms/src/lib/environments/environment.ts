@@ -9,7 +9,6 @@ export default {
     'news',
     'page',
     'grant',
-    'vidspyrnaPage',
     'menu',
     'groupedMenu',
     'organizationPage',

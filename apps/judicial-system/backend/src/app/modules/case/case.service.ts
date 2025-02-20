@@ -800,6 +800,19 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForIndictmentArraignmentDate(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
@@ -1624,19 +1637,23 @@ export class CaseService {
       const updatedArraignmentDate = DateLog.arraignmentDate(
         updatedCase.dateLogs,
       )
-      const arraignmentDateChanged =
+      const hasUpdatedArraignmentDate =
         updatedArraignmentDate &&
         updatedArraignmentDate.date.getTime() !==
           arraignmentDate?.date.getTime()
       const courtDate = DateLog.courtDate(theCase.dateLogs)
       const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
-      const courtDateChanged =
+      const hasUpdatedCourtDate =
         updatedCourtDate &&
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
-      if (arraignmentDateChanged || courtDateChanged) {
+      if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
         // New arraignment date or new court date
         await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+      }
+
+      if (hasUpdatedArraignmentDate) {
+        await this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
       }
 
       await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
@@ -1688,46 +1705,31 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    const whereClause: WhereOptions = [
-      { isArchived: false },
-      { type: CaseType.INDICTMENT },
-      { id: { [Op.ne]: caseId } },
-      { state: CaseState.RECEIVED },
-    ]
-
-    if (defendant.noNationalId) {
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id = '${defendant.nationalId}'
-              AND name = '${defendant.name}'
-          )`),
-        },
-      })
-    } else {
-      const [normalizedNationalId, formattedNationalId] =
-        normalizeAndFormatNationalId(defendant.nationalId)
-
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id in ('${normalizedNationalId}', '${formattedNationalId}')
-          )`),
-        },
-      })
-    }
-
     return this.caseModel.findAll({
       include: [
         { model: Institution, as: 'court' },
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          where: defendant.noNationalId
+            ? { nationalId: defendant.nationalId, name: defendant.name }
+            : {
+                nationalId: {
+                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+                },
+              },
+        },
       ],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: { [Op.and]: whereClause },
+      where: {
+        [Op.and]: {
+          isArchived: false,
+          type: CaseType.INDICTMENT,
+          id: { [Op.ne]: caseId },
+          state: CaseState.RECEIVED,
+        },
+      },
     })
   }
 
@@ -1739,8 +1741,11 @@ export class CaseService {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
             creatingProsecutorId: user.id,
-            prosecutorId:
-              user.role === UserRole.PROSECUTOR ? user.id : undefined,
+            prosecutorId: isIndictmentCase(caseToCreate.type)
+              ? caseToCreate.prosecutorId
+              : user.role === UserRole.PROSECUTOR
+              ? user.id
+              : undefined,
             courtId: isRequestCase(caseToCreate.type)
               ? user.institution?.defaultCourtId
               : undefined,

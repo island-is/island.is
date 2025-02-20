@@ -112,6 +112,9 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
 
+      - name: test-everything
+        uses: ./.github/actions/test-everything
+
       - name: Prepare lint targets
         id: lint_projects
         env:
