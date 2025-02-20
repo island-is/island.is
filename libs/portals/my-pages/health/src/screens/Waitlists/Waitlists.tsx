@@ -3,6 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
+  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
@@ -48,7 +49,7 @@ const Waitlists: React.FC = () => {
             heading={waitlist?.name ?? ''}
             text={[
               formatMessage(messages.statusLastUpdated),
-              waitlist.lastUpdated,
+              formatDate(waitlist.lastUpdated),
             ]
               .filter((item) => isDefined(item))
               .join(' ')}

@@ -35,6 +35,7 @@ export const formatDate = (
   date?: string | Date | null,
   dateFormat?: string,
 ) => {
+  console.log('date', date)
   if (!date) return ''
   const arg = date instanceof Date ? date : new Date(date)
   try {

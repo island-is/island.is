@@ -2,6 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
+  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
@@ -50,7 +51,7 @@ const References: React.FC = () => {
             heading={referral?.serviceName ?? ''}
             text={[
               formatMessage(messages.medicineValidTo),
-              referral.validUntilDate,
+              formatDate(referral.validUntilDate),
             ]
               .filter((item) => isDefined(item))
               .join(' ')}
@@ -70,22 +71,6 @@ const References: React.FC = () => {
             }}
           />
         ))}
-        {/* {
-          <ActionCard
-            heading="Heimilislækningar"
-            text="Gildir til: 12.08.2025"
-            tag={{ label: 'Virk tilvísun', outlined: false, variant: 'blue' }}
-            cta={{
-              url: HealthPaths.HealthReferencesDetail.replace(
-                ':type',
-                'heimilislaekningar',
-              ),
-              label: formatMessage(messages.seeMore),
-              centered: true,
-              variant: 'text',
-            }}
-          />
-        } */}
       </Stack>
     </IntroWrapper>
   )

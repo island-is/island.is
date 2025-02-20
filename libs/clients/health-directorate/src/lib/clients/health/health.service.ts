@@ -12,6 +12,7 @@ import {
   PrescribedItemDto,
   ReferralDto,
   WaitingListEntryDto,
+  DispensationHistoryDto,
 } from './gen/fetch'
 
 const LOG_CATEGORY = 'health-directorate-health-api'
@@ -41,11 +42,11 @@ export class HealthDirectorateHealthService {
     return locale === 'is' ? Locale.Is : Locale.En
   }
 
-  /* Afgreiðslur */
-  private async getDispensations(
+  /* Lyfjasaga */
+  public async getDispensations(
     auth: Auth,
     atcCode: string,
-  ): Promise<Array<DispensationDto> | null> {
+  ): Promise<Array<DispensationHistoryDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
       .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
         atcCode,
@@ -65,11 +66,15 @@ export class HealthDirectorateHealthService {
     return dispensations
   }
 
-  private async getGroupedDispensations(
+  /* Lyfjaafgreiðslur */
+  public async getGroupedDispensations(
     auth: Auth,
-  ): Promise<Array<DispensationDto> | null> {
+    locale: string,
+  ): Promise<Array<DispensationHistoryDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
-      .mePrescriptionDispensationControllerGetGroupedDispensationsV1()
+      .mePrescriptionDispensationControllerGetGroupedDispensationsV1({
+        locale: this.mapLocale(locale),
+      })
       .catch(handle404)
 
     if (!dispensations) {
@@ -92,6 +97,7 @@ export class HealthDirectorateHealthService {
     ).mePrescriptionControllerGetPrescriptionsV1({
       locale: this.mapLocale(locale),
     })
+    console.log(prescriptions[0])
 
     if (!prescriptions) {
       this.logger.debug('No prescriptions returned', {

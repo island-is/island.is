@@ -66,10 +66,10 @@ const MedicinePrescriptionHistory = () => {
                     label={formatMessage(messages.version)}
                     data={MedicinePrescriptionDetailData2}
                   />
-                  <DispensingContainer
+                  {/* <DispensingContainer
                     label={formatMessage(messages.dispenseHistory)}
-                    data={MedicineDispenseData}
-                  />
+                    data={}
+                  /> */}
                 </Stack>
               </Box>
             ),

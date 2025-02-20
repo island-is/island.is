@@ -1,4 +1,4 @@
-import { Box, Stack, Tag } from '@island.is/island-ui/core'
+import { Box, Icon, Pagination, Stack, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   EmptyTable,
@@ -7,20 +7,18 @@ import {
   IntroWrapper,
   SortableTable,
 } from '@island.is/portals/my-pages/core'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
 
-import {
-  MedicineDispenseData,
-  MedicinePrescriptionDetailData,
-  MedicinePrescriptionDetailData2,
-  MedicinePrescriptionsData,
-} from '../../utils/mockData'
+import {} from '../../utils/mockData'
 import DispensingContainer from './components/DispensingContainer/DispensingContainer'
 import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
 import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
 import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
 import { HealthDirectoratePrescribedItemCategory } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
+
+const ITEMS_ON_PAGE = 10
 
 const MedicinePrescriptions = () => {
   const { formatMessage, lang } = useLocale()
@@ -30,22 +28,47 @@ const MedicinePrescriptions = () => {
     useState<HealthDirectoratePrescribedItemCategory>(
       HealthDirectoratePrescribedItemCategory.Owner,
     )
+  const [page, setPage] = useState(1)
 
   const { data, error, loading } = useGetMedicinePrescriptionsQuery({
     variables: { locale: lang },
   })
 
+  const prescriptionDetail: { [key: string]: string } = {
+    medicine: formatMessage(messages.medicineTitle),
+    type: formatMessage(messages.type),
+    form: formatMessage(messages.medicineForm),
+    usedFor: formatMessage(messages.usedFor),
+    prescribedAmount: formatMessage(messages.prescribedAmount),
+    usage: formatMessage(messages.usage),
+  }
+  const prescriptionPublication: { [key: string]: string } = {
+    date: formatMessage(messages.publicationDate),
+    doctor: formatMessage(messages.doctor),
+    validTo: formatMessage(messages.medicineValidTo),
+  }
+
   const prescriptions = data?.healthDirectoratePrescriptions.prescriptions
-  console.log('data', data)
+
   const stringMaxLength = 22
 
   const filterList = (id: HealthDirectoratePrescribedItemCategory) => {
     if (!prescriptions) return []
     if (activeTag !== id) setActiveTag(id)
     if (id === HealthDirectoratePrescribedItemCategory.Owner)
-      return prescriptions
-    return prescriptions.filter((item) => item.category === id)
+      return prescriptions.slice(
+        ITEMS_ON_PAGE * (page - 1),
+        ITEMS_ON_PAGE * page,
+      )
+    return prescriptions
+      .filter((item) => item.category === id)
+      .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
   }
+
+  const totalPages =
+    prescriptions && prescriptions.length > ITEMS_ON_PAGE
+      ? Math.ceil(prescriptions.length / ITEMS_ON_PAGE)
+      : 0
 
   const tagLabels = [
     {
@@ -108,47 +131,107 @@ const MedicinePrescriptions = () => {
                 id: item?.productId ?? `${i}`,
                 medicine: item?.productName ?? '',
                 usedFor: item?.indication ?? '',
-                process: '',
+                process: item?.amountRemainingDisplay ?? '',
                 validTo: formatDate(item?.expiryDate) ?? '',
                 status: undefined,
-
-                // lastNode:
-                //   item?.status.type === 'renew'
-                //     ? {
-                //         type: 'action',
-                //         label: formatMessage(messages.renew),
-                //         action: () => {
-                //           setActivePrescription(item)
-                //           setOpenModal(true)
-                //         },
-                //         icon: { icon: 'reload', type: 'outline' },
-                //       }
-                //     : item?.status.type === 'tooltip'
-                //     ? {
-                //         type: 'info',
-                //         label: item.status.data,
-                //         text: formatMessage(messages.notValidForRenewal),
-                //       }
-                //     : { type: 'text', label: item.status.data },
+                lastNode: item?.isRenewable
+                  ? {
+                      type: 'action',
+                      label: formatMessage(messages.renew),
+                      action: () => {
+                        setActivePrescription(item)
+                        setOpenModal(true)
+                      },
+                      icon: { icon: 'reload', type: 'outline' },
+                    }
+                  : {
+                      type: 'info',
+                      label: item.renewalBlockedReason?.toString() ?? '',
+                      text: formatMessage(messages.notValidForRenewal),
+                    },
 
                 children: (
-                  <Box background={'blue100'} paddingBottom={1}>
+                  <Box background="blue100" paddingBottom={1}>
                     <Stack space={2}>
                       <NestedInfoLines
                         backgroundColor="blue"
                         label={formatMessage(messages.moreDetailedInfo)}
-                        data={MedicinePrescriptionDetailData}
+                        data={[
+                          {
+                            title: prescriptionDetail.medicine,
+                            value: item?.productName ?? '',
+                          },
+                          {
+                            title: prescriptionDetail.type,
+                            value: item?.productType ?? '',
+                          },
+                          {
+                            title: prescriptionDetail.form,
+                            value: item?.productForm ?? '',
+                          },
+                          {
+                            title: prescriptionDetail.usedFor,
+                            value: item?.indication ?? '',
+                          },
+
+                          {
+                            title: prescriptionDetail.prescribedAmount,
+                            value: item?.totalPrescribedAmountDisplay ?? '',
+                          },
+                          {
+                            title: prescriptionDetail.usage,
+                            value: item?.dosageInstructions ?? '',
+                          },
+                        ]}
                       />
                       <NestedInfoLines
                         backgroundColor="blue"
                         label={formatMessage(messages.version)}
-                        data={MedicinePrescriptionDetailData2}
+                        data={[
+                          {
+                            title: prescriptionPublication.date,
+                            value: formatDate(item?.issueDate) ?? '',
+                          },
+                          {
+                            title: prescriptionPublication.doctor,
+                            value: item?.prescriberName ?? '',
+                          },
+                          {
+                            title: prescriptionPublication.validTo,
+                            value: formatDate(item?.expiryDate) ?? '',
+                          },
+                        ]}
                       />
-                      <DispensingContainer
-                        backgroundColor="blue"
-                        label={formatMessage(messages.dispenseHistory)}
-                        data={MedicineDispenseData}
-                      />
+                      {item.dispensations.length > 0 && (
+                        <DispensingContainer
+                          backgroundColor="blue"
+                          label={formatMessage(messages.dispenseHistory)}
+                          data={item.dispensations.map((dispensation, di) => ({
+                            date: formatDate(dispensation?.dispensationDate),
+                            icon: (
+                              <Icon
+                                icon={
+                                  dispensation?.dispensationDate
+                                    ? 'checkmark'
+                                    : 'remove'
+                                }
+                                size="medium"
+                                color={
+                                  dispensation?.dispensationDate
+                                    ? 'mint600'
+                                    : 'dark300'
+                                }
+                                type="outline"
+                              />
+                            ),
+                            number: (di + 1).toString() ?? '',
+                            pharmacy: dispensation?.dispensingAgentName ?? '',
+                            quantity:
+                              dispensation?.dispensedItemsCount.toString() ??
+                              '',
+                          }))}
+                        />
+                      )}
                     </Stack>
                   </Box>
                 ),
@@ -167,13 +250,32 @@ const MedicinePrescriptions = () => {
           isVisible={openModal}
         />
       )}
-      {/* || loading */}
-      {!error && !filteredData.length && (
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && filteredData.length === 0 && (
         <EmptyTable
           loading={loading}
           message={formatMessage(messages.noDataFound, { arg: 'lyf' })}
         />
       )}
+      {totalPages > 0 ? (
+        <Box paddingTop={8}>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPage(page)}
+                component="button"
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </Box>
+      ) : null}
     </IntroWrapper>
   )
 }

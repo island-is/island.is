@@ -1237,6 +1237,47 @@ export const messages = defineMessages({
     id: 'sp.health:renew',
     defaultMessage: 'Endurnýja',
   },
+  prescribedAmount: {
+    id: 'sp.health:prescribed-amount',
+    defaultMessage: 'Ávísað magn',
+  },
+  usage: {
+    id: 'sp.health:usage',
+    defaultMessage: 'Notkun',
+  },
+  dispensations: {
+    id: 'sp.health:first-dispensations',
+    defaultMessage: '{arg}. afgreiðsla',
+  },
+
+  publicationDate: {
+    id: 'sp.health:publication-date',
+    defaultMessage: 'Útgáfudagur',
+  },
+  dispensingPlace: {
+    id: 'sp.health:dispensing-place',
+    defaultMessage: 'Afhendingarstaður',
+  },
+  allMedicine: {
+    id: 'sp.health:all-medicine',
+    defaultMessage: 'Öll lyf',
+  },
+  regularMedicine: {
+    id: 'sp.health:regular-medicine',
+    defaultMessage: 'Föst lyf',
+  },
+  temporaryMedicine: {
+    id: 'sp.health:temporary-medicine',
+    defaultMessage: 'Tímabundin lyf',
+  },
+  regimenMedicine: {
+    id: 'sp.health:regimen-medicine',
+    defaultMessage: 'Lyfjakúrar',
+  },
+  pickedUpInPharmacy: {
+    id: 'sp.health:picked-up-in-pharmacy',
+    defaultMessage: 'Sótt í {arg} {date}',
+  },
   renewalMedicineRequest: {
     id: 'sp.health:renewal-medicine-request',
     defaultMessage: 'Beiðni um endurnýjun á lyfi',
@@ -1421,5 +1462,9 @@ export const messages = defineMessages({
   vaccinationStatusDesc: {
     id: 'sp.health:vaccination-status-desc',
     defaultMessage: 'Útskýring á stöðu bólusetninga',
+  },
+  medicineFullyDispensed: {
+    id: 'sp.health:medicine-fully-dispensed',
+    defaultMessage: 'Fullafgreitt',
   },
 })

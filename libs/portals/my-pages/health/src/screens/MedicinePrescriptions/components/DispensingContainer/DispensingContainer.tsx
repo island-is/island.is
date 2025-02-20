@@ -1,26 +1,14 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Hidden,
-  Icon,
-  IconProps,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridContainer, Hidden, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import * as styles from './DispensingContainer.css'
+import DispensingItem, { DispensingItemProps } from './DispensingItem'
+import { useLocale } from '@island.is/localization'
+import { messages } from '../../../../lib/messages'
+import cn from 'classnames'
 
 interface Props {
   label: string
-  data: {
-    title: string
-    value: string
-    icon: {
-      type: IconProps['icon']
-      color: IconProps['color']
-    }
-  }[]
+  data: DispensingItemProps[]
   backgroundColor?: 'blue' | 'white'
 }
 
@@ -29,52 +17,76 @@ const DispensingContainer: React.FC<Props> = ({
   data,
   backgroundColor,
 }) => {
+  const { formatMessage } = useLocale()
   return (
     <Box
-      marginY={[1, 1, 1, 2, 2]}
-      marginX={[0, 0, 0, 2, 2]}
-      className={styles.container}
+      padding={[0, 0, 1, 3]}
+      paddingBottom={0}
       background={backgroundColor === 'blue' ? 'blue100' : 'white'}
     >
-      <Text fontWeight="medium" paddingBottom={[1, 1, 1, 2, 2]}>
-        {label}
-      </Text>
-      <GridContainer className={styles.grid}>
-        <GridRow>
-          {data.map((item, i) => (
-            <GridColumn key={i} span={['12/12', '12/12', '6/12']}>
-              <GridContainer className={styles.innerGrid}>
-                <GridRow>
-                  <GridColumn>
-                    <Box paddingLeft={1} display="flex" alignItems="flexStart">
-                      <Hidden below="md">
-                        <Box
-                          paddingX={1}
-                          display="flex"
-                          style={{ paddingTop: 2 }}
-                        >
-                          <Icon
-                            icon={item.icon.type}
-                            size="small"
-                            color={item.icon.color}
-                            type="outline"
-                          />
-                        </Box>
-                      </Hidden>
-                      <Box className={styles.text}>
-                        <Text fontWeight="medium">{item.title}</Text>
-                        <Text fontWeight="regular" color="dark400">
-                          {item.value}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </GridColumn>
-          ))}
-        </GridRow>
-      </GridContainer>
+      <Box
+        className={cn(styles.noLeftPadding, styles.text)}
+        paddingBottom={[2, 2, 2, 0]}
+      >
+        <Text variant="small" fontWeight="medium">
+          {label}
+        </Text>
+      </Box>
+      <Hidden above="md">
+        {/*  
+            message={formatMessage(messages.noDataFoundDetail, {
+            arg: formatMessage(messages.dentistsTitleVariation).toLowerCase(),
+          })} */}
+        {data.map((item, i) => (
+          <Box
+            background={i % 2 === 0 ? 'white' : 'blue100'}
+            paddingY={1}
+            paddingLeft={1}
+            key={`dispensing-item-container-${i}`}
+          >
+            <Box className={styles.text}>
+              <Text fontWeight="medium">
+                {formatMessage(messages.dispensations, {
+                  arg: i + 1,
+                })}
+              </Text>
+            </Box>
+            <Box className={styles.text}>
+              <Text fontWeight="regular">
+                {formatMessage(messages.pickedUpInPharmacy, {
+                  arg: item.pharmacy,
+                  date: item.date,
+                })}
+              </Text>
+            </Box>
+          </Box>
+        ))}
+      </Hidden>
+      <Hidden below="lg">
+        <Box background="blue100">
+          <GridContainer className={styles.grid}>
+            <DispensingItem
+              number={formatMessage(messages.number)}
+              date={formatMessage(messages.vaccinesTableHeaderDate)}
+              pharmacy={formatMessage(messages.dispensingPlace)}
+              quantity={formatMessage(messages.medicineQuantity)}
+              bold
+              icon={undefined}
+            />
+            {data.map((item, i) => (
+              <DispensingItem
+                date={item.date}
+                icon={item.icon}
+                number={item.number}
+                pharmacy={item.pharmacy}
+                quantity={item.quantity}
+                key={`dispensing-item-${i}`}
+                backgroundColor={i % 2 === 0 ? 'white' : 'blue'}
+              />
+            ))}
+          </GridContainer>
+        </Box>
+      </Hidden>
     </Box>
   )
 }

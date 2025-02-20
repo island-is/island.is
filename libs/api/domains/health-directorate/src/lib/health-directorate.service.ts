@@ -264,4 +264,12 @@ export class HealthDirectorateService {
 
     return { prescriptions }
   }
+
+  /* Medicine History */
+  async getMedicineHistory(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Prescriptions | null> {
+    return null
+  }
 }

@@ -74,12 +74,6 @@ export class Prescription {
   @Field(() => PrescribedItemRenewalStatusEnum, { nullable: true })
   renewalStatus?: PrescribedItemRenewalStatusEnum
 
-  @Field(() => Float, { nullable: true })
-  amountRemaining?: number
-
-  @Field({ nullable: true })
-  amountRemainingUnit?: string
-
   @Field({ nullable: true })
   amountRemainingDisplay?: string
 

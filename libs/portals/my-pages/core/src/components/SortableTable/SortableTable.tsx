@@ -205,6 +205,7 @@ export const SortableTable = (props: SortableTableProps) => {
                   />
                 ),
                 element: true,
+                width: i === 0 ? '100' : i === 1 ? '400' : '250',
               }))}
             />
           ) : (
