@@ -1019,6 +1019,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             pendingAction: employerApprovalStatePendingAction,
           },
           lifecycle: pruneAfterDays(970),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
@@ -1070,6 +1084,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -1155,6 +1183,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,

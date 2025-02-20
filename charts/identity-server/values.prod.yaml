@@ -480,7 +480,7 @@ services-auth-ids-api:
         nginxRequestsIrate: 5
       replicas:
         max: 15
-        min: 2
+        min: 6
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   initContainer:
@@ -525,9 +525,9 @@ services-auth-ids-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
+    default: 6
     max: 15
-    min: 2
+    min: 6
   resources:
     limits:
       cpu: '800m'
