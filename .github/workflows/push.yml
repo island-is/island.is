@@ -242,8 +242,8 @@ jobs:
           set -euo pipefail
           CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
           echo "CHUNKS: '$CHUNKS'"
-          if [[ $CHUNKS != "[]" ]]; then
-            echo IMAGES=$(echo $CHUNKS | jq -r 'map(.project) | join(",")') >> "$GITHUB_OUTPUT"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo IMAGES=$(echo "$CHUNKS" | jq -r 'map(.project) | join(",")') >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
