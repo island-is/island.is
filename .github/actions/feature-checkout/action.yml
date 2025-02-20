@@ -52,7 +52,7 @@ runs:
       uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
       with:
         name: pr-event
-        path: event.json
+        path: ${{ github.workspace }}/event.json
         retention-days: 90
         include-hidden-files: true
         if-no-files-found: error
