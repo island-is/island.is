@@ -1,4 +1,5 @@
 import { GrantBase } from '../../../grant.types'
+import { parseDateSafely } from '../../../utils'
 import { RannisGrantItem } from '../rannisGrants.types'
 
 export interface RannisGrantDto extends GrantBase {
@@ -21,8 +22,10 @@ export const mapRannisGrant = (
     id: grantItem.fundid,
     nameIs: grantItem.fund_name_is,
     nameEn: grantItem.fund_name_en,
-    dateFrom: grantItem.datefrom ? new Date(grantItem.datefrom) : undefined,
-    dateTo: grantItem.dateto ? new Date(grantItem.dateto) : undefined,
+    dateFrom: grantItem.datefrom
+      ? parseDateSafely(grantItem.datefrom)
+      : undefined,
+    dateTo: grantItem.dateto ? parseDateSafely(grantItem.dateto) : undefined,
     url: grantItem.fund_url,
     isOpen: grantItem.is_open === '1',
   }

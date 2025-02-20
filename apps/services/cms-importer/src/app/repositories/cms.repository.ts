@@ -121,7 +121,9 @@ export class CmsRepository {
           id: entry.sys.id,
           referenceId: grantReferenceId,
         })
-        Promise.reject(`Invalid field in input fields: ${inputField.key}`)
+        return Promise.reject(
+          `Invalid field in input fields: ${inputField.key}`,
+        )
       }
     }
     if (hasChanges) {

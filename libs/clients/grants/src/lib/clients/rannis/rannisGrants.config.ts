@@ -2,7 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
 const schema = z.object({
-  baseUrl: z.string(),
+  baseUrl: z.string().url(),
 })
 
 export const RannisGrantsClientConfig = defineConfig<z.infer<typeof schema>>({
