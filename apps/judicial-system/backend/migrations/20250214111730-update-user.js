@@ -19,11 +19,10 @@ module.exports = {
         unique: true,
         allowNull: false,
       }),
-      queryInterface.addConstraint('user', {
-        fields: ['national_id', 'institution_id'],
-        type: 'unique',
-        name: 'unique_national_id_per_institution',
-      }),
+      queryInterface.removeConstraint(
+        'user',
+        'unique_national_id_per_institution',
+      ),
     ])
   },
 }

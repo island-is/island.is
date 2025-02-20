@@ -335,16 +335,12 @@ export class InternalCaseService {
       .findByNationalId(caseToCreate.prosecutorNationalId)
       .catch(() => undefined)
 
-    if (!users) {
-      throw new BadRequestException('Creating user not found')
-    }
-
     // TODO: Sync with LÖKE so we can select the correct user
-    const creator = users[0]
+    const creator = users?.find((user) => isProsecutionUser(user))
 
-    if (!isProsecutionUser(creator)) {
+    if (!creator) {
       throw new BadRequestException(
-        'Creating user is not registered as a prosecution user',
+        'Creating user not found or is not registered as a prosecution user',
       )
     }
 
