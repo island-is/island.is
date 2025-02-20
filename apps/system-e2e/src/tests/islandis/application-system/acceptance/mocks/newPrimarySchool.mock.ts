@@ -38,7 +38,7 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
           nationalId: '0101303019',
           name: 'Gervimaður Afríka',
           phone: '555-1234',
-          email: 'fríka@gervimadur@.is',
+          email: 'frika@gervimadur.is',
           role: 'guardian',
           domicile: {
             id: 'fb94c164-c037-49ac-ae31-7501c9a90467',
