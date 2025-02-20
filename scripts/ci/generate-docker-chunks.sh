@@ -10,7 +10,7 @@ debug='[{"project":"air-discount-scheme-web","docker_type":"docker-next","home":
 
 chunks='[]'
 if [[ -n "${CHUNKS_DEBUG}" && "${CHUNKS_DEBUG}" == 'true' ]]; then
-  echo "$debug" | jq -cM '. | map("\(.|tostring)")'
+  echo "$debug"
 elif [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "$chunks"
@@ -45,4 +45,5 @@ for target in "$@"; do
 done
 
 >&2 echo "Map: ${chunks}"
-echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+# echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+echo "$chunks"
