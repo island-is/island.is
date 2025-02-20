@@ -247,7 +247,6 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
     eventList: eventsResponse?.data?.getEvents,
     namespace,
     selectedPage,
-    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
