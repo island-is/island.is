@@ -231,7 +231,7 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
-            echo CHUNKS=$CHUNKS >> "$GITHUB_OUTPUT"
+            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
