@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { GrantBase } from './grant.types'
-import { RannisGrantsClientService } from '@island.is/clients/grants/rannis'
+import { RannisGrantsClientService } from './clients/rannis/rannisGrants.service'
 
 @Injectable()
 export class GrantsClientService {

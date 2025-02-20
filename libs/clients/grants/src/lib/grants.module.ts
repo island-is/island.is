@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
 import { GrantsClientService } from './grant.service'
-import { RannisGrantsClientModule } from '@island.is/clients/grants/rannis'
+import { RannisGrantsClientModule } from './clients/rannis/rannisGrants.module'
 
 @Module({
-  providers: [GrantsClientService, RannisGrantsClientModule],
+  imports: [RannisGrantsClientModule],
+  providers: [GrantsClientService],
   exports: [GrantsClientService],
 })
 export class GrantsClientModule {}

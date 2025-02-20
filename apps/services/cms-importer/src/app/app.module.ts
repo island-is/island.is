@@ -4,10 +4,12 @@ import { AppService } from './app.service'
 import { ConfigModule } from '@island.is/nest/config'
 import { ManagementClientConfig } from './modules/managementClient/managementClient.config'
 import { ManagementClientModule } from './modules/managementClient/managementClient.module'
-import { GrantsClientModule } from '@island.is/clients/grants'
+import {
+  GrantsClientModule,
+  RannisGrantsClientConfig,
+} from '@island.is/clients/grants'
 import { CmsRepository } from './repositories/cms.repository'
 import { ClientGrantsRepository } from './repositories/clientGrants.repository'
-import { RannisGrantsClientConfig } from '@island.is/clients/grants/rannis'
 
 @Module({
   imports: [

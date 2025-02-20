@@ -13,11 +13,11 @@ export class AppService {
   ) {}
 
   public async run() {
-    logger.debug('Starting cms import worker...')
+    logger.info('Starting cms import worker...')
 
     await this.processGrants()
 
-    logger.debug('...cms import worker finished.')
+    logger.info('...cms import worker finished.')
   }
 
   private parseGrantDate = (date: Date): { date: string; hour?: number } => {
@@ -55,11 +55,15 @@ export class AppService {
         const clientGrant = cmsGrants.find((cg) => cg.referenceId === grant.id)
 
         if (!clientGrant) {
-          logger.info('No matching client grant discovered', {
+          logger.debug('No matching client grant discovered, aborting...', {
             referenceId: grant.id,
           })
           return
         }
+
+        logger.info('Grant matched to contentful grant, checking for updates', {
+          referenceId: grant.id,
+        })
 
         const grantDateFrom = grant.dateFrom
           ? new Date(grant.dateFrom)
@@ -67,6 +71,9 @@ export class AppService {
         const grantDateTo = grant.dateTo ? new Date(grant.dateTo) : undefined
 
         if (!grantDateFrom || !grantDateTo) {
+          logger.warn('Missing dateFrom or dateTo in grant, aborting...', {
+            referenceId: grant.id,
+          })
           return
         }
 
@@ -74,15 +81,28 @@ export class AppService {
           Number.isNaN(grantDateFrom.getTime()) ||
           Number.isNaN(grantDateTo.getTime())
         ) {
+          logger.warn('Invalid dateFrom or dateTo in grant, aborting...', {
+            referenceId: grant.id,
+          })
           return
         }
 
         if (grantDateFrom.getTime() > grantDateTo.getTime()) {
+          logger.warn(
+            'Invalid dates, DateFrom is after DateTo in grant, aborting...',
+            {
+              referenceId: grant.id,
+            },
+          )
           return
         }
 
         const parsedGrantDateTo = this.parseGrantDate(grantDateTo)
         const parsedGrantDateFrom = this.parseGrantDate(grantDateFrom)
+
+        logger.info('Grant values parsed successfully', {
+          referenceId: grant.id,
+        })
 
         return {
           referenceId: grant.id,
@@ -119,7 +139,7 @@ export class AppService {
       })
       .filter(isDefined)
 
-    await this.cmsRepository.updateContentfulGrants(grantsToUpdate)
-    return
+    logger.info('All grants processed. Continuing to update...')
+    return await this.cmsRepository.updateContentfulGrants(grantsToUpdate)
   }
 }

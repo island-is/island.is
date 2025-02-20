@@ -75,10 +75,13 @@ export class CmsRepository {
     const promises = grants
       .map((grant) => {
         if (!grant?.inputFields) {
-          logger.warn('No input fields to update')
+          logger.warn('No input fields to update for grant', {
+            referenceId: grant.referenceId,
+          })
           return
         }
         return this.updateContentfulEntry(
+          grant.referenceId,
           grant.cmsGrantEntry,
           contentTypeResponse.data?.fields,
           grant?.inputFields,
@@ -100,6 +103,7 @@ export class CmsRepository {
   }
 
   private updateContentfulEntry = (
+    grantReferenceId: string,
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Array<{ key: string; value: unknown }>,
@@ -114,6 +118,8 @@ export class CmsRepository {
       } else {
         logger.info(`Field not found`, {
           inputField: inputField.key,
+          id: entry.sys.id,
+          referenceId: grantReferenceId,
         })
         Promise.reject(`Invalid field in input fields: ${inputField.key}`)
       }
@@ -121,11 +127,13 @@ export class CmsRepository {
     if (hasChanges) {
       logger.info('updating values', {
         id: entry.sys.id,
+        referenceId: grantReferenceId,
       })
       return entry.update()
     }
     logger.info('Values unchanged, aborting update', {
       id: entry.sys.id,
+      referenceId: grantReferenceId,
     })
     return Promise.resolve(undefined)
   }
