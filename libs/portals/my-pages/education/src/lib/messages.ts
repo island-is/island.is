@@ -1,6 +1,22 @@
 import { defineMessages } from 'react-intl'
 
 export const edMessage = defineMessages({
+  studentAssessment: {
+    id: 'sp.education-secondary-school:student-assessment',
+    defaultMessage: 'Samræmd könnunarpróf',
+  },
+  studentAssessmentIntroText: {
+    id: 'sp.education-secondary-school:education-student-assessment-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat.',
+  },
+  assessment: {
+    id: 'sp.education-secondary-school:assessment',
+    defaultMessage: 'Námsmat',
+  },
+  examDateSpan: {
+    id: 'sp.education-secondary-school:exam-date-span',
+    defaultMessage: 'Prófár',
+  },
   gradeTableTitle: {
     id: 'sp.education-secondary-school:grade-table-title',
     defaultMessage: `Samræmd könnunarpróf {arg}. bekkur`,
@@ -94,24 +110,5 @@ export const edMessage = defineMessages({
     id: 'sp.education-secondary-school:career-intro',
     defaultMessage:
       'Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla',
-  },
-})
-
-export const compulsorySchoolMessages = defineMessages({
-  studentAssessment: {
-    id: 'sp.education-student-assessment:student-assessment',
-    defaultMessage: 'Samræmd könnunarpróf',
-  },
-  studentAssessmentIntroText: {
-    id: 'sp.education-student-assessment:education-student-assessment-intro',
-    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat.',
-  },
-  assessment: {
-    id: 'sp.education-student-assessment:assessment',
-    defaultMessage: 'Námsmat',
-  },
-  examDateSpan: {
-    id: 'sp.education-student-assessment:exam-date-span',
-    defaultMessage: 'Prófár',
   },
 })

@@ -1,5 +1,4 @@
 import { EducationCompulsorySchoolStudentCareer } from '@island.is/api/schema'
-import { compulsorySchoolMessages } from '../../lib/messages'
 import {
   FormatMessage,
   useLocale,
@@ -15,7 +14,8 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useFamilySchoolCareerQuery } from './CompulsorySchoolFamilyExamOverview.generated'
+import { useFamilySchoolCareerQuery } from './PrimarySchoolFamilyExamOverview.generated'
+import { edMessage } from '../../lib/messages'
 
 const generateActionCard = (
   name: string,
@@ -27,11 +27,9 @@ const generateActionCard = (
     image={{ type: 'avatar' }}
     translateLabel="no"
     heading={name}
-    text={`${formatMessage(
-      compulsorySchoolMessages.examDateSpan,
-    )}: ${dateSpan}`}
+    text={`${formatMessage(edMessage.examDateSpan)}: ${dateSpan}`}
     tag={{
-      label: formatMessage(compulsorySchoolMessages.studentAssessment),
+      label: formatMessage(edMessage.studentAssessment),
       variant: 'purple',
     }}
     cta={{
@@ -78,8 +76,8 @@ export const CompulsorySchoolFamilyExamOverview = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(compulsorySchoolMessages.assessment)}
-      intro={formatMessage(compulsorySchoolMessages.studentAssessmentIntroText)}
+      title={formatMessage(edMessage.assessment)}
+      intro={formatMessage(edMessage.studentAssessmentIntroText)}
       serviceProviderSlug={'menntamalastofnun'}
       serviceProviderTooltip={formatMessage(m.mmsTooltip)}
     >

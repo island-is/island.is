@@ -2,18 +2,14 @@ import {
   ExpandHeader,
   ExpandRow,
   IntroWrapper,
-  NestedFullTable,
   m,
 } from '@island.is/portals/my-pages/core'
-import { compulsorySchoolMessages, edMessage } from '../../lib/messages'
+import { edMessage } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import { Box, Text, Table as T } from '@island.is/island-ui/core'
 import { useParams } from 'react-router-dom'
-import { useUserFamilyMemberExamResultsQuery } from './CompulsorySchoolFamilyExamDetail.generated'
-import React from 'react'
-import { isDefined } from '@island.is/shared/utils'
-import format from 'date-fns/esm/fp/format/index'
+import { useUserFamilyMemberExamResultsQuery } from './PrimarySchoolFamilyExamDetail.generated'
 
 type UseParams = {
   id: string
@@ -34,8 +30,8 @@ export const CompulsorySchoolFamilyExamOverview = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(compulsorySchoolMessages.assessment)}
-      intro={formatMessage(compulsorySchoolMessages.studentAssessmentIntroText)}
+      title={formatMessage(edMessage.assessment)}
+      intro={formatMessage(edMessage.studentAssessmentIntroText)}
       serviceProviderSlug={'menntamalastofnun'}
       serviceProviderTooltip={formatMessage(m.mmsTooltip)}
     >
