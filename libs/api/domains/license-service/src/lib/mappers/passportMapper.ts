@@ -144,7 +144,7 @@ export class PassportMapper implements GenericLicenseMapper {
             arg: formatMessage(m.sixMonths),
           })
         : formatMessage(m.valid),
-      color: isInvalid || isExpired ? 'red' : 'blue',
+      color: isInvalid || isExpiring ? 'red' : 'blue',
       icon: isInvalid
         ? GenericUserLicenseDataFieldTagType.closeCircle
         : GenericUserLicenseDataFieldTagType.checkmarkCircle,
