@@ -230,8 +230,8 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS="$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
-            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo CHUNKS=$CHUNKS >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
@@ -240,10 +240,10 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          CHUNKS="${{ steps.build_map.outputs.CHUNKS }}"
+          CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
           echo "CHUNKS: '$CHUNKS'"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo IMAGES="$(echo "$CHUNKS" | jq -r 'map(.project) | join(",")')" >> "$GITHUB_OUTPUT"
+          if [[ $CHUNKS != "[]" ]]; then
+            echo IMAGES=$(echo $CHUNKS | jq -r 'map(.project) | join(",")') >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
