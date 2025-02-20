@@ -9,6 +9,7 @@ import {
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -140,6 +141,12 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                     formatMessage(m.unknown),
                 }),
                 licenseId: DEFAULT_LICENSE_ID,
+                expiryStatus:
+                  isExpired === undefined
+                    ? ExpiryStatus.UNKNOWN
+                    : isExpired
+                    ? ExpiryStatus.EXPIRED
+                    : ExpiryStatus.ACTIVE,
                 expired: isExpired,
                 expireDate: t.licenseInfo?.expirationDate ?? undefined,
                 displayTag:
