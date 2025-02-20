@@ -26,12 +26,19 @@ jobs:
           isolated_lang_chunks: '["tsx,typescript","jsx,javascript","java","gitleaks"]'
         run: |
           matrix=$(
-          jq -nc --argjson chunks "$isolated_lang_chunks" --arg exclude "$excluded_langs" '{
+          jq -nc --argjson chunks "$isolated_lang_chunks" --arg ignores_raw "$excluded_langs" '{
             include: [
-              $chunks | map({
-                exclude: $exclude,
-                langs: .,
-              })
+              [
+                $chunks | map({
+                  includes: . | split(","),
+                  excludes: []
+                }),
+                [{
+                  includes: [],
+                  excludes: $chunks | map(split(",")) | flatten,
+                  ignores: $ignores_raw | split(",")
+                }]
+              ] | flatten(1)
             ]
           }')
           echo "matrix (pretty):"
@@ -46,41 +53,47 @@ jobs:
       matrix: ${{ fromJson(needs.language-split.outputs.matrix) }}
     steps:
       - env:
-          langs: ${{ toJson(matrix.langs) }}
-          exclude: ${{ toJson(matrix.exclude) }}
+          includes: ${{ toJson(matrix.includes) }}
+          excludes: ${{ toJson(matrix.excludes) }}
           matrix: ${{ toJson(matrix) }}
           outputs: ${{ toJson(needs.language-split.outputs) }}
           # matrix: ${{ needs.language-split.outputs.matrix }}
         run: |
           set -x
-          echo "$outputs"
-          echo "$matrix"
-          echo "$langs"
-          echo "$exclude"
+          echo "outputs=$outputs"
+          echo "matrix=$matrix"
+          echo "includes=$includes"
+          echo "excludes=$excludes"
 
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set env
+      - name: Set env (includes)
+        if: ${{ toJson(matrix.excludes) == '[]' }}
         env:
-          langs: ${{ matrix.langs }}
-          exclude: ${{ matrix.exclude }}
-          matrix: ${{ matrix }}
+          includes: ${{ toJson(matrix.includes) }}
         run: |
-          jq -n --arg langs_raw "$langs" --arg exclude_raw "$exclude" '
-            $exclude_raw | split(",") as $exclude
-          | $langs_raw | split(",") as $langs
-          | $langs
-          | select(. | IN($exclude) | not)
+          set -x
+          jq -nre --argjson includes "$includes" '
+            $includes
           | map("VALIDATE_\(. | ascii_upcase)=true")
           | join("\n")
-          ' | tee -a "$GITHUB_ENV"
-          echo "---"
-          set | grep VALIDATE_
-          echo "---"
-          env | grep VALIDATE_
-          echo "---"
+          ' | while read -r line; do echo "$line" >> "$GITHUB_ENV"; done
+
+      - name: Set env (includes)
+        if: ${{ toJson(matrix.excludes) != '[]' }}
+        env:
+          excludes: ${{ toJson(matrix.excludes) }}
+          ignores: ${{ toJson(matrix.ignores) }}
+        run: |
+          set -x
+          jq -nre --argjson excludes "$excludes" --argjson ignores "$ignores" '
+            [$excludes,$ignores]
+          | flatten
+          | map("VALIDATE_\(. | ascii_upcase)=false")
+          | join("\n")
+          ' | while read -r line; do echo "$line" >> "$GITHUB_ENV"; done
 
       - name: Super-Linter
         uses: super-linter/super-linter@v7
@@ -91,12 +104,7 @@ jobs:
           FIX_YAML_PRETTIER: true
 
       - name: Commit and push linting fixes
-        # # Run only on:
-        # # - Pull requests
-        # # - Not on the default branch
-        # if: >
-        #   github.event_name == 'pull_request' &&
-        #   github.ref_name != github.event.repository.default_branch
+        if: ${{ !github.event.localrun }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
