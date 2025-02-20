@@ -104,9 +104,10 @@ export class EventLogService {
   ): Promise<Map<string, { latest: Date; count: number }>> {
     return this.eventLogModel
       .count({
-        group: ['nationalId'],
+        group: ['nationalId', 'institutionName'],
         attributes: [
           'nationalId',
+          'institutionName',
           [Sequelize.fn('max', Sequelize.col('created')), 'latest'],
           [Sequelize.fn('count', Sequelize.col('national_id')), 'count'],
         ],
@@ -119,7 +120,7 @@ export class EventLogService {
         (logs) =>
           new Map(
             logs.map((log) => [
-              log.nationalId as string,
+              `${log.nationalId}-${log.institutionName}`,
               { latest: log.latest as Date, count: log.count },
             ]),
           ),
