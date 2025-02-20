@@ -9,8 +9,4 @@ export class GrantsClientService {
   getGrants(): Promise<Array<GrantBase>> {
     return this.rannisGrantService.getGrants()
   }
-
-  getGrantById(id: string) {
-    // Implementation goes here
-  }
 }
