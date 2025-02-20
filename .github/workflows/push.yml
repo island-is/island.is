@@ -89,7 +89,7 @@ jobs:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs
-        uses: ./.github/actions.set-shas
+        uses: ./.github/actions/set-shas
 
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
