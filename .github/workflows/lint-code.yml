@@ -13,13 +13,75 @@ defaults:
     shell: bash -euo pipefail {0}
 
 jobs:
+  language-split:
+    name: Paralellize languge checks
+    runs-on: arc-runners
+    outputs:
+      matrix: ${{ steps.split.outputs.matrix }}
+    steps:
+      - name: Split
+        id: split
+        env:
+          excluded_langs: 'openapi,ruby'
+          isolated_lang_chunks: '["tsx,typescript","jsx,javascript","java","gitleaks"]'
+        run: |
+          matrix=$(
+          jq -nc --argjson chunks "$isolated_lang_chunks" --arg exclude "$excluded_langs" '{
+            include: [
+              $chunks | map({
+                exclude: $exclude,
+                langs: .,
+              })
+            ]
+          }')
+          echo "matrix (pretty):"
+          echo "$matrix" | jq
+          echo "matrix=$matrix" | tee -a "$GITHUB_OUTPUT"
+
   super-linter:
     name: Super-Linter
     runs-on: arc-runners
+    needs: language-split
+    strategy:
+      matrix: ${{ fromJson(needs.language-split.outputs.matrix) }}
     steps:
+      - env:
+          langs: ${{ toJson(matrix.langs) }}
+          exclude: ${{ toJson(matrix.exclude) }}
+          matrix: ${{ toJson(matrix) }}
+          outputs: ${{ toJson(needs.language-split.outputs) }}
+          # matrix: ${{ needs.language-split.outputs.matrix }}
+        run: |
+          set -x
+          echo "$outputs"
+          echo "$matrix"
+          echo "$langs"
+          echo "$exclude"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Set env
+        env:
+          langs: ${{ matrix.langs }}
+          exclude: ${{ matrix.exclude }}
+          matrix: ${{ matrix }}
+        run: |
+          jq -n --arg langs_raw "$langs" --arg exclude_raw "$exclude" '
+            $exclude_raw | split(",") as $exclude
+          | $langs_raw | split(",") as $langs
+          | $langs
+          | select(. | IN($exclude) | not)
+          | map("VALIDATE_\(. | ascii_upcase)=true")
+          | join("\n")
+          ' | tee -a "$GITHUB_ENV"
+          echo "---"
+          set | grep VALIDATE_
+          echo "---"
+          env | grep VALIDATE_
+          echo "---"
+
       - name: Super-Linter
         uses: super-linter/super-linter@v7
         env:
@@ -27,13 +89,14 @@ jobs:
           # Set your fix mode variables to true
           FIX_SHELL_SHFMT: true
           FIX_YAML_PRETTIER: true
+
       - name: Commit and push linting fixes
-        # Run only on:
-        # - Pull requests
-        # - Not on the default branch
-        if: >
-          github.event_name == 'pull_request' &&
-          github.ref_name != github.event.repository.default_branch
+        # # Run only on:
+        # # - Pull requests
+        # # - Not on the default branch
+        # if: >
+        #   github.event_name == 'pull_request' &&
+        #   github.ref_name != github.event.repository.default_branch
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
