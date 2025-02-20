@@ -203,27 +203,22 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
+
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          prescribedItemId: item.prescribedItemId,
-          prescriptionId: item.prescriptionId,
-          prescriberId: item.prescriberId,
+          id: item.productId,
+          name: item.productName,
+          type: item.productType,
+          form: item.productForm,
+          url: item.productUrl,
+          quantity: item.productQuantity,
           prescriberName: item.prescriberName,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
-          productId: item.productId,
-          productName: item.productName,
-          productType: item.productType,
-          productForm: item.productForm,
-          productUrl: item.productUrl,
-          productStrength: item.productStrength,
-          productQuantity: item.productQuantity,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
-          totalPrescribedAmount: item.totalPrescribedAmount,
-          totalPrescribedAmountDisplay: item.totalPrescribedAmountDisplay,
-          isRegiment: item.isRegiment ? true : false,
+          totalPrescribedAmount: item.totalPrescribedAmountDisplay,
           isRenewable: item.isRenewable,
           renewalBlockedReason: item.renewalBlockedReason
             ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
@@ -231,25 +226,19 @@ export class HealthDirectorateService {
           renewalStatus: item.renewalStatus
             ? mapPrescriptionRenewalStatus(item.renewalStatus)
             : undefined,
-          amountRemaining: item.amountRemaining,
-          amountRemainingUnit: item.amountRemainingUnit,
-          amountRemainingDisplay: item.amountRemainingDisplay,
-          percentageRemaining: item.percentageRemaining,
-          isFullyDispensed: item.isFullyDispensed,
+          amountRemaining: item.amountRemainingDisplay,
           dispensations: item.dispensations.map((item) => {
             return {
               id: item.id,
-              dispensingAgentId: item.dispensingAgentId,
-              dispensingAgentName: item.dispensingAgentName,
-              dispensationDate: item.dispensationDate,
-              dispensedItemsCount: item.dispensedItemsCount,
-              dispensedItems: item.dispensedItems.map((item) => {
+              agentName: item.dispensingAgentName,
+              date: item.dispensationDate,
+              count: item.dispensedItemsCount,
+              items: item.dispensedItems.map((item) => {
                 return {
-                  productId: item.productId,
-                  productName: item.productName,
-                  productStrength: item.productStrength,
-                  dispensedAmount: item.dispensedAmount,
-                  dispensedAmountDisplay: item.dispensedAmountDisplay,
+                  id: item.productId,
+                  name: item.productName,
+                  strength: item.productStrength,
+                  amount: item.dispensedAmountDisplay,
                   numberOfPackages: item.numberOfPackages,
                 }
               }),

@@ -2,20 +2,17 @@ import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateDispensedItem')
 export class DispensedItem {
-  @Field()
-  productId!: string
+  @Field(() => ID)
+  id!: string
 
   @Field({ nullable: true })
-  productName?: string
+  name?: string
 
   @Field({ nullable: true })
-  productStrength?: string
-
-  @Field(() => Int, { nullable: true })
-  dispensedAmount?: number
+  strength?: string
 
   @Field({ nullable: true })
-  dispensedAmountDisplay?: string
+  amount?: string
 
   @Field(() => Int, { nullable: true })
   numberOfPackages?: number
@@ -26,18 +23,15 @@ export class Dispensation {
   @Field(() => Int)
   id!: number
 
-  @Field(() => Int)
-  dispensingAgentId!: number
-
   @Field({ nullable: true })
-  dispensingAgentName?: string
+  agentName?: string
 
   @Field(() => Date)
-  dispensationDate!: Date
+  date!: Date
 
   @Field()
-  dispensedItemsCount!: number
+  count!: number
 
   @Field(() => [DispensedItem])
-  dispensedItems!: DispensedItem[]
+  items!: DispensedItem[]
 }
