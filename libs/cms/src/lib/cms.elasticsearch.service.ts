@@ -171,7 +171,15 @@ export class CmsElasticsearchService {
 
   async getEvents(
     index: string,
-    { size, page, order, organization, onlyIncludePastEvents }: GetEventsInput,
+    {
+      size,
+      page,
+      order,
+      organization,
+      onlyIncludePastEvents,
+      searchTerm,
+      lang,
+    }: GetEventsInput,
   ) {
     const tagList: {
       key: string
@@ -186,6 +194,25 @@ export class CmsElasticsearchService {
 
     if (tagList.length > 0) {
       tagQuery = { tags: tagList }
+    }
+
+    let queryString = searchTerm ? searchTerm.trim().toLowerCase() : ''
+
+    if (lang === 'is') {
+      queryString = queryString.replace('`', '')
+    }
+
+    const must: Record<string, unknown>[] = []
+
+    if (queryString.length > 0) {
+      must.push({
+        simple_query_string: {
+          query: queryString + '*',
+          fields: ['title^100', 'content'],
+          analyze_wildcard: true,
+          default_operator: 'and',
+        },
+      })
     }
 
     const query = {
@@ -208,6 +235,9 @@ export class CmsElasticsearchService {
               to: 'now',
             },
           }),
+      query: {
+        bool: must,
+      },
     }
 
     const eventsResponse = await this.elasticService.getDocumentsByMetaData(

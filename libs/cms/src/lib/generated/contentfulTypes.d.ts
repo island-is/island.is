@@ -1054,6 +1054,9 @@ export interface IEventFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IEvent extends Entry<IEventFields> {

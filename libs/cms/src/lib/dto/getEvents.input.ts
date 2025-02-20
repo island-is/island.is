@@ -31,4 +31,10 @@ export class GetEventsInput {
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
   onlyIncludePastEvents?: boolean
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  searchTerm?: string | null
+
+  // TODO: add filter tags
 }
