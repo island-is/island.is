@@ -18,6 +18,30 @@ export const fieldReducer = (
       const { value, id } = action.payload
       return setFieldValue(state, 'bankAccount', id, value)
     }
+    case 'SET_CURRENCY': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'iskNumber', id, value)
+    }
+    case 'SET_EMAIL': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'email', id, value)
+    }
+    case 'SET_NATIONAL_ID': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'nationalId', id, value)
+    }
+    case 'SET_PHONE_NUMBER': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'phoneNumber', id, value)
+    }
+    case 'SET_TEXT': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'text', id, value)
+    }
+    case 'SET_DATE': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'date', id, value)
+    }
     default:
       return state
   }

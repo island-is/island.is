@@ -5,7 +5,7 @@ import { Action } from '../../../lib/reducerTypes'
 
 interface Props {
   item: FormSystemField
-  dispatch: Dispatch<Action>
+  dispatch?: Dispatch<Action>
 }
 
 type ListItem = {
@@ -51,12 +51,13 @@ export const List = ({ item, dispatch }: Props) => {
         ] ?? 'Select an option'
       }
       backgroundColor='blue'
-      onChange={(e) =>
+      onChange={(e) => {
+        if (!dispatch) return
         dispatch({
           type: 'SET_LIST_VALUE',
           payload: { id: item.id, value: e?.value },
         })
-      }
+      }}
       value={value()}
     />
   )

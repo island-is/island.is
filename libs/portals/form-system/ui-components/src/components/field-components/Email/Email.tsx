@@ -1,22 +1,52 @@
-import { useState } from 'react'
-import { Input, Stack, Text } from '@island.is/island-ui/core'
+import { Dispatch, useState, ChangeEvent, useCallback } from 'react'
+import { Input, Stack } from '@island.is/island-ui/core'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
+import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
+  dispatch?: Dispatch<Action>
 }
 
-export const Email = ({ item }: Props) => {
-  const [email, setEmail] = useState('')
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+export const Email = ({ item, dispatch }: Props) => {
+  const initialEmail = getValue(item, 'email')
+  const [email, setEmail] = useState(initialEmail)
   const [hasError, setHasError] = useState(false)
-  const isValidEmail = (): boolean => {
-    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    const res = pattern.test(email)
-    return !res
-  }
   const { formatMessage } = useIntl()
+
+  const validateEmail = useCallback((email: string): boolean => {
+    return !EMAIL_REGEX.test(email)
+  }, [])
+
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const newEmail = e.target.value
+      setEmail(newEmail)
+      if (!dispatch) return
+      dispatch({
+        type: 'SET_EMAIL',
+        payload: {
+          id: item.id,
+          value: newEmail,
+        },
+      })
+    },
+    [dispatch, item.id, validateEmail]
+  )
+
+  const handleBlur = useCallback(() => {
+    setHasError(validateEmail(email))
+  }, [email, validateEmail])
+
+  const handleFocus = useCallback(() => {
+    setHasError(false)
+  }, [])
+
   return (
     <Stack space={2}>
       <Input
@@ -24,13 +54,13 @@ export const Email = ({ item }: Props) => {
         name="email"
         label={formatMessage(m.email)}
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onBlur={() => setHasError(isValidEmail())}
-        onFocus={() => setHasError(false)}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
         errorMessage={formatMessage(m.invalidEmail)}
         hasError={hasError}
         required={item?.isRequired ?? false}
-        backgroundColor='blue'
+        backgroundColor="blue"
       />
     </Stack>
   )

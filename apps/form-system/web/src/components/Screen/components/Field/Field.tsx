@@ -1,4 +1,4 @@
-import { Banknumber, Checkbox, CurrencyField, Email, FieldTypesEnum, FileUpload, List, MessageWithLink, NationalId, PhoneNumber, PropertyNumber, Radio, TextInput, TimeInput } from '@island.is/form-system/ui'
+import { Banknumber, Checkbox, CurrencyField, DatePicker, Email, FieldTypesEnum, FileUpload, List, MessageWithLink, NationalId, PhoneNumber, PropertyNumber, Radio, TextInput, TimeInput } from '@island.is/form-system/ui'
 import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
@@ -27,7 +27,7 @@ export const Field = ({ field }: Props) => {
         <MessageWithLink item={field} />
       )}
       {field.fieldType === FieldTypesEnum.ISK_NUMBERBOX && (
-        <CurrencyField {...fieldItems} /> // not finished
+        <CurrencyField {...fieldItems} />
       )}
       {field.fieldType === FieldTypesEnum.EMAIL && (
         <Email {...fieldItems} />
@@ -36,25 +36,28 @@ export const Field = ({ field }: Props) => {
         <FileUpload item={field} />
       )}
       {field.fieldType === FieldTypesEnum.NATIONAL_ID && (
-        <NationalId item={field} />
+        <NationalId {...fieldItems} /> // TODO: need to implement fetching name from nationalId
       )}
       {field.fieldType === FieldTypesEnum.PHONE_NUMBER && (
-        <PhoneNumber item={field} />
+        <PhoneNumber {...fieldItems} /> // TODO: need to find out how the country code can be extracted from PhoneInput
       )}
       {field.fieldType === FieldTypesEnum.PROPERTY_NUMBER && (
         <PropertyNumber item={field} />
       )}
       {field.fieldType === FieldTypesEnum.RADIO_BUTTONS && (
-        <Radio item={field} />
+        <Radio {...fieldItems} />
       )}
       {field.fieldType === FieldTypesEnum.TEXTBOX && (
-        <TextInput item={field} />
+        <TextInput {...fieldItems} />
       )}
       {field.fieldType === FieldTypesEnum.TIME_INPUT && (
         <TimeInput item={field} />
       )}
       {field.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <List {...fieldItems} />
+      )}
+      {field.fieldType === FieldTypesEnum.DATE_PICKER && (
+        <DatePicker {...fieldItems} />
       )}
     </Box>
   )

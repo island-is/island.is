@@ -6,14 +6,15 @@ import {
 import { ChangeEvent, Dispatch, useState } from 'react'
 import { FormSystemField } from '@island.is/api/schema'
 import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
-  dispatch: Dispatch<Action>
+  dispatch?: Dispatch<Action>
 }
 
 export const CurrencyField = ({ item, dispatch }: Props) => {
-  const [currency, setCurrency] = useState('')
+  const [currency, setCurrency] = useState(getValue(item, 'iskNumber'))
   const label = item?.name?.is
 
   const handleCurrencyChange = (
@@ -24,6 +25,14 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
     // Split the input value into groups of three characters
     const formattedValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     setCurrency(formattedValue)
+    if (!dispatch) return
+    dispatch({
+      type: 'SET_CURRENCY',
+      payload: {
+        value: formattedValue,
+        id: item.id,
+      }
+    })
   }
 
   return (

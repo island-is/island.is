@@ -1,28 +1,42 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import { RadioButton, Text, Box } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import { Dispatch, useEffect, useState } from 'react'
+import { getValue } from '../../../lib/getValue'
+import { Action } from '../../../lib'
 
 interface Props {
   item: FormSystemField
+  dispatch?: Dispatch<Action>
 }
 
-export const Radio = ({ item }: Props) => {
+export const Radio = ({ item, dispatch }: Props) => {
   const radioButtons = item.list as FormSystemListItem[]
+  const [value, setValue] = useState<string>(getValue(item, 'listValue'))
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
-  console.log(item)
+
   useEffect(() => {
-    setRadioChecked(radioButtons?.map(() => false) ?? [])
+    setRadioChecked(radioButtons?.map((rb) => rb.label?.is === value ? true : false) ?? [])
   }, [radioButtons])
+
+  const handleChange = (index: number) => {
+    setRadioChecked((prev) =>
+      prev.map((rb, i) => (i === index ? true : false)),
+    )
+    if (!dispatch) return
+    dispatch({
+      type: 'SET_LIST_VALUE',
+      payload: {
+        id: item.id,
+        value: radioButtons[index].label?.is,
+      }
+    })
+  }
 
   const radioButton = (rb: FormSystemListItem, index: number) => (
     <Box
       width="half"
       padding={1}
-      onClick={() =>
-        setRadioChecked((prev) =>
-          prev.map((rb, i) => (i === index ? true : false)),
-        )
-      }
+      onClick={(e) => handleChange(index)}
     >
       <RadioButton
         label={rb?.label?.is}

@@ -12,7 +12,7 @@ import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
-  dispatch: Dispatch<Action>
+  dispatch?: Dispatch<Action>
 }
 
 export const Banknumber = ({ item, dispatch }: Props) => {
@@ -72,6 +72,7 @@ export const Banknumber = ({ item, dispatch }: Props) => {
   useEffect(() => {
     const combinedValue = `${bank}-${ledger}-${account}`
     setValue(combinedValue)
+    if (!dispatch) return
     dispatch({
       type: 'SET_BANK_ACCOUNT',
       payload: { value: combinedValue, id: item.id },
@@ -110,7 +111,7 @@ export const Banknumber = ({ item, dispatch }: Props) => {
           backgroundColor='blue'
         />
       </Column>
-      <Column span="2/12">
+      <Column span="3/12">
         <Input
           ref={
             inputRefs[1] as React.RefObject<

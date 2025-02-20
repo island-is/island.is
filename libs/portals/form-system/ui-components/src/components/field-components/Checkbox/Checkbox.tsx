@@ -6,24 +6,24 @@ import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
-  dispatch: Dispatch<Action>
+  dispatch?: Dispatch<Action>
 }
 
 export const Checkbox = ({ item, dispatch }: Props) => {
   const value = getValue(item, 'checkboxValue')
-  console.log(value)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!dispatch) return
+    dispatch({
+      type: 'SET_CHECKBOX_VALUE',
+      payload: { id: item.id, value: e.target.checked },
+    })
+  }
   return (
     <CheckboxField
       name="checkbox"
       label={item?.name?.is ?? ''}
       checked={value}
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onChange={(e) =>
-        dispatch({
-          type: 'SET_CHECKBOX_VALUE',
-          payload: { id: item.id, value: e.target.checked },
-        })
-      }
+      onChange={handleChange}
     />
   )
 }

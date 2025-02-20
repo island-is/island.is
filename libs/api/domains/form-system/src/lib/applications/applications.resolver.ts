@@ -8,9 +8,10 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import { Application } from '../../models/applications.model'
+import { Application, ApplicationListDto } from '../../models/applications.model'
 import {
   CreateApplicationInput,
+  GetAllApplicationsInput,
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
@@ -78,4 +79,14 @@ export class ApplicationsResolver {
     return this.applicationsService.submitScreen(user, input)
   }
 
+  @Query(() => ApplicationListDto, {
+    name: 'formSystemGetApplications',
+  })
+  async getApplications(
+    @Args('input', { type: () => GetAllApplicationsInput })
+    input: GetAllApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationListDto> {
+    return this.applicationsService.getApplications(user, input)
+  }
 }

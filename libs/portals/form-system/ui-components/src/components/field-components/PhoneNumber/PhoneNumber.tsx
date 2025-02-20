@@ -6,22 +6,45 @@ import {
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
+import { Dispatch, useState } from 'react'
+import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props {
   item: FormSystemField
+  dispatch?: Dispatch<Action>
 }
 
-export const PhoneNumber = ({ item }: Props) => {
-  const { formatMessage } = useIntl()
+export const PhoneNumber = ({ item, dispatch }: Props) => {
+  const { locale, formatMessage } = useIntl()
+  const [phoneNumber, setPhoneNumber] = useState<string>(getValue(item, 'phoneNumber'))
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setPhoneNumber(e.target.value)
+    if (!dispatch) return
+    dispatch({
+      type: 'SET_PHONE_NUMBER',
+      payload: {
+        id: item.id,
+        value: e.target.value,
+      },
+    })
+  }
+
+
   return (
     <Row>
       <Column>
         <PhoneInput
           label={formatMessage(m.phoneNumber)}
           placeholder="Símanúmer"
-          name="phoneNumber"
+          name={item.id ?? ''}
+          locale={locale as Locale}
           required={item.isRequired ?? false}
           backgroundColor='blue'
+          value={phoneNumber}
+          onChange={handleChange}
         />
       </Column>
     </Row>

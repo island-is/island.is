@@ -102,3 +102,19 @@ export class SubmitScreenInput {
   @Field(() => ApplicationInput, { nullable: true })
   applicationDto?: ApplicationInput
 }
+
+@InputType('FormSystemGetAllApplicationsInput')
+export class GetAllApplicationsInput {
+  @Field(() => String, { nullable: true })
+  formId?: string
+
+  @Field(() => Int, { nullable: true })
+  page?: number
+
+  @Field(() => Int, { nullable: true })
+  limit?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isTest?: boolean
+}
+

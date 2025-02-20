@@ -6,6 +6,7 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerFindAllByTypeAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerSubmitScreenRequest,
@@ -13,10 +14,11 @@ import {
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
+  GetAllApplicationsInput,
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
-import { Application } from '../../models/applications.model'
+import { Application, ApplicationListDto } from '../../models/applications.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
 import { removeNullProperties } from '../../utils/removeNull'
 
@@ -116,12 +118,27 @@ export class ApplicationsService {
       .applicationsControllerSubmitScreen(
         input as ApplicationsControllerSubmitScreenRequest
       )
-    //.catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
 
-    // if (!response || response instanceof ApolloError) {
-    //   return
-    // }
+    if (!response || response instanceof ApolloError) {
+      return
+    }
+  }
 
+  async getApplications(
+    auth: User,
+    input: GetAllApplicationsInput
+  ): Promise<ApplicationListDto> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllByTypeAndUser(
+        input as ApplicationsControllerFindAllByTypeAndUserRequest
+      )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get applications'))
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+    return response
   }
 
 }

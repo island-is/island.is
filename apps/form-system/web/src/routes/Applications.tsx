@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { CREATE_APPLICATION } from "@island.is/form-system/graphql"
-import { useMutation } from "@apollo/client"
+import { CREATE_APPLICATION, GET_APPLICATIONS } from "@island.is/form-system/graphql"
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client"
 import { Button } from "@island.is/island-ui/core"
 
 interface Params {
@@ -18,8 +18,16 @@ export const Applications = () => {
         console.log(createApplication)
       }
     }
-  }
-  )
+  })
+
+  const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
+    onCompleted({ getApplications }) {
+      if (slug) {
+        console.log(getApplications)
+      }
+    }
+  })
+
   const createApplication = async () => {
     const app = await createApplicationMutation({
       variables: {
@@ -37,6 +45,20 @@ export const Applications = () => {
     return app
   }
 
+  const fetchApplications = async () => {
+    const apps = await getApplications({
+      variables: {
+        input: {
+          formId: 'dd81c73f-504e-4cee-b3f5-3161be4f20e9',
+          page: 1,
+          limit: 100,
+          isTest: false,
+        }
+      }
+    })
+    console.log(apps)
+  }
+
   console.log('slug', slug)
   // Check whether the user has opened this form before and if so, show all the applications 
   const applications = []
@@ -45,6 +67,9 @@ export const Applications = () => {
   }
 
   return (
-    <Button onClick={createApplication}>Create</Button>
+    <>
+      <Button onClick={createApplication}>Create</Button>
+      <Button onClick={fetchApplications}>Get</Button>
+    </>
   )
 }
