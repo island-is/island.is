@@ -42,14 +42,16 @@ export class HealthDirectorateHealthService {
     return locale === 'is' ? Locale.Is : Locale.En
   }
 
-  /* Lyfjasaga */
+  /* Afgreiðslur */
   public async getDispensations(
     auth: Auth,
     atcCode: string,
+    locale: string,
   ): Promise<Array<DispensationHistoryDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
       .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
         atcCode,
+        locale: this.mapLocale(locale),
       })
       .catch(handle404)
 
@@ -66,7 +68,6 @@ export class HealthDirectorateHealthService {
     return dispensations
   }
 
-  /* Lyfjaafgreiðslur */
   public async getGroupedDispensations(
     auth: Auth,
     locale: string,
