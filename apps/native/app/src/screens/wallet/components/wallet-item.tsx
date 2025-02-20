@@ -1,6 +1,6 @@
 import React from 'react'
 import { SafeAreaView, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { LicenseListCard, Link, LinkText } from '../../../ui'
 import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
@@ -27,6 +27,7 @@ export const WalletItem = React.memo(
     let cardHeight = 96
     const type = item.license?.type
     const intl = useIntl()
+    const theme = useTheme()
 
     // Passport card
     if (type === GenericLicenseType.Passport) {
@@ -42,7 +43,7 @@ export const WalletItem = React.memo(
           }}
         >
           {noPassport ? (
-            <SafeAreaView>
+            <SafeAreaView style={{ marginBottom: theme.spacing[2] }}>
               <LicenseListCard
                 type={GenericLicenseType.Passport}
                 subtitle={item?.payload?.metadata?.subtitle}
