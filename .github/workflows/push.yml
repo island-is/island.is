@@ -239,7 +239,6 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
           CHUNKS="${{ steps.build_map.outputs.BUILD_CHUNKS }}"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
