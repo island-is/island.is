@@ -12,6 +12,7 @@ import {
   PrescribedItemDto,
   ReferralDto,
   WaitingListEntryDto,
+  DispensationHistoryDto,
 } from './gen/fetch'
 
 const LOG_CATEGORY = 'health-directorate-health-api'
@@ -42,13 +43,15 @@ export class HealthDirectorateHealthService {
   }
 
   /* Afgreiðslur */
-  private async getDispensations(
+  public async getDispensations(
     auth: Auth,
     atcCode: string,
-  ): Promise<Array<DispensationDto> | null> {
+    locale: string,
+  ): Promise<Array<DispensationHistoryDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
       .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
         atcCode,
+        locale: this.mapLocale(locale),
       })
       .catch(handle404)
 
@@ -65,11 +68,14 @@ export class HealthDirectorateHealthService {
     return dispensations
   }
 
-  private async getGroupedDispensations(
+  public async getGroupedDispensations(
     auth: Auth,
-  ): Promise<Array<DispensationDto> | null> {
+    locale: string,
+  ): Promise<Array<DispensationHistoryDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
-      .mePrescriptionDispensationControllerGetGroupedDispensationsV1()
+      .mePrescriptionDispensationControllerGetGroupedDispensationsV1({
+        locale: this.mapLocale(locale),
+      })
       .catch(handle404)
 
     if (!dispensations) {
