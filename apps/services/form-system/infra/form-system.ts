@@ -36,5 +36,5 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       requests: { cpu: '50m', memory: '256Mi' },
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-external')

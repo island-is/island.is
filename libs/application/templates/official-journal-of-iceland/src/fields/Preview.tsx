@@ -32,9 +32,9 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { signatureHtml } = useSignatures({
     applicationId: application.id,
     variant:
-      application?.answers?.misc?.signatureType === 'regular'
-        ? 'regular'
-        : 'committee',
+      application?.answers?.misc?.signatureType === 'committee'
+        ? 'committee'
+        : 'regular',
   })
 
   const {

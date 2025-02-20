@@ -14,9 +14,4 @@ export class CreateEventLogInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly caseId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly nationalId?: string
 }
