@@ -386,7 +386,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: arc-runners
     timeout-minutes: 30
     env:
