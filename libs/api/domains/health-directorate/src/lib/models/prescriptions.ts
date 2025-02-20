@@ -26,7 +26,7 @@ export class Prescription {
   @Field(() => Int, { nullable: true })
   quantity?: number
 
-  @Field({ nullable: true })
+  @Field(() => PrescribedItemCategoryEnum, { nullable: true })
   category?: PrescribedItemCategoryEnum
 
   @Field({ nullable: true })
