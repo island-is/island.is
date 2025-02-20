@@ -22,6 +22,13 @@ export const valueContainer = style(
   'valueContainer',
 )
 
+export const multiValueContainer = style(
+  {
+    maxWidth: '100%',
+  },
+  'multiValueContainer',
+)
+
 export const multiValue = style(
   {
     backgroundColor: theme.color.blue200,
@@ -40,6 +47,13 @@ export const multiValueLabel = style(
     borderRadius: 0,
   },
   'multiValueLabel',
+)
+
+globalStyle(
+  `${wrapper} .island-select__value-container island-select__value-container--is-multi island-select__value-container--has-value`,
+  {
+    maxWidth: '100%',
+  },
 )
 
 globalStyle(`${wrapper} .island-select__multi-value`, {
