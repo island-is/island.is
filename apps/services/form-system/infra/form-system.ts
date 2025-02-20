@@ -21,5 +21,5 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       },
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .grantNamespaces('islandis')
