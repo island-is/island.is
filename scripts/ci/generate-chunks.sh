@@ -8,11 +8,7 @@ source "$DIR"/_common.sh
 
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 SKIP_TESTS_ON_BRANCH=${SKIP_TESTS_ON_BRANCH:-}
-# Check if CHUNKS_DEBUG is non-empty and the target is not e2e-ci (not all services have e2e targets)
-# Used to debug services, e.g. '["services-user-notification", "auth-api"]'
-if [[ -n "${CHUNKS_DEBUG:-}" && "$1" != "e2e-ci" ]]; then
-  echo '["air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web"]'
-elif [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]] || [[ "${SKIP_TESTS:-}" == true ]]; then
+if [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]] || [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "[]"
 elif [[ "${CI_DEBUG:-}" == true ]] && [[ "${TEST_EVERYTHING:-}" != true ]]; then

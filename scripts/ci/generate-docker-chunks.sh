@@ -6,12 +6,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 export MAX_JOBS='100'
 
-debug='[{"project":"air-discount-scheme-web","docker_type":"docker-next","home":"apps/air-discount-scheme/web","dist":"dist/apps/air-discount-scheme/web"},{"project":"air-discount-scheme-api","docker_type":"docker-express","home":"apps/air-discount-scheme/api","dist":"dist/apps/air-discount-scheme/api"},{"project":"air-discount-scheme-backend","docker_type":"docker-express","home":"apps/air-discount-scheme/backend","dist":"dist/apps/air-discount-scheme/backend"}]'
-
-chunks='[]'
-if [[ -n "${CHUNKS_DEBUG}" && "${CHUNKS_DEBUG}" == 'true' ]]; then
-  chunks="$debug"
-elif [[ "${SKIP_TESTS:-}" == true ]]; then
+if [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "$chunks"
   exit 0

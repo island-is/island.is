@@ -52,7 +52,6 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CHUNKS_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'chunks-debug') }}
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
