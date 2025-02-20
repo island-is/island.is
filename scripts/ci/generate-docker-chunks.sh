@@ -10,7 +10,7 @@ debug='[{"project":"air-discount-scheme-web","docker_type":"docker-next","home":
 
 chunks='[]'
 if [[ -n "${CHUNKS_DEBUG}" && "${CHUNKS_DEBUG}" == 'true' ]]; then
-  echo "$debug"
+  chunks="$debug"
 elif [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "$chunks"
