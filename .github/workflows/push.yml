@@ -52,7 +52,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-
+  CHUNKS_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'chunks-debug') }}
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -188,11 +188,6 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
-      - run: |
-          echo HEAD="$GITHUB_SHA" >> "$GITHUB_ENV"
-        id: git_nx_head
-        name: Preparing HEAD tag
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
@@ -248,7 +243,7 @@ jobs:
           CHUNKS="${{ steps.build_map.outputs.BUILD_CHUNKS }}"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
+            echo IMAGES="$(echo "$CHUNKS" | jq -r '[.[].projects] | join(",")')" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps

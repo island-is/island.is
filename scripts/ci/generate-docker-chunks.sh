@@ -9,9 +9,32 @@ export \
   BASE=${BASE:-main} \
   MAX_JOBS='100'
 
+debug='''
+[
+  {
+    "project": "air-discount-scheme-web",
+    "docker_type": "docker-next",
+    "home": "apps/air-discount-scheme/web",
+    "dist": "dist/apps/air-discount-scheme/web"
+  },
+  {
+    "project": "air-discount-scheme-api",
+    "docker_type": "docker-express",
+    "home": "apps/air-discount-scheme/api",
+    "dist": "dist/apps/air-discount-scheme/api"
+  },
+  {
+    "project": "air-discount-scheme-backend",
+    "docker_type": "docker-express",
+    "home": "apps/air-discount-scheme/backend",
+    "dist": "dist/apps/air-discount-scheme/backend"
+  }
+]
+'''
+
 chunks='[]'
 if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
-  chunks=$CHUNKS_DEBUG
+  chunks=$debug
 elif [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "$chunks"
