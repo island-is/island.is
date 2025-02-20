@@ -138,8 +138,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       },
     })
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 6,
+      min: 6,
       max: 15,
     })
     .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')

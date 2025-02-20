@@ -245,12 +245,15 @@ export const CaseOverview = () => {
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
                       pdfType="ruling"
+                      disabled={workingCase.isCompletedWithoutRuling || false}
                     >
                       {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
                           signingDate={workingCase.rulingSignatureDate}
                         />
+                      ) : workingCase.isCompletedWithoutRuling ? (
+                        <Text>{formatMessage(strings.noRuling)}</Text>
                       ) : (
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
