@@ -1,7 +1,8 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 @ObjectType('FormSystemApplicationEvent')
+@InputType('FormSystemApplicationEventInput')
 export class ApplicationEventDto {
   @ApiPropertyOptional({ type: Date })
   @Field(() => Date, { nullable: true })

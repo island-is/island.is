@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
-@InputType('FormSystemCreateFieldInput')
+@InputType('FormSystemCreateField')
 export class CreateFieldDto {
   @IsNotEmpty()
   @IsString()
@@ -21,4 +21,10 @@ export class CreateFieldDto {
   @IsNumber()
   @Field(() => Number)
   displayOrder!: number
+}
+
+@InputType('FormSystemCreateFieldInput')
+export class CreateFieldInput {
+  @Field(() => CreateFieldDto, { nullable: true })
+  createFieldDto?: CreateFieldDto
 }

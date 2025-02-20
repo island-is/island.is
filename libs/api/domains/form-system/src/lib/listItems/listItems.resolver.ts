@@ -8,14 +8,14 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
+import { ListItemsService } from './listItems.service'
 import {
   CreateListItemInput,
   DeleteListItemInput,
-  UpdateListItemDisplayOrderInput,
+  ListItemDto,
   UpdateListItemInput,
-} from '../../dto/listItem.input'
-import { ListItemsService } from './listItems.service'
-import { ListItem } from '../../models/listItem.model'
+  UpdateListItemsDisplayOrderInput,
+} from '@island.is/form-system-dto'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -24,14 +24,14 @@ import { ListItem } from '../../models/listItem.model'
 export class ListItemsResolver {
   constructor(private readonly listItemsService: ListItemsService) {}
 
-  @Mutation(() => ListItem, {
+  @Mutation(() => ListItemDto, {
     name: 'formSystemCreateListItem',
   })
   async createListItem(
     @Args('input', { type: () => CreateListItemInput })
     input: CreateListItemInput,
     @CurrentUser() user: User,
-  ): Promise<ListItem> {
+  ): Promise<ListItemDto> {
     return this.listItemsService.createListItem(user, input)
   }
 
@@ -64,8 +64,8 @@ export class ListItemsResolver {
     nullable: true,
   })
   async updateListItemsDisplayOrder(
-    @Args('input', { type: () => UpdateListItemDisplayOrderInput })
-    input: UpdateListItemDisplayOrderInput,
+    @Args('input', { type: () => UpdateListItemsDisplayOrderInput })
+    input: UpdateListItemsDisplayOrderInput,
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.listItemsService.updateListItemsDisplayOrder(user, input)

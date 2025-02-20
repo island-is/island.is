@@ -9,11 +9,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { ApplicationsService } from './applications.service'
-import { Application } from '../../models/applications.model'
 import {
+  ApplicationDto,
   CreateApplicationInput,
   GetApplicationInput,
-} from '../../dto/application.input'
+} from '@island.is/form-system-dto'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -22,25 +22,25 @@ import {
 export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  @Query(() => Application, {
+  @Query(() => ApplicationDto, {
     name: 'formSystemGetApplication',
   })
   async getApplication(
     @Args('input', { type: () => GetApplicationInput })
     input: GetApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<Application> {
+  ): Promise<ApplicationDto> {
     return this.applicationsService.getApplication(user, input)
   }
 
-  @Mutation(() => Application, {
+  @Mutation(() => ApplicationDto, {
     name: 'formSystemCreateApplication',
   })
   async createApplication(
     @Args('input', { type: () => CreateApplicationInput })
     input: CreateApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<Application> {
+  ): Promise<ApplicationDto> {
     return this.applicationsService.createApplication(user, input)
   }
 }

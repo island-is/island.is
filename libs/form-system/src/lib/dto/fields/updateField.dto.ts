@@ -8,7 +8,7 @@ import {
   LanguageType,
 } from '@island.is/form-system-dataTypes'
 
-@InputType('FormSystemUpdateFieldInput')
+@InputType('FormSystemUpdateField')
 export class UpdateFieldDto {
   @IsOptional()
   @ValidateNested()
@@ -46,4 +46,13 @@ export class UpdateFieldDto {
   @ApiPropertyOptional()
   @Field(() => String, { nullable: true })
   fieldType?: string
+}
+
+@InputType('FormSystemUpdateFieldInput')
+export class UpdateFieldInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => UpdateFieldDto)
+  updateFieldDto!: UpdateFieldDto
 }

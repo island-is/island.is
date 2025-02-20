@@ -12,10 +12,11 @@ import {
 } from '@island.is/clients/form-system'
 import {
   DeleteFormInput,
+  FormDto,
+  FormResponseDto,
   GetFormInput,
   UpdateFormInput,
-} from '../../dto/form.input'
-import { Form, FormResponse } from '../../models/form.model'
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class FormsService {
@@ -39,14 +40,14 @@ export class FormsService {
     return this.formsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createForm(auth: User): Promise<FormResponse> {
+  async createForm(auth: User): Promise<FormResponseDto> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerCreate()
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    return response as FormResponse
+    return response as FormResponseDto
   }
 
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
@@ -61,7 +62,7 @@ export class FormsService {
     return
   }
 
-  async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
+  async getForm(auth: User, input: GetFormInput): Promise<FormResponseDto> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
       .catch((e) => console.error(e))
@@ -70,19 +71,19 @@ export class FormsService {
       return {}
     }
 
-    return response as Form
+    return response as FormResponseDto
   }
 
-  async getAllForms(auth: User): Promise<FormResponse> {
-    console.log('inside getAllForms')
-    const response = await this.formsApiWithAuth(auth).formsControllerFindAll()
-    // .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+  async getAllForms(auth: User): Promise<FormResponseDto> {
+    const response = await this.formsApiWithAuth(auth)
+      .formsControllerFindAll()
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
 
     if (!response || response instanceof ApolloError) {
       return {}
     }
 
-    return response as FormResponse
+    return response as FormResponseDto
   }
 
   async updateForm(auth: User, input: UpdateFormInput): Promise<void> {

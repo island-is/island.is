@@ -4,7 +4,7 @@ import { IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { LanguageType } from '@island.is/form-system-dataTypes'
 
-@InputType('FormSystemUpdateSectionInput')
+@InputType('FormSystemUpdateSection')
 export class UpdateSectionDto {
   @IsOptional()
   @ValidateNested()
@@ -19,4 +19,13 @@ export class UpdateSectionDto {
   @ApiPropertyOptional({ type: LanguageType })
   @Field(() => LanguageType, { nullable: true })
   waitingText?: LanguageType
+}
+
+@InputType('FormSystemUpdateSectionInput')
+export class UpdateSectionInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => UpdateSectionDto)
+  updateSectionDto!: UpdateSectionDto
 }

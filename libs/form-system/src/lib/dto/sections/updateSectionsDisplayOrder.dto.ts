@@ -4,7 +4,7 @@ import { SectionDisplayOrderDto } from './sectionDisplayOrder.dto'
 import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
-@InputType('FormSystemUpdateSectionsDisplayOrderInput')
+@InputType('FormSystemUpdateSectionsDisplayOrder')
 export class UpdateSectionsDisplayOrderDto {
   @IsNotEmpty()
   @ValidateNested()
@@ -13,4 +13,10 @@ export class UpdateSectionsDisplayOrderDto {
   @ApiProperty({ type: [SectionDisplayOrderDto] })
   @Field(() => [SectionDisplayOrderDto])
   sectionsDisplayOrderDto!: SectionDisplayOrderDto[]
+}
+
+@InputType('FormSystemUpdateSectionsDisplayOrderInput')
+export class UpdateSectionsDisplayOrderInput {
+  @Field(() => UpdateSectionsDisplayOrderDto)
+  updateSectionsDisplayOrderDto!: UpdateSectionsDisplayOrderDto
 }

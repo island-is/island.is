@@ -9,7 +9,7 @@ import {
 import { Type } from 'class-transformer'
 import { LanguageType } from '@island.is/form-system-dataTypes'
 
-@InputType('FormSystemUpdateListItemInput')
+@InputType('FormSystemUpdateListItem')
 export class UpdateListItemDto {
   @IsOptional()
   @ValidateNested()
@@ -36,4 +36,13 @@ export class UpdateListItemDto {
   @ApiPropertyOptional()
   @Field(() => Boolean, { nullable: true })
   isSelected?: boolean
+}
+
+@InputType('FormSystemUpdateListItemInput')
+export class UpdateListItemInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => UpdateListItemDto)
+  updateListItemDto!: UpdateListItemDto
 }

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const ValueFragment = gql`
-  fragment Value on FormSystemValue {
+  fragment Value on FormSystemValueType {
     text
     number
     date
@@ -35,7 +35,7 @@ export const ValueFragment = gql`
 `
 
 export const ValueDtoFragment = gql`
-  fragment ValueDto on FormSystemValueDto {
+  fragment ValueDto on FormSystemValue {
     id
     order
     json {

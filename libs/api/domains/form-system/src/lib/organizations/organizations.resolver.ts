@@ -15,12 +15,11 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import {
-  Organization,
-  // OrganizationTitle,
-} from '../../models/organization.model'
-import { GetOrganizationInput } from '../../dto/organization.input'
 import { UseGuards } from '@nestjs/common'
+import {
+  GetOrganizationInput,
+  OrganizationDto,
+} from '@island.is/form-system-dto'
 // import { OrganizationTitleByNationalIdLoader } from '@island.is/cms'
 // import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 // import { Loader } from '@island.is/nest/dataloader'
@@ -32,27 +31,27 @@ import { UseGuards } from '@nestjs/common'
 export class OrganizationsResolver {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  @Query(() => Organization, {
+  @Query(() => OrganizationDto, {
     name: 'formSystemGetOrganization',
   })
   async getOrganization(
     @Args('input', { type: () => GetOrganizationInput })
     input: GetOrganizationInput,
     @CurrentUser() user: User,
-  ): Promise<Organization> {
+  ): Promise<OrganizationDto> {
     return this.organizationsService.getOrganization(user, input)
   }
 
-  @Mutation(() => Organization, {
-    name: 'formSystemCreateOrganization',
-  })
-  async createOrganization(
-    @Args('input', { type: () => GetOrganizationInput })
-    input: GetOrganizationInput,
-    @CurrentUser() user: User,
-  ): Promise<Organization> {
-    return this.organizationsService.createOrganization(user, input)
-  }
+  // @Mutation(() => OrganizationDto, {
+  //   name: 'formSystemCreateOrganization',
+  // })
+  // async createOrganization(
+  //   @Args('input', { type: () => GetOrganizationInput })
+  //   input: GetOrganizationInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<OrganizationDto> {
+  //   return this.organizationsService.createOrganization(user, input)
+  // }
 }
 
 // @Resolver(() => OrganizationTitle)

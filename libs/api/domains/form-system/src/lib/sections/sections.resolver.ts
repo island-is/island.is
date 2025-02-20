@@ -12,10 +12,10 @@ import { SectionsService } from './sections.service'
 import {
   CreateSectionInput,
   DeleteSectionInput,
+  SectionDto,
   UpdateSectionInput,
   UpdateSectionsDisplayOrderInput,
-} from '../../dto/section.input'
-import { Section } from '../../models/section.model'
+} from '@island.is/form-system-dto'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -24,14 +24,14 @@ import { Section } from '../../models/section.model'
 export class SectionsResolver {
   constructor(private readonly sectionsService: SectionsService) {}
 
-  @Mutation(() => Section, {
+  @Mutation(() => SectionDto, {
     name: 'formSystemCreateSection',
   })
   async createSection(
     @Args('input', { type: () => CreateSectionInput })
     input: CreateSectionInput,
     @CurrentUser() user: User,
-  ): Promise<Section> {
+  ): Promise<SectionDto> {
     return this.sectionsService.createSection(user, input)
   }
 
@@ -47,14 +47,14 @@ export class SectionsResolver {
     return this.sectionsService.deleteSection(user, input)
   }
 
-  @Mutation(() => Section, {
+  @Mutation(() => SectionDto, {
     name: 'formSystemUpdateSection',
   })
   async updateSection(
     @Args('input', { type: () => UpdateSectionInput })
     input: UpdateSectionInput,
     @CurrentUser() user: User,
-  ): Promise<Section> {
+  ): Promise<SectionDto> {
     return this.sectionsService.updateSection(user, input)
   }
 

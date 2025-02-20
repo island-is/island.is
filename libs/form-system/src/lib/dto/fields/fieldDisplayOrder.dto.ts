@@ -1,8 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString } from 'class-validator'
 
 @ObjectType('FormSystemFieldDisplayOrder')
+@InputType('FormSystemFieldDisplayOrderInput')
 export class FieldDisplayOrderDto {
   @IsNotEmpty()
   @IsString()

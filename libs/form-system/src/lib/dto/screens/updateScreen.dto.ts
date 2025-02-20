@@ -9,7 +9,7 @@ import {
 import { Type } from 'class-transformer'
 import { LanguageType } from '@island.is/form-system-dataTypes'
 
-@InputType('FormSystemUpdateScreenInput')
+@InputType('FormSystemUpdateScreen')
 export class UpdateScreenDto {
   @IsOptional()
   @ValidateNested()
@@ -29,4 +29,13 @@ export class UpdateScreenDto {
   @ApiPropertyOptional()
   @Field(() => Boolean, { nullable: true })
   callRuleset?: boolean
+}
+
+@InputType('FormSystemUpdateScreenInput')
+export class UpdateScreenInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => UpdateScreenDto)
+  updateScreenDto!: UpdateScreenDto
 }

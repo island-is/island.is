@@ -4,7 +4,7 @@ import { IsNotEmpty, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { LanguageType } from '@island.is/form-system-dataTypes'
 
-@InputType('FormSystemUpdateFormApplicantTypeInput')
+@InputType('FormSystemUpdateFormApplicantType')
 export class UpdateFormApplicantTypeDto {
   @IsNotEmpty()
   @ValidateNested()

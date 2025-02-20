@@ -14,13 +14,17 @@ import { ScreensService } from './screens/screens.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { SectionsService } from './sections/sections.service'
 import { SectionsResolver } from './sections/sections.resolver'
-import { ServicesResolver } from './services/services.resolver'
-import { ServicesService } from './services/services.service'
-import { ApplicantsResolver } from './applicants/applicants.resolver'
-import { ApplicantsService } from './applicants/applicants.service'
+// import { ServicesResolver } from './services/services.resolver'
+// import { ServicesService } from './services/services.service'
+// import { ApplicantsResolver } from './applicants/applicants.resolver'
+// import { ApplicantsService } from './applicants/applicants.service'
 import { LoggingModule } from '@island.is/logging'
-import { CertificationsResolver } from './certification/certification.resolver'
-import { CertificationsService } from './certification/certification.service'
+import { FormApplicantTypesService } from './formApplicantTypes/formApplicantTypes.service'
+import { FormApplicantTypesResolver } from './formApplicantTypes/formApplicantTypes.resolver'
+import { FormCertificationTypesService } from './formCertificationTypes/formCertificationTypes.service'
+import { FormCertificationTypesResolver } from './formCertificationTypes/formCertificationTypes.resolver'
+// import { CertificationsResolver } from './certification/certification.resolver'
+// import { CertificationsService } from './certification/certification.service'
 // import { OrganizationTitlesResolver } from './organizations/organizationTitles.resolver'
 // import { OrganizationTitleByNationalIdLoader } from 'libs/cms/src/lib/loaders/organizationTitleByNationalId.loader'
 // import { CmsContentfulService } from 'libs/cms/src/lib/cms.contentful.service'
@@ -37,6 +41,10 @@ import { CertificationsService } from './certification/certification.service'
     ListItemsResolver,
     OrganizationsService,
     OrganizationsResolver,
+    FormApplicantTypesService,
+    FormApplicantTypesResolver,
+    FormCertificationTypesService,
+    FormCertificationTypesResolver,
     // OrganizationTitlesResolver,
     // OrganizationTitleByNationalIdLoader,
     // CmsContentfulService,
@@ -44,12 +52,12 @@ import { CertificationsService } from './certification/certification.service'
     ScreensResolver,
     SectionsService,
     SectionsResolver,
-    ServicesResolver,
-    ServicesService,
-    ApplicantsResolver,
-    ApplicantsService,
-    CertificationsResolver,
-    CertificationsService,
+    // ServicesResolver,
+    // ServicesService,
+    // ApplicantsResolver,
+    // ApplicantsService,
+    // CertificationsResolver,
+    // CertificationsService,
   ],
   exports: [],
   imports: [FormSystemClientModule, LoggingModule],

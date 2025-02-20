@@ -12,7 +12,7 @@ import {
 import { Type } from 'class-transformer'
 import { Dependency, LanguageType } from '@island.is/form-system-dataTypes'
 
-@InputType('FormSystemUpdateFormInput')
+@InputType('FormSystemUpdateForm')
 export class UpdateFormDto {
   @IsString()
   @IsOptional()
@@ -77,4 +77,13 @@ export class UpdateFormDto {
   @ApiPropertyOptional({ type: [Dependency] })
   @Field(() => [Dependency], { nullable: 'itemsAndList' })
   dependencies?: Dependency[]
+}
+
+@InputType('FormSystemUpdateFormInput')
+export class UpdateFormInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => UpdateFormDto, { nullable: true })
+  updateFormDto?: UpdateFormDto
 }

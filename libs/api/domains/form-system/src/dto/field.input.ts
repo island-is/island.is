@@ -1,117 +1,117 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
-import { FieldSettingsInput } from './fieldSettings.input'
-import { LanguageTypeInput } from './languageType.input'
-import { ListItemInput } from './listItem.input'
-import { ValueDtoInput } from './value.input'
+// import { Field, InputType, Int } from '@nestjs/graphql'
+// import { FieldSettingsInput } from './fieldSettings.input'
+// import { LanguageTypeInput } from './languageType.input'
+// import { ListItemInput } from './listItem.input'
+// import { ValueDtoInput } from './value.input'
 
-@InputType('FormSystemCreateFieldDtoInput')
-export class CreateFieldDtoInput {
-  @Field(() => String, { nullable: true })
-  screenId?: string
+// @InputType('FormSystemCreateFieldDtoInput')
+// export class CreateFieldDtoInput {
+//   @Field(() => String, { nullable: true })
+//   screenId?: string
 
-  @Field(() => String, { nullable: true })
-  fieldType?: string
+//   @Field(() => String, { nullable: true })
+//   fieldType?: string
 
-  @Field(() => Int, { nullable: true })
-  displayOrder?: number
-}
+//   @Field(() => Int, { nullable: true })
+//   displayOrder?: number
+// }
 
-@InputType('FormSystemCreateFieldInput')
-export class CreateFieldInput {
-  @Field(() => CreateFieldDtoInput, { nullable: true })
-  createFieldDto?: CreateFieldDtoInput
-}
+// @InputType('FormSystemCreateFieldInput')
+// export class CreateFieldInput {
+//   @Field(() => CreateFieldDtoInput, { nullable: true })
+//   createFieldDto?: CreateFieldDtoInput
+// }
 
-@InputType('FormSystemDeleteFieldInput')
-export class DeleteFieldInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
+// @InputType('FormSystemDeleteFieldInput')
+// export class DeleteFieldInput {
+//   @Field(() => String, { nullable: true })
+//   id?: string
+// }
 
-@InputType('FormSystemFieldDisplayOrderInput')
-export class FieldDisplayOrderInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+// @InputType('FormSystemFieldDisplayOrderInput')
+// export class FieldDisplayOrderInput {
+//   @Field(() => String, { nullable: true })
+//   id?: string
 
-  @Field(() => String, { nullable: true })
-  screenId?: string
-}
+//   @Field(() => String, { nullable: true })
+//   screenId?: string
+// }
 
-@InputType('FormSystemUpdateFieldsDisplayOrderInput')
-export class UpdateFieldsDisplayOrderInput {
-  @Field(() => [FieldDisplayOrderInput], { nullable: 'itemsAndList' })
-  updateFieldsDisplayOrderDto?: FieldDisplayOrderInput[]
-}
+// @InputType('FormSystemUpdateFieldsDisplayOrderInput')
+// export class UpdateFieldsDisplayOrderInput {
+//   @Field(() => [FieldDisplayOrderInput], { nullable: 'itemsAndList' })
+//   updateFieldsDisplayOrderDto?: FieldDisplayOrderInput[]
+// }
 
-@InputType('FormSystemUpdateFieldDtoInput')
-export class UpdateFieldDtoInput {
-  @Field(() => LanguageTypeInput, { nullable: true })
-  name?: LanguageTypeInput
+// @InputType('FormSystemUpdateFieldDtoInput')
+// export class UpdateFieldDtoInput {
+//   @Field(() => LanguageTypeInput, { nullable: true })
+//   name?: LanguageTypeInput
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+//   @Field(() => LanguageTypeInput, { nullable: true })
+//   description?: LanguageTypeInput
 
-  @Field(() => Boolean, { nullable: true })
-  isPartOfMultiset?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isPartOfMultiset?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isRequired?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isRequired?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isHidden?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isHidden?: boolean
 
-  @Field(() => FieldSettingsInput, { nullable: true })
-  fieldSettings?: FieldSettingsInput
+//   @Field(() => FieldSettingsInput, { nullable: true })
+//   fieldSettings?: FieldSettingsInput
 
-  @Field(() => String, { nullable: true })
-  fieldType?: string
-}
+//   @Field(() => String, { nullable: true })
+//   fieldType?: string
+// }
 
-@InputType('FormSystemUpdateFieldInput')
-export class UpdateFieldInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+// @InputType('FormSystemUpdateFieldInput')
+// export class UpdateFieldInput {
+//   @Field(() => String, { nullable: true })
+//   id?: string
 
-  @Field(() => UpdateFieldDtoInput, { nullable: true })
-  updateFieldDto?: UpdateFieldDtoInput
-}
+//   @Field(() => UpdateFieldDtoInput, { nullable: true })
+//   updateFieldDto?: UpdateFieldDtoInput
+// }
 
-@InputType()
-@InputType('FormSystemFieldInput')
-export class FieldInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+// @InputType()
+// @InputType('FormSystemFieldInput')
+// export class FieldInput {
+//   @Field(() => String, { nullable: true })
+//   id?: string
 
-  @Field(() => String, { nullable: true })
-  screenId?: string
+//   @Field(() => String, { nullable: true })
+//   screenId?: string
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  name?: LanguageTypeInput
+//   @Field(() => LanguageTypeInput, { nullable: true })
+//   name?: LanguageTypeInput
 
-  @Field(() => Int, { nullable: true })
-  displayOrder?: number
+//   @Field(() => Int, { nullable: true })
+//   displayOrder?: number
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+//   @Field(() => LanguageTypeInput, { nullable: true })
+//   description?: LanguageTypeInput
 
-  @Field(() => Boolean, { nullable: true })
-  isPartOfMultiset?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isPartOfMultiset?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isHidden?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isHidden?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isRequired?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isRequired?: boolean
 
-  @Field(() => FieldSettingsInput, { nullable: true })
-  fieldSettings?: FieldSettingsInput
+//   @Field(() => FieldSettingsInput, { nullable: true })
+//   fieldSettings?: FieldSettingsInput
 
-  @Field(() => String, { nullable: true })
-  fieldType?: string
+//   @Field(() => String, { nullable: true })
+//   fieldType?: string
 
-  @Field(() => [ListItemInput], { nullable: 'itemsAndList' })
-  list?: ListItemInput[]
+//   @Field(() => [ListItemInput], { nullable: 'itemsAndList' })
+//   list?: ListItemInput[]
 
-  @Field(() => [ValueDtoInput], { nullable: 'itemsAndList' })
-  values?: ValueDtoInput[]
-}
+//   @Field(() => [ValueDtoInput], { nullable: 'itemsAndList' })
+//   values?: ValueDtoInput[]
+// }

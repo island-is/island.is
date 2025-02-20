@@ -11,10 +11,10 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
   DeleteFormInput,
+  FormResponseDto,
   GetFormInput,
   UpdateFormInput,
-} from '../../dto/form.input'
-import { FormResponse } from '../../models/form.model'
+} from '@island.is/form-system-dto'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -23,10 +23,10 @@ import { FormResponse } from '../../models/form.model'
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}
 
-  @Mutation(() => FormResponse, {
+  @Mutation(() => FormResponseDto, {
     name: 'formSystemCreateForm',
   })
-  async createForm(@CurrentUser() user: User): Promise<FormResponse> {
+  async createForm(@CurrentUser() user: User): Promise<FormResponseDto> {
     return this.formsService.createForm(user)
   }
 
@@ -41,20 +41,20 @@ export class FormsResolver {
     return this.formsService.deleteForm(user, input)
   }
 
-  @Query(() => FormResponse, {
+  @Query(() => FormResponseDto, {
     name: 'formSystemGetForm',
   })
   async getForm(
     @Args('input', { type: () => GetFormInput }) id: GetFormInput,
     @CurrentUser() user: User,
-  ): Promise<FormResponse> {
+  ): Promise<FormResponseDto> {
     return this.formsService.getForm(user, id)
   }
 
-  @Query(() => FormResponse, {
+  @Query(() => FormResponseDto, {
     name: 'formSystemGetAllForms',
   })
-  async getAllForms(@CurrentUser() user: User): Promise<FormResponse> {
+  async getAllForms(@CurrentUser() user: User): Promise<FormResponseDto> {
     return this.formsService.getAllForms(user)
   }
 

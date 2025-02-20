@@ -10,7 +10,6 @@ export const ListTypeFragment = gql`
     description {
       ...LanguageFields
     }
-    type
     isCommon
   }
   ${LanguageFields}

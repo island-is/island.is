@@ -13,10 +13,10 @@ import {
 import {
   CreateFieldInput,
   DeleteFieldInput,
+  FieldDto,
   UpdateFieldInput,
-  UpdateFieldsDisplayOrderInput,
-} from '../../dto/field.input'
-import { Field } from '../../models/field.model'
+  UpdateFieldsDisplayOrderDto,
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class FieldsService {
@@ -24,7 +24,7 @@ export class FieldsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fieldsApi: FieldsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -40,15 +40,15 @@ export class FieldsService {
     return this.fieldsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createField(auth: User, input: CreateFieldInput): Promise<Field> {
+  async createField(auth: User, input: CreateFieldInput): Promise<FieldDto> {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerCreate(input as FieldsControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create field'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      throw new Error()
     }
-    return response
+    return response as FieldDto
   }
 
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
@@ -74,13 +74,13 @@ export class FieldsService {
 
   async updateFieldsDisplayOrder(
     auth: User,
-    input: UpdateFieldsDisplayOrderInput,
+    input: UpdateFieldsDisplayOrderDto,
   ): Promise<void> {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerUpdateDisplayOrder({
         updateFieldsDisplayOrderDto: {
           fieldsDisplayOrderDto:
-            input.updateFieldsDisplayOrderDto as FieldDisplayOrderDto[],
+            input.fieldsDisplayOrderDto as FieldDisplayOrderDto[],
         },
       })
       .catch((e) =>

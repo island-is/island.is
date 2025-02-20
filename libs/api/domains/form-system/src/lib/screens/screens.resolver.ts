@@ -12,10 +12,10 @@ import { ScreensService } from './screens.service'
 import {
   CreateScreenInput,
   DeleteScreenInput,
+  ScreenDto,
   UpdateScreenInput,
   UpdateScreensDisplayOrderInput,
-} from '../../dto/screen.input'
-import { Screen } from '../../models/screen.model'
+} from '@island.is/form-system-dto'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -24,13 +24,13 @@ import { Screen } from '../../models/screen.model'
 export class ScreensResolver {
   constructor(private readonly screensService: ScreensService) {}
 
-  @Mutation(() => Screen, {
+  @Mutation(() => ScreenDto, {
     name: 'formSystemCreateScreen',
   })
   async createScreen(
     @Args('input') input: CreateScreenInput,
     @CurrentUser() user: User,
-  ): Promise<Screen> {
+  ): Promise<ScreenDto> {
     return this.screensService.createScreen(user, input)
   }
 

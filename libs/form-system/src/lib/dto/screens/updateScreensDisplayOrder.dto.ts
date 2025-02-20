@@ -4,7 +4,7 @@ import { ScreenDisplayOrderDto } from './screenDisplayOrder.dto'
 import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
-@InputType('FormSystemUpdateScreensDisplayOrderInput')
+@InputType('FormSystemUpdateScreensDisplayOrder')
 export class UpdateScreensDisplayOrderDto {
   @IsNotEmpty()
   @ValidateNested()
@@ -13,4 +13,10 @@ export class UpdateScreensDisplayOrderDto {
   @ApiProperty({ type: [ScreenDisplayOrderDto] })
   @Field(() => [ScreenDisplayOrderDto])
   screensDisplayOrderDto!: ScreenDisplayOrderDto[]
+}
+
+@InputType('FormSystemUpdateScreensDisplayOrderInput')
+export class UpdateScreensDisplayOrderInput {
+  @Field(() => UpdateScreensDisplayOrderDto)
+  updateScreensDisplayOrderDto!: UpdateScreensDisplayOrderDto
 }

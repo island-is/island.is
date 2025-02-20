@@ -1,20 +1,20 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { LanguageType } from './languageType.model'
+// import { Field, ObjectType } from '@nestjs/graphql'
+// import { LanguageType } from './languageType.model'
 
-@ObjectType('FormSystemApplicant')
-export class Applicant {
-  @Field(() => String, { nullable: true })
-  id?: string
+// @ObjectType('FormSystemApplicant')
+// export class Applicant {
+//   @Field(() => String, { nullable: true })
+//   id?: string
 
-  @Field(() => LanguageType, { nullable: true })
-  description?: LanguageType
+//   @Field(() => LanguageType, { nullable: true })
+//   description?: LanguageType
 
-  @Field(() => String, { nullable: true })
-  applicantTypeId?: string
+//   @Field(() => String, { nullable: true })
+//   applicantTypeId?: string
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+//   @Field(() => LanguageType, { nullable: true })
+//   name?: LanguageType
 
-  @Field(() => [LanguageType], { nullable: true })
-  nameSuggestions?: LanguageType[]
-}
+//   @Field(() => [LanguageType], { nullable: true })
+//   nameSuggestions?: LanguageType[]
+// }

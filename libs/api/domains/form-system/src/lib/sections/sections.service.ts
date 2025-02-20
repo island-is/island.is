@@ -13,10 +13,10 @@ import {
 import {
   CreateSectionInput,
   DeleteSectionInput,
+  SectionDto,
   UpdateSectionInput,
   UpdateSectionsDisplayOrderInput,
-} from '../../dto/section.input'
-import { Section } from '../../models/section.model'
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class SectionsService {
@@ -41,16 +41,19 @@ export class SectionsService {
     return this.sectionsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createSection(auth: User, input: CreateSectionInput): Promise<Section> {
+  async createSection(
+    auth: User,
+    input: CreateSectionInput,
+  ): Promise<SectionDto> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerCreate(input as SectionsControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create section'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      throw new Error('Failed to create section')
     }
 
-    return response
+    return response as SectionDto
   }
 
   async deleteSection(auth: User, input: DeleteSectionInput): Promise<void> {
@@ -65,16 +68,19 @@ export class SectionsService {
     return
   }
 
-  async updateSection(auth: User, input: UpdateSectionInput): Promise<Section> {
+  async updateSection(
+    auth: User,
+    input: UpdateSectionInput,
+  ): Promise<SectionDto> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdate(input as SectionsControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update section'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      throw new Error('Failed to update section')
     }
 
-    return response
+    return response as SectionDto
   }
 
   async updateSectionsDisplayOrder(

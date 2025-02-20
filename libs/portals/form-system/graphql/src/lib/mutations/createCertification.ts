@@ -2,9 +2,9 @@ import { gql } from '@apollo/client'
 
 export const CREATE_CERTIFICATION = gql`
   mutation FormSystemCreateCertification(
-    $input: FormSystemCreateCertificationInput!
+    $input: FormSystemCreateFormCertificationTypeInput!
   ) {
-    formSystemCreateCertification(input: $input) {
+    formSystemCreateFormCertificationType(input: $input) {
       id
       certificationTypeId
     }

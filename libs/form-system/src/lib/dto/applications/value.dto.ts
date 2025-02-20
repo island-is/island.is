@@ -1,9 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 import { ValueType } from '@island.is/form-system-dataTypes'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApplicationEventDto } from './applicationEvent.dto'
 
 @ObjectType('FormSystemValue')
+@InputType('FormSystemValueInput')
 export class ValueDto {
   @ApiProperty()
   @Field(() => String)

@@ -9,10 +9,10 @@ import {
   ApplicationsControllerGetApplicationRequest,
 } from '@island.is/clients/form-system'
 import {
+  ApplicationDto,
   CreateApplicationInput,
   GetApplicationInput,
-} from '../../dto/application.input'
-import { Application } from '../../models/applications.model'
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -40,7 +40,7 @@ export class ApplicationsService {
   async createApplication(
     auth: User,
     input: CreateApplicationInput,
-  ): Promise<Application> {
+  ): Promise<ApplicationDto> {
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
@@ -52,13 +52,13 @@ export class ApplicationsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    return response as Application
+    return response as ApplicationDto
   }
 
   async getApplication(
     auth: User,
     input: GetApplicationInput,
-  ): Promise<Application> {
+  ): Promise<ApplicationDto> {
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerGetApplication(
         input as ApplicationsControllerGetApplicationRequest,
@@ -69,6 +69,6 @@ export class ApplicationsService {
       return {}
     }
 
-    return response as Application
+    return response as ApplicationDto
   }
 }

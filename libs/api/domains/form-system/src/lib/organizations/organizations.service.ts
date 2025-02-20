@@ -8,8 +8,12 @@ import {
   OrganizationsControllerCreateRequest,
   OrganizationsControllerFindOneRequest,
 } from '@island.is/clients/form-system'
-import { GetOrganizationInput } from '../../dto/organization.input'
-import { Organization } from '../../models/organization.model'
+import {
+  GetOrganizationInput,
+  OrganizationDto,
+} from '@island.is/form-system-dto'
+// import { GetOrganizationInput } from '../../dto/organization.input'
+// import { Organization } from '../../models/organization.model'
 
 @Injectable()
 export class OrganizationsService {
@@ -34,29 +38,29 @@ export class OrganizationsService {
     return this.organizationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createOrganization(
-    auth: User,
-    input: GetOrganizationInput,
-  ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(auth)
-      .organizationsControllerCreate(
-        input as OrganizationsControllerCreateRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create organization'),
-      )
+  // async createOrganization(
+  //   auth: User,
+  //   input: GetOrganizationInput,
+  // ): Promise<OrganizationDto> {
+  //   const response = await this.organizationsApiWithAuth(auth)
+  //     .organizationsControllerCreate(
+  //       input as OrganizationsControllerCreateRequest,
+  //     )
+  //     .catch((e) =>
+  //       handle4xx(e, this.handleError, 'failed to create organization'),
+  //     )
 
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
+  //   if (!response || response instanceof ApolloError) {
+  //     return {}
+  //   }
 
-    return response as Organization
-  }
+  //   return response as Organization
+  // }
 
   async getOrganization(
     auth: User,
     input: GetOrganizationInput,
-  ): Promise<Organization> {
+  ): Promise<OrganizationDto> {
     const response = await this.organizationsApiWithAuth(auth)
       .organizationsControllerFindOne(
         input as OrganizationsControllerFindOneRequest,
@@ -66,9 +70,9 @@ export class OrganizationsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      throw new Error('Organization not found')
     }
 
-    return response as Organization
+    return response as OrganizationDto
   }
 }

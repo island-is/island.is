@@ -2,16 +2,10 @@ import { gql } from '@apollo/client'
 import { LanguageFields } from './languageFields'
 
 export const ApplicantFragment = gql`
-  fragment Applicant on FormSystemApplicant {
+  fragment Applicant on FormSystemFormApplicantType {
     id
-    description {
-      ...LanguageFields
-    }
     applicantTypeId
     name {
-      ...LanguageFields
-    }
-    nameSuggestions {
       ...LanguageFields
     }
   }

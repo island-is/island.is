@@ -14,10 +14,10 @@ import {
 import {
   CreateScreenInput,
   DeleteScreenInput,
+  ScreenDto,
   UpdateScreenInput,
   UpdateScreensDisplayOrderInput,
-} from '../../dto/screen.input'
-import { Screen } from '../../models/screen.model'
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class ScreensService {
@@ -42,15 +42,15 @@ export class ScreensService {
     return this.screensApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createScreen(auth: User, input: CreateScreenInput): Promise<Screen> {
+  async createScreen(auth: User, input: CreateScreenInput): Promise<ScreenDto> {
     const response = await this.screensApiWithAuth(auth)
       .screensControllerCreate(input as ScreensControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create screen'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      throw new Error('Failed to create screen')
     }
-    return response
+    return response as ScreenDto
   }
 
   async deleteScreen(auth: User, input: DeleteScreenInput): Promise<void> {

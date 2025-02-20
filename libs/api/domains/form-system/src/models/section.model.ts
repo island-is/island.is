@@ -1,30 +1,30 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { LanguageType } from './languageType.model'
-import { Screen as ScreenModel } from './screen.model'
+// import { Field, ObjectType, Int } from '@nestjs/graphql'
+// import { LanguageType } from './languageType.model'
+// import { Screen as ScreenModel } from './screen.model'
 
-@ObjectType('FormSystemSection')
-export class Section {
-  @Field(() => String, { nullable: true })
-  id?: string
+// @ObjectType('FormSystemSection')
+// export class Section {
+//   @Field(() => String, { nullable: true })
+//   id?: string
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+//   @Field(() => LanguageType, { nullable: true })
+//   name?: LanguageType
 
-  @Field(() => String, { nullable: true })
-  sectionType?: string
+//   @Field(() => String, { nullable: true })
+//   sectionType?: string
 
-  @Field(() => Int, { nullable: true })
-  displayOrder?: number
+//   @Field(() => Int, { nullable: true })
+//   displayOrder?: number
 
-  @Field(() => LanguageType, { nullable: true })
-  waitingText?: LanguageType
+//   @Field(() => LanguageType, { nullable: true })
+//   waitingText?: LanguageType
 
-  @Field(() => Boolean, { nullable: true })
-  isHidden?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isHidden?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isCompleted?: boolean
+//   @Field(() => Boolean, { nullable: true })
+//   isCompleted?: boolean
 
-  @Field(() => [ScreenModel], { nullable: 'itemsAndList' })
-  screens?: ScreenModel[]
-}
+//   @Field(() => [ScreenModel], { nullable: 'itemsAndList' })
+//   screens?: ScreenModel[]
+// }

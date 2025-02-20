@@ -13,10 +13,11 @@ import {
 import {
   CreateListItemInput,
   DeleteListItemInput,
-  UpdateListItemDisplayOrderInput,
+  ListItemDto,
   UpdateListItemInput,
-} from '../../dto/listItem.input'
-import { ListItem } from '../../models/listItem.model'
+  UpdateListItemsDisplayOrderDto,
+  UpdateListItemsDisplayOrderInput,
+} from '@island.is/form-system-dto'
 
 @Injectable()
 export class ListItemsService {
@@ -44,7 +45,7 @@ export class ListItemsService {
   async createListItem(
     auth: User,
     input: CreateListItemInput,
-  ): Promise<ListItem> {
+  ): Promise<ListItemDto> {
     const response = await this.listItemsApiWithAuth(auth)
       .listItemsControllerCreate(input as ListItemsControllerCreateRequest)
       .catch((e) =>
@@ -52,7 +53,7 @@ export class ListItemsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      throw new Error('Failed to create list item')
     }
     return response
   }
@@ -85,7 +86,7 @@ export class ListItemsService {
 
   async updateListItemsDisplayOrder(
     auth: User,
-    input: UpdateListItemDisplayOrderInput,
+    input: UpdateListItemsDisplayOrderInput,
   ): Promise<void> {
     const response = await this.listItemsApiWithAuth(auth)
       .listItemsControllerUpdateDisplayOrder(

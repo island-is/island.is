@@ -4,7 +4,7 @@ import { FormResponseFragment } from '../fragments/formResponse'
 export const GET_FORMS = gql`
   query FormSystemGetAllForms {
     formSystemGetAllForms {
-      ...FormResponse
+      ...FormResponseDto
     }
   }
   ${FormResponseFragment}

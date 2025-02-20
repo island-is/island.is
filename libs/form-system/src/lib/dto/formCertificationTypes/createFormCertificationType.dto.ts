@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString } from 'class-validator'
 
-@InputType('FormSystemCreateFormCertificationTypeInput')
+@InputType('FormSystemCreateFormCertificationType')
 export class CreateFormCertificationTypeDto {
   @IsNotEmpty()
   @IsString()
@@ -15,4 +15,10 @@ export class CreateFormCertificationTypeDto {
   @ApiProperty()
   @Field(() => String)
   certificationTypeId!: string
+}
+
+@InputType('FormSystemCreateFormCertificationTypeInput')
+export class CreateFormCertificationTypeInput {
+  @Field(() => CreateFormCertificationTypeDto, { nullable: true })
+  createFormCertificationTypeDto?: CreateFormCertificationTypeDto
 }

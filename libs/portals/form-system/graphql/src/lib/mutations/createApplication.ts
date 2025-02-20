@@ -6,7 +6,7 @@ export const CREATE_APPLICATION = gql`
     $input: FormSystemCreateApplicationInput!
   ) {
     formSystemCreateApplication(input: $input) {
-      ...Application
+      ...ApplicationDto
     }
   }
   ${ApplicationFragment}

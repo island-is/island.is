@@ -15,9 +15,6 @@ export const FieldTypeFragment = gql`
     fieldSettings {
       ...FieldSettings
     }
-    values {
-      ...Value
-    }
   }
   ${LanguageFields}
   ${FieldSettingsFragment}
