@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { GrantBase } from './grant.types'
-import { RannisGrantService } from './clients/rannis/rannisGrants.service'
+import { RannisGrantsClientService } from '@island.is/clients/grants/rannis'
 
 @Injectable()
 export class GrantsClientService {
-  constructor(private readonly rannisGrantService: RannisGrantService) {}
+  constructor(private readonly rannisGrantService: RannisGrantsClientService) {}
 
   getGrants(): Promise<Array<GrantBase>> {
     return this.rannisGrantService.getGrants()

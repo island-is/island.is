@@ -7,6 +7,7 @@ import { ManagementClientModule } from './modules/managementClient/managementCli
 import { GrantsClientModule } from '@island.is/clients/grants'
 import { CmsRepository } from './repositories/cms.repository'
 import { ClientGrantsRepository } from './repositories/clientGrants.repository'
+import { RannisGrantsClientConfig } from '@island.is/clients/grants/rannis'
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { ClientGrantsRepository } from './repositories/clientGrants.repository'
     ManagementClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [ManagementClientConfig],
+      load: [ManagementClientConfig, RannisGrantsClientConfig],
     }),
   ],
   providers: [AppService, CmsRepository, ClientGrantsRepository],

@@ -1,3 +1,5 @@
+export const RANNIS_CLIENT = 'rannisClient'
+
 export type RannisGrantResponse = Array<RannisGrantItem>
 
 export interface RannisGrantItem {
