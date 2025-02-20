@@ -4,10 +4,7 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-export \
-  HEAD=${HEAD:-HEAD} \
-  BASE=${BASE:-main} \
-  MAX_JOBS='100'
+export MAX_JOBS='100'
 
 debug='''
 [
@@ -33,8 +30,8 @@ debug='''
 '''
 
 chunks='[]'
-if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
-  chunks=$debug
+if [[ -n "${CHUNKS_DEBUG}" && "${CHUNKS_DEBUG}" == 'true' ]]; then
+  echo chunks="$debug"
 elif [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "$chunks"
