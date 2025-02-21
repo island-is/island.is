@@ -121,6 +121,9 @@ export type CreateDelegationProvider = Optional<
 >
 
 export type CreateDelegationType = Optional<
-  Pick<DelegationTypeModel, 'id' | 'name' | 'description' | 'providerId'>,
-  'id' | 'name' | 'description' | 'providerId'
+  Pick<
+    DelegationTypeModel,
+    'id' | 'name' | 'description' | 'providerId' | 'actorDiscretionRequired'
+  >,
+  'id' | 'name' | 'description' | 'providerId' | 'actorDiscretionRequired'
 >

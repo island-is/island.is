@@ -1,20 +1,25 @@
 import {
+  type CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+  type NonAttribute,
+} from 'sequelize'
+import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import {
-  type CreationOptional,
-  InferAttributes,
-  InferCreationAttributes,
-} from 'sequelize'
 
 import { AuthDelegationType } from '@island.is/shared/types'
 
 import { DelegationRecordDTO } from '../dto/delegation-index.dto'
+import { DelegationProviderModel } from './delegation-provider.model'
+import { DelegationTypeModel } from './delegation-type.model'
 
 @Table({
   tableName: 'delegation_index',
@@ -43,6 +48,7 @@ export class DelegationIndex extends Model<
     allowNull: false,
     primaryKey: true,
   })
+  @ForeignKey(() => DelegationProviderModel)
   provider!: string
 
   @Column({
@@ -50,6 +56,7 @@ export class DelegationIndex extends Model<
     allowNull: false,
     primaryKey: true,
   })
+  @ForeignKey(() => DelegationTypeModel)
   type!: string
 
   @Column({
@@ -76,12 +83,16 @@ export class DelegationIndex extends Model<
   @UpdatedAt
   readonly modified?: Date
 
+  @BelongsTo(() => DelegationTypeModel)
+  delegationType?: NonAttribute<DelegationTypeModel>
+
   toDTO(): DelegationRecordDTO {
     return {
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       subjectId: this.subjectId,
       type: this.type as AuthDelegationType,
+      actorDiscretionRequired: this.delegationType?.actorDiscretionRequired,
     }
   }
 }

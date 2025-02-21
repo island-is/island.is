@@ -1,21 +1,22 @@
-import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
+import addYears from 'date-fns/addYears'
+import kennitala from 'kennitala'
+import request from 'supertest'
 
-import { TestApp } from '@island.is/testing/nest'
-import {
-  createCurrentUser,
-  createNationalId,
-} from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
 import { DelegationIndex } from '@island.is/auth-api-lib'
+import { AuthScope } from '@island.is/auth/scopes'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
 
 import { setupWithAuth } from '../../../../../test/setup'
-import kennitala from 'kennitala'
-import addYears from 'date-fns/addYears'
 
 const path = '/v1/delegation-index/.id'
 const testNationalId = createNationalId('person')
@@ -251,6 +252,7 @@ describe('DelegationIndexController', () => {
   describe('With valid delegation provider', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
+    let factory: FixtureFactory
 
     let delegationIndexModel: typeof DelegationIndex
     const delegationProvider = AuthDelegationProvider.CompanyRegistry
@@ -264,6 +266,8 @@ describe('DelegationIndexController', () => {
       app = await setupWithAuth({
         user,
       })
+      factory = new FixtureFactory(app)
+      await factory.createAllDelegationTypes()
       server = request(app.getHttpServer())
 
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
@@ -419,6 +423,7 @@ describe('DelegationIndexController', () => {
   describe('PUT for Legal guardians', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
+    let factory: FixtureFactory
 
     let delegationIndexModel: typeof DelegationIndex
     const delegationProvider = AuthDelegationProvider.NationalRegistry
@@ -435,6 +440,8 @@ describe('DelegationIndexController', () => {
       server = request(app.getHttpServer())
 
       delegationIndexModel = app.get(getModelToken(DelegationIndex))
+      factory = new FixtureFactory(app)
+      await factory.createAllDelegationTypes()
     })
 
     afterAll(async () => {

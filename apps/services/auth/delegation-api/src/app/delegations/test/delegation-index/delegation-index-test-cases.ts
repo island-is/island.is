@@ -143,7 +143,9 @@ export const indexingTestCases: Record<string, TestCase> = {
     createClient({
       clientId: clientId,
       supportsPersonalRepresentatives: true,
-      supportedDelegationTypes: [AuthDelegationType.PersonalRepresentative],
+      supportedDelegationTypes: [
+        `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
+      ],
     }),
     {
       fromRepresentative: [
