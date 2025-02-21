@@ -30,6 +30,32 @@ export const userInformation = {
       defaultMessage: 'Umsækjandi',
       description: 'Applicant subtitle',
     },
+    email: {
+      id: 'ss.application:userInformation.applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Applicant email label',
+    },
+    phone: {
+      id: 'ss.application:userInformation.applicant.phone',
+      defaultMessage: 'Símanúmer',
+      description: 'Applicant phone number label',
+    },
+    alertMessage: {
+      id: 'ss.application:userInformation.applicant.alertMessageClean',
+      defaultMessage:
+        'Ef netfang og símanúmer er ekki rétt hér að ofan þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
+      description: 'Applicant alert message',
+    },
+    alertMessageLink: {
+      id: 'ss.application:userInformation.applicant.alertMessageLink',
+      defaultMessage: '/minarsidur',
+      description: 'Link for mínar síður',
+    },
+    alertMessageLinkTitle: {
+      id: 'ss.application:userInformation.applicant.alertMessageLinkTitle',
+      defaultMessage: 'Fara á mínar síður',
+      description: 'title for mínar síður link',
+    },
   }),
   applicationType: defineMessages({
     subtitle: {
@@ -50,7 +76,7 @@ export const userInformation = {
     alertMessage: {
       id: 'ss.application:userInformation.applicationType.alertMessage',
       defaultMessage:
-        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is',
+        'Miðstöð menntunar og skólaþjónustu hefur ekki upplýsingar um útskrift þína úr grunnskóla í vor. Vinsamlegast hafðu samband í gegnum netfangið innritun@midstodmenntunar.is eða í síma 514-7500',
       description: 'Application type alert message',
     },
   }),

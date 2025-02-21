@@ -6,7 +6,7 @@ import {
   OmbudsmanComplaintTypeEnum,
 } from '../shared'
 import { error } from './messages/error'
-import { NO, YES } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),

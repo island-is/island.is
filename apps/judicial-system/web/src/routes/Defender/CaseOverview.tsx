@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
@@ -27,18 +27,17 @@ import {
   PageLayout,
   PdfButton,
   SignedDocument,
+  ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import InfoCard from '../../components/InfoCard/InfoCard'
 import useInfoCardItems from '../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
-import * as styles from './CaseOverview.css'
 
 type availableModals =
   | 'NoModal'
@@ -224,7 +223,7 @@ export const CaseOverview = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'request'}
+                  pdfType="request"
                 />
                 {isCompletedCase(workingCase.state) && (
                   <>
@@ -232,7 +231,7 @@ export const CaseOverview = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'courtRecord'}
+                      pdfType="courtRecord"
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -245,32 +244,25 @@ export const CaseOverview = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'ruling'}
+                      pdfType="ruling"
+                      disabled={workingCase.isCompletedWithoutRuling || false}
                     >
                       {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
                           signingDate={workingCase.rulingSignatureDate}
                         />
+                      ) : workingCase.isCompletedWithoutRuling ? (
+                        <Text>{formatMessage(strings.noRuling)}</Text>
                       ) : (
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
                     <Box marginTop={7}>
-                      <a
-                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
-                        download={`mal_${workingCase.courtCaseNumber}`}
-                        className={styles.downloadAllButton}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="small"
-                          icon="download"
-                          iconType="outline"
-                        >
-                          {formatMessage(strings.getAllDocuments)}
-                        </Button>
-                      </a>
+                      <ZipButton
+                        caseId={workingCase.id}
+                        courtCaseNumber={workingCase.courtCaseNumber}
+                      />
                     </Box>
                   </>
                 )}

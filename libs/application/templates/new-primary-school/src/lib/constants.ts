@@ -27,16 +27,20 @@ export enum Roles {
 
 export enum ReasonForApplicationOptions {
   MOVING_MUNICIPALITY = 'movingMuniciplaity',
-  SIBLINGS_IN_SAME_SCHOOL = 'SiblingsInSameSchool',
+  SIBLINGS_IN_SAME_SCHOOL = 'siblingsInSameSchool',
 }
 
 export enum OptionsType {
   PRONOUN = 'pronoun',
   GENDER = 'gender',
-  INTOLERANCE = 'intolerence',
+  FOOD_ALLERGY_AND_INTOLERANCE = 'foodAllergyAndIntolerance',
   REASON = 'registrationReason',
+  REASON_INTERNATIONAL_SCHOOL = 'registrationReasonInternationalSchool',
+  REASON_PRIVATE_SCHOOL = 'registrationReasonPrivateSchool',
   RELATION = 'relation',
+  SCHOOL_MEAL = 'schoolMeal',
   ALLERGY = 'allergy',
+  LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }
 
 export enum MembershipRole {
@@ -57,8 +61,8 @@ export enum MembershipOrganizationType {
 
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',
-  ICELANDIC_AND_FOREIGN = 'icelandicAndForeign',
-  ONLY_FOREIGN = 'onlyForeign',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER_THAN_ICELANDIC = 'onlyOtherThanIcelandic',
 }
 
 export enum ApplicationType {

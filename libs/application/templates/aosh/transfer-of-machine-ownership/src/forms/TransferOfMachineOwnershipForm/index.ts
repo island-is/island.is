@@ -11,7 +11,6 @@ import { getChargeItems } from '../../utils'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
   id: 'TransferOfMachineOwnershipFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

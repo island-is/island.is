@@ -23,7 +23,6 @@ export const MortgageCertificateForm = (
 ): Form => {
   return buildForm({
     id: 'MortgageCertificateFormDraft',
-    title: '',
     logo: Logo,
     mode: FormModes.DRAFT,
     renderLastScreenBackButton: true,
@@ -50,7 +49,6 @@ export const MortgageCertificateForm = (
                   buildCustomField(
                     {
                       id: 'selectedProperties',
-                      title: '',
                       component: 'SelectProperty',
                     },
                     {
@@ -72,7 +70,6 @@ export const MortgageCertificateForm = (
                 children: [
                   buildCustomField({
                     id: 'propertiesOverview',
-                    title: '',
                     component: 'PropertiesOverview',
                   }),
                 ],
