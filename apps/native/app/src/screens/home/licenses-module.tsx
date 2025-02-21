@@ -54,36 +54,6 @@ const validateLicensesInitialData = ({
   return false
 }
 
-const useGetLicensesData = ({ skipFetching }: { skipFetching: boolean }) => {
-  // Query list of licenses
-  const { data, loading, error, refetch } = useListLicensesQuery({
-    variables: {
-      input: {
-        includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-          GenericLicenseType.PCard,
-          GenericLicenseType.Ehic,
-          GenericLicenseType.HuntingLicense,
-          GenericLicenseType.Passport,
-        ],
-      },
-    },
-    fetchPolicy: 'cache-first',
-    skip: skipFetching,
-  })
-
-  return {
-    data,
-    loading,
-    error,
-    refetch,
-  }
-}
-
 const LicensesModule = React.memo(
   ({ data, loading, error }: LicenseModuleProps) => {
     const theme = useTheme()
@@ -187,4 +157,4 @@ const LicensesModule = React.memo(
   },
 )
 
-export { LicensesModule, validateLicensesInitialData, useGetLicensesData }
+export { LicensesModule, validateLicensesInitialData, useListLicensesQuery }

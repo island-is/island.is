@@ -26,7 +26,6 @@ import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import refreshIcon from '../../assets/icons/refresh.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
-  GenericLicenseType,
   GenericUserLicense,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
@@ -39,6 +38,7 @@ import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
 import { useLocale } from '../../hooks/use-locale'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -116,17 +116,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const res = useListLicensesQuery({
     variables: {
       input: {
-        includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-          GenericLicenseType.PCard,
-          GenericLicenseType.Ehic,
-          GenericLicenseType.HuntingLicense,
-          GenericLicenseType.Passport,
-        ],
+        includedTypes: INCLUDED_LICENSE_TYPES,
       },
       locale: useLocale(),
     },
