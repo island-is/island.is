@@ -143,7 +143,6 @@ export const companySection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField.emailAndPhone',
-          title: '',
           message: information.labels.company.emailAndPhoneAlertMessage,
           alertType: 'info',
           marginBottom: 0,
@@ -175,20 +174,18 @@ export const companySection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField',
-          title: '',
           message: information.labels.company.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginBottom: 0,
-          condition: (_, externalData) => isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
           title: information.labels.company.nameOfBranch,
           backgroundColor: 'blue',
           width: 'half',
+          required: true,
           defaultValue: (application: Application) => '',
-          condition: (_, externalData) => isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -197,14 +194,14 @@ export const companySection = buildSubSection({
           width: 'half',
           doesNotRequireAnswer: true,
           defaultValue: (application: Application) => '',
-          condition: (_, externalData) => isCompany(externalData),
+          maxLength: 21,
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTownOfBranch,
           width: 'half',
           doesNotRequireAnswer: true,
-          condition: (_, externalData) => isCompany(externalData),
+          defaultValue: '',
           isClearable: true,
           options: (application) => {
             const postCodes =

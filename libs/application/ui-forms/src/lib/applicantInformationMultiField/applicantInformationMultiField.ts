@@ -18,7 +18,11 @@ export const applicantInformationMultiField = (
   // Email disabled is default false for all applications
   // Option to add description
   const {
+    phoneCondition,
     phoneRequired = false,
+    phoneDisabled = false,
+    phoneEnableCountrySelector,
+    emailCondition,
     emailRequired = true,
     emailDisabled = false,
     applicantInformationDescription = '',
@@ -101,6 +105,7 @@ export const applicantInformationMultiField = (
         width: 'half',
         variant: 'email',
         backgroundColor: 'blue',
+        condition: emailCondition,
         required: emailRequired,
         disabled: emailDisabled,
         defaultValue: (application: ApplicantInformationInterface) =>
@@ -112,9 +117,12 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.tel,
         width: 'half',
         backgroundColor: 'blue',
+        condition: phoneCondition,
+        required: phoneRequired,
+        disabled: phoneDisabled,
+        enableCountrySelector: phoneEnableCountrySelector,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
-        required: phoneRequired,
       }),
     ],
   })

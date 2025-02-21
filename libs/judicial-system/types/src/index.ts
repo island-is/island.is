@@ -118,9 +118,10 @@ export type {
 
 export {
   IndictmentCountOffense,
-  Substance,
   offenseSubstances,
 } from './lib/indictmentCount'
+
+export { Substance } from './lib/substances'
 
 export { type Lawyer, mapToLawyer } from './lib/lawyer'
 

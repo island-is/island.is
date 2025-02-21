@@ -1,17 +1,6 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { Routes } from './constants'
-import {
-  OfficialJournalOfIcelandAdvertEntity,
-  OfficialJournalOfIcelandPaging,
-} from '@island.is/api/schema'
-import {
-  committeeSignatureSchema,
-  memberItemSchema,
-  partialSchema,
-  regularSignatureItemSchema,
-  signatureValidationSchema,
-} from './dataSchema'
-import { z } from 'zod'
+import { partialSchema } from './dataSchema'
 
 export const InputFields = {
   [Routes.REQUIREMENTS]: {
@@ -31,12 +20,8 @@ export const InputFields = {
     additions: 'advert.additions',
   },
   [Routes.SIGNATURE]: {
-    regular: 'signatures.regular',
-    committee: 'signatures.committee',
-    additionalSignature: {
-      regular: 'signatures.additionalSignature.regular',
-      committee: 'signatures.additionalSignature.committee',
-    },
+    regular: 'signature.regular',
+    committee: 'signature.committee',
   },
   [Routes.MISC]: {
     signatureType: 'misc.signatureType',
@@ -80,13 +65,6 @@ export type OJOIApplication = Override<
   }
 >
 
-export type Answers = OJOIApplication['answers']
-
-export type Signature = z.infer<typeof signatureValidationSchema>
-export type SignatureItem = z.infer<typeof regularSignatureItemSchema>
-export type SignatureItemWithChairman = z.infer<typeof committeeSignatureSchema>
-export type SignatureMember = z.infer<typeof memberItemSchema>
-
 export type OJOIFieldBaseProps = Override<
   FieldBaseProps,
   {
@@ -94,17 +72,3 @@ export type OJOIFieldBaseProps = Override<
     errors: ErrorSchema
   }
 >
-
-export type CreateParentKey<Key extends string> =
-  `officialJournalOfIceland${Capitalize<Key>}`
-
-export type OfficialJournalOfIcelandGraphqlResponse<
-  Key extends string,
-  Value = OfficialJournalOfIcelandAdvertEntity[],
-> = {
-  [key in CreateParentKey<Key>]: {
-    [key in Key]: Value
-  } & {
-    paging: OfficialJournalOfIcelandPaging
-  }
-}
