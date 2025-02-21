@@ -78,6 +78,7 @@ globalStyle(`${wrapper} .island-select__multi-value__remove`, {
   transition: 'background .2s, color .2s',
   fontWeight: theme.typography.medium,
   cursor: 'pointer',
+  flexShrink: 0,
 })
 
 globalStyle(`${wrapper} .island-select__multi-value__remove:hover`, {
