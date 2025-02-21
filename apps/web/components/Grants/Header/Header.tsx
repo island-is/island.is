@@ -118,10 +118,11 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
   }
 
   return (
-    <Box marginTop={9}>
+    <Box>
       <GridContainer>
         <GridRow>
           <GridColumn
+            paddingTop={[6, 6, 6, 8, 8]}
             offset={props.offset ? ['0', '0', '0', '1/12', '1/12'] : ['0']}
             span={
               props.offset

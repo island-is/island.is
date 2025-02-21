@@ -93,9 +93,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
         searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
         searchUrl={searchUrl}
         shortcutsTitle={formatMessage(m.home.mostVisited)}
-        featuredImage={
-          customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
-        }
+        featuredImage={formatMessage(m.home.featuredImage)}
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
         offset
         quickLinks={[
