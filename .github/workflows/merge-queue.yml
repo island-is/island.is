@@ -2,6 +2,8 @@ name: Validate code in the merge queue (post merge)
 
 on:
   workflow_dispatch: {}
+  # While testing I do this!
+  pull_request: {} 
   merge_group:
 
 defaults:
@@ -49,6 +51,46 @@ jobs:
     secrets: inherit
     needs:
       - pre-checks
+  prepare-build:
+    needs:
+      - prepare
+    runs-on: arc-runners
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - run: |
+          node scripts/ci/docker/generate-tag.mjs
+          # While debugging this
+          exit 1
+  build:
+    needs:
+      - prepare-build
+    runs-on: arc-runners
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      
+      
 
   tests:
     needs:
