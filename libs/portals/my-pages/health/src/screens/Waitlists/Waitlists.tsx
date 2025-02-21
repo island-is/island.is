@@ -46,6 +46,7 @@ const Waitlists: React.FC = () => {
       <Stack space={2}>
         {waitlists?.map((waitlist, index) => (
           <ActionCard
+            key={`waitlist-${index}`}
             heading={waitlist?.name ?? ''}
             text={[
               formatMessage(messages.statusLastUpdated),

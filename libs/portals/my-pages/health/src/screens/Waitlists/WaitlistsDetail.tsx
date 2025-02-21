@@ -1,6 +1,7 @@
 import { Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   InfoLine,
   InfoLineStack,
@@ -60,29 +61,36 @@ const WaitlistsDetail: React.FC = () => {
 
       <InfoLineStack space={1}>
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.waitlist)}
           content={waitlist?.name ?? formatMessage(messages.noDataRegistered)}
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.organization)}
           content={
             waitlist?.organization ?? formatMessage(messages.noDataRegistered)
           }
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.registeredToList)}
           content={
-            waitlist?.waitBegan ?? formatMessage(messages.noDataRegistered)
+            formatDate(waitlist?.waitBegan) ??
+            formatMessage(messages.noDataRegistered)
           }
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.status)}
           content={waitlist?.status ?? formatMessage(messages.noDataRegistered)}
         />
         <InfoLine
+          loading={loading}
           label={formatMessage(messages.statusLastUpdated)}
           content={
-            waitlist?.lastUpdated ?? formatMessage(messages.noDataRegistered)
+            formatDate(waitlist?.lastUpdated) ??
+            formatMessage(messages.noDataRegistered)
           }
         />
       </InfoLineStack>
