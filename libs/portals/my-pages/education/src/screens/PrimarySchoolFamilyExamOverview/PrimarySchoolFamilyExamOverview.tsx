@@ -1,4 +1,4 @@
-import { EducationCompulsorySchoolStudentCareer } from '@island.is/api/schema'
+import { EducationPrimarySchoolStudentCareer } from '@island.is/api/schema'
 import {
   FormatMessage,
   useLocale,
@@ -35,7 +35,7 @@ const generateActionCard = (
     cta={{
       label: formatMessage(m.seeDetails),
       variant: 'text',
-      url: EducationPaths.EducationCompulsorySchoolAssessmentDetail.replace(
+      url: EducationPaths.EducationPrimarySchoolAssessmentDetail.replace(
         ':id',
         slug,
       ),
@@ -43,16 +43,16 @@ const generateActionCard = (
   />
 )
 
-export const CompulsorySchoolFamilyExamOverview = () => {
+export const PrimarySchoolFamilyExamOverview = () => {
   useNamespaces('sp.education-student-assessment')
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useFamilySchoolCareerQuery()
 
-  const userCareer: EducationCompulsorySchoolStudentCareer | null =
+  const userCareer: EducationPrimarySchoolStudentCareer | null =
     data?.userFamilyExamResults.userCareer ?? null
 
-  const familyCareer: Array<EducationCompulsorySchoolStudentCareer> | null =
+  const familyCareer: Array<EducationPrimarySchoolStudentCareer> | null =
     data?.userFamilyExamResults.familyMemberCareers ?? null
 
   const careers: Array<React.ReactNode> = [
@@ -99,4 +99,4 @@ export const CompulsorySchoolFamilyExamOverview = () => {
   )
 }
 
-export default CompulsorySchoolFamilyExamOverview
+export default PrimarySchoolFamilyExamOverview

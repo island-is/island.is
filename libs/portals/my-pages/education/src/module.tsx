@@ -4,17 +4,17 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const CompulsorySchoolFamilyExamOverview = lazy(
+const PrimarySchoolFamilyExamOverview = lazy(
   () =>
     import(
-      './screens/CompulsorySchoolFamilyExamOverview/CompulsorySchoolFamilyExamOverview'
+      './screens/PrimarySchoolFamilyExamOverview/PrimarySchoolFamilyExamOverview'
     ),
 )
 
-const CompulsorySchoolExamDetail = lazy(
+const PrimarySchoolExamDetail = lazy(
   () =>
     import(
-      './screens/CompulsorySchoolFamilyExamDetail/CompulsorySchoolFamilyExamDetail'
+      './screens/PrimarySchoolFamilyExamDetail/PrimarySchoolFamilyExamDetail'
     ),
 )
 
@@ -65,7 +65,7 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: (
         <Navigate
-          to={EducationPaths.EducationCompulsorySchoolAssessment}
+          to={EducationPaths.EducationPrimarySchoolAssessment}
           replace
         />
       ),
@@ -78,22 +78,22 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: (
         <Navigate
-          to={EducationPaths.EducationCompulsorySchoolAssessment}
+          to={EducationPaths.EducationPrimarySchoolAssessment}
           replace
         />
       ),
     },
     {
       name: 'Námsmat',
-      path: EducationPaths.EducationCompulsorySchoolAssessment,
+      path: EducationPaths.EducationPrimarySchoolAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <CompulsorySchoolFamilyExamOverview />,
+      element: <PrimarySchoolFamilyExamOverview />,
     },
     {
       name: 'Námsmat nánar',
-      path: EducationPaths.EducationCompulsorySchoolAssessmentDetail,
+      path: EducationPaths.EducationPrimarySchoolAssessmentDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <CompulsorySchoolExamDetail />,
+      element: <PrimarySchoolExamDetail />,
     },
 
     // Framhaldsskóli - Secondary education

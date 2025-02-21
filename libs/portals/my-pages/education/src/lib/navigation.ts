@@ -16,11 +16,11 @@ export const educationNavigation: PortalNavigationItem = {
       children: [
         {
           name: m.educationAssessment,
-          path: EducationPaths.EducationCompulsorySchoolAssessment,
+          path: EducationPaths.EducationPrimarySchoolAssessment,
           children: [
             {
               name: m.educationAssessment,
-              path: EducationPaths.EducationCompulsorySchoolAssessmentDetail,
+              path: EducationPaths.EducationPrimarySchoolAssessmentDetail,
               navHide: true,
             },
           ],

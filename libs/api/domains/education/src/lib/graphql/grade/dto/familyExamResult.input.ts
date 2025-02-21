@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType('EducationCompulsorySchoolExamUserFamilyMemberResultsInput')
+@InputType('EducationPrimarySchoolExamUserFamilyMemberResultsInput')
 export class ExamFamilyMemberInput {
   @Field()
   maskedId!: string

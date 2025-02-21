@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('EducationCompulsorySchoolCourseCompetence')
+@ObjectType('EducationPrimarySchoolCourseCompetence')
 export class CourseCompetence {
   @Field()
   competencyGrade!: string

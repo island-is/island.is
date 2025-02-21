@@ -3,7 +3,7 @@ import { CourseCompetence } from './competence.model'
 import { GradeCategory } from './gradeCategory.model'
 import { Grade } from './grade.model'
 
-@ObjectType('EducationCompulsorySchoolCourse')
+@ObjectType('EducationPrimarySchoolCourse')
 export class Course {
   @Field()
   label!: string

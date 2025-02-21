@@ -1,5 +1,5 @@
 query userFamilyMemberExamResults(
-  $input: EducationCompulsorySchoolExamUserFamilyMemberResultsInput!
+  $input: EducationPrimarySchoolExamUserFamilyMemberResultsInput!
 ) {
   userFamilyMemberExamResults(input: $input) {
     nationalId
@@ -10,7 +10,7 @@ query userFamilyMemberExamResults(
       coursesExamResults {
         label
         totalGrade {
-          compulsorySchoolGrade {
+          primarySchoolGrade {
             grade
             weight
             label
@@ -27,13 +27,13 @@ query userFamilyMemberExamResults(
         }
         gradeCategories {
           label
-          ... on EducationCompulsorySchoolGradeCategoryText {
+          ... on EducationPrimarySchoolGradeCategoryText {
             text
           }
-          ... on EducationCompulsorySchoolGradeCategoryWeighted {
+          ... on EducationPrimarySchoolGradeCategoryWeighted {
             label
             grade {
-              compulsorySchoolGrade {
+              primarySchoolGrade {
                 grade
                 weight
                 label

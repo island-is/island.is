@@ -20,7 +20,7 @@ export const mapCareer = (
       coursesExamResults: a.courses.map((c) => ({
         label: c.title,
         totalGrade: {
-          compulsorySchoolGrade: c.gradeHistory.compulsorySchoolGrade,
+          primarySchoolGrade: c.gradeHistory.primarySchoolGrade,
           serialGrade: c.gradeHistory.nationalCoordinationGrade,
         },
         competence: {
@@ -31,10 +31,10 @@ export const mapCareer = (
           ...c.grades.map((g) => ({
             label: g.title,
             grade: {
-              compulsorySchoolGrade: {
-                grade: g.compulsorySchoolGrade.grade,
-                weight: g.compulsorySchoolGrade.weight,
-                label: g.compulsorySchoolGrade.title,
+              primarySchoolGrade: {
+                grade: g.primarySchoolGrade.grade,
+                weight: g.primarySchoolGrade.weight,
+                label: g.primarySchoolGrade.title,
               },
               serialGrade: {
                 grade: g.nationalCoordinationGrade.grade,

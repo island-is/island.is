@@ -11,7 +11,7 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { EducationServiceV2 } from '../educationV2.service'
 import { ExamFamilyMemberInput } from './grade/dto/familyExamResult.input'
-import { FamilyCompulsorySchoolCareer } from './models/familyCareer.model'
+import { FamilyPrimarySchoolCareer } from './models/familyCareer.model'
 import { StudentCareer } from './models/studentCareer.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -20,12 +20,12 @@ import { StudentCareer } from './models/studentCareer.model'
 export class GradesResolver {
   constructor(private readonly educationService: EducationServiceV2) {}
 
-  @Query(() => FamilyCompulsorySchoolCareer)
+  @Query(() => FamilyPrimarySchoolCareer)
   @Scopes(ApiScope.education)
   @Audit()
   userFamilyExamResults(
     @CurrentUser() user: User,
-  ): Promise<FamilyCompulsorySchoolCareer | null> {
+  ): Promise<FamilyPrimarySchoolCareer | null> {
     return this.educationService.familyCareers(user)
   }
 

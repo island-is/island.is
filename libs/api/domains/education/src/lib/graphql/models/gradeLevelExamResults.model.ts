@@ -1,8 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { Course } from './course.model'
 
-@ObjectType('EducationCompulsorySchoolGradeLevelExamResults')
-export class CompulsorySchoolGradeLevelExamResults {
+@ObjectType('EducationPrimarySchoolGradeLevelExamResults')
+export class PrimarySchoolGradeLevelExamResults {
   @Field(() => Int)
   gradeLevel!: number
 

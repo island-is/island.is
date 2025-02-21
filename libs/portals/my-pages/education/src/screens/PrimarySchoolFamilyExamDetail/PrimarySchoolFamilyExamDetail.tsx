@@ -15,7 +15,7 @@ type UseParams = {
   id: string
 }
 
-export const CompulsorySchoolFamilyExamOverview = () => {
+export const PrimarySchoolFamilyExamOverview = () => {
   useNamespaces('sp.education-student-assessment')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
@@ -86,8 +86,8 @@ export const CompulsorySchoolFamilyExamOverview = () => {
                           },
                           {
                             value:
-                              studentAssessment.totalGrade
-                                ?.compulsorySchoolGrade?.grade ?? '',
+                              studentAssessment.totalGrade?.primarySchoolGrade
+                                ?.grade ?? '',
                           },
                           {
                             value:
@@ -126,19 +126,19 @@ export const CompulsorySchoolFamilyExamOverview = () => {
                             (grade, index) => {
                               const tableData =
                                 grade.__typename ===
-                                'EducationCompulsorySchoolGradeCategoryWeighted' ? (
+                                'EducationPrimarySchoolGradeCategoryWeighted' ? (
                                   <T.Row key={index}>
                                     <T.Data>{grade.label}</T.Data>
-                                    <T.Data>{`(${grade.grade.compulsorySchoolGrade.weight}%)`}</T.Data>
+                                    <T.Data>{`(${grade.grade.primarySchoolGrade.weight}%)`}</T.Data>
                                     <T.Data>
-                                      {grade.grade.compulsorySchoolGrade?.grade}
+                                      {grade.grade.primarySchoolGrade?.grade}
                                     </T.Data>
                                     <T.Data>
                                       {grade.grade.serialGrade.grade}
                                     </T.Data>
                                   </T.Row>
                                 ) : grade.__typename ===
-                                  'EducationCompulsorySchoolGradeCategoryText' ? (
+                                  'EducationPrimarySchoolGradeCategoryText' ? (
                                   <T.Row key={index}>
                                     <T.Data>{grade.label}</T.Data>
                                     <T.Data colSpan={42}>{grade.text}</T.Data>
@@ -161,4 +161,4 @@ export const CompulsorySchoolFamilyExamOverview = () => {
   )
 }
 
-export default CompulsorySchoolFamilyExamOverview
+export default PrimarySchoolFamilyExamOverview

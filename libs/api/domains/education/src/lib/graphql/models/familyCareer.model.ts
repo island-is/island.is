@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { StudentCareer } from './studentCareer.model'
 
-@ObjectType('EducationUserFamilyCompulsorySchoolCareer')
-export class FamilyCompulsorySchoolCareer {
+@ObjectType('EducationUserFamilyPrimarySchoolCareer')
+export class FamilyPrimarySchoolCareer {
   @Field(() => StudentCareer, { nullable: true })
   userCareer?: StudentCareer
 

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GradeCategory } from './gradeCategory.model'
 
-@ObjectType('EducationCompulsorySchoolGradeCategoryText', {
+@ObjectType('EducationPrimarySchoolGradeCategoryText', {
   implements: () => GradeCategory,
 })
 export class GradeCategoryText implements GradeCategory {

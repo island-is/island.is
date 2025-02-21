@@ -4,8 +4,8 @@ import { GradeResultDto, mapGradeResultDto } from './gradeResult.dto'
 export interface CourseGradeHistoryDto {
   title: string
   /** (isl: Grunnskólaeinkunn) */
-  compulsorySchoolGrade: GradeResultDto
-  /** Compulsory school grades when compared nationally (isl: Raðeinkunn)*/
+  primarySchoolGrade: GradeResultDto
+  /** Primary school grades when compared nationally (isl: Raðeinkunn)*/
   nationalCoordinationGrade: GradeResultDto
 }
 
@@ -14,7 +14,7 @@ export const mapCourseGradeHistoryDto = (
 ): CourseGradeHistoryDto => {
   return {
     title: data.heiti,
-    compulsorySchoolGrade: mapGradeResultDto(data.grunnskolaeinkunn),
+    primarySchoolGrade: mapGradeResultDto(data.grunnskolaeinkunn),
     nationalCoordinationGrade: mapGradeResultDto(data.radeinkunn),
   }
 }

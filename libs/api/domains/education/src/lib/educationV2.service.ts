@@ -5,7 +5,7 @@ import { mapCareer } from './educationMapper'
 import { isDefined, unmaskString } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { ExamFamilyMemberInput } from './graphql/grade/dto/familyExamResult.input'
-import { FamilyCompulsorySchoolCareer } from './graphql/models/familyCareer.model'
+import { FamilyPrimarySchoolCareer } from './graphql/models/familyCareer.model'
 import { StudentCareer } from './graphql/models/studentCareer.model'
 
 @Injectable()
@@ -15,9 +15,7 @@ export class EducationServiceV2 {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async familyCareers(
-    user: User,
-  ): Promise<FamilyCompulsorySchoolCareer | null> {
+  async familyCareers(user: User): Promise<FamilyPrimarySchoolCareer | null> {
     const data = await this.gradeService.getUserFamilyStudentAssessments(user)
 
     if (!data) {

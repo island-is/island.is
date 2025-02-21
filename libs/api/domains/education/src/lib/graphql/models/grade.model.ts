@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GradeDetail } from './gradeDetail.model'
 
-@ObjectType('EducationCompulsorySchoolGrade')
+@ObjectType('EducationPrimarySchoolGrade')
 export class Grade {
   @Field(() => GradeDetail)
-  compulsorySchoolGrade!: GradeDetail
+  primarySchoolGrade!: GradeDetail
 
   @Field(() => GradeDetail, { description: 'National standardised test grade' })
   serialGrade!: GradeDetail

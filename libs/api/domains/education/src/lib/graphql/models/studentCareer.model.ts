@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { CompulsorySchoolGradeLevelExamResults } from './gradeLevelExamResults.model'
+import { PrimarySchoolGradeLevelExamResults } from './gradeLevelExamResults.model'
 
-@ObjectType('EducationCompulsorySchoolStudentCareer')
+@ObjectType('EducationPrimarySchoolStudentCareer')
 export class StudentCareer {
   @Field()
   nationalId!: string
@@ -15,6 +15,6 @@ export class StudentCareer {
   @Field({ nullable: true })
   examDateSpan?: string
 
-  @Field(() => [CompulsorySchoolGradeLevelExamResults], { nullable: true })
-  examResults?: Array<CompulsorySchoolGradeLevelExamResults>
+  @Field(() => [PrimarySchoolGradeLevelExamResults], { nullable: true })
+  examResults?: Array<PrimarySchoolGradeLevelExamResults>
 }
