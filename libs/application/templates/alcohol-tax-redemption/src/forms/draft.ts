@@ -21,7 +21,6 @@ export const draftForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'draftMultiField',
-          title: '',
           children: [
             buildDescriptionField({
               id: 'description',
@@ -30,7 +29,6 @@ export const draftForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'TreeSlider',
-              title: '',
               component: 'TreeSlider',
             }),
             buildSubmitField({

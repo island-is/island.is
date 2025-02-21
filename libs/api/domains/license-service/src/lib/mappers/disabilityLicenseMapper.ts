@@ -6,6 +6,7 @@ import {
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -73,6 +74,12 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
                 arg: t.kennitala?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                isExpired === undefined
+                  ? ExpiryStatus.UNKNOWN
+                  : isExpired
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.ACTIVE,
               expired: isExpired,
               expireDate: t.gildirtil?.toISOString() ?? undefined,
               displayTag: expiryTag(formatMessage, isExpired),

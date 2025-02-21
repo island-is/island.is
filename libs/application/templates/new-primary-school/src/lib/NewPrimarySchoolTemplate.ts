@@ -2,6 +2,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   NO,
+  YES,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -15,7 +16,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
-  YES,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -211,12 +211,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         const { application } = context
 
         if (!hasForeignLanguages(application.answers)) {
-          unset(application.answers, 'languages.language1')
-          unset(application.answers, 'languages.language2')
-          unset(application.answers, 'languages.language3')
-          unset(application.answers, 'languages.language4')
-          unset(application.answers, 'languages.childLanguage')
-          unset(application.answers, 'languages.interpreter')
+          unset(application.answers, 'languages.selectedLanguages')
+          unset(application.answers, 'languages.preferredLanguage')
+          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),
@@ -259,13 +256,13 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       clearSupport: assign((context) => {
         const { application } = context
         const {
-          developmentalAssessment,
-          specialSupport,
+          hasDiagnoses,
+          hasHadSupport,
           hasIntegratedServices,
           hasCaseManager,
         } = getApplicationAnswers(application.answers)
 
-        if (developmentalAssessment !== YES && specialSupport !== YES) {
+        if (hasDiagnoses !== YES && hasHadSupport !== YES) {
           unset(application.answers, 'support.hasIntegratedServices')
           unset(application.answers, 'support.hasCaseManager')
           unset(application.answers, 'support.caseManager')

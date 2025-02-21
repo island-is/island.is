@@ -5,7 +5,7 @@
   "engines": {
     "npm": "please-use-yarn",
     "node": "20.15.0",
-    "yarn": "3.2"
+    "yarn": "4.6"
   },
   "repository": {
     "type": "git",
@@ -155,8 +155,8 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.14.0",
     "classnames": "2.2.6",
-    "configcat-js": "7.0.1",
-    "configcat-node": "9.1.1",
+    "configcat-js": "9.5.0",
+    "configcat-node": "11.3.0",
     "contentful": "8.2.0",
     "contentful-management": "10.12.0",
     "contentful-ui-extensions-sdk": "3.32.0",
@@ -175,7 +175,6 @@
     "downshift": "5.4.3",
     "entropy-string": "4.2.0",
     "escape-html": "1.0.3",
-    "eslint-plugin-local-rules": "1.0.1",
     "eslint-plugin-simple-import-sort": "10.0.0",
     "express": "4.18.2",
     "express-validator": "6.14.0",
@@ -248,7 +247,7 @@
     "react-alice-carousel": "1.19.3",
     "react-animate-height": "3.1.2",
     "react-csv": "2.0.3",
-    "react-datepicker": "4.10.0",
+    "react-datepicker": "5.1.0",
     "react-dom": "18.3.1",
     "react-dropzone": "11.7.1",
     "react-focus-lock": "2.9.4",
@@ -451,6 +450,7 @@
     "eslint-plugin-cypress": "2.14.0",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-local-rules": "3.0.2",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-storybook": "^0.6.12",
@@ -517,7 +517,7 @@
   },
   "volta": {
     "node": "20.15.0",
-    "yarn": "3.2.3"
+    "yarn": "4.6.0"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@4.6.0"
 }

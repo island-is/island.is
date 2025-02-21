@@ -17,7 +17,6 @@ export const pickPlateSubSection = buildSubSection({
         buildCustomField({
           id: 'pickPlate',
           component: 'PlateField',
-          title: '',
           doesNotRequireAnswer: true,
         }),
       ],

@@ -11,7 +11,6 @@ import {
   completedRequestCaseStates,
   courtOfAppealsRoles,
   DateType,
-  districtCourtRoles,
   EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
@@ -140,6 +139,7 @@ describe('getCasesQueryFilter', () => {
   describe.each([
     UserRole.DISTRICT_COURT_JUDGE,
     UserRole.DISTRICT_COURT_REGISTRAR,
+    UserRole.DISTRICT_COURT_ASSISTANT,
   ])('given %s role', (role) => {
     it(`should get ${role} filter`, () => {
       // Arrange
@@ -191,49 +191,6 @@ describe('getCasesQueryFilter', () => {
                   },
                 ],
               },
-            ],
-          },
-        ],
-      })
-    })
-  })
-
-  describe.each(
-    districtCourtRoles.filter(
-      (role) =>
-        ![
-          UserRole.DISTRICT_COURT_JUDGE,
-          UserRole.DISTRICT_COURT_REGISTRAR,
-        ].includes(role as UserRole),
-    ),
-  )('given %s role', (role) => {
-    it(`should get assistant filter`, () => {
-      // Arrange
-      const user = {
-        role,
-        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
-      }
-
-      // Act
-      const res = getCasesQueryFilter(user as User)
-
-      // Assert
-      expect(res).toStrictEqual({
-        [Op.and]: [
-          { is_archived: false },
-          {
-            [Op.or]: [
-              { court_id: { [Op.is]: null } },
-              { court_id: 'Court Id' },
-            ],
-          },
-          { type: indictmentCases },
-          {
-            state: [
-              CaseState.SUBMITTED,
-              CaseState.WAITING_FOR_CANCELLATION,
-              CaseState.RECEIVED,
-              CaseState.COMPLETED,
             ],
           },
         ],

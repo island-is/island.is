@@ -192,6 +192,7 @@ const useCase = () => {
                   requestSharedWithDefender: theCase.requestSharedWithDefender,
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
+                  prosecutorId: theCase.prosecutor?.id,
                 },
               },
             })
