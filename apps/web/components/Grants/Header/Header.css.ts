@@ -1,10 +1,10 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
 export const searchBox = style({
   outline: 'none',
-  padding: `${theme.spacing[1]}px ${theme.spacing[3]}px `,
+  padding: `8px 0 2px ${theme.spacing[2]}px`,
   fontSize: '24px',
   fontWeight: theme.typography.light,
   backgroundColor: theme.color.blue100,
@@ -15,3 +15,5 @@ export const searchBox = style({
 export const image = style({
   maxWidth: '100%',
 })
+
+globalStyle(`${searchBox} svg`, {})
