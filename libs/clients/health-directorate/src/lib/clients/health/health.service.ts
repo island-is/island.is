@@ -56,12 +56,10 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(
-        `No prescription dispensations returned for atc code: ${atcCode}`,
-        {
-          category: LOG_CATEGORY,
-        },
-      )
+      this.logger.debug(`No dispensations returned for atc code`, {
+        atcCode,
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -79,7 +77,7 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(`No prescription dispensations grouped returned`, {
+      this.logger.debug(`No grouped dispensations grouped returned`, {
         category: LOG_CATEGORY,
       })
       return null

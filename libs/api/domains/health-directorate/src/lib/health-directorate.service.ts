@@ -12,7 +12,7 @@ import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
 import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Prescription, Prescriptions } from './models/prescriptions'
+import { Prescription, Prescriptions } from './models/prescriptions.model'
 import { Referral, Referrals } from './models/referrals.model'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
@@ -151,13 +151,9 @@ export class HealthDirectorateService {
       data.map((item) => {
         return {
           id: item.id,
-          lastUpdated: item.lastUpdated
-            ? new Date(item.lastUpdated?.toString())
-            : undefined,
+          lastUpdated: item.lastUpdated,
           name: item.name,
-          waitBegan: item.waitBeganDate
-            ? new Date(item.waitBeganDate?.toString())
-            : undefined,
+          waitBegan: item.waitBeganDate,
           organization: item.organizationName.toString(),
           status: item.statusDisplay?.toString(),
         }
@@ -179,12 +175,8 @@ export class HealthDirectorateService {
         return {
           id: item.id,
           serviceName: item.serviceName,
-          createdDate: item.createdDate
-            ? new Date(item.createdDate?.toString())
-            : undefined,
-          validUntilDate: item.validUntilDate
-            ? new Date(item.validUntilDate?.toString())
-            : undefined,
+          createdDate: item.createdDate,
+          validUntilDate: item.validUntilDate,
           stateDisplay: item.stateDisplay,
           reason: item.reasonForReferral,
           fromContactInfo: item.fromContactInfo,
