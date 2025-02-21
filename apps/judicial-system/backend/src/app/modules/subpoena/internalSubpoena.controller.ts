@@ -12,6 +12,10 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
   messageEndpoint,
@@ -39,6 +43,7 @@ import { SubpoenaService } from './subpoena.service'
 export class InternalSubpoenaController {
   constructor(
     private readonly subpoenaService: SubpoenaService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -105,7 +110,7 @@ export class InternalSubpoenaController {
     type: DeliverResponse,
     description: 'Delivers a subpoena to the police',
   })
-  deliverSubpoenaFileToPolice(
+  async deliverSubpoenaFileToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -118,11 +123,24 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaFileToPolice(
-      theCase,
-      defendant,
-      subpoena,
-      deliverDto.user,
+    return this.auditTrailService.audit(
+      'internalSubpoena',
+      AuditedAction.DELIVER_SUBPOENA_TO_POLICE,
+      this.subpoenaService.deliverSubpoenaFileToPolice(
+        theCase,
+        defendant,
+        subpoena,
+        deliverDto.user,
+      ),
+      caseId,
+      {
+        subpoenaId: subpoena.id,
+        policeSubpoenaId: subpoena.subpoenaId,
+        subpoenaHash: subpoena.hash,
+        subpoenaCreated: subpoena.created,
+        subpoenaDeliveredToPolice: new Date(),
+        indictmentHash: theCase.indictmentHash,
+      },
     )
   }
 
