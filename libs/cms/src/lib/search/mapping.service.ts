@@ -6,7 +6,6 @@ import { AnchorPageSyncService } from './importers/anchorPage.service'
 import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
-import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
@@ -38,7 +37,6 @@ export class MappingService {
     private readonly subArticleSyncService: SubArticleSyncService,
     private readonly anchorPageSyncService: AnchorPageSyncService,
     private readonly lifeEventPageSyncService: LifeEventPageSyncService,
-    private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly menuSyncService: MenuSyncService,
     private readonly groupedMenuSyncService: GroupedMenuSyncService,
     private readonly organizationPageSyncService: OrganizationPageSyncService,
@@ -65,7 +63,6 @@ export class MappingService {
       this.lifeEventPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
-      this.adgerdirPageSyncService,
       this.menuSyncService,
       this.groupedMenuSyncService,
       this.organizationPageSyncService,
