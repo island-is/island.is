@@ -44,7 +44,6 @@ export const declined: Form = buildForm({
         }),
         buildCustomField({
           id: 'currentLicense',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildDescriptionField({
@@ -92,12 +91,10 @@ export const declined: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'rejected.space',
-          title: '',
           space: 'containerGutter',
         }),
         buildDescriptionField({
           id: 'rejected.space1',
-          title: '',
           space: 'containerGutter',
         }),
       ],

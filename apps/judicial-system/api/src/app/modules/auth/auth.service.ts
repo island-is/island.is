@@ -45,7 +45,10 @@ export class AuthService {
       return undefined
     }
 
-    return await res.json()
+    const users = await res.json()
+
+    // TODO: Support login with multiple users
+    return users[0]
   }
 
   async findDefender(nationalId: string): Promise<User | undefined> {
@@ -62,7 +65,9 @@ export class AuthService {
     } catch (error) {
       if (error instanceof NotFoundException) {
         this.logger.info('Defender not found', error)
-      } else throw error
+      } else {
+        throw error
+      }
     }
 
     // If a defender doesn't have any active cases, we look them up
@@ -163,24 +168,5 @@ export class AuthService {
       this.logger.error('Token verification failed:', error)
       throw error
     }
-  }
-
-  async logLogin(
-    eventType: EventType,
-    nationalId: string,
-    userRole?: UserRole,
-  ) {
-    await fetch(`${this.config.backendUrl}/api/eventLog/event`, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventType,
-        nationalId,
-        userRole,
-      }),
-    })
   }
 }
