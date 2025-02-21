@@ -26,10 +26,11 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import { HealthDirectorateService } from './health-directorate.service'
 import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
-import { Prescriptions } from './models/prescriptions'
+import { Prescriptions } from './models/prescriptions.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
 import { Waitlists } from './models/waitlists.model'
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)
@@ -98,6 +99,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
+  @Scopes(ApiScope.healthWaitingLists)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
@@ -112,6 +114,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
+  @Scopes(ApiScope.healthReferrals)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferrals(
     @Args('locale', { type: () => String, nullable: true })
@@ -126,6 +129,8 @@ export class HealthDirectorateResolver {
     name: 'healthDirectoratePrescriptions',
   })
   @Audit()
+  @Scopes(ApiScope.healthPrescriptions)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptions(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
