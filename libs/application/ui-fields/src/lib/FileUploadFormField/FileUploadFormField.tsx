@@ -28,14 +28,17 @@ export const FileUploadFormField = ({
     maxSize,
     maxSizeErrorText,
     forImageUpload,
+    marginTop,
+    marginBottom,
   } = field
   const { formatMessage } = useLocale()
   const { watch } = useFormContext()
   const currentValue = watch(id)
 
   const onFileRemoveWhenInAnswers = (fileToRemove: UploadFile) => {
+    const answers = structuredClone(application.answers)
     const updatedAnswers = set(
-      application.answers,
+      answers,
       id,
       currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key),
     )
@@ -46,7 +49,7 @@ export const FileUploadFormField = ({
   }
 
   return (
-    <div>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
       {introduction && (
         <FieldDescription
           description={formatText(introduction, application, formatMessage)}
@@ -69,7 +72,7 @@ export const FileUploadFormField = ({
             uploadButtonLabel &&
             formatText(uploadButtonLabel, application, formatMessage)
           }
-          multiple={uploadMultiple}
+          multiple={uploadMultiple ?? false}
           accept={uploadAccept}
           maxSize={maxSize}
           maxSizeErrorText={
@@ -80,6 +83,6 @@ export const FileUploadFormField = ({
           onRemove={onFileRemoveWhenInAnswers}
         />
       </Box>
-    </div>
+    </Box>
   )
 }

@@ -77,6 +77,9 @@ export class Event {
 
   @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
+
+  @Field(() => String, { nullable: true })
+  firstPublishedAt?: string | null
 }
 
 export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
@@ -118,5 +121,7 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
     organization: fields.organization
       ? mapOrganization(fields.organization)
       : null,
+    firstPublishedAt: (sys as unknown as { firstPublishedAt: string })
+      .firstPublishedAt,
   }
 }

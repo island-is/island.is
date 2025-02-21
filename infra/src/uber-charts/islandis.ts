@@ -36,6 +36,8 @@ import { serviceSetup as downloadServiceSetup } from '../../../apps/download-ser
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 
+import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+
 import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
@@ -62,6 +64,7 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
+import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
@@ -146,6 +149,9 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+const unicornApp = unicornAppSetup()
+const formSystemApi = formSystemApiSetup()
+
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -187,6 +193,7 @@ export const Services: EnvironmentServices = {
     contentfulEntryTagger,
     bffAdminPortalService,
     bffServicePortalService,
+    unicornApp,
   ],
   staging: [
     appSystemApi,
@@ -220,8 +227,9 @@ export const Services: EnvironmentServices = {
     sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
-    bffAdminPortalService,
     bffServicePortalService,
+    bffAdminPortalService,
+    unicornApp,
   ],
   dev: [
     appSystemApi,
@@ -253,6 +261,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     licenseApi,
+    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -261,6 +270,7 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     bffAdminPortalService,
     bffServicePortalService,
+    unicornApp,
   ],
 }
 

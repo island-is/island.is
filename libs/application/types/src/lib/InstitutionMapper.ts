@@ -209,17 +209,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
@@ -403,5 +393,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.SECONDARY_SCHOOL]: {
+    nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
 }

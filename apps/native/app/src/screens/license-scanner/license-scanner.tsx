@@ -1,4 +1,3 @@
-import { Bubble, Button, theme } from '@ui'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -34,6 +33,8 @@ import {
 } from 'react-native-vision-camera'
 import { CodeScanner, CodeType } from 'react-native-vision-camera'
 import styled from 'styled-components/native'
+
+import { Bubble, Button, theme } from '../../ui'
 import flashligth from '../../assets/icons/flashlight.png'
 import { LICENSE_SCANNER_DONE } from '../../constants/navigation-buttons'
 import {

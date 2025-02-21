@@ -2,11 +2,11 @@ import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
 
-import { useBff } from '@island.is/react-spa/bff'
+import { useAuth } from '@island.is/react-spa/bff'
 import * as styles from './AuthOverlay.css'
 
 const AuthOverlay = () => {
-  const { authState } = useBff()
+  const { authState } = useAuth()
   const { formatMessage } = useLocale()
 
   if (authState === 'switching')

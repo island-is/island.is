@@ -8,17 +8,29 @@ import {
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
 import { OJOIApplication } from '../lib/types'
-import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Application } from '@island.is/api/schema'
+import { POST_APPLICATION_MUTATION } from '../graphql/queries'
+import { getValueViaPath } from '@island.is/application/core'
+import { useFormContext } from 'react-hook-form'
+import debounce from 'lodash/debounce'
+import set from 'lodash/set'
 
 type OJOIUseApplicationParams = {
   applicationId?: string
 }
 
+type UpdateApplicationProps = {
+  path: string
+  value: any
+  onComplete?: () => void
+  onError?: (error: Error) => void
+}
+
 export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
   const { locale } = useLocale()
+  const { setValue } = useFormContext()
 
   const {
     data: application,
@@ -46,7 +58,19 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
 
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
-  const updateApplication = async (input: partialSchema, cb?: () => void) => {
+  const [
+    postApplicationMutation,
+    {
+      data: postApplicationData,
+      error: postApplicationError,
+      loading: postApplicationLoading,
+    },
+  ] = useMutation(POST_APPLICATION_MUTATION)
+
+  const updateApplication = async (
+    input: Partial<partialSchema>,
+    cb?: () => void,
+  ) => {
     await updateApplicationMutation({
       variables: {
         locale,
@@ -60,6 +84,28 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     })
 
     cb && cb()
+  }
+
+  const updateApplicationV2 = async ({
+    path,
+    value,
+    onComplete,
+    onError,
+  }: UpdateApplicationProps) => {
+    setValue(path, value)
+    const answers = set({}, path, value)
+
+    await updateApplicationMutation({
+      variables: {
+        locale,
+        input: {
+          id: applicationId,
+          answers: answers,
+        },
+      },
+      onCompleted: onComplete,
+      onError: onError,
+    })
   }
 
   const submitApplication = async (
@@ -94,6 +140,26 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     })
   }
 
+  const postApplication = async (id: string, onComplete?: () => void) => {
+    await postApplicationMutation({
+      variables: {
+        input: {
+          id: id,
+        },
+      },
+      onError: (error) => {
+        console.error(error)
+      },
+      onCompleted: (data) => {
+        onComplete && onComplete()
+      },
+    })
+  }
+
+  const getAnswer = (path: string) => {
+    return getValueViaPath(application?.applicationApplication, path)
+  }
+
   const debouncedUpdateApplication = debounce(
     updateApplication,
     DEBOUNCE_INPUT_TIMER,
@@ -118,10 +184,16 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     updateLoading,
     updateError,
     isLoading: applicationLoading || updateLoading,
+    postApplication,
+    postApplicationData,
+    postApplicationError,
+    postApplicationLoading,
     debouncedOnUpdateApplicationHandler,
     updateApplication,
+    updateApplicationV2,
     submitApplication,
     createApplication,
     refetchApplication,
+    getAnswer,
   }
 }

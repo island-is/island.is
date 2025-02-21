@@ -7,12 +7,17 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import { FormText, StaticText } from '@island.is/application/types'
+import {
+  Condition,
+  FormText,
+  FormTextWithLocale,
+  StaticText,
+} from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
   alertTitle: FormText
-  alertMessage: FormText
+  alertMessage: FormTextWithLocale
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText
   secondButtonLink: StaticText
@@ -21,7 +26,7 @@ type Props = Partial<{
   accordion?: boolean
   expandableHeader: FormText
   expandableIntro: FormText
-  expandableDescription: FormText
+  expandableDescription: FormTextWithLocale
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
   conclusionLinkLabel: StaticText
@@ -29,6 +34,7 @@ type Props = Partial<{
   bottomButtonLink: string
   bottomButtonLabel: StaticText
   bottomButtonMessage: FormText
+  condition?: Condition
 }>
 
 /**
@@ -67,6 +73,7 @@ export const buildFormConclusionSection = ({
   bottomButtonLink = '/minarsidur/umsoknir',
   bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
   bottomButtonMessage = coreMessages.openServicePortalMessageText,
+  condition,
 }: Props) => {
   const expandableDescriptionField = accordion
     ? [
@@ -83,6 +90,7 @@ export const buildFormConclusionSection = ({
   return buildSection({
     id: 'uiForms.conclusionSection',
     title: sectionTitle,
+    condition,
     children: [
       buildMultiField({
         id: 'uiForms.conclusionMultifield',
@@ -106,7 +114,6 @@ export const buildFormConclusionSection = ({
           ...expandableDescriptionField,
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionBottomLink',
-            title: '',
             url: bottomButtonLink,
             buttonTitle: bottomButtonLabel,
             message: bottomButtonMessage,

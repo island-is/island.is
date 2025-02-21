@@ -1,8 +1,8 @@
-import { NO, YES } from '@island.is/application/types'
 import { z } from 'zod'
 import { NEW, USED } from '../shared/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { NO, YES } from '@island.is/application/core'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -252,7 +252,7 @@ export const NewMachineAnswersSchema = z.object({
     streetRegistration: z
       .object({
         registerToTraffic: z.enum([YES, NO]),
-        size: z.enum(['1', '2', '3']),
+        size: z.enum(['1', '2', '3']).optional(),
       })
       .optional(),
   }),

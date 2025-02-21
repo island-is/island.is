@@ -18,6 +18,7 @@ import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
+import { LimitedAccessDefendantController } from '../limitedAccessDefendant.controller'
 import { CivilClaimant } from '../models/civilClaimant.model'
 import { Defendant } from '../models/defendant.model'
 import { DefendantEventLog } from '../models/defendantEventLog.model'
@@ -32,6 +33,7 @@ export const createTestingDefendantModule = async () => {
     imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
     controllers: [
       DefendantController,
+      LimitedAccessDefendantController,
       InternalDefendantController,
       CivilClaimantController,
     ],
@@ -108,6 +110,11 @@ export const createTestingDefendantModule = async () => {
       InternalDefendantController,
     )
 
+  const limitedAccessDefendantController =
+    defendantModule.get<LimitedAccessDefendantController>(
+      LimitedAccessDefendantController,
+    )
+
   const civilClaimantModel = await defendantModule.resolve<
     typeof CivilClaimant
   >(getModelToken(CivilClaimant))
@@ -129,6 +136,7 @@ export const createTestingDefendantModule = async () => {
     defendantService,
     defendantController,
     internalDefendantController,
+    limitedAccessDefendantController,
     civilClaimantService,
     civilClaimantController,
     civilClaimantModel,

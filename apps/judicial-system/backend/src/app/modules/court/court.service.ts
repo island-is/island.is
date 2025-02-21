@@ -1,10 +1,9 @@
 import formatISO from 'date-fns/formatISO'
 import { Base64 } from 'js-base64'
-import { Sequelize } from 'sequelize-typescript'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
 import { Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -34,6 +33,7 @@ export enum CourtDocumentFolder {
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
+  SUBPOENA_DOCUMENTS = 'Boðanir',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype
@@ -111,8 +111,8 @@ export const courtSubtypes: CourtSubtypes = {
   // 'Sektir málflytjenda',
   PHONE_TAPPING: 'Símhlerun',
   // 'Skýrslutaka brotaþola eldri en 18 ára',
-  // 'Skýrslutaka brotaþola yngri en 18 ára',
-  // 'Skýrslutaka fyrir dómi',
+  STATEMENT_FROM_MINOR: 'Skýrslutaka brotaþola yngri en 18 ára',
+  STATEMENT_IN_COURT: 'Skýrslutaka fyrir dómi',
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
@@ -128,6 +128,7 @@ enum RobotEmailType {
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
   INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
+  INDICTMENT_CASE_ARRAIGNMENT_DATE = 'INDICTMENT_CASE_ARRAIGNMENT_DATE',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
 }
@@ -140,7 +141,6 @@ export class CourtService {
     private readonly courtClientService: CourtClientService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(RobotLog) private readonly robotLogModel: typeof RobotLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(courtModuleConfig.KEY)
@@ -162,7 +162,9 @@ export class CourtService {
             },
           })
       } else {
-        logger.error('Missing required configuration for Microsoft Graph API')
+        this.logger.error(
+          'Missing required configuration for Microsoft Graph API',
+        )
       }
     }
   }
@@ -336,15 +338,19 @@ export class CourtService {
       )
 
       const isIndictment = isIndictmentCase(type)
+      const policeCaseNumber = policeCaseNumbers[0]
+        ? policeCaseNumbers[0].replace(/-/g, '')
+        : ''
 
       return await this.courtClientService.createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        // TODO: send a list of subtypes when CourtService supports it
         subtype: courtSubtype as string,
         status: 'Skráð',
         receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
-        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+        sourceNumber: policeCaseNumber,
       })
     } catch (reason) {
       if (reason instanceof ServiceUnavailableException) {
@@ -569,10 +575,13 @@ export class CourtService {
     policeCaseNumber?: string,
     subtypes?: string[],
     defendants?: { name?: string; nationalId?: string }[],
-    prosecutor?: { name?: string; nationalId?: string },
+    prosecutor?: { name?: string; nationalId?: string; email?: string },
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - upplýsingar`
+
+      policeCaseNumber = policeCaseNumber?.replace(/-/g, '')
+
       const content = JSON.stringify({
         receivedByCourtDate,
         indictmentDate,
@@ -666,6 +675,38 @@ export class CourtService {
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to update indictment case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  updateIndictmentCaseWithArraignmentDate(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    arraignmentDate?: Date,
+  ): Promise<unknown> {
+    try {
+      const subject = `${courtName} - ${courtCaseNumber} - þingfesting`
+      const content = JSON.stringify({ arraignmentDate })
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_ARRAIGNMENT_DATE,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with arraignment date',
         {
           caseId,
           actor: user.name,

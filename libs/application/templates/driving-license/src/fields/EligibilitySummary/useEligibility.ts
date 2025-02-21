@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
   ApplicationEligibility,
@@ -16,7 +16,6 @@ import {
   DrivingLicenseFakeData,
   otherLicenseCategories,
   remarksCannotRenew65,
-  YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
@@ -183,10 +182,6 @@ export const useEligibility = (
 
     const requirements = [
       ...eligibility,
-      {
-        key: RequirementKey.HasNoPhoto,
-        requirementMet: hasQualityPhoto,
-      },
       ...(hasExtendedLicense
         ? [
             {

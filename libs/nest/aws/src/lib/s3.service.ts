@@ -63,7 +63,7 @@ export class S3Service {
     const input: CopyObjectRequest = {
       Bucket: bucket,
       Key: key,
-      CopySource: copySource,
+      CopySource: encodeURIComponent(copySource),
     }
     try {
       return await this.s3Client.send(new CopyObjectCommand(input))

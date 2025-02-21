@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
   FileType,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -15,7 +14,6 @@ import {
   SINGLE,
   States,
   UnEmployedBenefitTypes,
-  YES,
   calculateDaysUsedByPeriods,
   calculatePeriodLength,
   getAdditionalSingleParentRightsInDays,
@@ -35,6 +33,7 @@ import {
   getAdditionalSingleParentRightsInMonths,
   clamp,
   getMultipleBirthsDaysInMonths,
+  Files,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
@@ -82,7 +81,7 @@ import {
   getRightsCode,
   transformApplicationToParentalLeaveDTO,
   getFromDate,
-  isPreBirthRight,
+  isFixedRight,
 } from './parental-leave.utils'
 import {
   generateAssignEmployerApplicationSms,
@@ -402,6 +401,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  async getPDFs(
+    application: Application,
+    documents: Files[],
+    attachmentType: string,
+    fileUpload: string,
+  ) {
+    const PDFs = []
+    for (const index of documents.keys()) {
+      const pdf = await this.getPdf(application, index, fileUpload)
+      PDFs.push({
+        attachmentType,
+        attachmentBytes: pdf,
+      })
+    }
+    return PDFs
+  }
+
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
     const {
@@ -433,48 +449,36 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {
-        residenceGrantFiles.forEach(async (item, index) => {
-          const pdf = await this.getPdf(
-            application,
-            index,
-            'fileUpload.residenceGrant',
-          )
-          attachments.push({
-            attachmentType: apiConstants.attachments.residenceGrant,
-            attachmentBytes: pdf,
-          })
-        })
+        const PDFs = await this.getPDFs(
+          application,
+          residenceGrantFiles,
+          apiConstants.attachments.residenceGrant,
+          'fileUpload.residenceGrant',
+        )
+        attachments.push(...PDFs)
       }
     }
 
     if (changeEmployerFile) {
-      changeEmployerFile.forEach(async (item, index) => {
-        const pdf = await this.getPdf(
-          application,
-          index,
-          'fileUpload.changeEmployerFile',
-        )
-        attachments.push({
-          attachmentType: apiConstants.attachments.changeEmployer,
-          attachmentBytes: pdf,
-        })
-      })
+      const PDFs = await this.getPDFs(
+        application,
+        changeEmployerFile,
+        apiConstants.attachments.changeEmployer,
+        'fileUpload.changeEmployerFile',
+      )
+      attachments.push(...PDFs)
     }
 
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
-        for (const index of additionalDocuments.keys()) {
-          const pdf = await this.getPdf(
-            application,
-            index,
-            'fileUpload.additionalDocuments',
-          )
-          attachments.push({
-            attachmentType: apiConstants.attachments.other,
-            attachmentBytes: pdf,
-          })
-        }
+        const PDFs = await this.getPDFs(
+          application,
+          additionalDocuments,
+          apiConstants.attachments.other,
+          'fileUpload.additionalDocuments',
+        )
+        attachments.push(...PDFs)
       }
       return attachments
     }
@@ -842,9 +846,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   ): Period[] {
     return periods.map((period, index) => {
       const isFirstPeriod = index === 0
-      const preBirthRight = isPreBirthRight(period.rightCodePeriod)
+      const fixedRight = isFixedRight(period.rightCodePeriod)
       return {
-        rightsCodePeriod: preBirthRight ? period.rightCodePeriod : rights,
+        rightsCodePeriod: fixedRight ? period.rightCodePeriod : rights,
         from: getFromDate(
           isFirstPeriod,
           isActualDateOfBirth,
@@ -874,7 +878,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const rightsDTO = await this.createRightsDTO(application)
     const rightUnits = rightsDTO.map(({ rightsUnit }) => rightsUnit)
     const rights = rightUnits
-      .filter((rightUnit) => !isPreBirthRight(rightUnit))
+      .filter((rightUnit) => !isFixedRight(rightUnit))
       .join(',')
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH

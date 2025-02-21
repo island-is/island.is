@@ -21,9 +21,11 @@ import {
   INDICTMENTS_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
+  ROUTE_HANDLER_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  applyDativeCaseToCourtName,
   formatDate,
   getAppealResultTextByValue,
   getHumanReadableCaseIndictmentRulingDecision,
@@ -46,6 +48,7 @@ import {
   RequestSharedWithDefender,
   SessionArrangements,
   type User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -292,14 +295,13 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber ?? theCase.policeCaseNumbers[0],
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      theCase.defenderName,
-      theCase.defenderEmail,
-      undefined,
-      !theCase.defenderNationalId,
-    )
+      html: body,
+      recipientName: theCase.defenderName,
+      recipientEmail: theCase.defenderEmail,
+      skipTail: !theCase.defenderNationalId,
+    })
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
@@ -321,7 +323,12 @@ export class CaseNotificationService extends BaseNotificationService {
       overviewUrl,
     )
 
-    return this.sendEmail(subject, body, prosecutor?.name, prosecutor?.email)
+    return this.sendEmail({
+      subject,
+      html: body,
+      recipientName: prosecutor?.name,
+      recipientEmail: prosecutor?.email,
+    })
   }
 
   private sendReadyForCourtEmailNotificationToCourt(
@@ -334,12 +341,12 @@ export class CaseNotificationService extends BaseNotificationService {
         `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
       )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      theCase.court?.name,
-      this.getCourtEmail(theCase.courtId),
-    )
+      html: body,
+      recipientName: theCase.court?.name,
+      recipientEmail: this.getCourtEmail(theCase.courtId),
+    })
   }
 
   private sendReadyForCourtEmailNotificationToDefender(
@@ -353,14 +360,13 @@ export class CaseNotificationService extends BaseNotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      theCase.defenderName,
-      theCase.defenderEmail,
-      undefined,
-      !theCase.defenderNationalId,
-    )
+      html: body,
+      recipientName: theCase.defenderName,
+      recipientEmail: theCase.defenderEmail,
+      skipTail: !theCase.defenderNationalId,
+    })
   }
 
   private async sendReadyForCourtNotifications(
@@ -514,13 +520,13 @@ export class CaseNotificationService extends BaseNotificationService {
         ? undefined
         : this.createICalAttachment(theCase)
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      theCase.prosecutor?.name,
-      theCase.prosecutor?.email,
-      calendarInvite ? [calendarInvite] : undefined,
-    ).then((recipient) => {
+      html: body,
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+      attachments: calendarInvite ? [calendarInvite] : undefined,
+    }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
         this.uploadCourtDateInvitationEmailToCourt(
@@ -564,12 +570,12 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber,
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
       html,
-      this.formatMessage(notifications.emailNames.prison),
-      this.config.email.prisonEmail,
-    )
+      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientEmail: this.config.email.prisonEmail,
+    })
   }
 
   private sendCourtDateCalendarInviteEmailNotificationToDefender(
@@ -594,14 +600,14 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.sessionArrangements,
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
       html,
-      theCase.defenderName,
-      theCase.defenderEmail,
-      calendarInvite ? [calendarInvite] : undefined,
-      !theCase.defenderNationalId,
-    ).then((recipient) => {
+      recipientName: theCase.defenderName,
+      recipientEmail: theCase.defenderEmail,
+      attachments: calendarInvite ? [calendarInvite] : undefined,
+      skipTail: !theCase.defenderNationalId,
+    }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
         this.uploadCourtDateInvitationEmailToCourt(
@@ -640,14 +646,13 @@ export class CaseNotificationService extends BaseNotificationService {
           RequestSharedWithDefender.COURT_DATE,
     )
 
-    return this.sendEmail(
-      linkSubject,
-      linkHtml,
-      theCase.defenderName,
-      theCase.defenderEmail,
-      undefined,
-      !theCase.defenderNationalId,
-    )
+    return this.sendEmail({
+      subject: linkSubject,
+      html: linkHtml,
+      recipientName: theCase.defenderName,
+      recipientEmail: theCase.defenderEmail,
+      skipTail: !theCase.defenderNationalId,
+    })
   }
 
   private async sendPostponedCourtDateEmailNotificationForIndictmentCase(
@@ -666,14 +671,14 @@ export class CaseNotificationService extends BaseNotificationService {
       overviewUrl,
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      email,
-      name,
-      calendarInvite && [calendarInvite],
-      Boolean(overviewUrl) === false,
-    ).then((recipient) => {
+      html: body,
+      recipientName: name,
+      recipientEmail: email,
+      attachments: calendarInvite && [calendarInvite],
+      skipTail: Boolean(overviewUrl) === false,
+    }).then((recipient) => {
       if (recipient.success) {
         // No need to wait
         this.uploadCourtDateInvitationEmailToCourt(
@@ -686,6 +691,35 @@ export class CaseNotificationService extends BaseNotificationService {
       }
 
       return recipient
+    })
+  }
+
+  private sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+    theCase: Case,
+    role: UserRole.DISTRICT_COURT_JUDGE | UserRole.DISTRICT_COURT_REGISTRAR,
+  ): Promise<Recipient> {
+    const official =
+      role === UserRole.DISTRICT_COURT_JUDGE ? theCase.judge : theCase.registrar
+
+    if (!official?.email) {
+      return Promise.resolve({ success: true })
+    }
+
+    return this.sendEmail({
+      subject: this.formatMessage(
+        notifications.courtOfficialAssignedEmail.subject,
+        {
+          courtCaseNumber: theCase.courtCaseNumber,
+        },
+      ),
+      html: this.formatMessage(notifications.courtOfficialAssignedEmail.body, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        role,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      }),
+      recipientName: official?.name,
+      recipientEmail: official?.email,
     })
   }
 
@@ -708,8 +742,8 @@ export class CaseNotificationService extends BaseNotificationService {
         courtDate,
         calendarInvite,
         `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
-        theCase.prosecutor?.name,
         theCase.prosecutor?.email,
+        theCase.prosecutor?.name,
       ),
     ]
 
@@ -718,7 +752,7 @@ export class CaseNotificationService extends BaseNotificationService {
       (d: Defendant) => d.defenderEmail,
     )
     uniqueDefendants.forEach((defendant) => {
-      if (defendant.defenderEmail) {
+      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
         promises.push(
           this.sendPostponedCourtDateEmailNotificationForIndictmentCase(
             theCase,
@@ -731,8 +765,8 @@ export class CaseNotificationService extends BaseNotificationService {
                 theCase.type,
                 theCase.id,
               ),
-            defendant.defenderName,
             defendant.defenderEmail,
+            defendant.defenderName,
           ),
         )
       }
@@ -810,42 +844,91 @@ export class CaseNotificationService extends BaseNotificationService {
 
     return result
   }
+
+  private async sendDistrictCourtUserAssignedNotifications(
+    theCase: Case,
+    userRole: UserRole.DISTRICT_COURT_JUDGE | UserRole.DISTRICT_COURT_REGISTRAR,
+  ): Promise<DeliverResponse> {
+    const recipient =
+      await this.sendCourtOfficialAssignedEmailNotificationForIndictmentCase(
+        theCase,
+        userRole,
+      )
+
+    return await this.recordNotification(
+      theCase.id,
+      userRole === UserRole.DISTRICT_COURT_JUDGE
+        ? CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED
+        : CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+      [recipient],
+    )
+  }
   //#endregion
 
   //#region RULING notifications
-  private sendRulingEmailNotificationToProsecutor(
+  private getIndictmentRulingEmailNotificationToProsecutorProps = (
     theCase: Case,
-  ): Promise<Recipient> {
-    return this.sendEmail(
-      isIndictmentCase(theCase.type)
-        ? this.formatMessage(notifications.caseCompleted.subject, {
+  ) => {
+    return {
+      subject: this.formatMessage(notifications.caseCompleted.subject, {
+        courtCaseNumber: theCase.courtCaseNumber,
+      }),
+      html: this.formatMessage(notifications.caseCompleted.prosecutorBody, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+        caseIndictmentRulingDecision:
+          getHumanReadableCaseIndictmentRulingDecision(
+            theCase.indictmentRulingDecision,
+          ),
+        linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      }),
+    }
+  }
+
+  private getRulingEmailNotificationToProsecutorProps = (theCase: Case) => {
+    const sharedHtmlProps = {
+      courtCaseNumber: theCase.courtCaseNumber,
+      courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    }
+    return {
+      subject: theCase.isCompletedWithoutRuling
+        ? this.formatMessage(notifications.acceptedWithoutRuling.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
           })
         : this.formatMessage(notifications.signedRuling.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
           }),
-      isIndictmentCase(theCase.type)
-        ? this.formatMessage(notifications.caseCompleted.prosecutorBody, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            caseIndictmentRulingDecision:
-              getHumanReadableCaseIndictmentRulingDecision(
-                theCase.indictmentRulingDecision,
-              ),
-            linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
-          })
+      html: theCase.isCompletedWithoutRuling
+        ? this.formatMessage(
+            notifications.acceptedWithoutRuling.prosecutorBody,
+            {
+              ...sharedHtmlProps,
+            },
+          )
         : this.formatMessage(notifications.signedRuling.prosecutorBodyS3, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
+            ...sharedHtmlProps,
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
           }),
-      theCase.prosecutor?.name,
-      theCase.prosecutor?.email,
-    )
+    }
+  }
+
+  private sendRulingEmailNotificationToProsecutor(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const emailProps = isIndictmentCase(theCase.type)
+      ? this.getIndictmentRulingEmailNotificationToProsecutorProps(theCase)
+      : this.getRulingEmailNotificationToProsecutorProps(theCase)
+
+    return this.sendEmail({
+      subject: emailProps.subject,
+      html: emailProps.html,
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
   }
 
   private async sendRulingEmailNotificationToDefender(
@@ -854,48 +937,62 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderName?: string,
     defenderEmail?: string,
   ) {
-    return this.sendEmail(
-      isIndictmentCase(theCase.type)
+    const sharedHtmlProps = {
+      courtCaseNumber: theCase.courtCaseNumber,
+      courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+      defenderHasAccessToRvg: Boolean(defenderNationalId),
+      linkStart: `<a href="${formatDefenderRoute(
+        this.config.clientUrl,
+        theCase.type,
+        theCase.id,
+      )}">`,
+      linkEnd: '</a>',
+    }
+    // for restrictive and investigation cases
+    const rulingMessage = theCase.isCompletedWithoutRuling
+      ? {
+          subject: notifications.acceptedWithoutRuling.subject,
+          body: notifications.acceptedWithoutRuling.defenderBody,
+          props: { subject: { courtCaseNumber: theCase.courtCaseNumber } },
+        }
+      : {
+          subject: notifications.signedRuling.subject,
+          body: notifications.signedRuling.defenderBody,
+          props: {
+            subject: {
+              courtCaseNumber: theCase.courtCaseNumber,
+              isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+            },
+            body: {
+              isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+            },
+          },
+        }
+
+    return this.sendEmail({
+      subject: isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
           })
-        : this.formatMessage(notifications.signedRuling.subject, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+        : this.formatMessage(rulingMessage.subject, {
+            ...rulingMessage.props.subject,
           }),
-      isIndictmentCase(theCase.type)
+      html: isIndictmentCase(theCase.type)
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+            ...sharedHtmlProps,
             caseIndictmentRulingDecision:
               getHumanReadableCaseIndictmentRulingDecision(
                 theCase.indictmentRulingDecision,
               ),
-            defenderHasAccessToRvg: Boolean(defenderNationalId),
-            linkStart: `<a href="${formatDefenderRoute(
-              this.config.clientUrl,
-              theCase.type,
-              theCase.id,
-            )}">`,
-            linkEnd: '</a>',
           })
-        : this.formatMessage(notifications.signedRuling.defenderBody, {
-            isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            defenderHasAccessToRvg: Boolean(defenderNationalId),
-            linkStart: `<a href="${formatDefenderRoute(
-              this.config.clientUrl,
-              theCase.type,
-              theCase.id,
-            )}">`,
-            linkEnd: '</a>',
+        : this.formatMessage(rulingMessage.body, {
+            ...rulingMessage.props.body,
+            ...sharedHtmlProps,
           }),
-      defenderName ?? '',
-      defenderEmail ?? '',
-      undefined,
-      Boolean(defenderNationalId) === false,
-    )
+      recipientName: defenderName ?? '',
+      recipientEmail: defenderEmail ?? '',
+      skipTail: Boolean(defenderNationalId) === false,
+    })
   }
 
   private async sendRulingEmailNotificationToPrison(
@@ -927,12 +1024,12 @@ export class CaseNotificationService extends BaseNotificationService {
             linkEnd: '</a>',
           })
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
       html,
-      this.formatMessage(notifications.emailNames.prison),
-      this.config.email.prisonEmail,
-    )
+      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientEmail: this.config.email.prisonEmail,
+    })
   }
 
   private async sendRulingEmailNotificationToPrisonAdministration(
@@ -946,12 +1043,12 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.court?.name,
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      this.formatMessage(notifications.emailNames.prisonAdmin),
-      this.config.email.prisonAdminEmail,
-    )
+      html: body,
+      recipientName: this.formatMessage(notifications.emailNames.prisonAdmin),
+      recipientEmail: this.config.email.prisonAdminEmail,
+    })
   }
 
   private async sendRejectedCustodyEmailToPrison(
@@ -971,12 +1068,12 @@ export class CaseNotificationService extends BaseNotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      body,
-      this.formatMessage(notifications.emailNames.prison),
-      this.config.email.prisonEmail,
-    )
+      html: body,
+      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientEmail: this.config.email.prisonEmail,
+    })
   }
 
   private async sendRulingNotifications(
@@ -990,7 +1087,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail) {
+        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
               theCase,
@@ -1073,9 +1170,9 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
-      theCase.isCustodyIsolation
+      html: theCase.isCustodyIsolation
         ? this.formatMessage(notifications.modified.isolationHtmlDefender, {
             caseType: theCase.type,
             actorInstitution: user.institution?.name,
@@ -1107,11 +1204,10 @@ export class CaseNotificationService extends BaseNotificationService {
             linkEnd: '</a>',
             validToDate: formatDate(theCase.validToDate, 'PPPp'),
           }),
-      theCase.defenderName,
-      theCase.defenderEmail,
-      undefined,
-      !theCase.defenderNationalId,
-    )
+      recipientName: theCase.defenderName,
+      recipientEmail: theCase.defenderEmail,
+      skipTail: !theCase.defenderNationalId,
+    })
   }
 
   private async sendModifiedNotifications(
@@ -1147,12 +1243,12 @@ export class CaseNotificationService extends BaseNotificationService {
         })
 
     const promises = [
-      this.sendEmail(
+      this.sendEmail({
         subject,
         html,
-        this.formatMessage(notifications.emailNames.prisonAdmin),
-        this.config.email.prisonAdminEmail,
-      ),
+        recipientName: this.formatMessage(notifications.emailNames.prisonAdmin),
+        recipientEmail: this.config.email.prisonAdminEmail,
+      }),
     ]
 
     const shouldSendNotificationToPrison =
@@ -1160,45 +1256,45 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (shouldSendNotificationToPrison) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          this.formatMessage(notifications.emailNames.prison),
-          this.config.email.prisonEmail,
-        ),
+          recipientName: this.formatMessage(notifications.emailNames.prison),
+          recipientEmail: this.config.email.prisonEmail,
+        }),
       )
     }
 
     if (user.id !== theCase.prosecutorId) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          theCase.prosecutor?.name,
-          theCase.prosecutor?.email,
-        ),
+          recipientName: theCase.prosecutor?.name,
+          recipientEmail: theCase.prosecutor?.email,
+        }),
       )
     }
 
     if (user.id !== theCase.judgeId) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          theCase.judge?.name,
-          theCase.judge?.email,
-        ),
+          recipientName: theCase.judge?.name,
+          recipientEmail: theCase.judge?.email,
+        }),
       )
     }
 
     if (theCase.registrar && user.id !== theCase.registrarId) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          theCase.registrar.name,
-          theCase.registrar.email,
-        ),
+          recipientName: theCase.registrar.name,
+          recipientEmail: theCase.registrar.email,
+        }),
       )
     }
 
@@ -1251,14 +1347,13 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber,
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
       html,
-      this.formatMessage(notifications.emailNames.prison),
-      this.config.email.prisonEmail,
-      undefined,
-      true,
-    )
+      recipientName: this.formatMessage(notifications.emailNames.prison),
+      recipientEmail: this.config.email.prisonEmail,
+      skipTail: true,
+    })
   }
 
   private sendRevokedEmailNotificationToDefenderForRequestCase(
@@ -1284,14 +1379,13 @@ export class CaseNotificationService extends BaseNotificationService {
       arraignmentDate,
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
       html,
-      defenderName,
-      defenderEmail,
-      undefined,
-      true,
-    )
+      recipientName: defenderName,
+      recipientEmail: defenderEmail,
+      skipTail: true,
+    })
   }
 
   private sendRevokedEmailNotificationToDefenderForIndictmentCase(
@@ -1321,14 +1415,13 @@ export class CaseNotificationService extends BaseNotificationService {
       },
     )
 
-    return this.sendEmail(
+    return this.sendEmail({
       subject,
       html,
-      defenderName,
-      defenderEmail,
-      undefined,
-      !defenderNationalId,
-    )
+      recipientName: defenderName,
+      recipientEmail: defenderEmail,
+      skipTail: !defenderNationalId,
+    })
   }
 
   private async sendRevokedNotificationsForRequestCase(
@@ -1396,24 +1489,30 @@ export class CaseNotificationService extends BaseNotificationService {
     recipientName?: string,
     recipientEmail?: string,
   ): Promise<Recipient> {
+    const { courtCaseNumber } = theCase
     const subject = this.formatMessage(
       notifications.courtRevokedIndictmentEmail.subject,
       {
-        courtCaseNumber: theCase.courtCaseNumber ?? 'NONE',
+        courtCaseNumber: courtCaseNumber || 'NONE',
       },
     )
     const body = this.formatMessage(
       notifications.courtRevokedIndictmentEmail.body,
       {
         prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-        courtCaseNumber: theCase.courtCaseNumber ?? 'NONE',
+        caseNumber: courtCaseNumber || theCase.policeCaseNumbers.join(', '),
       },
     )
 
-    return this.sendEmail(subject, body, recipientName, recipientEmail)
+    return this.sendEmail({
+      subject,
+      html: body,
+      recipientName,
+      recipientEmail,
+    })
   }
 
-  private async sendRevodeNotificationsForIndictmentCase(
+  private async sendRevokeNotificationsForIndictmentCase(
     theCase: Case,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
@@ -1491,7 +1590,7 @@ export class CaseNotificationService extends BaseNotificationService {
     if (isRequestCase(theCase.type)) {
       return this.sendRevokedNotificationsForRequestCase(theCase)
     } else {
-      return this.sendRevodeNotificationsForIndictmentCase(theCase)
+      return this.sendRevokeNotificationsForIndictmentCase(theCase)
     }
   }
   //#endregion
@@ -1592,14 +1691,13 @@ export class CaseNotificationService extends BaseNotificationService {
       { courtCaseNumber: theCase.courtCaseNumber },
     )
 
-    const recipient = await this.sendEmail(
+    const recipient = await this.sendEmail({
       subject,
       html,
-      theCase.registrar.name,
-      theCase.registrar.email,
-      undefined,
-      true,
-    )
+      recipientName: theCase.registrar.name,
+      recipientEmail: theCase.registrar.email,
+      skipTail: true,
+    })
 
     return this.recordNotification(
       theCase.id,
@@ -1620,12 +1718,12 @@ export class CaseNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     })
 
-    const recipient = await this.sendEmail(
+    const recipient = await this.sendEmail({
       subject,
       html,
-      theCase.prosecutor?.name,
-      theCase.prosecutor?.email,
-    )
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
 
     return this.recordNotification(
       theCase.id,
@@ -1652,12 +1750,12 @@ export class CaseNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     })
 
-    const recipient = await this.sendEmail(
+    const recipient = await this.sendEmail({
       subject,
       html,
-      theCase.prosecutor?.name,
-      theCase.prosecutor?.email,
-    )
+      recipientName: theCase.prosecutor?.name,
+      recipientEmail: theCase.prosecutor?.email,
+    })
 
     return this.recordNotification(
       theCase.id,
@@ -1686,7 +1784,13 @@ export class CaseNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     })
 
-    return this.sendEmail(subject, html, name, email, undefined, !link)
+    return this.sendEmail({
+      subject,
+      html,
+      recipientName: name,
+      recipientEmail: email,
+      skipTail: !link,
+    })
   }
 
   private async sendCaseFilesUpdatedNotifications(
@@ -1732,7 +1836,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail) {
+        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
           promises.push(
             this.sendCaseFilesUpdatedNotification(
               theCase.courtCaseNumber,
@@ -1803,7 +1907,12 @@ export class CaseNotificationService extends BaseNotificationService {
           )
 
         promises.push(
-          this.sendEmail(subject, body, recipient.name, recipient.email),
+          this.sendEmail({
+            subject,
+            html: body,
+            recipientName: recipient.name,
+            recipientEmail: recipient.email,
+          }),
         )
       }
     })
@@ -1850,35 +1959,45 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     const promises = [
-      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
+      this.sendEmail({
+        subject,
+        html,
+        recipientName: theCase.judge?.name,
+        recipientEmail: theCase.judge?.email,
+      }),
     ]
 
     const courtEmail = this.getCourtEmail(theCase.courtId)
     if (courtEmail) {
       promises.push(
-        this.sendEmail(subject, html, theCase.court?.name, courtEmail),
+        this.sendEmail({
+          subject,
+          html,
+          recipientName: theCase.court?.name,
+          recipientEmail: courtEmail,
+        }),
       )
     }
 
     if (theCase.registrar) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          theCase.registrar.name,
-          theCase.registrar.email,
-        ),
+          recipientName: theCase.registrar.name,
+          recipientEmail: theCase.registrar.email,
+        }),
       )
     }
 
     if (isDefenceUser(user)) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          theCase.prosecutor?.name,
-          theCase.prosecutor?.email,
-        ),
+          recipientName: theCase.prosecutor?.name,
+          recipientEmail: theCase.prosecutor?.email,
+        }),
       )
       promises.push(this.sendSms(smsText, theCase.prosecutor?.mobileNumber))
     }
@@ -1899,14 +2018,14 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          defenderHtml,
-          theCase.defenderName,
-          theCase.defenderEmail,
-          undefined,
-          !theCase.defenderNationalId,
-        ),
+          html: defenderHtml,
+          recipientName: theCase.defenderName,
+          recipientEmail: theCase.defenderEmail,
+
+          skipTail: !theCase.defenderNationalId,
+        }),
       )
     }
 
@@ -1960,14 +2079,26 @@ export class CaseNotificationService extends BaseNotificationService {
       },
     )
 
-    const promises = [
-      this.sendEmail(
+    const courtOfAppealsAssistantEmails =
+      this.config.email.courtOfAppealsAssistantEmails
+        .split(',')
+        .map((email) => email.trim())
+
+    const allCourtOfAppealsEmails = [
+      ...courtOfAppealsAssistantEmails,
+      this.getCourtEmail(this.config.courtOfAppealsId),
+    ]
+
+    const promises = allCourtOfAppealsEmails.map((email) =>
+      this.sendEmail({
         subject,
         html,
-        this.formatMessage(notifications.emailNames.courtOfAppeals),
-        this.getCourtEmail(this.config.courtOfAppealsId),
-      ),
-    ]
+        recipientName: this.formatMessage(
+          notifications.emailNames.courtOfAppeals,
+        ),
+        recipientEmail: email,
+      }),
+    )
 
     const prosecutorHtml = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,
@@ -1981,12 +2112,12 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     promises.push(
-      this.sendEmail(
+      this.sendEmail({
         subject,
-        prosecutorHtml,
-        theCase.prosecutor?.name,
-        theCase.prosecutor?.email,
-      ),
+        html: prosecutorHtml,
+        recipientName: theCase.prosecutor?.name,
+        recipientEmail: theCase.prosecutor?.email,
+      }),
     )
 
     if (theCase.defenderEmail) {
@@ -2006,14 +2137,14 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          defenderHtml,
-          theCase.defenderName,
-          theCase.defenderEmail,
-          undefined,
-          !theCase.defenderNationalId,
-        ),
+          html: defenderHtml,
+          recipientName: theCase.defenderName,
+          recipientEmail: theCase.defenderEmail,
+
+          skipTail: !theCase.defenderNationalId,
+        }),
       )
     }
 
@@ -2058,45 +2189,45 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (theCase.appealAssistant) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            courtOfAppealsHtml,
-            theCase.appealAssistant.name,
-            theCase.appealAssistant.email,
-          ),
+            html: courtOfAppealsHtml,
+            recipientName: theCase.appealAssistant.name,
+            recipientEmail: theCase.appealAssistant.email,
+          }),
         )
       }
 
       if (theCase.appealJudge1) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            courtOfAppealsHtml,
-            theCase.appealJudge1.name,
-            theCase.appealJudge1.email,
-          ),
+            html: courtOfAppealsHtml,
+            recipientName: theCase.appealJudge1.name,
+            recipientEmail: theCase.appealJudge1.email,
+          }),
         )
       }
 
       if (theCase.appealJudge2) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            courtOfAppealsHtml,
-            theCase.appealJudge2.name,
-            theCase.appealJudge2.email,
-          ),
+            html: courtOfAppealsHtml,
+            recipientName: theCase.appealJudge2.name,
+            recipientEmail: theCase.appealJudge2.email,
+          }),
         )
       }
 
       if (theCase.appealJudge3) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            courtOfAppealsHtml,
-            theCase.appealJudge3.name,
-            theCase.appealJudge3.email,
-          ),
+            html: courtOfAppealsHtml,
+            recipientName: theCase.appealJudge3.name,
+            recipientEmail: theCase.appealJudge3.email,
+          }),
         )
       }
     }
@@ -2114,12 +2245,12 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          prosecutorHtml,
-          theCase.prosecutor?.name,
-          theCase.prosecutor?.email,
-        ),
+          html: prosecutorHtml,
+          recipientName: theCase.prosecutor?.name,
+          recipientEmail: theCase.prosecutor?.email,
+        }),
       )
     }
 
@@ -2140,14 +2271,14 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          defenderHtml,
-          theCase.defenderName,
-          theCase.defenderEmail,
-          undefined,
-          !theCase.defenderNationalId,
-        ),
+          html: defenderHtml,
+          recipientName: theCase.defenderName,
+          recipientEmail: theCase.defenderEmail,
+
+          skipTail: !theCase.defenderNationalId,
+        }),
       )
     }
 
@@ -2201,7 +2332,12 @@ export class CaseNotificationService extends BaseNotificationService {
     courtOfAppealUsers.forEach((user) => {
       if (user) {
         promises.push(
-          this.sendEmail(subject, courtOfAppealHtml, user.name, user.email),
+          this.sendEmail({
+            subject,
+            html: courtOfAppealHtml,
+            recipientName: user.name,
+            recipientEmail: user.email,
+          }),
         )
       }
     })
@@ -2218,12 +2354,12 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          prosecutorHtml,
-          theCase.prosecutor?.name,
-          theCase.prosecutor?.email,
-        ),
+          html: prosecutorHtml,
+          recipientName: theCase.prosecutor?.name,
+          recipientEmail: theCase.prosecutor?.email,
+        }),
       )
     }
 
@@ -2279,13 +2415,18 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     promises.push(
-      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
-      this.sendEmail(
+      this.sendEmail({
         subject,
         html,
-        theCase.prosecutor?.name,
-        theCase.prosecutor?.email,
-      ),
+        recipientName: theCase.judge?.name,
+        recipientEmail: theCase.judge?.email,
+      }),
+      this.sendEmail({
+        subject,
+        html,
+        recipientName: theCase.prosecutor?.name,
+        recipientEmail: theCase.prosecutor?.email,
+      }),
     )
 
     if (
@@ -2293,12 +2434,14 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.state === CaseState.ACCEPTED
     ) {
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
           html,
-          this.formatMessage(notifications.emailNames.prisonAdmin),
-          this.config.email.prisonAdminEmail,
-        ),
+          recipientName: this.formatMessage(
+            notifications.emailNames.prisonAdmin,
+          ),
+          recipientEmail: this.config.email.prisonAdminEmail,
+        }),
       )
     }
 
@@ -2311,12 +2454,12 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (shouldSendNotificationToPrison) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
             html,
-            this.formatMessage(notifications.emailNames.prison),
-            this.config.email.prisonEmail,
-          ),
+            recipientName: this.formatMessage(notifications.emailNames.prison),
+            recipientEmail: this.config.email.prisonEmail,
+          }),
         )
       }
     }
@@ -2341,14 +2484,14 @@ export class CaseNotificationService extends BaseNotificationService {
       )
 
       promises.push(
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          defenderHtml,
-          theCase.defenderName,
-          theCase.defenderEmail,
-          undefined,
-          !theCase.defenderNationalId,
-        ),
+          html: defenderHtml,
+          recipientName: theCase.defenderName,
+          recipientEmail: theCase.defenderEmail,
+
+          skipTail: !theCase.defenderNationalId,
+        }),
       )
     }
 
@@ -2373,20 +2516,20 @@ export class CaseNotificationService extends BaseNotificationService {
     })
 
     promises.push(
-      this.sendEmail(
+      this.sendEmail({
         subject,
         html,
-        theCase.prosecutor?.name,
-        theCase.prosecutor?.email,
-      ),
-      this.sendEmail(
+        recipientName: theCase.prosecutor?.name,
+        recipientEmail: theCase.prosecutor?.email,
+      }),
+      this.sendEmail({
         subject,
         html,
-        theCase.defenderName,
-        theCase.defenderEmail,
-        undefined,
-        !theCase.defenderNationalId,
-      ),
+        recipientName: theCase.defenderName,
+        recipientEmail: theCase.defenderEmail,
+
+        skipTail: !theCase.defenderNationalId,
+      }),
     )
 
     return Promise.all(promises)
@@ -2446,7 +2589,12 @@ export class CaseNotificationService extends BaseNotificationService {
 
     sendTo.forEach((recipient) => {
       promises.push(
-        this.sendEmail(subject, html, recipient.name, recipient.email),
+        this.sendEmail({
+          subject,
+          html,
+          recipientName: recipient.name,
+          recipientEmail: recipient.email,
+        }),
       )
     })
 
@@ -2552,6 +2700,16 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendReceivedByCourtNotifications(theCase)
       case CaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
+      case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
+        return this.sendDistrictCourtUserAssignedNotifications(
+          theCase,
+          UserRole.DISTRICT_COURT_JUDGE,
+        )
+      case CaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED:
+        return this.sendDistrictCourtUserAssignedNotifications(
+          theCase,
+          UserRole.DISTRICT_COURT_REGISTRAR,
+        )
       case CaseNotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case CaseNotificationType.MODIFIED:

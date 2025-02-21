@@ -11,7 +11,6 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { ErrorShell } from '../components/ErrorShell'
 import FormStepper from '../components/FormStepper'
@@ -25,6 +24,8 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import * as styles from './FormShell.css'
+import { getFormComponent } from '../utils'
+import { canGoBack } from '../reducer/reducerUtils'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -52,7 +53,7 @@ export const FormShell: FC<
     },
     initializeReducer,
   )
-  const { formatMessage } = useLocale()
+
   const {
     activeScreen,
     application: storedApplication,
@@ -64,9 +65,8 @@ export const FormShell: FC<
     renderLastScreenButton,
     renderLastScreenBackButton,
   } = state.form
-  const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
-  const FormLogo = form.logo
+  const FormLogo = getFormComponent(form.logo, storedApplication)
 
   const getDraftSectionCurrentScreen = (): number | undefined => {
     const currentDraftScreenSection = sections.find(
@@ -142,6 +142,7 @@ export const FormShell: FC<
                       payload,
                     })
                   }}
+                  canGoBack={canGoBack(screens, activeScreen)}
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
                   activeScreenIndex={activeScreen}
                   numberOfScreens={screens.length}
@@ -168,7 +169,7 @@ export const FormShell: FC<
                 className={styles.sidebarInner}
               >
                 <FormStepper
-                  form={form}
+                  form={{ ...form, title: form.title ?? '' }}
                   sections={sections}
                   screens={screens}
                   currentScreen={currentScreen}

@@ -5,12 +5,10 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isProfessionalAthleteAccident,
-  isReportingOnBehalfOfEmployee,
-} from '../../../utils'
+import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 import { representativeInfo, sportsClubInfo } from '../../../lib/messages'
+import { isProfessionalAthleteAccident } from '../../../utils/occupationUtils'
+import { isReportingOnBehalfOfEmployee } from '../../../utils/reportingUtils'
 
 // Sports club information when the injured has a sports related accident
 export const sportsClubInfoSubSection = buildSubSection({

@@ -4,8 +4,8 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { accidentType } from '../../../lib/messages'
-import { isStudiesAccident } from '../../../utils'
 import { StudiesAccidentTypeEnum } from '../../../types'
+import { isStudiesAccident } from '../../../utils/accidentUtils'
 
 export const studiesAccidentSubSection = buildSubSection({
   id: 'studiesAccident.subSection',
@@ -19,7 +19,6 @@ export const studiesAccidentSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'studiesAccident.type',
-          title: '',
           options: [
             {
               value: StudiesAccidentTypeEnum.INTERNSHIP,

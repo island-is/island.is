@@ -31,7 +31,6 @@ export const MachineBasicInformation = buildSubSection({
         }),
         buildCustomField({
           id: 'machine.aboutMachine',
-          title: '',
           component: 'AboutMachine',
         }),
         buildDescriptionField({
@@ -122,11 +121,10 @@ export const MachineBasicInformation = buildSubSection({
           titleVariant: 'h5',
           marginTop: 3,
         }),
-        buildTextField({
+        buildCustomField({
           id: 'machine.basicInformation.location',
-          title: machine.labels.basicMachineInformation.location,
           width: 'half',
-          maxLength: 255,
+          component: 'LocationInputField',
         }),
         buildTextField({
           id: 'machine.basicInformation.cargoFileNumber',

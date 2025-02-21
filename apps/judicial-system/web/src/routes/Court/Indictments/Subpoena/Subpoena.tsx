@@ -5,6 +5,7 @@ import router from 'next/router'
 import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { CourtSessionType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -81,23 +82,26 @@ const Subpoena: FC = () => {
         return
       }
 
-      // If rescheduling after the court has met, then clear the current conclusion
-      const clearedConclusion =
-        isArraignmentScheduled && workingCase.indictmentDecision
-          ? [
-              {
+      const additionalUpdates = [
+        {
+          // This should always be an arraignment type
+          courtSessionType: CourtSessionType.ARRAIGNMENT,
+          // if the case is being rescheduled after the court has met,
+          // then clear the current conclusion
+          ...(isArraignmentScheduled && workingCase.indictmentDecision
+            ? {
                 indictmentDecision: null,
-                courtSessionType: null,
                 courtDate: null,
                 postponedIndefinitelyExplanation: null,
                 indictmentRulingDecision: null,
                 mergeCaseId: null,
                 force: true,
-              },
-            ]
-          : undefined
+              }
+            : {}),
+        },
+      ]
 
-      const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
+      const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
 
       if (!courtDateUpdated) {
         setIsCreatingSubpoena(false)
@@ -198,31 +202,38 @@ const Subpoena: FC = () => {
                       !courtDate?.location ||
                       !defendant.subpoenaType
                     }
-                    elementId={defendant.id}
+                    elementId={[
+                      defendant.id,
+                      `Fyrirkall - ${defendant.name} nýtt - PDF`,
+                    ]}
                     queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
                   />
                 </Box>
               )}
-              {defendant.subpoenas?.map((subpoena, sIndex) => (
-                <Box
-                  key={`subpoena-${subpoena.id}`}
-                  marginBottom={
-                    dIndex + 1 === workingCase.defendants?.length &&
-                    sIndex + 1 === defendant.subpoenas?.length
-                      ? 0
-                      : 2
-                  }
-                >
-                  <PdfButton
-                    caseId={workingCase.id}
-                    title={`Fyrirkall - ${defendant.name} ${formatDate(
-                      subpoena.created,
-                    )} - PDF`}
-                    pdfType="subpoena"
-                    elementId={[defendant.id, subpoena.id]}
-                  />
-                </Box>
-              ))}
+              {defendant.subpoenas?.map((subpoena, sIndex) => {
+                const fileName = `Fyrirkall - ${defendant.name} ${formatDate(
+                  subpoena.created,
+                )} - PDF`
+
+                return (
+                  <Box
+                    key={`subpoena-${subpoena.id}`}
+                    marginBottom={
+                      dIndex + 1 === workingCase.defendants?.length &&
+                      sIndex + 1 === defendant.subpoenas?.length
+                        ? 0
+                        : 2
+                    }
+                  >
+                    <PdfButton
+                      caseId={workingCase.id}
+                      title={fileName}
+                      pdfType="subpoena"
+                      elementId={[defendant.id, subpoena.id, fileName]}
+                    />
+                  </Box>
+                )
+              })}
             </>
           ))}
         </Box>

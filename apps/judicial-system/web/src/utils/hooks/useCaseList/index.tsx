@@ -19,7 +19,6 @@ import {
   isPublicProsecutorUser,
   isRequestCase,
   isRestrictionCase,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -47,7 +46,6 @@ const useCaseList = () => {
   const openCase = useCallback(
     (caseToOpen: Case, openCaseInNewTab?: boolean) => {
       let routeTo = null
-      const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
@@ -124,7 +122,7 @@ const useCaseList = () => {
               : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorIndictmentRoutes(isTrafficViolation),
+              constants.prosecutorIndictmentRoutes,
               caseToOpen,
             )
           }

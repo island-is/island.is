@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { isValid } from 'kennitala'
-import { YES } from '../shared/constants'
+import { YES } from '@island.is/application/core'
 
 export const LoginServiceSchema = z.object({
   termsOfAgreement: z.array(z.string()).refine((v) => v.includes(YES), {}),

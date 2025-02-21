@@ -1,12 +1,3 @@
-import {
-  Alert,
-  Button,
-  Heading,
-  Input,
-  InputRow,
-  Problem,
-  Typography,
-} from '@ui'
 import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
@@ -22,6 +13,15 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 import { ApolloError } from '@apollo/client'
 
+import {
+  Alert,
+  Button,
+  Heading,
+  Input,
+  InputRow,
+  Problem,
+  Typography,
+} from '../../ui'
 import {
   useGetHealthCenterQuery,
   useGetHealthInsuranceOverviewQuery,
@@ -471,7 +471,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             })}
             onPress={() =>
               openBrowser(
-                `${origin}/minarsidur/heilsa/lyf/lyfjakaup`,
+                `${origin}/minarsidur/heilsa/lyf/greidsluthatttaka`,
                 componentId,
               )
             }
@@ -550,36 +550,37 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
             />
           )}
-          {isOrganDonationEnabled && (
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: isOrganDonorWithLimitations
-                    ? 'health.organDonation.isDonorWithLimitations'
-                    : isOrganDonor
-                    ? 'health.organDonation.isDonor'
-                    : 'health.organDonation.isNotDonor',
-                })}
-                value={`${intl.formatMessage(
-                  {
+          {isOrganDonationEnabled &&
+            (organDonationRes.loading || organDonationRes.data) && (
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
                     id: isOrganDonorWithLimitations
-                      ? 'health.organDonation.isDonorWithLimitationsDescription'
+                      ? 'health.organDonation.isDonorWithLimitations'
                       : isOrganDonor
-                      ? 'health.organDonation.isDonorDescription'
-                      : 'health.organDonation.isNotDonorDescription',
-                  },
-                  {
-                    limitations: isOrganDonorWithLimitations
-                      ? organLimitations?.join(', ')
-                      : '',
-                  },
-                )}`}
-                loading={organDonationRes.loading && !organDonationRes.data}
-                error={organDonationRes.error && !organDonationRes.data}
-                noBorder
-              />
-            </InputRow>
-          )}
+                      ? 'health.organDonation.isDonor'
+                      : 'health.organDonation.isNotDonor',
+                  })}
+                  value={`${intl.formatMessage(
+                    {
+                      id: isOrganDonorWithLimitations
+                        ? 'health.organDonation.isDonorWithLimitationsDescription'
+                        : isOrganDonor
+                        ? 'health.organDonation.isDonorDescription'
+                        : 'health.organDonation.isNotDonorDescription',
+                    },
+                    {
+                      limitations: isOrganDonorWithLimitations
+                        ? organLimitations?.join(', ')
+                        : '',
+                    },
+                  )}`}
+                  loading={organDonationRes.loading && !organDonationRes.data}
+                  error={organDonationRes.error && !organDonationRes.data}
+                  noBorder
+                />
+              </InputRow>
+            )}
           {isOrganDonationEnabled &&
             organDonationRes.error &&
             !organDonationRes.data &&

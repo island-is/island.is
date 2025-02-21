@@ -191,6 +191,8 @@ identity-server:
     AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     ContentfulSettings__AccessToken: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
+    Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID'
+    Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN'
     FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
@@ -306,11 +308,15 @@ services-auth-admin-api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/services-auth/NOVA_URL'
+    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
     ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
+    ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -414,6 +420,7 @@ services-auth-delegation-api:
 services-auth-ids-api:
   enabled: true
   env:
+    ALSO_USE_FAKE_USER_API: 'true'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
@@ -476,7 +483,7 @@ services-auth-ids-api:
         nginxRequestsIrate: 5
       replicas:
         max: 15
-        min: 2
+        min: 6
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   initContainer:
@@ -521,9 +528,9 @@ services-auth-ids-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
+    default: 6
     max: 15
-    min: 2
+    min: 6
   resources:
     limits:
       cpu: '800m'

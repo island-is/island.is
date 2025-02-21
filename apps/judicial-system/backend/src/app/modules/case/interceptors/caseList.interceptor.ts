@@ -9,6 +9,7 @@ import {
 
 import { IndictmentDecision } from '@island.is/judicial-system/types'
 
+import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
@@ -65,6 +66,10 @@ export class CaseListInterceptor implements NestInterceptor {
             courtSessionType: theCase.courtSessionType,
             eventLogs: theCase.eventLogs,
             court: theCase.court,
+            caseSentToCourtDate: EventLog.caseSentToCourtEvent(
+              theCase.eventLogs,
+            )?.created,
+            isCompletedWithoutRuling: theCase.isCompletedWithoutRuling,
           }
         }),
       ),

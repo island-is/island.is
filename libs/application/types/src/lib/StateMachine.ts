@@ -57,7 +57,7 @@ export interface ApplicationContext {
 export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
-  type: 'primary' | 'subtle' | 'reject' | 'sign'
+  type: 'primary' | 'subtle' | 'reject' | 'sign' | 'signGhost' | 'rejectGhost'
   condition?: Condition
 } & TestSupport
 

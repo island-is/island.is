@@ -69,14 +69,6 @@ const UniversityStudiesFooter: React.FC<
               {n('footerEmbassy', 'Háskóla-, iðnaðar- og nýsköpunarráðuneytið')}
             </Text>
           </Box>
-          <Box display={'flex'} className={styles.footerSecondColumnContainer}>
-            <Box display={'flex'} style={{ gap: '0.5rem' }}>
-              <Text color="blue600" variant="medium">
-                {n('email', 'netfang')}:{' '}
-                {n('haskolanamEmail', 'haskolanam@island.is')}
-              </Text>
-            </Box>
-          </Box>
         </Box>
       </Box>
     </Box>

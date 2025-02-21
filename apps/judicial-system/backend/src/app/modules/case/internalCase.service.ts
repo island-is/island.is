@@ -32,7 +32,6 @@ import {
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
-  isTrafficViolationCase,
   NotificationType,
   restrictionCases,
   type User as TUser,
@@ -56,6 +55,7 @@ import { Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -307,6 +307,13 @@ export class InternalCaseService {
     )
   }
 
+  private getSignedCourtRecordPdf(theCase: Case) {
+    return this.awsS3Service.getGeneratedRequestCaseObject(
+      theCase.type,
+      `${theCase.id}/courtRecord.pdf`,
+    )
+  }
+
   private async deliverSignedRulingPdfToCourt(
     theCase: Case,
     user: TUser,
@@ -392,7 +399,16 @@ export class InternalCaseService {
     const theCase = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
-        { model: IndictmentCount, as: 'indictmentCounts' },
+        {
+          model: IndictmentCount,
+          as: 'indictmentCounts',
+          include: [
+            {
+              model: Offense,
+              as: 'offenses',
+            },
+          ],
+        },
         { model: CaseFile, as: 'caseFiles' },
         { model: CaseString, as: 'caseStrings' },
       ],
@@ -513,6 +529,30 @@ export class InternalCaseService {
     return { caseArchived: true }
   }
 
+  async getCaseHearingArrangements(date: Date): Promise<Case[]> {
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999))
+
+    return this.caseModel.findAll({
+      include: [
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: ['ARRAIGNMENT_DATE', 'COURT_DATE'],
+            date: {
+              [Op.gte]: startOfDay,
+              [Op.lte]: endOfDay,
+            },
+          },
+          required: true,
+        },
+      ],
+      where: { state: { [Op.eq]: CaseState.RECEIVED } },
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+    })
+  }
+
   async deliverProsecutorToCourt(
     theCase: Case,
     user: TUser,
@@ -606,6 +646,7 @@ export class InternalCaseService {
           ? {
               name: theCase.prosecutor.name,
               nationalId: theCase.prosecutor.nationalId,
+              email: theCase.prosecutor.email,
             }
           : undefined,
       )
@@ -657,12 +698,39 @@ export class InternalCaseService {
       })
   }
 
+  async deliverIndictmentArraignmentDateToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
+    return this.courtService
+      .updateIndictmentCaseWithArraignmentDate(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        arraignmentDate,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with the arraignment date`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverIndictmentCancellationNoticeToCourt(
     theCase: Case,
     withCourtCaseNumber: boolean,
     user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
+
+    const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
+    const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
 
     return this.courtService
       .updateIndictmentCaseWithCancellationNotice(
@@ -671,16 +739,14 @@ export class InternalCaseService {
         theCase.court?.name,
         theCase.courtCaseNumber,
         this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
-          courtCaseNumber:
-            (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+          courtCaseNumber: courtCaseNumber || 'NONE',
         }),
         stripHtmlTags(
           `${this.formatMessage(
             notifications.courtRevokedIndictmentEmail.body,
             {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
-              courtCaseNumber:
-                (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+              caseNumber,
             },
           )} ${this.formatMessage(notifications.emailTail)}`,
         ),
@@ -882,7 +948,7 @@ export class InternalCaseService {
       })
   }
 
-  private async deliverCaseToPoliceWithFiles(
+  async deliverCaseToPoliceWithFiles(
     theCase: Case,
     user: TUser,
     courtDocuments: PoliceDocument[],
@@ -1019,39 +1085,14 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let policeDocuments: PoliceDocument[]
+      const file = await this.pdfService.getIndictmentPdf(theCase)
 
-      if (isTrafficViolationCase(theCase)) {
-        const file = await this.pdfService.getIndictmentPdf(theCase)
-
-        policeDocuments = [
-          {
-            type: PoliceDocumentType.RVAS,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          },
-        ]
-      } else {
-        policeDocuments = await Promise.all(
-          theCase.caseFiles
-            ?.filter(
-              (caseFile) =>
-                caseFile.category === CaseFileCategory.INDICTMENT &&
-                caseFile.key,
-            )
-            .map(async (caseFile) => {
-              // TODO: Tolerate failure, but log error
-              const file = await this.fileService.getCaseFileFromS3(
-                theCase,
-                caseFile,
-              )
-
-              return {
-                type: PoliceDocumentType.RVAS,
-                courtDocument: Base64.btoa(file.toString('binary')),
-              }
-            }) ?? [],
-        )
-      }
+      const policeDocuments = [
+        {
+          type: PoliceDocumentType.RVAS,
+          courtDocument: Base64.btoa(file.toString('binary')),
+        },
+      ]
 
       const delivered = await this.deliverCaseToPoliceWithFiles(
         theCase,
@@ -1099,6 +1140,32 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async deliverSignedCourtRecordToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const delivered = await this.getSignedCourtRecordPdf(theCase)
+      .then((pdf) =>
+        this.deliverCaseToPoliceWithFiles(theCase, user, [
+          {
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(pdf.toString('binary')),
+          },
+        ]),
+      )
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver signed court record for case ${theCase.id} to police`,
+          { reason },
+        )
+
+        return false
+      })
+
+    return { delivered }
+  }
+
   async deliverSignedRulingToPolice(
     theCase: Case,
     user: TUser,
@@ -1115,7 +1182,7 @@ export class InternalCaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to deliver sigend ruling for case ${theCase.id} to police`,
+          `Failed to deliver signed ruling for case ${theCase.id} to police`,
           { reason },
         )
 

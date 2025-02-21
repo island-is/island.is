@@ -1,16 +1,17 @@
 import {
   buildCheckboxField,
   buildCustomField,
-  buildDividerField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  buildTitleField,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
-import { FILE_SIZE_LIMIT, YES } from '../../utils/constants'
+import { FILE_SIZE_LIMIT } from '../../utils/constants'
 import { Comparators } from '@island.is/application/types'
 import { getYesNoOptions } from '../../utils/options'
 
@@ -24,12 +25,10 @@ export const confirmSection = buildSection({
       children: [
         buildCustomField({
           id: 'review',
-          title: '',
           component: 'Review',
         }),
         buildRadioField({
           id: 'hasAdditionalInfo',
-          title: '',
           description: m.additionalInfo,
           largeButtons: true,
           width: 'half',
@@ -50,21 +49,12 @@ export const confirmSection = buildSection({
         }),
         buildFileUploadField({
           id: 'additionalFiles',
-          title: '',
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           uploadHeader: m.fileUploadHeader,
           uploadDescription: m.fileUploadDescription,
           uploadButtonLabel: m.fileUploadButton,
-          condition: {
-            questionId: 'hasAdditionalInfo',
-            comparator: Comparators.EQUALS,
-            value: YES,
-          },
-        }),
-        buildDividerField({
-          title: ' ',
-          color: 'transparent',
+          marginBottom: 5,
           condition: {
             questionId: 'hasAdditionalInfo',
             comparator: Comparators.EQUALS,
@@ -73,7 +63,6 @@ export const confirmSection = buildSection({
         }),
         buildCheckboxField({
           id: 'confirmCorrectInfo',
-          title: '',
           required: true,
           options: [
             {

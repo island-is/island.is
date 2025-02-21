@@ -53,7 +53,7 @@ export const getCompanyInformationForOverview = (
     `${basicCompany?.address ?? ''}, ${basicCompany?.postnumber ?? ''}`,
     company?.industryClassification ?? undefined,
     chosenSizeOfEnterprise?.name ?? undefined,
-    `${formatMessage(information.labels.workhealth.sectionTitle)}: ${
+    `**${formatMessage(information.labels.workhealth.sectionTitle)}**: ${
       workplaceHealthAndSafety.length > 0
         ? companyLaborProtection?.workhealthAndSafetyOccupation
             ?.map((c) => {
@@ -63,8 +63,8 @@ export const getCompanyInformationForOverview = (
         : ''
     }`,
 
-    `${formatMessage(overview.labels.email)}: ${company?.email}`,
-    `${formatMessage(overview.labels.phonenumber)}: ${formatPhoneNumber(
+    `**${formatMessage(overview.labels.email)}**: ${company?.email}`,
+    `**${formatMessage(overview.labels.phonenumber)}**: ${formatPhoneNumber(
       company?.phonenumber ?? '',
     )}`,
   ].filter((n) => n)

@@ -1,8 +1,8 @@
-import { Button } from '@ui'
 import styled from 'styled-components'
 import { View } from 'react-native'
 import { isValidElement } from 'react'
 
+import { Button } from '../../../ui'
 import openIcon from '../../../assets/icons/external-link.png'
 import downloadIcon from '../../../assets/icons/download.png'
 import { DocumentV2Action } from '../../../graphql/types/schema'

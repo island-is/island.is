@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js'
+import { Base64 } from 'js-base64'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
@@ -16,22 +17,27 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import type { User } from '@island.is/judicial-system/types'
+import {
+  type Message,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   EventType,
-  hasIndictmentCaseBeenSubmittedToCourt,
   isCompletedCase,
   isIndictmentCase,
+  type User,
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedPdf } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case'
+import { InternalCaseService } from '../case/internalCase.service'
+import { Case } from '../case/models/case.model'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { UserService } from '../user'
+import { PoliceDocumentType } from '../police'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -60,10 +66,10 @@ export class FileService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
-    private readonly userService: UserService,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
+    private readonly internalCaseService: InternalCaseService,
     @Inject(fileModuleConfig.KEY)
     private readonly config: ConfigType<typeof fileModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -107,24 +113,6 @@ export class FileService {
       return true
     }
 
-    if (
-      isIndictmentCase(theCase.type) &&
-      file.category === CaseFileCategory.INDICTMENT
-    ) {
-      // The file may have been confirmed
-      return this.awsS3Service
-        .deleteConfirmedIndictmentCaseObject(theCase.type, file.key)
-        .catch((reason) => {
-          // Tolerate failure, but log what happened
-          this.logger.error(
-            `Could not delete confirmed file ${file.id} of case ${file.caseId} from AWS S3`,
-            { reason },
-          )
-
-          return false
-        })
-    }
-
     return this.awsS3Service
       .deleteObject(theCase.type, file.key)
       .catch((reason) => {
@@ -142,11 +130,6 @@ export class FileService {
     let courtDocumentFolder: CourtDocumentFolder
 
     switch (file.category) {
-      case CaseFileCategory.INDICTMENT:
-      case CaseFileCategory.CRIMINAL_RECORD:
-      case CaseFileCategory.COST_BREAKDOWN:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.COURT_RECORD:
       case CaseFileCategory.RULING:
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
@@ -154,6 +137,9 @@ export class FileService {
       case CaseFileCategory.CASE_FILE:
       case CaseFileCategory.PROSECUTOR_CASE_FILE:
       case CaseFileCategory.DEFENDANT_CASE_FILE:
+      case CaseFileCategory.CRIMINAL_RECORD:
+      case CaseFileCategory.COST_BREAKDOWN:
+      case CaseFileCategory.CIVIL_CLAIM:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
@@ -177,48 +163,28 @@ export class FileService {
     file: CaseFile,
     pdf: Buffer,
   ): Promise<string | undefined> {
-    const confirmationEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-    )
-
-    if (!confirmationEvent || !confirmationEvent.nationalId) {
-      return undefined
+    if (
+      !theCase.rulingDate ||
+      (file.category !== CaseFileCategory.RULING &&
+        file.category !== CaseFileCategory.COURT_RECORD)
+    ) {
+      return undefined // This should never happen
     }
 
-    return this.userService
-      .findByNationalId(confirmationEvent.nationalId)
-      .then((user) => {
-        if (file.category === CaseFileCategory.INDICTMENT) {
-          return createConfirmedPdf(
-            {
-              actor: user.name,
-              title: user.title,
-              institution: user.institution?.name ?? '',
-              date: confirmationEvent.created,
-            },
-            pdf,
-            CaseFileCategory.INDICTMENT,
-          )
-        }
+    const completedEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
+    )
 
-        if (
-          (file.category === CaseFileCategory.RULING ||
-            file.category === CaseFileCategory.COURT_RECORD) &&
-          isCompletedCase(theCase.state) &&
-          theCase.rulingDate
-        ) {
-          return createConfirmedPdf(
-            {
-              actor: theCase.judge?.name ?? '',
-              title: theCase.judge?.title,
-              institution: theCase.judge?.institution?.name ?? '',
-              date: theCase.rulingDate,
-            },
-            pdf,
-            file.category,
-          )
-        }
-      })
+    return createConfirmedPdf(
+      {
+        actor: theCase.judge?.name ?? '',
+        title: theCase.judge?.title,
+        institution: theCase.judge?.institution?.name ?? '',
+        date: completedEvent?.created || theCase.rulingDate,
+      },
+      pdf,
+      file.category,
+    )
       .then((confirmedPdf) => {
         if (!confirmedPdf) {
           throw new Error('Failed to create confirmed PDF')
@@ -246,14 +212,6 @@ export class FileService {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
       return false
-    }
-
-    // Only indictments that have been submitted to court can be confirmed
-    if (
-      file.category === CaseFileCategory.INDICTMENT &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
-    ) {
-      return true
     }
 
     // Rulings and court records are only confirmed when a case is completed
@@ -397,14 +355,27 @@ export class FileService {
         CaseFileCategory.DEFENDANT_CASE_FILE,
       ].includes(file.category)
     ) {
-      await this.messageService.sendMessagesToQueue([
-        {
+      const messages: Message[] = []
+
+      if (theCase.origin === CaseOrigin.LOKE) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: file.id,
+        })
+      }
+
+      if (theCase.courtCaseNumber) {
+        messages.push({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
           elementId: file.id,
-        },
-      ])
+        })
+      }
+
+      await this.messageService.sendMessagesToQueue(messages)
     }
 
     return file
@@ -572,13 +543,6 @@ export class FileService {
     )
   }
 
-  resetIndictmentCaseFileHashes(caseId: string, transaction: Transaction) {
-    return this.fileModel.update(
-      { hash: null },
-      { where: { caseId, category: CaseFileCategory.INDICTMENT }, transaction },
-    )
-  }
-
   async deliverCaseFileToCourtOfAppeals(
     theCase: Case,
     file: CaseFile,
@@ -613,5 +577,46 @@ export class FileService {
 
         return { delivered: false }
       })
+  }
+
+  async deliverCaseFileToPolice(
+    theCase: Case,
+    file: CaseFile,
+    user: User,
+  ): Promise<DeliverResponse> {
+    try {
+      await this.verifyCaseFile(file, theCase)
+
+      const content = await this.getCaseFileFromS3(theCase, file)
+
+      const policeDocumentType =
+        file.category === CaseFileCategory.DEFENDANT_CASE_FILE
+          ? PoliceDocumentType.RVMV
+          : file.category === CaseFileCategory.PROSECUTOR_CASE_FILE
+          ? PoliceDocumentType.RVVS
+          : // Should not happen, but we would rather deliver the file than throw an error
+            PoliceDocumentType.RVMG
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: policeDocumentType,
+              courtDocument: Base64.btoa(content.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
+    } catch (error) {
+      this.logger.error(
+        `Failed to deliver file ${file.id} of case ${theCase.id} to police`,
+        { error },
+      )
+
+      return { delivered: false }
+    }
   }
 }

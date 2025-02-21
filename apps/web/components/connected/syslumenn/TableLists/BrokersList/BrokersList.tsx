@@ -2,7 +2,6 @@ import { CSSProperties, FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client/react'
 
-import { ConnectedComponent, Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -13,6 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
+import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
 
 import { GET_BROKERS_QUERY } from './queries'
 import { translation as t } from './translation.strings'

@@ -1,23 +1,24 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, slices } from './fragments'
 
 export const GET_GRANTS_QUERY = gql`
   query GetGrants($input: GetGrantsInput!) {
     getGrants(input: $input) {
+      total
       items {
         id
         name
         description
         applicationId
-        applicationDeadlineStatus
         applicationUrl {
           slug
           type
         }
         dateFrom
         dateTo
-        isOpen
         status
+        statusText
         categoryTags {
           id
           title
@@ -67,8 +68,11 @@ export const GET_GRANT_QUERY = gql`
           slug
           type
     }
-      applicationDeadlineStatus
+    applicationButtonLabel
       status
+      statusText
+      dateFrom
+      dateTo
       categoryTags {
         id
         title
@@ -76,6 +80,12 @@ export const GET_GRANT_QUERY = gql`
       typeTag {
         id
         title
+      }
+      supportLinks {
+        id
+        text
+        url
+        date
       }
       files {
           ...AssetFields
@@ -111,7 +121,7 @@ export const GET_GRANT_QUERY = gql`
         ...AllSlices
         ${nestedFields}
       }
-      applicationDeadline {
+      answeringQuestions {
         ...AllSlices
         ${nestedFields}
       }

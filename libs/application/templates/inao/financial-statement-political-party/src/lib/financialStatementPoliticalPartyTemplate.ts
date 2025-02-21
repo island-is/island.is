@@ -19,13 +19,14 @@ import {
 } from '@island.is/application/core'
 import {
   CurrentUserTypeProvider,
-  IndentityApiProvider,
+  IdentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Features } from '@island.is/feature-flags'
 import { POLITICALPARTY_USER_TYPE } from '../utils/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[
@@ -39,6 +40,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.NordaApplications,
   institution: m.institutionName,
   translationNamespaces: [configuration.translation],
   dataSchema,
@@ -81,7 +83,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
@@ -122,7 +124,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 CurrentUserTypeProvider,
-                IndentityApiProvider,
+                IdentityApiProvider,
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],

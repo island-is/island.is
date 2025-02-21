@@ -24,6 +24,7 @@ import { m } from './messages'
 import { PaymentCatalogApi } from '@island.is/application/types'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { buildPaymentState } from '@island.is/application/utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const getCodes = (application: Application): BasicChargeItem[] => {
   // This is where you'd pick and validate that you are going to create a charge for a
@@ -46,6 +47,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_PAYMENT,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema,
   readyForProduction: false,

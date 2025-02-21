@@ -16,6 +16,13 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
     },
+    externalDataDescription: {
+      id: 'oap.application:externalData.description',
+      defaultMessage:
+        'Eftirfarandi upplýsingar verða sóttar rafrænt þar sem hægt er',
+      description:
+        'The following information will be retrieved electronically where possible',
+    },
     skraInformationSubTitle: {
       id: 'oap.application:prerequisites.national.registry.subtitle',
       defaultMessage: 'Upplýsingar um þig og maka. Upplýsingar um búsetu.',
@@ -40,11 +47,11 @@ export const oldAgePensionFormMessage: MessageDir = {
         'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
     },
     pensionFundQuestionDescription: {
-      id: 'oap.application:pension.fund.question.description',
+      id: 'oap.application:pension.fund.question.description#markdown',
       defaultMessage:
-        'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
+        'Til að geta sótt um ellilífeyri þarf að vera búið að sækja um í öllum lífeyrissjóðum sem umsækjandi á rétt í. Hægt er að nálgast yfirlit yfir þá á Mínum síðum síðum þeirra sjóða sem þú hefur greitt í. Yfirlitið er oft kallað lífeyrisgátt eða réttindagátt. Nánari upplýsingar er að finna á https://www.lifeyrismal.is/is/lifeyrisgattin',
       description:
-        'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
+        'To be eligible for a pension, you must have applied to all the pension funds to which you are entitled. An overview of these can be found on the My Pages page of the funds you have paid into. The overview is often called a pension portal or rights portal. More information can be found here.',
     },
     fishermenQuestionTitle: {
       id: 'oap.application:fishermen.question.title',
@@ -288,18 +295,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    earlyRetirementTitle: {
-      id: 'oap.application:fileUpload.earlyRetirement.title',
-      defaultMessage: 'Fylgiskjöl vegna snemmtöku',
-      description: 'Early retirement attachment',
-    },
-    earlyRetirementDescription: {
-      id: 'oap.application:fileUpload.earlyRetirement.description',
-      defaultMessage:
-        'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit an overview from the pension portal in which you have earned rights. Note that the document must be in .pdf format.',
-    },
     pensionFileTitle: {
       id: 'oap.application:fileUpload.pensionFile.title',
       defaultMessage: 'Fylgiskjöl lífeyrissjóða',
@@ -534,5 +529,15 @@ export const statesMessages = defineMessages({
       'Umsókn þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til hún er tekin til yfirferðar. Athugið að ef ekki er búið að skila inn tekjuáætlun þarf að gera það hér.',
     description:
       'Your application is awaiting review. It is possible to edit the application until it is under review. Please note that if you have not submitted an income plan, you must do so here.',
+  },
+  oldAgePensionDismissed: {
+    id: 'oap.application:application.dismissed',
+    defaultMessage: 'Tryggingastofnun hefur vísað umsókn þinni um ellilífeyri frá',
+    description: 'Tryggingastofnun has dismissed your old age pension application',
+  },
+  oldAgePensionDismissedDescription: {
+    id: 'oap.application:application.dismissed.description',
+    defaultMessage: 'Umsókn þinni um ellilífeyri hefur verið vísað frá',
+    description: 'Your old age pension application has been dimissed',
   },
 })

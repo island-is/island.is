@@ -1,12 +1,10 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-import { AlertBanner, Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { m } from '@island.is/portals/my-pages/core'
-import { m as messages } from '../../lib/messages'
-import FinanceIntro from '../../components/FinanceIntro'
-import { useGetHmsLoansHistoryQuery } from './FinanceLoans.generated'
-import { FinanceLoansTable } from '../../components/FinanceLoans/FinanceLoansTable'
 import { Problem } from '@island.is/react-spa/shared'
+import { FinanceLoansTable } from '../../components/FinanceLoans/FinanceLoansTable'
+import { useGetHmsLoansHistoryQuery } from './FinanceLoans.generated'
 
 const FinanceLoans = () => {
   useNamespaces('sp.finance-loans')

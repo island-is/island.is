@@ -20,7 +20,6 @@ export const prePaidApplicant = buildSection({
       children: [
         buildNationalIdWithNameField({
           id: 'prePaidApplicant',
-          title: m.name,
           width: 'full',
           required: true,
         }),

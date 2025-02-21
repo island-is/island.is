@@ -52,4 +52,20 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á aukahnapp í staðfestingarglugga um hvort eigi að ljúka máli.',
   },
+  onlyAssignedJudgeCanComplete: {
+    id: 'judicial.system.core:indictments.summary.only_assigned_judge_can_complete',
+    defaultMessage: 'Einungis skráður dómari getur lokið málinu',
+    description:
+      'Notaður sem texti í stað "áfram" takkans á samantektarskjá ákæru þegar "áfram" takkinn er falinn',
+  },
+  courtEndTimeTitle: {
+    id: 'judicial.system.core:indictments.summary.court_end_time_title',
+    defaultMessage: 'Dagsetning lykta',
+    description: 'Notaður sem titill fyrir dagsetning lykta á samantektarskjá',
+  },
+  courtEndTimeDescription: {
+    id: 'judicial.system.core:indictments.summary.court_end_time_description',
+    defaultMessage: 'Dagsetning lykta málsins.', //TODO: We dont have the text yet
+    description: 'Notaður sem lýsing fyrir dagsetning lykta á samantektarskjá',
+  },
 })

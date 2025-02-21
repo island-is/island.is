@@ -1,16 +1,21 @@
 import {
   IsArray,
   IsEnum,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
   MaxLength,
+  Min,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  IndictmentSubtype,
+} from '@island.is/judicial-system/types'
 
 export class UpdateIndictmentCountDto {
   @IsOptional()
@@ -29,7 +34,7 @@ export class UpdateIndictmentCountDto {
   @IsArray()
   @IsEnum(IndictmentCountOffense, { each: true })
   @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  readonly offenses?: IndictmentCountOffense[]
+  readonly deprecatedOffenses?: IndictmentCountOffense[]
 
   @IsOptional()
   @IsObject()
@@ -50,4 +55,22 @@ export class UpdateIndictmentCountDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly legalArguments?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
+  readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @ApiPropertyOptional({ type: Number })
+  readonly recordedSpeed?: number
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @ApiPropertyOptional({ type: Number })
+  readonly speedLimit?: number
 }

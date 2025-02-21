@@ -45,7 +45,7 @@ import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {

@@ -2,7 +2,10 @@ import { useEffectOnce } from '@island.is/react-spa/shared'
 import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
+import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
 import { BffContext } from './BffContext'
+import { BffDoubleSessionModal } from './BffDoubleSession'
+import { BffError } from './BffError'
 import { BffPoller } from './BffPoller'
 import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
@@ -43,25 +46,37 @@ export const BffProvider = ({
     authState === 'logging-out'
   const isLoggedIn = authState === 'logged-in'
   const oldLoginPath = `${applicationBasePath}/login`
+  const bffBaseUrl = bffUrlGenerator()
 
   const { postMessage } = useBffBroadcaster((event) => {
-    if (
-      isLoggedIn &&
-      event.data.type === BffBroadcastEvents.NEW_SESSION &&
-      isNewUser(state.userInfo, event.data.userInfo)
-    ) {
-      setSessionExpiredScreen(true)
-    } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
-      // We will wait 1 seconds before we dispatch logout action.
-      // The reason is that IDS will not log the user out immediately.
-      // Note! The bff poller may have triggered logout by that time anyways.
-      setTimeout(() => {
-        dispatch({
-          type: ActionType.LOGGED_OUT,
-        })
+    /**
+     * Filter broadcast events by matching BFF base url
+     *
+     * Since the Broadcaster sends messages to all tabs/windows/iframes
+     * sharing the same origin (domain), we need to explicitly check if
+     * the message belongs to our specific BFF instance by comparing base urls.
+     * This prevents handling events meant for other applications/contexts
+     * running on the same domain.
+     */
+    if (event.data.bffBaseUrl === bffBaseUrl) {
+      if (
+        isLoggedIn &&
+        event.data.type === BffBroadcastEvents.NEW_SESSION &&
+        isNewUser(state.userInfo, event.data.userInfo)
+      ) {
+        setSessionExpiredScreen(true)
+      } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+        // We will wait 1 seconds before we dispatch logout action.
+        // The reason is that IDS will not log the user out immediately.
+        // Note! The bff poller may have triggered logout by that time anyways.
+        setTimeout(() => {
+          dispatch({
+            type: ActionType.LOGGED_OUT,
+          })
 
-        signIn()
-      }, 1000)
+          signIn()
+        }, 1000)
+      }
     }
   })
 
@@ -71,9 +86,10 @@ export const BffProvider = ({
       postMessage({
         type: BffBroadcastEvents.NEW_SESSION,
         userInfo: state.userInfo,
+        bffBaseUrl,
       })
     }
-  }, [postMessage, state.userInfo, isLoggedIn])
+  }, [postMessage, state.userInfo, isLoggedIn, bffBaseUrl])
 
   /**
    * Builds authentication query parameters for login redirection:
@@ -88,7 +104,7 @@ export const BffProvider = ({
     const targetLinkUri = urlParams.get('target_link_uri')
     const prompt = urlParams.get('prompt')
     const loginHint = urlParams.get('login_hint')
-    const url = window.location.href
+    const url = BffError.removeBffErrorParamsFromURL()
 
     const params = {
       target_link_uri:
@@ -108,14 +124,14 @@ export const BffProvider = ({
     return params
   }, [applicationBasePath, oldLoginPath])
 
-  const checkLogin = async (noRefresh = false) => {
+  const checkLogin = async () => {
     dispatch({
       type: ActionType.SIGNIN_START,
     })
 
     try {
       const url = bffUrlGenerator('/user', {
-        refresh: noRefresh.toString(),
+        refresh: 'true',
       })
 
       const res = await fetch(url, {
@@ -125,7 +141,7 @@ export const BffProvider = ({
       if (!res.ok) {
         // Bff server is down
         if (res.status >= 500) {
-          throw new Error(BFF_SERVER_UNAVAILABLE)
+          throw new BffError(BFF_SERVER_UNAVAILABLE, res.status)
         }
 
         // For other none ok responses, like 401/403, proceed with sign-in redirect.
@@ -150,7 +166,7 @@ export const BffProvider = ({
     } catch (error) {
       dispatch({
         type: ActionType.ERROR,
-        payload: error,
+        payload: new BffError(error.message),
       })
     }
   }
@@ -175,12 +191,13 @@ export const BffProvider = ({
     // Broadcast to all tabs/windows/iframes that the user is logging out
     postMessage({
       type: BffBroadcastEvents.LOGOUT,
+      bffBaseUrl,
     })
 
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-  }, [bffUrlGenerator, postMessage, state.userInfo])
+  }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl])
 
   const switchUser = useCallback(
     (nationalId?: string) => {
@@ -201,27 +218,16 @@ export const BffProvider = ({
     [bffUrlGenerator, getLoginQueryParams],
   )
 
-  const checkQueryStringError = () => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const error = urlParams.get('bff_error_code')
-    const errorDescription = urlParams.get('bff_error_description')
+  useEffectOnce(() => {
+    const error = BffError.fromURL()
 
-    if (error) {
+    if (!error && !isLoggedIn) {
+      checkLogin()
+    } else if (error) {
       dispatch({
         type: ActionType.ERROR,
-        payload: new Error(`${error}: ${errorDescription}`),
+        payload: error,
       })
-    }
-
-    // Returns true if there is an error
-    return !!error
-  }
-
-  useEffectOnce(() => {
-    const hasError = checkQueryStringError()
-
-    if (!hasError && !isLoggedIn) {
-      checkLogin()
     }
   })
 
@@ -230,12 +236,29 @@ export const BffProvider = ({
   }, [])
 
   const onRetry = () => {
-    window.location.href = applicationBasePath
+    BffError.removeBffErrorParamsFromURL()
+    window.location.reload()
   }
 
   const renderContent = () => {
     if (mockedInitialState) {
       return children
+    }
+
+    const error = state?.error
+
+    // Here priority matters. Make sure to check double session screen before error screen.
+    if (
+      showErrorScreen &&
+      error?.statusCode === 409 &&
+      error?.code === LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION
+    ) {
+      return (
+        <BffDoubleSessionModal
+          onSwitchUser={switchUser}
+          onKeepCurrentUser={onRetry}
+        />
+      )
     }
 
     if (showErrorScreen) {

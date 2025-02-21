@@ -60,7 +60,7 @@ describe('InternalNotificationController - Send indictments waiting for confirma
       const then = {} as Then
 
       await internalNotificationController
-        .sendNotification({
+        .sendInstitutionNotification({
           type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
           prosecutorsOfficeId,
         })

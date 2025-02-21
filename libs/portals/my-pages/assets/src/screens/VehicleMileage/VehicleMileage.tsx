@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import {
@@ -21,6 +21,7 @@ import {
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
   icelandLocalTime,
+  SimpleBarChart,
 } from '@island.is/portals/my-pages/core'
 
 import { isReadDateToday } from '../../utils/readDate'
@@ -33,6 +34,9 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import * as styles from './VehicleMileage.css'
 import { Problem } from '@island.is/react-spa/shared'
+import { VehicleMileageDetail } from '@island.is/api/schema'
+import format from 'date-fns/format'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -42,6 +46,11 @@ type UseParams = {
 
 interface FormData {
   odometerStatus: number
+}
+
+interface ChartProps {
+  date: string
+  mileage: number
 }
 
 const VehicleMileage = () => {
@@ -55,6 +64,22 @@ const VehicleMileage = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>()
+
+  const [showChart, setShowChart] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isServicePortalVehicleBulkMileageSubdataPageEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setShowChart(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const clearAll = () => {
     // Clear form, state and errors on success.
@@ -131,6 +156,43 @@ const VehicleMileage = () => {
 
   if ((error || requiresMileageRegistration === false) && !loading) {
     return <Problem type="not_found" />
+  }
+
+  const parseChartData = (
+    data: Array<VehicleMileageDetail>,
+  ): Array<Record<string, number | string>> => {
+    const filteredData = data?.reduce<Record<string, ChartProps>>(
+      (acc, current) => {
+        if (
+          !current.mileageNumber ||
+          !current.readDate ||
+          !current.originCode
+        ) {
+          return acc
+        }
+
+        const currentDate = new Date(current.readDate).toISOString()
+        //01.01.1993-ISLAND.IS
+        const mashedKey = currentDate + '-' + current.originCode
+        //If the "mashed" key isn't in the key array, add it.
+        if (!Object.keys(acc).includes(mashedKey)) {
+          acc[mashedKey] = { date: currentDate, mileage: current.mileageNumber }
+        }
+        return acc
+      },
+      {},
+    )
+
+    if (!filteredData) {
+      return []
+    }
+
+    return Object.values(filteredData)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map((item) => ({
+        date: format(new Date(item.date), 'dd.MM.yyyy'),
+        mileage: item.mileage,
+      }))
   }
 
   return (
@@ -312,49 +374,78 @@ const VehicleMileage = () => {
             </Box>
           )}
           {!loading && !error && hasData && (
-            <GridContainer>
-              <GridRow marginBottom={2}>
-                <GridColumn span="1/1">
-                  <Text as="h3" variant="h5">
-                    {formatMessage(m.overview)}
-                  </Text>
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span="1/1">
-                  <Table.Table width="100%">
-                    <Table.Head>
-                      <Table.Row>
-                        <Table.HeadData>{formatMessage(m.date)}</Table.HeadData>
-                        <Table.HeadData align="center">
-                          {formatMessage(messages.vehicleMileageRegistration)}
-                        </Table.HeadData>
-                        <Table.HeadData align="right">
-                          {formatMessage(messages.odometer)}
-                        </Table.HeadData>
-                      </Table.Row>
-                    </Table.Head>
-                    <Table.Body>
-                      {details?.map((item, i) => (
-                        <Table.Row key={i}>
-                          <Table.Data>
-                            {item.readDate
-                              ? icelandLocalTime(item.readDate)
-                              : ''}
-                          </Table.Data>
-                          <Table.Data align="center">
-                            {item.originCode}
-                          </Table.Data>
-                          <Table.Data align="right">
-                            {displayWithUnit(item.mileageNumber, 'km', true)}
-                          </Table.Data>
+            <>
+              <GridContainer>
+                <GridRow marginBottom={2}>
+                  <GridColumn span="1/1">
+                    <Text as="h3" variant="h5">
+                      {formatMessage(m.overview)}
+                    </Text>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span="1/1">
+                    <Table.Table width="100%">
+                      <Table.Head>
+                        <Table.Row>
+                          <Table.HeadData>
+                            {formatMessage(m.date)}
+                          </Table.HeadData>
+                          <Table.HeadData align="center">
+                            {formatMessage(messages.vehicleMileageRegistration)}
+                          </Table.HeadData>
+                          <Table.HeadData align="right">
+                            {formatMessage(messages.odometer)}
+                          </Table.HeadData>
                         </Table.Row>
-                      ))}
-                    </Table.Body>
-                  </Table.Table>
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
+                      </Table.Head>
+                      <Table.Body>
+                        {details?.map((item, i) => (
+                          <Table.Row key={i}>
+                            <Table.Data>
+                              {item.readDate
+                                ? icelandLocalTime(item.readDate)
+                                : ''}
+                            </Table.Data>
+                            <Table.Data align="center">
+                              {item.originCode}
+                            </Table.Data>
+                            <Table.Data align="right">
+                              {displayWithUnit(item.mileageNumber, 'km', true)}
+                            </Table.Data>
+                          </Table.Row>
+                        ))}
+                      </Table.Body>
+                    </Table.Table>
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
+              {showChart && (
+                <Box width="full">
+                  <SimpleBarChart
+                    data={parseChartData(details)}
+                    datakeys={['date', 'mileage']}
+                    bars={[
+                      {
+                        datakey: 'mileage',
+                      },
+                    ]}
+                    xAxis={{
+                      datakey: 'date',
+                    }}
+                    yAxis={{
+                      datakey: 'mileage',
+                      label: 'Km.',
+                    }}
+                    tooltip={{
+                      labels: {
+                        mileage: formatMessage(messages.odometer),
+                      },
+                    }}
+                  />
+                </Box>
+              )}
+            </>
           )}
         </Stack>
       </Box>

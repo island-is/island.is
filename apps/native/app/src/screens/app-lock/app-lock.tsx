@@ -1,4 +1,3 @@
-import { dynamicColor, font } from '@ui'
 import { selectionAsync } from 'expo-haptics'
 import {
   authenticateAsync,
@@ -17,6 +16,8 @@ import {
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
+
+import { dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'

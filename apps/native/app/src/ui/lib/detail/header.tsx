@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
-import { Label } from '@ui'
+import { Label } from '../label/label'
 
 const Host = styled.View<{ hasBorder?: boolean }>`
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;

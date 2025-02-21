@@ -67,7 +67,7 @@ export class InternalSubpoenaController {
   )
   @ApiOkResponse({
     type: DeliverResponse,
-    description: 'Delivers a subpoena to police',
+    description: 'Delivers a subpoena to the police centralized file service',
   })
   deliverSubpoenaToPolice(
     @Param('caseId') caseId: string,
@@ -79,12 +79,154 @@ export class InternalSubpoenaController {
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering subpoena ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
+      `Delivering subpoena ${subpoenaId} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
 
     return this.subpoenaService.deliverSubpoenaToPolice(
       theCase,
       defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a subpoena to the police',
+  })
+  deliverSubpoenaFileToPolice(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering subpoena ${subpoenaId} pdf to police for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverSubpoenaFileToPolice(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_SUBPOENA]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a subpoena to the court',
+  })
+  deliverSubpoenaToCourt(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering subpoena ${subpoenaId} pdf to court for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverSubpoenaToCourt(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a service certificate to the court',
+  })
+  deliverServiceCertificateToCourt(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering service certificate pdf to court for subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverServiceCertificateToCourt(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION]
+    }/:defendantId/:subpoenaId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers subpoena revocation to police',
+  })
+  deliverSubpoenaRevocationToPolice(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering subpoena revocation of ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.subpoenaService.deliverSubpoenaRevocationToPolice(
+      theCase,
       subpoena,
       deliverDto.user,
     )

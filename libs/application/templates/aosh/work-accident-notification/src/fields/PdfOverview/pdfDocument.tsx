@@ -29,6 +29,8 @@ interface PdfDocumentProps {
   formatMessage: FormatMessage
 }
 
+const regEx = /\*\*/g // RegEx to remove ** from the text
+
 export const PdfDocument: FC<
   React.PropsWithChildren<FieldBaseProps & PdfDocumentProps>
 > = ({ application, formatMessage }) => {
@@ -38,12 +40,12 @@ export const PdfDocument: FC<
     application.answers,
     application.externalData,
     formatMessage,
-  )
+  ).map((info) => info?.replace(regEx, ''))
   const accidentInfo = getAccidentInformationForOverview(
     application.answers,
     application.externalData,
     formatMessage,
-  )
+  ).map((info) => info?.replace(regEx, ''))
   return (
     <Document>
       <Page size="A4" style={pdfStyles.body}>
@@ -82,13 +84,13 @@ export const PdfDocument: FC<
               application.externalData,
               employee,
               formatMessage,
-            )
+            ).map((info) => info?.replace(regEx, ''))
             const causeandConsequencesInfo = getCauseAndConsequencesForOverview(
               application.externalData,
               application.answers,
               index,
               formatMessage,
-            )
+            ).map((info) => info?.replace(regEx, ''))
             return (
               <View key={`employee-${index}`} style={pdfStyles.view}>
                 <Text style={pdfStyles.employeeHeader}>

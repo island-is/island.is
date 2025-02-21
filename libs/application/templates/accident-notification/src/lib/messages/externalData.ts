@@ -15,7 +15,7 @@ export const externalData = {
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:
-        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæðan þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
+        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæða þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
       description: 'List item 1 on data gathering information',
     },
     bulletTwo: {
@@ -35,6 +35,18 @@ export const externalData = {
       defaultMessage:
         'Ef tilkynningaskylda er vanrækt skal það ekki vera því til fyrirstöðu að sá slasaði eða vandamenn geti gert kröfu til bóta.  Heimilt er að veita undanþágu þótt meira en ár sé liðið ef atvik slyss eru alveg ljós og drátturinn torveldar ekki gagnaöflun um atriði sem skipta máli. Þá er það skilyrði að unnt sé að meta orsakasamband slyssins og heilsutjóns slasaða.',
       description: 'List item 4 on data gathering information',
+    },
+    bullets: {
+      id: 'an.application:section.agreementDescription.bullets#markdown',
+      defaultMessage:
+        '* Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæða þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar. \n\n* Vinnueftirlit ríkisins kann einnig að fá afrit af tilkynningunni undir ákveðnum kringumstæðum á grundvelli 4. mgr. 79. gr. laga nr. 46/1980 sem og Rannsóknarnefnd samgönguslysa á grundvelli 12. og 16. gr. laga nr. 18/2013. \n\n* Eitthvað óvænt verður að hafa gerst sem veldur tjóni á líkama hins tryggða og áhorfandi getur áttað sig á að hafi gerst.',
+      description: 'Information on data handling before prerequisites',
+    },
+    moreInformation: {
+      id: 'an.application:section.agreementDescription.moreInformation#markdown',
+      defaultMessage:
+        'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands á [Persónuverndarsíðu Sjúkratrygginga](https://www.sjukra.is/personuvernd)',
+      description: 'More information about data handling',
     },
   }),
   dataProvider: defineMessages({
@@ -71,6 +83,16 @@ export const externalData = {
       defaultMessage:
         'Upplýsingar um nafn, kennitölu og heimilisfang. Upplýsingar um börn og maka.',
       description: 'Description: National Registry',
+    },
+    procureDescription: {
+      id: 'an.application:section.externalData.nationalRegistry.procureDescription',
+      defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang.',
+      description: 'Description: National Registry for procure holder',
+    },
+    subTitle: {
+      id: 'an.application:section.externalData.nationalRegistry.subTitle',
+      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      description: 'We will fetch name, national id and address',
     },
   }),
   accidentProvider: defineMessages({
@@ -150,24 +172,6 @@ export const externalData = {
       defaultMessage: 'Upplýsingar um stöðu meðlagsgreiðslna.',
       description:
         'Approval of gathering information from Approval of Municipal Collection Agency',
-    },
-  }),
-  extraInformation: defineMessages({
-    description: {
-      id: 'an.application:section.externalData.extraInformation.descriptionFirstPart',
-      defaultMessage:
-        'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands ',
-      description: 'Description for link in extrainformation',
-    },
-    linkText: {
-      id: 'an.application:section.externalData.extraInformation.linkText',
-      defaultMessage: 'Persónuverndarsíðu SÍ.',
-      description: 'Link text for link',
-    },
-    link: {
-      id: 'an.application:section.externalData.extraInformation.link',
-      defaultMessage: 'https://www.sjukra.is/personuvernd.',
-      description: 'The url the link text links to',
     },
   }),
 }

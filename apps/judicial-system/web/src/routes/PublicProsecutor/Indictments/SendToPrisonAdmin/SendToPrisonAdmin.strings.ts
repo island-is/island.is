@@ -29,7 +29,7 @@ export const strings = defineMessages({
       'Notaður sem titill á tilkynningarglugga um að senda til fullnustu.',
   },
   modalText: {
-    id: 'judicial.system.core:send_to_prison_admin.modal_text',
+    id: 'judicial.system.core:send_to_prison_admin.modal_text_v1',
     defaultMessage:
       'Mál {courtCaseNumber} verður sent til Fangelsismálastofnunar til fullnustu.\nÁkærði: {defendant}.',
     description:

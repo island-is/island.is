@@ -39,19 +39,26 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
-import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import {
+  GetGenericListItemsInput,
+  GetGenericListItemsInputOrderBy,
+} from './dto/getGenericListItems.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
 import { GenericListItem } from './models/genericListItem.model'
-import { GetTeamMembersInput } from './dto/getTeamMembers.input'
+import {
+  GetTeamMembersInput,
+  GetTeamMembersInputOrderBy,
+} from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
-import { GetGrantsInput } from './dto/getGrants.input'
-import { Grant, GrantStatus } from './models/grant.model'
+import {
+  GetGrantsInput,
+  GrantsAvailabilityStatus,
+  GrantsSortBy,
+} from './dto/getGrants.input'
+import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
-import { logger } from '@island.is/logging'
-import { IGrantFields } from './generated/contentfulTypes'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -164,7 +171,7 @@ export class CmsElasticsearchService {
 
   async getEvents(
     index: string,
-    { size, page, order, organization }: GetEventsInput,
+    { size, page, order, organization, onlyIncludePastEvents }: GetEventsInput,
   ) {
     const tagList: {
       key: string
@@ -190,9 +197,17 @@ export class CmsElasticsearchService {
       ...tagQuery,
       page,
       size,
-      releaseDate: {
-        from: 'now',
-      },
+      ...(!onlyIncludePastEvents
+        ? {
+            releaseDate: {
+              from: 'now',
+            },
+          }
+        : {
+            releaseDate: {
+              to: 'now',
+            },
+          }),
     }
 
     const eventsResponse = await this.elasticService.getDocumentsByMetaData(
@@ -473,6 +488,7 @@ export class CmsElasticsearchService {
     tags?: string[]
     tagGroups?: Record<string, string[]>
     type: ListItemType
+    orderBy?: GetGenericListItemsInputOrderBy | GetTeamMembersInputOrderBy
   }): Promise<
     ListItemType extends 'webGenericListItem'
       ? Omit<GenericListItemResponse, 'input'>
@@ -509,7 +525,9 @@ export class CmsElasticsearchService {
       },
     ]
 
-    let queryString = input.queryString ? input.queryString.toLowerCase() : ''
+    let queryString = input.queryString
+      ? input.queryString.trim().toLowerCase()
+      : ''
 
     if (input.lang === 'is') {
       queryString = queryString.replace('`', '')
@@ -520,24 +538,51 @@ export class CmsElasticsearchService {
         query: queryString + '*',
         fields: ['title^100', 'content'],
         analyze_wildcard: true,
+        default_operator: 'and',
       },
     })
 
     const size = input.size ?? 10
 
-    const sort: ('_score' | sortRule)[] = [
-      {
-        [SortField.RELEASE_DATE]: {
-          order: SortDirection.DESC,
-        },
-      },
-      // Sort items with equal values by ascending title order
-      { 'title.sort': { order: SortDirection.ASC } },
-    ]
+    let sort: sortRule[] = []
 
-    // Order by score first in case there is a query string
-    if (queryString.length > 0 && queryString !== '*') {
-      sort.unshift('_score')
+    if (
+      !input.orderBy ||
+      input.orderBy === GetGenericListItemsInputOrderBy.DATE
+    ) {
+      sort = [
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.TITLE) {
+      sort = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetGenericListItemsInputOrderBy.PUBLISH_DATE) {
+      sort = [
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+      ]
     }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
@@ -573,6 +618,10 @@ export class CmsElasticsearchService {
       ...input,
       type: 'webTeamMember',
       listId: input.teamListId,
+      orderBy:
+        input.orderBy === GetTeamMembersInputOrderBy.Manual
+          ? GetGenericListItemsInputOrderBy.DATE
+          : GetGenericListItemsInputOrderBy.TITLE,
     })
 
     return {
@@ -618,10 +667,12 @@ export class CmsElasticsearchService {
       search,
       page = 1,
       size = 8,
-      statuses,
+      sort,
+      status,
       categories,
       types,
       organizations,
+      funds,
     }: GetGrantsInput,
   ): Promise<GrantList> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -641,19 +692,22 @@ export class CmsElasticsearchService {
       queryString = queryString.replace('`', '')
     }
 
-    const sort: ('_score' | sortRule)[] = [
-      {
-        [SortField.RELEASE_DATE]: {
-          order: SortDirection.DESC,
-        },
-      },
-      // Sort items with equal values by ascending title order
-      { 'title.sort': { order: SortDirection.ASC } },
-    ]
-
-    // Order by score first in case there is a query string
+    let sortRules: ('_score' | sortRule)[] = []
+    if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
+      sortRules = [
+        { dateUpdated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (sort === GrantsSortBy.ALPHABETICAL) {
+      sortRules = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateUpdated: { order: SortDirection.DESC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
     if (queryString.length > 0 && queryString !== '*') {
-      sort.unshift('_score')
+      sortRules.unshift('_score')
     }
 
     if (queryString) {
@@ -662,6 +716,7 @@ export class CmsElasticsearchService {
           query: queryString + '*',
           fields: ['title^100', 'content'],
           analyze_wildcard: true,
+          default_operator: 'and',
         },
       })
     }
@@ -699,6 +754,156 @@ export class CmsElasticsearchService {
       })
     })
 
+    if (status !== undefined) {
+      if (status === GrantsAvailabilityStatus.CLOSED) {
+        must.push({
+          bool: {
+            must: [
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.type': 'status',
+                          },
+                        },
+                        {
+                          terms: {
+                            'tags.key': ['Closed with note', 'Automatic'],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+              {
+                bool: {
+                  must_not: {
+                    bool: {
+                      filter: [
+                        {
+                          range: {
+                            // date from
+                            releaseDate: {
+                              lt: 'now',
+                            },
+                          },
+                        },
+                        {
+                          range: {
+                            // date to
+                            dateCreated: {
+                              gt: 'now',
+                            },
+                          },
+                        },
+                        {
+                          nested: {
+                            path: 'tags',
+                            query: {
+                              bool: {
+                                must: [
+                                  {
+                                    term: {
+                                      'tags.type': 'status',
+                                    },
+                                  },
+                                  {
+                                    term: {
+                                      'tags.key': 'Automatic',
+                                    },
+                                  },
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        })
+      } else {
+        must.push({
+          bool: {
+            should: [
+              {
+                bool: {
+                  filter: [
+                    {
+                      range: {
+                        //date from
+                        releaseDate: {
+                          lt: 'now',
+                        },
+                      },
+                    },
+                    {
+                      range: {
+                        //date to
+                        dateCreated: {
+                          gt: 'now',
+                        },
+                      },
+                    },
+                    {
+                      nested: {
+                        path: 'tags',
+                        query: {
+                          bool: {
+                            must: [
+                              {
+                                term: {
+                                  'tags.type': 'status',
+                                },
+                              },
+                              {
+                                term: {
+                                  'tags.key': 'Automatic',
+                                },
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                nested: {
+                  path: 'tags',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          term: {
+                            'tags.type': 'status',
+                          },
+                        },
+                        {
+                          terms: {
+                            'tags.key': ['Open with note', 'Always open'],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        })
+      }
+    }
+
     if (organizations) {
       must.push({
         nested: {
@@ -713,7 +918,7 @@ export class CmsElasticsearchService {
                 },
                 {
                   term: {
-                    'tags.type': 'fund',
+                    'tags.type': 'organization',
                   },
                 },
               ],
@@ -723,7 +928,7 @@ export class CmsElasticsearchService {
       })
     }
 
-    if (statuses) {
+    if (funds) {
       must.push({
         nested: {
           path: 'tags',
@@ -732,12 +937,12 @@ export class CmsElasticsearchService {
               must: [
                 {
                   terms: {
-                    'tags.key': statuses,
+                    'tags.key': funds,
                   },
                 },
                 {
                   term: {
-                    'tags.type': 'status',
+                    'tags.type': 'fund',
                   },
                 },
               ],
@@ -758,7 +963,6 @@ export class CmsElasticsearchService {
         size,
         from: (page - 1) * size,
       })
-
     return {
       total: grantListResponse.body.hits.total.value,
       items: grantListResponse.body.hits.hits.map<Grant>((response) =>

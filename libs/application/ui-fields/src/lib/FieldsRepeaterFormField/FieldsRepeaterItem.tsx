@@ -1,5 +1,17 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
-import { Application, RepeaterItem } from '@island.is/application/types'
+import {
+  formatText,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
+import {
+  FieldComponents,
+  Application,
+  AsyncSelectContext,
+  RepeaterItem,
+  Option,
+  FieldTypes,
+  AsyncSelectField,
+} from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useRef } from 'react'
@@ -14,6 +26,7 @@ import {
   PhoneInputController,
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
+import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -22,6 +35,9 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
+  loadOptions?: (c: AsyncSelectContext) => Promise<Option[]>
+  clearOnChange?: boolean
+  updateOnSelect?: string
 }
 
 const componentMapper = {
@@ -46,6 +62,19 @@ export const Item = ({
   const { setValue, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
+  const getSpan = (component: string, width: string) => {
+    if (component !== 'radio' && component !== 'checkbox') {
+      if (width === 'half') {
+        return '1/2'
+      }
+      if (width === 'third') {
+        return '1/3'
+      }
+      return '1/1'
+    }
+    return '1/1'
+  }
+
   const {
     component,
     id: itemId,
@@ -61,10 +90,16 @@ export const Item = ({
     defaultValue,
     ...props
   } = item
-  const isHalfColumn = component !== 'radio' && width === 'half'
-  const isThirdColumn = component !== 'radio' && width === 'third'
-  const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
-  const Component = componentMapper[component]
+
+  const span = getSpan(component, width)
+  let Component: React.ComponentType<any>
+
+  if (component === 'selectAsync') {
+    Component = AsyncSelectFormField
+  } else {
+    Component = componentMapper[component]
+  }
+
   const id = `${dataId}[${index}].${itemId}`
   const activeValues = index >= 0 && values ? values[index] : undefined
 
@@ -116,7 +151,7 @@ export const Item = ({
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
     const errors = errorList?.[index]
-    return errors?.[id]
+    return errors && getErrorViaPath(errors, id)
   }
 
   const getDefaultValue = (
@@ -172,18 +207,35 @@ export const Item = ({
   }
   if (component === 'radio') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
     DefaultValue =
-      (getValueViaPath(application.answers, id) as string) ??
+      getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
+  }
+
+  let selectAsyncProps: AsyncSelectField | undefined
+  if (component === 'selectAsync') {
+    selectAsyncProps = {
+      id: id,
+      title: label,
+      type: FieldTypes.ASYNC_SELECT,
+      component: FieldComponents.ASYNC_SELECT,
+      children: undefined,
+      backgroundColor: backgroundColor,
+      isSearchable: item.isSearchable,
+      isMulti: item.isMulti,
+      loadOptions: item.loadOptions,
+      clearOnChange: item.clearOnChange,
+      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
+    }
   }
 
   if (condition && !condition(application, activeValues)) {
@@ -197,27 +249,41 @@ export const Item = ({
           {formatText(label, application, formatMessage)}
         </Text>
       )}
-      <Component
-        id={id}
-        name={id}
-        label={formatText(label, application, formatMessage)}
-        options={translatedOptions}
-        placeholder={formatText(placeholder, application, formatMessage)}
-        split={width === 'half' ? '1/2' : '1/1'}
-        error={getFieldError(itemId)}
-        control={control}
-        readOnly={Readonly}
-        disabled={Disabled}
-        backgroundColor={backgroundColor}
-        onChange={() => {
-          if (error) {
-            clearErrors(id)
-          }
-        }}
-        application={application}
-        defaultValue={DefaultValue}
-        {...props}
-      />
+      {component === 'selectAsync' && selectAsyncProps && (
+        <AsyncSelectFormField
+          application={application}
+          error={getFieldError(itemId)}
+          field={{
+            ...selectAsyncProps,
+          }}
+        />
+      )}
+      {component !== 'selectAsync' && (
+        <Component
+          id={id}
+          name={id}
+          label={formatMessage(label, {
+            index: index + 1,
+          })}
+          options={translatedOptions}
+          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+          error={getFieldError(itemId)}
+          control={control}
+          readOnly={Readonly}
+          disabled={Disabled}
+          backgroundColor={backgroundColor}
+          onChange={() => {
+            if (error) {
+              clearErrors(id)
+            }
+          }}
+          application={application}
+          defaultValue={DefaultValue}
+          large={true}
+          placeholder={formatText(placeholder, application, formatMessage)}
+          {...props}
+        />
+      )}
     </GridColumn>
   )
 }
