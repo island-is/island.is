@@ -198,7 +198,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/social-insurance-administration/income-plan'
     ),
   [ApplicationTypes.PRIMARY_SCHOOL]: () =>
-    import('libs/application/templates/primary-school/src'),
+    import('@island.is/application/templates/primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
   [ApplicationTypes.SECONDARY_SCHOOL]: () =>

@@ -5,7 +5,7 @@ import {
   getApplicationExternalData,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
-} from 'libs/application/templates/primary-school/src'
+} from '@island.is/application/templates/primary-school'
 import { Application } from '@island.is/application/types'
 import {
   AgentDto,
