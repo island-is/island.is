@@ -43,6 +43,32 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
+const validatePoliceCaseNumber = (
+  value: string | undefined,
+  existingNumbers: string[] | null | undefined,
+): { isValid: boolean; errorMessage?: string } => {
+  if (!value) {
+    return { isValid: false, errorMessage: 'Value is required' }
+  }
+
+  const baseValidation = validate([
+    [value, ['empty', 'police-casenumber-format']],
+  ])
+
+  if (!baseValidation.isValid) {
+    return baseValidation
+  }
+
+  if (existingNumbers?.includes(value)) {
+    return {
+      isValid: false,
+      errorMessage: 'This police case number already exists',
+    }
+  }
+
+  return { isValid: true }
+}
+
 export const PoliceCaseNumbers: FC<Props> = ({
   workingCase,
   setWorkingCase,
@@ -53,21 +79,21 @@ export const PoliceCaseNumbers: FC<Props> = ({
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const isLOKECase = workingCase.origin === CaseOrigin.LOKE
-
   const [hasError, setHasError] = useState(false)
+
   const updatePoliceNumbers = useCallback(
     (newPoliceCaseNumbers: string[]) => {
       setClientPoliceNumbers(newPoliceCaseNumbers)
-      setAndSendCaseToServer(
-        [
-          {
-            policeCaseNumbers: newPoliceCaseNumbers,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      if (newPoliceCaseNumbers.length > 0) {
+        setAndSendCaseToServer(
+          [{ policeCaseNumbers: newPoliceCaseNumbers, force: true }],
+          workingCase,
+          setWorkingCase,
+        )
+        setHasError(false)
+      } else {
+        setHasError(true)
+      }
     },
     [
       workingCase,
@@ -79,12 +105,15 @@ export const PoliceCaseNumbers: FC<Props> = ({
 
   const onAdd = useCallback(
     (value: string) => {
-      if (validate([[value, ['empty', 'police-casenumber-format']]]).isValid) {
+      const validation = validatePoliceCaseNumber(
+        value,
+        clientPoliceNumbers ?? [],
+      )
+      if (validation.isValid) {
         updatePoliceNumbers([...(clientPoliceNumbers ?? []), value])
-        setHasError(false)
       }
     },
-    [clientPoliceNumbers, updatePoliceNumbers, setHasError],
+    [clientPoliceNumbers, updatePoliceNumbers],
   )
 
   const onRemove = useCallback(
@@ -92,15 +121,46 @@ export const PoliceCaseNumbers: FC<Props> = ({
       const newPoliceCaseNumbers = clientPoliceNumbers?.filter(
         (number) => number !== value,
       )
-      if (newPoliceCaseNumbers && newPoliceCaseNumbers.length > 0) {
-        updatePoliceNumbers(newPoliceCaseNumbers)
-      } else {
-        setHasError(true)
-      }
-      setClientPoliceNumbers(newPoliceCaseNumbers)
+      updatePoliceNumbers(newPoliceCaseNumbers ?? [])
     },
-    [clientPoliceNumbers, updatePoliceNumbers, setClientPoliceNumbers],
+    [clientPoliceNumbers, updatePoliceNumbers],
   )
+
+  const renderPoliceCaseNumbersList = () => {
+    if (!clientPoliceNumbers?.length) {
+      return (
+        <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
+          {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
+        </Text>
+      )
+    }
+
+    return (
+      <Box display="flex" flexWrap="wrap" data-testid="policeCaseNumbers-list">
+        {clientPoliceNumbers.map((policeCaseNumber, index) => (
+          <Box
+            key={`${policeCaseNumber}-${index}`}
+            paddingRight={1}
+            paddingBottom={1}
+          >
+            <Tag
+              variant="darkerBlue"
+              onClick={onRemove(policeCaseNumber)}
+              aria-label={`Eyða númeri ${policeCaseNumber}`}
+              disabled={isLOKECase && index === 0}
+            >
+              <Box display="flex" alignItems="center">
+                <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
+                {isLOKECase && index === 0 ? null : (
+                  <Icon icon="close" size="small" />
+                )}
+              </Box>
+            </Tag>
+          </Box>
+        ))}
+      </Box>
+    )
+  }
 
   return (
     <>
@@ -118,9 +178,11 @@ export const PoliceCaseNumbers: FC<Props> = ({
         })}
         onAddValue={onAdd}
         buttonText={formatMessage(m.buttonText)}
-        isDisabled={(value) =>
-          !validate([[value, ['empty', 'police-casenumber-format']]]).isValid
-        }
+        isDisabled={(value) => {
+          if (!value) return true
+          return !validatePoliceCaseNumber(value, clientPoliceNumbers ?? [])
+            .isValid
+        }}
         onBlur={(event) => {
           setHasError(
             Boolean(
@@ -133,39 +195,7 @@ export const PoliceCaseNumbers: FC<Props> = ({
         hasError={hasError}
         errorMessage={validate([[undefined, ['empty']]]).errorMessage}
       >
-        {clientPoliceNumbers && clientPoliceNumbers.length === 0 ? (
-          <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
-            {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
-          </Text>
-        ) : (
-          <Box
-            display="flex"
-            flexWrap="wrap"
-            data-testid="policeCaseNumbers-list"
-          >
-            {clientPoliceNumbers?.map((policeCaseNumber, index) => (
-              <Box
-                key={`${policeCaseNumber}-${index}`}
-                paddingRight={1}
-                paddingBottom={1}
-              >
-                <Tag
-                  variant="darkerBlue"
-                  onClick={onRemove(policeCaseNumber)}
-                  aria-label={`Eyða númeri ${policeCaseNumber}`}
-                  disabled={isLOKECase && index === 0}
-                >
-                  <Box display="flex" alignItems="center">
-                    <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
-                    {isLOKECase && index > 0 ? null : (
-                      <Icon icon="close" size="small" />
-                    )}
-                  </Box>
-                </Tag>
-              </Box>
-            ))}
-          </Box>
-        )}
+        {renderPoliceCaseNumbersList()}
       </MultipleValueList>
     </>
   )
