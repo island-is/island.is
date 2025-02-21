@@ -118,30 +118,27 @@ const CaseDocuments: FC<Props> = ({
             title={formatMessage(core.pdfButtonRulingShortVersion)}
             pdfType="courtRecord"
           >
-            {isInvestigationCase(workingCase.type) && (
-              <Box display="flex" flexDirection="row">
-                {workingCase.courtRecordSignatory ? (
-                  <SignedDocument
-                    signatory={workingCase.courtRecordSignatory.name}
-                    signingDate={workingCase.courtRecordSignatureDate}
-                  />
-                ) : isDistrictCourtUser(user) ? (
-                  <Button
-                    size="small"
-                    data-testid="signCourtRecordButton"
-                    loading={isRequestingCourtRecordSignature}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleRequestCourtRecordSignature()
-                    }}
-                  >
-                    {formatMessage(m.signButton)}
-                  </Button>
-                ) : isRestrictionCase(workingCase.type) ? null : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
-                )}
-              </Box>
-            )}
+            {isInvestigationCase(workingCase.type) &&
+              (workingCase.courtRecordSignatory ? (
+                <SignedDocument
+                  signatory={workingCase.courtRecordSignatory.name}
+                  signingDate={workingCase.courtRecordSignatureDate}
+                />
+              ) : isDistrictCourtUser(user) ? (
+                <Button
+                  size="small"
+                  data-testid="signCourtRecordButton"
+                  loading={isRequestingCourtRecordSignature}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleRequestCourtRecordSignature()
+                  }}
+                >
+                  {formatMessage(m.signButton)}
+                </Button>
+              ) : isRestrictionCase(workingCase.type) ? null : (
+                <Text>{formatMessage(m.unsignedDocument)}</Text>
+              ))}
           </PdfButton>
         </li>
         {!isPrisonSystemUser(user) && (
@@ -153,29 +150,26 @@ const CaseDocuments: FC<Props> = ({
               pdfType="ruling"
               disabled={!isRulingRequired}
             >
-              {isRulingRequired && (
-                <Box display="flex" flexDirection="row">
-                  {workingCase.rulingSignatureDate ? (
-                    <SignedDocument
-                      signatory={workingCase.judge?.name}
-                      signingDate={workingCase.rulingSignatureDate}
-                    />
-                  ) : user?.id === workingCase.judge?.id ? (
-                    <Button
-                      size="small"
-                      loading={isRequestingRulingSignature}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        requestRulingSignature()
-                      }}
-                    >
-                      {formatMessage(m.signButton)}
-                    </Button>
-                  ) : (
-                    <Text>{formatMessage(m.unsignedDocument)}</Text>
-                  )}
-                </Box>
-              )}
+              {isRulingRequired &&
+                (workingCase.rulingSignatureDate ? (
+                  <SignedDocument
+                    signatory={workingCase.judge?.name}
+                    signingDate={workingCase.rulingSignatureDate}
+                  />
+                ) : user?.id === workingCase.judge?.id ? (
+                  <Button
+                    size="small"
+                    loading={isRequestingRulingSignature}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      requestRulingSignature()
+                    }}
+                  >
+                    {formatMessage(m.signButton)}
+                  </Button>
+                ) : (
+                  <Text>{formatMessage(m.unsignedDocument)}</Text>
+                ))}
             </PdfButton>
           </li>
         )}
