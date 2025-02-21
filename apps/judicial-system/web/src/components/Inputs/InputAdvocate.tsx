@@ -11,8 +11,11 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useGetLawyers } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import {
+  Database,
+  useIndexedDB,
+} from '../../utils/hooks/useIndexedDB/useIndexedDB'
 import {
   emailLabelStrings,
   nameLabelStrings,
@@ -77,10 +80,17 @@ const InputAdvocate: FC<Props> = ({
   disabled,
 }) => {
   const { formatMessage } = useIntl()
-  const lawyers = useGetLawyers()
+  const [lawyers, setLawyers] = useState<Lawyer[]>([])
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
+  const { ls } = useIndexedDB(
+    Database.name,
+    Database.lawyerTable,
+    [], // TODO: FIX,
+  )
+
+  ls().then((d: any) => setLawyers(d))
 
   const options = useMemo(
     () =>

@@ -4,7 +4,7 @@ import { Lawyer } from '@island.is/judicial-system/types'
 
 export const Database = {
   name: 'lawyer-registry',
-  lawyerTable: 'lawyers-table',
+  lawyerTable: 'db1',
 }
 
 export const useIndexedDB = (
@@ -17,7 +17,10 @@ export const useIndexedDB = (
 
   useEffect(() => {
     const initDB = () => {
-      const request = window.indexedDB.open(databaseName, 3)
+      console.info(`Init IndexedDB`)
+      console.log(lawyers)
+
+      const request = window.indexedDB.open(Database.lawyerTable, 3)
 
       request.onupgradeneeded = () => {
         const db = request.result
@@ -46,6 +49,7 @@ export const useIndexedDB = (
       }
 
       request.onsuccess = () => {
+        console.info(`IndexedDB success.`)
         setDB(request.result)
         setIsDBConnecting(false)
       }
@@ -56,5 +60,34 @@ export const useIndexedDB = (
     }
   }, [databaseName, db, tableName, lawyers])
 
-  return { isDBConnecting, db }
+  const ls = () => {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.open(Database.lawyerTable, 3)
+
+      request.onsuccess = function () {
+        const db = request.result
+        const transaction = db.transaction('lawyers-table', 'readonly')
+        const store = transaction.objectStore('lawyers-table')
+        const getAllRequest = store.getAll()
+
+        getAllRequest.onsuccess = function () {
+          resolve(
+            getAllRequest.result.sort((a: Lawyer, b: Lawyer) =>
+              a.name.localeCompare(b.name),
+            ),
+          )
+        }
+
+        getAllRequest.onerror = function () {
+          reject(getAllRequest.error)
+        }
+      }
+
+      request.onerror = function () {
+        reject(request.error)
+      }
+    })
+  }
+
+  return { isDBConnecting, db, ls }
 }

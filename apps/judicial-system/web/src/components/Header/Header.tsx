@@ -85,7 +85,7 @@ const HeaderContainer = () => {
 
   const { countryCode } = useGeoLocation()
 
-  const lawyers = useGetLawyers(isDefenceUser(user))
+  const lawyers = useGetLawyers(isDistrictCourtUser(user))
 
   const { isDBConnecting, db } = useIndexedDB(
     Database.name,
