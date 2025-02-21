@@ -308,8 +308,8 @@ codemagic.yaml                                                                  
 /libs/application/templates/car-recycling/                                                                @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                           @island-is/deloitte
 /libs/clients/car-recycling/                                                                              @island-is/deloitte
-/libs/application/templates/new-primary-school/                                                           @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                      @island-is/deloitte
+/libs/application/templates/primary-school/                                                           @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/primary-school/                      @island-is/deloitte
 /libs/clients/mms/frigg                                                                                   @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                              @island-is/fuglar @island-is/aranja
