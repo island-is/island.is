@@ -111,19 +111,20 @@ export class CmsRepository {
     let hasChanges = false
     for (const inputField of inputFields) {
       if (contentFields.find((ctf) => ctf.id === inputField.key)) {
+        if (!entry.fields[inputField.key]?.[LOCALE]) {
+          logger.info(`Field not found`, {
+            inputField: inputField.key,
+            id: entry.sys.id,
+            referenceId: grantReferenceId,
+          })
+          return Promise.reject(
+            `Invalid field in input fields: ${inputField.key}`,
+          )
+        }
         if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
           hasChanges = true
           entry.fields[inputField.key][LOCALE] = inputField.value
         }
-      } else {
-        logger.info(`Field not found`, {
-          inputField: inputField.key,
-          id: entry.sys.id,
-          referenceId: grantReferenceId,
-        })
-        return Promise.reject(
-          `Invalid field in input fields: ${inputField.key}`,
-        )
       }
     }
     if (hasChanges) {
