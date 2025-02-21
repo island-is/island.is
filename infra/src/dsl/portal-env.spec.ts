@@ -38,7 +38,7 @@ describe('BFF PortalEnv serialization', () => {
   const services = { api: service('api') }
   const sut = service(serviceName)
     .namespace(clientName)
-    .image(bffName)
+    image({ name: bffName, repository: 'testrepo', tag: 'testtag' })
     .redis()
     .serviceAccount(bffName)
     .env({
@@ -115,10 +115,15 @@ describe('BFF PortalEnv serialization', () => {
     expect(result.serviceDef[0].namespace).toBe(clientName)
   })
 
-  it('image and repo', () => {
-    expect(result.serviceDef[0].image.repository).toBe(
-      `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${bffName}`,
-    )
+  it('repo', () => {
+    expect(result.serviceDef[0].image.repository).toBe('testrepo')
+  })
+  it('image', () => {
+    expect(result.serviceDef[0].image.name).toBe(bffName)
+  })
+
+  it('image tag', () => {
+    expect(result.serviceDef[0].image.tag).toBe('testtag')
   })
 
   it('command and args', () => {
