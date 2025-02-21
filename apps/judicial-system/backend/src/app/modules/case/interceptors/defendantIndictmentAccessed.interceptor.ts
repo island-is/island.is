@@ -18,15 +18,15 @@ import { Case } from '../models/case.model'
 const hasValidOpenByPrisonAdminEvent = (
   defendantEventLogs: DefendantEventLog[],
 ) => {
-  const sentToPrisonAdminDate = DefendantEventLog.getDefendantEventLogTypeDate({
+  const sentToPrisonAdminDate = DefendantEventLog.getDefendantEventLogTypeDate(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
     defendantEventLogs,
-    eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-  })
+  )
   const openedByPrisonAdminDate =
-    DefendantEventLog.getDefendantEventLogTypeDate({
+    DefendantEventLog.getDefendantEventLogTypeDate(
+      DefendantEventType.OPENED_BY_PRISON_ADMIN,
       defendantEventLogs,
-      eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-    })
+    )
   return (
     sentToPrisonAdminDate &&
     openedByPrisonAdminDate &&
