@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildHiddenInput,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
@@ -19,7 +18,6 @@ export const schoolSection = buildSection({
         buildCustomField({
           component: 'SchoolSelection',
           id: 'selection',
-          title: '',
           description: '',
         }),
       ],

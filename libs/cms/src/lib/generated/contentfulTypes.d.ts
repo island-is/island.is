@@ -1684,6 +1684,12 @@ export interface IGenericListItemFields {
 
   /** External Link */
   externalLink?: ILinkUrl | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1866,6 +1872,9 @@ export interface IGrantFields {
 
   /** Application hints */
   grantApplicationHints?: Document | undefined
+
+  /** Answering questions */
+  grantAnsweringQuestions?: Document | undefined
 
   /** Application url */
   granApplicationUrl?: ILinkUrl | undefined
@@ -2146,8 +2155,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IAnchorPage
     | undefined
 
@@ -3167,8 +3174,8 @@ export interface IOrganizationFields {
   /** Kennitala */
   kennitala?: string | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
+  /** News Bottom Slices */
+  newsBottomSlices?: IEmailSignup[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3324,6 +3331,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Show past events option */
+  showPastEventsOption?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -3364,6 +3374,12 @@ export interface IOrganizationParentSubpageFields {
 
   /** Image */
   image?: Asset | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage?: Asset | undefined
+
+  /** Tiny Thumbnail Image */
+  tinyThumbnailImage?: Asset | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */
@@ -3379,6 +3395,43 @@ export interface IOrganizationParentSubpage
     contentType: {
       sys: {
         id: 'organizationParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageListFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Variant */
+  variant?: 'Service Card' | 'Profile Card - Title Above' | undefined
+
+  /** Page List */
+  pageList?: IOrganizationParentSubpage[] | undefined
+
+  /** See More Link */
+  seeMoreLink?: ILink | undefined
+}
+
+/** List of organization parent subpages */
+
+export interface IOrganizationParentSubpageList
+  extends Entry<IOrganizationParentSubpageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpageList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3450,6 +3503,9 @@ export interface IOrganizationSubpageFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
 }
 
 export interface IOrganizationSubpage
@@ -3493,8 +3549,11 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -3504,6 +3563,9 @@ export interface IOverviewLinksFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Link Data */
+  linkData?: Record<string, any> | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -4008,6 +4070,9 @@ export interface IServiceWebPageFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -4718,6 +4783,12 @@ export interface ITeamListFields {
 
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
+
+  /** Order By */
+  orderBy?: 'A - Z' | 'Manual' | undefined
 }
 
 /** list of team members */
@@ -5059,8 +5130,6 @@ export interface IUrlFields {
     | ILifeEventPage
     | INews
     | IProjectPage
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IOrganizationPage
     | undefined
 
@@ -5432,6 +5501,7 @@ export type CONTENT_TYPE =
   | 'organization'
   | 'organizationPage'
   | 'organizationParentSubpage'
+  | 'organizationParentSubpageList'
   | 'organizationSubpage'
   | 'organizationTag'
   | 'overviewLinks'

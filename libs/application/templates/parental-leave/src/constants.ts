@@ -2,8 +2,6 @@ import { DefaultEvents } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { parentalLeaveFormMessages } from './lib/messages'
 
-export const YES = 'yes'
-export const NO = 'no'
 export const MANUAL = 'manual'
 export const SPOUSE = 'spouse'
 export const SINGLE = 'single'

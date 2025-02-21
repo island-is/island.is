@@ -27,6 +27,7 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isClearable?: boolean
+  isLoading?: boolean
   isMulti?: IsMulti
   required?: boolean
   rules?: RegisterOptions
@@ -50,6 +51,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   isSearchable,
   isMulti,
   isClearable = false,
+  isLoading,
   dataTestId,
   required = false,
   rules,
@@ -77,7 +79,14 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
         .filter(Boolean) as Option<Value>[]
     }
 
-    return options.find((option) => option.value === value)
+    // Return null if the value is not in the options to avoid hung values
+    const foundOption = options.find((option) => option.value === value) || null
+    // Avoid having nonexistent values in the answers object by setting the value to null
+    // if the value is not in the options and there are options meaning options have been fetched
+    if (!foundOption && options.length > 0) {
+      setValue(id, null)
+    }
+    return foundOption
   }
 
   return (
@@ -104,6 +113,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
           filterConfig={filterConfig}
           isMulti={isMulti}
           isClearable={isClearable}
+          isLoading={isLoading}
           size={size}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
@@ -124,6 +134,10 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
 
             if (clearOnChange) {
               clearInputsOnChange(clearOnChange, setValue)
+            }
+
+            if (isClearable && newVal === null) {
+              clearInputsOnChange([id], setValue)
             }
           }}
         />

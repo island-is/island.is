@@ -71,3 +71,7 @@ export type RecordObject<T = unknown> = Record<string, T>
 export function getErrorViaPath(obj: RecordObject, path: string): string {
   return get(obj, path) as string
 }
+
+export const ellipsis = (text: string, length: number) => {
+  return text.length > length ? `${text.substring(0, length)}...` : text
+}

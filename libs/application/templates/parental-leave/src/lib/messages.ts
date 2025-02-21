@@ -736,6 +736,18 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Upplýsingar um laun.',
       description: 'Salary information.',
     },
+    taxInformationTitle: {
+      id: 'pl.application:permission.taxInformation.title',
+      defaultMessage: 'Upplýsingar vegna eftirlits',
+      description: 'Monitoring information',
+    },
+    taxInformationSubTitle: {
+      id: 'pl.application:permission.taxInformation.subtitle',
+      defaultMessage:
+        'Skattayfirvöld skulu veita upplýsingar um tekjur foreldra úr skattframtölum, staðgreiðsluskrá og tryggingagjaldsskrá sem nauðsynlegar eru vegna eftirlits með framkvæmd laga nr. 144/2020.',
+      description:
+        'The tax authorities shall provide information on the income of parents from tax returns, withholding tax and social security for the purposes of monitoring by the implementation of Act No. 144/2020.',
+    },
     salaryTitle: {
       id: 'pl.application:salary.title',
       defaultMessage: 'Áætlaður fæðingardagur barns',

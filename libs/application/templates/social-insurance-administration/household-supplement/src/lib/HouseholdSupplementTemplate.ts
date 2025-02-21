@@ -14,7 +14,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   InstitutionNationalIds,
-  YES,
   defineTemplateApi,
   NationalRegistrySpouseApi,
   UserProfileApi,
@@ -24,6 +23,7 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  YES,
 } from '@island.is/application/core'
 import { HouseholdSupplementHousing } from './constants'
 import { dataSchema } from './dataSchema'
@@ -46,6 +46,7 @@ import {
   BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getApplicationAnswers, isEligible } from './householdSupplementUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -54,6 +55,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,

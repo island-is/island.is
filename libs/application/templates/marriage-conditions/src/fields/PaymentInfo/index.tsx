@@ -4,6 +4,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { formatIsk } from '../../lib/utils'
+import { getValueViaPath } from '@island.is/application/core'
 
 export type Individual = {
   name: string
@@ -38,48 +39,39 @@ export const PaymentInfo: FC<
     ?.data as Array<Payment>
 
   // Get Charge Codes
-  let birthCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY153',
+  const birthCertCode = paymentCatalog?.find(
+    (payment) => payment.chargeItemCode === 'AY171',
   )
-  let maritalCertCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY154',
+  const maritalCertCode = paymentCatalog?.find(
+    (payment) => payment.chargeItemCode === 'AY172',
   )
 
   const surveyCertCode = paymentCatalog?.find(
     (payment) => payment.chargeItemCode === 'AY128',
   )
 
-  const marriageConditionsCode = paymentCatalog?.find(
-    (payment) => payment.chargeItemCode === 'AY129',
+  const applicantHasBirthCertificate = getValueViaPath<boolean>(
+    application.answers,
+    'applicant.hasBirthCertificate',
+  )
+  const spouseHasBirthCertificate = getValueViaPath<boolean>(
+    application.externalData,
+    'birthCertificate.data.hasBirthCertificate',
   )
 
-  // Fallback on fake data if on dev
-  // TODO: remove once paymentcatalog is updated on dev to reflect prod
-  if (field.props.allowFakeData) {
-    birthCertCode = field?.props?.fakePayments?.find(
-      (payment) => payment.chargeItemCode === 'AY153',
-    )
-    maritalCertCode = field?.props?.fakePayments?.find(
-      (payment) => payment.chargeItemCode === 'AY154',
-    )
-  }
+  const nrOfBirthCerts =
+    (applicantHasBirthCertificate ? 1 : 0) + (spouseHasBirthCertificate ? 1 : 0)
 
   // Isolate prices, calculate total and check if total is correct
   const prices = {
-    birthCertificate: 2 * (birthCertCode?.priceAmount ?? 0),
+    birthCertificate: nrOfBirthCerts * (birthCertCode?.priceAmount ?? 0),
     maritalCertificate: 2 * (maritalCertCode?.priceAmount ?? 0),
-    marriageConditions: marriageConditionsCode?.priceAmount ?? 0,
     surveyCertificate: surveyCertCode?.priceAmount ?? 0,
   }
-
-  // If correctTotal is false we only display final price
-  // To avoid embarrassing mistakes on production if prices
-  // descynchronize
-  const correctTotal =
+  const totalPrice =
     prices.birthCertificate +
-      prices.maritalCertificate +
-      prices.surveyCertificate ===
-    prices.marriageConditions
+    prices.maritalCertificate +
+    prices.surveyCertificate
 
   return (
     <Box>
@@ -88,21 +80,21 @@ export const PaymentInfo: FC<
       </Text>
       <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
         <Text variant="h5">{formatMessage(m.maritalStatusCertificates)}</Text>
-        <Text variant="h5">
-          {correctTotal ? formatIsk(prices.maritalCertificate) : ''}
-        </Text>
+        <Text variant="h5">{formatIsk(prices.maritalCertificate)}</Text>
       </Box>
-      <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
-        <Text variant="h5">{formatMessage(m.birthCertificates)}</Text>
-        <Text variant="h5">
-          {correctTotal ? formatIsk(prices.birthCertificate) : ''}
-        </Text>
-      </Box>
+      {nrOfBirthCerts > 0 && (
+        <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
+          <Text variant="h5">
+            {formatMessage(m.birthCertificatesWithParameters, {
+              nrOfBirthCerts: nrOfBirthCerts === 1 ? 'Eitt' : 'Tvö',
+            })}
+          </Text>
+          <Text variant="h5">{formatIsk(prices.birthCertificate)}</Text>
+        </Box>
+      )}
       <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
         <Text variant="h5">{formatMessage(m.surveyCertificate)}</Text>
-        <Text variant="h5">
-          {correctTotal ? formatIsk(prices.surveyCertificate) : ''}
-        </Text>
+        <Text variant="h5">{formatIsk(prices.surveyCertificate)}</Text>
       </Box>
       <Divider />
       <Box display="flex" paddingTop={3} justifyContent="spaceBetween">
@@ -110,7 +102,7 @@ export const PaymentInfo: FC<
           {formatMessage(m.total)}
         </Text>
         <Text variant="h3" color="blue400">
-          {formatIsk(prices.marriageConditions)}
+          {formatIsk(totalPrice)}
         </Text>
       </Box>
     </Box>

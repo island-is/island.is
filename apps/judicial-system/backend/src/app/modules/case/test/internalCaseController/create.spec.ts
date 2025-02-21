@@ -113,7 +113,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
       const mockDefendantCreate =
@@ -170,7 +170,9 @@ describe('InternalCaseController - Create', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Creating user not found')
+      expect(then.error.message).toBe(
+        'Creating user not found or is not registered as a prosecution user',
+      )
     })
   })
 
@@ -188,7 +190,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       then = await givenWhenThen(caseToCreate)
     })
@@ -196,7 +198,7 @@ describe('InternalCaseController - Create', () => {
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
-        'Creating user is not registered as a prosecution user',
+        'Creating user not found or is not registered as a prosecution user',
       )
     })
   })
@@ -215,7 +217,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       then = await givenWhenThen(caseToCreate)
     })
@@ -244,7 +246,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       await givenWhenThen({
         ...caseToCreate,
@@ -285,7 +287,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       await givenWhenThen({ ...caseToCreate, isHeightenedSecurityLevel: true })
     })
@@ -320,7 +322,9 @@ describe('InternalCaseController - Create', () => {
 
     it('should throw Error', () => {
       expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe('Creating user not found')
+      expect(then.error.message).toBe(
+        'Creating user not found or is not registered as a prosecution user',
+      )
     })
   })
 
@@ -338,7 +342,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
 
       then = await givenWhenThen(caseToCreate)
     })
@@ -364,7 +368,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
 
@@ -392,7 +396,7 @@ describe('InternalCaseController - Create', () => {
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(user)
+      mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
       const mockDefendantCreate =

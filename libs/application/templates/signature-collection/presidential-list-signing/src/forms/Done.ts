@@ -12,7 +12,6 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 
 export const Done: Form = buildForm({
   id: 'done',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     /* Sections for the stepper */
@@ -48,12 +47,10 @@ export const Done: Form = buildForm({
           children: [
             buildCustomField({
               id: 'listSigned',
-              title: '',
               component: 'ListSigned',
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
               space: 'containerGutter',
             }),
             buildMessageWithLinkButtonField({
@@ -65,12 +62,10 @@ export const Done: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space1',
-              title: '',
               space: 'containerGutter',
             }),
             buildDescriptionField({
               id: 'space2',
-              title: '',
               space: 'containerGutter',
             }),
           ],

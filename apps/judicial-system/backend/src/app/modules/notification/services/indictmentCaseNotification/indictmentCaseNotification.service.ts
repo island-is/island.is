@@ -11,6 +11,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatters'
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
@@ -59,14 +60,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            body,
-            recipient.name,
-            recipient.email,
-            undefined,
-            true,
-          ),
+            html: body,
+            recipientName: recipient.name,
+            recipientEmail: recipient.email,
+            attachments: undefined,
+            skipTail: true,
+          }),
         )
       }
     }
@@ -104,7 +105,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       strings.indictmentCompletedWithRuling.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: theCase.court?.name,
+        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
           theCase.defendants && theCase.defendants[0].serviceRequirement,
         caseOrigin: theCase.origin,

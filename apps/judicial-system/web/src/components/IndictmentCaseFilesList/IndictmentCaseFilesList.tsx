@@ -5,7 +5,6 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -14,10 +13,8 @@ import {
   isPublicProsecutor,
   isPublicProsecutorUser,
   isSuccessfulServiceStatus,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FileNotFoundModal,
   PdfButton,
   SectionHeading,
@@ -108,7 +105,6 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
     }
 
     return {
-      indictments: filterByCategories(CaseFileCategory.INDICTMENT),
       criminalRecords: filterByCategories(CaseFileCategory.CRIMINAL_RECORD),
       costBreakdowns: filterByCategories(CaseFileCategory.COST_BREAKDOWN),
       others: filterByCategories(CaseFileCategory.CASE_FILE),
@@ -158,15 +154,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { user, limitedAccess } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
     connectedCaseParentId,
   })
-
-  const showTrafficViolationCaseFiles =
-    features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-    isTrafficViolationCase(workingCase)
 
   const showSubpoenaPdf =
     displayGeneratedPDFs &&
@@ -182,12 +173,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading title={formatMessage(strings.title)} />
       )}
-      <FileSection
-        title={formatMessage(caseFiles.indictmentSection)}
-        files={filteredFiles.indictments}
-        onOpenFile={onOpen}
-      />
-      {showTrafficViolationCaseFiles && displayGeneratedPDFs && (
+      {displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.indictmentSection)}
@@ -196,7 +182,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
+              title={formatMessage(caseFiles.indictmentTitle)}
               pdfType="indictment"
               renderAs="row"
             />
@@ -279,35 +265,42 @@ const IndictmentCaseFilesList: FC<Props> = ({
             {formatMessage(strings.subpoenaTitle)}
           </Text>
           {workingCase.defendants?.map((defendant) =>
-            defendant.subpoenas?.map((subpoena) => (
-              <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
-                <PdfButton
-                  caseId={workingCase.id}
-                  title={formatMessage(strings.subpoenaButtonText, {
-                    name: defendant.name,
-                    date: formatDate(subpoena.created),
-                  })}
-                  pdfType="subpoena"
-                  elementId={[defendant.id, subpoena.id]}
-                  renderAs="row"
-                />
-                {!limitedAccess &&
-                  isSuccessfulServiceStatus(subpoena.serviceStatus) && (
-                    <PdfButton
-                      caseId={workingCase.id}
-                      title={formatMessage(
-                        strings.serviceCertificateButtonText,
-                        {
-                          name: defendant.name,
-                        },
-                      )}
-                      pdfType="serviceCertificate"
-                      elementId={[defendant.id, subpoena.id]}
-                      renderAs="row"
-                    />
-                  )}
-              </Box>
-            )),
+            defendant.subpoenas?.map((subpoena) => {
+              const subpoenaFileName = formatMessage(
+                strings.subpoenaButtonText,
+                {
+                  name: defendant.name,
+                  date: formatDate(subpoena.created),
+                },
+              )
+
+              return (
+                <Box key={`subpoena-${subpoena.id}`} marginBottom={2}>
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={subpoenaFileName}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id, subpoenaFileName]}
+                    renderAs="row"
+                  />
+                  {!limitedAccess &&
+                    isSuccessfulServiceStatus(subpoena.serviceStatus) && (
+                      <PdfButton
+                        caseId={workingCase.id}
+                        title={formatMessage(
+                          strings.serviceCertificateButtonText,
+                          {
+                            name: defendant.name,
+                          },
+                        )}
+                        pdfType="serviceCertificate"
+                        elementId={[defendant.id, subpoena.id]}
+                        renderAs="row"
+                      />
+                    )}
+                </Box>
+              )
+            }),
           )}
         </Box>
       )}

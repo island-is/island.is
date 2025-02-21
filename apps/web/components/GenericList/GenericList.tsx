@@ -25,13 +25,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Locale } from '@island.is/shared/types'
+import { NewsCard } from '@island.is/web/components'
 import {
   GenericListItem,
   GenericListItemResponse,
   GenericTag,
   GetGenericListItemsInputOrderBy,
   GetGenericListItemsQueryVariables,
+  Image as ImageSchema,
   Query,
 } from '@island.is/web/graphql/schema'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -50,25 +51,6 @@ import * as styles from './GenericList.css'
 
 const DEBOUNCE_TIME_IN_MS = 300
 const ITEMS_PER_PAGE = 10
-
-const getResultsFoundText = (totalItems: number, locale: Locale) => {
-  const singular = locale === 'is' ? 'niðurstaða fannst' : 'result found'
-  const plural = locale === 'is' ? 'niðurstöður fundust' : 'results found'
-
-  if (locale !== 'is') {
-    if (totalItems === 1) {
-      return singular
-    }
-    return plural
-  }
-
-  // Handle Icelandic locale specifically
-  if (totalItems % 10 === 1 && totalItems % 100 !== 11) {
-    return singular
-  }
-
-  return plural
-}
 
 interface ItemProps {
   item: GenericListItem
@@ -89,7 +71,7 @@ export const NonClickableItem = ({ item }: ItemProps) => {
           <Stack space={0}>
             {item.date && (
               <Text variant="eyebrow" color="purple400">
-                {format(new Date(item.date), 'dd.MM.yyyy')}
+                {format(new Date(item.date), 'do MMMM yyyy')}
               </Text>
             )}
             <Text variant="h3" as="span" color="dark400">
@@ -144,6 +126,27 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
 
   const filterTags = item.filterTags ?? []
 
+  if (item.image) {
+    return (
+      <NewsCard
+        title={item.title}
+        introduction={
+          item.cardIntro?.length > 0 && (
+            <Box>{webRichText(item.cardIntro ?? [])}</Box>
+          )
+        }
+        href={href ?? ''}
+        image={item.image as ImageSchema}
+        readMoreText=""
+        titleAs="h3"
+        titleVariant="h3"
+        titleTextColor="blue400"
+        date={item.date ?? ''}
+        dateTextColor="purple400"
+      />
+    )
+  }
+
   return (
     <FocusableBox
       padding={[2, 2, 3]}
@@ -161,7 +164,7 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
                 <Box className={styles.clickableItemTopRowContainer}>
                   <Inline space={2} justifyContent="spaceBetween">
                     <Text variant="eyebrow" color="purple400">
-                      {format(new Date(item.date), 'dd.MM.yyyy')}
+                      {format(new Date(item.date), 'do MMMM yyyy')}
                     </Text>
                     {icon && (
                       <Icon
@@ -308,10 +311,6 @@ export const GenericList = ({
 
   const noResultsFoundText =
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
-
-  const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
-
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
   const filterInputComponent = (
     <FilterInput
@@ -530,23 +529,7 @@ export const GenericList = ({
           {totalItems === 0 && !displayError && !loading && (
             <Text>{noResultsFoundText}</Text>
           )}
-          {totalItems > 0 && (
-            <Stack space={3}>
-              <Inline space={2} justifyContent="spaceBetween" alignY="center">
-                <Text>
-                  {totalItems} {resultsFoundText}
-                </Text>
-                {totalPages > 1 && (
-                  <Text>
-                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page ?? 1}{' '}
-                    {activeLocale === 'is' ? 'af' : 'of'} {totalPages}
-                  </Text>
-                )}
-              </Inline>
-              {children}
-            </Stack>
-          )}
-
+          {totalItems > 0 && children}
           {totalItems > ITEMS_PER_PAGE && (
             <Pagination
               page={page ?? 1}

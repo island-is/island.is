@@ -33,17 +33,15 @@ export const overviewSection = buildSection({
         buildCustomField({
           component: 'Overview',
           id: 'overview',
-          title: '',
           description: '',
         }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: overview.buttons.confirm,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: overview.buttons.confirm,
+              name: overview.buttons.submit,
               type: 'primary',
             },
           ],

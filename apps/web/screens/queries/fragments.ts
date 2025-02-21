@@ -293,6 +293,8 @@ export const slices = gql`
         ...ImageFields
       }
     }
+    showSearchInput
+    teamMemberOrder
   }
 
   fragment ContactUsFields on ContactUs {
@@ -496,7 +498,16 @@ export const slices = gql`
   fragment OverviewLinksField on OverviewLinks {
     __typename
     id
+    titleAbove
     hasBorderAbove
+    linkData {
+      variant
+      categoryCardItems {
+        title
+        description
+        href
+      }
+    }
     overviewLinks {
       title
       intro {
@@ -798,6 +809,8 @@ export const slices = gql`
     title
     displayTitle
     namespace
+    maxNumberOfCards
+    sorting
     resolvedGrantsList {
       total
       items {
@@ -976,6 +989,12 @@ export const slices = gql`
         }
         slug
         assetUrl
+        image {
+          url
+          title
+          width
+          height
+        }
       }
     }
   }
@@ -991,6 +1010,25 @@ export const slices = gql`
         slug
         type
       }
+    }
+  }
+
+  fragment OrganizationParentSubpageListFields on OrganizationParentSubpageList {
+    __typename
+    id
+    title
+    pageLinkVariant
+    pageLinks {
+      id
+      pageLinkIntro
+      label
+      href
+      thumbnailImageHref
+      tinyThumbnailImageHref
+    }
+    seeMoreLink {
+      text
+      url
     }
   }
 
@@ -1041,6 +1079,7 @@ export const slices = gql`
     ...LatestGenericListItemsFields
     ...FeaturedLinksFields
     ...GrantCardsListFields
+    ...OrganizationParentSubpageListFields
   }
 
   fragment AllSlices on Slice {

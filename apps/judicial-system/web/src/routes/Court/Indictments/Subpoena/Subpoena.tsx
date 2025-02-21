@@ -202,31 +202,38 @@ const Subpoena: FC = () => {
                       !courtDate?.location ||
                       !defendant.subpoenaType
                     }
-                    elementId={defendant.id}
+                    elementId={[
+                      defendant.id,
+                      `Fyrirkall - ${defendant.name} nýtt - PDF`,
+                    ]}
                     queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
                   />
                 </Box>
               )}
-              {defendant.subpoenas?.map((subpoena, sIndex) => (
-                <Box
-                  key={`subpoena-${subpoena.id}`}
-                  marginBottom={
-                    dIndex + 1 === workingCase.defendants?.length &&
-                    sIndex + 1 === defendant.subpoenas?.length
-                      ? 0
-                      : 2
-                  }
-                >
-                  <PdfButton
-                    caseId={workingCase.id}
-                    title={`Fyrirkall - ${defendant.name} ${formatDate(
-                      subpoena.created,
-                    )} - PDF`}
-                    pdfType="subpoena"
-                    elementId={[defendant.id, subpoena.id]}
-                  />
-                </Box>
-              ))}
+              {defendant.subpoenas?.map((subpoena, sIndex) => {
+                const fileName = `Fyrirkall - ${defendant.name} ${formatDate(
+                  subpoena.created,
+                )} - PDF`
+
+                return (
+                  <Box
+                    key={`subpoena-${subpoena.id}`}
+                    marginBottom={
+                      dIndex + 1 === workingCase.defendants?.length &&
+                      sIndex + 1 === defendant.subpoenas?.length
+                        ? 0
+                        : 2
+                    }
+                  >
+                    <PdfButton
+                      caseId={workingCase.id}
+                      title={fileName}
+                      pdfType="subpoena"
+                      elementId={[defendant.id, subpoena.id, fileName]}
+                    />
+                  </Box>
+                )
+              })}
             </>
           ))}
         </Box>

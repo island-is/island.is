@@ -51,6 +51,7 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { Pickup } from './types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
@@ -108,6 +109,7 @@ const template: ApplicationTemplate<
         ' - ' +
         m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
+  codeOwner: CodeOwners.Juni,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
   translationNamespaces: [configuration.translation],

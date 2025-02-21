@@ -1,5 +1,4 @@
-import { coreErrorMessages } from '@island.is/application/core'
-import { YES } from '@island.is/application/types'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -15,6 +14,7 @@ import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
+  getGenderMessage,
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
@@ -25,15 +25,15 @@ export const Child = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { childInfo, differentPlaceOfResidence } = getApplicationAnswers(
-    application.answers,
-  )
+  const { childInfo } = getApplicationAnswers(application.answers)
 
   const {
     options: pronounOptions,
     loading,
     error,
   } = useFriggOptions(OptionsType.PRONOUN)
+
+  const genderMessage = getGenderMessage(application)
 
   return (
     <ReviewGroup
@@ -42,7 +42,7 @@ export const Child = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span="12/12">
             <Text variant="h3" as="h3">
               {formatMessage(newPrimarySchoolMessages.overview.child)}
             </Text>
@@ -86,26 +86,31 @@ export const Child = ({
                 />
               </GridColumn>
             </GridRow>
-            {(childInfo.preferredName?.trim().length > 0 ||
-              childInfo.pronouns?.length > 0 ||
-              differentPlaceOfResidence === YES) && (
-              <GridRow rowGap={2}>
-                {childInfo.preferredName?.trim().length > 0 && (
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.shared.gender)}
+                  value={formatMessage(genderMessage)}
+                />
+              </GridColumn>
+              {childInfo.usePronounAndPreferredName?.includes(YES) &&
+                childInfo.preferredName?.trim().length > 0 && (
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
+                        newPrimarySchoolMessages.childrenNGuardians
                           .childInfoPreferredName,
                       )}
                       value={childInfo.preferredName}
                     />
                   </GridColumn>
                 )}
-                {childInfo.pronouns?.length > 0 && (
-                  <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+              {childInfo.usePronounAndPreferredName?.includes(YES) &&
+                childInfo.pronouns?.length > 0 && (
+                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
+                        newPrimarySchoolMessages.childrenNGuardians
                           .childInfoPronouns,
                       )}
                       value={childInfo.pronouns
@@ -121,19 +126,18 @@ export const Child = ({
                     />
                   </GridColumn>
                 )}
-                {differentPlaceOfResidence === YES && (
-                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
-                          .childInfoPlaceOfResidence,
-                      )}
-                      value={`${childInfo.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`}
-                    />
-                  </GridColumn>
-                )}
-              </GridRow>
-            )}
+              {childInfo.differentPlaceOfResidence === YES && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.childrenNGuardians
+                        .childInfoPlaceOfResidence,
+                    )}
+                    value={`${childInfo.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`}
+                  />
+                </GridColumn>
+              )}
+            </GridRow>
           </>
         )}
       </Stack>

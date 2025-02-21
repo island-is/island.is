@@ -19,6 +19,7 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -249,6 +250,8 @@ export const en: TranslatedMessages = {
   'wallet.emptyListTitle': 'There are currently no documents',
   'wallet.emptyListDescription':
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
+  'wallet.lastUpdated': 'Last updated: {date}',
+  'wallet.update': 'Update',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -264,8 +267,17 @@ export const en: TranslatedMessages = {
   'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
   'walletPass.errorNotPossibleOnThisDevice':
     'You cannot add passes on this device.',
-  'walletPass.errorNotConnectedNoBarcode':
+
+  'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
+  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorBadSession':
+    'Too little time since license was accessed on another device',
+  'walletPass.validLicense': 'Valid',
+  'walletPass.expiredLicense': 'Expired',
+  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
+  'walletPass.licenseNumber': 'License number: {licenseNumber}',
+  'walletPass.errorFetchingLicense': 'Could not update license',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',

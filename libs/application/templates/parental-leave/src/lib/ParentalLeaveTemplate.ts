@@ -5,6 +5,8 @@ import { assign } from 'xstate'
 
 import {
   EphemeralStateLifeCycle,
+  NO,
+  YES,
   coreHistoryMessages,
   coreMessages,
   pruneAfterDays,
@@ -27,7 +29,6 @@ import {
   ApiModuleActions,
   Events,
   MANUAL,
-  NO,
   NO_MULTIPLE_BIRTHS,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -40,7 +41,6 @@ import {
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
@@ -69,6 +69,7 @@ import {
   needsOtherParentApproval,
   restructureVMSTPeriods,
 } from './parentalLeaveTemplateUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const birthDayLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -85,6 +86,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: parentalLeaveFormMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.ParentalLeave.translation,
   dataSchema,
@@ -1017,6 +1019,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             pendingAction: employerApprovalStatePendingAction,
           },
           lifecycle: pruneAfterDays(970),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
@@ -1068,6 +1084,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -1153,6 +1183,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,

@@ -13,8 +13,16 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
-import { Alert, EmptyList, GeneralCardSkeleton, TopLine } from '../../ui'
+import {
+  Alert,
+  Button,
+  EmptyList,
+  GeneralCardSkeleton,
+  TopLine,
+  Typography,
+} from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
+import refreshIcon from '../../assets/icons/refresh.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   GenericLicenseType,
@@ -30,6 +38,8 @@ import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
+import { useLocale } from '../../hooks/use-locale'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type FlatListItem =
   | GenericUserLicense
@@ -96,6 +106,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
   const [hiddenContent, setHiddenContent] = useState(isIos)
+  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
 
   // Query list of licenses
   const res = useListLicensesQuery({
@@ -112,7 +123,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           GenericLicenseType.HuntingLicense,
         ],
       },
+      locale: useLocale(),
     },
+    fetchPolicy: 'cache-first',
   })
 
   // Additional licenses
@@ -138,6 +151,15 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
     return []
   }, [res])
+
+  const lastUpdatedFormatted = useMemo(() => {
+    const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
+      .updated
+
+    return lastUpdated
+      ? intl.formatDate(new Date(parseInt(lastUpdated, 10)))
+      : undefined
+  }, [licenseItems])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -175,6 +197,21 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [])
 
+  // Using the onRefresh function when pressing the update button in ios is buggy,
+  // it scrolls the list half out of view when done - so we do it manually instead
+  const programmaticScrollWhenRefreshing = () => {
+    flatListRef.current?.scrollToOffset({ offset: -300, animated: true })
+    res
+      .refetch()
+      .then(() => {
+        // Ofsetting to 0 scrolls the top of the list out of view, so we offset to -150
+        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
+      })
+      .catch(() => {
+        flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
+      })
+  }
+
   useNavigationComponentDidAppear(() => {
     setHiddenContent(false)
   }, componentId)
@@ -184,7 +221,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (item.__typename === 'Skeleton') {
         return (
           <View style={{ paddingHorizontal: theme.spacing[2] }}>
-            <GeneralCardSkeleton height={104} />
+            <GeneralCardSkeleton height={80} />
           </View>
         )
       }
@@ -255,7 +292,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         ListHeaderComponent={
-          isIos ? (
+          isIos && !isBarcodeEnabled ? (
             <View style={{ marginBottom: 16 }}>
               <Alert
                 type="info"
@@ -280,6 +317,32 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
                   resizeMode="contain"
                 />
               }
+            />
+          </View>
+        }
+        ListFooterComponent={
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: theme.spacing[1],
+            }}
+          >
+            {lastUpdatedFormatted && (
+              <Typography variant="body3">
+                {intl.formatMessage(
+                  { id: 'wallet.lastUpdated' },
+                  { date: lastUpdatedFormatted },
+                )}
+              </Typography>
+            )}
+            <Button
+              onPress={() =>
+                isIos ? programmaticScrollWhenRefreshing() : onRefresh()
+              }
+              title={intl.formatMessage({ id: 'wallet.update' })}
+              isTransparent={true}
+              icon={refreshIcon}
             />
           </View>
         }

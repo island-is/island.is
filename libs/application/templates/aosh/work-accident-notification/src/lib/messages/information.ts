@@ -114,8 +114,25 @@ export const information = {
           'ATH. Ef tengiliður er annar en er sjálfkrafa skráður þá geturðu breytt þeim upplýsingum hér.',
         description: 'Email and phone information alert message',
       },
+      branchPostnumberError: {
+        id: 'aosh.wan.application:information.company.branchPostnumberError',
+        defaultMessage:
+          'Ef skráð er heimilisfang útibús þarf einnig að skrá postnúmer',
+        description: 'Error if only address for branch is input',
+      },
+      branchAddressError: {
+        id: 'aosh.wan.application:information.company.branchAddressError',
+        defaultMessage:
+          'Ef skráð er postnúmer útibús þarf einnig að skrá heimilisfang',
+        description: 'Error if only postnumber for branch is input',
+      },
+      branchNameError: {
+        id: 'aosh.wan.application:information.company.branchNameError',
+        defaultMessage: 'Vinsamlegast skráðu nafn útibús/deildar',
+        description: 'Error if company user does not input name of branch',
+      },
     }),
-    laborProtection: {
+    laborProtection: defineMessages({
       pageTitle: {
         id: 'aosh.wan.application:information.laborProtection.pageTitle',
         defaultMessage: 'Vinnuverndastarf',
@@ -128,8 +145,8 @@ export const information = {
         description:
           'Text for the alerts field in the labor protection part of the company section',
       },
-    },
-    workhealth: {
+    }),
+    workhealth: defineMessages({
       sectionTitle: {
         id: 'aosh.wan.application:information.workhealth.sectionTitle',
         defaultMessage: 'Vinnuvernd',
@@ -157,8 +174,8 @@ export const information = {
         defaultMessage: 'Öryggis- og heilbrigðisstarfsemi fyrirtækisins.',
         description: 'Description of workhealth information page',
       },
-    },
-    projectPurchase: {
+    }),
+    projectPurchase: defineMessages({
       sectionTitle: {
         id: 'aosh.wan.application:information.projectPurchase.sectionTitle',
         defaultMessage: 'Verkkaupi',
@@ -197,6 +214,6 @@ export const information = {
         defaultMessage: 'Verkkaupi',
         description: 'Description of project purchase information page',
       },
-    },
+    }),
   },
 }

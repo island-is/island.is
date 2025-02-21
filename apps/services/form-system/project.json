@@ -1,5 +1,5 @@
 {
-  "name": "services-form-system",
+  "name": "services-form-system-api",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
@@ -12,7 +12,29 @@
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
-        "assets": ["apps/services/form-system/src/assets"]
+        "assets": [
+          "apps/services/form-system/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/form-system/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": "*",
+            "input": "apps/services/form-system/seeders",
+            "output": "./seeders"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/form-system",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/form-system",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
@@ -26,14 +48,14 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "services-form-system:build"
+        "buildTarget": "services-form-system-api:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "services-form-system:build:development"
+          "buildTarget": "services-form-system-api:build:development"
         },
         "production": {
-          "buildTarget": "services-form-system:build:production"
+          "buildTarget": "services-form-system-api:build:production"
         }
       }
     },
@@ -95,6 +117,24 @@
     },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn dev-services services-form-system-api",
+          "yarn nx run services-form-system-api:migrate",
+          "yarn nx run services-form-system-api:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start services-form-system-api"],
+        "parallel": true
+      }
     }
   }
 }

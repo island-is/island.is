@@ -11,8 +11,7 @@ import { conclusion } from '../../../lib/messages'
 
 export const conclusionSection = buildSection({
   id: 'conclusion',
-  title: '',
-  tabTitle: conclusion.general.title,
+  title: conclusion.general.title,
   children: [
     buildMultiField({
       id: 'uiForms.conclusionMultifield',
@@ -32,12 +31,10 @@ export const conclusionSection = buildSection({
         }),
         buildCustomField({
           id: 'pdfoverview',
-          title: '',
           component: 'PdfOverview',
         }),
         buildMessageWithLinkButtonField({
           id: 'uiForms.conclusionBottomLink',
-          title: '',
           url: '/minarsidur/umsoknir',
           buttonTitle: coreMessages.openServicePortalButtonTitle,
           message: coreMessages.openServicePortalMessageText,

@@ -50,6 +50,7 @@ interface Props {
   min?: number
   step?: string
   clearOnChange?: string[]
+  tooltip?: string
 }
 
 interface ChildParams {
@@ -98,8 +99,9 @@ export const InputController = forwardRef(
       min,
       step,
       clearOnChange,
+      tooltip,
     } = props
-    const { setValue } = useFormContext()
+    const formContext = useFormContext()
 
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
@@ -133,8 +135,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -176,8 +178,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -219,8 +221,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             onValueChange={({ value }) => {
@@ -237,6 +239,7 @@ export const InputController = forwardRef(
         return (
           <Input
             id={id}
+            tooltip={tooltip}
             value={value}
             disabled={disabled}
             readOnly={readOnly}
@@ -261,8 +264,8 @@ export const InputController = forwardRef(
               if (onInputChange) {
                 onInputChange(e)
               }
-              if (clearOnChange) {
-                clearInputsOnChange(clearOnChange, setValue)
+              if (clearOnChange && formContext?.setValue) {
+                clearInputsOnChange(clearOnChange, formContext.setValue)
               }
             }}
             rows={rows}

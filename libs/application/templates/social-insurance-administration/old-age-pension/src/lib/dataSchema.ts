@@ -11,7 +11,6 @@ import {
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { NO, YES } from '@island.is/application/types'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
@@ -20,6 +19,7 @@ import {
 import { validatorErrorMessages } from './messages'
 import { filterValidEmployers } from './oldAgePensionUtils'
 import { Employer } from '../types'
+import { NO, YES } from '@island.is/application/core'
 
 const getTotalRatio = (employers: Employer[]) => {
   return employers.reduce((accumulator, currentValue) => {
@@ -128,7 +128,7 @@ export const dataSchema = z.object({
       bank: z.string(),
       bankAddress: z.string(),
       bankName: z.string(),
-      currency: z.string(),
+      currency: z.string().nullable(),
       iban: z.string(),
       swift: z.string(),
       personalAllowance: z.enum([YES, NO]),

@@ -13,7 +13,7 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 
-export const defenderCaseFileCategoriesForRequestCases = [
+const defenderCaseFileCategoriesForRequestCases = [
   CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
@@ -32,7 +32,6 @@ const defenderDefaultCaseFileCategoriesForIndictmentCases = [
 
 const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
-    CaseFileCategory.INDICTMENT,
     CaseFileCategory.CRIMINAL_RECORD,
     CaseFileCategory.COST_BREAKDOWN,
     CaseFileCategory.CASE_FILE,
@@ -45,6 +44,8 @@ const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
   CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+  CaseFileCategory.COURT_RECORD,
+  CaseFileCategory.CRIMINAL_RECORD_UPDATE,
 ]
 
 const prisonStaffCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
@@ -59,9 +60,8 @@ const canDefenceUserViewCaseFileOfRequestCase = (
   )
 }
 
-const canDefenceUserViewCaseFileOfIndictmentCase = (
+const getDefenceUserIndictmentCaseFileCategories = (
   nationalId: string,
-  caseFileCategory: CaseFileCategory,
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
@@ -71,9 +71,7 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
       defendants,
     )
   ) {
-    return defenderCaseFileCategoriesForIndictmentCases.includes(
-      caseFileCategory,
-    )
+    return defenderCaseFileCategoriesForIndictmentCases
   }
 
   if (
@@ -82,14 +80,25 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
       civilClaimants,
     )
   ) {
-    return defenderCaseFileCategoriesForIndictmentCases.includes(
-      caseFileCategory,
-    )
+    return defenderCaseFileCategoriesForIndictmentCases
   }
 
-  return defenderDefaultCaseFileCategoriesForIndictmentCases.includes(
-    caseFileCategory,
+  return defenderDefaultCaseFileCategoriesForIndictmentCases
+}
+
+const canDefenceUserViewCaseFileOfIndictmentCase = (
+  nationalId: string,
+  caseFileCategory: CaseFileCategory,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+) => {
+  const allowedCaseFileCategories = getDefenceUserIndictmentCaseFileCategories(
+    nationalId,
+    defendants,
+    civilClaimants,
   )
+
+  return allowedCaseFileCategories.includes(caseFileCategory)
 }
 
 const canDefenceUserViewCaseFile = (
@@ -168,4 +177,21 @@ export const canLimitedAccessUserViewCaseFile = (
   }
 
   return false
+}
+
+export const getDefenceUserCaseFileCategories = (
+  nationalId: string,
+  caseType: CaseType,
+  defendants?: Defendant[],
+  civilClaimants?: CivilClaimant[],
+) => {
+  if (isRequestCase(caseType)) {
+    return defenderCaseFileCategoriesForRequestCases
+  }
+
+  return getDefenceUserIndictmentCaseFileCategories(
+    nationalId,
+    defendants,
+    civilClaimants,
+  )
 }
