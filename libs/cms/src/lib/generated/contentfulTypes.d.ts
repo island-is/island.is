@@ -2155,8 +2155,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IAnchorPage
     | undefined
 
@@ -5132,8 +5130,6 @@ export interface IUrlFields {
     | ILifeEventPage
     | INews
     | IProjectPage
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IOrganizationPage
     | undefined
 
