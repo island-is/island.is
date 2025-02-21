@@ -1,6 +1,6 @@
 import { useState, useReducer, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
 
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
@@ -15,11 +15,15 @@ import {
   CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
+  GET_ATTACHMENT_TAGS
 } from '@island.is/application/graphql'
 
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
+
+const MALWARE_FETCH_ATTEMPTS = 3
+const MALWARE_MS_BETWEEN_FETCHES = 750
 
 type UploadFileAnswer = {
   name: string
@@ -99,6 +103,7 @@ export const FileUploadController = ({
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
+  const { refetch: getAttachmentTags } = useQuery(GET_ATTACHMENT_TAGS, { skip: true })
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
@@ -130,6 +135,7 @@ export const FileUploadController = ({
       } = data
 
       const response = await uploadFileToS3(file, dispatch, url, fields)
+      const responseUrl = `${response.url}/${fields.key}`
 
       // 3. Add Attachment Data
       await addAttachment({
@@ -137,10 +143,13 @@ export const FileUploadController = ({
           input: {
             id: application.id,
             key: fields.key,
-            url: `${response.url}/${fields.key}`,
+            url: responseUrl,
           },
         },
       })
+
+      // Maybe do this above the dispatch of add attachment?
+      await checkForMalwareIssue(responseUrl)
 
       // Done!
       return Promise.resolve({ key: fields.key })
@@ -257,6 +266,33 @@ export const FileUploadController = ({
     })
 
     setUploadError(undefined)
+  }
+
+  const checkForMalwareIssue = async (url: string) => {
+    let guardDutyStatus
+    let totalWaitTime = 0
+    for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
+      const { data } = await getAttachmentTags({ url })
+      
+      const formattedTags = data.getAttachmentTags as Array<{Key: string, Value: string}>
+      console.log('results', data)
+
+      guardDutyStatus = formattedTags?.find(tag => tag.Key === 'GuardDutyMalwareScanStatus')?.Value
+      if(guardDutyStatus === 'NO_THREATS_FOUND') {
+        break
+      }
+      // Wait before doing next malware tag check
+      const waitTimeThisLoop = MALWARE_MS_BETWEEN_FETCHES * (Math.pow(2, i))
+      totalWaitTime += waitTimeThisLoop
+      await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
+    }
+    if(guardDutyStatus === undefined) {
+      console.log(`No guard duty tag on attachment after ${totalWaitTime/1000} seconds`)
+    } else {
+      if(guardDutyStatus !== 'NO_THREATS_FOUND') {
+        throw new Error(`Unacceptable GuardDuty status found (${guardDutyStatus}) on file: ${url}`)
+      }
+    }
   }
 
   const onFileRejection = (files: FileRejection[]) => {
