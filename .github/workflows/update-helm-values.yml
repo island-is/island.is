@@ -27,9 +27,9 @@ jobs:
       - name: Copy helm charts to helm-values repository
         run: |
           echo "$(ls -alh)"
-          echo "$(ls -alh island-is/)"
-          echo "$(ls -alh helm-value/)"
-          # cp -R island.is/charts/* helm-values/charts/
+          echo "$(ls -alh island.is/)"
+          echo "$(ls -alh helm-values/)"
+          cp -R island.is/charts/* helm-values/charts/
       - name: Commit and push changes to helm-values repository
         run: |
           cd helm-values
