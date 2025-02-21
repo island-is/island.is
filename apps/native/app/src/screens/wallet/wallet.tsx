@@ -301,7 +301,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         ListHeaderComponent={
           (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
             <View style={{ marginBottom: 16 }}>
-              {true && (
+              {isIos && !isBarcodeEnabled && (
                 <Alert
                   type="info"
                   visible={!dismissed.includes('howToUseLicence')}

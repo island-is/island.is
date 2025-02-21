@@ -7,6 +7,7 @@ import styled from 'styled-components/native'
 import { Alert, dynamicColor, LicenseCard, theme } from '../../ui'
 import {
   GenericLicenseType,
+  GenericUserLicenseExpiryStatus,
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -73,7 +74,9 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   const item = data?.genericLicense
   const isInvalid = item?.payload?.metadata?.expired
   const expireDate = item?.payload?.metadata?.expireDate
-  const expireWarning = item?.payload?.metadata?.expiryStatus === 'EXPIRING'
+  const expireWarning =
+    item?.payload?.metadata?.expiryStatus ===
+    GenericUserLicenseExpiryStatus.Expiring
 
   if (!item) return null
 
