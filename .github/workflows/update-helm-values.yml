@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - 'feature/update-helm-values'
+      # TODO: insert - main and - release/*
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  prepare:
+    runs-on: arc-runners
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          path: island.is
+      # NOTE: checkout main
+      - name: Checking out relevant branches for a branch build
+        run: |
+          set -euo pipefail
+          cd island.is/
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+  update-helm-values-repository:
+    needs:
+      - prepare
+    runs-on: arc-runners
+    timeout-minutes: 90
+    steps:
+      - name: Checkout helm-values repository
+        uses: actions/checkout@v4
+        with:
+          repository: island-is/helm-values
+          ref: main
+          token: ${{ secrets.GH_HELM_VALUES_PAT }}
+          path: helm-values
+      - name: Copy helm charts to helm-values repository
+        run: |
+          cp -R island.is/charts/* helm-values/charts/
+      - name: Commit and push changes to helm-values repository
+        run: |
+          cd helm-values
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+          git add .
+          git commit -m "Updated helm charts"
+          echo "Showing changeset\n $(git show)"
+          echo "Done commiting"
+          # git push
