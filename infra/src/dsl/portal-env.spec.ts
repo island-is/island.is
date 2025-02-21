@@ -38,7 +38,7 @@ describe('BFF PortalEnv serialization', () => {
   const services = { api: service('api') }
   const sut = service(serviceName)
     .namespace(clientName)
-    image({ name: bffName, repository: 'testrepo', tag: 'testtag' })
+    .image({ name: bffName, repository: 'testrepo', tag: 'testtag' })
     .redis()
     .serviceAccount(bffName)
     .env({
@@ -225,7 +225,7 @@ describe('BFF PortalEnv serialization', () => {
 })
 
 describe('Env definition defaults', () => {
-  const sut = service('api').namespace('islandis').image(bffName)
+  const sut = service('api').namespace('islandis').image({ name: bffName, repository: 'testrepo', tag: 'testtag' })
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({
