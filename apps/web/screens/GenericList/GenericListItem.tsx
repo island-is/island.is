@@ -96,12 +96,12 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
             {webRichText(item.content ?? [], {
               renderComponent: {
                 FaqList: (slice: FaqListProps) => (
-                  <Box style={{ clear: 'both' }}>
+                  <Box className={styles.clearBoth}>
                     <FaqList {...slice} />
                   </Box>
                 ),
                 AccordionSlice: (slice: AccordionSliceSchema) => (
-                  <Box style={{ clear: 'both' }}>
+                  <Box className={styles.clearBoth}>
                     <AccordionSlice slice={slice} />
                   </Box>
                 ),
