@@ -118,12 +118,26 @@ export const PoliceCaseNumbers: FC<Props> = ({
 
   const onRemove = useCallback(
     (value: string) => () => {
-      const newPoliceCaseNumbers = clientPoliceNumbers?.filter(
-        (number) => number !== value,
+      if (!clientPoliceNumbers) return
+
+      let firstOccurrenceSkipped = false
+
+      const newPoliceCaseNumbers = clientPoliceNumbers.filter(
+        (number, index) => {
+          if (isLOKECase && number === value && index === 0) {
+            if (!firstOccurrenceSkipped) {
+              firstOccurrenceSkipped = true // Skip the first occurrence
+              return true
+            }
+            return false // Remove all other instances
+          }
+          return number !== value // Remove in non-LOKE cases
+        },
       )
-      updatePoliceNumbers(newPoliceCaseNumbers ?? [])
+
+      updatePoliceNumbers(newPoliceCaseNumbers)
     },
-    [clientPoliceNumbers, updatePoliceNumbers],
+    [clientPoliceNumbers, updatePoliceNumbers, isLOKECase],
   )
 
   const renderPoliceCaseNumbersList = () => {

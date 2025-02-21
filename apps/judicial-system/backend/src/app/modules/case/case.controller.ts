@@ -39,6 +39,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseOrigin,
   CaseState,
   CaseType,
   indictmentCases,
@@ -269,6 +270,15 @@ export class CaseController {
       throw new BadRequestException(
         'Cannot merge case that is not in a received state',
       )
+    }
+
+    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
+      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
+      if (!update.policeCaseNumbers.includes(mainPoliceCaseNumber)) {
+        throw new BadRequestException(
+          `Cannot remove main police case number ${mainPoliceCaseNumber}`,
+        )
+      }
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
