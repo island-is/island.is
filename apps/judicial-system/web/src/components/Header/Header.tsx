@@ -37,7 +37,7 @@ import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { getLawyerByNationalId } from '../../utils/stepHelper'
+import { getLawyerByNationalId } from '../../utils/utils'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'

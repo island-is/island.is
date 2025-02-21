@@ -15,7 +15,7 @@ import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { getLawyerByNationalId } from '../../utils/stepHelper'
+import { getLawyerByNationalId } from '../../utils/utils'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
