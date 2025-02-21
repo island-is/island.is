@@ -4,8 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const searchBox = style({
   outline: 'none',
-  paddingTop: theme.spacing[1],
-  paddingBottom: theme.spacing[1],
+  padding: `${theme.spacing[1]}px ${theme.spacing[3]}px `,
   fontSize: '24px',
   fontWeight: theme.typography.light,
   backgroundColor: theme.color.blue100,

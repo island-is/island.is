@@ -69,6 +69,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
             name: 'search',
             type: 'outline',
           }}
+          className={styles.searchBox}
         />
       </Box>
     )
