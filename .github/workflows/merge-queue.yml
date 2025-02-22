@@ -59,7 +59,6 @@ jobs:
       - prepare
     runs-on: arc-runners
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
       DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
       # Fix this
       NODE_IMAGE_VERSION: 20
@@ -88,6 +87,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+      - name: Set id for matrix
+        run: |
+          node ./scripts/ci/docker/create-id.ts
       - name: load-deps
         uses: ./.github/actions/load-deps
       - name: Docker login to ECR repo
@@ -143,7 +145,6 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
@@ -156,7 +157,6 @@ jobs:
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
