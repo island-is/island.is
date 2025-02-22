@@ -59,7 +59,10 @@ jobs:
       - prepare
     runs-on: arc-runners
     env:
+      # Just so this is not an unassigned variable
+      AFFECTED_ALL: ""
       DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
       # Fix this
       NODE_IMAGE_VERSION: 20
       PUBLISH: false

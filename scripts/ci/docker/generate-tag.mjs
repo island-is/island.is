@@ -13,7 +13,7 @@ const tagName = getTagname();
 
 core.setOutput("ARTIFACT_NAME", artifactName);
 core.setOutput("DOCKER_TAG", tagName);
-
+core.setOutput("GIT_BRANCH", targetBranch);
 console.info(`Artifact name: ${artifactName}`);
 console.info(`Docker tag: ${tagName}`);
 
