@@ -5,10 +5,10 @@
 
 import core from "@actions/core";
 
-const PROJECT = process.env.PROJECT;
-const TARGET = process.env.TARGET;
-const IMAGE_NAME = process.env.IMAGE_NAME;
-const IMAGE_TAG = process.env.TAG;
+const PROJECT = process.env.APP_NAME ? process.env.APP_NAME.trim() : undefined;
+const TARGET = process.env.TARGET ? process.env.TARGET.trim() : undefined;
+const IMAGE_NAME = process.env.IMAGE_NAME ? process.env.IMAGE_NAME.trim() : undefined;
+const IMAGE_TAG = process.env.DOCKER_TAG ? process.env.DOCKER_TAG.trim() : undefined;
 const MATRIX_ID = process.env.MATRIX_ID;
 
 let hasError = false;
@@ -42,6 +42,7 @@ if (hasError) {
 const key = `build-${MATRIX_ID}-${PROJECT}-${TARGET}`;
 
 const value = {
+    value: 'build',
     project: PROJECT,
     target: TARGET,
     imageName: IMAGE_NAME,
