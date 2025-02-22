@@ -68,7 +68,7 @@ jobs:
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
+      BUILD_CHUNKS: ${{ steps.build_projects.outputs.BUILD_CHUNKS }}
       DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
