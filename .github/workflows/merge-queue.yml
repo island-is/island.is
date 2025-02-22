@@ -90,7 +90,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
       - name: Set id for matrix
         run: |
-          node ./scripts/ci/docker/create-id.ts
+          node ./scripts/ci/docker/create-id.mjs
       - name: load-deps
         uses: ./.github/actions/load-deps
       - name: Docker login to ECR repo
@@ -166,9 +166,6 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
-
-      
-
   tests:
     needs:
       - prepare

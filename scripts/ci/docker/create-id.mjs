@@ -1,3 +1,4 @@
+// @ts-check
 // This is so every matrix has a unique ID which we can use when exporting values to output
 // so we can be sure that output is not overwritten by another matrix job
 
