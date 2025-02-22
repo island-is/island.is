@@ -8,6 +8,8 @@ on:
         type: boolean
         default: false
     outputs:
+      MQ_SHA: 
+        value: ${{ jobs.install.outputs.MQ_SHA}}
       MQ_DOCKER_TAG:
         value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
       MQ_ARTIFACT_NAME:
@@ -65,6 +67,7 @@ env:
 jobs:
   install:
     outputs:
+      MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
       MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
       MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
       MQ_GIT_BRANCH: ${{ steps.prepare-merge-queue.outputs.GIT_BRANCH }}

@@ -10,12 +10,16 @@ const targetBranch = getTargetBranch();
 const typeOfDeployment = getTypeOfDeployment();
 const artifactName = getArtifactname();
 const tagName = getTagname();
+const sha = context.payload.pull_request?.head.sha || context.sha;
 
 core.setOutput("ARTIFACT_NAME", artifactName);
 core.setOutput("DOCKER_TAG", tagName);
 core.setOutput("GIT_BRANCH", targetBranch);
+core.setOutput("GIT_SHA", sha);
 console.info(`Artifact name: ${artifactName}`);
 console.info(`Docker tag: ${tagName}`);
+console.info(`Git branch: ${targetBranch}`);
+console.info(`Git SHA: ${sha}`);
 
 function getTagname() {
     if (eventName === "pull_request" && context.payload.pull_request?.number) {

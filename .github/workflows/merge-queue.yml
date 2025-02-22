@@ -63,6 +63,7 @@ jobs:
       AFFECTED_ALL: ""
       DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
+      GIT_COMMIT_SHA: ${{ needs.prepare.outputs.MQ_SHA }}
       # Fix this
       NODE_IMAGE_VERSION: 20
       PUBLISH: false
@@ -107,8 +108,6 @@ jobs:
         id: dockerargs
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
@@ -149,7 +148,6 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
-          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
@@ -161,7 +159,6 @@ jobs:
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
-          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
