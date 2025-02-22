@@ -1,3 +1,4 @@
+import { generatePerson } from 'kennitala'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import {
@@ -117,6 +118,8 @@ describe('getAvailableMonths', () => {
 
 describe('isExistsCohabitantOlderThan25', () => {
   it('should return true if user has cohabitant older than 25', () => {
+    const birthday = new Date()
+    birthday.setFullYear(birthday.getFullYear() - 26)
     const application = buildApplication({
       externalData: {
         nationalRegistry: {
@@ -128,7 +131,7 @@ describe('isExistsCohabitantOlderThan25', () => {
         },
         nationalRegistryCohabitants: {
           // eslint-disable-next-line local-rules/disallow-kennitalas
-          data: ['2605791429'],
+          data: [generatePerson(birthday)],
           date: new Date(),
           status: 'success',
         },
@@ -140,7 +143,9 @@ describe('isExistsCohabitantOlderThan25', () => {
     expect(res).toEqual(true)
   })
 
-  it('should return false if user has cohabitant older than 25', () => {
+  it('should return false if user has cohabitant younger than 25', () => {
+    const birthday = new Date()
+    birthday.setFullYear(birthday.getFullYear() - 24)
     const application = buildApplication({
       externalData: {
         nationalRegistry: {
@@ -152,7 +157,7 @@ describe('isExistsCohabitantOlderThan25', () => {
         },
         nationalRegistryCohabitants: {
           // eslint-disable-next-line local-rules/disallow-kennitalas
-          data: ['0212181460'],
+          data: [generatePerson(birthday)],
           date: new Date(),
           status: 'success',
         },
