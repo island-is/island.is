@@ -192,7 +192,7 @@ jobs:
 
       - name: Prepare merge queue 
         id: prepare-merge-queue
-        if: ${{ github.event.inputs.run_merge_queue == 'true' }}
+        if: ${{ github.event.inputs.run_merge_queue == 'true' || github.event.inputs.run_merge_queue == true }}
         run: |
           node scripts/ci/docker/generate-tag.mjs
 
