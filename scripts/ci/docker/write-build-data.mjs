@@ -39,7 +39,7 @@ if (hasError) {
     process.exit(1);
 }
 
-const key = `${MATRIX_ID}-${PROJECT}-${TARGET}`;
+const key = `build-${MATRIX_ID}-${PROJECT}-${TARGET}`;
 
 const value = {
     project: PROJECT,

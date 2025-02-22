@@ -68,13 +68,13 @@ jobs:
       NX_PARALLEL: 1
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
+      matrix: 
+        chunk: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
     steps:
       - name: Gather apps
         id: gather
         run: |
           set -euo pipefail
-          echo ${{ matrix.chunks }}
           AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
