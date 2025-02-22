@@ -12,7 +12,7 @@ const artifactName = getArtifactname();
 const tagName = getTagname();
 
 core.setOutput("ARTIFACT_NAME", artifactName);
-core.setOutput("TAG_NAME", tagName);
+core.setOutput("DOCKER_TAG", tagName);
 
 function getTagname() {
     if (eventName === "pull_request" && context.payload.pull_request?.number) {
