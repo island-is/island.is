@@ -44,9 +44,9 @@ env:
 
 jobs:
   # WHILE TESTING
-  #pre-checks:
-  #  uses: ./.github/workflows/pre-checks.yml
-  #  secrets: inherit
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
@@ -76,6 +76,7 @@ jobs:
   build:
     needs:
       - prepare-build
+      - prepare
     runs-on: arc-runners
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
