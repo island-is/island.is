@@ -70,7 +70,7 @@ main() {
   eval "${ACTION}"
 }
 
-upload_artifact() {
+_upload_artifact() {
   case $UPLOAD_ARTIFACT_DOCKER in
   true)
     IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET"  node "$DIR/docker/write-build-data.mjs"
@@ -82,3 +82,4 @@ upload_artifact() {
 
 _set_publish
 main "$@"
+_upload_artifact
