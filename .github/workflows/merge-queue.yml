@@ -65,13 +65,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-      - name: load-deps
-        uses: ./.github/actions/load-deps
       - id: generate-tag
         run: |
           node scripts/ci/docker/generate-tag.mjs
-          echo ${{ needs.prepare.outputs.DOCKER_CHUNKS}}
-          echo This is a debug shit
   build:
     needs:
       - prepare-build
