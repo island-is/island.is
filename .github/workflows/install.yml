@@ -194,7 +194,7 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
           echo "Setting docker chunks"
-            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo CHUNKS="{\"projects\": $CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: License audit Node modules
