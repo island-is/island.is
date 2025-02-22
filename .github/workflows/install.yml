@@ -193,6 +193,7 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
+          echo "Setting docker chunks"
             echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
