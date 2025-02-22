@@ -4,8 +4,8 @@ on:
     inputs:
       run_merge_queue:
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
     outputs:
       MQ_DOCKER_TAG:
         value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
