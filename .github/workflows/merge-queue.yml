@@ -61,9 +61,7 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo ${{ needs.prepare.outputs.MQ_DOCKER_TAG }}
-          echo ${{ needs.prepare.outputs.MQ_ARTIFACT_NAME }}
-          echo ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
+          printf "${{ join(needs.prepare.outputs.*, '\n') }}" 
   build:
     needs:
       - prepare
