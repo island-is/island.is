@@ -184,7 +184,6 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Prepare docker build targets
         id: docker_projects
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
@@ -193,9 +192,10 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-          echo "Setting docker chunks"
-            echo CHUNKS="{\"projects\": $CHUNKS}" >> "$GITHUB_OUTPUT"
+            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
+  
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh

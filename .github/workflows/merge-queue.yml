@@ -68,7 +68,7 @@ jobs:
       NX_PARALLEL: 1
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
     steps:
       - name: Gather apps
         id: gather
