@@ -113,7 +113,9 @@ jobs:
         run: |
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
-      
+      - name: test
+        run: |
+          echo ${{ github.event.inputs.run_merge_queue }}
       - name: Prepare merge queue 
         id: prepare-merge-queue
         if: ${{ github.event.inputs.run_merge_queue == 'true' }}
