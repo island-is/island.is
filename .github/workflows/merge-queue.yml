@@ -54,6 +54,16 @@ jobs:
       run_merge_queue: true
   #  needs:
   #    - pre-checks
+  debug:
+    needs: 
+      - prepare
+    runs-on: arc-runners
+    steps:
+      - name: Debug
+        run: |
+          echo ${{ needs.prepare.outputs.MQ_DOCKER_TAG }}
+          echo ${{ needs.prepare.outputs.MQ_ARTIFACT_NAME }}
+          echo ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
   build:
     needs:
       - prepare

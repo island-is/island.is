@@ -14,6 +14,9 @@ const tagName = getTagname();
 core.setOutput("ARTIFACT_NAME", artifactName);
 core.setOutput("DOCKER_TAG", tagName);
 
+console.info(`Artifact name: ${artifactName}`);
+console.info(`Docker tag: ${tagName}`);
+
 function getTagname() {
     if (eventName === "pull_request" && context.payload.pull_request?.number) {
         return `pr-${context.payload.pull_request.number}-${randomTag}`;
