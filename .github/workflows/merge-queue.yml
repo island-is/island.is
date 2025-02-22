@@ -54,16 +54,7 @@ jobs:
       run_merge_queue: true
   #  needs:
   #    - pre-checks
-  debug:
-    needs: 
-      - prepare
-    runs-on: arc-runners
-    steps:
-      - name: Debug
-        run: |
-          printf "${{ join(needs.prepare.outputs.*, '\n') }}" 
-          echo ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
-  build:
+  docker-build:
     needs:
       - prepare
     runs-on: arc-runners
@@ -76,7 +67,6 @@ jobs:
       DISABLE_CHUNKS: true
       MAX_JOBS: 3
       NX_PARALLEL: 1
-      
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
