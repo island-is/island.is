@@ -44,38 +44,21 @@ env:
 
 jobs:
   # WHILE TESTING
-  pre-checks:
-    uses: ./.github/workflows/pre-checks.yml
-    secrets: inherit
+  # pre-checks:
+  #  uses: ./.github/workflows/pre-checks.yml
+  #  secrets: inherit
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
   #  needs:
   #    - pre-checks
-  prepare-build:
-    needs:
-      - prepare
-    outputs:
-      DOCKER_TAG: ${{ steps.generate-tag.outputs.DOCKER_TAG }}
-    runs-on: arc-runners
-    env:
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-      - id: generate-tag
-        run: |
-          node scripts/ci/docker/generate-tag.mjs
   build:
     needs:
-      - prepare-build
       - prepare
     runs-on: arc-runners
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      DOCKER_TAG: ${{ needs.prepare-build.outputs.DOCKER_TAG}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
       # Fix this
       NODE_IMAGE_VERSION: 20
       PUBLISH: false

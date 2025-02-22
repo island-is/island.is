@@ -1,7 +1,16 @@
 name: 'Prep Dependencies'
 on:
   workflow_call:
+    inputs:
+      run_merge_queue:
+        required: false
+        type: boolean
+        default: false
     outputs:
+      MQ_DOCKER_TAG:
+        value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
+      MQ_ARTIFACT_NAME:
+        value: ${{ jobs.install.outputs.MQ_ARTIFACT_NAME }}
       TEST_CHUNKS:
         value: ${{ jobs.install.outputs.TEST_CHUNKS }}
       E2E_CHUNKS:
@@ -53,6 +62,8 @@ env:
 jobs:
   install:
     outputs:
+      MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
+      MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
@@ -178,6 +189,12 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Prepare merge queue 
+        id: prepare-merge-queue
+        if: ${{ github.event.inputs.run_merge_queue == 'true' }}
+        run: |
+          node scripts/ci/docker/generate-tag.mjs
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
