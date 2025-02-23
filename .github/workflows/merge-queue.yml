@@ -58,6 +58,11 @@ jobs:
     needs:
       - prepare
     runs-on: arc-runners
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      json: ${{ steps.matrix-output.outputs.json }}
     env:
       # Just so this is not an unassigned variable
       AFFECTED_ALL: ""
@@ -166,12 +171,21 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+      - uses: beacon-biosignals/matrix-output@v1
+        id: matrix-output
+        with:
+          yaml: |
+            value: ${{ env.JSON_value }}
+            project: ${{ env.JSON_project }}
+            target: ${{ env.JSON_target }}
+            imageName: ${{ env.JSON_imageName }}
+            imageTag: ${{ env.JSON_imageTag }}
   post-docker-build:
     needs:
       - docker-build
     runs-on: arc-runners
     steps:
-      - run: printf "${{ join(needs.docker-build.outputs.*, '\n') }}"
+      - run: echo ${{ needs.docker-build.outputs.json }}
 
   tests:
     needs:
@@ -210,19 +224,18 @@ jobs:
     needs:
       - prepare
       - tests
+      - post-docker-build
       # - e2e
       # - build
     steps:
-      - name: Announce success
-        run: echo "Build is successful"
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       # - name: Check e2e success
       #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      # - name: Check build success
-      #   run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Check build success
+        run: '[[ ${{ needs.post-docker-build.result }} != "failure" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:

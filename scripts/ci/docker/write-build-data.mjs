@@ -39,8 +39,6 @@ if (hasError) {
     process.exit(1);
 }
 
-const key = `build-${MATRIX_ID}-${PROJECT}-${TARGET}`;
-
 const value = {
     value: 'build',
     project: PROJECT,
@@ -49,6 +47,9 @@ const value = {
     imageTag: IMAGE_TAG,
 }
 
-core.setOutput(key, JSON.stringify(value));
-console.info(`Build data ${JSON.stringify(value, null, 2)} written to output: ${key}`);
+for (const key in value) {
+    core.exportVariable(`JSON_${key}`, value[key]);
+}
+
+console.info(`Build data ${JSON.stringify(value, null, 2)}}`);
 
