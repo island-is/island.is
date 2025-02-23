@@ -187,6 +187,7 @@ jobs:
       - docker-build
       - prepare
     permissions:
+      id-token: write
       contents: write
     runs-on: arc-runners
     steps:
@@ -203,6 +204,15 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+      - name: Adding required env vars
+        uses: actions/github-script@v7
+        env:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env['ACTIONS_CACHE_URL'])
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+            core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
       - name: Upload artifact
         env:
           ARTIFACT_NAME: ${{ needs.prepare.outputs.MQ_ARTIFACT_NAME}}
