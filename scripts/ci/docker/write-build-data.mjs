@@ -9,7 +9,7 @@ const PROJECT = process.env.APP_NAME ? process.env.APP_NAME.trim() : undefined;
 const TARGET = process.env.TARGET ? process.env.TARGET.trim() : undefined;
 const IMAGE_NAME = process.env.IMAGE_NAME ? process.env.IMAGE_NAME.trim() : undefined;
 const IMAGE_TAG = process.env.DOCKER_TAG ? process.env.DOCKER_TAG.trim() : undefined;
-const MATRIX_ID = process.env.MATRIX_ID;
+const MATRIX_ID = process.env["MATRIX-ID"];
 
 let hasError = false;
 
@@ -31,7 +31,7 @@ if (!IMAGE_TAG) {
 }
 
 if (!MATRIX_ID) {
-    console.error('Error: MATRIX_ID is undefined');
+    console.error('Error:  MATRIX-ID is undefined');
     hasError = true;
 }
 
