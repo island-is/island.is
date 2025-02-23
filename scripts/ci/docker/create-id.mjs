@@ -15,5 +15,5 @@ const id = uuidv5(affectedProjects, uuidv5.URL);
 
 console.log(`Export Matrix ID: ${id}`);
 
-core.exportVariable('MATRIX-ID', id);
+core.exportVariable('MATRIX_ID', id);
 core.exportVariable('UPLOAD_ARTIFACT_DOCKER', 'true');

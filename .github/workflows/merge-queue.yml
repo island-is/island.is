@@ -171,13 +171,12 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
-      # PLEASE ADD YQ TO THE RUNNER - THIS IS JUST AN UGLY HACK
-      - uses: chrisdickinson/setup-yq@latest
       - name: Docker build output
-        uses: beacon-biosignals/matrix-output@v1
-        id: matrix-output
+        uses: cloudposse/github-action-matrix-outputs-write@v1
         with:
-          yaml: |
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ env.MATRIX_ID }}
+          outputs: |-
             value: ${{ env.JSON_value }}
             project: ${{ env.JSON_project }}
             target: ${{ env.JSON_target }}
@@ -188,7 +187,11 @@ jobs:
       - docker-build
     runs-on: arc-runners
     steps:
-      - run: echo ${{ needs.docker-build.outputs.json }}
+      - uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: docker-build
+      - run: echo "${{ steps.read.outputs.result }}" 
 
   tests:
     needs:
