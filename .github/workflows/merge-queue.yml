@@ -171,7 +171,10 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
-      - uses: beacon-biosignals/matrix-output@v1
+      # PLEASE ADD YQ TO THE RUNNER - THIS IS JUST AN UGLY HACK
+      - uses: chrisdickinson/setup-yq@latest
+      - name: Docker build output
+        uses: beacon-biosignals/matrix-output@v1
         id: matrix-output
         with:
           yaml: |
