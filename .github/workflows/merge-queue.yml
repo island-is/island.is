@@ -193,11 +193,19 @@ jobs:
         id: read
         with:
           matrix-step-name: docker-build
+      - name: checkout
+        uses: actions/checkout@v4
+  
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
       - name: Upload artifact
         env:
           ARTIFACT_NAME: ${{ needs.prepare.outputs.MQ_ARTIFACT_NAME}}
           JSON_DATA: ${{ steps.read.outputs.result }}
-        run: node scripts/ci/docker/get-data.mjs
+        run: node scripts/ci/docker/write-data.mjs
 
   tests:
     needs:
