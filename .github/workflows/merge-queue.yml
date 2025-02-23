@@ -186,6 +186,8 @@ jobs:
     needs:
       - docker-build
       - prepare
+    permissions:
+      contents: write
     runs-on: arc-runners
     steps:
       - name: Get docker-build output
