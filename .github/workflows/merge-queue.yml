@@ -166,6 +166,13 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+  post-docker-build:
+    needs:
+      - docker-build
+    runs-on: arc-runners
+    steps:
+      - run: printf "${{ join(needs.docker-build.outputs.*, '\n') }}"
+
   tests:
     needs:
       - prepare
