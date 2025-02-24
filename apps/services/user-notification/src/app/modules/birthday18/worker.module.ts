@@ -3,7 +3,12 @@ import { LoggingModule } from '@island.is/logging'
 import { UserNotificationBirthday18WorkerService } from './worker.service'
 import { environment } from '../../../environments/environment'
 import { QueueModule } from '@island.is/message-queue'
-import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
+import {
+  NationalRegistryV3ApplicationsClientConfig,
+  NationalRegistryV3ApplicationsClientModule,
+} from '@island.is/clients/national-registry-v3-applications'
+import { ConfigModule } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
@@ -18,6 +23,10 @@ import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/n
           queueName: environment.deadLetterQueueName,
         },
       },
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, NationalRegistryV3ApplicationsClientConfig],
     }),
     NationalRegistryV3ApplicationsClientModule,
   ],
