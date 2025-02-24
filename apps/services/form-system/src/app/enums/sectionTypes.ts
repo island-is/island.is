@@ -1,6 +1,6 @@
 export const SectionTypes = {
-  PREMISES: 'premises',
-  PARTIES: 'parties',
-  INPUT: 'input',
-  PAYMENT: 'payment',
+  PREMISES: 'PREMISES',
+  PARTIES: 'PARTIES',
+  INPUT: 'INPUT',
+  PAYMENT: 'PAYMENT',
 }

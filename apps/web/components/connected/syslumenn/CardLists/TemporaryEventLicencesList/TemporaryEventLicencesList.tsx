@@ -333,7 +333,13 @@ const TemporaryEventLicencesList: FC<
                         {temporaryEventLicence.licenseHolder}
                       </Text>
 
-                      <Text paddingBottom={2}>
+                      <Box paddingBottom={2}>
+                        {Boolean(temporaryEventLicence.location) && (
+                          <Text>{temporaryEventLicence.location}</Text>
+                        )}
+                      </Box>
+
+                      <Text>
                         {formatMessage(t.licenseNumber)}:{' '}
                         {temporaryEventLicence.licenseNumber}
                       </Text>

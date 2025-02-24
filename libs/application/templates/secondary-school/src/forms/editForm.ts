@@ -18,7 +18,6 @@ import { getEndOfDayUTCDate, getFirstRegistrationEndDate } from '../utils'
 // Note: This form is identical to SecondarySchoolForm, except added ABORT action in buildSubmitField and custom field HandleBeforeSubmitInEdit
 export const Edit: Form = buildForm({
   id: 'SecondarySchoolForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: false,
@@ -51,13 +50,11 @@ export const Edit: Form = buildForm({
             buildCustomField({
               component: 'Overview',
               id: 'overview',
-              title: '',
               description: '',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: (event) => {
                 return event === DefaultEvents.ABORT
               },
@@ -77,7 +74,6 @@ export const Edit: Form = buildForm({
             buildCustomField({
               component: 'HandleBeforeSubmitInEdit',
               id: 'handleBeforeSubmitInEdit',
-              title: '',
               description: '',
             }),
           ],

@@ -61,13 +61,6 @@ export enum FileNames {
 }
 
 export const OJOI_INPUT_HEIGHT = 64
-
-export type SignatureType = 'regular' | 'committee'
-export enum SignatureTypes {
-  REGULAR = 'regular',
-  COMMITTEE = 'committee',
-}
-
 export const ONE = 1
 export const MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 1
 export const DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT = 1
