@@ -17,10 +17,12 @@ runs:
       with:
         repository: island-is/helm-values
         ref: main
-        token: $gh_token_pat
+        token: ${{ inputs.gh_token_pat }}
         path: helm-values
     - name: Copy affected helm charts from island.is repository to helm-values repository
       shell: bash
+      env:
+        files: ${{ inputs.files }}
       run: |
         IFS=$IFS,
         paths=()
