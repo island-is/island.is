@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Op } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -1444,7 +1444,6 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  // TODO
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
