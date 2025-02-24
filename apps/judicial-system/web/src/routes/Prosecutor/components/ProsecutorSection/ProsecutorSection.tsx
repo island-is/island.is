@@ -1,6 +1,5 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 
-import { Box } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -10,7 +9,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
-const ProsecutorSection = () => {
+const ProsecutorSection: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCase } = useCase()
 
@@ -30,21 +29,16 @@ const ProsecutorSection = () => {
   }
 
   const handleProsecutorChange = (prosecutorId: string) => {
-    if (!workingCase) {
-      return false
-    }
-
     setProsecutor(prosecutorId)
-    return true
   }
 
   return (
-    <Box component="section" marginBottom={5}>
+    <>
       <ProsecutorSectionHeading
         isIndictment={isIndictmentCase(workingCase.type)}
       />
       <ProsecutorSelection onChange={handleProsecutorChange} />
-    </Box>
+    </>
   )
 }
 

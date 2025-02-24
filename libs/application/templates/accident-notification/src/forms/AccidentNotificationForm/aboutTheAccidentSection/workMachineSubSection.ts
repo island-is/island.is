@@ -29,7 +29,6 @@ export const workMachineSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'workMachineRadio',
-          title: '',
           backgroundColor: 'blue',
           width: 'half',
           required: true,

@@ -172,6 +172,7 @@ globalStyle(
 
 globalStyle(`${wrapper}  .island-select__menu-list`, {
   padding: 0,
+  maxHeight: '336px',
 })
 
 export const icon = style({
