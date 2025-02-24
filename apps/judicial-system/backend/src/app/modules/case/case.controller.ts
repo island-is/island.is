@@ -272,13 +272,16 @@ export class CaseController {
       )
     }
 
-    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
-      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
-      if (!update.policeCaseNumbers.includes(mainPoliceCaseNumber)) {
-        throw new BadRequestException(
-          `Cannot remove main police case number ${mainPoliceCaseNumber}`,
-        )
-      }
+    // If the case comes from LOKE then we don't want to allow the removal or
+    // moving around of the first police case number as that coupled with the
+    // case id is the identifier used to update the case in LOKE.
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      update.policeCaseNumbers?.indexOf(theCase.policeCaseNumbers[0]) !== 0
+    ) {
+      throw new BadRequestException(
+        `Cannot remove or move main police case number ${theCase.policeCaseNumbers[0]}`,
+      )
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
