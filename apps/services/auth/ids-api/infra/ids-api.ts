@@ -152,7 +152,7 @@ const schedule = { schedule: '0 3 * * *' }
 export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
-    .image(imageName)
+    .image({name: imageName})
     .command('node')
     .args('main.js', '--job=cleanup')
     .resources({
