@@ -84,12 +84,16 @@ async function download() {
     for (const value of parsedData) {
         const { project, imageName, imageTag } = value;
         console.log(`Changing value for imageName ${imageName}`);
-        IMAGE_OBJECT[imageName].forEach(({ filePath, content }) => {
-            content.image.tag = imageTag;
-            const newFile = jsyaml.dump(content);
-            fs.writeFileSync(filePath, newFile, {encoding: 'utf-8'});
-            console.info(`Updated ${filePath}`);
-        });
+        if (imageName in IMAGE_OBJECT) {
+            IMAGE_OBJECT[imageName].forEach(({ filePath, content }) => {
+                content.image.tag = imageTag;
+                const newFile = jsyaml.dump(content);
+                fs.writeFileSync(filePath, newFile, { encoding: 'utf-8' });
+                console.info(`Updated ${filePath}`);
+            });
+        } else {
+            console.info(`Skipping ${imageName}…`)
+        }
 
     }
     console.log(JSON.stringify(parsedData, null, 2));
