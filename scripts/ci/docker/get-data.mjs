@@ -1,5 +1,8 @@
-import core from "@actions/core";
 // @ts-check
+import fs from "node:fs";
+import { execSync } from "node:child_process";
+import core from "@actions/core";
+
 const name = 'pr-18084';
 const url = `https://api.github.com/repos/island-is/island.is/actions/artifacts?name=${name}`;
 const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT';
