@@ -42,3 +42,4 @@ runs:
         git add .
         git commit -m "Updated helm charts"
         echo "Showing changeset\n $(git show)"
+        git push
