@@ -27,11 +27,14 @@ async function download() {
         },
     });
     const zipBuffer = Buffer.from(await artifactZipResponse.arrayBuffer());
+    console.log(zipBuffer);
+    process.exit(0);
     const zipFileName = 'artifact.zip';
-    fs.writeFileSync(zipFileName, zipBuffer);
     console.log(`Saved artifact to ${zipFileName}.`);
 
     const outputDir = '/tmp/artifact_unzip';
+    // fs.writeFileSync(join(outputDir, zipFileName, zipBuffer);
+
     try {
         execSync(`cat ${zipFileName}`);
         execSync(`unzip -o ${zipFileName} -d ${outputDir}`, { stdio: 'inherit' });
