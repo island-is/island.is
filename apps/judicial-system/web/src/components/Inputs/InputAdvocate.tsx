@@ -1,4 +1,11 @@
-import { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
@@ -84,13 +91,26 @@ const InputAdvocate: FC<Props> = ({
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
-  const { ls } = useIndexedDB(
+  const { getAllLawyers, isDBConnecting } = useIndexedDB(
     Database.name,
     Database.lawyerTable,
-    [], // TODO: FIX,
   )
 
-  ls().then((d: any) => setLawyers(d))
+  useEffect(() => {
+    const fetchData = async () => {
+      if (lawyers.length === 0) {
+        const allLawyers = await getAllLawyers()
+
+        if (allLawyers.length > 0) {
+          setLawyers(allLawyers)
+        }
+      }
+    }
+
+    if (isDBConnecting === false) {
+      fetchData()
+    }
+  }, [getAllLawyers, isDBConnecting, lawyers.length])
 
   const options = useMemo(
     () =>

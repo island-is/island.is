@@ -37,7 +37,6 @@ import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { getLawyerByNationalId } from '../../utils/utils'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
@@ -81,30 +80,9 @@ const HeaderContainer = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
   const [isRobot, setIsRobot] = useState<boolean>()
-  const [lawyer, setLawyer] = useState<Lawyer | null>(null)
 
   const { countryCode } = useGeoLocation()
-
-  const lawyers = useGetLawyers(isDistrictCourtUser(user))
-
-  const { isDBConnecting, db } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    lawyers,
-  )
-
-  useEffect(() => {
-    const fetchLawyer = async () => {
-      try {
-        const data = await getLawyerByNationalId(db, user?.nationalId)
-        setLawyer(data)
-      } catch (error) {
-        console.error('Failed to fetch customer:', error)
-      }
-    }
-
-    fetchLawyer()
-  }, [db, user?.nationalId])
+  useIndexedDB(Database.name, Database.lawyerTable)
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
@@ -144,12 +122,12 @@ const HeaderContainer = () => {
               <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
               <Hidden above="sm">
                 <Text fontWeight="light" variant={'eyebrow'}>
-                  {'Réttarvörslugátt'}
+                  Réttarvörslugátt
                 </Text>
               </Hidden>
               <Hidden below="md">
                 <Text fontWeight="light" variant={'default'}>
-                  {'Réttarvörslugátt'}
+                  Réttarvörslugátt
                 </Text>
               </Hidden>
             </Box>
@@ -189,7 +167,7 @@ const HeaderContainer = () => {
                         )}
                       </Text>
                     </Box>
-                    <Box marginBottom={2}>
+                    {/* <Box marginBottom={2}>
                       <Text>
                         {capitalize(
                           isDefenceUser(user) && lawyer
@@ -213,7 +191,7 @@ const HeaderContainer = () => {
                           ? lawyer.email
                           : user.email}
                       </Text>
-                    </Box>
+                    </Box> */}
                   </Box>
                 </div>
                 <div className={styles.dropdownItem}>

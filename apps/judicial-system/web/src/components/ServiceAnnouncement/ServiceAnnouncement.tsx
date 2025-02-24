@@ -15,7 +15,6 @@ import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { getLawyerByNationalId } from '../../utils/utils'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
@@ -104,11 +103,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   const { formatMessage } = useIntl()
 
-  const { db } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    [], // TODO: FIX,
-  )
+  const { db } = useIndexedDB(Database.name, Database.lawyerTable)
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena
@@ -125,12 +120,12 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
           return
         }
 
-        const data = await getLawyerByNationalId(
-          db,
-          subpoena.defenderNationalId,
-        )
+        // const data = await getLawyerByNationalId(
+        //   db,
+        //   subpoena.defenderNationalId,
+        // )
 
-        setLawyer(data ?? undefined)
+        setLawyer(undefined)
       } catch (error) {
         console.error('Failed to fetch customer:', error)
       }

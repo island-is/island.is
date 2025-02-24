@@ -147,23 +147,6 @@ export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
   )
 }
 
-export const getLawyerByNationalId = (
-  db: IDBDatabase | null,
-  nationalId?: string | null,
-): Promise<Lawyer> | null => {
-  if (!db || !nationalId) {
-    return null
-  }
-  const transaction = db.transaction(Database.lawyerTable)
-  const store = transaction.objectStore(Database.lawyerTable)
-
-  return new Promise((resolve, reject) => {
-    const request = store.get(nationalId)
-    request.onsuccess = () => resolve(request.result)
-    request.onerror = () => reject(request.error)
-  })
-}
-
 export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
   Boolean(
     isProsecutionUser(user) ||
