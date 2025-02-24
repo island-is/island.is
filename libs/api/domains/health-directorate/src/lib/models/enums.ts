@@ -34,3 +34,14 @@ export enum PrescribedItemRenewalStatusEnum {
 registerEnumType(PrescribedItemRenewalStatusEnum, {
   name: 'HealthDirectoratePrescriptionRenewalStatus',
 })
+
+export enum PrescribedItemCategoryEnum {
+  Regular = 'regular',
+  Pn = 'pn',
+  Regimen = 'regimen',
+  Owner = 'owner',
+}
+
+registerEnumType(PrescribedItemCategoryEnum, {
+  name: 'HealthDirectoratePrescribedItemCategory',
+})

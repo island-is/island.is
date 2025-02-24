@@ -2,8 +2,10 @@ import {
   DiseaseVaccinationDtoVaccinationStatusEnum,
   PrescribedItemDtoRenewalBlockedReasonEnum,
   PrescribedItemDtoRenewalStatusEnum,
+  PrescribedItemDtoCategoryEnum,
 } from '@island.is/clients/health-directorate'
 import {
+  PrescribedItemCategoryEnum,
   PrescribedItemRenewalBlockedReasonEnum,
   PrescribedItemRenewalStatusEnum,
   VaccinationStatusEnum,
@@ -63,5 +65,20 @@ export const mapPrescriptionRenewalStatus = (
       return PrescribedItemRenewalStatusEnum.NUMBER_2
     default:
       return PrescribedItemRenewalStatusEnum.NUMBER_0
+  }
+}
+
+export const mapPrescriptionCategory = (
+  status: PrescribedItemDtoCategoryEnum,
+): PrescribedItemCategoryEnum => {
+  switch (status) {
+    case PrescribedItemDtoCategoryEnum.Pn:
+      return PrescribedItemCategoryEnum.Pn
+    case PrescribedItemDtoCategoryEnum.Regimen:
+      return PrescribedItemCategoryEnum.Regimen
+    case PrescribedItemDtoCategoryEnum.Regular:
+      return PrescribedItemCategoryEnum.Regular
+    default:
+      return PrescribedItemCategoryEnum.Owner
   }
 }
