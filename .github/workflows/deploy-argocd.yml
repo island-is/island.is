@@ -16,5 +16,7 @@ jobs:
         - name: Setup yarn
           uses: ./.github/actions/setup-yarn
         - name: Get manifest data
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: node scripts/ci/docker/get-data.mjs
         

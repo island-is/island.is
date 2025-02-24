@@ -2,14 +2,14 @@
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 import core from "@actions/core";
-import { join } from "node:path";
-
+import github from "@actions/github";
 const name = 'pr-18084';
 const url = `https://api.github.com/repos/island-is/island.is/actions/artifacts?name=${name}`;
 const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT';
 const _KEY_OUTPUT = 'MQ_OUTPUT';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
+await download();
 
 async function download() {
     const value = await (await fetch(url)).json();
@@ -56,5 +56,3 @@ async function download() {
     core.setOutput(_KEY_HAS_OUTPUT, "true");
     core.setOutput(_KEY_OUTPUT, parsedData);
 }
-
-download();
