@@ -1,5 +1,6 @@
 // @ts-check
-import fs from "node:fs";
+import fs, { readFileSync } from "node:fs";
+import jsyaml from 'js-yaml';
 import { execSync } from "node:child_process";
 import core from "@actions/core";
 import github from "@actions/github";
@@ -57,6 +58,17 @@ async function download() {
 
     const fileData = fs.readFileSync(fileName, 'utf-8');
     const parsedData = JSON.parse(fileData);
+    for (const value of parsedData) {
+        const { project, imageName, imageTag } = value;
+        const stageName = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
+        const path = `charts/islandis-services/${project}/values.${stageName}.yaml`;
+        const values = jsyaml.load(readFileSync(path, 'utf-8'));
+        if (values && typeof values == 'object' && 'image' in values && values.image && typeof values.image == 'object' && 'tag' in values.image) {
+            values.image.tag = imageTag;
+            console.log(`Changed value for ${project}`);
+        }
+        console.log(values);
+    }
     console.log(JSON.stringify(parsedData, null, 2));
     core.setOutput(_KEY_HAS_OUTPUT, "true");
     core.setOutput(_KEY_OUTPUT, parsedData);
@@ -73,17 +85,20 @@ function getTypeOfDeployment() {
     if (branch === 'main') {
         return {
             dev: true,
+            staging: false,
             prod: false
         }
     }
     if (branch.startsWith('release')) {
         return {
             dev: false,
+            staging: false,
             prod: true
         }
     }
     return {
         dev: false,
+        staging: false,
         prod: false
     }
 }
