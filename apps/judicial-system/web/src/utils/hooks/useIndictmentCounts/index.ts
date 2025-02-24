@@ -4,7 +4,10 @@ import { useIntl } from 'react-intl'
 import { toast } from '@island.is/island-ui/core'
 import { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Offense,
+  UpdateIndictmentCountInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { indictmentCount } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -103,6 +106,7 @@ const useIndictmentCounts = () => {
       indictmentCountId: string,
       update: UpdateIndictmentCount,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
+      updatedOffenses?: Offense[],
     ) => {
       setWorkingCase((prevWorkingCase) => {
         if (!prevWorkingCase.indictmentCounts) {
@@ -119,6 +123,7 @@ const useIndictmentCounts = () => {
         newIndictmentCounts[indictmentCountIndexToUpdate] = {
           ...newIndictmentCounts[indictmentCountIndexToUpdate],
           ...update,
+          ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
         }
 
         return { ...prevWorkingCase, indictmentCounts: newIndictmentCounts }
@@ -128,11 +133,21 @@ const useIndictmentCounts = () => {
   )
 
   const lawTag = useCallback(
-    (law: number[]) =>
-      formatMessage(indictmentCount.lawsBrokenTag, {
-        paragraph: law[1],
-        article: law[0],
-      }),
+    (law: number[]) => {
+      const article = law[0]
+      const paragraph = law[1]
+
+      if (paragraph === 0) {
+        return formatMessage(indictmentCount.lawsBrokenTagArticleOnly, {
+          article,
+        })
+      } else {
+        return formatMessage(indictmentCount.lawsBrokenTag, {
+          article,
+          paragraph,
+        })
+      }
+    },
     [formatMessage],
   )
 

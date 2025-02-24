@@ -79,89 +79,99 @@ const CaseDocuments: FC<Props> = ({
 
   const { user } = useContext(UserContext)
 
+  const isRulingRequired = !workingCase.isCompletedWithoutRuling
+
   return (
     <Box marginBottom={10}>
       <Text as="h3" variant="h3" marginBottom={1}>
         {formatMessage(m.caseDocuments)}
       </Text>
-      <Box marginBottom={2}>
+      <Box marginBottom={2} component="ul">
         {!isPrisonSystemUser(user) && (
-          <PdfButton
-            renderAs="row"
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRequest)}
-            pdfType={'request'}
-          />
+          <li>
+            <PdfButton
+              renderAs="row"
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRequest)}
+              pdfType="request"
+            />
+          </li>
         )}
         {showCustodyNotice(
           workingCase.type,
           workingCase.state,
           workingCase.decision,
         ) && (
-          <PdfButton
-            renderAs="row"
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonCustodyNotice)}
-            pdfType="custodyNotice"
-          />
+          <li>
+            <PdfButton
+              renderAs="row"
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonCustodyNotice)}
+              pdfType="custodyNotice"
+            />
+          </li>
         )}
-        <PdfButton
-          renderAs="row"
-          caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRulingShortVersion)}
-          pdfType={'courtRecord'}
-        >
-          {isInvestigationCase(workingCase.type) &&
-            (workingCase.courtRecordSignatory ? (
-              <SignedDocument
-                signatory={workingCase.courtRecordSignatory.name}
-                signingDate={workingCase.courtRecordSignatureDate}
-              />
-            ) : isDistrictCourtUser(user) ? (
-              <Button
-                size="small"
-                data-testid="signCourtRecordButton"
-                loading={isRequestingCourtRecordSignature}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  handleRequestCourtRecordSignature()
-                }}
-              >
-                {formatMessage(m.signButton)}
-              </Button>
-            ) : isRestrictionCase(workingCase.type) ? null : (
-              <Text>{formatMessage(m.unsignedDocument)}</Text>
-            ))}
-        </PdfButton>
-        {!isPrisonSystemUser(user) && (
+        <li>
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
-            pdfType={'ruling'}
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="courtRecord"
           >
-            <Box display="flex" flexDirection="row">
-              {workingCase.rulingSignatureDate ? (
+            {isInvestigationCase(workingCase.type) &&
+              (workingCase.courtRecordSignatory ? (
                 <SignedDocument
-                  signatory={workingCase.judge?.name}
-                  signingDate={workingCase.rulingSignatureDate}
+                  signatory={workingCase.courtRecordSignatory.name}
+                  signingDate={workingCase.courtRecordSignatureDate}
                 />
-              ) : user?.id === workingCase.judge?.id ? (
+              ) : isDistrictCourtUser(user) ? (
                 <Button
                   size="small"
-                  loading={isRequestingRulingSignature}
+                  data-testid="signCourtRecordButton"
+                  loading={isRequestingCourtRecordSignature}
                   onClick={(event) => {
                     event.stopPropagation()
-                    requestRulingSignature()
+                    handleRequestCourtRecordSignature()
                   }}
                 >
                   {formatMessage(m.signButton)}
                 </Button>
-              ) : (
+              ) : isRestrictionCase(workingCase.type) ? null : (
                 <Text>{formatMessage(m.unsignedDocument)}</Text>
-              )}
-            </Box>
+              ))}
           </PdfButton>
+        </li>
+        {!isPrisonSystemUser(user) && (
+          <li>
+            <PdfButton
+              renderAs="row"
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRuling)}
+              pdfType="ruling"
+              disabled={!isRulingRequired}
+            >
+              {isRulingRequired &&
+                (workingCase.rulingSignatureDate ? (
+                  <SignedDocument
+                    signatory={workingCase.judge?.name}
+                    signingDate={workingCase.rulingSignatureDate}
+                  />
+                ) : user?.id === workingCase.judge?.id ? (
+                  <Button
+                    size="small"
+                    loading={isRequestingRulingSignature}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      requestRulingSignature()
+                    }}
+                  >
+                    {formatMessage(m.signButton)}
+                  </Button>
+                ) : (
+                  <Text>{formatMessage(m.unsignedDocument)}</Text>
+                ))}
+            </PdfButton>
+          </li>
         )}
       </Box>
     </Box>

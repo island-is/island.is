@@ -103,6 +103,7 @@ const SelectableList: FC<Props> = (props) => {
     setIsHandlingCTA(false)
   }
 
+  const validSelectableItems = selectableItems.filter((item) => !item.invalid)
   return (
     <>
       <Box
@@ -118,11 +119,8 @@ const SelectableList: FC<Props> = (props) => {
             name="select-all"
             label={formatMessage(strings.selectAllLabel)}
             checked={
-              selectableItems.length > 0 &&
-              // check if all valid selectable items are checked
-              selectableItems
-                .filter((item) => !item.invalid)
-                .every((item) => item.checked)
+              validSelectableItems.length > 0 &&
+              validSelectableItems.every((item) => item.checked)
             }
             onChange={(evt) =>
               setSelectableItems((selectableItems) =>
@@ -132,7 +130,7 @@ const SelectableList: FC<Props> = (props) => {
                 })),
               )
             }
-            disabled={isHandlingCTA || selectableItems.length === 0}
+            disabled={isHandlingCTA || validSelectableItems.length === 0}
             strong
           />
         </Box>

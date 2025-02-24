@@ -4,6 +4,7 @@ import { EmailRecipient } from '../types'
 import { pathToAsset } from '../utils'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
+import kennitala from 'kennitala'
 
 export type ApplicationSubmittedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -29,11 +30,16 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     'applicant.name',
   )
 
-  const subject = 'Umsókn um framhaldsskóla - Umsókn send'
+  if (!applicantNationalId) throw new Error('Application national id empty')
+  if (!applicantName) throw new Error('Application name empty')
+
+  const subject = 'Umsókn um framhaldsskóla móttekin!'
 
   const message =
-    `<span>Umsókn nemandans</span><br/>` +
-    `<span>${applicantName}, kt. ${applicantNationalId}</span><br/>` +
+    `<span>Umsókn nemandans:</span><br/>` +
+    `<span>${applicantName}, kt. ${kennitala.format(
+      applicantNationalId,
+    )},</span><br/>` +
     `<span>í framhaldsskóla hefur verið móttekin.</span><br/>` +
     `<span>Þú getur farið inn á mínar síður og fylgst með framgangi umsóknarinnar.</span>`
 

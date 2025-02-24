@@ -12,10 +12,20 @@ export const error = defineMessages({
     description: 'Error validate can create title',
   },
   errorValidateCanCreateDescription: {
-    id: 'ss.application:error.errorValidateCanCreateTitle',
+    id: 'ss.application:error.errorValidateCanCreateDescription',
     defaultMessage:
       'Þú ert með aðra opna umsókn í gangi, vinsamlegast eyðið henni áður en opnað er nýja umsókn',
     description: 'Error validate can create description',
+  },
+  errorNoSchoolOpenForAdmissionTitle: {
+    id: 'ss.application:error.errorNoSchoolOpenForAdmissionTitle',
+    defaultMessage: 'Ekki er hægt að opna nýja umsókn ',
+    description: 'Error no school open for admission title',
+  },
+  errorNoSchoolOpenForAdmissionDescription: {
+    id: 'ss.application:error.errorNoSchoolOpenForAdmissionDescription',
+    defaultMessage: 'Það er enginn skóli með opið fyrir umsóknir eins og er',
+    description: 'Error no school open for admission description',
   },
   errorPastRegistrationDateTitle: {
     id: 'ss.application:error.errorPastRegistrationDateTitle',
@@ -38,5 +48,10 @@ export const error = defineMessages({
     defaultMessage:
       'Ekki tókst að senda inn umsókn, vinsamlegast reyndu síðar..',
     description: 'Error submit application description',
+  },
+  errorSameAsApplicant: {
+    id: 'ss.application:error.errorSameAsApplicant',
+    defaultMessage: 'Má ekki vera sá sami og umsækjandi',
+    description: 'Error same as applicant',
   },
 })

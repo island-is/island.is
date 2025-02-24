@@ -1,30 +1,112 @@
 name: Validate code in the merge queue (post merge)
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   merge_group:
 
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
+concurrency:
+  group: merge-queue-post-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+  COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  DISABLE_CHUNKS: 'false'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NODE_IMAGE_VERSION: 20
+  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+  AWS_REGION: eu-west-1
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+
 jobs:
-  success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
+  prepare:
+    uses: ./.github/workflows/install.yml
+    secrets: inherit
+    needs:
+      - pre-checks
+
+  tests:
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-runners
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  success:
+    runs-on: arc-runners
+    if: ${{ !cancelled() }}
+    needs:
+      - prepare
+      - tests
+      # - e2e
+      # - build
+    steps:
       - name: Announce success
         run: echo "Build is successful"
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+      # - name: Check e2e success
+      #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
+      # - name: Check build success
+      #   run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+
+  # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ec2-runners
+    runs-on: arc-runners
     env:
       CHECK: 'false'
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-
     steps:
       - name: Codeowners validation
         run: |

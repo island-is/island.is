@@ -20,10 +20,10 @@ import { SubpoenaService } from './subpoena.service'
   imports: [
     forwardRef(() => CaseModule),
     forwardRef(() => PoliceModule),
-    forwardRef(() => FileModule),
     forwardRef(() => MessageModule),
     forwardRef(() => EventModule),
     forwardRef(() => DefendantModule),
+    forwardRef(() => FileModule),
     CourtModule,
     SequelizeModule.forFeature([Subpoena, Defendant]),
   ],

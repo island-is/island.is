@@ -39,6 +39,7 @@ import {
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { States } from '../utils/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -83,6 +84,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.NordaApplications,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: dataSchema,

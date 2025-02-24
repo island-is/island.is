@@ -31,6 +31,9 @@ export interface BadSubjectProblem extends BaseProblem {
   type: ProblemType.BAD_SUBJECT
   alternativeSubjects?: AlternativeSubject[]
 }
+export interface BadSessionProblem extends BaseProblem {
+  type: ProblemType.BAD_SESSION
+}
 
 export interface AttemptFailedProblem extends BaseProblem {
   type: ProblemType.ATTEMPT_FAILED

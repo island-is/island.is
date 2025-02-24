@@ -18,6 +18,7 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -236,6 +237,22 @@ export const is = {
   'inbox.filterDateConfirm': 'Staðfesta',
   'inbox.filterDateCancel': 'Hætta við',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Velja skjöl',
+  'inbox.bulkSelectAllButton': 'Velja allt',
+  'inbox.bulkDeselectAllButton': 'Afvelja allt',
+  'inbox.bulkSelectCancelButton': 'Hætta við',
+  'inbox.bulkSelectActionStar': 'Stjörnumerkja',
+  'inbox.bulkSelectActionArchive': 'Geymsla',
+  'inbox.bulkSelectActionRead': 'Merkja lesið',
+  'inbox.bulkSelect.starSuccess': 'Valin skjöl stjörnumerkt',
+  'inbox.bulkSelect.archiveSuccess': 'Valin skjöl færð í geymslu',
+  'inbox.bulkSelect.markAsReadSuccess': 'Valin skjöl merkt sem lesin',
+  'inbox.bulkSelect.starError': 'Ekki tókst að stjörnumerkja skjöl',
+  'inbox.bulkSelect.archiveError': 'Ekki tókst að færa skjöl í geymslu',
+  'inbox.bulkSelect.markAsReadError': 'Ekki tókst að merkja skjöl sem lesin',
+  'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
@@ -406,6 +423,8 @@ export const is = {
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
   'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorBadSession':
+    'Of stutt síðan skírteini var sótt á öðru tæki',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',

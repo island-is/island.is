@@ -57,15 +57,14 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
     }
   })
 
-  describe('subpoena delivered to police', () => {
+  describe('subpoena delivered to police central file system', () => {
     const subpoenaPdf = uuid()
-    let then: Then
 
     beforeEach(async () => {
       const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
       mockGetSubpoenaPdf.mockResolvedValue(subpoenaPdf)
 
-      then = await givenWhenThen()
+      await givenWhenThen()
     })
 
     it('should call deliverSubpoenaToPolice', () => {

@@ -352,7 +352,10 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly hasBeenAppealed?: boolean
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'appeal deadline in R cases',
+  })
   readonly appealDeadline?: string
 
   @Field(() => UserRole, { nullable: true })
@@ -430,7 +433,10 @@ export class Case {
   @Field(() => IndictmentCaseReviewDecision, { nullable: true })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    description: 'appeal deadline for public prosecutor',
+  })
   readonly indictmentAppealDeadline?: string
 
   @Field(() => Boolean, { nullable: true })
@@ -465,4 +471,10 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly hasCivilClaims?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isCompletedWithoutRuling?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly caseSentToCourtDate?: string
 }

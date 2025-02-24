@@ -7,12 +7,17 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import { Condition, FormText, StaticText } from '@island.is/application/types'
+import {
+  Condition,
+  FormText,
+  FormTextWithLocale,
+  StaticText,
+} from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
   alertTitle: FormText
-  alertMessage: FormText
+  alertMessage: FormTextWithLocale
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText
   secondButtonLink: StaticText
@@ -21,7 +26,7 @@ type Props = Partial<{
   accordion?: boolean
   expandableHeader: FormText
   expandableIntro: FormText
-  expandableDescription: FormText
+  expandableDescription: FormTextWithLocale
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
   conclusionLinkLabel: StaticText
@@ -109,7 +114,6 @@ export const buildFormConclusionSection = ({
           ...expandableDescriptionField,
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionBottomLink',
-            title: '',
             url: bottomButtonLink,
             buttonTitle: bottomButtonLabel,
             message: bottomButtonMessage,

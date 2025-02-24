@@ -11,6 +11,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
@@ -34,7 +35,6 @@ import {
   Form,
   FormModes,
   FormValue,
-  YES,
 } from '@island.is/application/types'
 import {
   applicantInformationMultiField,
@@ -107,7 +107,6 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -429,7 +428,6 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(

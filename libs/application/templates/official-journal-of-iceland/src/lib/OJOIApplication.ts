@@ -17,6 +17,7 @@ import { InputFields, TemplateApiActions } from './types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export enum ApplicationStates {
   REQUIREMENTS = 'requirements',
@@ -65,6 +66,7 @@ const OJOITemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
   name: getApplicationName,
+  codeOwner: CodeOwners.Hugsmidjan,
   institution: general.ministryOfJustice,
   featureFlag: Features.officialJournalOfIceland,
   translationNamespaces: [
@@ -295,7 +297,7 @@ const OJOITemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn hafnað',
           status: 'rejected',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(90),
           actionCard: {
             tag: {
               label: 'Hafnað',

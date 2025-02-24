@@ -8,7 +8,7 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
@@ -17,9 +17,9 @@ export const startingSchoolSubSection = buildSubSection({
   id: 'startingSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.startingSchoolSubSectionTitle,
   condition: (answers) => {
-    // Only display section if "Moving abroad" is not selected as reason for application
-    const { reasonForApplication } = getApplicationAnswers(answers)
-    return reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+    // Only display section if application type is "Application for a new primary school"
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
   },
   children: [
     buildMultiField({
@@ -29,53 +29,74 @@ export const startingSchoolSubSection = buildSubSection({
         newPrimarySchoolMessages.primarySchool.startingSchoolDescription,
       children: [
         buildDateField({
-          id: 'startingSchool.startDate',
+          id: 'startingSchool.expectedStartDate',
           title: newPrimarySchoolMessages.shared.date,
           placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
           defaultValue: null,
           minDate: () => new Date(),
         }),
-        buildRadioField({
-          id: 'startingSchool.temporaryStay',
-          title: newPrimarySchoolMessages.primarySchool.temporaryStay,
-          condition: (answers) =>
-            !!getApplicationAnswers(answers).selectedSchool,
-          width: 'half',
-          defaultValue: NO,
-          options: [
-            {
-              label: newPrimarySchoolMessages.shared.yes,
-              value: YES,
-            },
-            {
-              label: newPrimarySchoolMessages.shared.no,
-              value: NO,
-            },
-          ],
-        }),
-        buildDescriptionField({
-          id: 'endDateDescription',
-          titleVariant: 'h4',
-          title: newPrimarySchoolMessages.primarySchool.endDateDescription,
-        }),
-        buildDateField({
-          id: 'startingSchool.endDate',
-          title: newPrimarySchoolMessages.primarySchool.endDateTitle,
-          placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-          defaultValue: null,
-          condition: (answers) => {
-            const { startDateHiddenInput, startDate, temporaryStay } =
-              getApplicationAnswers(answers)
-            return temporaryStay === YES && startDate === startDateHiddenInput
-          },
-          minDate: (application: Application) =>
-            new Date(getApplicationAnswers(application.answers).startDate),
-        }),
-        buildHiddenInputWithWatchedValue({
-          // Needed to trigger an update on minimum date for endDate
-          id: 'startDate.hiddenInput',
-          watchValue: 'startingSchool.startDate',
-        }),
+        // Only show for National school types
+        //
+        // buildRadioField({
+        //   id: 'startingSchool.temporaryStay',
+        //   title: newPrimarySchoolMessages.primarySchool.temporaryStay,
+        //   condition: (answers) => true,
+        //   width: 'half',
+        //   defaultValue: NO,
+        //   options: [
+        //     {
+        //       label: newPrimarySchoolMessages.shared.yes,
+        //       value: YES,
+        //     },
+        //     {
+        //       label: newPrimarySchoolMessages.shared.no,
+        //       value: NO,
+        //     },
+        //   ],
+        // }),
+        // buildDescriptionField({
+        //   id: 'expectedEndDateDescription',
+        //   titleVariant: 'h4',
+        //   condition: (answers) => {
+        //     const {
+        //       expectedStartDateHiddenInput,
+        //       expectedStartDate,
+        //       temporaryStay,
+        //     } = getApplicationAnswers(answers)
+        //     return (
+        //       temporaryStay === YES &&
+        //       expectedStartDate === expectedStartDateHiddenInput
+        //     )
+        //   },
+        //   title:
+        //     newPrimarySchoolMessages.primarySchool.expectedEndDateDescription,
+        // }),
+        // buildDateField({
+        //   id: 'startingSchool.expectedEndDate',
+        //   title: newPrimarySchoolMessages.primarySchool.expectedEndDateTitle,
+        //   placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+        //   defaultValue: null,
+        //   condition: (answers) => {
+        //     const {
+        //       expectedStartDateHiddenInput,
+        //       expectedStartDate,
+        //       temporaryStay,
+        //     } = getApplicationAnswers(answers)
+        //     return (
+        //       temporaryStay === YES &&
+        //       expectedStartDate === expectedStartDateHiddenInput
+        //     )
+        //   },
+        //   minDate: (application: Application) =>
+        //     new Date(
+        //       getApplicationAnswers(application.answers).expectedStartDate,
+        //     ),
+        // }),
+        // buildHiddenInputWithWatchedValue({
+        //   // Needed to trigger an update on minimum date for expectedEndDate
+        //   id: 'startingSchool.expectedStartDateHiddenInput',
+        //   watchValue: 'startingSchool.expectedStartDate',
+        // }),
       ],
     }),
   ],

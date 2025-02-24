@@ -23,7 +23,6 @@ export const Done: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'doneDescription',
-          title: '',
           description: m.doneDescriptionBody,
         }),
       ],

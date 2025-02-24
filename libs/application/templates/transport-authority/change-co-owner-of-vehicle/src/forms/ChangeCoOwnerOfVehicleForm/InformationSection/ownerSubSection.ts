@@ -62,7 +62,6 @@ export const ownerSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'ownerCoOwners',
-          title: '',
           component: 'CoOwner',
           doesNotRequireAnswer: true,
         }),

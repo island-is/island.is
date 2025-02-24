@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes, States } from '../../utils'
+import { Routes, checkIsEditable, checkUseAnswersCopy } from '../../utils'
 import { getLanguageByCode } from '@island.is/shared/utils'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -15,9 +15,12 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const extraInformation = getValueViaPath<
     SecondarySchoolAnswers['extraInformation']
-  >(application.answers, 'extraInformation')
+  >(application.answers, copyPrefix + 'extraInformation')
 
   const showNativeLanguage = !!extraInformation?.nativeLanguageCode
   const showOtherDescription = !!extraInformation?.otherDescription
@@ -28,11 +31,13 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const getLanguageName = (code: string | undefined): string => {
+  const getLanguageName = (code: string | undefined | null): string => {
     if (!code) return ''
     const language = getLanguageByCode(code)
     return language?.name || ''
   }
+
+  const isEditable = checkIsEditable(application.state)
 
   return (
     (showNativeLanguage || showOtherDescription || showSupportingDocuments) && (
@@ -40,7 +45,7 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
         handleClick={() => onClick(Routes.EXTRA_INFORMATION)}
         editMessage={formatMessage(overview.general.editMessage)}
         title={formatMessage(overview.extraInformation.subtitle)}
-        isEditable={application.state === States.DRAFT}
+        isEditable={isEditable}
       >
         <Box>
           <GridRow>
