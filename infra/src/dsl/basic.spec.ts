@@ -23,8 +23,7 @@ describe('Basic serialization', () => {
   const sut = service('api')
     .namespace('islandis')
     .image({
-      name: 'test',
-      repository: 'testrepo',
+      repository: 'testrepo/test',
       tag: 'testtag',
     })
     .env({ A: 'B' })
@@ -66,10 +65,7 @@ describe('Basic serialization', () => {
   })
 
   it('repo', () => {
-    expect(result.serviceDef[0].image.repository).toBe('testrepo')
-  })
-  it('image', () => {
-    expect(result.serviceDef[0].image.name).toBe('test')
+    expect(result.serviceDef[0].image.repository).toBe('testrepo/test')
   })
 
   it('image tag', () => {

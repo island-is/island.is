@@ -65,7 +65,6 @@ export type HealthProbe = {
 export type Secrets = { [name: string]: string }
 
 export type DockerImage = {
-  name?: string
   repository?: string
   tag?: string
 }

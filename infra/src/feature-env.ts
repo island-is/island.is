@@ -83,7 +83,7 @@ const parseArguments = (argv: Arguments) => {
     .filter(
       (h) =>
         (images.length === 1 && images[0] === '*') ||
-      images?.includes(h.serviceDef.image?.name ?? h.serviceDef.name),
+      images?.includes(h.serviceDef.image?.repository ?? h.serviceDef.name),
     )
     return { habitat, affectedServices, env, dockerTag }
 }

@@ -60,9 +60,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
-      repository: `${serviceDef.image?.repository ?? defaultRepository}`,
-      name: `${serviceDef.image?.name ?? serviceDef.name}`,
-      tag: `${serviceDef.image?.tag ?? 'latest_master'}`,
+      repository: `${serviceDef.image?.repository ?? defaultRepository}/${serviceDef.image?.name ?? serviceDef.name}`,
+      tag: `${serviceDef.image?.tag}`,
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
@@ -88,6 +87,10 @@ const serializeService: SerializeMethod<HelmService> = async (
       },
     },
     securityContext,
+  }
+  // Exit early if image tag is not set
+  if (!serviceDef.image?.tag) {
+    throw new Error("Image tag incorrectly set")
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
@@ -470,7 +473,7 @@ const serviceMockDef = (options: {
     grantNamespacesEnabled: true,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
-      name: `bbyars/mountebank`,
+      repository: `bbyars/mountebank`,
     },
     env: {},
     command: ['mb', 'start', '--configfile=/etc/config/default-imposters.json'],

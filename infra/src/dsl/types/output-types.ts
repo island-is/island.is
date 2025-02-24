@@ -40,7 +40,6 @@ export type OutputPersistentVolumeClaim = {
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 export type DockerImage = {
-  name?: string
   repository?: string
   tag?: string
 }
