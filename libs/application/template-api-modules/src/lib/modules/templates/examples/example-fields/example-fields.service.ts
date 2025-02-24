@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-
 import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NotificationsService } from '../../../../notification/notifications.service'
@@ -7,7 +6,6 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { NotificationType } from '../../../../notification/notificationsTemplates'
 
 // const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
@@ -19,30 +17,13 @@ export class ExampleFieldsService extends BaseTemplateApiService {
     super(ApplicationTypes.EXAMPLE_FIELDS)
   }
 
-  async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const applicantName = getValueViaPath(
+    const applicantName = getValueViaPath<string>(
       application.externalData,
       'nationalRegistry.data.fullName',
-    ) as string
-
-    this.notificationsService.sendNotification({
-      type: NotificationType.ChildrenResidenceChange,
-      messageParties: {
-        recipient: auth.nationalId,
-        sender: auth.nationalId,
-      },
-      args: {
-        applicantName,
-        applicationId: application.id,
-      },
-    })
-
-    // const name = getValueViaPath<string>(
-    //   application.externalData,
-    //   'nationalRegistry.data.fullName',
-    // )
+    )
 
     return {
       referenceData: {
@@ -76,8 +57,6 @@ export class ExampleFieldsService extends BaseTemplateApiService {
   }
 
   async createApplication() {
-    console.log('------------ Hér í create application ------------')
-
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 

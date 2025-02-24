@@ -20,7 +20,3 @@ export const runsFirst = defineTemplateApi({
 export const NationalRegistryApi = NationalRegistryUserApi.configure({
   order: 1,
 })
-
-export interface MyParameterType {
-  id: number
-}

@@ -2,6 +2,7 @@ import { defineTemplateApi } from '@island.is/application/types'
 import { MockProviderApi } from '@island.is/application/types'
 import { NationalRegistryUserApi } from '@island.is/application/types'
 import { ApiActions } from '../shared/constants'
+
 export interface MyParameterType {
   id: number
 }
@@ -38,7 +39,3 @@ export const MyMockProvider = MockProviderApi.configure({
 export const NationalRegistryApi = NationalRegistryUserApi.configure({
   order: 1,
 })
-
-export interface MyParameterType {
-  id: number
-}
