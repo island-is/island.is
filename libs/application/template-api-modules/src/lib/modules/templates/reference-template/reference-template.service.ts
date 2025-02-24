@@ -47,7 +47,7 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     //   application.externalData,
     //   'nationalRegistry.data.fullName',
     // )
-
+    
     return {
       referenceData: {
         applicantName,
