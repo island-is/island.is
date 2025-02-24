@@ -8,6 +8,6 @@ export const renderEnv = async (env: OpsEnv, chartName: ChartName) => {
     Envs[Deployments[chartName][env]],
     Charts[chartName][env],
     Charts[chartName][env],
-    'no-mocks',
+    'no-mocks'
   )
 }
