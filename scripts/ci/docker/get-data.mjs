@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 import core from "@actions/core";
+import { join } from "node:path";
 
 const name = 'pr-18084';
 const url = `https://api.github.com/repos/island-is/island.is/actions/artifacts?name=${name}`;
@@ -27,16 +28,15 @@ async function download() {
         },
     });
     const zipBuffer = Buffer.from(await artifactZipResponse.arrayBuffer());
-    console.log(zipBuffer);
-    process.exit(0);
-    const zipFileName = 'artifact.zip';
+    
+    const zipFileName = '/tmp/artifact.zip';
     console.log(`Saved artifact to ${zipFileName}.`);
 
     const outputDir = '/tmp/artifact_unzip';
-    // fs.writeFileSync(join(outputDir, zipFileName, zipBuffer);
+    fs.writeFileSync(zipFileName, zipBuffer);
 
     try {
-        execSync(`cat ${zipFileName}`);
+        execSync(`cat ${zipFileName}`, {stdio: 'inherit'});
         execSync(`unzip -o ${zipFileName} -d ${outputDir}`, { stdio: 'inherit' });
         console.log(`Unzipped artifact to ${outputDir}/`);
     } catch (err) {
