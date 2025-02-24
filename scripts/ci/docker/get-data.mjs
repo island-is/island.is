@@ -25,7 +25,7 @@ async function download() {
     const artifactZipResponse = await fetch(downloadUrl, {
         headers: {
             Authorization: `Bearer ${GITHUB_TOKEN}`,
-            Accept: 'application/octet-stream',
+            Accept: 'application/json',
         },
     });
     const zipBuffer = Buffer.from(await artifactZipResponse.arrayBuffer());
