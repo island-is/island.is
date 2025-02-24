@@ -10,7 +10,7 @@ const imageName = 'services-sessions'
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
   service('services-sessions')
     .namespace(namespace)
-    .image(imageName)
+    .image({ name: imageName })
     .codeOwner(CodeOwners.Aranja)
     .redis()
     .db({
@@ -57,7 +57,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
-    .image(imageName)
+    .image({ name: imageName })
     .namespace(namespace)
     .codeOwner(CodeOwners.Aranja)
     .redis()
@@ -97,7 +97,7 @@ const extraAttributes = { schedule: '0 3 * * *' }
 export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
-    .image(imageName)
+    .image({ name: imageName })
     .codeOwner(CodeOwners.Aranja)
     .command('node')
     .args('main.js', '--job=cleanup')

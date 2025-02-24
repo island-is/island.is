@@ -59,7 +59,7 @@ export const userNotificationServiceSetup = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
 }): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
-    .image(imageName)
+    .image({ name: imageName })
     .namespace(serviceName)
     .serviceAccount(serviceName)
     .codeOwner(CodeOwners.Juni)
@@ -134,7 +134,7 @@ export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>
 }): ServiceBuilder<typeof serviceWorkerName> =>
   service(serviceWorkerName)
-    .image(imageName)
+    .image({ name: imageName })
     .namespace(serviceName)
     .serviceAccount(serviceWorkerName)
     .codeOwner(CodeOwners.Juni)
@@ -183,7 +183,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
   typeof serviceCleanupWorkerName
 > =>
   service(serviceCleanupWorkerName)
-    .image(imageName)
+    .image({ name: imageName })
     .namespace(serviceName)
     .serviceAccount(serviceCleanupWorkerName)
     .codeOwner(CodeOwners.Juni)

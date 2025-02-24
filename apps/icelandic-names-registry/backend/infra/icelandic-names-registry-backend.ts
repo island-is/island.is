@@ -3,7 +3,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup =
   (): ServiceBuilder<'icelandic-names-registry-backend'> =>
     service('icelandic-names-registry-backend')
-      .image('icelandic-names-registry-backend')
+      .image({ name: 'icelandic-names-registry-backend' })
       .namespace('icelandic-names-registry')
       .db()
       .migrations()

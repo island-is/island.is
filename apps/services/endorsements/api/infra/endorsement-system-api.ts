@@ -13,7 +13,7 @@ import {
 export const serviceSetup =
   (_services: {}): ServiceBuilder<'endorsement-system-api'> =>
     service('endorsement-system-api')
-      .image('services-endorsements-api')
+      .image({ name: 'services-endorsements-api' })
       .namespace('endorsement-system')
       .serviceAccount('endorsement-system-api')
       .codeOwner(CodeOwners.Juni)

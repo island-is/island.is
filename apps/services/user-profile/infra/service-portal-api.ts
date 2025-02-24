@@ -66,7 +66,7 @@ const secrets: Secrets = {
 export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
   service(serviceId)
     .namespace(namespace)
-    .image(imageId)
+    .image({ name: imageId })
     .serviceAccount(serviceId)
     .codeOwner(CodeOwners.Aranja)
     .env(envVariables)

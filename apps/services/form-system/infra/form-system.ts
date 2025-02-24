@@ -7,7 +7,7 @@ import {
 const serviceName = 'services-form-system-api'
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
-    .image(serviceName)
+    .image({ name: serviceName })
     .namespace(serviceName)
     .codeOwner(CodeOwners.Advania)
     .db()

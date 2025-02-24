@@ -2,7 +2,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
   service('services-documents')
-    .image('services-documents')
+    .image({ name: 'services-documents' })
     .namespace('services-documents')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {

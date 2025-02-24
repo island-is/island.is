@@ -22,7 +22,7 @@ export const serviceSetup =
   (): ServiceBuilder<'services-auth-personal-representative'> => {
     return service('services-auth-personal-representative')
       .namespace('personal-representative')
-      .image('services-auth-personal-representative')
+      .image({ name: 'services-auth-personal-representative' })
       .db({ name: 'servicesauth' })
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',

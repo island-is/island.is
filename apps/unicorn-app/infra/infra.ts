@@ -2,7 +2,7 @@ import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 const serviceName = 'unicorn-app'
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
-    .image(serviceName)
+    .image({ name: serviceName })
     .namespace(serviceName)
     .serviceAccount(serviceName)
     .ingress({

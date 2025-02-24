@@ -31,7 +31,7 @@ const REDIS_NODE_CONFIG = {
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
     .namespace(namespace)
-    .image(imageName)
+    .image({ name: imageName })
     .codeOwner(CodeOwners.Aranja)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
@@ -152,7 +152,7 @@ const schedule = { schedule: '0 3 * * *' }
 export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
     .namespace(namespace)
-    .image({name: imageName})
+    .image({ name: imageName })
     .command('node')
     .args('main.js', '--job=cleanup')
     .resources({

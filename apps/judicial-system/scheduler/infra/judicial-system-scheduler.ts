@@ -5,7 +5,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'judicial-system-scheduler'> =>
   service('judicial-system-scheduler')
     .namespace('judicial-system')
-    .image('judicial-system-scheduler')
+    .image({ name: 'judicial-system-scheduler' })
     .env({
       SQS_QUEUE_NAME: 'sqs-judicial-system',
       SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',

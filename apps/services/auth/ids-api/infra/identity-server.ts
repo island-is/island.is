@@ -8,7 +8,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'identity-server'> => {
   return service('identity-server')
     .namespace('identity-server')
-    .image('identity-server')
+    .image({ name: 'identity-server' })
     .env({
       AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log',
       ASPNETCORE_URLS: 'http://*:5000',

@@ -3,7 +3,7 @@ import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
   service('air-discount-scheme-backend')
-    .image('air-discount-scheme-backend')
+    .image({ name: 'air-discount-scheme-backend' })
     .namespace('air-discount-scheme')
     .secrets({
       ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',

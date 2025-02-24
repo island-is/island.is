@@ -66,7 +66,7 @@ export const workerSetup = (services: {
 }): ServiceBuilder<'application-system-api-worker'> =>
   service('application-system-api-worker')
     .namespace(namespace)
-    .image('application-system-api')
+    .image({ name: 'application-system-api' })
     .db()
     .serviceAccount('application-system-api-worker')
     .redis()

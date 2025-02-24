@@ -27,7 +27,7 @@ const REDIS_NODE_CONFIG = {
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
-    .image('services-auth-admin-api')
+    .image({ name: 'services-auth-admin-api' })
     .codeOwner(CodeOwners.Aranja)
     .db({
       name: 'servicesauth',

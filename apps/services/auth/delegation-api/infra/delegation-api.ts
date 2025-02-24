@@ -29,7 +29,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'services-auth-delegation-api'> => {
   return service('services-auth-delegation-api')
     .namespace('identity-server-delegation')
-    .image('services-auth-delegation-api')
+    .image({ name: 'services-auth-delegation-api' })
     .codeOwner(CodeOwners.Aranja)
     .db({
       name: 'servicesauth',

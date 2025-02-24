@@ -11,7 +11,7 @@ export const serviceSetup = (
 ): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .namespace(clientName)
-    .image(bffName)
+    .image({ name: bffName })
     .redis()
     .serviceAccount(bffName)
     .env({

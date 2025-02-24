@@ -4,7 +4,7 @@ export const serviceSetup =
   (): ServiceBuilder<'services-auth-personal-representative-public'> => {
     return service('services-auth-personal-representative-public')
       .namespace('personal-representative')
-      .image('services-auth-personal-representative-public')
+      .image({ name: 'services-auth-personal-representative-public' })
       .db({
         name: 'servicesauth',
       })

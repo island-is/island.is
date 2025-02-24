@@ -10,7 +10,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'consultation-portal'> => {
   const consultationService = service('consultation-portal')
   consultationService
-    .image('consultation-portal')
+    .image({ name: 'consultation-portal' })
     .namespace('consultation-portal')
     .codeOwner(CodeOwners.Advania)
     .liveness('/liveness')

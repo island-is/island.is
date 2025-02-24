@@ -11,7 +11,7 @@ import {
 
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
-    .image('regulations-admin-backend')
+    .image({ name: 'regulations-admin-backend' })
     .namespace('regulations-admin')
     .codeOwner(CodeOwners.Hugsmidjan)
     .env({

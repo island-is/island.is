@@ -891,7 +891,7 @@ application-system-api-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
     tag: 'latest'
   namespace: 'application-system'
   podDisruptionBudget:
@@ -1231,7 +1231,7 @@ endorsement-system-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/endorsement-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
     tag: 'latest'
   initContainer:
     containers:
@@ -1764,7 +1764,7 @@ search-indexer-service:
         max: 1
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/search-indexer-service'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
     tag: 'latest'
   ingress:
     primary-alb:
@@ -1986,7 +1986,7 @@ service-portal-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
     tag: 'latest'
   ingress:
     internal-alb:
@@ -2105,7 +2105,7 @@ services-bff-portals-admin:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff-portals-admin'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
     tag: 'latest'
   ingress:
     primary-alb:
@@ -2192,7 +2192,7 @@ services-bff-portals-my-pages:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff-portals-my-pages'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
     tag: 'latest'
   ingress:
     primary-alb:
@@ -2422,7 +2422,7 @@ services-sessions-cleanup:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions-cleanup'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
     tag: 'latest'
   namespace: 'services-sessions'
   podDisruptionBudget:
@@ -2489,7 +2489,7 @@ services-sessions-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
     tag: 'latest'
   initContainer:
     containers:
@@ -2727,7 +2727,7 @@ services-university-gateway-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
     tag: 'latest'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
@@ -3050,7 +3050,7 @@ user-notification:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
     tag: 'latest'
   ingress:
     internal-alb:
@@ -3145,7 +3145,7 @@ user-notification-cleanup-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notification-cleanup-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
     tag: 'latest'
   initContainer:
     containers:
@@ -3264,7 +3264,7 @@ user-notification-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/user-notification-worker'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
     tag: 'latest'
   initContainer:
     containers:
@@ -3434,7 +3434,7 @@ xroad-collector:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/xroad-collector'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
     tag: 'latest'
   namespace: 'xroad-collector'
   podDisruptionBudget:
