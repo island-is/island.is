@@ -29,7 +29,7 @@ async function download() {
         },
     });
     const zipBuffer = Buffer.from(await artifactZipResponse.arrayBuffer());
-    
+    console.log(zipBuffer.toString('utf-8'));
     const zipFileName = '/tmp/artifact.zip';
     console.log(`Saved artifact to ${zipFileName}.`);
 
