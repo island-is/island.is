@@ -272,7 +272,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           )
         }
       />
-      <Box background="blue100" marginY={8}>
+      <Box background="blue100" marginY={isTablet ? 6 : 8}>
         {!isTablet && (
           <SidebarLayout
             fullWidthContent={true}
@@ -335,7 +335,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           </SidebarLayout>
         )}
         {isTablet && (
-          <Box marginTop={6} margin={3} paddingTop={3}>
+          <Box margin={3} paddingTop={3}>
             <Text fontWeight="semiBold">{formatMessage(m.search.search)}</Text>
             <Box marginTop={2} className={styles.searchInput}>
               <FilterInput
@@ -347,7 +347,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               />
             </Box>
             <Box
-              marginTop={3}
+              marginTop={2}
               display="flex"
               justifyContent="spaceBetween"
               height="full"
