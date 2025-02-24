@@ -474,6 +474,20 @@ export const InboxScreen: NavigationFunctionComponent<{
     setLoadingMore(false)
   }
 
+  const handleBulkActionError = (
+    actionType: 'star' | 'archive' | 'markAsRead',
+  ) => {
+    showToastForBulkSelectAction({
+      variant: 'error',
+      title: intl.formatMessage({
+        id: `inbox.bulkSelect.${actionType}Error`,
+      }),
+      message: intl.formatMessage({
+        id: 'inbox.bulkSelect.pleaseTryAgain',
+      }),
+    })
+  }
+
   const showToastForBulkSelectAction = ({
     variant,
     title,
@@ -871,15 +885,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 }),
               })
             } else {
-              showToastForBulkSelectAction({
-                variant: 'error',
-                title: intl.formatMessage({
-                  id: 'inbox.bulkSelect.starError',
-                }),
-                message: intl.formatMessage({
-                  id: 'inbox.bulkSelect.pleaseTryAgain',
-                }),
-              })
+              handleBulkActionError('star')
             }
           }}
           onClickArchive={async () => {
@@ -898,15 +904,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 }),
               })
             } else {
-              showToastForBulkSelectAction({
-                variant: 'error',
-                title: intl.formatMessage({
-                  id: 'inbox.bulkSelect.archiveError',
-                }),
-                message: intl.formatMessage({
-                  id: 'inbox.bulkSelect.pleaseTryAgain',
-                }),
-              })
+              handleBulkActionError('archive')
             }
           }}
           onClickMarkAsRead={async () => {
@@ -933,15 +931,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 }),
               })
             } else {
-              showToastForBulkSelectAction({
-                variant: 'error',
-                title: intl.formatMessage({
-                  id: 'inbox.bulkSelect.markAsReadError',
-                }),
-                message: intl.formatMessage({
-                  id: 'inbox.bulkSelect.pleaseTryAgain',
-                }),
-              })
+              handleBulkActionError('markAsRead')
             }
           }}
         />
