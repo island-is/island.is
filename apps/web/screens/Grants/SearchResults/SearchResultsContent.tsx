@@ -41,7 +41,7 @@ export const SearchResultsContent = ({
   return (
     <>
       {!isTablet && (
-        <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
+        <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
           <Box display="flex" alignItems="center">
             <Text>{subheader}</Text>
           </Box>

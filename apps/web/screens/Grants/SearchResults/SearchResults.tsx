@@ -272,14 +272,13 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           )
         }
       />
-      <Box background="blue100">
+      <Box background="blue100" marginY={8}>
         {!isTablet && (
           <SidebarLayout
-            paddingTop={6}
             fullWidthContent={true}
             sidebarContent={
               <Stack space={3}>
-                <Text fontWeight="semiBold">
+                <Text variant="h4" as="h4" paddingY={1}>
                   {formatMessage(m.search.search)}
                 </Text>
                 <FilterInput
