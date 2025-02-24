@@ -21,6 +21,7 @@ import { getPathFromType } from '../../../utils/mapPaths'
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
+  const k = 8
 
   const includedTypes = [
     GenericLicenseType.AdrLicense,
