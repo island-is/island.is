@@ -14,7 +14,6 @@ const name = getArtifactname();
 const url = `https://api.github.com/repos/island-is/island.is/actions/artifacts?name=${name}`;
 
 const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT';
-const _KEY_OUTPUT = 'MQ_OUTPUT';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const STAGE_NAME = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
@@ -47,7 +46,6 @@ async function download() {
     if (value.total_count === 0) {
         console.error(`No artifacts found for ${name}`);
         core.setOutput(_KEY_HAS_OUTPUT, "false");
-        core.setOutput(_KEY_OUTPUT, "[]");
         process.exit(0);
     }
     const artifact = value.artifacts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
@@ -88,6 +86,7 @@ async function download() {
             IMAGE_OBJECT[imageName].forEach(({ filePath, content }) => {
                 content.image.tag = imageTag;
                 const newFile = jsyaml.dump(content);
+                console.log(newFile);
                 fs.writeFileSync(filePath, newFile, { encoding: 'utf-8' });
                 console.info(`Updated ${filePath}`);
             });
@@ -96,9 +95,7 @@ async function download() {
         }
 
     }
-    console.log(JSON.stringify(parsedData, null, 2));
     core.setOutput(_KEY_HAS_OUTPUT, "true");
-    core.setOutput(_KEY_OUTPUT, parsedData);
 }
 
 function getBranch() {
