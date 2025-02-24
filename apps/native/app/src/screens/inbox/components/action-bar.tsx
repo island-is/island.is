@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { Image } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 
@@ -56,6 +56,7 @@ export const ActionBar = ({
   loading?: boolean
 }) => {
   const theme = useTheme()
+  const intl = useIntl()
   const shouldWrapItems = screenWidth < 380
   return (
     <Wrapper
@@ -72,6 +73,11 @@ export const ActionBar = ({
           <ActionBarItem
             onPress={onClickStar}
             underlayColor={theme.shade.shade400}
+            accessibilityRole="button"
+            accessibilityLabel={intl.formatMessage({
+              id: 'inbox.bulkSelectActionStar',
+              defaultMessage: 'Stjörnumerkja',
+            })}
           >
             <ItemWrapper wrapItem={shouldWrapItems}>
               <Image
@@ -94,6 +100,11 @@ export const ActionBar = ({
           <ActionBarItem
             onPress={onClickArchive}
             underlayColor={theme.shade.shade400}
+            accessibilityRole="button"
+            accessibilityLabel={intl.formatMessage({
+              id: 'inbox.bulkSelectActionArchive',
+              defaultMessage: 'Geymsla',
+            })}
           >
             <ItemWrapper wrapItem={shouldWrapItems}>
               <Image
@@ -116,6 +127,11 @@ export const ActionBar = ({
           <ActionBarItem
             onPress={onClickMarkAsRead}
             underlayColor={theme.shade.shade400}
+            accessibilityRole="button"
+            accessibilityLabel={intl.formatMessage({
+              id: 'inbox.bulkSelectActionRead',
+              defaultMessage: 'Merkja lesið',
+            })}
           >
             <ItemWrapper wrapItem={shouldWrapItems}>
               <Image
