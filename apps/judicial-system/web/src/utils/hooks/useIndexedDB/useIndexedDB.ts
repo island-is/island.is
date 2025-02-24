@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 
 import { Lawyer } from '@island.is/judicial-system/types'
 
@@ -11,6 +11,8 @@ export const Database = {
   version: 5,
 }
 
+type LawyerWithCreated = Lawyer & { created: Date }
+
 export const useIndexedDB = (databaseName: string, tableName: string) => {
   const [db, setDB] = useState<IDBDatabase | null>(null)
   const [dbExists, setDBExists] = useState<boolean | null>(null)
@@ -19,78 +21,83 @@ export const useIndexedDB = (databaseName: string, tableName: string) => {
   const lawyers = useGetLawyers(true)
 
   useEffect(() => {
-    const initDB = async () => {
-      console.info(`Init IndexedDB`)
+    const syncData = async () => {
+      try {
+        const db = await openDB()
+        const transaction = db.transaction(Database.lawyerTable, 'readonly')
+        const store = transaction.objectStore(Database.lawyerTable)
+        const request = store.getAll()
+
+        request.onsuccess = async () => {
+          const records: LawyerWithCreated[] = request.result
+          const now = new Date()
+          const shouldRefresh =
+            records.length > 0
+              ? differenceInMinutes(now, records[0].created) > 1
+              : true
+
+          if (shouldRefresh) {
+            console.log('Refreshing IndexedDB data...')
+            await clearAndFetchData()
+          } else {
+            console.log('Using cached IndexedDB data.')
+          }
+        }
+
+        request.onerror = () => {
+          console.error('Failed to access IndexedDB.')
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if (lawyers.length > 0) {
+      syncData()
+    }
+  }, [lawyers])
+
+  const openDB = (): Promise<IDBDatabase> => {
+    return new Promise((resolve, reject) => {
       const request = window.indexedDB.open(
         Database.lawyerTable,
         Database.version,
       )
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = () => {
         const db = request.result
+        const objectStore = db.createObjectStore(tableName, {
+          autoIncrement: true,
+          keyPath: 'nationalId',
+        })
 
-        if (!db.objectStoreNames.contains(tableName)) {
-          const objectStore = db.createObjectStore(tableName, {
-            autoIncrement: true,
-            keyPath: 'nationalId',
-          })
-
-          objectStore.createIndex('name', 'name', { unique: false })
-        }
-      }
-
-      request.onerror = () => {
-        console.error(`IndexedDB error. ${request.error}`)
-        setIsDBConnecting(false)
+        objectStore.createIndex('name', 'name', { unique: false })
       }
 
       request.onsuccess = () => {
-        console.info(`IndexedDB success.`)
-        setDB(request.result)
-        setIsDBConnecting(false)
-
-        const transaction = request.result.transaction(tableName, 'readwrite')
-        const lawyerStore = transaction.objectStore(tableName)
-        const today = new Date()
-
-        lawyers.forEach((lawyer) => {
-          lawyerStore.add({ ...lawyer, created: today })
-        })
-
-        transaction.oncomplete = () =>
-          console.info('Lawyers added successfully.')
-        transaction.onerror = (e) => console.error('Error adding lawyers')
+        console.log('Connected to IndexedDB')
+        resolve(request.result)
       }
-    }
 
-    const checkDBExists = async () => {
-      if (indexedDB.databases) {
-        const databases = await indexedDB.databases()
-        console.log(databases)
-        const exists = databases.some((db) => db.name === Database.lawyerTable)
-        setDBExists(exists)
+      request.onerror = () => {
+        console.error('Failed to connect to IndexedDB')
+        reject(request.error)
       }
-    }
-    // const cDate = async () => {
-    //   const a = await getCreatedDate()
-    //   console.log(a)
-    //   setCreatedDate(a)
-    // }
+    })
+  }
 
-    // checkDBExists()
+  const clearAndFetchData = async () => {
+    const db = await openDB()
+    const transaction = db.transaction(Database.lawyerTable, 'readwrite')
+    const store = transaction.objectStore(Database.lawyerTable)
+    const now = new Date()
 
-    // if (dbExists) {
-    //   // cDate()
+    store.clear()
 
-    //   if (createdDate && differenceInDays(new Date(), createdDate) > 1) {
-    //     console.log(createdDate)
-    //   }
-    // }
-
-    if (!db && lawyers.length > 0) {
-      initDB()
-    }
-  }, [databaseName, db, tableName, lawyers, dbExists, createdDate])
+    lawyers.map((lawyer) => {
+      store.add({ ...lawyer, created: now })
+    })
+  }
 
   const getAllLawyers = (): Promise<Lawyer[]> => {
     return new Promise((resolve, reject) => {
