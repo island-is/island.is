@@ -98,6 +98,7 @@ async function download() {
         }
 
     }
+    console.log(`Changed files is ${changedFiles.join(',')}`);
     core.setOutput(_KEY_HAS_OUTPUT, "true");
     core.setOutput(_KEY_CHANGED_FILES, changedFiles.join(','));
 }
