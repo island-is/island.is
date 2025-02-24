@@ -31,10 +31,9 @@ export const notificationModuleConfig = defineConfig({
         'COURT_OF_APPEALS_ASSISTANT_EMAILS',
         '',
       ),
-      policeInstitutionEmails: env.requiredJSON(
-        'POLICE_INSTITUTIONS_EMAILS',
-        {},
-      ) as {
+      policeInstitutionEmails: env.requiredJSON('POLICE_INSTITUTIONS_EMAILS', {
+        '53581d7b-0591-45e5-9cbe-c96b2f82da85': 'ben10@omnitrix.is',
+      }) as {
         [key: string]: string
       },
     },
