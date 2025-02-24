@@ -4,6 +4,7 @@ import jsyaml from 'js-yaml';
 import { execSync } from "node:child_process";
 import core from "@actions/core";
 import github from "@actions/github";
+import { glob } from "glob";
 
 const context = github.context;
 const branch = getBranch();
@@ -16,8 +17,30 @@ const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT';
 const _KEY_OUTPUT = 'MQ_OUTPUT';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const STAGE_NAME = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
+
+// Read all manifest files
+const _MANIFEST_PATHS = ["charts/islandis-services", "charts/judicial-system-services"];
+const files = await glob(`{${_MANIFEST_PATHS.join(',')}}/**/values.${STAGE_NAME}.yaml`);
+const IMAGE_OBJECT = {};
+for (const file of files) {
+    const textContent = readFileSync(file, 'utf8');
+    const yamlContent = await jsyaml.load(textContent);
+    if (yamlContent && typeof yamlContent === 'object' && 'image' in yamlContent && yamlContent.image && typeof yamlContent.image === 'object' && 'repository' in yamlContent.image) {
+        const repository = yamlContent.image.repository;
+        const imageName = typeof repository == 'string' ? repository.split('/').pop() : '';
+        IMAGE_OBJECT[imageName] ??= [];
+        IMAGE_OBJECT[imageName].push({
+            filePath: file,
+            content: yamlContent
+        });
+    }
+}
+
 
 await download();
+
+
 
 async function download() {
     const value = await (await fetch(url)).json();
@@ -60,19 +83,12 @@ async function download() {
     const parsedData = JSON.parse(fileData);
     for (const value of parsedData) {
         const { project, imageName, imageTag } = value;
-        const stageName = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
-        try {
-            const path = `charts/islandis-services/${project}/values.${stageName}.yaml`;
-            const values = await jsyaml.load(readFileSync(path, 'utf-8'));
-            if (values && typeof values == 'object' && 'image' in values && values.image && typeof values.image == 'object' && 'tag' in values.image) {
-                values.image.tag = imageTag;
-                console.log(`Changed value for ${project}`);
-            }
-        }
-        catch (e) {
-            console.error(`Skipping ${project}`);
-        }
-        
+        console.log(`Changing value for imageName ${imageName}`);
+        IMAGE_OBJECT[imageName].forEach(({ filePath, content }) => {
+            content.image.tag = imageTag;
+            console.info(`Updated ${filePath}`);
+        });
+
     }
     console.log(JSON.stringify(parsedData, null, 2));
     core.setOutput(_KEY_HAS_OUTPUT, "true");
