@@ -23,7 +23,8 @@ console.info(`Git SHA: ${sha}`);
 
 function getTagname() {
     if (eventName === "pull_request" && context.payload.pull_request?.number) {
-        return `pr-${context.payload.pull_request.number}-${randomTag}`;
+        throw new Error(`Unsupported event: ${eventName}`);
+        // return `pr-${context.payload.pull_request.number}-${randomTag}`;
     }
     if (eventName === "merge_group") {
         if (typeOfDeployment.dev) {
@@ -34,12 +35,13 @@ function getTagname() {
         }
         throw new Error(`Unable to determine artifact name for merge_group event`);
     }
-
+    throw new Error(`Unable to determine artifact name for event type: ${eventName}`);
 }
 
 function getArtifactname() {
     if (eventName === "pull_request" && context.payload.pull_request?.number) {
-        return `pr-${context.payload.pull_request.number}`;
+        throw new Error(`Unsupported event: ${eventName}`);
+        // return `pr-${context.payload.pull_request.number}`;
     }
     if (eventName === "merge_group") {
         if (typeOfDeployment.dev) {
@@ -56,7 +58,7 @@ function getArtifactname() {
 
 
 function getTypeOfDeployment() {
-    if (targetBranch === 'main') {
+    if (targetBranch === 'main' || targetBranch == "mq-docker-pre-main") {
         return {
             dev: true,
             prod: false
@@ -69,11 +71,8 @@ function getTypeOfDeployment() {
         }
     }
     // UNKNOWN BRANCH
-    console.error(`Unknown branch: ${targetBranch} - not sure how to tag this deployment`);
-    return {
-        dev: false,
-        prod: false
-    }
+    // console.error(`Unknown branch: ${targetBranch} - not sure how to tag this deployment`);
+    throw new Error(`Unsupported branch: ${targetBranch}`);
 }
 
 

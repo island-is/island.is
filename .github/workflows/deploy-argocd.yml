@@ -1,7 +1,10 @@
 name: Upload manifest to argocd repo
 
 on: 
-    push: {}
+    push:
+        branches:
+            - main
+            - mq-docker-pre-main
 
 concurrency:
   group: upload-manifest-${{ github.head_ref || github.run_id }}

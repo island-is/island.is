@@ -111,7 +111,7 @@ function getBranch() {
 }
 
 function getTypeOfDeployment() {
-    if (branch === 'main') {
+    if (branch === 'main' || branch == "mq-docker-pre-main") {
         return {
             dev: true,
             staging: false,
@@ -139,6 +139,6 @@ function getArtifactname() {
     if (typeOfDeployment.prod) {
         return `release-${sha}`;
     }
-    console.error(`UNSUPPORTED - WILL BE USING TEST CONST`);
-    return 'pr-18084';
+    
+    throw new Error(`Unsupported`);
 }
