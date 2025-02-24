@@ -171,7 +171,7 @@ export class CmsElasticsearchService {
 
   async getEvents(
     index: string,
-    { size, page, order, organization, includePastEvents }: GetEventsInput,
+    { size, page, order, organization, onlyIncludePastEvents }: GetEventsInput,
   ) {
     const tagList: {
       key: string
@@ -197,13 +197,17 @@ export class CmsElasticsearchService {
       ...tagQuery,
       page,
       size,
-      ...(!includePastEvents
+      ...(!onlyIncludePastEvents
         ? {
             releaseDate: {
               from: 'now',
             },
           }
-        : {}),
+        : {
+            releaseDate: {
+              to: 'now',
+            },
+          }),
     }
 
     const eventsResponse = await this.elasticService.getDocumentsByMetaData(

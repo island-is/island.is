@@ -7,7 +7,6 @@ import {
 import {
   CrimeScene,
   IndictmentSubtype,
-  SubstanceMap,
 } from '@island.is/judicial-system/types'
 import {
   IndictmentCountOffense,
@@ -17,34 +16,9 @@ import {
 import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import { getDeprecatedIncidentDescriptionReason } from './getDeprecatedIncidentDescriptionReason'
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 
-const getDeprecatedIncidentDescriptionProps = ({
-  deprecatedOffenses,
-  formatMessage,
-  substances,
-}: {
-  deprecatedOffenses?: Maybe<IndictmentCountOffense[]>
-  formatMessage: IntlShape['formatMessage']
-  substances?: SubstanceMap | null
-}) => {
-  if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
-    return undefined
-  }
-
-  const reason = getDeprecatedIncidentDescriptionReason(
-    deprecatedOffenses,
-    substances || {},
-    formatMessage,
-  )
-  const isSpeeding = deprecatedOffenses?.includes(
-    IndictmentCountOffense.SPEEDING,
-  )
-
-  return { reason, isSpeeding }
-}
 
 const getIncidentDescriptionProps = ({
   offenses,
@@ -68,18 +42,14 @@ export const getIncidentDescription = ({
   formatMessage,
   crimeScene,
   subtypesRecord,
-  isOffenseEndpointEnabled,
 }: {
   indictmentCount: TempIndictmentCount
   formatMessage: IntlShape['formatMessage']
   crimeScene?: CrimeScene
   subtypesRecord?: Record<string, IndictmentSubtype[]>
-  isOffenseEndpointEnabled?: boolean
 }) => {
   const {
     offenses,
-    deprecatedOffenses,
-    substances,
     vehicleRegistrationNumber,
     indictmentCountSubtypes,
     policeCaseNumber,
@@ -110,13 +80,10 @@ export const getIncidentDescription = ({
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
-    const incidentDescriptionProps = isOffenseEndpointEnabled
-      ? getIncidentDescriptionProps({ offenses, formatMessage })
-      : getDeprecatedIncidentDescriptionProps({
-          deprecatedOffenses,
-          formatMessage,
-          substances,
-        })
+    const incidentDescriptionProps = getIncidentDescriptionProps({
+      offenses,
+      formatMessage,
+    })
     if (!incidentDescriptionProps) {
       return ''
     }
