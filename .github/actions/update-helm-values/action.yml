@@ -30,7 +30,7 @@ runs:
         echo "$files\n$paths"
         for path in ${paths[@]}; do
           echo "Copying filepath: ${path}"
-          cp island-is/"$path" helm-values/charts/
+          cp "$path" helm-values/charts/
         done
     - name: Commit and push changes to helm-values repository
       shell: bash
