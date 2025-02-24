@@ -34,6 +34,7 @@ async function download() {
 
     const outputDir = '/tmp/artifact_unzip';
     try {
+        execSync(`cat ${zipFileName}`);
         execSync(`unzip -o ${zipFileName} -d ${outputDir}`, { stdio: 'inherit' });
         console.log(`Unzipped artifact to ${outputDir}/`);
     } catch (err) {
