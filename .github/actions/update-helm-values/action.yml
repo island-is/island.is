@@ -29,8 +29,9 @@ runs:
         read -a paths <<< $files
         echo "$files\n$paths"
         for path in ${paths[@]}; do
-          echo "Copying filepath: ${path}"
-          cp "$path" helm-values/charts/
+          export DEST="helm-values/charts/${path#charts/}"
+          echo "Copying filepath: ${path} to $DEST"
+          cp "$path" "$DEST"
         done
     - name: Commit and push changes to helm-values repository
       shell: bash
