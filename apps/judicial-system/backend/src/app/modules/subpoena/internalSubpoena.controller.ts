@@ -104,7 +104,7 @@ export class InternalSubpoenaController {
     }
 
     return this.auditTrailService.audit(
-      'internalSubpoena',
+      deliverDto.user.id,
       AuditedAction.DELIVER_SUBPOENA_TO_POLICE,
       this.subpoenaService.deliverSubpoenaToPolice(
         theCase,
@@ -132,7 +132,7 @@ export class InternalSubpoenaController {
     type: DeliverResponse,
     description: 'Delivers a subpoena to the police',
   })
-  async deliverSubpoenaFileToPolice(
+  deliverSubpoenaFileToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -145,16 +145,11 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.auditTrailService.audit(
-      'internalSubpoena',
-      AuditedAction.DELIVER_SUBPOENA_TO_POLICE,
-      this.subpoenaService.deliverSubpoenaFileToPolice(
-        theCase,
-        defendant,
-        subpoena,
-        deliverDto.user,
-      ),
-      caseId,
+    return this.subpoenaService.deliverSubpoenaFileToPolice(
+      theCase,
+      defendant,
+      subpoena,
+      deliverDto.user,
     )
   }
 
