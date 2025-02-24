@@ -55,9 +55,8 @@ hpa:
       max: 10
       min: 3
 image:
-  name: 'services-sessions-cleanup'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 namespace: 'services-sessions'
 podDisruptionBudget:
   maxUnavailable: 1

@@ -48,9 +48,8 @@ hpa:
       max: 10
       min: 3
 image:
-  name: 'icelandic-names-registry-backend'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 initContainer:
   containers:
     - args:

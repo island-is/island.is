@@ -71,9 +71,8 @@ hpa:
       max: 3
       min: 1
 image:
-  name: 'judicial-system-backend'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 initContainer:
   containers:
     - args:

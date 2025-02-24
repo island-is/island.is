@@ -42,9 +42,8 @@ hpa:
       max: 10
       min: 3
 image:
-  name: 'contentful-entry-tagger-service'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 ingress:
   primary-alb:
     annotations:

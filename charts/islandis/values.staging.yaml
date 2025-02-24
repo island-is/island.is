@@ -38,9 +38,8 @@ air-discount-scheme-api:
         max: 3
         min: 1
   image:
-    name: 'air-discount-scheme-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -128,9 +127,8 @@ air-discount-scheme-backend:
         max: 3
         min: 1
   image:
-    name: 'air-discount-scheme-backend'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -230,9 +228,8 @@ air-discount-scheme-web:
         max: 3
         min: 1
   image:
-    name: 'air-discount-scheme-web'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -449,9 +446,8 @@ api:
         max: 3
         min: 1
   image:
-    name: 'api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -726,9 +722,8 @@ application-system-api:
         max: 3
         min: 1
   image:
-    name: 'application-system-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -896,9 +891,8 @@ application-system-api-worker:
         max: 3
         min: 1
   image:
-    name: 'application-system-api-worker'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -973,9 +967,8 @@ application-system-form:
         max: 3
         min: 1
   image:
-    name: 'application-system-form'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1043,9 +1036,8 @@ consultation-portal:
         max: 3
         min: 1
   image:
-    name: 'consultation-portal'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1136,9 +1128,8 @@ download-service:
         max: 3
         min: 1
   image:
-    name: 'download-service'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1240,9 +1231,8 @@ endorsement-system-api:
         max: 3
         min: 1
   image:
-    name: 'endorsement-system-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -1339,9 +1329,8 @@ icelandic-names-registry-backend:
         max: 3
         min: 1
   image:
-    name: 'icelandic-names-registry-backend'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -1426,9 +1415,8 @@ island-ui-storybook:
         max: 3
         min: 1
   image:
-    name: 'island-ui-storybook'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1501,9 +1489,8 @@ license-api:
         max: 3
         min: 1
   image:
-    name: 'license-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1609,9 +1596,8 @@ portals-admin:
         max: 3
         min: 1
   image:
-    name: 'portals-admin'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1690,9 +1676,8 @@ regulations-admin-backend:
         max: 3
         min: 1
   image:
-    name: 'regulations-admin-backend'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -1779,9 +1764,8 @@ search-indexer-service:
         max: 1
         min: 1
   image:
-    name: 'search-indexer-service'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -1912,9 +1896,8 @@ service-portal:
         max: 3
         min: 1
   image:
-    name: 'service-portal'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -2003,9 +1986,8 @@ service-portal-api:
         max: 3
         min: 1
   image:
-    name: 'service-portal-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     internal-alb:
       annotations:
@@ -2123,9 +2105,8 @@ services-bff-portals-admin:
         max: 3
         min: 1
   image:
-    name: 'services-bff-portals-admin'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -2211,9 +2192,8 @@ services-bff-portals-my-pages:
         max: 3
         min: 1
   image:
-    name: 'services-bff-portals-my-pages'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -2288,9 +2268,8 @@ services-documents:
         max: 3
         min: 1
   image:
-    name: 'services-documents'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -2372,9 +2351,8 @@ services-sessions:
         max: 3
         min: 1
   image:
-    name: 'services-sessions'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     internal-alb:
       annotations:
@@ -2444,9 +2422,8 @@ services-sessions-cleanup:
         max: 3
         min: 1
   image:
-    name: 'services-sessions-cleanup'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2512,9 +2489,8 @@ services-sessions-worker:
         max: 3
         min: 1
   image:
-    name: 'services-sessions-worker'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -2620,9 +2596,8 @@ services-university-gateway:
         max: 3
         min: 1
   image:
-    name: 'services-university-gateway'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -2752,9 +2727,8 @@ services-university-gateway-worker:
         max: 3
         min: 1
   image:
-    name: 'services-university-gateway-worker'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2814,9 +2788,8 @@ skilavottord-web:
         max: 3
         min: 1
   image:
-    name: 'skilavottord-web'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -2886,9 +2859,8 @@ skilavottord-ws:
         max: 3
         min: 1
   image:
-    name: 'skilavottord-ws'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -2978,9 +2950,8 @@ unicorn-app:
         max: 3
         min: 1
   image:
-    name: 'unicorn-app'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -3079,9 +3050,8 @@ user-notification:
         max: 3
         min: 1
   image:
-    name: 'user-notification'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     internal-alb:
       annotations:
@@ -3175,9 +3145,8 @@ user-notification-cleanup-worker:
         max: 3
         min: 1
   image:
-    name: 'user-notification-cleanup-worker'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -3295,9 +3264,8 @@ user-notification-worker:
         max: 3
         min: 1
   image:
-    name: 'user-notification-worker'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -3393,9 +3361,8 @@ web:
         max: 3
         min: 1
   image:
-    name: 'web'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -3467,9 +3434,8 @@ xroad-collector:
         max: 3
         min: 1
   image:
-    name: 'xroad-collector'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   namespace: 'xroad-collector'
   podDisruptionBudget:
     maxUnavailable: 1

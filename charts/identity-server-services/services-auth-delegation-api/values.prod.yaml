@@ -74,9 +74,8 @@ hpa:
       max: 10
       min: 2
 image:
-  name: 'services-auth-delegation-api'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 ingress:
   internal-alb:
     annotations:

@@ -50,9 +50,8 @@ hpa:
       max: 3
       min: 1
 image:
-  name: 'external-contracts-tests'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 namespace: 'external-contracts-tests'
 podDisruptionBudget:
   maxUnavailable: 1

@@ -39,9 +39,8 @@ auth-admin-web:
         max: 10
         min: 2
   image:
-    name: 'auth-admin-web'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -150,9 +149,8 @@ identity-server:
         max: 10
         min: 3
   image:
-    name: 'identity-server'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -276,9 +274,8 @@ services-auth-admin-api:
         max: 10
         min: 2
   image:
-    name: 'services-auth-admin-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -381,9 +378,8 @@ services-auth-delegation-api:
         max: 10
         min: 2
   image:
-    name: 'services-auth-delegation-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     internal-alb:
       annotations:
@@ -490,9 +486,8 @@ services-auth-ids-api:
         max: 15
         min: 6
   image:
-    name: 'services-auth-ids-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   initContainer:
     containers:
       - args:
@@ -601,9 +596,8 @@ services-auth-ids-api-cleanup:
         max: 10
         min: 3
   image:
-    name: 'services-auth-ids-api-cleanup'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -678,9 +672,8 @@ services-auth-personal-representative:
         max: 10
         min: 2
   image:
-    name: 'services-auth-personal-representative'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -749,9 +742,8 @@ services-auth-personal-representative-public:
         max: 10
         min: 2
   image:
-    name: 'services-auth-personal-representative-public'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:
@@ -846,9 +838,8 @@ services-auth-public-api:
         max: 10
         min: 2
   image:
-    name: 'services-auth-public-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-    tag: 'latest_master'
+    tag: 'latest'
   ingress:
     primary-alb:
       annotations:

@@ -57,9 +57,8 @@ hpa:
       max: 3
       min: 1
 image:
-  name: 'user-notification-cleanup-worker'
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
-  tag: 'latest_master'
+  tag: 'latest'
 initContainer:
   containers:
     - args:
