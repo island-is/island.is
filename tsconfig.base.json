@@ -456,8 +456,8 @@
       "@island.is/application/templates/mortgage-certificate": [
         "libs/application/templates/mortgage-certificate/src/index.ts"
       ],
-      "@island.is/application/templates/new-primary-school": [
-        "libs/application/templates/new-primary-school/src/index.ts"
+      "@island.is/application/templates/primary-school": [
+        "libs/application/templates/primary-school/src/index.ts"
       ],
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
