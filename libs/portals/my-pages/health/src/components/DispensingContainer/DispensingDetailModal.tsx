@@ -12,7 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
-import { messages } from '../../../../lib/messages'
+import { messages } from '../../lib/messages'
 import * as styles from './DispensingContainer.css'
 import DispensingDetailModalItem from './DispensingDetailModalItem'
 

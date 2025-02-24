@@ -11,12 +11,12 @@ import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
 
 import {} from '../../utils/mockData'
-import DispensingContainer from './components/DispensingContainer/DispensingContainer'
-import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
+import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
 import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
 import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
 import { HealthDirectoratePrescribedItemCategory } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
+import DispensingContainer from '../../components/DispensingContainer/DispensingContainer'
 
 const ITEMS_ON_PAGE = 10
 

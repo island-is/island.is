@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import cn from 'classnames'
 import React, { ReactNode } from 'react'
-import { messages } from '../../../../lib/messages'
+import { messages } from '../../lib/messages'
 import * as styles from './DispensingContainer.css'
 
 interface DispensingDetailModalItemProps {

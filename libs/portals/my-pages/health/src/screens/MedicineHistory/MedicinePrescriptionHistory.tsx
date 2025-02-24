@@ -12,9 +12,9 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import DispensingContainer from './components/DispensingContainer/DispensingContainer'
-import DispensingDetailModal from './components/DispensingContainer/DispensingDetailModal'
-import { useGetMedicineHistoryQuery } from './Prescriptions.generated'
+import { useGetMedicineHistoryQuery } from '../MedicinePrescriptions/Prescriptions.generated'
+import DispensingDetailModal from '../../components/DispensingContainer/DispensingDetailModal'
+import DispensingContainer from '../../components/DispensingContainer/DispensingContainer'
 
 const MedicinePrescriptionHistory = () => {
   const { formatMessage, lang } = useLocale()
