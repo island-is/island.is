@@ -63,7 +63,7 @@ async function download() {
         const stageName = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
         try {
             const path = `charts/islandis-services/${project}/values.${stageName}.yaml`;
-            const values = jsyaml.load(readFileSync(path, 'utf-8'));
+            const values = await jsyaml.load(readFileSync(path, 'utf-8'));
             if (values && typeof values == 'object' && 'image' in values && values.image && typeof values.image == 'object' && 'tag' in values.image) {
                 values.image.tag = imageTag;
                 console.log(`Changed value for ${project}`);
