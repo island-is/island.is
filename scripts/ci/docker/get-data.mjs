@@ -12,7 +12,6 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 async function download() {
     const value = await (await fetch(url)).json();
-    console.log(value);
     if (value.total_count === 0) {
         console.error(`No artifacts found for ${name}`);
         core.setOutput(_KEY_HAS_OUTPUT, "false");
@@ -24,7 +23,7 @@ async function download() {
     const artifactZipResponse = await fetch(downloadUrl, {
         headers: {
             Authorization: `Bearer ${GITHUB_TOKEN}`,
-            Accept: 'application/vnd.github+json',
+            Accept: 'application/octet-stream',
         },
     });
     const zipBuffer = Buffer.from(await artifactZipResponse.arrayBuffer());
