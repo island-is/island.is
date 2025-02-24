@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Update helm-values repository
-        uses: ./island.is/.github/actions/update-helm-values
+        uses: .github/actions/update-helm-values
         with:
           files: 'charts/islandis-services/air-discount-scheme-backend/values.dev.yaml,charts/islandis-services/air-discount-scheme-web/values.dev.yaml'
           gh_token_pat: ${{ secrets.GH_HELM_VALUES_PAT }}
