@@ -26,6 +26,23 @@ import { SpeedingOffenseFields } from './SpeedingOffenseFields'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
 
+// when migrating offenses to the new structure they will all have the same creation date, thus we fallback to compare 
+// and sort by the offense type
+const offensesCompare = (
+  o1: Offense, o2: Offense
+) => {
+  const offense1Index = Object.values(IndictmentCountOffense).indexOf(o1.offense)
+  const offense2Index = Object.values(IndictmentCountOffense).indexOf(o2.offense)
+
+  if (offense1Index < offense2Index) {
+    return -1
+  }
+  if (offense1Index > offense2Index) {
+    return 1
+  }
+  return 0
+}
+
 const sortByCreatedDate = (o1: Offense, o2: Offense) => {
   if (!(o1.created && o2.created)) {
     return 0
@@ -36,7 +53,7 @@ const sortByCreatedDate = (o1: Offense, o2: Offense) => {
   if (o1.created > o2.created) {
     return 1
   }
-  return 0
+  return offensesCompare(o1, o2)
 }
 
 const getUpdatedOffenses = (
