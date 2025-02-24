@@ -872,7 +872,7 @@ export const InboxScreen: NavigationFunctionComponent<{
               })
             } else {
               showToastForBulkSelectAction({
-                variant: 'success',
+                variant: 'error',
                 title: intl.formatMessage({
                   id: 'inbox.bulkSelect.starError',
                 }),
@@ -899,7 +899,7 @@ export const InboxScreen: NavigationFunctionComponent<{
               })
             } else {
               showToastForBulkSelectAction({
-                variant: 'success',
+                variant: 'error',
                 title: intl.formatMessage({
                   id: 'inbox.bulkSelect.archiveError',
                 }),
@@ -934,7 +934,7 @@ export const InboxScreen: NavigationFunctionComponent<{
               })
             } else {
               showToastForBulkSelectAction({
-                variant: 'success',
+                variant: 'error',
                 title: intl.formatMessage({
                   id: 'inbox.bulkSelect.markAsReadError',
                 }),
