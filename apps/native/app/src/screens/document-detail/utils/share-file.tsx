@@ -50,7 +50,7 @@ export const shareFile = async ({
         ? `file://${pdfUrl}`
         : isHtml
         ? `file://${htmlUrl}`
-        : content ?? document.downloadUrl!,
+        : content ?? undefined,
     })
   } catch (error) {
     // noop
