@@ -91,6 +91,7 @@ import { DigitalIcelandStatistics } from '../components/connected/DigitalIceland
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
+import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -220,6 +221,9 @@ export const webRenderConnectedComponent = (
       break
     case 'DigitalIcelandStatistics':
       connectedComponent = <DigitalIcelandStatistics />
+      break
+    case 'Trufelog/Lifsskodunarfelog':
+      connectedComponent = <ReligiousOrganizationList slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

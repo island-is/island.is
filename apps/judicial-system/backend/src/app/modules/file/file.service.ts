@@ -168,15 +168,7 @@ export class FileService {
       (file.category !== CaseFileCategory.RULING &&
         file.category !== CaseFileCategory.COURT_RECORD)
     ) {
-      return undefined
-    }
-
-    const confirmationEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-    )
-
-    if (!confirmationEvent || !confirmationEvent.nationalId) {
-      return undefined
+      return undefined // This should never happen
     }
 
     const completedEvent = theCase.eventLogs?.find(
