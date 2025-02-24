@@ -9,7 +9,7 @@ export enum IndictmentCountOffense {
   ILLEGAL_DRUGS_DRIVING = 'ILLEGAL_DRUGS_DRIVING',
   PRESCRIPTION_DRUGS_DRIVING = 'PRESCRIPTION_DRUGS_DRIVING',
   SPEEDING = 'SPEEDING',
-  // OTHER = 'OTHER',
+  OTHER = 'OTHER',
 }
 
 export type SubstanceMap = { [key in Substance]?: string }
@@ -24,5 +24,5 @@ export const offenseSubstances: {
   [IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING]:
     ILLEGAL_DRUGS_AND_PRESCRIPTION_DRUGS_DRIVING,
   [IndictmentCountOffense.SPEEDING]: [],
-  // [IndictmentCountOffense.OTHER]: [],
+  [IndictmentCountOffense.OTHER]: [],
 }
