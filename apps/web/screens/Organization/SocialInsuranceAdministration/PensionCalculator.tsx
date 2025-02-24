@@ -1421,7 +1421,6 @@ PensionCalculator.getProps = async ({
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
-    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,

@@ -96,7 +96,6 @@ export class HealthDirectorateHealthService {
     ).mePrescriptionControllerGetPrescriptionsV1({
       locale: this.mapLocale(locale),
     })
-    console.log(prescriptions[0])
 
     if (!prescriptions) {
       this.logger.debug('No prescriptions returned', {
