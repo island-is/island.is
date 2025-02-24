@@ -52,7 +52,6 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -77,7 +76,6 @@ jobs:
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
@@ -89,40 +87,41 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: feature-checkout
+      - name: Derive appropriate SHAs
+        uses: ./.github/actions/set-shas
+
+      - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
-      - name: prerelease-checkout
+      - name: Prepare pre-release
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-        # NOTE: checkout features
-      - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-        run: |
-          set -euo pipefail
-          git checkout "$GITHUB_HEAD_REF"
-          git checkout "$GITHUB_BASE_REF"
-          git checkout "$GITHUB_SHA"
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
-          BASE_SHA=${{ env.NX_BASE }}
-          HEAD_SHA=${{ env.NX_HEAD }}
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+      #   # NOTE: checkout features
+      # - name: Checkout branches for feature deployment
+      #   if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
+      #   run: |
+      #     set -euo pipefail
+      #     git checkout "$GITHUB_HEAD_REF"
+      #     git checkout "$GITHUB_BASE_REF"
+      #     git checkout "$GITHUB_SHA"
+      #     git config --global user.email "ci@island.is"
+      #     git config --global user.name "CI Bot"
+      #
+      #     # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+      #     # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+      #     BASE_SHA=${{ env.NX_BASE }}
+      #     HEAD_SHA=${{ env.NX_HEAD }}
+      #     echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
+      #     echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       # NOTE: checkout main
-      - name: Checking out relevant branches for a branch build
+      - name: Checkout main branch
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
           set -euo pipefail
@@ -188,11 +187,6 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
-      - run: |
-          echo HEAD="$GITHUB_SHA" >> "$GITHUB_ENV"
-        id: git_nx_head
-        name: Preparing HEAD tag
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
@@ -223,6 +217,11 @@ jobs:
         env:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
 
+      - name: Set AFFECTED_ALL env
+        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || env.BRANCH == 'main' }}
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -230,20 +229,9 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Gather unaffected docker images
-        id: unaffected
-        run: |
-          set -euo pipefail
-          UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
-          echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
-
-      - name: check pre-release
-        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || steps.set-branch-env.outputs.GIT_BRANCH == 'main' }}
-        run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
       # NOTE: only on PRs
       - name: Prepare deployment targets
@@ -251,11 +239,13 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          CHUNKS="${{ steps.build_map.outputs.BUILD_CHUNKS }}"
+          CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
+            # NOTE: validate the jq command to trigger failure
+            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
+            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
@@ -393,7 +383,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: arc-runners
     timeout-minutes: 30
     env:
@@ -431,14 +421,6 @@ jobs:
         env:
           PUBLISH: 'true'
 
-      - name: Retag as latest
-        if: ${{ env.GIT_BRANCH == 'main' && env.NX_AFFECTED_ALL != 'true' }}
-        env:
-          UNAFFECTED: helm-config
-          LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
-          DOCKER_TAG: latest
-        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
@@ -449,42 +431,13 @@ jobs:
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
 
-  retag-unaffected:
-    runs-on: arc-runners
-    timeout-minutes: 5
-    if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
-    needs:
-      - pre-checks
-      - docker-build
-      - prepare
-    env:
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
-      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
-
-    steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check docker-build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-      - name: Retag unaffected Docker images
-        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
   deploy:
     runs-on: arc-runners
-    if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
+    if: ${{ !cancelled() && needs.helm-docker-build.result == 'success' && needs.docker-build.result == 'success' }}
     needs:
-      - retag-unaffected
       - pre-checks
       - prepare
+      - docker-build
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -537,11 +490,9 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
-      - retag-unaffected
+      - docker-build
       - deploy
     steps:
-      - name: Check retag success
-        run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
@@ -558,7 +509,6 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
-      - retag-unaffected
       - deploy
     steps:
       - name: Send Slack notification

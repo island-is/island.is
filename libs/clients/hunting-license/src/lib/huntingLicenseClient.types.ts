@@ -1,5 +1,7 @@
 import { PermitHunting, PermitHuntingPermitValidityEnum } from '../../gen/fetch'
 
+type Validity = 'active' | 'expired' | 'unknown'
+
 export type HuntingLicenseDto = {
   holderNationalId: string
   holderName: string
@@ -8,6 +10,7 @@ export type HuntingLicenseDto = {
   category: string
   number: string
   isValid: boolean
+  validity: Validity
   validFrom?: Date
   validTo?: Date
   permitFor?: Array<string>
@@ -49,6 +52,21 @@ export const mapHuntingLicenseDto = (
     }
   }
 
+  let validity: Validity
+  switch (data.permitValidity) {
+    case PermitHuntingPermitValidityEnum.Gildi:
+    case PermitHuntingPermitValidityEnum.Valid:
+      validity = 'active'
+      break
+    case PermitHuntingPermitValidityEnum.EkkiGildi:
+    case PermitHuntingPermitValidityEnum.Expired:
+      validity = 'expired'
+      break
+    default:
+      validity = 'unknown'
+      break
+  }
+
   return {
     holderNationalId: data.personid,
     holderName: data.personname,
@@ -56,6 +74,7 @@ export const mapHuntingLicenseDto = (
     holderCity: holderCity ?? '',
     category: data.permitCategory ?? '',
     number: data.permitNumber,
+    validity,
     isValid: data.permitValidity === PermitHuntingPermitValidityEnum.Gildi,
     permitFor: data.permitFor,
     benefits: data.benefits?.map((b) => ({

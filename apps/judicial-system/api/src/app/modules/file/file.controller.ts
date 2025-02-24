@@ -177,7 +177,12 @@ export class FileController {
     )
   }
 
-  @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
+  @Get([
+    'subpoena/:defendantId',
+    'subpoena/:defendantId/:fileName',
+    'subpoena/:defendantId/:subpoenaId',
+    'subpoena/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
