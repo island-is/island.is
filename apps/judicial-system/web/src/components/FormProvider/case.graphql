@@ -218,6 +218,7 @@ query Case($input: CaseQueryInput!) {
         indictmentCountId
         created
         modified
+        offense
         substances
       }
       deprecatedOffenses
