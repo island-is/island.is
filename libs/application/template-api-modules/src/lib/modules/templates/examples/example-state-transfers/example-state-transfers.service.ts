@@ -76,8 +76,6 @@ export class ExampleStateTransfersService extends BaseTemplateApiService {
   }
 
   async createApplication() {
-    console.log('------------ Hér í create application ------------')
-
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
