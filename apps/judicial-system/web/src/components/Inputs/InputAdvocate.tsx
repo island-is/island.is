@@ -192,7 +192,6 @@ const InputAdvocate: FC<Props> = ({
             lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
           onChange={handleAdvocateChange}
-          filterConfig={{ matchFrom: 'start' }}
           isDisabled={Boolean(disabled)}
           isCreatable
           isClearable
