@@ -102,31 +102,47 @@ export class CmsRepository {
     })
   }
 
+  private inputFieldExistsInContent = (
+    contentFields: Array<ContentFields<KeyValueMap>>,
+    inputField: { key: string; value: unknown },
+  ) => {
+    return !!contentFields.find((ctf) => ctf.id === inputField.key)
+  }
+
   private updateContentfulEntry = (
     grantReferenceId: string,
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Array<{ key: string; value: unknown }>,
-  ) => {
+  ): Promise<Entry | undefined> => {
     let hasChanges = false
     for (const inputField of inputFields) {
-      if (contentFields.find((ctf) => ctf.id === inputField.key)) {
-        if (!entry.fields[inputField.key]?.[LOCALE]) {
-          logger.info(`Field not found`, {
-            inputField: inputField.key,
-            id: entry.sys.id,
-            referenceId: grantReferenceId,
-          })
-          return Promise.reject(
-            `Invalid field in input fields: ${inputField.key}`,
-          )
-        }
-        if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
-          hasChanges = true
-          entry.fields[inputField.key][LOCALE] = inputField.value
-        }
+      if (!this.inputFieldExistsInContent(contentFields, inputField)) {
+        logger.info(`Field not found`, {
+          inputField: inputField.key,
+          id: entry.sys.id,
+          referenceId: grantReferenceId,
+        })
+        return Promise.reject(
+          `Invalid field in input fields: ${inputField.key}`,
+        )
+      }
+      if (!entry.fields[inputField.key]?.[LOCALE]) {
+        logger.info(`Field not found in entry`, {
+          inputField: inputField.key,
+          id: entry.sys.id,
+          referenceId: grantReferenceId,
+        })
+        return Promise.reject(
+          `Invalid field in input fields for entry; inputField: ${inputField.key}, entry: ${entry.sys.id}`,
+        )
+      }
+      if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
+        hasChanges = true
+        entry.fields[inputField.key][LOCALE] = inputField.value
       }
     }
+
     if (hasChanges) {
       logger.info('updating values', {
         id: entry.sys.id,
