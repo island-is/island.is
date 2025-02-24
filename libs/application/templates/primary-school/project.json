@@ -1,5 +1,5 @@
 {
-  "name": "application-templates-new-primary-school",
+  "name": "application-templates-primary-school",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/primary-school/src",
   "projectType": "library",

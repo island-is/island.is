@@ -12,5 +12,5 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '<rootDir>/coverage/libs/application/templates/primary-school',
-  displayName: 'application-templates-new-primary-school',
+  displayName: 'application-templates-primary-school',
 }

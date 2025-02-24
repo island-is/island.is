@@ -2,17 +2,17 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import {
   errorMessages,
   getApplicationAnswers,
-} from 'libs/application/templates/primary-school/src'
+} from '@island.is/application/templates/primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { transformApplicationToPrimarySchoolDTO } from './new-primary-school.utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { transformApplicationToPrimarySchoolDTO } from './primary-school.utils'
 
 @Injectable()
 export class PrimarySchoolService extends BaseTemplateApiService {

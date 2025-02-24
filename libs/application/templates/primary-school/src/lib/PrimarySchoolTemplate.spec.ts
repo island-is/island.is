@@ -30,7 +30,7 @@ const buildApplication = (data: {
   }
 }
 
-describe('New Primary School Template', () => {
+describe('Primary School Template', () => {
   it('should transition from draft to submitted on submit', () => {
     const helper = new ApplicationTemplateHelper(
       buildApplication({
