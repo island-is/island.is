@@ -61,13 +61,18 @@ async function download() {
     for (const value of parsedData) {
         const { project, imageName, imageTag } = value;
         const stageName = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
-        const path = `charts/islandis-services/${project}/values.${stageName}.yaml`;
-        const values = jsyaml.load(readFileSync(path, 'utf-8'));
-        if (values && typeof values == 'object' && 'image' in values && values.image && typeof values.image == 'object' && 'tag' in values.image) {
-            values.image.tag = imageTag;
-            console.log(`Changed value for ${project}`);
+        try {
+            const path = `charts/islandis-services/${project}/values.${stageName}.yaml`;
+            const values = jsyaml.load(readFileSync(path, 'utf-8'));
+            if (values && typeof values == 'object' && 'image' in values && values.image && typeof values.image == 'object' && 'tag' in values.image) {
+                values.image.tag = imageTag;
+                console.log(`Changed value for ${project}`);
+            }
         }
-        console.log(values);
+        catch (e) {
+            console.error(`Skipping ${project}`);
+        }
+        
     }
     console.log(JSON.stringify(parsedData, null, 2));
     core.setOutput(_KEY_HAS_OUTPUT, "true");
