@@ -100,7 +100,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
-  @Scopes(ApiScope.healthWaitingLists)
+  @Scopes(ApiScope.internal)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
@@ -115,7 +115,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
-  @Scopes(ApiScope.healthReferrals)
+  @Scopes(ApiScope.internal)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferrals(
     @Args('locale', { type: () => String, nullable: true })
@@ -130,7 +130,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectoratePrescriptions',
   })
   @Audit()
-  @Scopes(ApiScope.healthPrescriptions)
+  @Scopes(ApiScope.internal)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptions(
     @Args('locale', { type: () => String, nullable: true })
@@ -145,7 +145,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateMedicineHistory',
   })
   @Audit()
-  @Scopes(ApiScope.healthDispensations)
+  @Scopes(ApiScope.internal)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getMedicineHistory(
     @Args('locale', { type: () => String, nullable: true })
