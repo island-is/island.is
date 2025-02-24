@@ -21,6 +21,31 @@ export const registerProperty = {
         'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
+    propertySearchPlaceholder: {
+      id: 'ra.application:registerProperty.info.propertySearchPlaceholder',
+      defaultMessage: 'Leitaðu eftir heimilisfangi',
+      description: 'Placeholder for property search',
+    },
+    searchResultHeaderPropertyId: {
+      id: 'ra.application:registerProperty.info.searchResultHeaderPropertyId',
+      defaultMessage: 'Fasteignanúmer',
+      description: 'Search result header for property number',
+    },
+    searchResultHeaderMarking: {
+      id: 'ra.application:registerProperty.info.searchResultHeaderMarking',
+      defaultMessage: 'Merking',
+      description: 'Search result header for "merking"',
+    },
+    searchResultHeaderPropertySize: {
+      id: 'ra.application:registerProperty.info.searchResultHeaderPropertySize',
+      defaultMessage: 'Stærð',
+      description: 'Search result header for property size',
+    },
+    searchResultsHeaderNumOfRooms: {
+      id: 'ra.application:registerProperty.info.searchResultsHeaderNumOfRooms',
+      defaultMessage: 'Herbergi',
+      description: 'Search result header for number of rooms',
+    },
 
     // Error messages
     searchResultsEmptyError: {

@@ -1,5 +1,7 @@
+import { de } from 'date-fns/locale'
+
 // Svar frá: http://localhost:5123/api/Stadfang/search?partialStadfang=Sunnusmári
-const propertyStadfang = [
+export const stadfangData = [
   {
     stadfang_nr: 1161225,
     stadfang: 'Sunnusmári 26',
@@ -243,7 +245,7 @@ const propertyStadfang = [
 ]
 
 // Svar frá: http://localhost:5123/api/Fasteign/byStadfangNr?stadfangNr=1162164
-const propertyByStadfangNr = [
+export const fasteignByStadfangNrData = [
   {
     fastnum: 2522506,
     fasteign_nr: 2522506,
@@ -715,10 +717,10 @@ const propertyByStadfangNr = [
 ]
 
 // Svar frá: http://localhost:5123/api/Adalmatseining/byFasteignNr?fasteignNr=2522551
-const adalmatseiningByFasteignNr = [
+export const adalmatseiningByFasteignNrData = [
   {
-    fastnum: 2522551,
-    fasteignanumer: 2522551,
+    fastnum: 2522506,
+    fasteignanumer: 2522506,
     fasteignamat: 73650,
     brunabotamat: 46900,
     notkun: 'Íbúð á hæð',
@@ -729,7 +731,7 @@ const adalmatseiningByFasteignNr = [
       {
         fnum: 2394043,
         fasteignamat: 0,
-        fastnum: 2522551,
+        fastnum: 2522506,
         notkun: 'Stæði í bílageymslu',
         merking: '04A32',
         stadfang_nr: 1162164,
@@ -741,15 +743,93 @@ const adalmatseiningByFasteignNr = [
       {
         fnum: 2393995,
         fasteignamat: 73650,
-        fastnum: 2522551,
+        fastnum: 2522506,
         notkun: 'Íbúð á hæð',
         merking: '010510',
         stadfang_nr: 1162164,
         stadfang_birting: null,
         brunabotamat: 46900,
         eining: 'm²',
-        einflm: 87.5,
+        einflm: 97.7,
+      },
+    ],
+  },
+  {
+    fastnum: 2522507,
+    fasteignanumer: 2522507,
+    fasteignamat: 73650,
+    brunabotamat: 46900,
+    notkun: 'Íbúð á hæð',
+    stadfang_nr: 1162164,
+    stadfang_birting: 'Sunnusmári 1',
+    merking: '010511',
+    matseiningar: [
+      {
+        fnum: 2394043,
+        fasteignamat: 0,
+        fastnum: 2522507,
+        notkun: 'Stæði í bílageymslu',
+        merking: '04A34',
+        stadfang_nr: 1162164,
+        stadfang_birting: null,
+        brunabotamat: 6500,
+        eining: 'm²',
+        einflm: 0,
+      },
+      {
+        fnum: 2393995,
+        fasteignamat: 73650,
+        fastnum: 2522507,
+        notkun: 'Íbúð á hæð',
+        merking: '010511',
+        stadfang_nr: 1162164,
+        stadfang_birting: null,
+        brunabotamat: 46900,
+        eining: 'm²',
+        einflm: 53.4,
+      },
+    ],
+  },
+  {
+    fastnum: 2522508,
+    fasteignanumer: 2522508,
+    fasteignamat: 73650,
+    brunabotamat: 46900,
+    notkun: 'Íbúð á hæð',
+    stadfang_nr: 1162164,
+    stadfang_birting: 'Sunnusmári 1',
+    merking: '010512',
+    matseiningar: [
+      {
+        fnum: 2394043,
+        fasteignamat: 0,
+        fastnum: 2522508,
+        notkun: 'Stæði í bílageymslu',
+        merking: '04A36',
+        stadfang_nr: 1162164,
+        stadfang_birting: null,
+        brunabotamat: 6500,
+        eining: 'm²',
+        einflm: 0,
+      },
+      {
+        fnum: 2393995,
+        fasteignamat: 73650,
+        fastnum: 2522508,
+        notkun: 'Íbúð á hæð',
+        merking: '010512',
+        stadfang_nr: 1162164,
+        stadfang_birting: null,
+        brunabotamat: 46900,
+        eining: 'm²',
+        einflm: 144.1,
       },
     ],
   },
 ]
+
+export default {
+  stadfangData,
+  fasteignByStadfangNrData,
+  adalmatseiningByFasteignNrData,
+}
