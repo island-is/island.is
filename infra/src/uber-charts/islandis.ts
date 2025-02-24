@@ -68,7 +68,7 @@ import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
-import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+// import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -158,7 +158,7 @@ const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
 const unicornApp = unicornAppSetup()
-const formSystemApi = formSystemApiSetup()
+// const formSystemApi = formSystemApiSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
