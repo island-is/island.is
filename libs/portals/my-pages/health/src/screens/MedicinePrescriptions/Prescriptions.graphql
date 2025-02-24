@@ -1,0 +1,59 @@
+query GetMedicinePrescriptions($locale: String) {
+  healthDirectoratePrescriptions(locale: $locale) {
+    prescriptions {
+      id
+      name
+      type
+      form
+      url
+      quantity
+      prescriberName
+      issueDate
+      expiryDate
+      category
+      dosageInstructions
+      indication
+      totalPrescribedAmount
+      isRenewable
+      renewalBlockedReason
+      renewalStatus
+      amountRemaining
+      dispensations {
+        id
+        agentName
+        date
+        count
+      }
+    }
+  }
+}
+
+query GetMedicineHistory($locale: String) {
+  healthDirectorateMedicineHistory(locale: $locale) {
+    medicineHistory {
+      id
+      name
+      strength
+      atcCode
+      indication
+      lastDispensationDate
+      dispensationCount
+      dispensations {
+        id
+        name
+        agentName
+        date
+        strength
+        quantity
+        unit
+        type
+        indication
+        dosageInstructions
+        issueDate
+        prescriberName
+        expirationDate
+        isExpired
+      }
+    }
+  }
+}
