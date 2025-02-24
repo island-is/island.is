@@ -22,7 +22,11 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import { MedicineHistory } from './models/medicineHistory.model'
+import {
+  MedicineHistory,
+  MedicineHistoryItem,
+} from './models/medicineHistory.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -253,6 +257,44 @@ export class HealthDirectorateService {
     locale: Locale,
   ): Promise<MedicineHistory | null> {
     const data = await this.healthApi.getGroupedDispensations(auth, locale)
-    return null
+    if (!data) {
+      return null
+    }
+
+    const medicineHistory: Array<MedicineHistoryItem> =
+      data.map((item) => {
+        return {
+          id: item.productId,
+          name: item.productName,
+          strength: item.productStrength,
+          atcCode: item.productAtcCode,
+          indication: item.indication,
+          lastDispensationDate: item.lastDispensationDate,
+          dispensationCount: item.dispensationCount,
+          dispensations: item.dispensations.map((subItem) => {
+            const quantity = subItem.productQuantity ?? 0
+
+            return {
+              id: subItem.productId,
+              name: subItem.productName,
+              quantity: [quantity.toString(), subItem.productUnit]
+                .filter((x) => isDefined(x))
+                .join(' '),
+              agentName: subItem.dispensingAgentName,
+              unit: subItem.productUnit,
+              type: subItem.productType,
+              indication: subItem.indication,
+              dosageInstructions: subItem.dosageInstructions,
+              issueDate: subItem.issueDate,
+              prescriberName: subItem.prescriberName,
+              expirationDate: subItem.expirationDate,
+              isExpired: subItem.isExpired,
+              date: subItem.dispensationDate,
+            }
+          }),
+        }
+      }) ?? []
+
+    return { medicineHistory }
   }
 }

@@ -3,19 +3,19 @@ import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 @ObjectType('HealthDirectorateMedicineHistoryDispensation')
 export class MedicineHistoryDispensation {
   @Field({ nullable: true })
-  agentName?: string
-
-  @Field(() => Date)
-  date!: Date
-
-  @Field({ nullable: true })
-  strength?: string
+  id?: string
 
   @Field({ nullable: true })
   name?: string
 
-  @Field(() => ID)
-  id!: string
+  @Field({ nullable: true })
+  agentName?: string
+
+  @Field(() => Date, { nullable: true })
+  date?: Date
+
+  @Field({ nullable: true })
+  strength?: string
 
   @Field({ nullable: true })
   quantity?: string
@@ -47,8 +47,8 @@ export class MedicineHistoryDispensation {
 
 @ObjectType('HealthDirectorateMedicineHistoryItem')
 export class MedicineHistoryItem {
-  @Field()
-  id!: string
+  @Field({ nullable: true })
+  id?: string
 
   @Field({ nullable: true })
   name?: string
@@ -74,6 +74,6 @@ export class MedicineHistoryItem {
 
 @ObjectType('HealthDirectorateMedicineHistory')
 export class MedicineHistory {
-  @Field(() => [MedicineHistory])
-  prescriptions!: MedicineHistory[]
+  @Field(() => [MedicineHistoryItem])
+  medicineHistory!: MedicineHistoryItem[]
 }
