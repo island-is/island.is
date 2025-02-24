@@ -90,7 +90,7 @@ export class AuditTrailService {
     userId: string
     action: AuditedAction
     ids: string | string[] | undefined
-    details?: { [key: string]: string | Date | undefined | null }
+    details?: { [key: string]: string | Date | boolean | undefined | null }
     error?: unknown
   }) {
     const message = {
@@ -102,9 +102,7 @@ export class AuditTrailService {
     }
 
     // The generic logger expects a string, whereas the CloudWatch trail expect a json object
-    const log = this.config.useGenericLogger ? JSON.stringify(message) : message
-    console.log({ log })
-    return log
+    return this.config.useGenericLogger ? JSON.stringify(message) : message
   }
 
   private initTrail() {
@@ -150,7 +148,7 @@ export class AuditTrailService {
     userId: string
     actionType: AuditedAction
     ids: string | string[] | undefined
-    details?: { [key: string]: string | Date | undefined | null }
+    details?: { [key: string]: string | Date | boolean | undefined | null }
     error?: unknown
   }) {
     if (!this.trail) {
@@ -167,14 +165,19 @@ export class AuditTrailService {
     actionType,
     result,
     auditedResult,
-    details,
+    getAuditDetails,
   }: {
     userId: string
     actionType: AuditedAction
     result: R
     auditedResult: string | ((result: R) => string | string[])
-    details?: { [key: string]: string | Date | undefined | null }
+    getAuditDetails?: (
+      res: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
   }): Promise<R> {
+    const auditDetails = getAuditDetails
+      ? { details: await getAuditDetails(result) }
+      : {}
     this.writeToTrail({
       userId,
       actionType,
@@ -182,7 +185,7 @@ export class AuditTrailService {
         typeof auditedResult === 'string'
           ? auditedResult
           : auditedResult(result),
-      details,
+      ...auditDetails,
     })
 
     return result
@@ -193,7 +196,9 @@ export class AuditTrailService {
     actionType: AuditedAction,
     action: Promise<R>,
     auditedResult: string | ((result: R) => string | string[]),
-    details?: { [key: string]: string | Date | undefined | null },
+    getAuditDetails?: (
+      res: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>,
   ): Promise<R> {
     try {
       const result = await action
@@ -203,7 +208,7 @@ export class AuditTrailService {
         actionType,
         result,
         auditedResult,
-        details,
+        getAuditDetails,
       })
     } catch (e) {
       this.writeToTrail({
@@ -222,7 +227,9 @@ export class AuditTrailService {
     actionType: AuditedAction,
     action: Promise<R> | R,
     auditedResult: string | ((result: R) => string | string[]),
-    details?: { [key: string]: string | Date | undefined | null },
+    getAuditDetails?: (
+      res: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>,
   ): Promise<R> {
     if (action instanceof Promise) {
       return await this.auditPromisedResult<R>(
@@ -230,7 +237,7 @@ export class AuditTrailService {
         actionType,
         action,
         auditedResult,
-        details,
+        getAuditDetails,
       )
     } else {
       return await this.auditResult({
@@ -238,7 +245,7 @@ export class AuditTrailService {
         actionType,
         result: action,
         auditedResult,
-        details,
+        getAuditDetails,
       })
     }
   }

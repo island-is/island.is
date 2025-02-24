@@ -87,11 +87,33 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaToPolice(
-      theCase,
-      defendant,
-      subpoena,
-      deliverDto.user,
+    // callback function to fetch the updated subpoena fields after delivering subpoena to police
+    const getDeliveredSubpoenaFileToPoliceLogDetails = async (
+      results: DeliverResponse,
+    ) => {
+      const currentSubpoena = await this.subpoenaService.findById(subpoena.id)
+      return {
+        deliveredToPolice: results.delivered,
+        subpoenaId: subpoena.id,
+        subpoenaCreated: subpoena.created,
+        policeSubpoenaId: currentSubpoena.subpoenaId,
+        subpoenaHash: currentSubpoena.hash,
+        subpoenaDeliveredToPolice: new Date(),
+        indictmentHash: theCase.indictmentHash,
+      }
+    }
+
+    return this.auditTrailService.audit(
+      'internalSubpoena',
+      AuditedAction.DELIVER_SUBPOENA_TO_POLICE,
+      this.subpoenaService.deliverSubpoenaToPolice(
+        theCase,
+        defendant,
+        subpoena,
+        deliverDto.user,
+      ),
+      caseId,
+      getDeliveredSubpoenaFileToPoliceLogDetails,
     )
   }
 
@@ -133,14 +155,6 @@ export class InternalSubpoenaController {
         deliverDto.user,
       ),
       caseId,
-      {
-        subpoenaId: subpoena.id,
-        policeSubpoenaId: subpoena.subpoenaId,
-        subpoenaHash: subpoena.hash,
-        subpoenaCreated: subpoena.created,
-        subpoenaDeliveredToPolice: new Date(),
-        indictmentHash: theCase.indictmentHash,
-      },
     )
   }
 
