@@ -80,7 +80,7 @@ export const conditionsSection = buildSection({
 
             return checkboxValue ? checkboxValue[0] === YES : false
           },
-          id: 'conditionsTextField',
+          id: 'conditionsHiddenTextField',
         }),
       ],
     }),
