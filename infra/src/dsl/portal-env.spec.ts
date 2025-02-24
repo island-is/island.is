@@ -117,6 +117,7 @@ describe('BFF PortalEnv serialization', () => {
 
   it('repo', () => {
     expect(result.serviceDef[0].image.repository).toBe('testrepo')
+  })
 
   it('image tag', () => {
     expect(result.serviceDef[0].image.tag).toBe('testtag')
