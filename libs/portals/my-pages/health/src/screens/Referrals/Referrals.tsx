@@ -47,7 +47,7 @@ const References: React.FC = () => {
       <Stack space={2}>
         {referrals?.map((referral, index) => (
           <ActionCard
-            key={index}
+            key={`referral-${index}`}
             heading={referral?.serviceName ?? ''}
             text={[
               formatMessage(messages.medicineValidTo),

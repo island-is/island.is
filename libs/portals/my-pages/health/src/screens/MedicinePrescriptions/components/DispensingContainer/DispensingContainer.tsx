@@ -1,13 +1,20 @@
-import { Box, GridContainer, Hidden, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridContainer,
+  Hidden,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import cn from 'classnames'
 import React from 'react'
+import { messages } from '../../../../lib/messages'
 import * as styles from './DispensingContainer.css'
 import DispensingItem, { DispensingItemProps } from './DispensingItem'
-import { useLocale } from '@island.is/localization'
-import { messages } from '../../../../lib/messages'
-import cn from 'classnames'
 
 interface Props {
   label: string
+  showMedicineName?: boolean
   data: DispensingItemProps[]
   backgroundColor?: 'blue' | 'white'
 }
@@ -15,6 +22,7 @@ interface Props {
 const DispensingContainer: React.FC<Props> = ({
   label,
   data,
+  showMedicineName = false,
   backgroundColor,
 }) => {
   const { formatMessage } = useLocale()
@@ -40,8 +48,7 @@ const DispensingContainer: React.FC<Props> = ({
         {data.map((item, i) => (
           <Box
             background={i % 2 === 0 ? 'white' : 'blue100'}
-            paddingY={1}
-            paddingLeft={1}
+            padding={1}
             key={`dispensing-item-container-${i}`}
           >
             <Box className={styles.text}>
@@ -51,13 +58,23 @@ const DispensingContainer: React.FC<Props> = ({
                 })}
               </Text>
             </Box>
-            <Box className={styles.text}>
+            <Box>
               <Text fontWeight="regular">
                 {formatMessage(messages.pickedUpInPharmacy, {
                   arg: item.pharmacy,
                   date: item.date,
                 })}
               </Text>
+            </Box>
+            <Box width="full">
+              <Button
+                variant="ghost"
+                size="small"
+                fluid
+                onClick={item.button?.onClick}
+              >
+                {item.button?.text}
+              </Button>
             </Box>
           </Box>
         ))}
@@ -66,10 +83,15 @@ const DispensingContainer: React.FC<Props> = ({
         <Box background="blue100">
           <GridContainer className={styles.grid}>
             <DispensingItem
-              number={formatMessage(messages.number)}
+              number={formatMessage(messages.vaccinesTableHeaderNr)}
               date={formatMessage(messages.vaccinesTableHeaderDate)}
               pharmacy={formatMessage(messages.dispensingPlace)}
               quantity={formatMessage(messages.medicineQuantity)}
+              medicine={
+                showMedicineName
+                  ? formatMessage(messages.medicineTitle)
+                  : undefined
+              }
               bold
               icon={undefined}
             />
@@ -80,8 +102,10 @@ const DispensingContainer: React.FC<Props> = ({
                 number={item.number}
                 pharmacy={item.pharmacy}
                 quantity={item.quantity}
+                medicine={item.medicine}
                 key={`dispensing-item-${i}`}
                 backgroundColor={i % 2 === 0 ? 'white' : 'blue'}
+                button={item.button}
               />
             ))}
           </GridContainer>

@@ -703,6 +703,18 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  close: {
+    id: 'sp.health:close',
+    defaultMessage: 'Loka',
+  },
+  detail: {
+    id: 'sp.health:detail',
+    defaultMessage: 'Nánar',
+  },
+  date: {
+    id: 'sp.health:date',
+    defaultMessage: 'Dagsetning',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -765,6 +777,10 @@ export const messages = defineMessages({
   medicineTitle: {
     id: 'sp.health:medicine-title',
     defaultMessage: 'Lyf',
+  },
+  medicineName: {
+    id: 'sp.health:medicine-name',
+    defaultMessage: 'Heiti lyfs',
   },
   medicineTitleIntro: {
     id: 'sp.health:medicine-title-intro',
@@ -1245,6 +1261,10 @@ export const messages = defineMessages({
     id: 'sp.health:usage',
     defaultMessage: 'Notkun',
   },
+  usageInstructions: {
+    id: 'sp.health:usage-instructions',
+    defaultMessage: 'Notkunarleiðbeiningar',
+  },
   dispensations: {
     id: 'sp.health:first-dispensations',
     defaultMessage: '{arg}. afgreiðsla',
@@ -1289,6 +1309,10 @@ export const messages = defineMessages({
   medicineInformation: {
     id: 'sp.health:medicine-information',
     defaultMessage: 'Upplýsingar um lyf',
+  },
+  dispensationInformation: {
+    id: 'sp.health:dispensation-information',
+    defaultMessage: 'Upplýsingar um afgreiðslu',
   },
   moreDetailedInfo: {
     id: 'sp.health:more-detailed-info',
@@ -1337,6 +1361,14 @@ export const messages = defineMessages({
   referralsIntro: {
     id: 'sp.health:referrals-intro',
     defaultMessage: 'Hér finnur þú tilvísanir ...',
+  },
+  referralFor: {
+    id: 'sp.health:referral-for',
+    defaultMessage: 'Tilvísun fyrir',
+  },
+  referralFrom: {
+    id: 'sp.health:referral-from',
+    defaultMessage: 'Útgefandi',
   },
   noReferrals: {
     id: 'sp.health:no-referrals',
@@ -1465,5 +1497,13 @@ export const messages = defineMessages({
   medicineFullyDispensed: {
     id: 'sp.health:medicine-fully-dispensed',
     defaultMessage: 'Fullafgreitt',
+  },
+  recepient: {
+    id: 'sp.health:recepient',
+    defaultMessage: 'viðtakandi',
+  },
+  notRegistered: {
+    id: 'sp.health:not-registered',
+    defaultMessage: 'Ekki skráð',
   },
 })

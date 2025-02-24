@@ -1,13 +1,13 @@
-import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
+import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
+import { messages as hm } from './lib/messages'
+import { HealthPaths } from './lib/paths'
 import ReferencesDetail from './screens/Referrals/ReferralsDetail'
 import Waitlists from './screens/Waitlists/Waitlists'
 import WaitlistsDetail from './screens/Waitlists/WaitlistsDetail'
-import { messages as hm } from './lib/messages'
-import { HealthPaths } from './lib/paths'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -264,28 +264,28 @@ export const healthModule: PortalModule = {
       name: hm.referrals,
       path: HealthPaths.HealthReferences,
       key: 'Referrals',
-      enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <Referrals />,
     },
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferencesDetail,
       key: 'Referrals',
-      enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <ReferencesDetail />,
     },
     {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlists,
       key: 'HealthWaitlists',
-      enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <Waitlists />,
     },
     {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlistsDetail,
       key: 'HealthWaitlists',
-      enabled: true, //TODO: Add scopeuserInfo.scopes.includes(ApiScope.healthReferences),
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <WaitlistsDetail />,
     },
   ],

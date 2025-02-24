@@ -1,14 +1,15 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  formatDate,
   HEALTH_DIRECTORATE_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetReferralsDetailQuery } from './Referrals.generated'
-import { useParams } from 'react-router-dom'
 
 type UseParams = {
   id: string
@@ -19,7 +20,7 @@ const ReferencesDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useGetReferralsDetailQuery({
+  const { data } = useGetReferralsDetailQuery({
     variables: { locale: lang },
   })
 
@@ -38,20 +39,26 @@ const ReferencesDetail: React.FC = () => {
       marginBottom={6}
     >
       <InfoLineStack space={1}>
-        <InfoLine label="Tilvísun fyrir" content="Sjúkraþjálfun" />
         <InfoLine
-          label="Útgefandi"
-          content="Helena melax, læknir"
-          button={{
-            type: 'link',
-            label: formatMessage(messages.organizationWebsite),
-            to: '/',
-            icon: 'open',
-          }}
+          label={formatMessage(messages.referralFor)}
+          content={referral?.reason ?? ''}
         />
-        <InfoLine label="Gildir til" content="01.03.2024" />
-        <InfoLine label="Staða" content="Virk tilvísun" />
-        <InfoLine label="Viðtakandi" content="Opin tilvísun" />
+        <InfoLine
+          label={formatMessage(messages.referralFrom)}
+          content={referral?.fromContactInfo?.name ?? ''}
+        />
+        <InfoLine
+          label={formatMessage(messages.medicineValidTo)}
+          content={formatDate(referral?.validUntilDate)}
+        />
+        <InfoLine
+          label={formatMessage(messages.vaccinatedStatus)}
+          content={referral?.stateDisplay ?? ''}
+        />
+        <InfoLine
+          label={formatMessage(messages.recepient)}
+          content={referral?.toContactInfo.name ?? ''}
+        />
       </InfoLineStack>
     </IntroWrapper>
   )
