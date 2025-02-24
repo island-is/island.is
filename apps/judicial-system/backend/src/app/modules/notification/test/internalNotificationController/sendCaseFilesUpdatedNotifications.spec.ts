@@ -29,12 +29,14 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send case files updated notifications', () => {
-  const { prosecutor, judge, defender, spokesperson } = createTestUsers([
-    'prosecutor',
-    'judge',
-    'defender',
-    'spokesperson',
-  ])
+  const { prosecutor, judge, defender, spokesperson, registrar } =
+    createTestUsers([
+      'prosecutor',
+      'judge',
+      'defender',
+      'spokesperson',
+      'registrar',
+    ])
 
   const caseId = uuid()
   const courtCaseNumber = uuid()
@@ -60,6 +62,7 @@ describe('InternalNotificationController - Send case files updated notifications
             court: { name: 'Héraðsdómur Reykjavíkur' },
             prosecutor: { name: prosecutor.name, email: prosecutor.email },
             judge: { name: judge.name, email: judge.email },
+            registrar: { name: registrar.name, email: registrar.email },
             defendants: [
               {
                 defenderNationalId: defender.nationalId,
@@ -109,6 +112,13 @@ describe('InternalNotificationController - Send case files updated notifications
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
+          to: [{ name: registrar.name, address: registrar.email }],
+          subject: `Ný gögn í máli ${courtCaseNumber}`,
+          html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/domur/akaera/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
           to: [{ name: spokesperson.name, address: spokesperson.email }],
           subject: `Ný gögn í máli ${courtCaseNumber}`,
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
@@ -121,6 +131,7 @@ describe('InternalNotificationController - Send case files updated notifications
           html: `Ný gögn hafa borist vegna máls ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
+
       expect(then.result).toEqual({ delivered: true })
     })
   })
