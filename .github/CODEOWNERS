@@ -418,3 +418,9 @@ codemagic.yaml                                                                  
 /apps/system-e2e/src/tests/islandis/web/                                                                  @island-is/hugsmidjan @island-is/juni @island-is/stefna
 # Judicial system
 /apps/system-e2e/src/tests/judicial-system/                                                               @island-is/kolibri-justice-league
+
+
+
+# For off hours testing of merge queue this will be temoirarily added on 24. feb 2025 and removed on 26. feb 2025
+/yarn.lock                                                                                                @island-is/core @island-is/devops
+/package.json                                                                                             @island-is/core @island-is/devops
