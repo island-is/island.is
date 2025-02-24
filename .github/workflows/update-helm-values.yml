@@ -1,8 +1,5 @@
 on:
-  push:
-    branches:
-      - 'feature/update-helm-values'
-      # TODO: insert - main and - release/*
+  push: {}
 defaults:
   run:
     shell: bash
@@ -17,27 +14,8 @@ jobs:
         with:
           fetch-depth: 1
           path: island.is
-      - name: Checkout helm-values repository
-        uses: actions/checkout@v4
+      - name: Update helm-values repository
+        uses: ./island.is/.github/actions/update-helm-values
         with:
-          repository: island-is/helm-values
-          ref: main
-          token: ${{ secrets.GH_HELM_VALUES_PAT }}
-          path: helm-values
-      - name: Copy helm charts to helm-values repository
-        run: |
-          echo "$(ls -alh)"
-          echo "$(ls -alh island.is/)"
-          echo "$(ls -alh helm-values/)"
-          cp -R island.is/charts/* helm-values/charts/
-      - name: Commit and push changes to helm-values repository
-        run: |
-          cd helm-values
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          git add .
-          git commit -m "Updated helm charts"
-          echo "Showing changeset\n $(git show)"
-          echo "Done commiting"
-          # git push
+          files: 'charts/islandis-services/air-discount-scheme-backend/values.dev.yaml,charts/islandis-services/air-discount-scheme-web/values.dev.yaml'
+          gh_token_pat: ${{ secrets.GH_HELM_VALUES_PAT }}
