@@ -8,20 +8,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-    prepare:
-        uses: ./.github/workflows/install.yml
-        secrets: inherit
     upload:
-      needs: 
-        - prepare
       runs-on: arc-runners
       steps:
         - name: checkout
           uses: actions/checkout@v4
         - name: Setup yarn
           uses: ./.github/actions/setup-yarn
-        - name: load-deps
-          uses: ./.github/actions/load-deps
         - name: Get manifest data
           run: node scripts/ci/docker/get-data.mjs
         
