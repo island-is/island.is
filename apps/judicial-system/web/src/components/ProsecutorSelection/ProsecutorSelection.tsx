@@ -1,5 +1,6 @@
-import { FC, useContext, useMemo } from 'react'
+import { FC, useCallback, useContext, useEffect, useMemo } from 'react'
 import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
 
 import { Option, Select } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -18,17 +19,20 @@ interface Props {
 
 const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const { formatMessage } = useIntl()
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user: currentUser } = useContext(UserContext)
 
   const selectedProsecutor = useMemo(() => {
-    return workingCase.prosecutor
-      ? {
-          label: workingCase.prosecutor.name ?? '',
-          value: workingCase.prosecutor.id,
-        }
-      : undefined
-  }, [workingCase.prosecutor])
+    const label = workingCase.prosecutor
+      ? workingCase.prosecutor.name ?? ''
+      : currentUser?.name ?? ''
+
+    const value = workingCase.prosecutor
+      ? workingCase.prosecutor.id
+      : currentUser?.id
+
+    return { label, value }
+  }, [currentUser?.id, currentUser?.name, workingCase.prosecutor])
 
   const { data, loading } = useProsecutorSelectionUsersQuery({
     fetchPolicy: 'no-cache',
@@ -60,6 +64,36 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
     workingCase.prosecutorsOffice?.id,
   ])
 
+  const setProsecutorState = useCallback(
+    (prosecutorId: string) => {
+      const prosecutor = data?.users?.find((p) => p.id === prosecutorId)
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        prosecutor,
+      }))
+    },
+    [data?.users, setWorkingCase],
+  )
+
+  const handleChange = (value: SingleValue<Option<string | undefined>>) => {
+    const id = value?.value
+
+    if (id && typeof id === 'string') {
+      if (!workingCase.id) {
+        setProsecutorState(id)
+      } else {
+        onChange(id)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!workingCase.id && !workingCase.prosecutor && currentUser) {
+      setProsecutorState(currentUser.id)
+    }
+  }, [currentUser, setProsecutorState, workingCase.id, workingCase.prosecutor])
+
   return (
     <Select
       name="prosecutor"
@@ -71,12 +105,7 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       })}
       value={selectedProsecutor}
       options={eligibleProsecutors}
-      onChange={(value) => {
-        const id = value?.value
-        if (id && typeof id === 'string') {
-          onChange(id)
-        }
-      }}
+      onChange={handleChange}
       isDisabled={loading}
       required
     />

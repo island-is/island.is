@@ -25,7 +25,6 @@ export const opperatingCostSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'fetchDataBasedOnYear',
-          title: '',
           component: 'FetchDataBasedOnSelectedYear',
         }),
         // Income
@@ -64,7 +63,6 @@ export const opperatingCostSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: CEMETERYOPERATIONIDS.totalIncome,
-          title: '',
           label: m.totalIncome,
           value: sumIncome,
           variant: 'currency',
@@ -128,7 +126,6 @@ export const opperatingCostSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: CEMETERYOPERATIONIDS.totalExpense,
-          title: '',
           label: m.totalExpenses,
           value: sumExpenses,
           variant: 'currency',
@@ -143,7 +140,6 @@ export const opperatingCostSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: OPERATINGCOST.total,
-          title: '',
           value: sumOperatingResults,
           variant: 'currency',
           rightAlign: true,

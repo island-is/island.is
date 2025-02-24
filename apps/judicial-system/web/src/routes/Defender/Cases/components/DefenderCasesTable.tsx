@@ -60,7 +60,7 @@ export const DefenderCasesTable: FC<Props> = ({
             title: formatMessage(tables.sentToCourtDate),
             sortBy: 'caseSentToCourtDate',
           },
-          { title: formatMessage(tables.state) },
+          { title: formatMessage(tables.state), sortBy: 'state' },
           {
             title: formatMessage(
               showingCompletedCases
