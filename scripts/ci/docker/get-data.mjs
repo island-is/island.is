@@ -21,6 +21,7 @@ async function download() {
     }
     const artifact = value.artifacts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
     const downloadUrl = artifact.archive_download_url;
+    console.log(`Downloading from ${downloadUrl}...`);
     const artifactZipResponse = await fetch(downloadUrl, {
         headers: {
             Authorization: `Bearer ${GITHUB_TOKEN}`,
