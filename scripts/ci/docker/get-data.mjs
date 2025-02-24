@@ -86,6 +86,8 @@ async function download() {
         console.log(`Changing value for imageName ${imageName}`);
         IMAGE_OBJECT[imageName].forEach(({ filePath, content }) => {
             content.image.tag = imageTag;
+            const newFile = jsyaml.dump(content);
+            fs.writeFileSync(filePath, newFile, {encoding: 'utf-8'});
             console.info(`Updated ${filePath}`);
         });
 
