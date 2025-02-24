@@ -30,6 +30,8 @@ runs:
         echo "$files\n$paths"
         for path in ${paths[@]}; do
           export DEST="helm-values/charts/${path#charts/}"
+          export DEST_PATH=$(dirname $DEST)
+          mkdir -p $DEST_PATH
           echo "Copying filepath: ${path} to $DEST"
           cp "$path" "$DEST"
         done
