@@ -2,8 +2,6 @@ name: Validate code in the merge queue (post merge)
 
 on:
   workflow_dispatch: {}
-  # While testing I do this!
-  pull_request: {} 
   merge_group:
 
 defaults:
@@ -43,20 +41,20 @@ env:
   GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
 
 jobs:
-  # WHILE TESTING
-  # pre-checks:
-  #  uses: ./.github/workflows/pre-checks.yml
-  #  secrets: inherit
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
     with:
       run_merge_queue: true
-  #  needs:
-  #    - pre-checks
+    needs:
+      - pre-checks
   docker-build:
     needs:
       - prepare
+      - pre-checks
     runs-on: arc-runners
     permissions:
       actions: read
@@ -70,8 +68,8 @@ jobs:
       GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
       GIT_COMMIT_SHA: ${{ needs.prepare.outputs.MQ_SHA }}
       # Fix this
-      NODE_IMAGE_VERSION: 20
-      PUBLISH: false
+      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
+      PUBLISH: true
       DISABLE_CHUNKS: true
       MAX_JOBS: 3
       NX_PARALLEL: 1

@@ -1,0 +1,27 @@
+name: Upload manifest to argocd repo
+
+on: 
+    push: {}
+
+concurrency:
+  group: upload-manifest-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+    prepare:
+        uses: ./.github/workflows/install.yml
+        secrets: inherit
+    upload:
+      needs: 
+        - prepare
+      runs-on: arch-runners
+      steps:
+        - name: checkout
+          uses: actions/checkout@v4
+        - name: Setup yarn
+          uses: ./.github/actions/setup-yarn
+        - name: load-deps
+          uses: ./.github/actions/load-deps
+        - name: Get manifest data
+          run: node scripts/ci/docker/get-data.mjs
+        
