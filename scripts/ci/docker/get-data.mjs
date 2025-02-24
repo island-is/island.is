@@ -14,6 +14,7 @@ const name = getArtifactname();
 const url = `https://api.github.com/repos/island-is/island.is/actions/artifacts?name=${name}`;
 
 const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT';
+const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const STAGE_NAME = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'staging' : typeOfDeployment.prod ? 'prod' : 'dev';
@@ -21,6 +22,7 @@ const STAGE_NAME = typeOfDeployment.dev ? 'dev' : typeOfDeployment.staging ? 'st
 // Read all manifest files
 const _MANIFEST_PATHS = ["charts/islandis-services", "charts/judicial-system-services"];
 const files = await glob(`{${_MANIFEST_PATHS.join(',')}}/**/values.${STAGE_NAME}.yaml`);
+const changedFiles = [];
 const IMAGE_OBJECT = {};
 for (const file of files) {
     const textContent = readFileSync(file, 'utf8');
@@ -88,6 +90,7 @@ async function download() {
                 const newFile = jsyaml.dump(content);
                 console.log(newFile);
                 fs.writeFileSync(filePath, newFile, { encoding: 'utf-8' });
+                changedFiles.push(filePath);
                 console.info(`Updated ${filePath}`);
             });
         } else {
@@ -96,6 +99,7 @@ async function download() {
 
     }
     core.setOutput(_KEY_HAS_OUTPUT, "true");
+    core.setOutput(_KEY_CHANGED_FILES, changedFiles.join(','));
 }
 
 function getBranch() {
