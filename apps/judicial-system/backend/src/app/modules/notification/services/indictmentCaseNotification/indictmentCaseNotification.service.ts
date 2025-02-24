@@ -105,8 +105,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       strings.indictmentCompletedWithRuling.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        policeCaseNumber: theCase.policeCaseNumbers[0],
-
+        policeCaseNumber:
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
         courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
           theCase.defendants && theCase.defendants[0].serviceRequirement,
