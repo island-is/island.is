@@ -307,11 +307,20 @@
         ]
       }
     },
-    "/forms/organization": {
+    "/forms/organization/{nationalId}": {
       "get": {
         "operationId": "FormsController_findAll",
         "summary": "Get all forms belonging to organization",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get all forms belonging to organization",
@@ -1861,12 +1870,12 @@
           "listType": {
             "type": "string",
             "enum": [
-              "9e1600f7-7d25-4997-9e8d-16e6d15cd901",
-              "2cd6cda1-ab72-4746-bb38-16b95b89ae75",
-              "1df24f32-1481-4775-81eb-0cf0a5eb9328",
-              "7aa0396f-2574-40cb-8ea4-299a5b62b22d",
-              "7bfc3703-af37-455b-b9a1-8b612f46184b",
-              "f50779b3-464c-42e3-9cc3-8914886f9bf7"
+              "CUSTOM",
+              "MUNICIPALITIES",
+              "COUNTRIES",
+              "POSTAL_CODES",
+              "MASTERS_TRADES",
+              "REGISTRATION_CATEGORIES_OF_ACTIVITIES"
             ]
           },
           "fileTypes": {
@@ -2056,7 +2065,8 @@
         },
         "required": [
           "id",
-          "order"
+          "order",
+          "events"
         ]
       },
       "FieldDto": {

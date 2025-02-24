@@ -11,6 +11,7 @@ import { FormsService } from './forms.service'
 import {
   DeleteFormInput,
   GetFormInput,
+  GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
@@ -19,14 +20,12 @@ import { FormResponse } from '../../models/form.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) { }
+  constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',
   })
-  async createForm(
-    @CurrentUser() user: User,
-  ): Promise<FormResponse> {
+  async createForm(@CurrentUser() user: User): Promise<FormResponse> {
     return this.formsService.createForm(user)
   }
 
@@ -55,9 +54,10 @@ export class FormsResolver {
     name: 'formSystemGetAllForms',
   })
   async getAllForms(
+    @Args('input', { type: () => GetFormsInput }) nationalId: GetFormsInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.getAllForms(user)
+    return this.formsService.getAllForms(user, nationalId)
   }
 
   @Mutation(() => Boolean, {

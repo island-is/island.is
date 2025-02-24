@@ -16,6 +16,7 @@ import { FormSystemPaths } from '../../lib/paths'
 import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { boolean } from 'zod'
 
 interface Props {
   id?: string | null
@@ -28,6 +29,7 @@ interface Props {
   isHeader: boolean
   translated?: boolean
   slug?: string
+  beenPublished?: boolean
 }
 
 interface ColumnTextProps {
@@ -49,6 +51,7 @@ export const TableRow = ({
   isHeader,
   translated,
   slug,
+  beenPublished,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -69,7 +72,7 @@ export const TableRow = ({
             <Text variant="medium">{formatMessage(m.translations)}</Text>
           </Column>
           <Column span="2/12">
-            <Text variant="medium">{formatMessage(m.organisation)}</Text>
+            <Text variant="medium">{formatMessage(m.organization)}</Text>
           </Column>
           <Column span="1/12">
             <Text variant="medium">{formatMessage(m.state)}</Text>
@@ -145,10 +148,7 @@ export const TableRow = ({
                   title: formatMessage(m.copy),
                 },
                 {
-                  title: formatMessage(m.translateToEnglish),
-                },
-                {
-                  title: 'Export',
+                  title: formatMessage(m.delete),
                 },
                 {
                   title: 'Json',

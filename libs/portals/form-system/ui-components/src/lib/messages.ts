@@ -5,21 +5,29 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:application-builder',
     defaultMessage: 'Umsóknarsmiður',
   },
-  template: {
-    id: 'portals-admin.form-system:template',
-    defaultMessage: 'Forskrift',
+  form: {
+    id: 'portals-admin.form-system:form',
+    defaultMessage: 'Form',
   },
-  templates: {
-    id: 'portals-admin.form-system:templates',
-    defaultMessage: 'Forskriftir',
+  newForm: {
+    id: 'portals-admin.form-system:new-form',
+    defaultMessage: 'Nýtt',
   },
-  newTemplate: {
-    id: 'portals-admin.form-system:new-template',
-    defaultMessage: 'Ný forskrift',
-  },
-  organisation: {
-    id: 'portals-admin.form-system:organisation',
+  organization: {
+    id: 'portals-admin.form-system:organization',
     defaultMessage: 'Stofnun',
+  },
+  applications: {
+    id: 'portals-admin.form-system:applications',
+    defaultMessage: 'Umsóknir',
+  },
+  overview: {
+    id: 'portals-admin.form-system:overview',
+    defaultMessage: 'Yfirlitsíða',
+  },
+  back: {
+    id: 'portals-admin.form-system:back',
+    defaultMessage: 'Til baka',
   },
   state: {
     id: 'portals-admin.form-system:state',
@@ -376,10 +384,6 @@ export const m = defineMessages({
   copy: {
     id: 'portals-admin.form-system:copy',
     defaultMessage: 'Afrita',
-  },
-  translateToEnglish: {
-    id: 'portals-admin.form-system:translate-to-english',
-    defaultMessage: 'Þýðing enska',
   },
   getUrl: {
     id: 'portals-admin.form-system:get-url',

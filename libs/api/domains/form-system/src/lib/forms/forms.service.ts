@@ -7,12 +7,14 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   FormsApi,
   FormsControllerDeleteRequest,
+  FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
 import {
   DeleteFormInput,
   GetFormInput,
+  GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { Form, FormResponse } from '../../models/form.model'
@@ -21,9 +23,8 @@ import { Form, FormResponse } from '../../models/form.model'
 export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private formsService: FormsApi,
-    // private formsUrlService: FormUrlsApi
-  ) { }
+    private formsService: FormsApi, // private formsUrlService: FormUrlsApi
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -73,13 +74,10 @@ export class FormsService {
     return response as Form
   }
 
-  async getAllForms(
-    auth: User
-  ): Promise<FormResponse> {
+  async getAllForms(auth: User, input: GetFormsInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll()
-    // .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
-
+      .formsControllerFindAll(input as FormsControllerFindAllRequest)
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
     if (!response || response instanceof ApolloError) {
       return {}
     }

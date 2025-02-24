@@ -16,30 +16,6 @@ export const Forms = () => {
   if (forms) {
     return (
       <div>
-        {/* Title and buttons  */}
-        <div>
-          <Text variant="h2">{formatMessage(m.templates)}</Text>
-        </div>
-        <Box marginTop={5}>
-          <Inline space={2}>
-            <Button
-              variant="ghost"
-              size="medium"
-              onClick={async () => {
-                const { data } = await formSystemCreateFormMutation()
-                navigate(
-                  FormSystemPaths.Form.replace(
-                    ':formId',
-                    String(data?.formSystemCreateForm?.form?.id),
-                  ),
-                )
-              }}
-            >
-              {formatMessage(m.newTemplate)}
-            </Button>
-          </Inline>
-        </Box>
-
         <Box marginTop={5}></Box>
 
         <Box marginTop={5}>
@@ -57,6 +33,7 @@ export const Forms = () => {
                 isHeader={false}
                 translated={f?.isTranslated ?? false}
                 slug={f?.slug ?? ''}
+                beenPublished={f?.beenPublished ?? false}
               />
             )
           })}

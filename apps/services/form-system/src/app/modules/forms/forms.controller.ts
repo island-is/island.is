@@ -52,12 +52,14 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Get all forms belonging to organization',
   })
-  @Get('organization')
+  @ApiParam({ name: 'nationalId', type: String })
+  @Get('organization/:nationalId')
   async findAll(
+    @Param('nationalId') nationalId: string,
     @CurrentUser()
     user: User,
   ): Promise<FormResponseDto> {
-    return await this.formsService.findAll(user)
+    return await this.formsService.findAll(nationalId, user)
   }
 
   @ApiOperation({ summary: 'Get form by id' })

@@ -14,7 +14,12 @@ export interface FormsLoaderResponse {
 export const formsLoader: WrappedLoaderFn = ({ client }) => {
   return async (): Promise<FormsLoaderResponse> => {
     const { data, error } = await client.query<FormsLoaderQueryResponse>({
-      query: GET_FORMS
+      query: GET_FORMS,
+      variables: {
+        input: {
+          nationalId: '5005101370',
+        },
+      },
     })
     if (error) {
       throw error

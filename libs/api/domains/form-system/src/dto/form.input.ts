@@ -35,6 +35,11 @@ export class GetFormInput {
   id?: string
 }
 
+@InputType('FormSystemGetFormsInput')
+export class GetFormsInput {
+  @Field(() => String, { nullable: true })
+  nationalId?: string
+}
 
 @InputType('FormSystemFormUrlInput')
 export class FormUrlInput {
@@ -151,6 +156,9 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
   applicationDaysToRemove?: number
