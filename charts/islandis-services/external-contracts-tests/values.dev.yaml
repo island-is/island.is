@@ -50,7 +50,7 @@ hpa:
       max: 3
       min: 1
 image:
-  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+  repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests'
   tag: 'latest'
 namespace: 'external-contracts-tests'
 podDisruptionBudget:

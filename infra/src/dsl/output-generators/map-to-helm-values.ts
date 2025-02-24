@@ -60,7 +60,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
-      repository: `${serviceDef.image?.repository ?? defaultRepository}`,
+      repository: `${serviceDef.image?.repository ?? defaultRepository}/${serviceDef.image?.name ?? serviceDef.name}`,
       tag: `${serviceDef.image?.tag || 'latest'}`,
     },
     env: {
