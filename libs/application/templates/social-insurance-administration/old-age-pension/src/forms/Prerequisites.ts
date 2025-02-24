@@ -187,7 +187,6 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
-                  title: '',
                   options: getYesNoOptions(),
                   width: 'half',
                 }),
@@ -239,13 +238,11 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible',
-              title: '',
               description: getEligibleDesc,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

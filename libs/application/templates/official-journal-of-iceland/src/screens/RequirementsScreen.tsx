@@ -15,14 +15,9 @@ import {
   DEFAULT_REGULAR_SIGNATURE_COUNT,
   DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
   OJOI_INPUT_HEIGHT,
-  SignatureTypes,
 } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
-import {
-  getRegularSignature,
-  getCommitteeSignature,
-  getAddition,
-} from '../lib/utils'
+import { getAddition } from '../lib/utils'
 import set from 'lodash/set'
 import { useEffect } from 'react'
 
@@ -52,28 +47,6 @@ export const RequirementsScreen = ({
       getAddition(DEFAULT_ADDITIONS_COUNT, false),
     ])
 
-    currentAnswers = set(currentAnswers, InputFields.signature.regular, [
-      ...getRegularSignature(
-        DEFAULT_REGULAR_SIGNATURE_COUNT,
-        DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-      ),
-    ])
-
-    currentAnswers = set(currentAnswers, InputFields.signature.committee, {
-      ...getCommitteeSignature(DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT),
-    })
-
-    currentAnswers = set(
-      currentAnswers,
-      InputFields.misc.signatureType,
-      SignatureTypes.REGULAR,
-    )
-
-    setValue(InputFields.signature.regular, currentAnswers.signatures?.regular)
-    setValue(
-      InputFields.signature.committee,
-      currentAnswers.signatures?.committee,
-    )
     setValue(InputFields.misc.signatureType, currentAnswers.misc?.signatureType)
 
     updateApplication(currentAnswers)

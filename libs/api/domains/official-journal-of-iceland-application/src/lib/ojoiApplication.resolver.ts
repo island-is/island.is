@@ -29,7 +29,10 @@ import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
-import { InvolvedPartySignatures } from '../models/getInvolvedPartySignatures.response'
+import {
+  GetInvolvedPartySignature,
+  InvolvedPartySignatures,
+} from '../models/getInvolvedPartySignatures.response'
 import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
@@ -178,8 +181,8 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.postApplication(input, user)
   }
 
-  @Query(() => InvolvedPartySignatures, {
-    name: 'officialJournalOfIcelandApplicationInvolvedPartySignatures',
+  @Query(() => GetInvolvedPartySignature, {
+    name: 'officialJournalOfIcelandApplicationInvolvedPartySignature',
   })
   getInvolvedPartySignatures(
     @Args('input') input: GetInvolvedPartySignaturesInput,

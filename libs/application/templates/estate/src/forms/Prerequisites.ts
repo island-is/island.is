@@ -23,7 +23,6 @@ export const getForm = ({
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     children: [
@@ -81,12 +80,10 @@ export const getForm = ({
               buildDescriptionField({
                 id: 'applicationInfo',
                 space: 'containerGutter',
-                title: '',
                 description: m.prerequisitesSubtitle,
               }),
               buildRadioField({
                 id: 'selectedEstate',
-                title: '',
                 width: 'full',
                 required: true,
                 options: [
@@ -126,7 +123,6 @@ export const getForm = ({
               }),
               buildSubmitField({
                 id: 'estate.submit',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {

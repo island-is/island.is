@@ -29,11 +29,9 @@ export const Requirements: Form = buildForm({
       children: [
         buildMultiField({
           id: Routes.REQUIREMENTS,
-          title: '',
           children: [
             buildCustomField({
               id: 'requirements',
-              title: '',
               component: 'RequirementsScreen',
             }),
           ],
@@ -46,16 +44,13 @@ export const Requirements: Form = buildForm({
       children: [
         buildMultiField({
           id: Routes.INVOLVED_PARTY,
-          title: '',
           children: [
             buildCustomField({
               id: 'involvedParty',
-              title: '',
               component: 'InvolvedPartyScreen',
             }),
             buildSubmitField({
               id: 'toComments',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
@@ -70,7 +65,6 @@ export const Requirements: Form = buildForm({
         // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
-          title: '',
           children: [],
         }),
       ],
