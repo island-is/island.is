@@ -64,6 +64,12 @@ jobs:
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     steps:
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
+          echo DEPLOY_FEATURE="$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
+
       - name: checkout
         uses: actions/checkout@v4
         with:
@@ -131,6 +137,7 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -140,6 +147,7 @@ jobs:
 
       - name: Prepare e2e targets
         id: e2e_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         env:
           CHUNK_SIZE: 1
         run: |
@@ -152,6 +160,7 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
@@ -161,6 +170,7 @@ jobs:
 
       - name: Prepare docker build targets
         id: docker_projects
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
@@ -188,9 +198,3 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Set outputs
-        id: set-outputs
-        run: |
-          echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
-          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE" >> $GITHUB_OUTPUT

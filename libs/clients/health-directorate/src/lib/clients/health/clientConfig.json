@@ -1,0 +1,1008 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/me/waiting-lists": {
+      "get": {
+        "description": "Get user's status in the waiting lists",
+        "operationId": "MeWaitingListController_getWaitingListEntries_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaitingListEntryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Waiting lists"]
+      }
+    },
+    "/v1/me/referrals": {
+      "get": {
+        "description": "Get user's referrals",
+        "operationId": "MeReferralController_getReferrals_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReferralDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Referrals"]
+      }
+    },
+    "/v1/me/prescriptions": {
+      "get": {
+        "description": "Get user's active prescriptions",
+        "operationId": "MePrescriptionController_getPrescriptions_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PrescribedItemDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/dispensations": {
+      "get": {
+        "description": "Get user's dispensation history",
+        "operationId": "MePrescriptionDispensationController_getGroupedDispensations_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DispensationHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/v1/me/prescriptions/dispensations/{atcCode}": {
+      "get": {
+        "description": "Get user's dispensations for a specific ATC code",
+        "operationId": "MePrescriptionDispensationController_getDispensationsForAtcCode_v1",
+        "parameters": [
+          {
+            "name": "atcCode",
+            "required": true,
+            "in": "path",
+            "description": "The ATC code to fetch dispensations for",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DispensationHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
+    "/system/alive": {
+      "get": {
+        "operationId": "SystemController_alive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System"]
+      }
+    },
+    "/system/ready": {
+      "get": {
+        "operationId": "SystemController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "info": {
+                      "type": "object",
+                      "example": { "database": { "status": "up" } },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": { "status": "up" },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": { "status": { "type": "string" } },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System"]
+      }
+    },
+    "/v1/donation-exceptions": {
+      "get": {
+        "description": "Gets a list of organs that can be omitted from an donation-exception donation",
+        "operationId": "DonationExceptionController_getOrgans_v1",
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/OrganDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Organ donation"]
+      }
+    },
+    "/v1/me/organ-donor-status": {
+      "get": {
+        "description": "Get user's donation-exception donor status",
+        "operationId": "MeDonorStatusController_getOrganDonorStatus_v1",
+        "parameters": [
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrganDonorDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Organ donation"]
+      },
+      "post": {
+        "description": "Update user's donation-exception donor status",
+        "operationId": "MeDonorStatusController_updateOrganDonorStatus_v1",
+        "parameters": [
+          {
+            "name": "ip",
+            "required": false,
+            "in": "query",
+            "description": "The IP address of the user",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The locale to use for the response",
+            "schema": { "$ref": "#/components/schemas/Locale" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateOrganDonorDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Organ donation"]
+      }
+    }
+  },
+  "info": {
+    "title": "Health service",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
+            "scopes": { "openid": "openid" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Locale": { "type": "string", "enum": ["en", "is"] },
+      "WaitingListEntryDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "waitBeganDate": { "format": "date-time", "type": "string" },
+          "lastUpdated": { "format": "date-time", "type": "string" },
+          "statusId": { "type": "number" },
+          "statusDisplay": { "type": "string" },
+          "organizationName": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "name",
+          "statusId",
+          "statusDisplay",
+          "organizationName"
+        ]
+      },
+      "HttpProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "object",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": { "type": "number", "description": "The HTTP status code" },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          }
+        },
+        "required": ["type", "title"]
+      },
+      "ReferralContactInfoDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "profession": { "type": "string" },
+          "department": { "type": "string" }
+        },
+        "required": ["name", "profession", "department"]
+      },
+      "ReferralDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "serviceType": { "type": "string" },
+          "serviceName": { "type": "string" },
+          "createdDate": { "format": "date-time", "type": "string" },
+          "validUntilDate": { "format": "date-time", "type": "string" },
+          "stateValue": { "type": "number" },
+          "stateDisplay": { "type": "string" },
+          "assignedProviderId": { "type": "string" },
+          "reasonForReferral": { "type": "string" },
+          "fromContactInfo": {
+            "$ref": "#/components/schemas/ReferralContactInfoDto"
+          },
+          "toContactInfo": {
+            "$ref": "#/components/schemas/ReferralContactInfoDto"
+          }
+        },
+        "required": ["id", "serviceType", "fromContactInfo", "toContactInfo"]
+      },
+      "DispensedItemDto": {
+        "type": "object",
+        "properties": {
+          "productId": { "type": "string" },
+          "productName": { "type": "string" },
+          "productStrength": { "type": "string" },
+          "dispensedAmount": { "type": "number" },
+          "dispensedAmountDisplay": { "type": "string" },
+          "numberOfPackages": { "type": "number" }
+        },
+        "required": ["productId"]
+      },
+      "DispensationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number" },
+          "dispensingAgentId": { "type": "number" },
+          "dispensingAgentName": { "type": "string" },
+          "dispensationDate": { "format": "date-time", "type": "string" },
+          "dispensedItemsCount": { "type": "number" },
+          "dispensedItems": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DispensedItemDto" }
+          }
+        },
+        "required": [
+          "id",
+          "dispensingAgentId",
+          "dispensationDate",
+          "dispensedItemsCount",
+          "dispensedItems"
+        ]
+      },
+      "PrescribedItemDto": {
+        "type": "object",
+        "properties": {
+          "prescribedItemId": { "type": "number" },
+          "prescriptionId": { "type": "number" },
+          "prescriberId": { "type": "string" },
+          "prescriberName": { "type": "string" },
+          "issueDate": { "format": "date-time", "type": "string" },
+          "expiryDate": { "format": "date-time", "type": "string" },
+          "productId": { "type": "string" },
+          "productName": { "type": "string" },
+          "productType": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "productForm": { "type": "string" },
+          "productUrl": { "type": "string" },
+          "productStrength": { "type": "string" },
+          "productQuantity": { "type": "number" },
+          "dosageInstructions": { "type": "string" },
+          "indication": { "type": "string" },
+          "totalPrescribedAmount": { "type": "number" },
+          "totalPrescribedAmountDisplay": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["regular", "pn", "regimen", "owner"]
+          },
+          "isRegiment": { "type": "boolean" },
+          "isRenewable": { "type": "boolean" },
+          "renewalBlockedReason": {
+            "type": "string",
+            "enum": [
+              "pendingRequest",
+              "rejectedRequest",
+              "notFullyDispensed",
+              "isRegiment"
+            ]
+          },
+          "renewalStatus": { "type": "number", "enum": [0, 1, 2] },
+          "amountRemaining": { "type": "number" },
+          "amountRemainingUnit": { "type": "string" },
+          "amountRemainingDisplay": { "type": "string" },
+          "percentageRemaining": { "type": "number" },
+          "isFullyDispensed": { "type": "boolean" },
+          "dispensations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DispensationDto" }
+          }
+        },
+        "required": [
+          "prescribedItemId",
+          "prescriptionId",
+          "prescriberId",
+          "prescriberName",
+          "issueDate",
+          "expiryDate",
+          "productId",
+          "isRenewable",
+          "isFullyDispensed",
+          "dispensations"
+        ]
+      },
+      "DispensationHistoryItemDto": {
+        "type": "object",
+        "properties": {
+          "dispensingAgentId": { "type": "number" },
+          "dispensingAgentName": { "type": "string" },
+          "dispensationDate": { "format": "date-time", "type": "string" },
+          "productStrength": { "type": "string" },
+          "productName": { "type": "string" },
+          "productId": { "type": "string" },
+          "productQuantity": { "type": "number" },
+          "productUnit": { "type": "string" },
+          "productType": {
+            "type": "string",
+            "description": "Based on the ATC classification"
+          },
+          "indication": { "type": "string" },
+          "dosageInstructions": { "type": "string" },
+          "issueDate": { "format": "date-time", "type": "string" },
+          "prescriberName": { "type": "string" },
+          "expirationDate": { "format": "date-time", "type": "string" },
+          "isExpired": { "type": "boolean" }
+        },
+        "required": ["prescriberName", "isExpired"]
+      },
+      "DispensationHistoryDto": {
+        "type": "object",
+        "properties": {
+          "productName": { "type": "string" },
+          "productId": { "type": "string" },
+          "productStrength": { "type": "string" },
+          "productAtcCode": { "type": "string" },
+          "indication": { "type": "string" },
+          "lastDispensationDate": { "format": "date-time", "type": "string" },
+          "dispensationCount": { "type": "number" },
+          "dispensations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DispensationHistoryItemDto"
+            }
+          }
+        },
+        "required": ["dispensationCount", "dispensations"]
+      },
+      "OrganDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "OrganDonorDto": {
+        "type": "object",
+        "properties": {
+          "isDonor": { "type": "boolean" },
+          "exceptions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrganDto" }
+          },
+          "exceptionComment": { "type": "string" },
+          "registrationDate": { "format": "date-time", "type": "string" },
+          "isMinor": { "type": "boolean" },
+          "isTemporaryResident": { "type": "boolean" }
+        },
+        "required": ["isDonor", "exceptions"]
+      },
+      "UpdateOrganDonorDto": {
+        "type": "object",
+        "properties": {
+          "isDonor": { "type": "boolean" },
+          "exceptions": { "type": "array", "items": { "type": "string" } },
+          "exceptionComment": { "type": "string" }
+        },
+        "required": ["isDonor", "exceptions"]
+      }
+    }
+  }
+}
