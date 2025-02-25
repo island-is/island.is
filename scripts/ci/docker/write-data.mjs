@@ -1,30 +1,29 @@
 // @ts-check
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
-const data = process.env.JSON_DATA ? JSON.parse(process.env.JSON_DATA) : null;
+const data = process.env.JSON_DATA ? JSON.parse(process.env.JSON_DATA) : null
 
 if (typeof data !== 'object' || data == null) {
-    throw new Error('Invalid data type')
+  throw new Error('Invalid data type')
 }
 
-const keys = Object.keys(data.value);
+const keys = Object.keys(data.value)
 
 const result = keys.map((key) => {
-    const values = Object.keys(data).reduce((a, b) => {
-        return {
-            ...a,
-            [b]: data[b][key]
-        }
-    }, {});
-
+  const values = Object.keys(data).reduce((a, b) => {
     return {
-        id: key,
-        ...values
+      ...a,
+      [b]: data[b][key],
     }
-});
+  }, {})
 
-const tmpFilePath = path.join('/tmp', 'data.json');
-fs.writeFileSync(tmpFilePath, JSON.stringify(result, null, 2));
+  return {
+    id: key,
+    ...values,
+  }
+})
 
+const tmpFilePath = path.join('/tmp', 'data.json')
+fs.writeFileSync(tmpFilePath, JSON.stringify(result, null, 2))

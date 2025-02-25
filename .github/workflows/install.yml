@@ -11,7 +11,7 @@ on:
         type: boolean
         default: false
     outputs:
-      MQ_SHA: 
+      MQ_SHA:
         value: ${{ jobs.install.outputs.MQ_SHA}}
       MQ_DOCKER_TAG:
         value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
@@ -102,7 +102,7 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
       - id: get-branch
-        env: 
+        env:
           RAW_REF: ${{ inputs.main_branch }}
         run: |
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
@@ -130,7 +130,7 @@ jobs:
         run: |
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
-      - name: Prepare merge queue 
+      - name: Prepare merge queue
         id: prepare-merge-queue
         if: ${{ inputs.run_merge_queue == true }}
         run: |
@@ -211,7 +211,6 @@ jobs:
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
-  
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
