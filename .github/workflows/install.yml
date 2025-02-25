@@ -105,7 +105,7 @@ jobs:
         env: 
           RAW_REF: ${{ inputs.main_branch }}
         run: |
-          echo "MAIN_BRANCH=MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
