@@ -11,9 +11,8 @@ export const AssetLink: FC<React.PropsWithChildren<AssetLinkProps>> = ({
   url,
   children,
 }) => {
-  let extension: string
   const parts = url.split('.')
-  extension = parts[parts.length - 1].toUpperCase()
+  let extension = parts[parts.length - 1].toUpperCase()
 
   if (url.includes('videos.ctfassets') && extension.length >= 10) {
     extension = 'VIDEO'
