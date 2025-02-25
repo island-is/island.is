@@ -7,6 +7,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
 import {
+  auditTrailModuleConfig,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
@@ -35,10 +39,15 @@ jest.mock('../../defendant/defendant.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
+jest.mock('@island.is/judicial-system/audit-trail')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
-    imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
+    imports: [
+      ConfigModule.forRoot({
+        load: [sharedAuthModuleConfig, auditTrailModuleConfig],
+      }),
+    ],
     controllers: [
       SubpoenaController,
       InternalSubpoenaController,
@@ -87,6 +96,7 @@ export const createTestingSubpoenaModule = async () => {
         },
       },
       SubpoenaService,
+      AuditTrailService,
       MessageService,
     ],
   }).compile()
@@ -109,6 +119,8 @@ export const createTestingSubpoenaModule = async () => {
   )
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
+  const auditTrailService =
+    subpoenaModule.get<AuditTrailService>(AuditTrailService)
 
   const subpoenaController =
     subpoenaModule.get<SubpoenaController>(SubpoenaController)
@@ -132,6 +144,7 @@ export const createTestingSubpoenaModule = async () => {
     internalCaseService,
     subpoenaModel,
     subpoenaService,
+    auditTrailService,
     subpoenaController,
     internalSubpoenaController,
     limitedAccessSubpoenaController,
