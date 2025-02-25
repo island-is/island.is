@@ -42,21 +42,37 @@ export class PaymentCallbackController {
     }
   }
 
-  @Post('api-client-payment-callback/')
+  @Post('application-payment/api-client-payment-callback/')
   async apiClientPaymentCallback(
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
-    console.log('===============================================')
-    console.log('applicationPaymentCallback')
-    console.log('===============================================')
-    console.log('callback', callback)
-    console.log('===============================================')
-    // if (callback.type === 'success') {
-    //   await this.paymentService.fulfillPayment(
-    //     callback.paymentFlowId,
-    //     callback.eventMetadata?.charge?.receptionId ?? '',
-    //     callback.paymentFlowMetadata.applicationId,
-    //   )
-    // }
+    if (callback.type === 'success') {
+      if (callback.details?.eventMetadata?.charge?.receptionId) {
+        await this.paymentService.fulfillPayment(
+          callback.paymentFlowMetadata.paymentId,
+          callback.details?.eventMetadata?.charge?.receptionId ?? '',
+          callback.paymentFlowMetadata.applicationId,
+        )
+      } else {
+        throw new Error('No receptionId found in success callback')
+      }
+    }
+
+    const application = await this.applicationService.findOneById(
+      callback.paymentFlowMetadata.applicationId,
+    )
+    if (application) {
+      const oneMonthFromNow = addMonths(new Date(), 1)
+      //Applications payment states are default to be pruned in 24 hours.
+      //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
+
+      await this.applicationService.update(
+        callback.paymentFlowMetadata.applicationId,
+        {
+          ...application,
+          pruneAt: oneMonthFromNow,
+        },
+      )
+    }
   }
 }

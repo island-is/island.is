@@ -201,6 +201,7 @@ export class SharedTemplateApiService {
     performingOrganizationID: string,
     chargeItems: BasicChargeItem[],
     extraData: ExtraData[] | undefined = undefined,
+    locale?: string | undefined,
   ) {
     return this.paymentService.createCharge(
       user,
@@ -208,6 +209,7 @@ export class SharedTemplateApiService {
       chargeItems,
       applicationId,
       extraData,
+      locale,
     )
   }
 

@@ -197,7 +197,7 @@ export class ApiClientPaymentDetails {
 
   @IsObject()
   @ApiProperty()
-  readonly eventMetadata!: object
+  readonly eventMetadata!: ApiClientEventMetadata
 }
 
 export class ApiClientCallback {
@@ -211,7 +211,6 @@ export class ApiClientCallback {
 
   @IsObject()
   @ApiProperty()
-  @IsInstance(ApiClientCallbackMetadata)
   readonly paymentFlowMetadata!: ApiClientCallbackMetadata
 
   @IsString()
@@ -222,9 +221,4 @@ export class ApiClientCallback {
   @IsObject()
   @ApiProperty()
   readonly details!: ApiClientPaymentDetails
-
-  @IsObject()
-  @IsOptional()
-  @ApiProperty()
-  readonly eventMetadata?: ApiClientEventMetadata
 }

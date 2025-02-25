@@ -10,8 +10,6 @@ import { Op } from 'sequelize'
 import {
   CatalogItem,
   ChargeFjsV2ClientService,
-  ChargeResponse,
-  ChargeStatusResultStatusEnum,
   ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
@@ -24,7 +22,6 @@ import {
 } from '@island.is/application/api/core'
 import { PaymentModuleConfig } from './payment.config'
 import { ConfigType } from '@nestjs/config'
-import { formatCharge } from './types/Charge'
 import {
   PaymentType as BasePayment,
   BasicChargeItem,
@@ -33,9 +30,6 @@ import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './types/paymentStatus'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ProblemError } from '@island.is/nest/problem'
-import { ProblemType } from '@island.is/shared/problem'
-import { coreErrorMessages } from '@island.is/application/core'
 import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
@@ -57,9 +51,6 @@ export class PaymentService {
   async findPaymentByApplicationId(
     applicationId: string,
   ): Promise<Payment | null> {
-    // console.log('===============================================')
-    // console.log('findPaymentByApplicationId', applicationId)
-    // console.log('===============================================')
     return this.paymentModel.findOne({
       where: {
         application_id: applicationId,
@@ -91,11 +82,33 @@ export class PaymentService {
     }
   }
 
+  async addPaymentUrl(
+    applicationId: string,
+    paymentId: string,
+    paymentUrl: string,
+  ): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    const definition = JSON.parse(
+      (payment?.definition as unknown as string) ?? '{}', // definition is a JSONB field so it is returned as a string
+    )
+    await this.paymentModel.update(
+      {
+        definition: {
+          ...definition,
+          paymentUrl: paymentUrl,
+        },
+      },
+      {
+        where: {
+          id: paymentId,
+          application_id: applicationId,
+        },
+      },
+    )
+  }
+
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
-    // console.log('===============================================')
-    // console.log('getStatus', foundPayment)
-    // console.log('===============================================')
     if (!foundPayment) {
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
@@ -107,34 +120,15 @@ export class PaymentService {
         `valid payment object was not found for application id ${applicationId} - user4 not set`,
       )
     }
-    const application = await this.applicationService.findOneById(applicationId)
 
-    let applicationSlug
-    if (application?.typeId) {
-      applicationSlug = getSlugFromType(application.typeId)
-    } else {
-      throw new NotFoundException(
-        `application type id was not found for application id ${applicationId}`,
-      )
-    }
-
-    const callbackUrl = `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
-
+    const paymentUrl = JSON.parse(foundPayment.dataValues.definition).paymentUrl
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
       fulfilled: foundPayment.fulfilled || false,
-      paymentUrl: this.makeDelegationPaymentUrl(
-        foundPayment.user4,
-        user.sub ?? user.nationalId,
-        callbackUrl,
-      ),
+      paymentUrl,
       paymentId: foundPayment.id,
     }
-  }
-
-  public makePaymentUrl(docNum: string): string {
-    return `${this.config.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
   async setUser4(
@@ -182,9 +176,6 @@ export class PaymentService {
       },
       expires_at: new Date(),
     }
-    // console.log('===============================================')
-    // console.log('createPaymentModel', paymentModel)
-    // console.log('===============================================')
     return await this.paymentModel.create(paymentModel)
   }
 
@@ -211,55 +202,12 @@ export class PaymentService {
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
-    let user4 = ''
+    let paymentUrl = ''
 
     if (paymentModel) {
       //payment Model already exists something has previously gone wrong.
 
-      const chargeStatus = await this.chargeFjsV2ClientService.getChargeStatus(
-        paymentModel.id,
-      )
-
-      const status = chargeStatus?.statusResult?.status
-
-      if (chargeStatus === null) {
-        //No charge present in FJS - we need to create a new one
-        const chargeResult = await this.createNewCharge(
-          paymentModel,
-          user,
-          extraData,
-        )
-        user4 = chargeResult.user4
-      } else if (status === ChargeStatusResultStatusEnum.InProgress) {
-        //Payment is still in progress - we need to wait for it to finish before we can continue.
-        throw new ProblemError({
-          type: ProblemType.TEMPLATE_API_ERROR,
-          title: 'CreateCharge Payment still in progress.',
-          errorReason: {
-            title:
-              coreErrorMessages.paymentCreateChargeFailedStillInProgressTitle,
-            summary:
-              coreErrorMessages.paymentCreateChargeFailedStillInProgressSummary,
-          },
-        })
-      } else if (
-        status === ChargeStatusResultStatusEnum.Unpaid &&
-        chargeStatus.statusResult.docNum
-      ) {
-        //We aldready have a charge that is unpaid so we can proceed like normal
-        //and update payment with user4 from charge result
-        await this.setUser4(
-          applicationId,
-          paymentModel.id,
-          chargeStatus.statusResult.docNum,
-        )
-        this.auditPaymentCreation(user, applicationId, paymentModel.id)
-        return this.buildChargeResult(
-          paymentModel.id,
-          chargeStatus.statusResult.docNum,
-        )
-      }
-      // update charge with new data if needed
+      paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
     } else {
       //3. Create new payment entry
       paymentModel = await this.createPaymentModel(
@@ -268,77 +216,47 @@ export class PaymentService {
         performingOrganizationID,
       )
 
-      //4. Create new charge
-      const chargeResult = await this.createNewCharge(
-        paymentModel,
-        user,
-        extraData,
-      )
-      user4 = chargeResult.user4
-
-      // console.log('===============================================')
-      // console.log('catalogChargeItems')
-      // console.dir(catalogChargeItems, { depth: null })
-      // console.log('===============================================')
-
-      const paymentUrl =
+      const paymentResult =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
           createPaymentFlowInput: {
             availablePaymentMethods: [
               CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
             ],
-            charges: [
-              {
-                chargeType: catalogChargeItems[0].chargeType,
-                chargeItemCode: catalogChargeItems[0].chargeItemCode,
-                quantity: catalogChargeItems[0].quantity ?? 1,
-                price: catalogChargeItems[0].priceAmount,
-              },
-            ],
+            charges: catalogChargeItems.map((chargeItem) => ({
+              chargeType: chargeItem.chargeType,
+              chargeItemCode: chargeItem.chargeItemCode,
+              quantity: chargeItem.quantity ?? 1,
+              price: chargeItem.priceAmount,
+            })),
             payerNationalId: user.nationalId,
             organisationId: performingOrganizationID,
             onUpdateUrl:
-              'https://webhook.site/b60602ce-55af-4603-8571-afaae4b70d11',
+              'http://localhost:3333/application-payment/api-client-payment-callback/',
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
             },
+            returnUrl: await this.getReturnUrl(applicationId),
           },
         })
-      console.log('===============================================')
-      console.log('paymentUrl', paymentUrl)
-      console.log('===============================================')
+
+      paymentUrl =
+        locale && locale === 'en'
+          ? paymentResult.urls.en
+          : paymentResult.urls.is
+
+      await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
     }
 
     //5. Update payment with user4 from charge result
-    await this.setUser4(applicationId, paymentModel.id, user4)
+
+    await this.setUser4(applicationId, paymentModel.id, 'user4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
-    return this.buildChargeResult(paymentModel.id, user4)
-  }
-
-  async createNewCharge(
-    paymentModel: Payment,
-    user: User,
-    extraData: ExtraData[] | undefined,
-  ): Promise<ChargeResponse> {
-    // console.log('===============================================')
-    // console.log('createNewCharge')
-    // console.dir(paymentModel, { depth: null })
-    // console.log('user')
-    // console.dir(user, { depth: null })
-    // console.log('extraData')
-    // console.dir(extraData, { depth: null })
-    // console.log('===============================================')
-    return await this.chargeFjsV2ClientService.createCharge(
-      formatCharge(
-        paymentModel,
-        this.config.callbackBaseUrl,
-        this.config.callbackAdditionUrl,
-        extraData,
-        user,
-      ),
-    )
+    return {
+      id: paymentModel.id,
+      paymentUrl,
+    }
   }
 
   private auditPaymentCreation(
@@ -352,29 +270,6 @@ export class PaymentService {
       resources: applicationId as string,
       meta: { applicationId, id: paymentId },
     })
-  }
-
-  private buildChargeResult(paymentId: string, user4: string) {
-    return {
-      id: paymentId,
-      paymentUrl: this.makePaymentUrl(user4),
-    }
-  }
-
-  public makeDelegationPaymentUrl(
-    docNum: string,
-    loginHint: string,
-    callbackUrl: string,
-  ): string {
-    const targetLinkUri = `${this.makePaymentUrl(
-      docNum,
-    )}&returnURL=${callbackUrl}`
-
-    return `${this.config.arkBaseUrl}/quickpay/pay?iss=${
-      this.config.authIssuer
-    }&login_hint=${loginHint}&target_link_uri=${encodeURIComponent(
-      targetLinkUri,
-    )}`
   }
 
   async findCatalogChargeItems(
@@ -456,5 +351,20 @@ export class PaymentService {
         application_id: applicationId,
       },
     })
+  }
+
+  private async getReturnUrl(applicationId: string) {
+    const application = await this.applicationService.findOneById(applicationId)
+
+    let applicationSlug
+    if (application?.typeId) {
+      applicationSlug = getSlugFromType(application.typeId)
+    } else {
+      throw new NotFoundException(
+        `application type id was not found for application id ${applicationId}`,
+      )
+    }
+
+    return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
   }
 }
