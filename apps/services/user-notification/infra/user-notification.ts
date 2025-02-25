@@ -17,8 +17,8 @@ const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
-const MAIN_QUEUE_NAME = serviceName
-const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
+const MAIN_QUEUE_NAME = `${serviceName}-feat-birthday`
+const DEAD_LETTER_QUEUE_NAME = `${serviceName}-feat-birthday-failure`
 
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
@@ -189,14 +189,31 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
       prod: { schedule: '@midnight' },
     })
 
-export const userNotificationBirthdayWorkerSetup = (): ServiceBuilder<
-  typeof serviceBirthdayWorkerName
-> =>
+export const userNotificationBirthdayWorkerSetup = (services: {
+  userProfileApi: ServiceBuilder<typeof serviceBirthdayWorkerName>
+}): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
   service(serviceBirthdayWorkerName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceBirthdayWorkerName)
     .codeOwner(CodeOwners.Juni)
+    .env({
+      ...getEnv(services),
+      EMAIL_REGION: 'eu-west-1',
+      CONTENTFUL_HOST: {
+        dev: 'preview.contentful.com',
+        staging: 'cdn.contentful.com',
+        prod: 'cdn.contentful.com',
+      },
+    })
+    .secrets({
+      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=birthday')
     .db({ name: 'user-notification' })
