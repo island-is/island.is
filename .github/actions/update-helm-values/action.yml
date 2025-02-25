@@ -1,0 +1,48 @@
+name: 'Update helm-values charts'
+description: 'Copys the changeset in charts folder to helm-values repository'
+
+inputs:
+  files:
+    description: 'Comma seperated string of paths to copy'
+    required: true
+  gh_token_pat:
+    description: 'PAT token so the action can fetch the helm-values repository'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout helm-values repository
+      uses: actions/checkout@v4
+      with:
+        repository: island-is/helm-values
+        ref: main
+        token: ${{ inputs.gh_token_pat }}
+        path: helm-values
+    - name: Copy affected helm charts from island.is repository to helm-values repository
+      shell: bash
+      env:
+        files: ${{ inputs.files }}
+      run: |
+        IFS=$IFS,
+        paths=()
+        read -a paths <<< $files
+        echo "$files\n$paths"
+        for path in ${paths[@]}; do
+          export DEST="helm-values/charts/${path#charts/}"
+          export DEST_PATH=$(dirname $DEST)
+          mkdir -p $DEST_PATH
+          echo "Copying filepath: ${path} to $DEST"
+          cp "$path" "$DEST"
+        done
+    - name: Commit and push changes to helm-values repository
+      shell: bash
+      run: |
+        cd helm-values
+        git config --global user.email "ci@island.is"
+        git config --global user.name "CI Bot"
+
+        git add .
+        git commit -m "Updated helm charts"
+        echo "Showing changeset\n $(git show)"
+        git push

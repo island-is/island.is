@@ -47,6 +47,8 @@ jobs:
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
+    with:
+      main_branch: ${{ github.base_ref }}
 
   tests:
     needs:
