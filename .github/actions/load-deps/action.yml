@@ -1,5 +1,5 @@
 name: 'Load Dependencies'
-description: 'Fetch and extract generated files. Depends on the `install` action.'
+description: 'Fetch and extract generated files. Depends on the `setup-yarn` action.'
 
 runs:
   using: 'composite'

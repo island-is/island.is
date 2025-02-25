@@ -6,8 +6,14 @@ runs:
   steps:
     - name: Prep env
       shell: bash
+      env:
+        YARN_CACHE_FOLDER: $HOME/dependencies/.yarn/cache
+        CYPRESS_CACHE_FOLDER: $HOME/dependencies/.cache
+        COREPACK_HOME: $HOME/dependencies/corepack
+        NODE_PATH: $HOME/dependencies/node_modules
+        COREPACK_ENABLE_STRICT: 1
       run: |
-        for e in YARN_CACHE_FOLDER COREPACK_HOME NODE_PATH; do
+        for e in YARN_CACHE_FOLDER CYPRESS_CACHE_FOLDER COREPACK_HOME NODE_PATH COREPACK_ENABLE_STRICT; do
           # Expand home-dirs with string substitution (matches homes at the beginning of the variable)
           p=${!e}
           p=${p/#\$HOME/$HOME}
