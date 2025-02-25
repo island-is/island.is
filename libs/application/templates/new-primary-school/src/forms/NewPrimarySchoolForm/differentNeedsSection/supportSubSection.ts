@@ -44,12 +44,12 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-diagnoses',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-diagnoses',
               value: NO,
             },
           ],
@@ -72,12 +72,12 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-had-support',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-had-support',
               value: NO,
             },
           ],
@@ -94,12 +94,12 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-integrated-services',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-integrated-services',
               value: NO,
             },
           ],
@@ -121,12 +121,12 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-case-manager',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-case-manager',
               value: NO,
             },
           ],
