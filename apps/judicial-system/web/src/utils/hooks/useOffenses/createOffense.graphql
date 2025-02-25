@@ -4,6 +4,7 @@ mutation CreateOffense($input: CreateOffenseInput!) {
     created
     modified
     indictmentCountId
+    offense
     substances
   }
 }
