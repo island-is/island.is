@@ -3,13 +3,13 @@ import { m } from '@island.is/portals/my-pages/core'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DocumentRenderer } from '../DocumentRenderer/DocumentRendererV2'
-import { DocumentHeader } from '../DocumentHeader/DocumentHeaderV2'
+import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
+import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import NoPDF from '../NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
-import { useDocumentList } from '../../hooks/useDocumentList'
+import { useDocumentListV3 } from '../../hooks/useDocumentListV3'
 
 interface Props {
   activeBookmark: boolean
@@ -25,7 +25,7 @@ export const DesktopOverview: FC<Props> = ({
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const { activeDocument } = useDocumentContext()
-  const { activeArchive } = useDocumentList()
+  const { activeArchive } = useDocumentListV3()
 
   if (loading) {
     return (
@@ -71,6 +71,7 @@ export const DesktopOverview: FC<Props> = ({
           archived: activeArchive,
           bookmarked: activeBookmark,
         }}
+        actions={activeDocument.actions}
       />
       <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
       {activeDocument?.id && (

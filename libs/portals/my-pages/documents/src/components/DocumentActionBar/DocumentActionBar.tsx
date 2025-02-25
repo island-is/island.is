@@ -11,7 +11,7 @@ import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { downloadFile } from '../../utils/downloadDocumentV2'
+import { downloadFile } from '../../utils/downloadDocument'
 import * as styles from './DocumentActionBar.css'
 
 export type DocumentActionBarProps = {

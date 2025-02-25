@@ -4,7 +4,7 @@ import { Modal, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { ActiveDocumentType2 } from '../../lib/types'
-import { downloadFile } from '../../utils/downloadDocumentV2'
+import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentRenderer.css'
 

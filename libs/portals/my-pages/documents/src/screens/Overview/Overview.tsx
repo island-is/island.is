@@ -20,10 +20,10 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilterV2'
-import DocumentLine from '../../components/DocumentLine/DocumentLineV3'
-import { FavAndStashV3 } from '../../components/FavAndStash/FavAndStashV3'
-import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplayV3'
+import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
+import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import { FavAndStash } from '../../components/FavAndStash/FavAndStash'
+import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 import { pageSize, useDocumentListV3 } from '../../hooks/useDocumentListV3'
 import { useKeyDown } from '../../hooks/useKeyDown'
@@ -33,7 +33,7 @@ import { messages } from '../../utils/messages'
 import { useDocumentContext } from './DocumentContext'
 import * as styles from './Overview.css'
 
-export const ServicePortalDocumentsV3 = () => {
+export const DocumentsOverview = () => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -187,7 +187,7 @@ export const ServicePortalDocumentsV3 = () => {
               </Box>
 
               {selectedLines.length > 0 ? (
-                <FavAndStashV3
+                <FavAndStash
                   loading={batchActionLoading}
                   onStash={() =>
                     submitBatchAction(
@@ -304,4 +304,4 @@ export const ServicePortalDocumentsV3 = () => {
   )
 }
 
-export default ServicePortalDocumentsV3
+export default DocumentsOverview

@@ -6,8 +6,8 @@ import AvatarImage from '../DocumentLine/AvatarImage'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
-} from '../DocumentActionBar/DocumentActionBarV2'
-import DocumentActions from '../DocumentActions/DocumentActionsV3'
+} from '../DocumentActionBar/DocumentActionBar'
+import DocumentActions from '../DocumentActions/DocumentActions'
 import * as styles from './DocumentHeader.css'
 
 type DocumentHeaderProps = {
