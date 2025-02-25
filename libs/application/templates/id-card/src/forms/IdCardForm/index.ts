@@ -11,7 +11,6 @@ import { getChargeItems } from '../../utils'
 
 export const IdCardForm: Form = buildForm({
   id: 'IdCardFormDraft',
-  title: '',
   // logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

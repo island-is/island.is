@@ -16,7 +16,6 @@ import {
   Application,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
 import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
@@ -24,6 +23,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { shared } from './messages'
 import { ApiActions } from '../shared/constants'
 import { ApiScope } from '@island.is/auth/scopes'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -32,6 +32,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.WORK_ACCIDENT_NOTIFICATION,
   name: shared.application.name,
+  codeOwner: CodeOwners.Origo,
   institution: shared.application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.WorkAccidentNotification.translation,
@@ -46,7 +47,6 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitidAccident],
-  featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -54,7 +54,6 @@ const template: ApplicationTemplate<
       [States.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
-          progress: 0,
           status: 'draft',
           actionCard: {
             tag: {
@@ -109,7 +108,11 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

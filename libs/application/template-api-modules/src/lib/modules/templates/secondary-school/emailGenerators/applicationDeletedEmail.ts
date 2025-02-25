@@ -39,10 +39,9 @@ export const generateApplicationDeletedEmail: ApplicationDeletedEmail = (
     `<span>Umsókn nemandans:</span><br/>` +
     `<span>${applicantName}, kt. ${kennitala.format(
       applicantNationalId,
-      '-',
     )},</span><br/>` +
     `<span>um nám í framhaldsskóla hefur verið eytt.</span><br/>` +
-    `<span>Þú getur farið inn á mínar síður og skoðað sögu umsóknarinnar.</span>`
+    `<span>Hægt er að gera nýja umsókn á Ísland.is.</span>`
 
   return {
     from: {
@@ -81,8 +80,8 @@ export const generateApplicationDeletedEmail: ApplicationDeletedEmail = (
         {
           component: 'Button',
           context: {
-            copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.SecondarySchool.slug}/${application.id}`,
+            copy: 'Opna nýja umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.SecondarySchool.slug}`,
           },
         },
       ],

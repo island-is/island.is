@@ -18,7 +18,6 @@ import {
 import {
   Application,
   ApplicationTypes,
-  YES,
 } from '@island.is/application/types'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
@@ -46,6 +45,7 @@ import * as kennitala from 'kennitala'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
 import { S3Service } from '@island.is/nest/aws'
+import { YES } from '@island.is/application/core'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 

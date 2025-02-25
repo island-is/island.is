@@ -7,9 +7,11 @@ import router from 'next/router'
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,6 +28,7 @@ import {
   IndictmentCountOffense,
   Institution,
   Maybe,
+  Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
@@ -85,6 +88,7 @@ const Indictment = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const {
@@ -129,14 +133,16 @@ const Indictment = () => {
       // If the case has:
       // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
-      const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.offenses?.some((offense) =>
-          [
-            IndictmentCountOffense.DRUNK_DRIVING,
-            IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-            IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-          ].includes(offense),
-        ),
+      const requestDriversLicenseSuspension = indictmentCounts?.some(
+        (count) => {
+          return count.offenses?.some((o) =>
+            [
+              IndictmentCountOffense.DRUNK_DRIVING,
+              IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+              IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+            ].includes(o.offense),
+          )
+        },
       )
 
       if (
@@ -191,6 +197,7 @@ const Indictment = () => {
     async (
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
+      updatedOffenses?: Offense[],
     ) => {
       if (
         updatedIndictmentCount.policeCaseNumber &&
@@ -218,7 +225,9 @@ const Indictment = () => {
 
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId ? returnedIndictmentCount : count,
+          count.id === indictmentCountId
+            ? { ...returnedIndictmentCount, offenses: updatedOffenses }
+            : count,
         ),
       )
 
@@ -226,6 +235,7 @@ const Indictment = () => {
         indictmentCountId,
         returnedIndictmentCount,
         setWorkingCase,
+        updatedOffenses,
       )
     },
     [
@@ -503,6 +513,7 @@ const Indictment = () => {
             caseId={workingCase.id}
             title={formatMessage(strings.pdfButtonIndictment)}
             pdfType="indictment"
+            elementId="Ákæra"
           />
         </Box>
       </FormContentContainer>
@@ -511,7 +522,7 @@ const Indictment = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

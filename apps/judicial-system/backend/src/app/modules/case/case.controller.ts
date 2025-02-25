@@ -28,7 +28,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -137,7 +137,7 @@ export class CaseController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -155,7 +155,7 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -200,7 +200,7 @@ export class CaseController {
     if (update.registrarId) {
       await this.validateAssignedUser(
         update.registrarId,
-        [UserRole.DISTRICT_COURT_REGISTRAR],
+        [UserRole.DISTRICT_COURT_REGISTRAR, UserRole.DISTRICT_COURT_ASSISTANT],
         theCase.courtId,
       )
     }
@@ -275,7 +275,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     CaseWriteGuard,
@@ -320,7 +320,7 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -347,7 +347,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -368,7 +368,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthGuard, CaseExistsGuard)
+  @UseGuards(JwtAuthUserGuard, CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -397,7 +397,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -433,7 +433,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -482,7 +482,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -519,7 +519,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -553,7 +553,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
@@ -564,6 +564,7 @@ export class CaseController {
     prosecutorRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
@@ -593,7 +594,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -632,13 +633,17 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('case/:caseId/courtRecord/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -673,13 +678,17 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Get('case/:caseId/courtRecord/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -704,7 +713,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -741,7 +750,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -770,7 +779,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -801,7 +810,7 @@ export class CaseController {
     return extendedCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

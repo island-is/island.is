@@ -22,7 +22,6 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'overview.submit',
-          title: '',
           actions: [
             {
               event: DefaultEvents.SUBMIT,

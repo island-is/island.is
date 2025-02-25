@@ -4,8 +4,9 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
 import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
@@ -29,10 +30,12 @@ export const freeSchoolMealSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'accept-free-school-lunch',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-accept-free-school-lunch',
               value: NO,
             },
           ],
@@ -46,10 +49,12 @@ export const freeSchoolMealSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'has-special-needs',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-has-special-needs',
               value: NO,
             },
           ],
@@ -72,7 +77,7 @@ export const freeSchoolMealSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.ALLERGY, // TODO: Update when Júní has updated key-options
+            optionsType: OptionsType.SCHOOL_MEAL,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .specialNeedsTypePlaceholder,

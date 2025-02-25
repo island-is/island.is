@@ -7,27 +7,18 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { HTMLText } from '@island.is/regulations-tools/types'
-import {
-  base64ToBlob,
-  getAdvertMarkup,
-  getSignaturesMarkup,
-  parseZodIssue,
-} from '../lib/utils'
-import { Routes, SignatureTypes } from '../lib/constants'
+import { base64ToBlob, parseZodIssue } from '../lib/utils'
+import { Routes } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { advert, error, preview, signatures } from '../lib/messages'
-import {
-  previewValidationSchema,
-  signatureValidationSchema,
-} from '../lib/dataSchema'
+import { previewValidationSchema, signatureValidator } from '../lib/dataSchema'
 import { ZodCustomIssue } from 'zod'
 import { usePdf } from '../hooks/usePdf'
 import { useState } from 'react'
+import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
+import { useSignatures } from '../hooks/useSignatures'
 
 export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { application: currentApplication } = useApplication({
@@ -37,6 +28,14 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const [hasInvalidPdf, setHasInvalidPdf] = useState(false)
 
   const { formatMessage: f } = useLocale()
+
+  const { signatureHtml } = useSignatures({
+    applicationId: application.id,
+    variant:
+      application?.answers?.misc?.signatureType === 'committee'
+        ? 'committee'
+        : 'regular',
+  })
 
   const {
     fetchPdf,
@@ -87,30 +86,9 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
     currentApplication.answers,
   )
 
-  const signatureValidationCheck = signatureValidationSchema.safeParse({
-    signatures: currentApplication.answers.signatures,
-    misc: currentApplication.answers.misc,
-  })
-
-  const signatureMarkup = getSignaturesMarkup({
-    signatures: currentApplication.answers.signatures,
-    type: currentApplication.answers.misc?.signatureType as SignatureTypes,
-  })
-
-  const advertMarkup = getAdvertMarkup({
-    type: currentApplication.answers.advert?.type?.title,
-    title: currentApplication.answers.advert?.title,
-    html: currentApplication.answers.advert?.html,
-  })
-
-  const hasMarkup =
-    !!currentApplication.answers.advert?.html ||
-    currentApplication.answers.advert?.type?.title ||
-    currentApplication.answers.advert?.title
-
-  const combinedHtml = hasMarkup
-    ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
-    : (`${signatureMarkup}` as HTMLText)
+  const signatureValidationCheck = signatureValidator(
+    application.answers.misc?.signatureType ?? 'regular',
+  ).safeParse(currentApplication.answers.signature)
 
   const hasError = !(
     advertValidationCheck.success &&
@@ -219,12 +197,12 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         </Stack>
       </Box>
       <Box border="standard" borderRadius="large">
-        <HTMLEditor
-          name="preview.document"
-          config={signatureConfig}
-          readOnly={true}
-          hideWarnings={true}
-          value={combinedHtml}
+        <AdvertPreview
+          advertSubject={currentApplication.answers.advert?.title}
+          advertType={currentApplication.answers.advert?.type?.title}
+          advertText={`${
+            currentApplication.answers.advert?.html ?? ''
+          }${signatureHtml}`}
         />
       </Box>
     </Stack>

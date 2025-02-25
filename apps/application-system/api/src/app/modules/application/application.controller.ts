@@ -92,11 +92,14 @@ import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '@island.is/application/api/payment'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import { ApplicationActionService } from './application-action.service'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { withCodeOwner } from '@island.is/infra-tracing'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -106,6 +109,7 @@ import { ApplicationActionService } from './application-action.service'
 })
 @ApiBearerAuth()
 @Controller()
+@CodeOwner(CodeOwners.NordaApplications)
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -324,6 +328,21 @@ export class ApplicationController {
     cache[application.typeId] = hasAccess
 
     return hasAccess
+  }
+
+  private withApplicationInfo = <R, TArgs extends unknown[]>(
+    template : ApplicationTemplate<ApplicationContext, ApplicationStateSchema<EventObject>, EventObject>, 
+    application: Application, 
+    callback: (...args: TArgs) => R,
+    ...args: TArgs
+  ): R => {
+    const context = {
+      templateId: template.type,
+      applicationId: application.id
+    }
+    return withCodeOwner(template.codeOwner, () =>
+      withLoggingContext(context, callback, ...args)
+    )
   }
 
   @Scopes(ApplicationScope.write)
@@ -639,70 +658,71 @@ export class ApplicationController {
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
-
-    const helper = new ApplicationTemplateHelper(
-      existingApplication as BaseApplication,
-      template,
-    )
-
-    const userRole = template.mapUserToRole(
-      user.nationalId,
-      existingApplication as BaseApplication,
-    )
-
-    const providersFromRole = userRole
-      ? helper.getApisFromRoleInState(userRole)
-      : []
-
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
-    const templateApis: TemplateApi[] = []
-
-    for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
-      const found = providersFromRole.find(
-        (x) => x.actionId === externalDataDto.dataProviders[i].actionId,
+    return this.withApplicationInfo(template, existingApplication, async () => {
+      const helper = new ApplicationTemplateHelper(
+        existingApplication as BaseApplication,
+        template,
       )
 
-      if (found) {
-        templateApis.push(found)
-      } else {
-        throw new BadRequestException(
-          `Current user is not permitted to update external data in this state with actionId: ${externalDataDto.dataProviders[i].actionId}`,
+      const userRole = template.mapUserToRole(
+        user.nationalId,
+        existingApplication as BaseApplication,
+      )
+
+      const providersFromRole = userRole
+        ? helper.getApisFromRoleInState(userRole)
+        : []
+
+      const namespaces = await getApplicationTranslationNamespaces(
+        existingApplication as BaseApplication,
+      )
+      const intl = await this.intlService.useIntl(namespaces, locale)
+
+      const templateApis: TemplateApi[] = []
+
+      for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
+        const found = providersFromRole.find(
+          (x) => x.actionId === externalDataDto.dataProviders[i].actionId,
+        )
+
+        if (found) {
+          templateApis.push(found)
+        } else {
+          throw new BadRequestException(
+            `Current user is not permitted to update external data in this state with actionId: ${externalDataDto.dataProviders[i].actionId}`,
+          )
+        }
+      }
+
+      await this.validationService.validateIncomingExternalDataProviders(
+        existingApplication as BaseApplication,
+        templateApis,
+        user.nationalId,
+      )
+
+      const updatedApplication = await this.templateApiActionRunner.run(
+        existingApplication as BaseApplication,
+        templateApis,
+        user,
+        locale,
+        intl.formatMessage,
+      )
+
+      if (!updatedApplication) {
+        throw new NotFoundException(
+          `An application with the id ${id} does not exist`,
         )
       }
-    }
 
-    await this.validationService.validateIncomingExternalDataProviders(
-      existingApplication as BaseApplication,
-      templateApis,
-      user.nationalId,
-    )
+      this.auditService.audit({
+        auth: user,
+        action: 'updateExternalData',
+        resources: existingApplication.id,
+        meta: { providers: externalDataDto },
+      })
 
-    const updatedApplication = await this.templateApiActionRunner.run(
-      existingApplication as BaseApplication,
-      templateApis,
-      user,
-      locale,
-      intl.formatMessage,
-    )
-
-    if (!updatedApplication) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
-
-    this.auditService.audit({
-      auth: user,
-      action: 'updateExternalData',
-      resources: existingApplication.id,
-      meta: { providers: externalDataDto },
+      return updatedApplication
     })
-
-    return updatedApplication
   }
 
   @Scopes(ApplicationScope.write)
@@ -728,7 +748,6 @@ export class ApplicationController {
       })
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
-
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -736,73 +755,77 @@ export class ApplicationController {
       )
     }
 
-    const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
-    const permittedAnswers =
-      await this.validationService.validateIncomingAnswers(
+    return this.withApplicationInfo(template, existingApplication, async () => {
+      const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
+      const namespaces = await getApplicationTranslationNamespaces(
         existingApplication as BaseApplication,
-        newAnswers,
-        user.nationalId,
-        false,
+      )
+      const intl = await this.intlService.useIntl(namespaces, locale)
+
+      const permittedAnswers =
+        await this.validationService.validateIncomingAnswers(
+          existingApplication as BaseApplication,
+          newAnswers,
+          user.nationalId,
+          false,
+          intl.formatMessage,
+        )
+
+      await this.validationService.validateApplicationSchema(
+        existingApplication as BaseApplication,
+        permittedAnswers,
         intl.formatMessage,
+        user,
       )
 
-    await this.validationService.validateApplicationSchema(
-      existingApplication as BaseApplication,
-      permittedAnswers,
-      intl.formatMessage,
-      user,
-    )
+      const mergedAnswers = mergeAnswers(
+        existingApplication.answers,
+        permittedAnswers,
+      )
 
-    const mergedAnswers = mergeAnswers(
-      existingApplication.answers,
-      permittedAnswers,
-    )
+      const mergedApplication: BaseApplication = {
+        ...(existingApplication.toJSON() as BaseApplication),
+        answers: mergedAnswers,
+      }
 
-    const mergedApplication: BaseApplication = {
-      ...(existingApplication.toJSON() as BaseApplication),
-      answers: mergedAnswers,
-    }
+      const {
+        hasChanged,
+        hasError,
+        error,
+        application: updatedApplication,
+      } = await this.applicationActionService.changeState(
+        mergedApplication,
+        template,
+        updateApplicationStateDto.event,
+        user,
+        locale,
+      )
 
-    const {
-      hasChanged,
-      hasError,
-      error,
-      application: updatedApplication,
-    } = await this.applicationActionService.changeState(
-      mergedApplication,
-      template,
-      updateApplicationStateDto.event,
-      user,
-      locale,
-    )
+      this.auditService.audit({
+        auth: user,
+        action: 'submitApplication',
+        resources: existingApplication.id,
+        meta: {
+          event: updateApplicationStateDto.event,
+          before: existingApplication.state,
+          after: updatedApplication.state,
+          fields: Object.keys(permittedAnswers),
+        },
+      })
 
-    this.auditService.audit({
-      auth: user,
-      action: 'submitApplication',
-      resources: existingApplication.id,
-      meta: {
-        event: updateApplicationStateDto.event,
-        before: existingApplication.state,
-        after: updatedApplication.state,
-        fields: Object.keys(permittedAnswers),
-      },
+      if (hasError && error) {
+        this.logger.error(`Application submission ended with an error`)
+        throw new TemplateApiError(error, 500)
+      }
+
+      this.logger.info(`Application submission ended successfully`)
+
+      if (hasChanged) {
+        return updatedApplication
+      }
+
+      return existingApplication
     })
-
-    if (hasError && error) {
-      throw new TemplateApiError(error, 500)
-    }
-    this.logger.info(`Application submission ended successfully`)
-
-    if (hasChanged) {
-      return updatedApplication
-    }
-
-    return existingApplication
   }
 
   @Scopes(ApplicationScope.write)

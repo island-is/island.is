@@ -114,6 +114,23 @@ export const information = {
           'ATH. Ef tengiliður er annar en er sjálfkrafa skráður þá geturðu breytt þeim upplýsingum hér.',
         description: 'Email and phone information alert message',
       },
+      branchPostnumberError: {
+        id: 'aosh.wan.application:information.company.branchPostnumberError',
+        defaultMessage:
+          'Ef skráð er heimilisfang útibús þarf einnig að skrá postnúmer',
+        description: 'Error if only address for branch is input',
+      },
+      branchAddressError: {
+        id: 'aosh.wan.application:information.company.branchAddressError',
+        defaultMessage:
+          'Ef skráð er postnúmer útibús þarf einnig að skrá heimilisfang',
+        description: 'Error if only postnumber for branch is input',
+      },
+      branchNameError: {
+        id: 'aosh.wan.application:information.company.branchNameError',
+        defaultMessage: 'Vinsamlegast skráðu nafn útibús/deildar',
+        description: 'Error if company user does not input name of branch',
+      },
     }),
     laborProtection: defineMessages({
       pageTitle: {

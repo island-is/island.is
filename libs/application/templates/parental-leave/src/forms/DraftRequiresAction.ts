@@ -20,7 +20,6 @@ export const DraftRequiresAction: Form = buildForm({
   children: [
     buildSection({
       id: 'draftRequiresAction.section',
-      title: '',
       children: [
         buildMultiField({
           id: 'draftRequiresAction.multiField',
@@ -37,7 +36,6 @@ export const DraftRequiresAction: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

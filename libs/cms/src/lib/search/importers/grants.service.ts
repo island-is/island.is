@@ -39,6 +39,9 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
           }
 
           const content = [
+            mapped.fund?.title,
+            mapped.fund?.parentOrganization.title,
+            mapped.description,
             mapped.specialEmphasis
               ? extractStringsFromObject(
                   mapped?.specialEmphasis?.map(

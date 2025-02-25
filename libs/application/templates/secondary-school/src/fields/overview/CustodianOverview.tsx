@@ -9,7 +9,8 @@ import {
   formatKennitala,
   formatPhoneNumber,
   Routes,
-  States,
+  checkIsEditable,
+  checkUseAnswersCopy,
 } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
@@ -20,10 +21,13 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
-      'custodians',
+      copyPrefix + 'custodians',
     ) || []
 
   const custodiansExternalData = custodiansAnswers.filter(
@@ -32,27 +36,38 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
-  >(application.answers, 'mainOtherContact')
+  >(application.answers, copyPrefix + 'mainOtherContact')
 
   const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       application.answers,
-      'otherContacts',
+      copyPrefix + 'otherContacts',
     ) || []
   ).filter((x) => !!x.person.nationalId)
+
+  // merge together list of main other contact + other contacts
+  let contacts: {
+    person?: {
+      nationalId?: string
+      name?: string
+      email?: string
+      phone?: string
+    }
+  }[] = []
+  if (mainOtherContact?.person?.nationalId) {
+    contacts.push(mainOtherContact)
+  }
+  if (otherContacts.length > 0) {
+    contacts = contacts.concat(otherContacts)
+  }
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
   }
 
-  const showCustodians = !!custodiansExternalData.length
-  const showMainOtherContact = !!mainOtherContact?.person?.nationalId
-  const showOtherContacts = !!otherContacts.length
+  const totalCount = custodiansExternalData.length + contacts.length
 
-  const totalCount =
-    custodiansExternalData.length +
-    (showMainOtherContact ? 1 : 0) +
-    otherContacts.length
+  const isEditable = checkIsEditable(application.state)
 
   return (
     <ReviewGroup
@@ -63,13 +78,16 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           ? overview.custodian.subtitle
           : overview.otherContact.subtitle,
       )}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
-        {showCustodians && (
+        {!!custodiansExternalData.length && (
           <GridRow>
             {custodiansExternalData.map((custodian, index) => (
-              <GridColumn span="1/2">
+              <GridColumn
+                key={custodian.person?.nationalId}
+                span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
+              >
                 {totalCount > 1 && (
                   <Text variant="h5">
                     {`${formatMessage(overview.custodian.label)} ${
@@ -91,60 +109,32 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                 <Text>{custodiansAnswers[index]?.person?.email}</Text>
               </GridColumn>
             ))}
-            {custodiansExternalData.length % 2 !== 0 && (
-              <GridColumn span="1/2"></GridColumn>
-            )}
           </GridRow>
         )}
 
-        {(showMainOtherContact || showOtherContacts) && (
+        {!!contacts.length && (
           <GridRow marginTop={3}>
-            {showMainOtherContact && (
-              <GridColumn span={showOtherContacts ? '1/2' : '1/1'}>
+            {contacts.map((contact, index) => (
+              <GridColumn
+                key={contact.person?.nationalId}
+                span={contacts.length > 1 ? '1/2' : '1/1'}
+              >
                 {totalCount > 1 && (
                   <Text variant="h5">
                     {`${formatMessage(overview.otherContact.label)} ${
-                      otherContacts.length > 0 ? '1' : ''
+                      contacts.length > 1 ? index + 1 : ''
                     }`}
                   </Text>
                 )}
-                <Text>{mainOtherContact.person?.name}</Text>
-                <Text>
-                  {formatKennitala(mainOtherContact.person?.nationalId)}
-                </Text>
+                <Text>{contact?.person?.name}</Text>
+                <Text>{formatKennitala(contact?.person?.nationalId)}</Text>
                 <Text>
                   {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                  {formatPhoneNumber(mainOtherContact.person?.phone)}
+                  {formatPhoneNumber(contact?.person?.phone)}
                 </Text>
-                <Text>{mainOtherContact.person?.email}</Text>
+                <Text>{contact?.person?.email}</Text>
               </GridColumn>
-            )}
-            {showOtherContacts &&
-              otherContacts.map((otherContact, index) => (
-                <GridColumn span="1/2">
-                  {totalCount > 1 && showMainOtherContact && (
-                    <Text variant="h5">
-                      {`${formatMessage(overview.otherContact.label)} ${
-                        index + 2
-                      }`}
-                    </Text>
-                  )}
-                  {totalCount > 1 && !showMainOtherContact && (
-                    <Text variant="h5">
-                      {`${formatMessage(overview.otherContact.label)} ${
-                        otherContacts.length > 1 ? index + 1 : ''
-                      }`}
-                    </Text>
-                  )}
-                  <Text>{otherContact.person.name}</Text>
-                  <Text>{formatKennitala(otherContact.person.nationalId)}</Text>
-                  <Text>
-                    {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                    {formatPhoneNumber(otherContact.person?.phone)}
-                  </Text>
-                  <Text>{otherContact.person?.email}</Text>
-                </GridColumn>
-              ))}
+            ))}
           </GridRow>
         )}
       </Box>
