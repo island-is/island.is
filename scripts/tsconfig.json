@@ -1,5 +1,5 @@
 {
   "extends": "../tsconfig.base.json",
   "files": [],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "ci/docker/const.mjs"]
 }

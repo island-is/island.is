@@ -19,6 +19,8 @@ on:
         value: ${{ jobs.install.outputs.MQ_ARTIFACT_NAME }}
       MQ_GIT_BRANCH:
         value: ${{ jobs.install.outputs.MQ_GIT_BRANCH }}
+      MQ_SHOULD_RUN_BUILD:
+        value: ${{ jobs.install.outputs.MQ_SHOULD_RUN_BUILD}}
       TEST_CHUNKS:
         value: ${{ jobs.install.outputs.TEST_CHUNKS }}
       E2E_CHUNKS:
@@ -74,6 +76,7 @@ jobs:
       MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
       MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
       MQ_GIT_BRANCH: ${{ steps.prepare-merge-queue.outputs.GIT_BRANCH }}
+      MQ_SHOULD_RUN_BUILD: ${{ steps.prepare-merge-queue.outputs.SHOULD_RUN_BUILD }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}

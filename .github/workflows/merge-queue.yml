@@ -54,6 +54,7 @@ jobs:
       - prepare
       - pre-checks
     runs-on: arc-runners
+    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
     permissions:
       actions: read
       contents: read
@@ -182,11 +183,15 @@ jobs:
     needs:
       - docker-build
       - prepare
+      - tests
+    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
     permissions:
       id-token: write
       contents: write
     runs-on: arc-runners
     steps:
+      - name: Check tests success
+        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
