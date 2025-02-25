@@ -197,30 +197,28 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .namespace(serviceName)
     .serviceAccount(serviceBirthdayWorkerName)
     .codeOwner(CodeOwners.Juni)
-    .env({
-      ...getEnv(services),
-      EMAIL_REGION: 'eu-west-1',
-      CONTENTFUL_HOST: {
-        dev: 'preview.contentful.com',
-        staging: 'cdn.contentful.com',
-        prod: 'cdn.contentful.com',
-      },
-    })
+    .db()
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=birthday')
+    .redis()
+    .env({ ...getEnv(services) })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
       IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
-      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
-    .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=birthday')
-    .db({ name: 'user-notification' })
-    .migrations()
     .extraAttributes({
       dev: { schedule: '@hourly' },
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'islandis',
+      'identity-server-delegation',
+      'application-system',
+    )
