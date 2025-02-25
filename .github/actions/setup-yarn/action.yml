@@ -58,4 +58,3 @@ runs:
         ln -sf "$HOME/dependencies/.yarn/cache" .yarn/
         ln -sf "$HOME/dependencies/.yarn/install-state.gz" .yarn/
         echo "NODE_PATH=$HOME/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
-        ls -lah . .yarn
