@@ -16,7 +16,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -56,7 +56,7 @@ import { SubpoenaService } from './subpoena.service'
 @Controller('api/case/:caseId/defendant/:defendantId/subpoena')
 @ApiTags('subpoenas')
 @UseGuards(
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
