@@ -222,7 +222,7 @@ export const NewsList = ({
                 }
                 imageSrc={newsItem.image?.url ?? ''}
                 tags={newsItem.genericTags
-                  .filter((tag) => tag.id !== FRONTPAGE_NEWS_TAG_ID)
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
                   .map((tag) => tag.title)}
                 title={newsItem.title}
                 description={newsItem.intro}
