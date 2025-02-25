@@ -38,7 +38,6 @@ import { getXBirthday } from './utils/getXBirthday'
 import { isUnderXAge } from './utils/isUnderXAge'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { isEmpty } from 'lodash'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
