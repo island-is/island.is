@@ -1,7 +1,6 @@
 name: Validate code in the merge queue (post merge)
 
 on:
-  workflow_dispatch: {}
   merge_group:
 
 defaults:
