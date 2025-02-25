@@ -61,23 +61,26 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - name: checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+      - name: Verify that affected projects have any tests
+        env:
+          PROJECTS: api,web,application-system-api,clients-consultation-portal
+        run: |
+          if ! d=$(
+            diff
+            <(yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${PROJECTS//,/|}): " | cut -d':' -f1 | sort -u)
+            <(echo -e "${PROJECTS//,/\n}" | sort)
+          ); then
+            echo "These projects don't have any tests:"
+            echo "${d}"
+            exit 1
+          fi
+          echo "All projects ($PROJECTS) have tests."
 
   e2e:
     needs:
