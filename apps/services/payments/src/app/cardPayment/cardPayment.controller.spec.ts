@@ -50,6 +50,8 @@ describe('CardPaymentController', () => {
 
   let paymentFlowId: string
 
+  let logPaymentFlowUpdateSpy: jest.SpyInstance
+
   beforeAll(async () => {
     previousPaymentGatewayApiUrl = process.env.PAYMENTS_GATEWAY_API_URL!
     previousTokenSigningSecret = process.env.PAYMENTS_TOKEN_SIGNING_SECRET!
@@ -63,12 +65,6 @@ describe('CardPaymentController', () => {
     app = await testServer({
       appModule: AppModule,
       enableVersioning: true,
-      override: (builder) =>
-        builder.overrideProvider(getModelToken(PaymentFlowEvent)).useClass(
-          jest.fn(() => ({
-            findOne: jest.fn(),
-          })),
-        ),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
@@ -91,6 +87,16 @@ describe('CardPaymentController', () => {
     } = response.body
 
     paymentFlowId = is.split('/').pop()
+  })
+
+  beforeEach(() => {
+    logPaymentFlowUpdateSpy = jest
+      .spyOn(paymentFlowService, 'logPaymentFlowUpdate')
+      .mockReturnValue(Promise.resolve())
+  })
+
+  afterEach(() => {
+    logPaymentFlowUpdateSpy.mockRestore()
   })
 
   afterAll(async () => {
@@ -125,8 +131,6 @@ describe('CardPaymentController', () => {
     })
 
     it('should throw an error if trying to verify a payment flow that has already been paid', async () => {
-      jest.restoreAllMocks()
-
       const verifyPayload: VerifyCardInput = {
         amount: 1000,
         cardNumber: 4242424242424242,
