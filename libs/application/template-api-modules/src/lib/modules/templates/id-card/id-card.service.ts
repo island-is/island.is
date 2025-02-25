@@ -346,18 +346,20 @@ export class IdCardService extends BaseTemplateApiService {
         }
       : undefined
     // Email to parent A
-    await this.sharedTemplateAPIService
-      .sendEmail(
-        (props) => generateApplicationSubmittedEmail(props, parentA),
-        application,
-      )
-      .catch((e) => {
-        this.logger.error(
-          `Error sending email about submission for parentA, applicationID: ${application.id}`,
-          e,
+    if (parentA?.email) {
+      await this.sharedTemplateAPIService
+        .sendEmail(
+          (props) => generateApplicationSubmittedEmail(props, parentA),
+          application,
         )
-      })
-    if (parentB) {
+        .catch((e) => {
+          this.logger.error(
+            `Error sending email about submission for parentA, applicationID: ${application.id}`,
+            e,
+          )
+        })
+    }
+    if (parentB?.email) {
       // Email to parent B
       await this.sharedTemplateAPIService
         .sendEmail(
