@@ -29,10 +29,10 @@ function getTagname() {
   if (eventName === 'merge_group') {
     const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '')
     if (typeOfDeployment.dev) {
-      return `main-${dateString}-${randomTag}`
+      return `main_${dateString}_${sha}_${randomTag}`
     }
     if (typeOfDeployment.prod) {
-      return `release-${dateString}-${randomTag}`
+      return `release_${dateString}_${sha}__${randomTag}`
     }
     throw new Error(`Unable to determine artifact name for merge_group event`)
   }
