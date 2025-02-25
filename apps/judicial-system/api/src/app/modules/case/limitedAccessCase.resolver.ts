@@ -22,7 +22,7 @@ import { CaseInterceptor } from './interceptors/case.interceptor'
 import { LimitedAccessCaseInterceptor } from './interceptors/limitedAccessCase.interceptor'
 import { Case } from './models/case.model'
 
-@UseGuards(JwtGraphQlAuthUserGuard)
+@UseGuards(new JwtGraphQlAuthUserGuard(true))
 @Resolver(() => Case)
 export class LimitedAccessCaseResolver {
   constructor(
