@@ -526,7 +526,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     expectedEndDateDescription: {
       id: 'nps.application:primary.school.expected.end.date.description',
       defaultMessage: 'Vinsamlegast skráið áætlaðan lokadag',
-      description: 'Please provide an end date',
+      description: 'Please provide an expected end date',
     },
     expectedEndDateTitle: {
       id: 'nps.application:primary.school.expected.end.date.title',

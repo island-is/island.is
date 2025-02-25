@@ -23,7 +23,7 @@ export const startingSchoolSubSection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'startingSchoolMultiField',
+      id: 'startingSchool',
       title: newPrimarySchoolMessages.primarySchool.startingSchoolTitle,
       description:
         newPrimarySchoolMessages.primarySchool.startingSchoolDescription,
@@ -36,13 +36,13 @@ export const startingSchoolSubSection = buildSubSection({
           minDate: () => new Date(),
         }),
         // Only show for National school types
-        //
         // buildRadioField({
         //   id: 'startingSchool.temporaryStay',
         //   title: newPrimarySchoolMessages.primarySchool.temporaryStay,
         //   condition: (answers) => true,
         //   width: 'half',
         //   defaultValue: NO,
+        //   space: 4,
         //   options: [
         //     {
         //       label: newPrimarySchoolMessages.shared.yes,
@@ -55,8 +55,11 @@ export const startingSchoolSubSection = buildSubSection({
         //   ],
         // }),
         // buildDescriptionField({
-        //   id: 'expectedEndDateDescription',
+        //   id: 'startingSchool.expectedEndDate.description',
+        //   title:
+        //     newPrimarySchoolMessages.primarySchool.expectedEndDateDescription,
         //   titleVariant: 'h4',
+        //   space: 4,
         //   condition: (answers) => {
         //     const {
         //       expectedStartDateHiddenInput,
@@ -68,8 +71,6 @@ export const startingSchoolSubSection = buildSubSection({
         //       expectedStartDate === expectedStartDateHiddenInput
         //     )
         //   },
-        //   title:
-        //     newPrimarySchoolMessages.primarySchool.expectedEndDateDescription,
         // }),
         // buildDateField({
         //   id: 'startingSchool.expectedEndDate',

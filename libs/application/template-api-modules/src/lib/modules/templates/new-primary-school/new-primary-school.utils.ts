@@ -115,7 +115,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
             expectedStartDate: new Date(expectedStartDate),
-            // expectedEndDate new Date(expectedEndDate) // TODO: Add this when Júní has added school type
+            // expectedEndDate: new Date(expectedEndDate), // TODO: Add this when Júní has added school type
           }
         : {}),
       reason: reasonForApplication, // TODO: Add a condition for this when Júní has added school type
