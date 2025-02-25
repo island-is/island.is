@@ -204,6 +204,18 @@ jobs:
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
         run: node scripts/ci/docker/write-data.mjs
+      - name: Get manifest data
+        id: manifest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/ci/docker/get-data.mjs
+      - name: Update helm-values repository
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
+          gh_token_pat: ${{ secrets.GH_HELM_VALUES_PAT }}
+      
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -222,6 +234,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
