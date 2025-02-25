@@ -4,28 +4,12 @@ description: 'Yarn setup and install dependencies'
 runs:
   using: 'composite'
   steps:
-    - name: Prep env
-      shell: bash
-      env:
-        # Yarn cache needs a folder that exists, and will fail otherwise
-        YARN_CACHE_FOLDER: $HOME/dependencies/.yarn/cache
-        COREPACK_HOME: $HOME/dependencies/corepack
-        NODE_PATH: $HOME/dependencies/node_modules
-      run: |
-        for e in YARN_CACHE_FOLDER COREPACK_HOME NODE_PATH; do
-          if p=$(realpath "${!e}"); then
-            echo "${e}=${p}" | tee -a "$GITHUB_ENV"
-          else
-            echo "Using ${e} defaults (not set explicitly)"
-          fi
-        done
-
     - name: Compare yarn.lock files
       shell: bash
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
-        bundled=$(sha256sum "$HOME/dependencies/yarn.lock" | awk '{print $1}') || :
+        bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
         echo "Current hash: $current"
         echo "Bundled hash: $bundled"
@@ -36,21 +20,21 @@ runs:
       shell: bash
       run: |
         corepack enable
-        corepack use yarn
+        corepack prepare --activate
         yarn --version
 
     - name: Run yarn install if yarn.lock changed
       shell: bash
-      if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'false' }}
+      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
       run: |
         yarn install --immutable
 
     - name: Link pre-installed dependencies
-      if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'true' }}
+      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
       shell: bash
       run: |
         rm -rf node_modules
-        ln -s "$HOME/dependencies/node_modules" .
-        ln -s "$HOME/dependencies/.yarn/cache" .yarn/
-        ln -s "$HOME/dependencies/.yarn/install-state.gz" .yarn/
-        echo "NODE_PATH=$HOME/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+        ln -s /home/runner/dependencies/node_modules .
+        ln -s /home/runner/dependencies/.yarn/cache .yarn/
+        ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
+        echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
