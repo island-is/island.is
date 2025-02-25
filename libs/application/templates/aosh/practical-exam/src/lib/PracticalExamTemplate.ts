@@ -32,6 +32,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { shared } from './messages/shared'
 import { getChargeItems, isCompany } from '../utils'
 import { PaymentOptions } from '../shared/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -40,6 +41,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PRACTICAL_EXAM,
   name: shared.application.name,
+  codeOwner: CodeOwners.Origo,
   institution: shared.application.institutionName,
   translationNamespaces: ApplicationConfigurations.PracticalExam.translation,
   dataSchema: PracticalExamAnswersSchema,
@@ -181,6 +183,8 @@ const template: ApplicationTemplate<
           //   action: ApiActions.submitApplication
           // }),
           actionCard: {
+            title: 'Akureyri 123',
+            description: 'Akureyri',
             tag: {
               //label: shared.application.actionCardDone,
               variant: 'blueberry',
