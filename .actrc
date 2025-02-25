@@ -8,7 +8,7 @@
 
 ## Mounts and user/env config in container
 # Mount common dependencies as a volume; yarn needs it cache folder to exist, and won't try to create them – mounting here to ensure the folder exists
---container-options -v dependencies:/home/runner/dependencies -v dependencies-yarn:/home/runner/dependencies/.yarn/cache
+--container-options -v dependencies:/home/runner/dependencies -v dependencies-yarn:/home/runner/dependencies/.yarn/cache -v codegen:/tmp/codegen
 
 # Homedir wasn't writeable on our EC2 runners, but ARC-runners are OK
 # --env=HOME=/tmp/github/home
