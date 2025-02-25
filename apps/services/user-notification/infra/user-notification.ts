@@ -214,6 +214,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=birthday')
     .db({ name: 'user-notification' })
