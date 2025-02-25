@@ -64,7 +64,6 @@ export const PersonalSection = buildSection({
         }),
         buildAlertMessageField({
           id: 'userInformation.alert',
-          title: '',
           alertType: 'info',
           message: personal.labels.userInformation.alertMessage,
           links: [

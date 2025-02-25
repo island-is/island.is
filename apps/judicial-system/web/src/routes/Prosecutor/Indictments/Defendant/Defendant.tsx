@@ -9,11 +9,13 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
+  Feature,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -38,7 +40,7 @@ import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/
 
 import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
+import { getIncidentDescription } from '../Indictment/lib/getIncidentDescription'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -117,8 +119,6 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
-  const [isProsecutorSelected, setIsProsecutorSelected] =
-    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -299,12 +299,12 @@ const Defendant = () => {
             ...indictmentCount,
             indictmentCountSubtypes: subtypes?.[policeCaseNumber],
           }
-          const incidentDescription = getIncidentDescription(
-            updatedIndictmentCount,
+          const incidentDescription = getIncidentDescription({
+            indictmentCount: updatedIndictmentCount,
             formatMessage,
             crimeScene,
-            subtypes,
-          )
+            subtypesRecord: subtypes,
+          })
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
@@ -454,16 +454,7 @@ const Defendant = () => {
     }))
   }
 
-  /**
-   * This condition can be a little hard to read. The point is that if the
-   * case exists, i.e. if `workingCase.id` is truthy, then the user has
-   * selected a prosecutor. If the case does not exist, i.e. if
-   * `workingCase.id` is falsy, then the user has not selected a prosecutor
-   * and must do so before proceeding.
-   */
-  const stepIsValid =
-    isDefendantStepValidIndictments(workingCase) &&
-    Boolean(workingCase.id || isProsecutorSelected)
+  const stepIsValid = isDefendantStepValidIndictments(workingCase)
 
   return (
     <PageLayout
@@ -478,11 +469,9 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
-        <ProsecutorSection
-          handleChange={
-            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
-          }
-        />
+        <Box component="section" marginBottom={5}>
+          <ProsecutorSection />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
