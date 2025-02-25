@@ -79,7 +79,7 @@ export class FormsService {
     private readonly sequelize: Sequelize,
   ) {}
 
-  async findAll(nationalId: string, user: User): Promise<FormResponseDto> {
+  async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
     const organizationNationalId = user.nationalId
     let organization = await this.organizationModel.findOne({
       where: { nationalId: nationalId },
@@ -239,7 +239,7 @@ export class FormsService {
       await form.save()
     }
 
-    return this.findAll(user.nationalId, user)
+    return this.findAll(user, user.nationalId)
   }
 
   async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {

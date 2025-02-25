@@ -20,6 +20,7 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
           nationalId: '5005101370',
         },
       },
+      fetchPolicy: 'no-cache',
     })
     if (error) {
       throw error

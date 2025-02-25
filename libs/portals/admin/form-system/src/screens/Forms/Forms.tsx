@@ -7,23 +7,33 @@ import { FormsLoaderResponse } from './Forms.loader'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { useState } from 'react'
+import { FormSystemForm } from '@island.is/api/schema'
+import { FormsHeader } from './FormsHeader'
+import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 
 export const Forms = () => {
   const navigate = useNavigate()
   const { forms } = useLoaderData() as FormsLoaderResponse
   const { formatMessage } = useIntl()
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
+
+  const [formsState, setFormsState] = useState<FormSystemForm[]>(forms)
+
   if (forms) {
     return (
-      <div>
+      <>
+        <FormsHeader setFormsState={setFormsState} />
+
         <Box marginTop={5}></Box>
 
-        <Box marginTop={5}>
+        {/* <Box marginTop={5}>
           <Box width="half"></Box>
-        </Box>
-        <TableRow isHeader={true} />
+        </Box> */}
+
+        <TableRowHeader />
         {forms &&
-          forms?.map((f) => {
+          formsState?.map((f) => {
             return (
               <TableRow
                 key={f?.id}
@@ -34,10 +44,11 @@ export const Forms = () => {
                 translated={f?.isTranslated ?? false}
                 slug={f?.slug ?? ''}
                 beenPublished={f?.beenPublished ?? false}
+                setFormsState={setFormsState}
               />
             )
           })}
-      </div>
+      </>
     )
   }
   return <></>

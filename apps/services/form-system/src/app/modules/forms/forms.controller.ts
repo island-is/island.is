@@ -55,11 +55,11 @@ export class FormsController {
   @ApiParam({ name: 'nationalId', type: String })
   @Get('organization/:nationalId')
   async findAll(
-    @Param('nationalId') nationalId: string,
     @CurrentUser()
     user: User,
+    @Param('nationalId') nationalId: string,
   ): Promise<FormResponseDto> {
-    return await this.formsService.findAll(nationalId, user)
+    return await this.formsService.findAll(user, nationalId)
   }
 
   @ApiOperation({ summary: 'Get form by id' })

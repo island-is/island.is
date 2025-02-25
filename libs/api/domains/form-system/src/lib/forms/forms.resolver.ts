@@ -54,10 +54,10 @@ export class FormsResolver {
     name: 'formSystemGetAllForms',
   })
   async getAllForms(
-    @Args('input', { type: () => GetFormsInput }) nationalId: GetFormsInput,
+    @Args('input', { type: () => GetFormsInput }) input: GetFormsInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.getAllForms(user, nationalId)
+    return this.formsService.getAllForms(user, input)
   }
 
   @Mutation(() => Boolean, {

@@ -8,7 +8,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import * as styles from './TableRow.css'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
@@ -17,6 +17,9 @@ import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { boolean } from 'zod'
+import { FormSystemForm } from '@island.is/api/schema'
+import { useMutation } from '@apollo/client'
+import { DELETE_FORM } from '@island.is/form-system/graphql'
 
 interface Props {
   id?: string | null
@@ -30,6 +33,7 @@ interface Props {
   translated?: boolean
   slug?: string
   beenPublished?: boolean
+  setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
 }
 
 interface ColumnTextProps {
@@ -52,39 +56,41 @@ export const TableRow = ({
   translated,
   slug,
   beenPublished,
+  setFormsState,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
-  const header = () => (
-    <>
-      <Box className={styles.header}>
-        <Row>
-          <Column span="5/12">
-            <Box paddingLeft={2}>
-              <Text variant="medium">{formatMessage(m.name)}</Text>
-            </Box>
-          </Column>
-          <Column span="2/12">
-            <Text variant="medium">{formatMessage(m.lastModified)}</Text>
-          </Column>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.translations)}</Text>
-          </Column>
-          <Column span="2/12">
-            <Text variant="medium">{formatMessage(m.organization)}</Text>
-          </Column>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.state)}</Text>
-          </Column>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.actions)}</Text>
-          </Column>
-        </Row>
-      </Box>
-    </>
-  )
-  if (isHeader) return header()
+  // const header = () => (
+  //   <>
+  //     <Box className={styles.header}>
+  //       <Row>
+  //         <Column span="5/12">
+  //           <Box paddingLeft={2}>
+  //             <Text variant="medium">{formatMessage(m.name)}</Text>
+  //           </Box>
+  //         </Column>
+  //         <Column span="2/12">
+  //           <Text variant="medium">{formatMessage(m.lastModified)}</Text>
+  //         </Column>
+  //         <Column span="1/12">
+  //           <Text variant="medium">{formatMessage(m.translations)}</Text>
+  //         </Column>
+  //         <Column span="2/12">
+  //           <Text variant="medium">{formatMessage(m.organization)}</Text>
+  //         </Column>
+  //         <Column span="1/12">
+  //           <Text variant="medium">{formatMessage(m.state)}</Text>
+  //         </Column>
+  //         <Column span="1/12">
+  //           <Text variant="medium">{formatMessage(m.actions)}</Text>
+  //         </Column>
+  //       </Row>
+  //     </Box>
+  //   </>
+  // )
+  // if (isHeader) return header()
+  const deleteForm = useMutation(DELETE_FORM)
   return (
     <Box
       paddingTop={2}
@@ -149,6 +155,18 @@ export const TableRow = ({
                 },
                 {
                   title: formatMessage(m.delete),
+                  onClick: () => {
+                    deleteForm[0]({
+                      variables: {
+                        input: {
+                          id: id,
+                        },
+                      },
+                    })
+                    setFormsState((prevForms) =>
+                      prevForms.filter((form) => form.id !== id),
+                    )
+                  },
                 },
                 {
                   title: 'Json',
