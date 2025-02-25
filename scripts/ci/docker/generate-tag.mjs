@@ -5,12 +5,12 @@ import core from '@actions/core'
 const randomTag = createRandomString(16)
 const context = github.context
 const eventName = context.eventName
+const sha = context.payload.pull_request?.head.sha || context.sha
 
 const targetBranch = getTargetBranch()
 const typeOfDeployment = getTypeOfDeployment()
 const artifactName = getArtifactname()
 const tagName = getTagname()
-const sha = context.payload.pull_request?.head.sha || context.sha
 
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
