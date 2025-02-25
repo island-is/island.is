@@ -19,7 +19,7 @@ import {
   NewsCard,
   Webreader,
 } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { GenericTag, GetNewsQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 
@@ -222,7 +222,7 @@ export const NewsList = ({
                 }
                 imageSrc={newsItem.image?.url ?? ''}
                 tags={newsItem.genericTags
-                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG)
                   .map((tag) => tag.title)}
                 title={newsItem.title}
                 description={newsItem.intro}
