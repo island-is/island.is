@@ -54,7 +54,7 @@ export class UserService {
     return user
   }
 
-  async findByNationalId(nationalId: string): Promise<User> {
+  async findByNationalId(nationalId: string): Promise<User[]> {
     // First check if the user is an admin
     try {
       const admin = this.config.adminUsers.find(
@@ -64,32 +64,34 @@ export class UserService {
       if (admin) {
         // Default values are necessary because most of the fields are required
         // all the way up to the client. Consider refactoring this.
-        return {
-          created: nowFactory(),
-          modified: nowFactory(),
-          mobileNumber: '',
-          email: '',
-          role: UserRole.ADMIN,
-          active: true,
-          canConfirmIndictment: false,
-          ...admin,
-        } as User
+        return [
+          {
+            created: nowFactory(),
+            modified: nowFactory(),
+            mobileNumber: '',
+            email: '',
+            role: UserRole.ADMIN,
+            active: true,
+            canConfirmIndictment: false,
+            ...admin,
+          } as User,
+        ]
       }
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error('Failed to parse admin users', { error })
     }
 
-    const user = await this.userModel.findOne({
+    const users = await this.userModel.findAll({
       where: { nationalId, active: true },
       include: [{ model: Institution, as: 'institution' }],
     })
 
-    if (!user) {
+    if (!users || users.length === 0) {
       throw new NotFoundException('User does not exist')
     }
 
-    return user
+    return users
   }
 
   async create(userToCreate: CreateUserDto): Promise<User> {

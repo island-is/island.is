@@ -54,6 +54,7 @@ export const Select = <
   dataTestId,
   filterConfig,
   isLoading = false,
+  hideSelectedOptions,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -167,6 +168,7 @@ export const Select = <
         required={required}
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
+        hideSelectedOptions={hideSelectedOptions}
         components={{
           Control,
           Input,

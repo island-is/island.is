@@ -4,15 +4,10 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-export \
-  HEAD=${HEAD:-HEAD} \
-  BASE=${BASE:-main} \
-  MAX_JOBS='100'
-
+export MAX_JOBS='100'
 chunks='[]'
-if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
-  chunks=$CHUNKS_DEBUG
-elif [[ "${SKIP_TESTS:-}" == true ]]; then
+
+if [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
   echo "$chunks"
   exit 0
@@ -46,4 +41,5 @@ for target in "$@"; do
 done
 
 >&2 echo "Map: ${chunks}"
-echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+# echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+echo "$chunks"

@@ -39,7 +39,6 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
     `<span>Umsókn nemandans:</span><br/>` +
     `<span>${applicantName}, kt. ${kennitala.format(
       applicantNationalId,
-      '-',
     )},</span><br/>` +
     `<span>í framhaldsskóla hefur verið móttekin.</span><br/>` +
     `<span>Þú getur farið inn á mínar síður og fylgst með framgangi umsóknarinnar.</span>`
