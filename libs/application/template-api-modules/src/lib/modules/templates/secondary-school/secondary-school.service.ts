@@ -179,10 +179,12 @@ export class SecondarySchoolService extends BaseTemplateApiService {
                 application,
                 attachment,
               )
+              const contentType =
+                this.getMimeType(attachment.name.split('.').pop()) || ''
               return {
                 fileName: attachment.name,
                 fileContent,
-                contentType: `application/${attachment.name.split('.').pop()}`,
+                contentType,
               }
             },
           ),
@@ -261,5 +263,22 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     } catch (error) {
       throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
+  }
+
+  private getMimeType(extension?: string): string | undefined {
+    const fileExtensionWhitelist = {
+      '.pdf': 'application/pdf',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+    }
+
+    return (
+      extension &&
+      getValueViaPath<string>(
+        fileExtensionWhitelist,
+        `.${extension.toLowerCase()}`,
+      )
+    )
   }
 }
