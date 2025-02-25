@@ -96,6 +96,6 @@ export class RecyclingPartnerService {
       throw new Error(`Partner not found for company ID: ${companyId}`)
     }
 
-    return partner.municipalityId ?? partner.companyId
+    return partner.municipalityId || partner.companyId
   }
 }
