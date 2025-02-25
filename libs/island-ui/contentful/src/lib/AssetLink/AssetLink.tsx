@@ -11,14 +11,19 @@ export const AssetLink: FC<React.PropsWithChildren<AssetLinkProps>> = ({
   url,
   children,
 }) => {
+  let extension: string
   const parts = url.split('.')
-  const extension = parts[parts.length - 1].toUpperCase()
+  extension = parts[parts.length - 1].toUpperCase()
+
+  if (url.includes('videos.ctfassets') && extension.length >= 10) {
+    extension = 'VIDEO'
+  }
 
   const secureUrl = `${url.startsWith('//') ? 'https:' : ''}${url}`
 
   return (
     <FocusableBox href={secureUrl} border="standard" borderRadius="large">
-      <LinkCard background="white" tag={extension}>
+      <LinkCard background="white" tag={extension.length < 10 ? extension : ''}>
         {title || children}
       </LinkCard>
     </FocusableBox>
