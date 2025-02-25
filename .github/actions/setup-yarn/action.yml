@@ -42,6 +42,8 @@ runs:
         yarn install --immutable
         cp -rf ./node_modules "$HOME/dependencies/node_modules"
         cp -rf ./.yarn "$HOME/dependencies/.yarn"
+        cp -rf ./yarn.lock "$HOME/dependencies/yarn.lock"
+        cp -rf ./package.json "$HOME/dependencies/package.json"
 
     - name: Link pre-installed dependencies
       if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'true' }}
