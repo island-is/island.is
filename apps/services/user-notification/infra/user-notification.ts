@@ -17,8 +17,8 @@ const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
-const MAIN_QUEUE_NAME = `${serviceName}-feat-birthday`
-const DEAD_LETTER_QUEUE_NAME = `${serviceName}-feat-birthday-failure`
+const MAIN_QUEUE_NAME = serviceName
+const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
