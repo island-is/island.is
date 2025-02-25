@@ -2,6 +2,9 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      main_branch:
+        default: 'main'
+        type: string
       run_merge_queue:
         description: 'Should the merge que step run'
         required: false
@@ -98,9 +101,16 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-
+      - id: get-branch
+        env: 
+          RAW_REF: ${{ inputs.main_branch }}
+        run: |
+          echo "MAIN_BRANCH=MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
       - name: Set base/head sha output
         id: export-sha

@@ -49,6 +49,7 @@ jobs:
     secrets: inherit
     with:
       run_merge_queue: true
+      main_branch: ${{ github.base_ref }}
     needs:
       - pre-checks
   docker-build:
