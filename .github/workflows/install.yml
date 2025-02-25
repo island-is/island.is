@@ -27,10 +27,10 @@ env:
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '8'
-  MAX_JOBS: '3'
-  NX_PARALLEL: '2'
-  NX_MAX_PARALLEL: '4'
+  CHUNK_SIZE: 8
+  MAX_JOBS: 3
+  NX_PARALLEL: 2
+  NX_MAX_PARALLEL: 4
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
@@ -44,11 +44,7 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  YARN_CACHE_FOLDER: ~/dependencies/.yarn/cache
-  CYPRESS_CACHE_FOLDER: ~/dependencies/.cache
-  COREPACK_HOME: ~/dependencies/corepack
-  NODE_PATH: ~/dependencies/node_modules
-  COREPACK_ENABLE_STRICT: '0'
+  COREPACK_ENABLE_STRICT: 1
 
 jobs:
   install:

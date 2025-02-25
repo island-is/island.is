@@ -37,11 +37,6 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  YARN_CACHE_FOLDER: ~/dependencies/.yarn/cache
-  CYPRESS_CACHE_FOLDER: ~/dependencies/.cache
-  COREPACK_HOME: ~/dependencies/corepack
-  NODE_PATH: ~/dependencies/node_modules
-  COREPACK_ENABLE_STRICT: '0'
 
 jobs:
   prepare:
@@ -89,6 +84,7 @@ jobs:
       AFFECTED_PROJECT: ${{ matrix.projects }}
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      CYPRESS_CACHE_FOLDER: ~/dependencies/.cache
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
