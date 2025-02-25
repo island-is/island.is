@@ -14,7 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -33,7 +33,7 @@ import { IndictmentCountService } from './indictmentCount.service'
 
 @Controller('api/case/:caseId/indictmentCount')
 @ApiTags('indictment-counts')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class IndictmentCountController {
   constructor(
     private readonly indictmentCountService: IndictmentCountService,

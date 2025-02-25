@@ -469,11 +469,15 @@ export const StandardForm = ({
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
-              name="kennitala"
+              name="kennitala_thess_sem_malid_vardar"
               format="######-####"
-              label={fn('kennitala', 'label', 'Kennitala')}
+              label={fn(
+                'kennitala_thess_sem_malid_vardar',
+                'label',
+                'Kennitala þess sem málið varðar',
+              )}
               requiredMessage={fn(
-                'kennitala',
+                'kennitala_thess_sem_malid_vardar',
                 'requiredMessage',
                 'Kennitölu vantar',
               )}
@@ -488,11 +492,15 @@ export const StandardForm = ({
           <>
             <GridColumn paddingBottom={3}>
               <BasicInput
-                name="kennitala"
+                name="kennitala_thess_sem_malid_vardar"
                 format="######-####"
-                label={fn('kennitala', 'label', 'Kennitala')}
+                label={fn(
+                  'kennitala_thess_sem_malid_vardar',
+                  'label',
+                  'Kennitala þess sem málið varðar',
+                )}
                 requiredMessage={fn(
-                  'kennitala',
+                  'kennitala_thess_sem_malid_vardar',
                   'requiredMessage',
                   'Kennitölu vantar',
                 )}
