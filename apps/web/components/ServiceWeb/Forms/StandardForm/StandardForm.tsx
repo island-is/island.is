@@ -470,7 +470,7 @@ export const StandardForm = ({
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
               name="kennitala_thess_sem_malid_vardar"
-              format="######_####"
+              format="######-####"
               label={fn(
                 'kennitala_thess_sem_malid_vardar',
                 'label',
