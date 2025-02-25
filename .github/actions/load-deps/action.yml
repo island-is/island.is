@@ -4,17 +4,21 @@ description: 'Fetch and extract generated files. Depends on the `install` action
 runs:
   using: 'composite'
   steps:
-    - name: INFO
+    - name: Prep env
       shell: bash
+      id: prep
+      env:
+        GENERATED_FILES: ${{ github.workspace }}/dist/${{ github.sha }}.tar.gz
       run: |
         echo "generated files: ${GENERATED_FILES}"
+        echo "GENERATED_FILES=${GENERATED_FILES}" | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${GENERATED_FILES}
+          ${{ steps.prep.outputs.GENERATED_FILES }}
         key: generated-files-${{ github.sha }}
 
     - name: Prepare generated files
@@ -34,5 +38,5 @@ runs:
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${GENERATED_FILES}
+          ${{ steps.prep.outputs.GENERATED_FILES }}
         key: generated-files-${{ github.sha }}
