@@ -1,0 +1,172 @@
+import { useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { View } from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+
+import {
+  Badge,
+  ExpandableCard,
+  Skeleton,
+  Typography,
+  dynamicColor,
+} from '../../../ui'
+import chevronDown from '../../../assets/icons/chevron-down.png'
+import clockIcon from '../../../assets/icons/clock.png'
+import { RightsPortalDrugCertificate } from '../../../graphql/types/schema'
+
+const Row = styled.View<{ border?: boolean }>`
+  flex-direction: row;
+  flex-wrap: wrap;
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue100,
+    dark: theme.shades.dark.shade300,
+  }))};
+  border-bottom-width: ${({ border }) => (border ? 1 : 0)}px;
+`
+
+const Cell = styled.View`
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
+  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme }) => theme.spacing.smallGutter}px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
+`
+
+const TableRow = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue200,
+    dark: theme.shades.dark.shade300,
+  }))};
+  border-bottom-width: 1px;
+`
+const RowItem = styled.View`
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
+  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  width: 40%;
+  flex: 1;
+`
+
+const TableHeader = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+
+export function CertificateCard({
+  certificate,
+  loading,
+}: {
+  certificate: RightsPortalDrugCertificate
+  loading: boolean
+}) {
+  const intl = useIntl()
+  const theme = useTheme()
+  const [open, setOpen] = useState(false)
+
+  const isExpired =
+    certificate.validTo && new Date(certificate.validTo) < new Date()
+
+  const certificateData = [
+    {
+      data: certificate.atcCode,
+      label: 'health.prescriptions.atcCode',
+    },
+    {
+      data: certificate.atcName,
+      label: 'health.prescriptions.ingredients',
+    },
+    {
+      data: certificate.validFrom && intl.formatDate(certificate.validFrom),
+      label: 'health.prescriptions.validFrom',
+    },
+    {
+      data: certificate.validTo && intl.formatDate(certificate.validTo),
+      label: 'health.prescriptions.validUntil',
+    },
+    {
+      data: certificate.doctor,
+      label: 'health.prescriptions.nameOfDoctor',
+    },
+  ]
+
+  return (
+    <ExpandableCard
+      title={
+        isExpired
+          ? intl.formatMessage({ id: 'health.prescriptions.expired' })
+          : certificate.validTo
+          ? intl.formatMessage(
+              { id: 'health.prescriptions.validTo' },
+              { date: intl.formatDate(certificate.validTo) },
+            )
+          : undefined
+      }
+      titleColor={isExpired ? theme.color.red600 : undefined}
+      titleIcon={clockIcon}
+      message={certificate.atcName}
+      icon={chevronDown}
+      value={
+        certificate.rejected ? (
+          <Badge
+            variant={'red'}
+            title={intl.formatMessage({ id: 'health.prescriptions.rejected' })}
+            outlined
+          />
+        ) : !certificate.processed ? (
+          <Badge
+            variant={'darkerBlue'}
+            title={intl.formatMessage({ id: 'health.prescriptions.inProcess' })}
+            outlined
+          />
+        ) : undefined
+      }
+      onPress={() => {
+        setOpen((isOpen) => !isOpen)
+      }}
+      open={open}
+    >
+      <View style={{ width: '100%', padding: theme.spacing[2] }}>
+        {loading ? (
+          Array.from({ length: 3 }).map((_, index) => (
+            <Row key={index}>
+              <Cell style={{ flex: 1 }}>
+                <Skeleton height={18} />
+              </Cell>
+            </Row>
+          ))
+        ) : (
+          <View>
+            <TableHeader>
+              <Typography variant="eyebrow">
+                <FormattedMessage id="health.prescriptions.furtherInformation" />
+              </Typography>
+            </TableHeader>
+            {certificateData
+              .filter((item) => item.data)
+              .map((item, visibleIndex) => (
+                <TableRow
+                  key={visibleIndex}
+                  style={{
+                    backgroundColor:
+                      visibleIndex % 2 === 0
+                        ? theme.color.blue100
+                        : theme.color.white,
+                  }}
+                >
+                  <RowItem>
+                    <Typography variant="eyebrow">
+                      <FormattedMessage id={item.label} />
+                    </Typography>
+                  </RowItem>
+                  <RowItem>
+                    <Typography variant="body3">{item.data}</Typography>
+                  </RowItem>
+                </TableRow>
+              ))}
+          </View>
+        )}
+      </View>
+    </ExpandableCard>
+  )
+}

@@ -712,4 +712,14 @@ export const is = {
   'health.prescriptions.description':
     'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
   'health.prescriptions.drugCertificates': 'Lyfjaskírteini',
+  'health.prescriptions.validTo': 'Gildir til: {date}',
+  'health.prescriptions.expired': 'Útrunnið',
+  'health.prescriptions.rejected': 'Hafnað',
+  'health.prescriptions.inProcess': 'Í vinnslu',
+  'health.prescriptions.furtherInformation': 'Nánari upplýsingar',
+  'health.prescriptions.atcCode': 'ATC flokkur',
+  'health.prescriptions.ingredients': 'Innihaldsefni',
+  'health.prescriptions.validFrom': 'Gildir frá',
+  'health.prescriptions.validUntil': 'Gildir til',
+  'health.prescriptions.nameOfDoctor': 'Heiti læknis',
 }

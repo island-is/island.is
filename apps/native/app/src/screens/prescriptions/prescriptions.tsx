@@ -11,10 +11,14 @@ import {
   TabButtons,
   Typography,
 } from '../../ui'
-import { useGetDrugPrescriptionsQuery } from '../../graphql/types/schema'
+import {
+  useGetDrugCertificatesQuery,
+  useGetDrugPrescriptionsQuery,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { CertificateCard } from './components/certificate-card'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -54,11 +58,15 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
 
+  const showPrescriptions = selectedTab === 0
+
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
   })
 
-  console.log(prescriptionsRes.data)
+  const certificatesRes = useGetDrugCertificatesQuery()
+
+  const drugCertificates = certificatesRes.data?.rightsPortalDrugCertificates
 
   useConnectivityIndicator({
     componentId,
@@ -99,7 +107,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               defaultMessage="Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini."
             />
           </Typography>
-          {!prescriptionsRes.error && (
+          {!(prescriptionsRes.error && certificatesRes.error) && (
             <Tabs>
               <TabButtons
                 buttons={[
@@ -119,27 +127,28 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
               />
             </Tabs>
           )}
-          {!prescriptionsRes.error && (
+          {!certificatesRes.error && !showPrescriptions && (
             <Prescriptions>
-              {/* {prescriptionsRes.loading && !prescriptionsRes.data
+              {certificatesRes.loading && !certificatesRes.data
                 ? Array.from({ length: 5 }).map((_, index) => (
                     <GeneralCardSkeleton height={90} key={index} />
                   ))
-                : vaccinations.map((vaccination, index) => (
-                    <VaccinationsCard
-                      key={`${vaccination?.id}-${index}`}
-                      vaccination={vaccination}
-                      loading={prescriptionsRes.loading && !prescriptionsRes.data}
-                      componentId={componentId}
+                : drugCertificates?.map((certificate, index) => (
+                    <CertificateCard
+                      key={`${certificate?.id}-${index}`}
+                      certificate={certificate}
+                      loading={certificatesRes.loading && !certificatesRes.data}
                     />
-                  ))} */}
+                  ))}
             </Prescriptions>
           )}
-          {prescriptionsRes.error && !prescriptionsRes.data && (
-            <ErrorWrapper>
-              <Problem />
-            </ErrorWrapper>
-          )}
+          {showPrescriptions &&
+            prescriptionsRes.error &&
+            !prescriptionsRes.data && (
+              <ErrorWrapper>
+                <Problem />
+              </ErrorWrapper>
+            )}
         </Host>
       </ScrollView>
     </View>

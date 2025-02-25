@@ -674,7 +674,7 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
-  'health.overview.prescriptions': 'Lyfjaávísanir',
+  'health.overview.prescriptions': 'Prescriptions',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -707,9 +707,19 @@ export const en: TranslatedMessages = {
     'All organs can be used for transplantation except: {limitations}.',
 
   // health - prescriptions & drug certificates
-  'health.prescriptions.screenTitle': 'Lyfjaávísanir',
-  'health.prescriptions.title': 'Lyfjaávísanir',
+  'health.prescriptions.screenTitle': 'Prescriptions',
+  'health.prescriptions.title': 'Prescriptions',
   'health.prescriptions.description':
-    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
-  'health.prescriptions.drugCertificates': 'Lyfjaskírteini',
+    'Here you can find an overview of your prescriptions and medication certificates.',
+  'health.prescriptions.drugCertificates': 'Medicine licence',
+  'health.prescriptions.validTo': 'Valid to: {date}',
+  'health.prescriptions.expired': 'Expired',
+  'health.prescriptions.rejected': 'Rejected',
+  'health.prescriptions.inProcess': 'In process',
+  'health.prescriptions.furtherInformation': 'Further information',
+  'health.prescriptions.atcCode': 'ATC code',
+  'health.prescriptions.ingredients': 'Ingredient',
+  'health.prescriptions.validFrom': 'Valid from',
+  'health.prescriptions.validUntil': 'Valid to',
+  'health.prescriptions.nameOfDoctor': 'Name of doctor',
 }
