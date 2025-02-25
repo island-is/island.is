@@ -60,6 +60,7 @@ export class ConfirmIdentityController {
   @Documentation({
     response: {
       status: 200,
+      type: IdentityConfirmationDTO,
     },
     request: {
       params: {
