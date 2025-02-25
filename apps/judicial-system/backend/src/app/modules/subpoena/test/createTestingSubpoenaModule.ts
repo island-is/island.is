@@ -120,9 +120,6 @@ export const createTestingSubpoenaModule = async () => {
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
 
-  const auditTrailService =
-    subpoenaModule.get<AuditTrailService>(AuditTrailService)
-
   const subpoenaController =
     subpoenaModule.get<SubpoenaController>(SubpoenaController)
 
@@ -145,7 +142,6 @@ export const createTestingSubpoenaModule = async () => {
     internalCaseService,
     subpoenaModel,
     subpoenaService,
-    auditTrailService,
     subpoenaController,
     internalSubpoenaController,
     limitedAccessSubpoenaController,
