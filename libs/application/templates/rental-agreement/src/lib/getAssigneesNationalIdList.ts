@@ -32,21 +32,19 @@ export const getAssigneesNationalIdList = (application: Application) => {
       ({ isRepresentative }) => !isRepresentative?.includes(IS_REPRESENTATIVE),
     )
 
-    filterLandlords?.map(({ nationalIdWithName: { nationalId } }) => {
+    filterLandlords?.forEach(({ nationalIdWithName: { nationalId } }) => {
       if (nationalId) {
         assigneesNationalIdList.push(nationalId)
         return nationalId
-      }
+      } else return null
     })
 
-    filterTenants?.map(({ nationalIdWithName: { nationalId } }) => {
+    filterTenants?.forEach(({ nationalIdWithName: { nationalId } }) => {
       if (nationalId) {
         assigneesNationalIdList.push(nationalId)
         return nationalId
-      }
+      } else return null
     })
-
-    console.log('Assignees National Id List: ', assigneesNationalIdList)
 
     return assigneesNationalIdList
   } catch (error) {

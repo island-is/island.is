@@ -753,3 +753,9 @@ const adalmatseiningByFasteignNr = [
     ],
   },
 ]
+
+export default {
+  propertyStadfang,
+  propertyByStadfangNr,
+  adalmatseiningByFasteignNr,
+}

@@ -10,7 +10,6 @@ import {
   Bullet,
   BulletList,
   Button,
-  Text,
 } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'

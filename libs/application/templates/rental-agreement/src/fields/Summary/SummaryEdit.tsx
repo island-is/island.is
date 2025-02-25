@@ -74,86 +74,84 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // }, [unfilledConditions, setSubmitButtonDisabled])
 
   return (
-    <>
-      <Box className={summaryWrap}>
-        <ApplicantsSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          landlordsRoute={Routes.LANDLORDINFORMATION}
-          tenantsRoute={Routes.TENANTINFORMATION}
-          hasChangeButton={true}
-        />
-        <ApplicantsRepresentativesSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          landlordsRoute={Routes.LANDLORDINFORMATION}
-          tenantsRoute={Routes.TENANTINFORMATION}
-          hasChangeButton={true}
-        />
-        <RentalInfoSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          rentalPeriodRoute={Routes.RENTALPERIOD}
-          rentalAmountRoute={Routes.RENTALAMOUNT}
-          securityDepositRoute={Routes.SECURITYDEPOSIT}
-          hasChangeButton={true}
-        />
-        <PropertyInfoSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          categoryRoute={Routes.PROPERTYCATEGORY}
-          propertyInfoRoute={Routes.PROPERTYINFORMATION}
-          propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
-          specialProvisionsRoute={Routes.SPECIALPROVISIONS}
-          propertyConditionRoute={Routes.CONDITION}
-          fileUploadRoute={Routes.CONDITION}
-          fireProtectionsRoute={Routes.FIREPROTECTIONS}
-          hasChangeButton={true}
-        />
-        <OtherFeesSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          route={Routes.OTHERFEES}
-          hasChangeButton={true}
-        />
+    <Box className={summaryWrap}>
+      <ApplicantsSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+        hasChangeButton={true}
+      />
+      <ApplicantsRepresentativesSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+        hasChangeButton={true}
+      />
+      <RentalInfoSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        rentalPeriodRoute={Routes.RENTALPERIOD}
+        rentalAmountRoute={Routes.RENTALAMOUNT}
+        securityDepositRoute={Routes.SECURITYDEPOSIT}
+        hasChangeButton={true}
+      />
+      <PropertyInfoSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        categoryRoute={Routes.PROPERTYCATEGORY}
+        propertyInfoRoute={Routes.PROPERTYINFORMATION}
+        propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
+        specialProvisionsRoute={Routes.SPECIALPROVISIONS}
+        propertyConditionRoute={Routes.CONDITION}
+        fileUploadRoute={Routes.CONDITION}
+        fireProtectionsRoute={Routes.FIREPROTECTIONS}
+        hasChangeButton={true}
+      />
+      <OtherFeesSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        route={Routes.OTHERFEES}
+        hasChangeButton={true}
+      />
 
-        {!isFireProtectionsPresent ||
-        !isConditionPresent ||
-        !isOtherFeesPresent ? (
-          <Box marginTop={4} marginBottom={4}>
-            <AlertMessage
-              type="error"
-              title={formatMessage(summary.alertMissingInfoTitle)}
-              message={
-                <BulletList>
-                  {unfilledConditions.map((condition, index) => (
-                    <Bullet key={`${index}_${condition.route}`}>
-                      <Button
-                        onClick={() => {
-                          setSubmitButtonDisabled &&
-                            setSubmitButtonDisabled(false)
-                          goToScreen?.(condition.route)
-                        }}
-                        variant="text"
-                        size="small"
-                      >
-                        {formatMessage(condition.message)}
-                      </Button>
-                    </Bullet>
-                  ))}
-                </BulletList>
-              }
-            />
-          </Box>
-        ) : (
-          ''
-        )}
-      </Box>
-    </>
+      {!isFireProtectionsPresent ||
+      !isConditionPresent ||
+      !isOtherFeesPresent ? (
+        <Box marginTop={4} marginBottom={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(summary.alertMissingInfoTitle)}
+            message={
+              <BulletList>
+                {unfilledConditions.map((condition, index) => (
+                  <Bullet key={`${index}_${condition.route}`}>
+                    <Button
+                      onClick={() => {
+                        setSubmitButtonDisabled &&
+                          setSubmitButtonDisabled(false)
+                        goToScreen?.(condition.route)
+                      }}
+                      variant="text"
+                      size="small"
+                    >
+                      {formatMessage(condition.message)}
+                    </Button>
+                  </Bullet>
+                ))}
+              </BulletList>
+            }
+          />
+        </Box>
+      ) : (
+        ''
+      )}
+    </Box>
   )
 }
