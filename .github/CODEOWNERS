@@ -404,6 +404,11 @@ codemagic.yaml                                                                  
 /scripts/codegen.js                                                                                       @island-is/devops @island-is/core
 /charts/                                                                                                  @island-is/devops
 .dockerignore                                                                                             @island-is/devops
+# Act (local GHA workflows) config
+.actrc                                                                                                    @island-is/devops
+.secrets                                                                                                  @island-is/devops
+.vars                                                                                                     @island-is/devops
+.event.json                                                                                               @island-is/devops
 
 # QA
 /apps/system-e2e/                                                                                         @island-is/qa
