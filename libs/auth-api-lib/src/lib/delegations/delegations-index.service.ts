@@ -207,7 +207,7 @@ export class DelegationsIndexService {
     nationalId: string
     direction: DelegationDirection
   }): Promise<PaginatedDelegationRecordDTO> {
-    
+
     const apiScope = await this.apiScopeModel.findOne({
       where: {
         name: scope,
