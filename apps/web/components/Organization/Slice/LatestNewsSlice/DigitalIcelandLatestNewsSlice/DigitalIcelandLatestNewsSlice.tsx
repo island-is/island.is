@@ -10,7 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { DigitalIcelandNewsCard } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
@@ -75,7 +75,7 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
                 description={news.intro}
                 imageSrc={news.image?.url ?? ''}
                 tags={news.genericTags
-                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG)
                   .map((tag) => tag.title)}
                 title={news.title}
               />
