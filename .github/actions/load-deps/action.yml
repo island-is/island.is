@@ -26,7 +26,11 @@ runs:
       if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
       shell: bash
       run: |
-        tar -xzvf "${GENERATED_FILES}" || echo "Skipping untaring local file tarball"
+        ls -lah "$(dirname "${GENERATED_FILES}")"
+        if [ -e "${GENERATED_FILES}" ] && tar -xzvf "${GENERATED_FILES}"; then
+          echo "Found and unpacked existing generated files"
+          exit 0
+        fi
         node ./scripts/ci/generate-files.mjs "${GENERATED_FILES}"
 
     - name: Extract generated files
