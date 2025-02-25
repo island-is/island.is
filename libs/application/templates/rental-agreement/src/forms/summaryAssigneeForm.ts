@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -20,6 +21,21 @@ export const summaryAssigneeForm: Form = buildForm({
       id: 'summary',
       title: summary.sectionName,
       children: [
+        buildDescriptionField({
+          id: 'summaryTitle',
+          title: summary.pageTitle,
+          marginBottom: 3,
+        }),
+        buildDescriptionField({
+          id: 'summaryFirstDescription',
+          title: '',
+          description: summary.pageDescriptionFirstParagraph,
+        }),
+        buildDescriptionField({
+          id: 'summarySecondDescription',
+          title: '',
+          description: summary.pageDescriptionSecondparagraph,
+        }),
         buildMultiField({
           id: 'summary',
           title: '',

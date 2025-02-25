@@ -14,7 +14,7 @@ interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   landlordsRoute?: Routes
   tenantsRoute?: Routes
-  isChangeButton: boolean
+  hasChangeButton: boolean
 }
 
 export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
@@ -24,7 +24,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
     goToScreen,
     landlordsRoute,
     tenantsRoute,
-    isChangeButton,
+    hasChangeButton,
   } = props
   const answers = application.answers as RentalAgreement
 
@@ -54,7 +54,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
               key={landlord.nationalIdWithName?.nationalId}
               editAction={goToScreen}
               route={landlordsRoute}
-              isChangeButton={isChangeButton}
+              hasChangeButton={hasChangeButton}
             >
               <GridColumn span={['12/12']}>
                 <KeyValue
@@ -99,7 +99,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
               key={tenant.nationalIdWithName?.nationalId}
               editAction={goToScreen}
               route={tenantsRoute}
-              isChangeButton={isChangeButton}
+              hasChangeButton={hasChangeButton}
             >
               <GridColumn span={['12/12']}>
                 <KeyValue

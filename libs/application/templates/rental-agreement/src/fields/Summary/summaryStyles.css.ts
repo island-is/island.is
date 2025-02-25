@@ -13,10 +13,12 @@ export const summaryNoBorder = style({
 export const gridRow = style({
   position: 'relative',
   display: 'flex',
+  paddingTop: '12px',
+  paddingBottom: '12px',
 })
 
 export const gridRowChangeButton = style({
-  paddingRight: '100px',
+  paddingRight: '144px',
 })
 
 export const divider = style({
@@ -26,7 +28,7 @@ export const divider = style({
 
   selectors: {
     '&:last-child': {
-      display: 'none',
+      borderColor: '#CCDFFF',
     },
   },
 })

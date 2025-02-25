@@ -37,6 +37,11 @@ export const tenantDetails = defineMessages({
     defaultMessage: 'Netfang',
     description: 'Tenant Details email input label',
   },
+  isRepresentative: {
+    id: 'ra.application:tenantDetails.isRepresentative',
+    defaultMessage: 'Umb.',
+    description: 'Tenant is representative',
+  },
   phoneInputLabel: {
     id: 'ra.application:tenantDetails.phoneLabel',
     defaultMessage: 'Símanúmer',

@@ -7,7 +7,6 @@ import {
   Bullet,
   BulletList,
   Button,
-  Text,
 } from '@island.is/island-ui/core'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
@@ -77,19 +76,13 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <>
       <Box className={summaryWrap}>
-        <Box>
-          <Text variant="h2" as="h2" marginBottom={3}>
-            {formatMessage(summary.pageTitle)}
-          </Text>
-          <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
-        </Box>
         <ApplicantsSummary
           application={application}
           field={field}
           goToScreen={goToScreen}
           landlordsRoute={Routes.LANDLORDINFORMATION}
           tenantsRoute={Routes.TENANTINFORMATION}
-          isChangeButton={true}
+          hasChangeButton={true}
         />
         <ApplicantsRepresentativesSummary
           application={application}
@@ -97,15 +90,16 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           goToScreen={goToScreen}
           landlordsRoute={Routes.LANDLORDINFORMATION}
           tenantsRoute={Routes.TENANTINFORMATION}
-          isChangeButton={true}
+          hasChangeButton={true}
         />
         <RentalInfoSummary
           application={application}
           field={field}
+          goToScreen={goToScreen}
           rentalPeriodRoute={Routes.RENTALPERIOD}
           rentalAmountRoute={Routes.RENTALAMOUNT}
           securityDepositRoute={Routes.SECURITYDEPOSIT}
-          isChangeButton={true}
+          hasChangeButton={true}
         />
         <PropertyInfoSummary
           application={application}
@@ -118,25 +112,15 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           propertyConditionRoute={Routes.CONDITION}
           fileUploadRoute={Routes.CONDITION}
           fireProtectionsRoute={Routes.FIREPROTECTIONS}
-          isChangeButton={true}
+          hasChangeButton={true}
         />
         <OtherFeesSummary
           application={application}
           field={field}
           goToScreen={goToScreen}
           route={Routes.OTHERFEES}
-          isChangeButton={true}
+          hasChangeButton={true}
         />
-        {/* <SummaryCard
-          cardLabel={formatMessage(summary.shareLinkLabel)}
-          tooltipText={formatMessage(summary.shareLinkTooltip)}
-          noBorder
-        >
-          <CopyLink
-            linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
-            buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
-          />
-        </SummaryCard> */}
 
         {!isFireProtectionsPresent ||
         !isConditionPresent ||

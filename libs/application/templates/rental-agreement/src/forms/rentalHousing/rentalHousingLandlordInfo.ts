@@ -62,17 +62,19 @@ export const RentalHousingLandlordInfo = buildSubSection({
           },
           table: {
             format: {
-              name: (value) => value,
               phone: (value) => value && formatPhoneNumber(value),
               nationalId: (value) => value && formatNationalId(value),
+              isRepresentative: (value) =>
+                value?.includes(IS_REPRESENTATIVE) ? '✅' : '',
             },
             header: [
               landlordDetails.nameInputLabel,
               landlordDetails.phoneInputLabel,
               landlordDetails.nationalIdHeaderLabel,
               landlordDetails.emailInputLabel,
+              landlordDetails.isRepresentative,
             ],
-            rows: ['name', 'phone', 'nationalId', 'email'],
+            rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
           },
         }),
       ],

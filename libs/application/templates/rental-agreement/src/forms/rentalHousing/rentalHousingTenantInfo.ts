@@ -22,6 +22,7 @@ export const RentalHousingTenantInfo = buildSubSection({
           title: '',
           editField: true,
           marginTop: 1,
+          maxRows: 10,
           fields: {
             nationalIdWithName: {
               component: 'nationalIdWithName',
@@ -62,17 +63,19 @@ export const RentalHousingTenantInfo = buildSubSection({
           },
           table: {
             format: {
-              name: (value) => value,
               phone: (value) => value && formatPhoneNumber(value),
               nationalId: (value) => value && formatNationalId(value),
+              isRepresentative: (value) =>
+                value?.includes(IS_REPRESENTATIVE) ? '✅' : '',
             },
             header: [
               tenantDetails.nameInputLabel,
               tenantDetails.phoneInputLabel,
               tenantDetails.nationalIdHeaderLabel,
               tenantDetails.emailInputLabel,
+              tenantDetails.isRepresentative,
             ],
-            rows: ['name', 'phone', 'nationalId', 'email'],
+            rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
           },
         }),
       ],

@@ -25,14 +25,14 @@ import {
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
-import { registerProperty, summary } from '../../lib/messages'
+import { summary } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   rentalPeriodRoute?: Routes
   rentalAmountRoute?: Routes
   securityDepositRoute?: Routes
-  isChangeButton: boolean
+  hasChangeButton: boolean
 }
 
 export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
@@ -43,7 +43,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     rentalPeriodRoute,
     rentalAmountRoute,
     securityDepositRoute,
-    isChangeButton,
+    hasChangeButton,
   } = props
   const answers = application.answers as RentalAgreement
 
@@ -103,33 +103,34 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     return matchingOption ? matchingOption.label : '-'
   }
 
-  console.log('registerProperty', answers.registerProperty.searchResults?.label)
-
   return (
     <SummaryCard>
       {/* Property Address */}
-      <GridColumn span={['12/12']}>
-        {answers.registerProperty.searchResults && (
-          <KeyValue
-            label={`${answers.registerProperty.searchResults.streetAddress}, ${answers.registerProperty.searchResults.regionNumber} ${answers.registerProperty.searchResults.cityName}`}
-            value={
-              `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                answers.registerProperty.searchResults.propertyIds[0].propertyId
-              }` || '-'
-            }
-            labelVariant="h4"
-            labelAs="h4"
-            valueVariant="medium"
-            valueAs="p"
-          />
-        )}
-      </GridColumn>
+      <SummaryCardRow hasChangeButton={false}>
+        <GridColumn span={['12/12']}>
+          {answers.registerProperty.searchresults && (
+            <KeyValue
+              label={`${answers.registerProperty.searchresults.streetAddress}, ${answers.registerProperty.searchresults.regionNumber} ${answers.registerProperty.searchresults.cityName}`}
+              value={
+                `${formatMessage(summary.rentalPropertyIdPrefix)}${
+                  answers.registerProperty.searchresults.propertyIds[0]
+                    .propertyId
+                }` || '-'
+              }
+              labelVariant="h4"
+              labelAs="h4"
+              valueVariant="medium"
+              valueAs="p"
+            />
+          )}
+        </GridColumn>
+      </SummaryCardRow>
 
       {/* Rental period */}
       <SummaryCardRow
         editAction={goToScreen}
         route={rentalPeriodRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
@@ -162,7 +163,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={rentalAmountRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
@@ -195,7 +196,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={securityDepositRoute}
-          isChangeButton={isChangeButton}
+          hasChangeButton={hasChangeButton}
         >
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue
@@ -268,7 +269,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={rentalAmountRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn
           span={

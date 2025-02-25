@@ -21,7 +21,7 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
-import { getNationalIdListOfAssignees } from './getLandlordsNationalId'
+import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -193,10 +193,10 @@ const RentalAgreementTemplate: ApplicationTemplate<
     actions: {
       assignUsers: assign((context) => {
         const { application } = context
-        const assigneeNationalIds = getNationalIdListOfAssignees(application)
+        const assigneesNationalIds = getAssigneesNationalIdList(application)
 
-        if (assigneeNationalIds && assigneeNationalIds.length > 0) {
-          set(application, 'assignees', assigneeNationalIds)
+        if (assigneesNationalIds && assigneesNationalIds.length > 0) {
+          set(application, 'assignees', assigneesNationalIds)
         }
 
         return context

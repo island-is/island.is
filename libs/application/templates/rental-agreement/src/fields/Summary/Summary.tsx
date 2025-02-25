@@ -26,19 +26,13 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <>
       <Box className={summaryWrap}>
-        <Box>
-          <Text variant="h2" as="h2" marginBottom={3}>
-            {formatMessage(summary.pageTitle)}
-          </Text>
-          <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
-        </Box>
         <ApplicantsSummary
           application={application}
           field={field}
           goToScreen={goToScreen}
           landlordsRoute={Routes.LANDLORDINFORMATION}
           tenantsRoute={Routes.TENANTINFORMATION}
-          isChangeButton={false}
+          hasChangeButton={false}
         />
         <ApplicantsRepresentativesSummary
           application={application}
@@ -46,7 +40,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           goToScreen={goToScreen}
           landlordsRoute={Routes.LANDLORDINFORMATION}
           tenantsRoute={Routes.TENANTINFORMATION}
-          isChangeButton={false}
+          hasChangeButton={false}
         />
         <RentalInfoSummary
           application={application}
@@ -55,7 +49,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           rentalPeriodRoute={Routes.RENTALPERIOD}
           rentalAmountRoute={Routes.RENTALAMOUNT}
           securityDepositRoute={Routes.SECURITYDEPOSIT}
-          isChangeButton={false}
+          hasChangeButton={false}
         />
         <PropertyInfoSummary
           application={application}
@@ -68,19 +62,18 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           propertyConditionRoute={Routes.CONDITION}
           fileUploadRoute={Routes.CONDITION}
           fireProtectionsRoute={Routes.FIREPROTECTIONS}
-          isChangeButton={false}
+          hasChangeButton={false}
         />
         <OtherFeesSummary
           application={application}
           field={field}
           goToScreen={goToScreen}
           route={Routes.OTHERFEES}
-          isChangeButton={false}
+          hasChangeButton={false}
         />
         <SummaryCard
           cardLabel={formatMessage(summary.shareLinkLabel)}
           tooltipText={formatMessage(summary.shareLinkTooltip)}
-          noBorder
         >
           <CopyLink
             linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
