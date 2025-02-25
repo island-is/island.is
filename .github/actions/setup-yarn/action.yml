@@ -8,11 +8,10 @@ runs:
       shell: bash
       run: |
         for e in YARN_CACHE_FOLDER COREPACK_HOME NODE_PATH; do
-          if [[ "${!e}" =~ ^\~ ]]; then
-            echo "${e} must be a path or expand to a path"
-            exit 1
-          fi
-          p=$(realpath -m "${!e}")
+          # Expand home-dirs with string substitution (matches homes at the beginning of the variable)
+          p=${!e}
+          p=${p/#\$HOME/$HOME}
+          p=${p/#\~/$HOME}
           echo "${e}=${p}" | tee -a "$GITHUB_ENV"
         done
 
