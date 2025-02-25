@@ -236,11 +236,6 @@ export const titles = {
     }),
   },
   shared: {
-    login: defineMessage({
-      id: 'judicial.system.core:titles.shared.login',
-      defaultMessage: 'Réttarvörslugátt',
-      description: 'Notaður sem titill fyrir innskráningarskjá',
-    }),
     cases: defineMessage({
       id: 'judicial.system.core:titles.shared.cases',
       defaultMessage: 'Öll mál - Réttarvörslugátt',

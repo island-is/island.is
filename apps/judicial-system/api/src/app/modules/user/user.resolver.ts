@@ -10,6 +10,8 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
+  EligibleGraphQlUsers,
+  JwtGraphQlAuthGuard,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -19,6 +21,7 @@ import { CreateUserInput } from './dto/createUser.input'
 import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'
 import { UsersQueryInput } from './dto/users.input'
+import { CurrentUserResponse } from './models/currentUser.response'
 import { User } from './models/user.model'
 
 @Resolver(() => User)
@@ -73,14 +76,15 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(new JwtGraphQlAuthUserGuard(true))
-  @Query(() => User, { nullable: true })
+  @UseGuards(JwtGraphQlAuthGuard)
+  @Query(() => CurrentUserResponse, { nullable: true })
   async currentUser(
     @CurrentGraphQlUser() user: TUser,
-  ): Promise<User | undefined> {
+    @EligibleGraphQlUsers() eligibleUsers: TUser[],
+  ): Promise<CurrentUserResponse | undefined> {
     this.logger.debug('Getting current user')
 
-    return user as User
+    return { user, eligibleUsers }
   }
 
   @UseGuards(JwtGraphQlAuthUserGuard)

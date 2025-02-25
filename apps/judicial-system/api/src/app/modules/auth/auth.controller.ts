@@ -2,7 +2,16 @@ import { createHash, randomBytes } from 'crypto'
 import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 
-import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,7 +21,12 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { SharedAuthService } from '@island.is/judicial-system/auth'
+import {
+  CurrentHttpUser,
+  EligibleHttpUsers,
+  JwtAuthGuard,
+  SharedAuthService,
+} from '@island.is/judicial-system/auth'
 import {
   ACCESS_TOKEN_COOKIE_NAME,
   CASES_ROUTE,
@@ -29,13 +43,14 @@ import {
   EventType,
   InstitutionType,
   isPrisonSystemUser,
+  type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
-import { AuthUser, Cookie } from './auth.types'
+import { Cookie } from './auth.types'
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -63,6 +78,7 @@ export class AuthController {
     name: CODE_VERIFIER_COOKIE_NAME,
     options: this.defaultCookieOptions,
   }
+
   private readonly csrfCookie: Cookie = {
     name: CSRF_COOKIE_NAME,
     options: {
@@ -92,31 +108,19 @@ export class AuthController {
 
   @Get('login')
   login(
-    @Query('redirectRoute') redirectRoute: string,
-    @Query('nationalId') nationalId: string,
     @Res() res: Response,
+    @Query('redirectRoute') redirectRoute?: string,
+    @Query('nationalId') nationalId?: string,
   ) {
     this.logger.debug('Received login request')
 
-    const { name, options } = this.redirectCookie
-
-    res.clearCookie(name, options)
-    res.clearCookie(
-      this.codeVerifierCookie.name,
-      this.codeVerifierCookie.options,
-    )
+    this.clearCookies(res)
 
     // Local development
     if (this.config.allowAuthBypass && nationalId) {
       this.logger.debug(`Logging in using development mode`)
 
-      return this.redirectAuthenticatedUser(
-        {
-          nationalId,
-        },
-        res,
-        redirectRoute,
-      )
+      return this.redirectAuthenticatedUser(nationalId, res, redirectRoute)
     }
 
     randomBytes(32, (err, buf) => {
@@ -148,7 +152,11 @@ export class AuthController {
         const loginUrl = `${this.config.issuer}/connect/authorize?${params}`
 
         res
-          .cookie(name, { redirectRoute }, options)
+          .cookie(
+            this.redirectCookie.name,
+            { redirectRoute },
+            this.redirectCookie.options,
+          )
           .cookie(
             this.codeVerifierCookie.name,
             codeVerifier,
@@ -167,12 +175,10 @@ export class AuthController {
   ) {
     this.logger.debug('Received callback request')
 
-    const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
+    const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
     const codeVerifier = req.cookies[this.codeVerifierCookie.name]
-    res.clearCookie(
-      this.codeVerifierCookie.name,
-      this.codeVerifierCookie.options,
-    )
+
+    this.clearCookies(res)
 
     try {
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
@@ -184,9 +190,7 @@ export class AuthController {
         this.logger.debug('Token verification successful')
 
         return this.redirectAuthenticatedUser(
-          {
-            nationalId: verifiedUserToken.nationalId,
-          },
+          verifiedUserToken.nationalId,
           res,
           redirectRoute,
           idsTokens.id_token,
@@ -206,6 +210,8 @@ export class AuthController {
       'Received login request through a deprecated authentication system',
     )
 
+    this.clearCookies(res)
+
     res.redirect('/?villa=innskraning-gomul')
   }
 
@@ -215,13 +221,7 @@ export class AuthController {
 
     const idToken = req.cookies[this.idToken.name]
 
-    res.clearCookie(this.accessTokenCookie.name, this.accessTokenCookie.options)
-    res.clearCookie(this.csrfCookie.name, this.csrfCookie.options)
-    res.clearCookie(
-      this.codeVerifierCookie.name,
-      this.codeVerifierCookie.options,
-    )
-    res.clearCookie(this.idToken.name, this.idToken.options)
+    this.clearCookies(res)
 
     if (idToken) {
       return res.redirect(
@@ -232,121 +232,186 @@ export class AuthController {
     return res.redirect(this.config.logoutRedirectUri)
   }
 
-  private async authorizeUser(
-    authUser: AuthUser,
-    csrfToken: string | undefined,
-    requestedRedirectRoute: string,
-    loginBypass: boolean,
+  @UseGuards(JwtAuthGuard)
+  @Get('activate/:userId')
+  activateUser(
+    @Param('userId') userId: string,
+    @CurrentHttpUser() user: User,
+    @EligibleHttpUsers() eligibleUsers: User[],
+    @Res() res: Response,
+    @Req() req: Request,
   ) {
-    let authorization:
-      | {
-          userId: string
-          jwtToken: string
-          redirectRoute: string
-        }
-      | undefined
+    this.logger.debug(`Received activate user ${userId} request`)
 
-    const users = await this.authService.findUsersByNatinoalId(
-      authUser.nationalId,
-    )
-    let user = users && users.length > 0 ? users[0] : undefined
-
-    if (users && user) {
-      authorization = {
-        userId: user.id,
-        jwtToken: this.sharedAuthService.signJwt(0, users, csrfToken),
-        redirectRoute:
-          requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
-            ? requestedRedirectRoute
-            : user.role === UserRole.ADMIN
-            ? USERS_ROUTE
-            : user.role === UserRole.DEFENDER
-            ? DEFENDER_CASES_ROUTE
-            : user.institution?.type === InstitutionType.COURT_OF_APPEALS
-            ? COURT_OF_APPEAL_CASES_ROUTE
-            : isPrisonSystemUser(user)
-            ? PRISON_CASES_ROUTE
-            : CASES_ROUTE,
-      }
-    } else {
-      user = await this.authService.findDefender(authUser.nationalId)
-
-      if (user) {
-        authorization = {
-          userId: user.id,
-          jwtToken: this.sharedAuthService.signJwt(0, [user], csrfToken),
-          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
-        }
-      }
+    if (userId === user?.id) {
+      return this.redirect(res, user)
     }
 
-    if (authorization) {
+    const csrfToken = req.cookies[this.csrfCookie.name]
+
+    const userIdx = eligibleUsers.findIndex((user) => user.id === userId)
+
+    if (userIdx < 0) {
+      this.logger.info('Blocking illegal user activation attempt')
+
+      res.clearCookie(this.idToken.name, this.idToken.options)
+
       this.backendService.createEventLog({
-        eventType: loginBypass ? EventType.LOGIN_BYPASS : EventType.LOGIN,
-        nationalId: user?.nationalId,
-        userRole: user?.role,
-        userName: user?.name,
-        userTitle: user?.title,
-        institutionName: user?.institution?.name,
+        eventType: csrfToken
+          ? EventType.LOGIN_UNAUTHORIZED
+          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
+        nationalId: eligibleUsers[0].nationalId,
       })
 
-      return authorization
+      return res.redirect('/?villa=innskraning-ogildur-notandi')
     }
 
-    this.backendService.createEventLog({
-      eventType: loginBypass
-        ? EventType.LOGIN_BYPASS_UNAUTHORIZED
-        : EventType.LOGIN_UNAUTHORIZED,
-      nationalId: authUser.nationalId,
-    })
+    const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
 
-    return undefined
+    this.clearCookies(res, false)
+
+    return this.redirectAuthorizeUser(
+      eligibleUsers,
+      userIdx,
+      res,
+      redirectRoute,
+      csrfToken && new Entropy({ bits: 128 }).string(),
+    )
+  }
+
+  private clearCookies(res: Response, clearIdToken = true) {
+    res.clearCookie(
+      this.codeVerifierCookie.name,
+      this.codeVerifierCookie.options,
+    )
+    res.clearCookie(this.redirectCookie.name, this.redirectCookie.options)
+    res.clearCookie(this.csrfCookie.name, this.csrfCookie.options)
+    res.clearCookie(this.accessTokenCookie.name, this.accessTokenCookie.options)
+
+    if (clearIdToken) {
+      res.clearCookie(this.idToken.name, this.idToken.options)
+    }
+  }
+
+  private async findEligibleUsersByNationalId(nationalId: string) {
+    const users = await this.authService.findUsersByNatinoalId(nationalId)
+
+    if (users) {
+      return users
+    }
+
+    const defender = await this.authService.findDefender(nationalId)
+
+    if (defender) {
+      return [defender]
+    }
+
+    return []
   }
 
   private async redirectAuthenticatedUser(
-    authUser: AuthUser,
+    nationalId: string,
     res: Response,
-    requestedRedirectRoute: string,
+    requestedRedirectRoute?: string,
     idToken?: string,
     csrfToken?: string,
   ) {
-    const authorization = await this.authorizeUser(
-      authUser,
-      csrfToken,
-      requestedRedirectRoute,
-      !idToken,
-    )
+    const eligibleUsers = await this.findEligibleUsersByNationalId(nationalId)
 
-    if (!authorization) {
+    if (eligibleUsers.length === 0) {
       this.logger.info('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
-    const { userId, jwtToken, redirectRoute } = authorization
+    const currentUserIdx = eligibleUsers.length === 1 ? 0 : -1
 
-    this.auditTrailService.audit(
-      userId,
-      AuditedAction.LOGIN,
-      res
-        .cookie(
-          this.csrfCookie.name,
-          csrfToken as string,
-          {
-            ...this.csrfCookie.options,
-            maxAge: EXPIRES_IN_MILLISECONDS,
-          } as CookieOptions,
-        )
-        .cookie(this.accessTokenCookie.name, jwtToken, {
-          ...this.accessTokenCookie.options,
-          maxAge: EXPIRES_IN_MILLISECONDS,
-        })
-        .cookie(this.idToken.name, idToken, {
-          ...this.idToken.options,
-          maxAge: EXPIRES_IN_MILLISECONDS,
-        })
-        .redirect(redirectRoute),
-      userId,
+    res.cookie(this.idToken.name, idToken, {
+      ...this.idToken.options,
+      maxAge: EXPIRES_IN_MILLISECONDS,
+    })
+
+    return this.redirectAuthorizeUser(
+      eligibleUsers,
+      currentUserIdx,
+      res,
+      requestedRedirectRoute,
+      csrfToken,
     )
+  }
+
+  private async redirectAuthorizeUser(
+    eligibleUsers: User[], // eligibleUsers is an array of one or more users
+    currentUserIdx: number,
+    res: Response,
+    requestedRedirectRoute?: string,
+    csrfToken?: string,
+  ) {
+    const currentUser =
+      currentUserIdx < 0 ? undefined : eligibleUsers[currentUserIdx]
+
+    if (currentUser) {
+      this.backendService.createEventLog({
+        eventType: csrfToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
+        nationalId: currentUser.nationalId,
+        userRole: currentUser.role,
+        userName: currentUser.name,
+        userTitle: currentUser.title,
+        institutionName: currentUser.institution?.name,
+      })
+    }
+
+    const jwtToken = this.sharedAuthService.signJwt(
+      currentUserIdx,
+      eligibleUsers,
+      csrfToken,
+    )
+
+    res
+      .cookie(
+        this.csrfCookie.name,
+        csrfToken as string,
+        {
+          ...this.csrfCookie.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        } as CookieOptions,
+      )
+      .cookie(this.accessTokenCookie.name, jwtToken, {
+        ...this.accessTokenCookie.options,
+        maxAge: EXPIRES_IN_MILLISECONDS,
+      })
+
+    return this.redirect(res, currentUser, requestedRedirectRoute)
+  }
+
+  private redirect(
+    res: Response,
+    currentUser?: User,
+    requestedRedirectRoute?: string,
+  ) {
+    const redirectRoute = !currentUser
+      ? '/'
+      : requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
+      ? requestedRedirectRoute
+      : currentUser.role === UserRole.ADMIN
+      ? USERS_ROUTE
+      : currentUser.role === UserRole.DEFENDER
+      ? DEFENDER_CASES_ROUTE
+      : currentUser.institution?.type === InstitutionType.COURT_OF_APPEALS
+      ? COURT_OF_APPEAL_CASES_ROUTE
+      : isPrisonSystemUser(currentUser)
+      ? PRISON_CASES_ROUTE
+      : CASES_ROUTE
+
+    const ret = res.redirect(redirectRoute)
+
+    if (currentUser) {
+      this.auditTrailService.audit(
+        currentUser.id,
+        AuditedAction.LOGIN,
+        ret,
+        currentUser.id,
+      )
+    }
   }
 }
