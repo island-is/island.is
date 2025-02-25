@@ -511,6 +511,7 @@ export const buildSubmitField = (data: {
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
   actions: CallToAction[]
+  condition?: Condition
 }): SubmitField => {
   const {
     id,
@@ -520,6 +521,7 @@ export const buildSubmitField = (data: {
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
+    condition,
   } = data
   return {
     children: undefined,
@@ -534,6 +536,7 @@ export const buildSubmitField = (data: {
         : false,
     marginTop,
     marginBottom,
+    condition,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
