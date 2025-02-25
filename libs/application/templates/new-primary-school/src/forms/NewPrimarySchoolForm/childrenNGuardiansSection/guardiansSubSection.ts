@@ -96,7 +96,7 @@ export const guardiansSubSection = buildSubSection({
           id: 'guardians[0].email',
           title: newPrimarySchoolMessages.shared.email,
           width: 'half',
-          dataTestId: 'email',
+          dataTestId: 'email1',
           variant: 'email',
           required: true,
           defaultValue: (application: Application) =>
