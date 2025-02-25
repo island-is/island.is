@@ -199,10 +199,28 @@ export class PaymentFlowService {
       paymentFlow.charges,
     )
 
+    const isAlreadyPaid = !!paymentFlowSuccessEvent
+    let hasInvoice = !!paymentFlow.existingInvoiceId
+
+    if (!isAlreadyPaid) {
+      const chargeConfirmation = (
+        await this.paymentFlowChargeModel.findOne({
+          where: {
+            paymentFlowId: id,
+          },
+        })
+      )?.toJSON()
+
+      if (chargeConfirmation) {
+        hasInvoice = true
+      }
+    }
+
     return {
       paymentFlow,
       paymentDetails,
       isAlreadyPaid: !!paymentFlowSuccessEvent,
+      hasInvoice,
     }
   }
 
@@ -296,6 +314,17 @@ export class PaymentFlowService {
           receptionId: chargeConfirmation.receptionID,
           user4: chargeConfirmation.user4,
         })
+
+      await this.paymentFlowModel.update(
+        {
+          existingInvoiceId: chargeConfirmation.receptionID,
+        },
+        {
+          where: {
+            id: paymentFlowId,
+          },
+        },
+      )
 
       return newChargeConfirmation
     } catch (e) {

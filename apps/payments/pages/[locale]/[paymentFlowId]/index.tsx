@@ -33,6 +33,7 @@ import {
   ChargeCardMutation,
   useVerifyCardMutation,
   useChargeCardMutation,
+  useCreateInvoiceMutation,
 } from '../../../graphql/mutations.graphql.generated'
 import {
   GetPaymentFlowQuery,
@@ -164,6 +165,7 @@ export default function PaymentPage({
   const [verifyCardMutation] = useVerifyCardMutation()
   const [chargeCardMutation] = useChargeCardMutation()
   const [getVerificationStatusQuery] = useGetVerificationStatusLazyQuery()
+  const [createInvoiceMutation] = useCreateInvoiceMutation()
 
   const router = useRouter()
   const methods = useForm({
@@ -359,7 +361,23 @@ export default function PaymentPage({
         await payWithCard(data)
         return // No need to set isSubmitting to false
       } else {
-        router.push(`${router.asPath}/krafa-stofnud`)
+        const response = await createInvoiceMutation({
+          variables: {
+            input: {
+              paymentFlowId: paymentFlow.id,
+            },
+          },
+        })
+
+        console.log({
+          response,
+        })
+
+        if (response.data?.paymentsCreateInvoice.isSuccess) {
+          console.log('success!')
+        }
+
+        // router.push(`${router.asPath}/krafa-stofnud`)
         return
       }
     } catch (e) {

@@ -20,6 +20,8 @@ import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.in
 import { ApolloError } from '@apollo/client'
 import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
 import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
+import { CreateInvoiceResponse } from './dto/createInvoice.response'
+import { CreateInvoiceInput } from './dto/createInvoice.input'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 
 @UseGuards(ScopesGuard, FeatureFlagGuard)
@@ -96,6 +98,18 @@ export class PaymentsResolver {
   ): Promise<ChargeCardResponse> {
     try {
       return this.paymentsService.chargeCard(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => CreateInvoiceResponse, { name: 'paymentsCreateInvoice' })
+  async createInvoice(
+    @Args('input', { type: () => CreateInvoiceInput })
+    input: CreateInvoiceInput,
+  ): Promise<CreateInvoiceResponse> {
+    try {
+      return this.paymentsService.createInvoice(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

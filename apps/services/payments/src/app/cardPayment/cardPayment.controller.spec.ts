@@ -125,6 +125,8 @@ describe('CardPaymentController', () => {
     })
 
     it('should throw an error if trying to verify a payment flow that has already been paid', async () => {
+      jest.restoreAllMocks()
+
       const verifyPayload: VerifyCardInput = {
         amount: 1000,
         cardNumber: 4242424242424242,
@@ -134,7 +136,7 @@ describe('CardPaymentController', () => {
       }
 
       const paymentFlowServiceAlreadyPaidCheckSpy = jest
-        .spyOn(paymentFlowService, 'isEligibleToBePaid')
+        .spyOn(PaymentFlowService.prototype, 'isEligibleToBePaid')
         .mockReturnValue(Promise.resolve(false))
 
       const response = await server
@@ -375,7 +377,7 @@ describe('CardPaymentController', () => {
       }
 
       const getPaymentFlowWithPaymentDetailsSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
         .mockRejectedValue(
           new BadRequestException(PaymentServiceCode.PaymentFlowNotFound),
         )
@@ -403,11 +405,12 @@ describe('CardPaymentController', () => {
       }
 
       const getPaymentFlowWithPaymentDetailsSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
         .mockResolvedValue({
           isAlreadyPaid: true,
           paymentDetails: {} as any,
           paymentFlow: {} as any,
+          hasInvoice: false,
         })
 
       const response = await server

@@ -215,9 +215,9 @@ export class CardPaymentController {
         // Error code = 400 and message = "Búið að taka á móti álagningu XXX ..."
         // (there is a 24 hour limit on buying certain items)
         // Then we should refund the payment
-        if (e.message === FjsErrorCode.AlreadyPaid) {
-          // Refund the payment
-        }
+        // if (e.message === FjsErrorCode.AlreadyPaid) {
+        //   // Refund the payment
+        // }
 
         throw e
       }
@@ -247,7 +247,7 @@ export class CardPaymentController {
       })
 
       // TODO
-      throw new BadRequestException(e.message || CardErrorCode.Unknown)
+      throw new BadRequestException(e.message || CardErrorCode.UnknownCardError)
     }
   }
 }

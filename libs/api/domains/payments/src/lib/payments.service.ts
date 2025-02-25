@@ -18,6 +18,8 @@ import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.in
 import { PaymentsApiModuleConfig } from './payments.config'
 import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
 import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
+import { CreateInvoiceInput } from './dto/createInvoice.input'
+import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 
 @Injectable()
@@ -105,5 +107,13 @@ export class PaymentsService {
       isSuccess,
       responseCode,
     }
+  }
+
+  async createInvoice(
+    createInvoiceInput: CreateInvoiceInput,
+  ): Promise<CreateInvoiceResponse> {
+    return this.paymentsApi.invoicePaymentControllerCreate({
+      createInvoiceInput,
+    })
   }
 }

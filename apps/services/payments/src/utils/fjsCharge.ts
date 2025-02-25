@@ -46,7 +46,7 @@ export const generateChargeFJSPayload = ({
 
 export const fjsErrorMessageToCode = (message: string): FjsErrorCode => {
   if (message.startsWith('Búið að taka á móti álagningu')) {
-    return FjsErrorCode.AlreadyPaid
+    return FjsErrorCode.AlreadyCreatedCharge
   }
 
   return FjsErrorCode.FailedToCreateCharge

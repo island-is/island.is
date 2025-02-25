@@ -13,6 +13,7 @@ import { XRoadConfig } from '@island.is/nest/config'
 
 import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
 import { CardPaymentModule } from './cardPayment/cardPayment.module'
+import { InvoicePaymentModule } from './invoicePayment/invoicePayment.module'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 
 @Module({
@@ -24,6 +25,7 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
     }),
     PaymentFlowModule,
     CardPaymentModule,
+    InvoicePaymentModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
