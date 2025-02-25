@@ -12,6 +12,7 @@ import {
   GetTypeByIdRequest,
   GetTypesRequest,
   GetMainTypesRequest,
+  GetSimilarAdvertsByIdRequest,
 } from '../../gen/fetch/apis'
 import { GetAdvertMainTypes } from '../../gen/fetch'
 
@@ -21,6 +22,10 @@ export class OfficialJournalOfIcelandClientService {
 
   public async getAdvertById(params: GetAdvertByIdRequest) {
     return this.api.getAdvertById(params)
+  }
+
+  public async getSimilarAdvertsById(params: GetSimilarAdvertsByIdRequest) {
+    return this.api.getSimilarAdvertsById(params)
   }
 
   public async getAdverts(input: GetAdvertsRequest) {

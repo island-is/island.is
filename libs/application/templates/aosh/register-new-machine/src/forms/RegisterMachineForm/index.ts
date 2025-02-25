@@ -9,7 +9,6 @@ import { OverviewSection } from './OverviewSection'
 
 export const RegisterNewMachineForm: Form = buildForm({
   id: 'RegisterNewMachineFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [

@@ -47,7 +47,7 @@ const ActiveCases: FC<Props> = (props) => {
           title: capitalize(formatMessage(tables.sentToCourtDate)),
           sortBy: 'caseSentToCourtDate',
         },
-        { title: formatMessage(tables.state) },
+        { title: formatMessage(tables.state), sortBy: 'state' },
         {
           title: formatMessage(tables.hearingArrangementDate),
           sortBy: 'courtDate',

@@ -6,7 +6,6 @@ import { OverviewSection } from './Overview'
 
 export const Review: Form = buildForm({
   id: 'Review',
-  title: '',
   // logo: Logo,
   mode: FormModes.DRAFT,
   children: [StateSection, OverviewSection],

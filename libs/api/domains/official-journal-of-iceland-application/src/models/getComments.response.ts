@@ -9,6 +9,15 @@ registerEnumType(CommentDirection, {
   name: 'OJOICommentDirection',
 })
 
+export enum CommentActionEnum {
+  EXTERNAL = 'external',
+  APPLICATION = 'application',
+}
+
+registerEnumType(CommentActionEnum, {
+  name: 'OJOICommentActionEnum',
+})
+
 @ObjectType('OJOIAComment')
 export class CaseComment {
   @Field(() => ID)
@@ -20,14 +29,14 @@ export class CaseComment {
   @Field(() => CommentDirection)
   direction!: CommentDirection
 
-  @Field()
-  title!: string
+  @Field(() => CommentActionEnum)
+  action!: CommentActionEnum
 
   @Field(() => String, { nullable: true })
   comment!: string | null
 
-  @Field(() => String, { nullable: true })
-  creator!: string | null
+  @Field(() => String)
+  creator!: string
 
   @Field(() => String, { nullable: true })
   receiver!: string | null

@@ -5,7 +5,6 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 
 export const Declined: Form = buildForm({
   id: 'Declined',
-  title: '',
   mode: FormModes.REJECTED,
   children: [
     buildDescriptionField({

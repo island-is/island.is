@@ -21,12 +21,10 @@ export const sectionDelivery = buildSection({
       children: [
         buildDescriptionField({
           id: 'deliveryDescription',
-          title: '',
           description: m.deliveryMethodDescription,
         }),
         buildRadioField({
           id: 'delivery.deliveryMethod',
-          title: '',
           width: 'half',
           disabled: false,
           options: [
