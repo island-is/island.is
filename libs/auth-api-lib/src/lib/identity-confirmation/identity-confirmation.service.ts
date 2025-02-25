@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
@@ -11,13 +10,9 @@ import { ZendeskService } from '@island.is/clients/zendesk'
 import { uuid } from 'uuidv4'
 import { IdentityConfirmationType } from './types/identity-confirmation-type'
 import { SmsService } from '@island.is/nova-sms'
-import { EmailService } from '@island.is/email-service'
-import { IdentityConfirmationApiConfig } from './config'
-import type { ConfigType } from '@island.is/nest/config'
 import { IdentityConfirmationDTO } from './dto/identity-confirmation-dto.dto'
 import type { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { DelegationsIncomingService } from '../delegations/delegations-incoming.service'
 
 const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
 const ZENDESK_CUSTOM_FIELDS = {
@@ -31,10 +26,6 @@ export class IdentityConfirmationService {
     private identityConfirmationModel: typeof IdentityConfirmation,
     private readonly zendeskService: ZendeskService,
     private readonly smsService: SmsService,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
-    @Inject(IdentityConfirmationApiConfig.KEY)
-    private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
     private nationalRegistryClient: NationalRegistryV3ClientService,
   ) {}
 

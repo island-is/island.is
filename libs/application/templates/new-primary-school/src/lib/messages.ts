@@ -742,8 +742,8 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders',
     },
-    requestMedicationAssistance: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.request.medication.assistance',
+    requestsMedicationAdministration: {
+      id: 'nps.application:different.needs.allergies.and.intolerances.requests.medication.administration',
       defaultMessage:
         'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
       description:
@@ -777,29 +777,29 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current nursery will forward that information to the school they are applying to.",
     },
-    developmentalAssessment: {
-      id: 'nps.application:different.needs.developmental.assessment',
+    hasDiagnoses: {
+      id: 'nps.application:different.needs.has.diagnoses',
       defaultMessage:
         'Hafa farið fram skimanir eða greiningar á þroska eða stöðu barnsins í núverandi skóla?',
       description:
         'Have any assessments or diagnoses been conducted on the development or status of the child in the current school?',
     },
-    enrollmentDevelopmentalAssessment: {
-      id: 'nps.application:different.needs.enrollment.developmental.assessment',
+    enrollmentHasDiagnoses: {
+      id: 'nps.application:different.needs.enrollment.has.diagnoses',
       defaultMessage:
         'Hafa farið fram skimanir eða greiningar á þroska eða stöðu barnsins í núverandi leikskóla?',
       description:
         'Have any assessments or diagnoses been conducted on the development or status of the child in the current nursery?',
     },
-    specialSupport: {
-      id: 'nps.application:different.needs.special.support',
+    hasHadSupport: {
+      id: 'nps.application:different.needs.has.had.support',
       defaultMessage:
         'Hefur nemandinn áður notið sérkennslu eða stuðnings í skóla?',
       description:
         'Has the student previously received special education or support in school?',
     },
-    enrollmentSpecialSupport: {
-      id: 'nps.application:different.needs.enrollment.special.support',
+    enrollmentHasHadSupport: {
+      id: 'nps.application:different.needs.enrollment.has.had.support',
       defaultMessage:
         'Hefur nemandinn áður notið sérkennslu eða stuðnings í leikskóla?',
       description:
@@ -853,15 +853,15 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "When transferring a child from nursery to primary school, the head of the nursery ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
     },
-    requestMeeting: {
-      id: 'nps.application:different.needs.request.meeting',
+    requestingMeeting: {
+      id: 'nps.application:different.needs.requesting.meeting',
       defaultMessage:
         'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins getur þú óskað eftir samtali. Skólinn mun setja sig í samband við þig, þegar nær dregur fyrsta skóladegi',
       description:
         "If you believe that the primary school needs more information about the child's needs, you can request a meeting. The school will contact you when the first day of school approaches.",
     },
-    requestMeetingDescription: {
-      id: 'nps.application:different.needs.request.meeting.info',
+    requestingMeetingDescription: {
+      id: 'nps.application:different.needs.requesting.meeting.description',
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
     },
