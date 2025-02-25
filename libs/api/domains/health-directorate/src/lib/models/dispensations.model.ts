@@ -9,6 +9,12 @@ export class DispensedItem {
   name?: string
 
   @Field({ nullable: true })
+  type?: string
+
+  @Field({ nullable: true })
+  dosageInstructions?: string
+
+  @Field({ nullable: true })
   strength?: string
 
   @Field({ nullable: true })
@@ -16,6 +22,12 @@ export class DispensedItem {
 
   @Field(() => Int, { nullable: true })
   numberOfPackages?: number
+
+  @Field({ nullable: true })
+  quantity?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isExpired?: boolean
 }
 
 @ObjectType('HealthDirectorateDispensation')
@@ -28,6 +40,9 @@ export class Dispensation {
 
   @Field(() => Date)
   date!: Date
+
+  @Field(() => Date, { nullable: true })
+  lastDispensationDate?: Date
 
   @Field()
   count!: number

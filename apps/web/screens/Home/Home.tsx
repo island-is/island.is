@@ -9,7 +9,7 @@ import {
   SearchSection,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
   ContentLanguage,
@@ -156,7 +156,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
-          tags: [FRONTPAGE_NEWS_TAG_ID],
+          tags: [FRONTPAGE_NEWS_TAG_SLUG],
         },
       },
     }),
@@ -177,7 +177,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
         ...item,
         genericTags:
           item?.genericTags?.filter(
-            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID,
+            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG,
           ) ?? [],
       })) ?? [],
     categories: getArticleCategories,
