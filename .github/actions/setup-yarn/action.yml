@@ -9,7 +9,7 @@ runs:
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
-        bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
+        bundled=$(sha256sum ~/dependencies/yarn.lock | awk '{print $1}') || :
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
         echo "Current hash: $current"
         echo "Bundled hash: $bundled"
@@ -25,16 +25,16 @@ runs:
 
     - name: Run yarn install if yarn.lock changed
       shell: bash
-      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
+      if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'false' }}
       run: |
         yarn install --immutable
 
     - name: Link pre-installed dependencies
-      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
+      if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'true' }}
       shell: bash
       run: |
         rm -rf node_modules
-        ln -s /home/runner/dependencies/node_modules .
-        ln -s /home/runner/dependencies/.yarn/cache .yarn/
-        ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
-        echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+        ln -s ~/dependencies/node_modules .
+        ln -s ~/dependencies/.yarn/cache .yarn/
+        ln -s ~/dependencies/.yarn/install-state.gz .yarn/
+        echo "NODE_PATH=$HOME/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
