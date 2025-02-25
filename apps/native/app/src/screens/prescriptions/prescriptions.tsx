@@ -11,7 +11,7 @@ import {
   TabButtons,
   Typography,
 } from '../../ui'
-import { useGetVaccinationsQuery } from '../../graphql/types/schema'
+import { useGetDrugPrescriptionsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
@@ -54,10 +54,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
 
-  // TODO: use prescriptions endpoint when reay
-  const prescriptionsRes = useGetVaccinationsQuery({
+  const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
   })
+
+  console.log(prescriptionsRes.data)
 
   useConnectivityIndicator({
     componentId,
