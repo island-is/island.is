@@ -62,7 +62,7 @@ function getArtifactname() {
 }
 
 function getTypeOfDeployment() {
-  if (targetBranch === 'main') {
+  if (targetBranch === 'main' || targetBranch === 'mq-docker-pre-main') {
     return {
       dev: true,
       prod: false,

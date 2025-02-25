@@ -5,10 +5,6 @@ on:
     branches:
       - main
 
-concurrency:
-  group: upload-manifest-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: false
-
 jobs:
   upload:
     runs-on: arc-runners
