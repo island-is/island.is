@@ -39,12 +39,12 @@ jest.mock('../../defendant/defendant.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
-jest.mock('@island.is/judicial-system/audit-trail')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
+        isGlobal: true,
         load: [sharedAuthModuleConfig, auditTrailModuleConfig],
       }),
     ],
@@ -119,6 +119,7 @@ export const createTestingSubpoenaModule = async () => {
   )
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
+
   const auditTrailService =
     subpoenaModule.get<AuditTrailService>(AuditTrailService)
 
