@@ -33,7 +33,9 @@ runs:
       if: ${{ steps.restore-codegen-cache.outputs.cache-hit == 'true' }}
       shell: bash
       run: |
+        echo "::group::Unpack codegen"
         tar -xzvf "${GENERATED_FILES}"
+        echo "::endgroup::"
 
     - name: Cache Generated files
       if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
