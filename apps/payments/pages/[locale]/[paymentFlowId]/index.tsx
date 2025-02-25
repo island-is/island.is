@@ -264,7 +264,7 @@ export default function PaymentPage({
         throw new Error(problem?.detail)
       }
 
-      throw new Error(CardErrorCode.Unknown)
+      throw new Error(CardErrorCode.UnknownCardError)
     }
   }
 
@@ -298,7 +298,7 @@ export default function PaymentPage({
         throw new Error(problem?.detail)
       }
 
-      throw new Error(CardErrorCode.Unknown)
+      throw new Error(CardErrorCode.UnknownCardError)
     }
   }
 
