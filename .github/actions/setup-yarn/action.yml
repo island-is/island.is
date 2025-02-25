@@ -20,7 +20,7 @@ runs:
       shell: bash
       run: |
         corepack enable
-        corepack prepare --activate
+        corepack use yarn
         yarn --version
 
     - name: Run yarn install if yarn.lock changed
