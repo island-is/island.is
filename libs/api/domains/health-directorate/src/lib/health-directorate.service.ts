@@ -17,10 +17,16 @@ import { Referral, Referrals } from './models/referrals.model'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
+  mapPrescriptionCategory,
   mapPrescriptionRenewalBlockedReason,
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
+import {
+  MedicineHistory,
+  MedicineHistoryItem,
+} from './models/medicineHistory.model'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -204,13 +210,16 @@ export class HealthDirectorateService {
           type: item.productType,
           form: item.productForm,
           url: item.productUrl,
-          quantity: item.productQuantity,
+          quantity: item.productQuantity?.toString(),
           prescriberName: item.prescriberName,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
           indication: item.indication,
           totalPrescribedAmount: item.totalPrescribedAmountDisplay,
+          category: item.category
+            ? mapPrescriptionCategory(item.category)
+            : undefined,
           isRenewable: item.isRenewable,
           renewalBlockedReason: item.renewalBlockedReason
             ? mapPrescriptionRenewalBlockedReason(item.renewalBlockedReason)
@@ -240,5 +249,52 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { prescriptions }
+  }
+
+  /* Medicine History */
+  async getMedicineHistory(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<MedicineHistory | null> {
+    const data = await this.healthApi.getGroupedDispensations(auth, locale)
+    if (!data) {
+      return null
+    }
+
+    const medicineHistory: Array<MedicineHistoryItem> =
+      data.map((item) => {
+        return {
+          id: item.productId,
+          name: item.productName,
+          strength: item.productStrength,
+          atcCode: item.productAtcCode,
+          indication: item.indication,
+          lastDispensationDate: item.lastDispensationDate,
+          dispensationCount: item.dispensationCount,
+          dispensations: item.dispensations.map((subItem) => {
+            const quantity = subItem.productQuantity ?? 0
+
+            return {
+              id: subItem.productId,
+              name: subItem.productName,
+              quantity: [quantity.toString(), subItem.productUnit]
+                .filter((x) => isDefined(x))
+                .join(' '),
+              agentName: subItem.dispensingAgentName,
+              unit: subItem.productUnit,
+              type: subItem.productType,
+              indication: subItem.indication,
+              dosageInstructions: subItem.dosageInstructions,
+              issueDate: subItem.issueDate,
+              prescriberName: subItem.prescriberName,
+              expirationDate: subItem.expirationDate,
+              isExpired: subItem.isExpired,
+              date: subItem.dispensationDate,
+            }
+          }),
+        }
+      }) ?? []
+
+    return { medicineHistory }
   }
 }

@@ -43,7 +43,6 @@ export const reasonForApplicationSubSection = buildSubSection({
               newPrimarySchoolMessages.primarySchool
                 .reasonForApplicationSubSectionTitle,
             component: 'FriggOptionsAsyncSelectField',
-            dataTestId: 'reason-for-application',
           },
           {
             optionsType: OptionsType.REASON,
