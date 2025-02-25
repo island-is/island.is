@@ -356,6 +356,7 @@ services-auth-delegation-api:
     - 'islandis'
     - 'service-portal'
     - 'user-notification-worker'
+    - 'user-notification-birthday-worker'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

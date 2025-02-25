@@ -25,14 +25,26 @@ command:
   - 'node'
 enabled: true
 env:
+  AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+  AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
   CODE_OWNER: 'juni'
+  CONTENTFUL_HOST: 'preview.contentful.com'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'user_notification'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'user_notification'
+  DEAD_LETTER_QUEUE_NAME: 'user-notification-feat-birthday-failure'
+  EMAIL_FROM_ADDRESS: 'development@island.is'
+  EMAIL_REGION: 'eu-west-1'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
+  MAIN_QUEUE_NAME: 'user-notification-feat-birthday'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: ''
+  SERVICE_PORTAL_BFF_LOGIN_URL: 'https://beta.dev01.devland.is/bff/login'
+  SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+  USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
 grantNamespaces:
   - 'nginx-ingress-internal'
   - 'islandis'
@@ -101,7 +113,12 @@ resources:
 schedule: '@hourly'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
   DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+  FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+  IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+  NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

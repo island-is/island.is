@@ -151,7 +151,7 @@ const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
 const userNotificationBirthdayWorkerService =
-  userNotificationBirthdayWorkerSetup()
+  userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
 const unicornApp = unicornAppSetup()
 const formSystemApi = formSystemApiSetup()
