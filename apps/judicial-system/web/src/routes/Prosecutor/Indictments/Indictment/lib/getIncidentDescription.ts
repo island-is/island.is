@@ -4,10 +4,7 @@ import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  CrimeScene,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
+import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
   IndictmentCountOffense,
   Maybe,
@@ -18,7 +15,6 @@ import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-we
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
-
 
 const getIncidentDescriptionProps = ({
   offenses,
@@ -80,6 +76,16 @@ export const getIncidentDescription = ({
     isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
     indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
   ) {
+    const hasOnlyOtherOffense =
+      offenses?.length === 1 &&
+      offenses[0].offense === IndictmentCountOffense.OTHER
+    
+    if (hasOnlyOtherOffense) {
+      return formatMessage(strings.incidentDescriptionShortAutofill, {
+        incidentDate,
+      })
+    }
+
     const incidentDescriptionProps = getIncidentDescriptionProps({
       offenses,
       formatMessage,
