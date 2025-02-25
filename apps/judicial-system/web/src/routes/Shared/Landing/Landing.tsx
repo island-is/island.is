@@ -70,7 +70,7 @@ const Landing = () => {
                 justifyContent="spaceBetween"
                 className={styles.processContent}
               >
-                {eligibleUsers && eligibleUsers.length >> 1 ? (
+                {eligibleUsers && eligibleUsers.length > 1 ? (
                   <MultipleInstitutions />
                 ) : (
                   <Login />
