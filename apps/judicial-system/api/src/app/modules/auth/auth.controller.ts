@@ -266,15 +266,12 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogildur-notandi')
     }
 
-    const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
-
     this.clearCookies(res, false)
 
     return this.redirectAuthorizeUser(
       eligibleUsers,
       userIdx,
       res,
-      redirectRoute,
       csrfToken && new Entropy({ bits: 128 }).string(),
     )
   }
@@ -335,8 +332,8 @@ export class AuthController {
       eligibleUsers,
       currentUserIdx,
       res,
-      requestedRedirectRoute,
       csrfToken,
+      requestedRedirectRoute,
     )
   }
 
@@ -344,8 +341,8 @@ export class AuthController {
     eligibleUsers: User[], // eligibleUsers is an array of one or more users
     currentUserIdx: number,
     res: Response,
-    requestedRedirectRoute?: string,
     csrfToken?: string,
+    requestedRedirectRoute?: string,
   ) {
     const currentUser =
       currentUserIdx < 0 ? undefined : eligibleUsers[currentUserIdx]
