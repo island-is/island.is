@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - mq-docker-pre-main
 
 concurrency:
   group: upload-manifest-${{ github.head_ref || github.run_id }}

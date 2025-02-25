@@ -130,7 +130,7 @@ function getBranch() {
 }
 
 function getTypeOfDeployment() {
-  if (branch === 'main' || branch == 'mq-docker-pre-main') {
+  if (branch === 'main') {
     return {
       dev: true,
       staging: false,
