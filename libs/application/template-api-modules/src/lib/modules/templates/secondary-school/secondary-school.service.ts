@@ -179,8 +179,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
                 application,
                 attachment,
               )
-              const contentType =
-                this.getMimeType(attachment.name.split('.').pop()) || ''
+              const contentType = this.getMimeType(
+                attachment.name.split('.').pop(),
+              )
               return {
                 fileName: attachment.name,
                 fileContent,
@@ -265,7 +266,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     }
   }
 
-  private getMimeType(extension?: string): string | undefined {
+  private getMimeType(extension?: string): string {
     const fileExtensionWhitelist = {
       '.pdf': 'application/pdf',
       '.jpg': 'image/jpeg',
@@ -273,12 +274,17 @@ export class SecondarySchoolService extends BaseTemplateApiService {
       '.png': 'image/png',
     }
 
-    return (
+    const contentType =
       extension &&
       getValueViaPath<string>(
         fileExtensionWhitelist,
         `.${extension.toLowerCase()}`,
       )
-    )
+
+    if (!contentType) {
+      throw new Error(`Invalid extension in attachment: ${extension}`)
+    }
+
+    return contentType
   }
 }
