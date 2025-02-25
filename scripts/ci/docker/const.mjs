@@ -1,0 +1,1 @@
+export const MAIN_BRANCHES = ['main', 'mq-docker-pre-main']

@@ -4,6 +4,7 @@ import jsyaml from 'js-yaml'
 import { execSync } from 'node:child_process'
 import core from '@actions/core'
 import github from '@actions/github'
+import { MAIN_BRANCHES } from './const.mjs';
 import { glob } from 'glob'
 
 const context = github.context
@@ -97,7 +98,7 @@ function getBranch() {
 }
 
 function getTypeOfDeployment() {
-  if (branch === 'main' || branch === 'mq-docker-pre-main') {
+  if (MAIN_BRANCHES.includes(branch)) {
     return {
       dev: true,
       staging: false,
