@@ -16,7 +16,6 @@ import {
   Application,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
 import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
