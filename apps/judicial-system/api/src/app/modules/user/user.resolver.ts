@@ -10,7 +10,6 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
