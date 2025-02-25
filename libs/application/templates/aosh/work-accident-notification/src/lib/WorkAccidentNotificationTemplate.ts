@@ -48,7 +48,6 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitidAccident],
-  featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
