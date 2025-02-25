@@ -278,7 +278,10 @@ export class CaseController {
     if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
       const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
 
-      if (update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0) {
+      if (
+        mainPoliceCaseNumber &&
+        update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
+      ) {
         throw new BadRequestException(
           `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
         )
