@@ -32,7 +32,7 @@ function getTagname() {
       return `main_${dateString}_${sha}_${randomTag}`
     }
     if (typeOfDeployment.prod) {
-      return `release_${dateString}_${sha}__${randomTag}`
+      return `release_${dateString}_${sha}_${randomTag}`
     }
     throw new Error(`Unable to determine artifact name for merge_group event`)
   }
