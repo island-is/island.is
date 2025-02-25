@@ -198,6 +198,8 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
+      - uses: ./.github/workflows/install.yml
+
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
