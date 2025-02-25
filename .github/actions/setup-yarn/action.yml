@@ -8,7 +8,7 @@ runs:
       shell: bash
       env:
         # Yarn cache needs a folder that exists, and will fail otherwise
-        YARN_CACHE_FOLDER: ${{ github.event.localrun && '$HOME/dependencies/.yarn/cache' || '' }}
+        YARN_CACHE_FOLDER: $HOME/dependencies/.yarn/cache
         COREPACK_HOME: $HOME/dependencies/corepack
         NODE_PATH: $HOME/dependencies/node_modules
       run: |
