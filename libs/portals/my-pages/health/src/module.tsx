@@ -1,13 +1,10 @@
+import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
-import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
-import ReferencesDetail from './screens/Referrals/ReferralsDetail'
-import Waitlists from './screens/Waitlists/Waitlists'
-import WaitlistsDetail from './screens/Waitlists/WaitlistsDetail'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -43,7 +40,7 @@ const MedicinePrescriptions = lazy(() =>
   import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
 )
 const MedicinePrescriptionHistory = lazy(() =>
-  import('./screens/MedicineHistory/MedicinePrescriptionHistory'),
+  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
 )
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
@@ -77,8 +74,6 @@ const OrganDonationRegistration = lazy(() =>
 const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
-
-const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -259,34 +254,6 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
-    },
-    {
-      name: hm.referrals,
-      path: HealthPaths.HealthReferences,
-      key: 'Referrals',
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      element: <Referrals />,
-    },
-    {
-      name: hm.referrals,
-      path: HealthPaths.HealthReferencesDetail,
-      key: 'Referrals',
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      element: <ReferencesDetail />,
-    },
-    {
-      name: hm.waitlists,
-      path: HealthPaths.HealthWaitlists,
-      key: 'HealthWaitlists',
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      element: <Waitlists />,
-    },
-    {
-      name: hm.waitlists,
-      path: HealthPaths.HealthWaitlistsDetail,
-      key: 'HealthWaitlists',
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      element: <WaitlistsDetail />,
     },
   ],
 }

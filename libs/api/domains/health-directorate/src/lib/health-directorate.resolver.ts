@@ -30,7 +30,6 @@ import { Prescriptions } from './models/prescriptions.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
 import { Waitlists } from './models/waitlists.model'
-import { MedicineHistory } from './models/medicineHistory.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -138,20 +137,5 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Prescriptions | null> {
     return this.api.getPrescriptions(user, locale)
-  }
-
-  /* Medicine History */
-  @Query(() => MedicineHistory, {
-    name: 'healthDirectorateMedicineHistory',
-  })
-  @Audit()
-  @Scopes(ApiScope.internal)
-  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
-  getMedicineHistory(
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @CurrentUser() user: User,
-  ): Promise<MedicineHistory | null> {
-    return this.api.getMedicineHistory(user, locale)
   }
 }
