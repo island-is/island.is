@@ -12,6 +12,7 @@ runs:
       run: |
         echo "generated files: ${GENERATED_FILES}"
         echo "GENERATED_FILES=${GENERATED_FILES}" | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
+        mkdir -p "$(dirname "${GENERATED_FILES}")"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
