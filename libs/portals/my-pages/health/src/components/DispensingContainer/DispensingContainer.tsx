@@ -41,24 +41,20 @@ const DispensingContainer: React.FC<Props> = ({
         </Text>
       </Box>
       <Hidden above="md">
-        {/*  
-            message={formatMessage(messages.noDataFoundDetail, {
-            arg: formatMessage(messages.dentistsTitleVariation).toLowerCase(),
-          })} */}
         {data.map((item, i) => (
           <Box
             background={i % 2 === 0 ? 'white' : 'blue100'}
             padding={1}
             key={`dispensing-item-container-${i}`}
           >
-            <Box className={styles.text}>
+            <Box className={styles.text} marginBottom={'smallGutter'}>
               <Text fontWeight="medium">
                 {formatMessage(messages.dispensations, {
                   arg: i + 1,
                 })}
               </Text>
             </Box>
-            <Box>
+            <Box className={styles.text} marginBottom={'smallGutter'}>
               <Text fontWeight="regular">
                 {formatMessage(messages.pickedUpInPharmacy, {
                   arg: item.pharmacy,
@@ -66,12 +62,13 @@ const DispensingContainer: React.FC<Props> = ({
                 })}
               </Text>
             </Box>
-            <Box width="full">
+            <Box width="full" marginBottom={'smallGutter'}>
               <Button
-                variant="ghost"
+                variant="text"
                 size="small"
                 fluid
                 onClick={item.button?.onClick}
+                icon="arrowForward"
               >
                 {item.button?.text}
               </Button>

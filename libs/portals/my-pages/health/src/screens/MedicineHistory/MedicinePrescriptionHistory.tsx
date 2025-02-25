@@ -16,11 +16,17 @@ import { useGetMedicineHistoryQuery } from '../MedicinePrescriptions/Prescriptio
 import DispensingContainer from '../../components/DispensingContainer/DispensingContainer'
 import DispensingDetailModal from '../../components/DispensingContainer/DispensingDetailModal'
 
+interface ActiveDispensation {
+  id: string
+  activeDispensation: HealthDirectorateMedicineHistoryDispensation
+  dispensationNumber: number
+}
+
 const MedicinePrescriptionHistory = () => {
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [activeDispensation, setActiveDispensation] = useState<
-    HealthDirectorateMedicineHistoryDispensation | undefined
+    ActiveDispensation | undefined
   >(undefined)
   const [openModal, setOpenModal] = useState(false)
   const { data, loading, error } = useGetMedicineHistoryQuery({
@@ -88,7 +94,13 @@ const MedicinePrescriptionHistory = () => {
                           button: {
                             text: formatMessage(messages.detail),
                             onClick: () => {
-                              setActiveDispensation(subItem)
+                              setActiveDispensation({
+                                id:
+                                  subItem.id ||
+                                  subItem.name + '-' + subIndex.toString(),
+                                dispensationNumber: subIndex + 1,
+                                activeDispensation: subItem,
+                              })
                               setOpenModal(true)
                             },
                           },
@@ -102,13 +114,17 @@ const MedicinePrescriptionHistory = () => {
           }
         />
       )}
-      {openModal && activeDispensation && (
+      {activeDispensation && (
         <DispensingDetailModal
-          id={activeDispensation.id ?? ''}
-          activeDispensation={activeDispensation}
+          id={activeDispensation.id}
+          activeDispensation={activeDispensation.activeDispensation}
+          number={activeDispensation.dispensationNumber}
           toggleClose={openModal}
           isVisible={openModal}
-          closeModal={() => setOpenModal(false)}
+          closeModal={() => {
+            setOpenModal(false)
+            setActiveDispensation(undefined)
+          }}
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}

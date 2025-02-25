@@ -19,6 +19,7 @@ import DispensingDetailModalItem from './DispensingDetailModalItem'
 interface Props {
   id: string
   activeDispensation: HealthDirectorateMedicineHistoryDispensation
+  number: number
   toggleClose?: boolean
   isVisible: boolean
   closeModal: () => void
@@ -27,6 +28,7 @@ interface Props {
 const DispensingDetailModal: React.FC<Props> = ({
   id,
   activeDispensation,
+  number,
   toggleClose,
   isVisible,
   closeModal,
@@ -46,10 +48,11 @@ const DispensingDetailModal: React.FC<Props> = ({
       initialVisibility={false}
       onVisibilityChange={(visibility) => {
         setModalVisible(visibility)
+        if (!visibility) close()
       }}
       toggleClose={toggleClose}
-      removeOnClose
       className={styles.modal}
+      removeOnClose
     >
       <Box paddingY={[2, 2, 2, 4, 8]} paddingX={[2, 2, 2, 6, 12]}>
         <Box paddingLeft={1}>
@@ -68,7 +71,7 @@ const DispensingDetailModal: React.FC<Props> = ({
                   value={activeDispensation.agentName}
                 />
                 <DispensingDetailModalItem
-                  label={formatMessage(messages.date)}
+                  label={formatMessage(messages.dispensations, { arg: number })}
                   value={formatDate(activeDispensation.issueDate)}
                 />
                 <DispensingDetailModalItem

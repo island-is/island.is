@@ -77,7 +77,7 @@ const DispensingItem: React.FC<DispensingItemProps> = ({
       )}
       {medicine && (
         <GridColumn span={'2/12'} className={styles.text}>
-          <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2">
+          <Text fontWeight={bold ? 'medium' : 'regular'} paddingY="p2" truncate>
             {medicine}
           </Text>
         </GridColumn>
