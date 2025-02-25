@@ -41,8 +41,8 @@ export const startingSchoolSubSection = buildSubSection({
         //   title: newPrimarySchoolMessages.primarySchool.temporaryStay,
         //   condition: (answers) => true,
         //   width: 'half',
-        //   defaultValue: NO,
         //   space: 4,
+        //   defaultValue: NO,
         //   options: [
         //     {
         //       label: newPrimarySchoolMessages.shared.yes,
