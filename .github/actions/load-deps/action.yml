@@ -8,7 +8,7 @@ runs:
       shell: bash
       id: prep
       env:
-        GENERATED_FILES: ${{ github.event.localrun && '/tmp/codegen/codegen.tar.gz' || '${{ github.workspace }}/${{ github.sha }}.tar.gz' }}
+        GENERATED_FILES: ${{ github.event.localrun && '/tmp/codegen/codegen.tar.gz' || format('{}/{}.tar.gz', github.workspace, github.sha) }}
       run: |
         echo "generated files: ${GENERATED_FILES}"
         echo "GENERATED_FILES=${GENERATED_FILES}" | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
