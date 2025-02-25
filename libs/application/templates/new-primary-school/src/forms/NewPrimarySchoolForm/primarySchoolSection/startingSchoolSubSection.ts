@@ -42,7 +42,7 @@ export const startingSchoolSubSection = buildSubSection({
         //   condition: (answers) => true,
         //   width: 'half',
         //   space: 4,
-        //   defaultValue: NO,
+        //   required: true,
         //   options: [
         //     {
         //       label: newPrimarySchoolMessages.shared.yes,

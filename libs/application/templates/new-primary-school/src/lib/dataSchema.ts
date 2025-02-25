@@ -133,6 +133,9 @@ export const dataSchema = z.object({
       temporaryStay: z.string().optional(),
       expectedEndDate: z.string().optional().nullable(),
     })
+    .refine(({ temporaryStay }) => temporaryStay !== '', {
+      path: ['temporaryStay'],
+    })
     .refine(
       ({ expectedStartDate, expectedEndDate, temporaryStay }) =>
         !temporaryStay ||
