@@ -11,11 +11,17 @@ export const summary = defineMessages({
     defaultMessage: 'Samantekt',
     description: 'Title of the summary page',
   },
-  pageDescription: {
-    id: 'ra.application:summary.pageDescription',
+  pageDescriptionFirstParagraph: {
+    id: 'ra.application:summary.pageDescriptionFirstParagraph',
     defaultMessage:
       'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp. ',
-    description: 'Description of the summary page',
+    description: 'First paragraph description of the summary page',
+  },
+  pageDescriptionSecondparagraph: {
+    id: 'ra.application:summary.pageDescriptionSecondParagraph#markdown',
+    defaultMessage:
+      'Aðilum leigusamnings ber að kynna sér hvað löglegur leigusamningur skuli innihalda. [Sjá nánar hér..](https://www.althingi.is/lagas/nuna/1994036.html)',
+    description: 'Second paragraph description of the summary page',
   },
   changeSectionButtonLabel: {
     id: 'ra.application:summary.changeSectionButtonLabel',

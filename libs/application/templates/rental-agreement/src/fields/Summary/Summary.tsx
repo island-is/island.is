@@ -4,7 +4,7 @@ import {
   ApplicationConfigurations,
   FieldBaseProps,
 } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
 import { Routes } from '../../lib/constants'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
@@ -24,70 +24,61 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <>
-      <Box className={summaryWrap}>
-        <Box>
-          <Text variant="h2" as="h2" marginBottom={3}>
-            {formatMessage(summary.pageTitle)}
-          </Text>
-          <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
-        </Box>
-        <ApplicantsSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          landlordsRoute={Routes.LANDLORDINFORMATION}
-          tenantsRoute={Routes.TENANTINFORMATION}
-          isChangeButton={false}
+    <Box className={summaryWrap}>
+      <ApplicantsSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+        hasChangeButton={false}
+      />
+      <ApplicantsRepresentativesSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        landlordsRoute={Routes.LANDLORDINFORMATION}
+        tenantsRoute={Routes.TENANTINFORMATION}
+        hasChangeButton={false}
+      />
+      <RentalInfoSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        rentalPeriodRoute={Routes.RENTALPERIOD}
+        rentalAmountRoute={Routes.RENTALAMOUNT}
+        securityDepositRoute={Routes.SECURITYDEPOSIT}
+        hasChangeButton={false}
+      />
+      <PropertyInfoSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        categoryRoute={Routes.PROPERTYCATEGORY}
+        propertyInfoRoute={Routes.PROPERTYINFORMATION}
+        propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
+        specialProvisionsRoute={Routes.SPECIALPROVISIONS}
+        propertyConditionRoute={Routes.CONDITION}
+        fileUploadRoute={Routes.CONDITION}
+        fireProtectionsRoute={Routes.FIREPROTECTIONS}
+        hasChangeButton={false}
+      />
+      <OtherFeesSummary
+        application={application}
+        field={field}
+        goToScreen={goToScreen}
+        route={Routes.OTHERFEES}
+        hasChangeButton={false}
+      />
+      <SummaryCard
+        cardLabel={formatMessage(summary.shareLinkLabel)}
+        tooltipText={formatMessage(summary.shareLinkTooltip)}
+      >
+        <CopyLink
+          linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
+          buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
         />
-        <ApplicantsRepresentativesSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          landlordsRoute={Routes.LANDLORDINFORMATION}
-          tenantsRoute={Routes.TENANTINFORMATION}
-          isChangeButton={false}
-        />
-        <RentalInfoSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          rentalPeriodRoute={Routes.RENTALPERIOD}
-          rentalAmountRoute={Routes.RENTALAMOUNT}
-          securityDepositRoute={Routes.SECURITYDEPOSIT}
-          isChangeButton={false}
-        />
-        <PropertyInfoSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          categoryRoute={Routes.PROPERTYCATEGORY}
-          propertyInfoRoute={Routes.PROPERTYINFORMATION}
-          propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
-          specialProvisionsRoute={Routes.SPECIALPROVISIONS}
-          propertyConditionRoute={Routes.CONDITION}
-          fileUploadRoute={Routes.CONDITION}
-          fireProtectionsRoute={Routes.FIREPROTECTIONS}
-          isChangeButton={false}
-        />
-        <OtherFeesSummary
-          application={application}
-          field={field}
-          goToScreen={goToScreen}
-          route={Routes.OTHERFEES}
-          isChangeButton={false}
-        />
-        <SummaryCard
-          cardLabel={formatMessage(summary.shareLinkLabel)}
-          tooltipText={formatMessage(summary.shareLinkTooltip)}
-          noBorder
-        >
-          <CopyLink
-            linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
-            buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
-          />
-        </SummaryCard>
-      </Box>
-    </>
+      </SummaryCard>
+    </Box>
   )
 }

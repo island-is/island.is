@@ -35,7 +35,7 @@ interface Props extends FieldBaseProps {
   propertyConditionRoute?: Routes
   fileUploadRoute?: Routes
   fireProtectionsRoute?: Routes
-  isChangeButton: boolean
+  hasChangeButton: boolean
 }
 
 export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
@@ -50,7 +50,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     propertyConditionRoute,
     fileUploadRoute,
     fireProtectionsRoute,
-    isChangeButton,
+    hasChangeButton,
   } = props
   const answers = application.answers as RentalAgreement
 
@@ -79,7 +79,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={categoryRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
@@ -118,14 +118,14 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={propertyInfoRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
             value={
-              (answers.registerProperty.searchResults &&
-                answers.registerProperty.searchResults.propertyIds[0].units[0]
+              (answers.registerProperty.searchresults &&
+                answers.registerProperty.searchresults.propertyIds[0].units[0]
                   .numberOfRooms) ||
               '-'
             }
@@ -135,8 +135,8 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.propertySizeLabel}
             value={
-              (answers.registerProperty.searchResults &&
-                answers.registerProperty.searchResults.propertyIds[0].units[0]
+              (answers.registerProperty.searchresults &&
+                answers.registerProperty.searchresults.propertyIds[0].units[0]
                   .size) ||
               '-'
             }
@@ -147,7 +147,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={propertyDescriptionRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12']}>
           <KeyValue
@@ -160,7 +160,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={specialProvisionsRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12']}>
           <KeyValue
@@ -173,7 +173,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={propertyConditionRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '4/12']}>
           <KeyValue
@@ -205,7 +205,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={fileUploadRoute}
-          isChangeButton={isChangeButton}
+          hasChangeButton={hasChangeButton}
         >
           <GridColumn span={['12/12']}>
             <Box paddingY={'p2'}>
@@ -245,7 +245,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={fireProtectionsRoute}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
         isLast={true}
       >
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>

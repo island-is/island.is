@@ -10,7 +10,6 @@ import {
   Bullet,
   BulletList,
   Button,
-  Text,
 } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
 import { RentalAgreement } from '../../lib/dataSchema'
@@ -67,33 +66,15 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (condition) => !condition.isFilled,
   )
 
-  // useEffect(() => {
-  //   if (unfilledConditions && unfilledConditions.length > 0) {
-  //     setSubmitButtonDisabled && setSubmitButtonDisabled(true)
-  //   } else {
-  //     setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-  //   }
-
-  //   return () => {
-  //     setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-  //   }
-  // }, [unfilledConditions, setSubmitButtonDisabled])
-
   return (
     <Box className={summaryWrap}>
-      <Box>
-        <Text variant="h2" as="h2" marginBottom={3}>
-          {formatMessage(summary.pageTitle)}
-        </Text>
-        <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
-      </Box>
       <ApplicantsSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
         landlordsRoute={Routes.LANDLORDINFORMATION}
         tenantsRoute={Routes.TENANTINFORMATION}
-        isChangeButton={true}
+        hasChangeButton={true}
       />
       <ApplicantsRepresentativesSummary
         application={application}
@@ -101,7 +82,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         goToScreen={goToScreen}
         landlordsRoute={Routes.LANDLORDINFORMATION}
         tenantsRoute={Routes.TENANTINFORMATION}
-        isChangeButton={true}
+        hasChangeButton={true}
       />
       <RentalInfoSummary
         application={application}
@@ -110,7 +91,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         rentalPeriodRoute={Routes.RENTALPERIOD}
         rentalAmountRoute={Routes.RENTALAMOUNT}
         securityDepositRoute={Routes.SECURITYDEPOSIT}
-        isChangeButton={true}
+        hasChangeButton={true}
       />
       <PropertyInfoSummary
         application={application}
@@ -123,19 +104,18 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         propertyConditionRoute={Routes.CONDITION}
         fileUploadRoute={Routes.CONDITION}
         fireProtectionsRoute={Routes.FIREPROTECTIONS}
-        isChangeButton={true}
+        hasChangeButton={true}
       />
       <OtherFeesSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
         route={Routes.OTHERFEES}
-        isChangeButton={true}
+        hasChangeButton={true}
       />
       <SummaryCard
         cardLabel={formatMessage(summary.shareLinkLabel)}
         tooltipText={formatMessage(summary.shareLinkTooltip)}
-        noBorder
       >
         <CopyLink
           linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}

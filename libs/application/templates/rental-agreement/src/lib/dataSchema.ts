@@ -1,4 +1,4 @@
-import { number, z } from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import {
   RentalAmountIndexTypes,
@@ -12,7 +12,6 @@ import {
   RentalPaymentMethodOptions,
 } from './constants'
 import * as m from './messages'
-import { size } from 'lodash'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
@@ -63,17 +62,6 @@ const PropertyId = z.object({
   units: z.array(propertyUnit),
 })
 
-const Property = z.object({
-  label: z.string(),
-  value: z.string(),
-  streetAddress: z.string(),
-  regionNumber: z.string(),
-  cityName: z.string(),
-  size: z.string(),
-  numberOfRooms: z.string(),
-  propertyIds: z.array(PropertyId),
-})
-
 const landlordInfo = z
   .object({
     table: z.array(
@@ -122,7 +110,7 @@ const landlordInfo = z
       })
     }
     // TODO: Uncomment this when validation in repeatable table is fixed
-    // else if (filterNonRepresentatives?.length === 0) {
+    // if (filterNonRepresentatives?.length === 0) {
     //   ctx.addIssue({
     //     code: z.ZodIssueCode.custom,
     //     message: 'Custom error message',
@@ -192,7 +180,18 @@ const tenantInfo = z
 
 const registerProperty = z
   .object({
-    searchResults: Property.optional(),
+    searchresults: z
+      .object({
+        label: z.string(),
+        value: z.string(),
+        streetAddress: z.string(),
+        regionNumber: z.string(),
+        cityName: z.string(),
+        size: z.string(),
+        numberOfRooms: z.string(),
+        propertyIds: z.array(PropertyId),
+      })
+      .optional(),
     categoryType: z
       .enum([
         RentalHousingCategoryTypes.ENTIRE_HOME,

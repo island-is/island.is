@@ -14,13 +14,13 @@ interface SummaryCardProps {
   children: ReactNode
   editAction?: (id: string) => void
   route?: Routes
-  isChangeButton: boolean
+  hasChangeButton: boolean
   isLast?: boolean
 }
 
 export const SummaryCardRow = ({
   children,
-  isChangeButton = true,
+  hasChangeButton = true,
   editAction,
   route,
   isLast = false,
@@ -30,10 +30,10 @@ export const SummaryCardRow = ({
   return (
     <>
       <GridRow
-        className={`${gridRow} ${isChangeButton ? gridRowChangeButton : ''}`}
+        className={`${gridRow} ${hasChangeButton ? gridRowChangeButton : ''}`}
       >
         {children}
-        {isChangeButton && editAction && route && (
+        {hasChangeButton && editAction && route && (
           <div className={changeButton}>
             <Button
               variant="ghost"
@@ -46,7 +46,7 @@ export const SummaryCardRow = ({
           </div>
         )}
       </GridRow>
-      {!isLast && <Divider />}
+      <Divider strong={isLast} />
     </>
   )
 }

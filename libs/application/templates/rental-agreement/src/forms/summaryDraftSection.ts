@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -15,6 +16,21 @@ export const SummaryDraftSection = buildSection({
       id: 'summary',
       title: '',
       children: [
+        buildDescriptionField({
+          id: 'summaryTitle',
+          title: summary.pageTitle,
+          marginBottom: 2,
+        }),
+        buildDescriptionField({
+          id: 'summaryFirstDescription',
+          title: '',
+          description: summary.pageDescriptionFirstParagraph,
+        }),
+        buildDescriptionField({
+          id: 'summarySecondDescription',
+          title: '',
+          description: summary.pageDescriptionSecondparagraph,
+        }),
         buildCustomField({
           id: 'summaryEditComponent',
           title: 'Samantekt',

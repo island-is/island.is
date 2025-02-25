@@ -1,5 +1,3 @@
-import { de } from 'date-fns/locale'
-
 // Svar frá: http://localhost:5123/api/Stadfang/search?partialStadfang=Sunnusmári
 export const stadfangData = [
   {

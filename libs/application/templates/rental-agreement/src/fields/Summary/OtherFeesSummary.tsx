@@ -18,12 +18,12 @@ import { FC } from 'react'
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   route?: Routes
-  isChangeButton: boolean
+  hasChangeButton: boolean
 }
 
 export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
-  const { application, goToScreen, route, isChangeButton } = props
+  const { application, goToScreen, route, hasChangeButton } = props
   const answers = application.answers as RentalAgreement
 
   const otherFeesPayee = (answer: string) => {
@@ -50,7 +50,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={route}
-        isChangeButton={isChangeButton}
+        hasChangeButton={hasChangeButton}
         isLast={
           !tenantPaysHouseFund && !tenantPaysElectricity && !tenantPaysHeating
         }
@@ -87,7 +87,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={route}
-          isChangeButton={isChangeButton}
+          hasChangeButton={hasChangeButton}
           isLast={!tenantPaysHouseFund && !tenantPaysHeating}
         >
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -121,7 +121,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={route}
-          isChangeButton={isChangeButton}
+          hasChangeButton={hasChangeButton}
           isLast={!tenantPaysHouseFund}
         >
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -155,7 +155,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={route}
-          isChangeButton={isChangeButton}
+          hasChangeButton={hasChangeButton}
           isLast={true}
         >
           <GridColumn span={['12/12']}>
