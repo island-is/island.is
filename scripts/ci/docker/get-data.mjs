@@ -58,44 +58,11 @@ for (const file of files) {
   }
 }
 
-await download()
+await parseData()
 
-async function download() {
-  const value = await (await fetch(url)).json()
-  if (value.total_count === 0) {
-    console.error(`No artifacts found for ${name}`)
-    core.setOutput(_KEY_HAS_OUTPUT, 'false')
-    process.exit(0)
-  }
-  const artifact = value.artifacts.sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-  )[0]
-  const downloadUrl = artifact.archive_download_url
-  console.log(`Downloading from ${downloadUrl}...`)
-  const artifactZipResponse = await fetch(downloadUrl, {
-    headers: {
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
-      Accept: 'application/json',
-    },
-  })
-  const zipBuffer = Buffer.from(await artifactZipResponse.arrayBuffer())
-  const zipFileName = '/tmp/artifact.zip'
-  console.log(`Saved artifact to ${zipFileName}.`)
-
-  const outputDir = '/tmp/artifact_unzip'
-  fs.writeFileSync(zipFileName, zipBuffer)
-
-  try {
-    execSync(`unzip -o ${zipFileName} -d ${outputDir}`, { stdio: 'inherit' })
-    console.log(`Unzipped artifact to ${outputDir}/`)
-  } catch (err) {
-    console.error('Failed to unzip artifact:', err)
-    process.exit(1)
-  }
-  const fileName = `${outputDir}/data.json`
+async function parseData() {
+  const fileName = `/tmp/data.json`
   if (!fs.existsSync(fileName)) {
-    console.error(`File "${fileName}" not found in unzipped artifact.`)
     process.exit(0)
   }
 
@@ -123,14 +90,14 @@ async function download() {
 }
 
 function getBranch() {
-  if (context.eventName === 'push') {
-    return context.ref.replace('refs/heads/', '')
+  if (context.eventName === 'merge_group') {
+    return context.payload.merge_group.base_ref.replace('refs/heads/', '')
   }
   throw new Error(`Unsupported event: ${context.eventName}`)
 }
 
 function getTypeOfDeployment() {
-  if (branch === 'main') {
+  if (branch === 'main' || branch === 'mq-docker-pre-main') {
     return {
       dev: true,
       staging: false,
