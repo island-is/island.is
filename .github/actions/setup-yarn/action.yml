@@ -37,7 +37,6 @@ runs:
       shell: bash
       run: |
         corepack enable
-        corepack use yarn
         yarn --version
 
     - name: Run yarn install if yarn.lock changed
@@ -55,7 +54,8 @@ runs:
       shell: bash
       run: |
         rm -rf node_modules
-        ln -s "$HOME/dependencies/node_modules" .
-        ln -s "$HOME/dependencies/.yarn/cache" .yarn/
-        ln -s "$HOME/dependencies/.yarn/install-state.gz" .yarn/
+        ln -sf "$HOME/dependencies/node_modules" .
+        ln -sf "$HOME/dependencies/.yarn/cache" .yarn/
+        ln -sf "$HOME/dependencies/.yarn/install-state.gz" .yarn/
         echo "NODE_PATH=$HOME/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+        ls -lah . .yarn
