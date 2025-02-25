@@ -164,12 +164,7 @@ const Indictment = () => {
         )
       }
     },
-    [
-      formatMessage,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -518,6 +513,7 @@ const Indictment = () => {
             caseId={workingCase.id}
             title={formatMessage(strings.pdfButtonIndictment)}
             pdfType="indictment"
+            elementId="Ákæra"
           />
         </Box>
       </FormContentContainer>
