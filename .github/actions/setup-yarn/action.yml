@@ -12,10 +12,9 @@ runs:
         COREPACK_HOME: $HOME/dependencies/corepack
         NODE_PATH: $HOME/dependencies/node_modules
       run: |
-        set -x
         for e in YARN_CACHE_FOLDER COREPACK_HOME NODE_PATH; do
           if p=$(realpath "${!e}"); then
-            echo "${e}=${p}" >> "$GITHUB_ENV"
+            echo "${e}=${p}" | tee -a "$GITHUB_ENV"
           else
             echo "Using ${e} defaults (not set explicitly)"
           fi
