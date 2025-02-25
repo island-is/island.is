@@ -6,18 +6,14 @@ runs:
   steps:
     - name: Prep env
       shell: bash
-      env:
-        # Yarn cache needs a folder that exists, and will fail otherwise
-        YARN_CACHE_FOLDER: $HOME/dependencies/.yarn/cache
-        COREPACK_HOME: $HOME/dependencies/corepack
-        NODE_PATH: $HOME/dependencies/node_modules
       run: |
         for e in YARN_CACHE_FOLDER COREPACK_HOME NODE_PATH; do
-          if p=$(realpath "${!e}"); then
-            echo "${e}=${p}" | tee -a "$GITHUB_ENV"
-          else
-            echo "Using ${e} defaults (not set explicitly)"
+          if [[ "${!e}" =~ ^\~ ]]; then
+            echo "${e} must be a path or expand to a path"
+            exit 1
           fi
+          p=$(realpath -m "${!e}")
+          echo "${e}=${p}" | tee -a "$GITHUB_ENV"
         done
 
     - name: Compare yarn.lock files
