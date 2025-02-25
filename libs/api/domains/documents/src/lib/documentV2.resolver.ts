@@ -59,9 +59,8 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
-    const ffEnabled = await this.getFeatureFlag()
     try {
-      return await this.auditService.auditPromise(
+      const data = await this.auditService.auditPromise(
         {
           auth: user,
           namespace: '@island.is/api/document-v2',
@@ -69,17 +68,23 @@ export class DocumentResolverV2 {
           resources: input.id,
           meta: { includeDocument: input.includeDocument },
         },
-        ffEnabled
-          ? this.documentServiceV2.findDocumentByIdV3(
-              user.nationalId,
-              input.id,
-              locale,
-              input.includeDocument,
-            )
-          : this.documentServiceV2.findDocumentById(user.nationalId, input.id),
+        this.documentServiceV2.findDocumentById(
+          user.nationalId,
+          input.id,
+          locale,
+          input.includeDocument,
+        ),
       )
+      this.logger.info('Single document fetched successfully V1', {
+        category: LOG_CATEGORY,
+        documentId: input.id,
+        includeDocument: input.includeDocument,
+        provider: input.provider,
+        documentCategory: input.category,
+      })
+      return data
     } catch (e) {
-      this.logger.info('failed to get single document', {
+      this.logger.error('Failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
         documentCategory: input.category,
@@ -96,8 +101,6 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    const ffEnabled = await this.getFeatureFlag()
-    if (ffEnabled) return this.documentServiceV2.listDocumentsV3(user, input)
     return this.documentServiceV2.listDocuments(user, input)
   }
 
@@ -226,12 +229,5 @@ export class DocumentResolverV2 {
       })
       throw e
     }
-  }
-
-  private async getFeatureFlag(): Promise<boolean> {
-    return await this.featureFlagService.getValue(
-      Features.isServicePortalDocumentsV3PageEnabled,
-      false,
-    )
   }
 }
