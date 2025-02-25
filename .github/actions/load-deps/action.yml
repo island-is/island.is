@@ -8,7 +8,7 @@ runs:
       shell: bash
       id: prep
       env:
-        GENERATED_FILES: ${{ github.workspace }}/dist/${{ github.sha }}.tar.gz
+        GENERATED_FILES: ${{ github.workspace }}/dist/codegen/${{ github.event.localrun && 'codegen' || github.sha }}.tar.gz
       run: |
         echo "generated files: ${GENERATED_FILES}"
         echo "GENERATED_FILES=${GENERATED_FILES}" | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
@@ -20,12 +20,13 @@ runs:
       with:
         path: |
           ${{ steps.prep.outputs.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+        key: generated-files-${{ steps.prep.outputs.GENERATED_FILES }}
 
     - name: Prepare generated files
       if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
       shell: bash
       run: |
+        tar -xzvf "${GENERATED_FILES}" || echo "Skipping untaring local file tarball"
         node ./scripts/ci/generate-files.mjs "${GENERATED_FILES}"
 
     - name: Extract generated files
@@ -40,4 +41,4 @@ runs:
       with:
         path: |
           ${{ steps.prep.outputs.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+        key: generated-files-${{ steps.prep.outputs.GENERATED_FILES }}
