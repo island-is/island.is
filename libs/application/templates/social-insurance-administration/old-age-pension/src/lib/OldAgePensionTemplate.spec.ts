@@ -103,6 +103,23 @@ describe('Old Age Pension Template', () => {
   })
 
   describe('state transitions', () => {
+    it('should transition from tryggingastofnunSubmitted to additionalDocumentsRequired on ADDITIONALDOCUMENTSREQUIRED', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunSubmitted',
+        }),
+        OldAgePensionTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('draft')
+    })
+  })
+
+  describe('state transitions', () => {
     it('should transition from tryggingastofnunSubmitted to dismissed on dismissed', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
