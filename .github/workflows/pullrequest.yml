@@ -71,14 +71,13 @@ jobs:
         env:
           PROJECTS: api,web,application-system-api,clients-consultation-portal
         run: |
-          if ! d=$(
-            diff
-            <(yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${PROJECTS//,/|}): " | cut -d':' -f1 | sort -u)
-            <(echo -e "${PROJECTS//,/\n}" | sort)
-          ); then
+          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${PROJECTS//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
+          echo -e "${PROJECTS//,/\n}" | sort > /tmp/projects-all
+          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
+            code=$?
             echo "These projects don't have any tests:"
             echo "${d}"
-            exit 1
+            exit $code
           fi
           echo "All projects ($PROJECTS) have tests."
 
