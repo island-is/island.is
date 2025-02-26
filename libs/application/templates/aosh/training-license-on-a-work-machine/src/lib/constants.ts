@@ -1,7 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.REJECT
+  type: DefaultEvents.SUBMIT | DefaultEvents.REJECT | DefaultEvents.ASSIGN
 }
 
 export enum States {
@@ -19,4 +19,6 @@ export enum Roles {
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
+  deleteApplication = 'deleteApplication',
+  rejectApplication = 'rejectApplication',
 }

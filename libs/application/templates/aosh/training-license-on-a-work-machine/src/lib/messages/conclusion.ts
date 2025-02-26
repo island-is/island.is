@@ -17,36 +17,64 @@ export const conclusion = {
   default: defineMessages({
     alertMessage: {
       id: 'aosh.tlwm.application:conclusion.default.alertMessage',
-      defaultMessage: 'Skráning móttekin!',
-      description: 'Conclusion seller alert message',
-    },
-    accordionTitle: {
-      id: 'aosh.tlwm.application:conclusion.default.accordionTitle',
-      defaultMessage: 'Nýskráning þín á tæki hefur verið móttekin!',
-      description: 'Conclusion seller accordion title',
+      defaultMessage:
+        'Umsókn þín um kennsluréttindi á vinnuvél hefur verið send til samþykktar.',
+      description: 'Conclusion applicant alert message',
     },
     expandableHeader: {
       id: 'aosh.tlwm.application:conclusion.default.expandableHeader',
       defaultMessage: 'Hvað gerist næst?',
-      description: 'Conclusion seller expandable header',
+      description: 'Conclusion applicant expandable header',
     },
     expandableDescription: {
-      id: 'aosh.tlwm.application:conclusion.default.expandableDescription',
+      id: 'aosh.tlwm.application:conclusion.default.expandableDescription#markdown',
+      defaultMessage: `* Nú þarf aðilinn sem á að samþykkja starfstíma á vinnuvél að klára það skref svo umsókn berist 
+          Vinnueftirlitinu til yfirferðar. Þeir sem þurfa að samþykkja hafa 7 daga til þess.
+          \n* Ef samþykki liggur ekki fyrir innan 7 daga verður umsóknin felld niður og umsækjandi upplýstur.`,
+      description: 'Conclusion applicant expandable description',
+    },
+  }),
+  approvedForApplicant: defineMessages({
+    alertMessage: {
+      id: 'aosh.tlwm.application:conclusion.approvedForApplicant.alertMessage',
       defaultMessage:
-        'Nýskráning þín á tæki hefur verið móttekin og skráð hjá Vinnueftirlitinu. Þú getur fylgst með stöðu umsóknarinnar í "Mínar síður".',
-      description: 'Conclusion seller expandable description',
+        'Umsókn þín um kennsluréttindi á vinnuvél hefur verið send til Vinnueftirlitsins.',
+      description: 'Conclusion approved applicant alert message',
+    },
+    expandableHeader: {
+      id: 'aosh.tlwm.application:conclusion.approvedForApplicant.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Conclusion approved applicant expandable header',
+    },
+    expandableDescription: {
+      id: 'aosh.tlwm.application:conclusion.approvedForApplicant.expandableDescription#markdown',
+      defaultMessage: `* Umsóknin hefur borist Vinnueftirlitinu til yfirferðar. 
+            \n* Vinnueftirlitið upplýsir umsækjanda um framgang mála.`,
+      description: 'Conclusion approved applicant expandable description',
+    },
+  }),
+  approvedForAssignee: defineMessages({
+    alertMessage: {
+      id: 'aosh.tlwm.application:conclusion.approvedForAssignee.alertMessage',
+      defaultMessage: 'Vottorð um starfstíma samþykkt!',
+      description: 'Conclusion approved assignee alert message',
+    },
+    expandableHeader: {
+      id: 'aosh.tlwm.application:conclusion.approvedForAssignee.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Conclusion approved assignee expandable header',
+    },
+    expandableDescription: {
+      id: 'aosh.tlwm.application:conclusion.approvedForAssignee.expandableDescription#markdown',
+      defaultMessage: `* Vinnueftirlitið upplýsir umsækjandann um niðurstöðuna.`,
+      description: 'Conclusion approved assignee expandable description',
     },
   }),
   rejected: defineMessages({
     alertMessage: {
       id: 'aosh.tmo.application:conclusion.rejected.alertMessage',
-      defaultMessage: 'Vottorð um starfstíma hafnað!',
+      defaultMessage: 'Samþykktaraðili hefur hafnað!',
       description: 'Conclusion rejected alert message',
-    },
-    message: {
-      id: 'aosh.tmo.application:conclusion.rejected.message',
-      defaultMessage: `Vinsamlegast hafið samband við Vinnueftirlitið, vinnueftirlit@ver.is, ef nánari upplýsinga er þörf.`,
-      description: 'Conclusion rejected third text',
     },
   }),
 }

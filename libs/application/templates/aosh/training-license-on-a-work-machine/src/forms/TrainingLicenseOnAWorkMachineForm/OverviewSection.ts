@@ -1,12 +1,18 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
+  buildOverviewField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { overview } from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import {
+  getApplicantOverviewInformation,
+  getAssigneeOverviewInformation,
+  isContractor,
+} from '../../utils'
+import { getMachineTenureOverviewInformation } from '../../utils/getMachineTenureInformation'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -15,16 +21,33 @@ export const overviewSection = buildSection({
     buildMultiField({
       id: 'overviewSection.multiField',
       title: overview.general.pageTitle,
+      description: overview.general.description,
       children: [
-        buildCustomField({
-          id: 'overview',
+        buildOverviewField({
+          id: 'overviewApplicant',
           title: '',
-          component: 'Overview',
+          backId: 'informationMultiField',
+          bottomLine: false,
+          items: getApplicantOverviewInformation,
+        }),
+        buildOverviewField({
+          id: 'overviewApplicant',
+          title: '',
+          backId: 'certificateOfTenureMultiField',
+          bottomLine: false,
+          items: getMachineTenureOverviewInformation,
+        }),
+        buildOverviewField({
+          id: 'overviewAssignee',
+          title: '',
+          backId: 'assigneeInformationMultiField',
+          bottomLine: false,
+          items: getAssigneeOverviewInformation,
+          condition: (answers) => !isContractor(answers),
         }),
         buildDescriptionField({
           id: 'overviewSection.agreementText',
-          title: '',
-          description: overview.general.agreementText,
+          title: overview.general.agreementText,
           titleVariant: 'h5',
         }),
         buildSubmitField({
@@ -36,6 +59,13 @@ export const overviewSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: overview.general.approveButton,
               type: 'primary',
+              condition: (answers) => isContractor(answers),
+            },
+            {
+              event: DefaultEvents.ASSIGN,
+              name: overview.general.approveButton,
+              type: 'primary',
+              condition: (answers) => !isContractor(answers),
             },
           ],
         }),

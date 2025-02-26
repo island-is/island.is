@@ -10,12 +10,14 @@ import {
   ChargeFjsV2ClientModule,
 } from '@island.is/clients/charge-fjs-v2'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './training-license-on-a-work-machine.service'
+import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
     WorkMachinesClientModule,
     ChargeFjsV2ClientModule,
+    ApplicationsNotificationsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [WorkMachinesClientConfig, ChargeFjsV2ClientConfig],

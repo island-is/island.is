@@ -8,11 +8,13 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  PruningApplication,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  defaultLifecycleWithPruneMessage,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -20,7 +22,12 @@ import { Events, States, Roles, ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TrainingLicenseOnAWorkMachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { IdentityApi, LicensesApi, UserProfileApi } from '../dataProviders'
+import {
+  IdentityApi,
+  LicensesApi,
+  RegistrationNumberPrefixApi,
+  UserProfileApiWithValidation,
+} from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -94,7 +101,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, LicensesApi],
+              api: [
+                IdentityApi,
+                UserProfileApiWithValidation,
+                RegistrationNumberPrefixApi,
+                LicensesApi,
+              ],
             },
           ],
         },
@@ -116,6 +128,10 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationSent,
                 onEvent: DefaultEvents.SUBMIT,
               },
+              {
+                logMessage: coreHistoryMessages.applicationAssigned,
+                onEvent: DefaultEvents.ASSIGN,
+              },
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
@@ -133,6 +149,11 @@ const template: ApplicationTemplate<
                   name: 'Staðfesta',
                   type: 'primary',
                 },
+                {
+                  event: DefaultEvents.ASSIGN,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
               delete: true,
@@ -140,13 +161,10 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [
-            {
-              target: States.COMPLETED,
-              cond: (context) => isContractor(context.application.answers),
-            },
-            { target: States.REVIEW },
-          ],
+          [DefaultEvents.SUBMIT]: {
+            target: States.COMPLETED,
+          },
+          [DefaultEvents.ASSIGN]: { target: States.REVIEW },
         },
       },
       [States.REVIEW]: {
@@ -154,19 +172,15 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Kennsluréttindi á vinnuvél',
           status: 'inprogress',
-          // onDelete: defineTemplateApi({
-          //   action: ApiActions.deleteApplication,
-          // }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
-              label: applicationMessage.actionCardDraft,
+              label: applicationMessage.actionCardReview,
               variant: 'blue',
             },
             historyLogs: [
-              // {
-              //   onEvent: DefaultEvents.APPROVE,
-              //   logMessage: applicationMessage.historyLogApprovedByReviewer,
-              // },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage: coreHistoryMessages.applicationRejected,
@@ -176,13 +190,14 @@ const template: ApplicationTemplate<
                 logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
-            // pendingAction: reviewStatePendingAction,
           },
           lifecycle: {
+            pruneMessage: {
+              notificationTemplateId: 'HNIPP.AS.VER.TLWM.PRUNED',
+            },
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
+            whenToPrune: (application) => pruneInDaysAtMidnight(application, 7),
           },
           roles: [
             {
@@ -204,7 +219,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [],
+                answers: ['rejected'],
               },
               read: 'all',
             },
@@ -241,7 +256,15 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Conclusion),
                 ),
               read: 'all',
-            }, // Should assignee see anything here?
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/AssigneeConclusion').then((module) =>
+                  Promise.resolve(module.AssigneeConclusion),
+                ),
+              read: 'all',
+            },
           ],
         },
       },
@@ -250,9 +273,9 @@ const template: ApplicationTemplate<
           name: 'Rejected',
           status: 'rejected',
           lifecycle: pruneAfterDays(30),
-          // onEntry: defineTemplateApi({
-          //   action: ApiActions.submitApplication,
-          // }), // Will there be a rejectApplication ?
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardRejected,
@@ -263,7 +286,6 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                // Change to rejected
                 import('../forms/Rejected').then((module) =>
                   Promise.resolve(module.Rejected),
                 ),
@@ -272,7 +294,6 @@ const template: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                // Change to rejected
                 import('../forms/Rejected').then((module) =>
                   Promise.resolve(module.Rejected),
                 ),

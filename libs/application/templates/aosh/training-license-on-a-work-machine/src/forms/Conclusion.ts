@@ -3,6 +3,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { isContractor } from '../utils'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
@@ -13,10 +14,19 @@ export const Conclusion: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
-      alertTitle: conclusion.default.accordionTitle,
-      alertMessage: conclusion.default.alertMessage,
-      expandableHeader: conclusion.default.accordionTitle,
-      // expandableDescription: conclusion.default.accordionText,
+      alertTitle: conclusion.default.alertMessage,
+      expandableHeader: conclusion.default.expandableHeader,
+      expandableDescription: conclusion.default.expandableDescription,
+      condition: (answers) => !isContractor(answers),
+    }),
+    buildFormConclusionSection({
+      sectionTitle: conclusion.general.sectionTitle,
+      multiFieldTitle: conclusion.general.title,
+      alertTitle: conclusion.approvedForApplicant.alertMessage,
+      expandableHeader: conclusion.approvedForApplicant.expandableHeader,
+      expandableDescription:
+        conclusion.approvedForApplicant.expandableDescription,
+      condition: (answers) => isContractor(answers),
     }),
   ],
 })

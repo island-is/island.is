@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { overview } from '../../../lib/messages'
 import * as styles from './RejectConfirmationModal.css'
+import { useFormContext } from 'react-hook-form'
 
 type RejectConfirmationModalProps = {
   visibility: boolean
@@ -18,6 +19,7 @@ export const RejectConfirmationModal: FC<
   React.PropsWithChildren<RejectConfirmationModalProps>
 > = ({ visibility, setVisibility, application, refetch }) => {
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -29,14 +31,12 @@ export const RejectConfirmationModal: FC<
   )
 
   const submitAndMoveToFinalReview = async () => {
+    setValue('rejected', true)
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
           event: DefaultEvents.REJECT,
-          // answers: {
-          //   rejecter: getRejecter(reviewerNationalId, application.answers),
-          // },
         },
       },
     })

@@ -20,32 +20,32 @@ export const assigneeInformation = {
   }),
   labels: defineMessages({
     companyName: {
-      id: 'aosh.tlwm.application:assigneeInformation.labels.name',
+      id: 'aosh.tlwm.application:assigneeInformation.labels.companyName',
       defaultMessage: 'Nafn fyrirtækis',
       description: `Assignee information name label`,
     },
     companyNationalId: {
-      id: 'aosh.tlwm.application:assigneeInformation.labels.nationalId',
+      id: 'aosh.tlwm.application:assigneeInformation.labels.companyNationalId',
       defaultMessage: 'Kennitala fyrirtækis',
       description: `Assignee information nationalId label`,
     },
     assigneeName: {
-      id: 'aosh.tlwm.application:assigneeInformation.labels.address',
+      id: 'aosh.tlwm.application:assigneeInformation.labels.assigneeName',
       defaultMessage: 'Nafn staðfestingaraðila',
       description: `Assignee information address label`,
     },
     assigneeNationalId: {
-      id: 'aosh.tlwm.application:assigneeInformation.labels.postCode',
+      id: 'aosh.tlwm.application:assigneeInformation.labels.assigneeNationalId',
       defaultMessage: 'Kennitala staðfestingaraðila',
       description: `Assignee information post code label`,
     },
     assigneePhone: {
-      id: 'aosh.tlwm.application:assigneeInformation.labels.phone',
+      id: 'aosh.tlwm.application:assigneeInformation.labels.assigneePhone',
       defaultMessage: 'Símanúmer staðfestingaraðila',
       description: `Assignee information phone number label`,
     },
     assigneeEmail: {
-      id: 'aosh.tlwm.application:assigneeInformation.labels.email',
+      id: 'aosh.tlwm.application:assigneeInformation.labels.assigneeEmail',
       defaultMessage: 'Netfang staðfestingaraðila',
       description: `Assignee information email label`,
     },

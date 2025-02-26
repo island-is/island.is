@@ -34,6 +34,8 @@ export const CertificateOfTenureSchema = z.object({
   unknownMachineType: z.boolean().optional(),
   unknownPracticalRight: z.boolean().optional(),
   alreadyHaveTrainingLicense: z.boolean().optional(),
+  wrongPracticalRight: z.boolean().optional(),
+  listOfPossiblePracticalRights: z.array(z.string()).optional(),
 })
 
 const AssigneeInformationSchema = z
@@ -109,6 +111,7 @@ export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,
   certificateOfTenure: CertificateOfTenureSchema,
   assigneeInformation: AssigneeInformationSchema,
+  rejected: z.boolean().optional(),
 })
 
 export type TrainingLicenseOnAWorkMachineAnswers = z.TypeOf<

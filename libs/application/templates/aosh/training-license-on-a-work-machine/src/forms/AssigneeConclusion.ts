@@ -4,18 +4,19 @@ import { conclusion } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
-export const Rejected: Form = buildForm({
-  id: 'RejectedApplicationForm',
+export const AssigneeConclusion: Form = buildForm({
+  id: 'AssigneeConclusionApplicationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.REJECTED,
+  mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
-      alertTitle: conclusion.rejected.alertMessage,
       multiFieldTitle: conclusion.general.title,
-      accordion: false,
-      alertType: 'error',
+      alertTitle: conclusion.approvedForAssignee.alertMessage,
+      expandableHeader: conclusion.approvedForAssignee.expandableHeader,
+      expandableDescription:
+        conclusion.approvedForAssignee.expandableDescription,
     }),
   ],
 })

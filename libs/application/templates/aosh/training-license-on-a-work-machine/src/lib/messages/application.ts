@@ -17,6 +17,12 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in progress',
   },
+  actionCardReview: {
+    id: 'aosh.tlwm.application:actionCardReview',
+    defaultMessage: 'Í samþykktarferli',
+    description:
+      'Description of application state/status when the application is in review',
+  },
   actionCardDone: {
     id: 'aosh.tlwm.application:actionCardDone',
     defaultMessage: 'Afgreidd',

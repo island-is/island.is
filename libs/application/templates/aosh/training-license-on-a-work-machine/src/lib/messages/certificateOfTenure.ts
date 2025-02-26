@@ -85,7 +85,13 @@ export const certificateOfTenure = {
     unknownPracticalRight: {
       id: 'aosh.tlwm.application:certificateOfTenure.labels.unknownPracticalRight',
       defaultMessage:
-        'Vinnuvélanúmerið sem þú skráðir passar ekki. Öll vinnuvélanúmer byrja á tveimur bókstöfum og þurfa að byrja á bókstöfunum  A,B,G eða Z. Dæmi um vinnuvélanúmer er AB9999.',
+        'Þú hefur ekki réttindi til þess að sækja um kennsluréttindi í þessum vélaflokk.',
+      description: 'Certificate of tenure unknown practical right label',
+    },
+    wrongPracticalRight: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.wrongPracticalRight',
+      defaultMessage:
+        'Vinnuvélanúmerið sem þú skráðir passar ekki. Öll vinnuvélanúmer byrja á tveimur bókstöfum, samstæður sem eru leyfilegar sem byrja á {firstLetter} eru {allAggregates}. Dæmi um vinnuvélanúmer er AB9999.',
       description: 'Certificate of tenure unknown practical right label',
     },
     unknownMachineType: {

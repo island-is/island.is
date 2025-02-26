@@ -9,7 +9,12 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
 import { externalData } from '../lib/messages'
-import { IdentityApi, LicensesApi, UserProfileApi } from '../dataProviders'
+import {
+  IdentityApi,
+  LicensesApi,
+  RegistrationNumberPrefixApi,
+  UserProfileApiWithValidation,
+} from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -48,7 +53,7 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserProfileApiWithValidation,
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
@@ -56,6 +61,11 @@ export const PrerequisitesForm: Form = buildForm({
               provider: LicensesApi,
               title: externalData.licenses.title,
               subTitle: externalData.licenses.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: RegistrationNumberPrefixApi,
+              title: '',
+              subTitle: '',
             }),
           ],
         }),

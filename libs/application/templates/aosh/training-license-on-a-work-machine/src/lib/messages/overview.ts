@@ -62,6 +62,92 @@ export const overview = {
       description: 'Assignee label on overview page',
     },
   }),
+  applicant: defineMessages({
+    name: {
+      id: 'aosh.tlwm.application:overview.labels.name',
+      defaultMessage: 'Nafn: {value}',
+      description: `Overview applicant name label`,
+    },
+    nationalId: {
+      id: 'aosh.tlwm.application:overview.labels.nationalId',
+      defaultMessage: 'Kennitala: {value}',
+      description: `Overview applicant nationalId label`,
+    },
+    address: {
+      id: 'aosh.tlwm.application:overview.labels.address',
+      defaultMessage: 'Heimilisfang: {value}',
+      description: `Overview applicant address label`,
+    },
+    postCode: {
+      id: 'aosh.tlwm.application:overview.labels.postCode',
+      defaultMessage: 'Bæjarfélag og póstnúmer: {value}',
+      description: `Overview applicant post code label`,
+    },
+    phone: {
+      id: 'aosh.tlwm.application:overview.labels.phone',
+      defaultMessage: 'Símanúmer: {value}',
+      description: `Overview applicant phone number label`,
+    },
+    email: {
+      id: 'aosh.tlwm.application:overview.labels.email',
+      defaultMessage: 'Netfang: {value}',
+      description: `Overview applicant email label`,
+    },
+  }),
+  assignee: defineMessages({
+    companyName: {
+      id: 'aosh.tlwm.application:overview.assignee.companyName',
+      defaultMessage: 'Nafn fyrirtækis: {value}',
+      description: `Overview assignee information name label`,
+    },
+    assigneeName: {
+      id: 'aosh.tlwm.application:overview.assignee.assigneeName',
+      defaultMessage: 'Nafn tengiliðs: {value}',
+      description: `Overview assignee information address label`,
+    },
+    assigneeNationalId: {
+      id: 'aosh.tlwm.application:overview.assignee.assigneeNationalId',
+      defaultMessage: 'Kennitala tengiliðs: {value}',
+      description: `Overview assignee information post code label`,
+    },
+    assigneePhone: {
+      id: 'aosh.tlwm.application:overview.assignee.assigneePhone',
+      defaultMessage: 'Símanúmer tengiliðs: {value}',
+      description: `Overview assignee information phone number label`,
+    },
+    assigneeEmail: {
+      id: 'aosh.tlwm.application:overview.assignee.assigneeEmail',
+      defaultMessage: 'Netfang tengiliðs: {value}',
+      description: `Overview assignee information email label`,
+    },
+  }),
+  certificateOfTenure: defineMessages({
+    machineNumber: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.machineNumber',
+      defaultMessage: 'Vinnuvélanúmer: {value}',
+      description: 'Overview certificate of tenure machine number label',
+    },
+    machineType: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.machineType',
+      defaultMessage: 'Tegund vélar: {value}',
+      description: 'Overview certificate of tenure machine type label',
+    },
+    practicalRight: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.practicalRight',
+      defaultMessage: 'Verkleg réttindi: {value}',
+      description: 'Overview certificate of tenure practical right label',
+    },
+    tenureInHours: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.tenureInHours',
+      defaultMessage: 'Starfstími í klst: {value}',
+      description: 'Overview certificate of tenure in hours label',
+    },
+    period: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.period',
+      defaultMessage: 'Tímabil: {value}',
+      description: 'Overview certificate of tenure period',
+    },
+  }),
   confirmationModal: defineMessages({
     title: {
       id: 'aosh.tlwm.application:overview.confirmationModal.title',

@@ -1,7 +1,10 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect } from 'react'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { MachineLicenseCategoryDto } from '@island.is/clients/work-machines'
+import {
+  MachineLicenseCategoryDto,
+  MachineSubCategoryDto,
+} from '@island.is/clients/work-machines'
 import { useFormContext } from 'react-hook-form'
 import { gql, useLazyQuery } from '@apollo/client'
 import { MACHINE_TYPE_BY_REGISTRATION_NUMBER } from '../../graphql/queries'
@@ -28,6 +31,11 @@ export const SetAnswersForCertificateOfTenure: FC<
     'licenses.data.licenseCategories',
     [],
   )
+  const subCategories = getValueViaPath<MachineSubCategoryDto[]>(
+    application.externalData,
+    'subCategories.data',
+    [],
+  )
 
   const [runQuery, { loading }] = useLazyQuery(
     machineTypeByRegistrationNumber,
@@ -50,6 +58,7 @@ export const SetAnswersForCertificateOfTenure: FC<
 
   useEffect(() => {
     setValue('certificateOfTenure.unknownPracticalRight', false)
+    setValue('certificateOfTenure.wrongPracticalRight', false)
     setValue('certificateOfTenure.unknownMachineType', false)
     setValue('certificateOfTenure.alreadyHaveTrainingLicense', false)
     const selectedCategory =
@@ -59,10 +68,31 @@ export const SetAnswersForCertificateOfTenure: FC<
               category.categoryPrefix === watchMachineNumber[0].toUpperCase(),
           )
         : undefined
+    const onlyFirstLetterInSubCategoryCorrect =
+      watchMachineNumber && watchMachineNumber.length > 1
+        ? subCategories?.filter(
+            (category) =>
+              category.registrationNumberPrefix &&
+              category.registrationNumberPrefix[0] ===
+                watchMachineNumber[0].toUpperCase() &&
+              category.registrationNumberPrefix.slice(0, 2) !==
+                watchMachineNumber.slice(0, 2).toUpperCase(),
+          )
+        : undefined
+    const bothLettersInSubCategoryCorrect =
+      watchMachineNumber && watchMachineNumber.length > 1
+        ? subCategories?.find(
+            (category) =>
+              category.registrationNumberPrefix &&
+              category.registrationNumberPrefix.slice(0, 2) ===
+                watchMachineNumber.slice(0, 2).toUpperCase(),
+          )
+        : undefined
     if (
       watchMachineNumber &&
       watchMachineNumber.length > 5 &&
       selectedCategory &&
+      bothLettersInSubCategoryCorrect &&
       !selectedCategory.hasInstructorLicense
     ) {
       setValue(
@@ -93,11 +123,26 @@ export const SetAnswersForCertificateOfTenure: FC<
     } else if (
       watchMachineNumber &&
       watchMachineNumber.length > 5 &&
-      !selectedCategory
+      onlyFirstLetterInSubCategoryCorrect &&
+      onlyFirstLetterInSubCategoryCorrect.length > 0 &&
+      !bothLettersInSubCategoryCorrect
+    ) {
+      setValue('certificateOfTenure.wrongPracticalRight', true)
+      setValue(
+        'certificateOfTenure.listOfPossiblePracticalRights',
+        onlyFirstLetterInSubCategoryCorrect.map(
+          (category) => category.registrationNumberPrefix,
+        ),
+      )
+    } else if (
+      watchMachineNumber &&
+      watchMachineNumber.length > 5 &&
+      !selectedCategory &&
+      bothLettersInSubCategoryCorrect
     ) {
       setValue('certificateOfTenure.unknownPracticalRight', true)
     }
-  }, [watchMachineNumber])
+  }, [watchMachineNumber, licenseCategories, subCategories])
 
   return (
     <Box paddingTop={2}>

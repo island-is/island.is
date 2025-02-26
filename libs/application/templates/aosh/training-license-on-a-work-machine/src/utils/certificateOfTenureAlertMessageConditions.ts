@@ -9,6 +9,14 @@ export const isUnknownPracticalRight = (answers: FormValue) => {
   return !!unknownPracticalRight
 }
 
+export const isWrongPracticalRight = (answers: FormValue) => {
+  const wrongPracticalRight = getValueViaPath<boolean>(
+    answers,
+    'certificateOfTenure.wrongPracticalRight',
+  )
+  return !!wrongPracticalRight
+}
+
 export const isUnknownMachineType = (answers: FormValue) => {
   const unknownMachineType = getValueViaPath<boolean>(
     answers,

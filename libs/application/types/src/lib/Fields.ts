@@ -854,7 +854,7 @@ export interface DisplayField extends BaseField {
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
   keyText?: FormText
-  valueText?: FormText
+  valueText?: FormText | FormTextArray
   boldValueText?: boolean
   lineAboveKeyText?: boolean
 }

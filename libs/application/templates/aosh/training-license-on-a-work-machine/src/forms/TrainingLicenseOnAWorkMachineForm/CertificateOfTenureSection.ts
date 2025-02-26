@@ -13,6 +13,7 @@ import {
   alreadyHaveTrainingLicense,
   isUnknownMachineType,
   isUnknownPracticalRight,
+  isWrongPracticalRight,
 } from '../../utils'
 
 export const certificateOfTenureSection = buildSection({
@@ -53,6 +54,34 @@ export const certificateOfTenureSection = buildSection({
           alertType: 'warning',
           doesNotRequireAnswer: true,
           condition: (answers) => isUnknownPracticalRight(answers),
+        }),
+        buildAlertMessageField({
+          id: 'certificateOfTenure.wrongPracticalRight',
+          title: '',
+          message: (application) => {
+            const listOfPossiblePracticalRights = getValueViaPath<string[]>(
+              application.answers,
+              'certificateOfTenure.listOfPossiblePracticalRights',
+            )
+            return {
+              ...certificateOfTenure.labels.wrongPracticalRight,
+              values: {
+                firstLetter: `${
+                  listOfPossiblePracticalRights
+                    ? listOfPossiblePracticalRights[0].charAt(0).toUpperCase()
+                    : ''
+                }`,
+                allAggregates: `${
+                  listOfPossiblePracticalRights
+                    ? listOfPossiblePracticalRights.join(', ')
+                    : ''
+                }`,
+              },
+            }
+          },
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers) => isWrongPracticalRight(answers),
         }),
         buildAlertMessageField({
           id: 'certificateOfTenure.unknownMachineType',
