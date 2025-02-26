@@ -18,7 +18,7 @@ else
   PROJECTS=$("$PROJECT_ROOT"/scripts/ci/_nx-affected-targets.sh "$1")
   if [[ "${FORCE_UNICORN:-}" == true ]]; then
     # Append 'unicorn' app
-    PROJECTS="${PROJECTS}${PROJECTS:+, }unicorn"
+    PROJECTS="${PROJECTS}${PROJECTS:+, }unicorn-app"
   fi
   >&2 echo "Projects: ${PROJECTS}"
   CHUNKS=$(node "$PROJECT_ROOT"/scripts/ci/_chunk.js "${PROJECTS}")
