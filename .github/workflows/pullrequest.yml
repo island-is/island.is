@@ -54,7 +54,11 @@ jobs:
     if: ${{ needs.prepare.outputs.is-unicorn == 'true' }}
     runs-on: arc-runners
     env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
