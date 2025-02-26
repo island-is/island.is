@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import {
   Box,
   GridColumn,
@@ -5,6 +6,7 @@ import {
   Icon,
   IconMapIcon,
   Inline,
+  LinkV2,
   Stack,
   Tag,
   Text,
@@ -15,6 +17,7 @@ import { BaseProps } from './InfoCard'
 import { ActionCardProps } from '../ActionCard/types'
 
 import * as styles from './InfoCard.css'
+
 const eyebrowColor = 'blueberry600'
 
 export type DetailedProps = BaseProps & {
@@ -24,7 +27,7 @@ export type DetailedProps = BaseProps & {
   //max 5 lines
   detailLines?: Array<{
     icon: IconMapIcon
-    text: string
+    text: string | ReactNode
   }>
   tags?: Array<ActionCardProps['tag']>
 }
@@ -39,6 +42,8 @@ export const DetailedInfoCard = ({
   tags,
   logo,
   logoAlt,
+  link,
+  linkType = 'card',
 }: DetailedProps) => {
   const renderLogo = () => {
     if (!logo) {
@@ -75,7 +80,11 @@ export const DetailedInfoCard = ({
                 color="blue400"
               />
               <Box marginLeft={2}>
-                <Text variant="small">{d.text}</Text>
+                {typeof d.text === 'string' ? (
+                  <Text variant="small">{d.text}</Text>
+                ) : (
+                  d.text
+                )}
               </Box>
             </Box>
           ))}
@@ -144,9 +153,18 @@ export const DetailedInfoCard = ({
       return (
         <GridRow direction="row">
           <GridColumn span="8/12">
-            <Text variant="h3" color="blue400">
-              {title}
-            </Text>
+            {linkType === 'title' ? (
+              <LinkV2 href={link.href}>
+                <Text variant="h3" color="blue400">
+                  {title}
+                </Text>
+              </LinkV2>
+            ) : (
+              <Text variant="h3" color="blue400">
+                {title}
+              </Text>
+            )}
+
             {description && (
               <Box flexGrow={1} marginTop={1}>
                 <Text variant="medium" fontWeight="light">

@@ -34,7 +34,6 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
@@ -165,6 +164,9 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             namespace={namespace}
             eventList={eventList?.items}
             parentPageSlug={organizationPage.slug}
+            variant={
+              organizationPage.slug === 'landspitali' ? 'InfoCard' : 'NewsCard'
+            }
             noEventsFoundFallback={
               <Text variant="h4">
                 {!onlyIncludePastEvents
@@ -278,10 +280,6 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
           : {},
       ),
   ])
-
-  const organizationNamespace = extractNamespaceFromOrganization(
-    organizationPage.organization,
-  )
 
   return {
     organizationPage,

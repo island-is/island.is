@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import {
+  AddToCalendarButton,
   EventLocation,
   EventTime,
   getThemeConfig,
@@ -43,6 +44,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { formatEventLocation } from '@island.is/web/utils/event'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -97,6 +99,7 @@ const EventInformationBox = ({
   const formattedDate =
     event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
   const n = useNamespace(namespace)
+  const router = useRouter()
 
   return (
     <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
@@ -129,6 +132,29 @@ const EventInformationBox = ({
             <EventLocation location={event.location} />
           </Box>
         )}
+        {
+          <Box
+            display="flex"
+            flexWrap="nowrap"
+            columnGap={ICON_TEXT_SPACE}
+            alignItems="center"
+          >
+            <Box>
+              <Icon color="blue400" icon="add" type="outline" />
+            </Box>
+            <AddToCalendarButton
+              event={{
+                title: event.title,
+                description: '',
+                pageUrl: router.asPath,
+                location: formatEventLocation(event.location),
+                startDate: event.startDate,
+                startTime: event.time.startTime,
+                endTime: event.time.endTime,
+              }}
+            />
+          </Box>
+        }
       </Stack>
     </Box>
   )
