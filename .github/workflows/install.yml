@@ -119,7 +119,6 @@ jobs:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
       - name: Set base/head sha output
-        if:
         id: export-sha
         shell: bash
         run: |
