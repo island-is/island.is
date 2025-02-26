@@ -527,7 +527,6 @@ SubPage.getProps = async ({
     namespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
