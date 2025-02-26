@@ -71,7 +71,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          PROJECTS=$(git diff --name-only origin/main |
+          PROJECTS=$(git diff --name-only "$NX_BASE" |
             xargs yarn nx show projects --affected --projects="$AFFECTED_PROJECTS" --json --files |
             jq -rc '. | join(",") | "PROJECTS=\(.)"')
           echo "PROJECTS=$PROJECTS" | tee "$GITHUB_ENV"
