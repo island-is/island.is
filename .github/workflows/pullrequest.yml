@@ -66,16 +66,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Debug find projects without tests
-        id: min-affected
-        run: |
-          set -euo pipefail
-
-          projects=$(git diff --name-only "$NX_BASE" |
-            xargs yarn nx show projects --affected --projects="$AFFECTED_PROJECTS" --json --files |
-            jq -rc '. | join(",") | "PROJECTS=\(.)"')
-          echo "projects=$projects" | tee "$GITHUB_OUTPUT"
-
       - name: Verify that unicorns have some tests
         id: verify
         env:
