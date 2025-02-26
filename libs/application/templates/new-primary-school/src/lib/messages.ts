@@ -1039,6 +1039,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Það þarf að velja a.m.k tvö tungumál',
     description: 'At least two language must be selected',
   },
+  expectedEndDateRequired: {
+    id: 'nps.application:error.expected.end.date.required',
+    defaultMessage: 'Það þarf að velja áætlaðan lokadag',
+    description: 'You must select an expected end date',
+  },
   noChildrenFoundTitle: {
     id: 'nps.application:error.no.children.found.title',
     defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',

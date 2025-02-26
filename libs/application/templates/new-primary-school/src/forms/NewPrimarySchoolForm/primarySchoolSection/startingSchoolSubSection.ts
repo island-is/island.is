@@ -76,7 +76,6 @@ export const startingSchoolSubSection = buildSubSection({
         //   id: 'startingSchool.expectedEndDate',
         //   title: newPrimarySchoolMessages.primarySchool.expectedEndDateTitle,
         //   placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-        //   defaultValue: null,
         //   condition: (answers) => {
         //     const {
         //       expectedStartDateHiddenInput,

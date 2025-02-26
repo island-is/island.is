@@ -130,21 +130,27 @@ export const dataSchema = z.object({
   startingSchool: z
     .object({
       expectedStartDate: z.string(),
-      temporaryStay: z.string().optional(),
-      expectedEndDate: z.string().optional().nullable(),
-    })
-    .refine(({ temporaryStay }) => temporaryStay !== '', {
-      path: ['temporaryStay'],
+      temporaryStay: z.string().min(1).optional(),
+      expectedEndDate: z.string().optional(),
     })
     .refine(
       ({ expectedStartDate, expectedEndDate, temporaryStay }) =>
-        !temporaryStay ||
-        temporaryStay === NO ||
-        (expectedEndDate &&
-          new Date(expectedStartDate) <= new Date(expectedEndDate)),
+        !(
+          temporaryStay === YES &&
+          expectedEndDate &&
+          new Date(expectedStartDate) > new Date(expectedEndDate)
+        ),
       {
         path: ['expectedEndDate'],
         params: errorMessages.expectedEndDateMessage,
+      },
+    )
+    .refine(
+      ({ expectedEndDate, temporaryStay }) =>
+        !(temporaryStay === YES && !expectedEndDate),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateRequired,
       },
     ),
   languages: z
