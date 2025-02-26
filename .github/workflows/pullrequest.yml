@@ -74,7 +74,6 @@ jobs:
         env:
           projects: ${{ env.AFFECTED_PROJECTS }}
         run: |
-          set -x
           yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests | grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u | tee /tmp/projects-with-tests
           echo -e "${projects}" | sed 's/,/\n/g' | sort -u | tee /tmp/projects-all
           if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
