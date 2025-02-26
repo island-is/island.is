@@ -5,7 +5,6 @@ import { HealthcareLicenseCertificateService } from './healthcare-license-certif
 import {
   HealthDirectorateClientModule,
   HealthDirectorateClientConfig,
-  HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 
 @Module({
@@ -14,10 +13,7 @@ import {
     HealthDirectorateClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        HealthDirectorateClientConfig,
-        HealthDirectorateHealthClientConfig,
-      ],
+      load: [HealthDirectorateClientConfig],
     }),
   ],
   providers: [HealthcareLicenseCertificateService],
