@@ -6,25 +6,6 @@ on:
       - mq-docker-test-token
 
 jobs:
-  upload:
-    runs-on: arc-runners
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-      - name: Get manifest data
-        id: manifest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/ci/docker/get-data.mjs
-      - name: Update helm-values repository
-        uses: ./.github/actions/update-helm-values
-        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
-        with:
-          files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
-          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
-
   test:
     runs-on: arc-runners
     steps:
