@@ -128,6 +128,49 @@
         ]
       }
     },
+    "/api/TrufelogOgLifsskodunarfelog/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "TrufelogOgLifsskodunarfelog_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrufelogOgLisskodunarfelogModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": ""
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/SkraSveinsbref": {
       "post": {
         "tags": ["Syslumenn"],
@@ -4245,6 +4288,32 @@
             "nullable": true
           },
           "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "TrufelogOgLisskodunarfelogModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nafnFelags": {
+            "type": "string",
+            "nullable": true
+          },
+          "forstodumadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag": {
             "type": "string",
             "nullable": true
           }
