@@ -9,7 +9,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { NotificationType } from '../../../../notification/notificationsTemplates'
 
-// const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ExampleCommonActionsService extends BaseTemplateApiService {
   constructor(
