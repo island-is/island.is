@@ -38,10 +38,6 @@ export class ExampleStateTransfersService extends BaseTemplateApiService {
       },
     })
 
-    // const name = getValueViaPath<string>(
-    //   application.externalData,
-    //   'nationalRegistry.data.fullName',
-    // )
 
     return {
       referenceData: {
