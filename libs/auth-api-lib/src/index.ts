@@ -164,6 +164,7 @@ export * from './lib/identity-confirmation/identity-confirmation.module'
 export * from './lib/identity-confirmation/identity-confirmation.service'
 export * from './lib/identity-confirmation/dto/IdentityConfirmationInput.dto'
 export * from './lib/identity-confirmation/models/Identity-Confirmation.model'
+export * from './lib/identity-confirmation/dto/identity-confirmation-dto.dto'
 
 // Personal Representative Module
 export * from './lib/personal-representative/personal-representative.module'

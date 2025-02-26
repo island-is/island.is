@@ -93,6 +93,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/secondary-school/emailGenerators/assets",
             "output": "./secondary-school-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/id-card/emailGenerators/assets",
+            "output": "./id-card-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",

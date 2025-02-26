@@ -53,6 +53,9 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'true',
         prod: 'true',
       },
+      AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
+      AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
+      AUDIT_TRAIL_REGION: 'eu-west-1',
     })
     .xroad(Base, JudicialSystem)
     .secrets({
