@@ -1,7 +1,7 @@
 // @ts-check
 import github from '@actions/github'
 import core from '@actions/core'
-import { MAIN_BRANCHES } from './const.mjs';
+import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs';
 
 const randomTag = createRandomString(16)
 const context = github.context
@@ -22,6 +22,7 @@ console.info(`Artifact name: ${artifactName}`)
 console.info(`Docker tag: ${tagName}`)
 console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
+
 
 function shouldRun() {
     if (eventName === 'merge_group') {
@@ -79,7 +80,7 @@ function getTypeOfDeployment() {
             prod: false,
         }
     }
-    if (targetBranch.startsWith('release')) {
+    if (RELEASE_BRANCHES.includes(targetBranch)) {
         return {
             dev: false,
             prod: true,
