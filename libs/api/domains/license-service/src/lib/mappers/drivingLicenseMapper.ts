@@ -17,6 +17,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { formatDate, expiryTag } from '../utils'
+import { format } from 'kennitala'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
@@ -58,7 +59,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.nationalId),
-            value: t.socialSecurityNumber ?? '',
+            value: t.socialSecurityNumber ? format(t.socialSecurityNumber) : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
