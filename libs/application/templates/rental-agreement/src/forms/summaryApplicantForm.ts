@@ -51,6 +51,7 @@ export const summaryApplicantForm: Form = buildForm({
             buildSubmitField({
               id: 'toDraft',
               title: '',
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.EDIT,

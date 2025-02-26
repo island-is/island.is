@@ -39,6 +39,7 @@ export const SummaryDraftSection = buildSection({
         buildSubmitField({
           id: 'toSummary',
           title: 'í yfirlit',
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,

@@ -76,6 +76,7 @@ export const SignatureInfo = buildSection({
         buildSubmitField({
           id: 'signatureInfo.submit',
           title: '',
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
