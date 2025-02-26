@@ -115,10 +115,10 @@ describe('Death Benefits Template', () => {
       )
 
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.EDIT,
+        type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('draft')
+      expect(newState).toBe('additionalDocumentsRequired')
     })
   })
 
