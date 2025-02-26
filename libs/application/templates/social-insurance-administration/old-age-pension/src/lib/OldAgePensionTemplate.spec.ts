@@ -253,5 +253,4 @@ describe('Old Age Pension Template', () => {
       expect(newState).toBe('dismissed')
     })
   })
-  
 })
