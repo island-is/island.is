@@ -63,15 +63,15 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
   })
-
   const certificatesRes = useGetDrugCertificatesQuery()
 
   const drugCertificates = certificatesRes.data?.rightsPortalDrugCertificates
+  const prescriptions = prescriptionsRes.data?.healthDirectoratePrescriptions
 
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: prescriptionsRes,
+    queryResult: [prescriptionsRes, certificatesRes],
   })
 
   const onRefresh = useCallback(async () => {
@@ -79,12 +79,13 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
 
     try {
       await prescriptionsRes.refetch()
+      await certificatesRes.refetch()
     } catch (e) {
       // noop
     } finally {
       setRefetching(false)
     }
-  }, [prescriptionsRes])
+  }, [prescriptionsRes, certificatesRes])
 
   return (
     <View style={{ flex: 1 }}>
@@ -142,9 +143,33 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                   ))}
             </Prescriptions>
           )}
+          {!prescriptionsRes.error && showPrescriptions && (
+            <Prescriptions>
+              {prescriptionsRes.loading && !prescriptionsRes.data
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <GeneralCardSkeleton height={90} key={index} />
+                  ))
+                : drugCertificates?.map((prescription, index) => (
+                    <CertificateCard
+                      key={`${prescription?.id}-${index}`}
+                      certificate={prescription}
+                      loading={
+                        prescriptionsRes.loading && !prescriptionsRes.data
+                      }
+                    />
+                  ))}
+            </Prescriptions>
+          )}
           {showPrescriptions &&
             prescriptionsRes.error &&
             !prescriptionsRes.data && (
+              <ErrorWrapper>
+                <Problem />
+              </ErrorWrapper>
+            )}
+          {!showPrescriptions &&
+            certificatesRes.error &&
+            !certificatesRes.data && (
               <ErrorWrapper>
                 <Problem />
               </ErrorWrapper>

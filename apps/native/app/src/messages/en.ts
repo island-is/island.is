@@ -717,6 +717,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.rejected': 'Rejected',
   'health.prescriptions.inProcess': 'In process',
   'health.prescriptions.furtherInformation': 'Further information',
+  'health.prescriptions.drugName': 'Drug name',
   'health.prescriptions.atcCode': 'ATC code',
   'health.prescriptions.ingredients': 'Ingredient',
   'health.prescriptions.validFrom': 'Valid from',

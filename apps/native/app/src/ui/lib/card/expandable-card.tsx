@@ -82,6 +82,7 @@ interface CardProps {
   message: React.ReactNode
   icon?: ImageSourcePropType
   value?: React.ReactNode
+  topRightValue?: React.ReactNode
   children?: React.ReactNode
   open?: boolean
   onPress?: () => void
@@ -111,6 +112,7 @@ export const ExpandableCard = ({
   title,
   titleIcon,
   titleColor,
+  topRightValue,
   message,
   value,
   children,
@@ -177,6 +179,7 @@ export const ExpandableCard = ({
                   {title}
                 </TitleText>
               </Title>
+              <Typography variant="body3">{topRightValue}</Typography>
             </Row>
           )}
           <Row>

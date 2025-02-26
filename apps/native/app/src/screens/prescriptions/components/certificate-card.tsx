@@ -69,6 +69,10 @@ export function CertificateCard({
 
   const certificateData = [
     {
+      data: certificate.drugName,
+      label: 'health.prescriptions.drugName',
+    },
+    {
       data: certificate.atcCode,
       label: 'health.prescriptions.atcCode',
     },
@@ -104,7 +108,8 @@ export function CertificateCard({
       }
       titleColor={isExpired ? theme.color.red600 : undefined}
       titleIcon={clockIcon}
-      message={certificate.atcName}
+      topRightValue={certificate.drugName ? certificate.atcName : undefined}
+      message={certificate.drugName ?? certificate.atcName}
       icon={chevronDown}
       value={
         certificate.rejected ? (

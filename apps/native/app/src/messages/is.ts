@@ -717,6 +717,7 @@ export const is = {
   'health.prescriptions.rejected': 'Hafnað',
   'health.prescriptions.inProcess': 'Í vinnslu',
   'health.prescriptions.furtherInformation': 'Nánari upplýsingar',
+  'health.prescriptions.drugName': 'Lyfjaheiti',
   'health.prescriptions.atcCode': 'ATC flokkur',
   'health.prescriptions.ingredients': 'Innihaldsefni',
   'health.prescriptions.validFrom': 'Gildir frá',
