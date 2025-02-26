@@ -5,12 +5,16 @@ on:
     branches:
       - mq-docker-test-token
 
+
+
 jobs:
   test:
     runs-on: arc-runners
+    permissions:
+      contents: read
     steps:
     - name: Checkout helm-values repository
-      uses: actions/checkout@v4
+      uses:   mq-docker-test-token
       with:
         repository: island-is/helm-values
         ref: main
