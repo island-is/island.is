@@ -70,11 +70,6 @@ export class ExampleFieldsService extends BaseTemplateApiService {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Use the shared service to send an email using a custom email generator
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   generateApplicationApprovedEmail,
-    //   application,
-    // )
 
     return {
       id: 1337,
