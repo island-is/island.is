@@ -51,7 +51,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.is-unicorn == 'true' && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     runs-on: arc-runners
     timeout-minutes: 45
     env:
