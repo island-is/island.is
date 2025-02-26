@@ -167,7 +167,7 @@ jobs:
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
 
         # Don't run this step locally
-        if: ${{ !github.event.localrun }}
+        if: ${{ !github.event.localrun && inputs.run_merge_queue == false }}
         with:
           name: pr-event
           path: event.json
