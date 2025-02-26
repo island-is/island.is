@@ -16,9 +16,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Login with Private key
-      shell: bash
-      run: |
     - name: Get token
       id: get-token
       shell: bash
