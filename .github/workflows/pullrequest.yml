@@ -69,17 +69,17 @@ jobs:
 
       - name: Verify that affected projects have any tests
         env:
-          PROJECTS: api,web,application-system-api,clients-consultation-portal
+          AFFECTED_PROJECTS: api,web,application-system-api,clients-consultation-portal,clients-rights-portal
         run: |
-          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${PROJECTS//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
-          echo -e "${PROJECTS//,/\n}" | sort > /tmp/projects-all
+          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${AFFECTED_PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${AFFECTED_PROJECTS//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
+          echo -e "${AFFECTED_PROJECTS//,/\n}" | sort > /tmp/projects-all
           if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
             code=$?
             echo "These projects don't have any tests:"
             echo "${d}"
             exit $code
           fi
-          echo "All projects ($PROJECTS) have tests."
+          echo "All projects ($AFFECTED_PROJECTS) have tests."
 
   e2e:
     needs:
