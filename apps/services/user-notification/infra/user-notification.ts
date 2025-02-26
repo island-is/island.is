@@ -190,7 +190,7 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     })
 
 export const userNotificationBirthdayWorkerSetup = (services: {
-  userProfileApi: ServiceBuilder<typeof serviceBirthdayWorkerName>
+  userProfileApi: ServiceBuilder<'service-portal-api'>
 }): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
   service(serviceBirthdayWorkerName)
     .image(imageName)
