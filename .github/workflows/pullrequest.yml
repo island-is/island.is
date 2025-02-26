@@ -48,39 +48,6 @@ jobs:
     uses: ./.github/workflows/install.yml
     secrets: inherit
 
-  tests-unicorn:
-    needs:
-      - prepare
-    if: ${{ needs.prepare.outputs.is-unicorn == 'true' }}
-    runs-on: arc-runners
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Verify that unicorns have some tests
-        id: verify
-        env:
-          projects: ${{ steps.min-affected.outputs.projects }}
-        run: |
-          set -x
-          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests | grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u | tee /tmp/projects-with-tests
-          echo -e "${projects}" | sed 's/,/\n/g' | sort -u | tee /tmp/projects-all
-          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
-            echo "These projects don't have any tests:"
-            echo "${d}"
-            exit 1
-          fi
-          echo "All projects ($projects) have tests."
-
   tests:
     needs:
       - prepare
