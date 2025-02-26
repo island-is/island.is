@@ -85,8 +85,12 @@ export const getCleanCertificateOfTenure = (
     machineRegistrationNumber: certificateOfTenure?.machineNumber ?? '',
     licenseCategoryPrefix: certificateOfTenure?.licenseCategoryPrefix ?? '',
     machineType: certificateOfTenure?.machineType ?? '',
-    dateWorkedOnMachineFrom: new Date(certificateOfTenure?.dateFrom ?? ''),
-    dateWorkedOnMachineTo: new Date(certificateOfTenure?.dateTo ?? ''),
+    dateWorkedOnMachineFrom: certificateOfTenure?.dateFrom
+      ? new Date(certificateOfTenure.dateFrom)
+      : new Date(),
+    dateWorkedOnMachineTo: certificateOfTenure?.dateTo
+      ? new Date(certificateOfTenure.dateTo)
+      : new Date(),
     hoursWorkedOnMachine: parseInt(
       certificateOfTenure?.tenureInHours ?? '0',
       10,

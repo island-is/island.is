@@ -223,7 +223,13 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           '[training-license-on-a-work-machine-service]: Error submitting application to AOSH',
           error,
         )
-        throw Error('Error submitting application to AOSH')
+        throw new TemplateApiError(
+          {
+            title: 'Error submitting application',
+            summary: 'There was an error submitting your application to AOSH',
+          },
+          500,
+        )
       })
   }
 }

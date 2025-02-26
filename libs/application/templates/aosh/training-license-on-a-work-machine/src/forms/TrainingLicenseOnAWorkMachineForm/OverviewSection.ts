@@ -31,7 +31,7 @@ export const overviewSection = buildSection({
           items: getApplicantOverviewInformation,
         }),
         buildOverviewField({
-          id: 'overviewApplicant',
+          id: 'overviewMachineTenure',
           title: '',
           backId: 'certificateOfTenureMultiField',
           bottomLine: false,

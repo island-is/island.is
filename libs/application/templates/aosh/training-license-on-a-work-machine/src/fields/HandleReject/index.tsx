@@ -11,7 +11,6 @@ export const HandleReject: FC<FieldBaseProps> = ({
     useState<boolean>(false)
 
   setBeforeSubmitCallback?.(async (event) => {
-    console.log(event)
     if (event === DefaultEvents.REJECT) {
       setRejectModalVisibility(true)
       return [false, '']

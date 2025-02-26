@@ -31,7 +31,7 @@ export const reviewOverviewSection = buildSection({
             getApplicantOverviewInformation(answers, externalData, true),
         }),
         buildOverviewField({
-          id: 'overviewApplicant',
+          id: 'overviewMachineTenure',
           title: '',
           bottomLine: false,
           items: getMachineTenureOverviewInformation,
