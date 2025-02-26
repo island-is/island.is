@@ -39658,6 +39658,7 @@ __metadata:
     typescript: "npm:5.4.5"
     ua-parser-js: "npm:1.0.33"
     unified: "npm:9.2.0"
+    universal-github-app-jwt: "npm:2.2.0"
     uuidv4: "npm:6.0.8"
     vm-browserify: "npm:1.1.2"
     webpack-bundle-analyzer: "npm:4.5.0"
@@ -57282,6 +57283,13 @@ __metadata:
     "@types/cookie": "npm:^0.3.3"
     cookie: "npm:^0.4.0"
   checksum: 10/4f34c9432c480957b95d13110cd0f8adc7005ebdefe4717ebfc1480771403d62cb3826681d5bb585004884e24b1fa4e876403d00d1267d82800e9e0a42126df8
+  languageName: node
+  linkType: hard
+
+"universal-github-app-jwt@npm:2.2.0":
+  version: 2.2.0
+  resolution: "universal-github-app-jwt@npm:2.2.0"
+  checksum: 10/9fb7f9a0ef305a17f7d93aea34b6fb910162b2af5718e11c0bd96af9c5fb8bb7189ac704e5dba029ec7a05262bf50160cf6d9f7fcbc715db42fb10a0c30468d2
   languageName: node
   linkType: hard
 

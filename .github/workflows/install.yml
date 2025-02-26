@@ -103,7 +103,6 @@ jobs:
           fetch-depth: 0  
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
       - name: load-deps
         uses: ./.github/actions/load-deps
       - id: get-branch
