@@ -7,10 +7,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { EducationPaths } from '../../lib/paths'
+import { EducationPaths } from '../../../lib/paths'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { defineMessage } from 'react-intl'
-import { edMessage } from '../../lib/messages'
+import { edMessage } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {

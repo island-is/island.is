@@ -7,7 +7,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { Stack } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { EducationPaths } from '../../lib/paths'
+import { EducationPaths } from '../../../lib/paths'
 import {
   ActionCard,
   CardLoader,
@@ -15,7 +15,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { useFamilySchoolCareerQuery } from './PrimarySchoolFamilyExamOverview.generated'
-import { edMessage } from '../../lib/messages'
+import { edMessage } from '../../../lib/messages'
 
 const generateActionCard = (
   name: string,
@@ -50,10 +50,10 @@ export const PrimarySchoolFamilyExamOverview = () => {
   const { data, loading, error } = useFamilySchoolCareerQuery()
 
   const userCareer: EducationPrimarySchoolStudentCareer | null =
-    data?.userFamilyExamResults.userCareer ?? null
+    data?.userFamilyPrimarySchoolExamResults.userCareer ?? null
 
   const familyCareer: Array<EducationPrimarySchoolStudentCareer> | null =
-    data?.userFamilyExamResults.familyMemberCareers ?? null
+    data?.userFamilyPrimarySchoolExamResults.familyMemberCareers ?? null
 
   const careers: Array<React.ReactNode> = [
     userCareer?.name && userCareer?.examDateSpan

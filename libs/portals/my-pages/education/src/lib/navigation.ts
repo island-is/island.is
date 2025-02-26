@@ -11,6 +11,10 @@ export const educationNavigation: PortalNavigationItem = {
   description: m.educationDescription,
   children: [
     {
+      name: m.myEducation,
+      path: EducationPaths.EducationOverview,
+    },
+    {
       name: m.educationGrunnskoli,
       path: EducationPaths.EducationGrunnskoli,
       children: [

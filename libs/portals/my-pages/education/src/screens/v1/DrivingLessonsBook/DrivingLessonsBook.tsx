@@ -25,10 +25,10 @@ import {
   vehicleMessage as messages,
   urls,
 } from '@island.is/portals/my-pages/assets/messages'
-import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
-import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
-import Exams from '../../components/DrivingLessonsTables/Exams'
 import { Problem } from '@island.is/react-spa/shared'
+import DrivingLessonsSchools from '../../../components/DrivingLessonsTables/DrivingLessonsSchools'
+import Exams from '../../../components/DrivingLessonsTables/Exams'
+import PhysicalLessons from '../../../components/DrivingLessonsTables/PhysicalLessons'
 
 export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {

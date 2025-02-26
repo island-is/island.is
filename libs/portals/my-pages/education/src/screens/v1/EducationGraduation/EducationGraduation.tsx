@@ -9,11 +9,11 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { isDefined } from '@island.is/shared/utils'
-import { EducationPaths } from '../../lib/paths'
+import { EducationPaths } from '../../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { useStudentInfoQuery } from './EducationGraduation.generated'
 import { useMemo } from 'react'
-import { mapUniversityToSlug } from '../../utils/mapUniversitySlug'
+import { mapUniversityToSlug } from '../../../utils/mapUniversitySlug'
 
 export const EducationGraduation = () => {
   useNamespaces('sp.education-graduation')

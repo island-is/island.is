@@ -25,16 +25,17 @@ export class PrimarySchoolResolver {
   @Query(() => FamilyPrimarySchoolCareer)
   @Scopes(ApiScope.education)
   @Audit()
-  userFamilyExamResults(
+  userFamilyPrimarySchoolExamResults(
     @CurrentUser() user: User,
   ): Promise<FamilyPrimarySchoolCareer | null> {
+    const data = this.educationService.getPrimarySchoolExamResults(user)
     return this.educationService.familyCareers(user)
   }
 
   @Query(() => StudentCareer)
   @Scopes(ApiScope.education)
   @Audit()
-  userFamilyMemberExamResults(
+  userFamilyMemberPrimarySchoolExamResults(
     @CurrentUser() user: User,
     @Args('input') input: ExamFamilyMemberInput,
   ): Promise<StudentCareer | null> {

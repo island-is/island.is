@@ -4,7 +4,7 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import { edMessage } from '../../lib/messages'
+import { edMessage } from '../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import { Box, Text, Table as T } from '@island.is/island-ui/core'
@@ -36,18 +36,20 @@ export const PrimarySchoolFamilyExamOverview = () => {
       serviceProviderTooltip={formatMessage(m.mmsTooltip)}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && !data?.userFamilyMemberExamResults && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
       {!error &&
         !loading &&
-        data?.userFamilyMemberExamResults?.examResults?.map(
+        !data?.userFamilyMemberPrimarySchoolExamResults && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
+      {!error &&
+        !loading &&
+        data?.userFamilyMemberPrimarySchoolExamResults?.examResults?.map(
           (studentAssessment, index) => (
             <Box key={index} marginBottom={7}>
               <Text variant="h4" as="h2" marginBottom={3}>

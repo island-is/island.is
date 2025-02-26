@@ -9,11 +9,13 @@ import {
   ExamFamilyMemberInput,
   StudentCareer,
 } from '../models'
+import { FriggClientService } from '@island.is/clients/mms/frigg'
 
 @Injectable()
 export class EducationServiceV2 {
   constructor(
     private readonly gradeService: GradeClientService,
+    private readonly friggService: FriggClientService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -70,5 +72,14 @@ export class EducationServiceV2 {
     }
 
     return mapCareer(examData, false) ?? null
+  }
+
+  async getPrimarySchoolExamResults(user: User): Promise<any | null> {
+    const data = await this.friggService.getUserById(user, user.nationalId)
+    if (!data) {
+      return null
+    }
+
+    return 'bingbong'
   }
 }

@@ -1,7 +1,7 @@
 query userFamilyMemberExamResults(
   $input: EducationPrimarySchoolExamUserFamilyMemberResultsInput!
 ) {
-  userFamilyMemberExamResults(input: $input) {
+  userFamilyMemberPrimarySchoolExamResults(input: $input) {
     nationalId
     name
     examDateSpan

@@ -1,0 +1,9 @@
+query overview {
+  userFamilyPrimarySchoolExamResults {
+    userCareer {
+      nationalId
+      name
+      examDateSpan
+    }
+  }
+}

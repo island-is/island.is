@@ -17,8 +17,8 @@ import { useParams } from 'react-router-dom'
 
 import { useGetInnaPeriodsQuery } from '../SecondarySchoolCareer/Periods.generated'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
-import { tagSelector } from '../../utils/tagSelector'
-import { edMessage } from '../../lib/messages'
+import { tagSelector } from '../../../utils/tagSelector'
+import { edMessage } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {

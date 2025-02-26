@@ -25,7 +25,7 @@ import { useParams } from 'react-router-dom'
 import {
   mapSlugToContentfulSlug,
   mapSlugToUniversity,
-} from '../../utils/mapUniversitySlug'
+} from '../../../utils/mapUniversitySlug'
 import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 type UseParams = {
   id: string

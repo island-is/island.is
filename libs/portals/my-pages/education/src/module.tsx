@@ -4,55 +4,57 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
+const Overview = lazy(() => import('./screens/v2/Overview/Overview'))
 const PrimarySchoolFamilyExamOverview = lazy(
   () =>
     import(
-      './screens/PrimarySchoolFamilyExamOverview/PrimarySchoolFamilyExamOverview'
+      './screens/v1/PrimarySchoolFamilyExamOverview/PrimarySchoolFamilyExamOverview'
     ),
 )
 
 const PrimarySchoolExamDetail = lazy(
   () =>
     import(
-      './screens/PrimarySchoolFamilyExamDetail/PrimarySchoolFamilyExamDetail'
+      './screens/v1/PrimarySchoolFamilyExamDetail/PrimarySchoolFamilyExamDetail'
     ),
 )
 
 const EducationGraduation = lazy(
-  () => import('./screens/EducationGraduation/EducationGraduation'),
+  () => import('./screens/v1/EducationGraduation/EducationGraduation'),
 )
 
 const EducationGraduationDetail = lazy(
-  () => import('./screens/EducationGraduationDetail/EducationGraduationDetail'),
+  () =>
+    import('./screens/v1/EducationGraduationDetail/EducationGraduationDetail'),
 )
 
 const SecondarySchoolCareer = lazy(
-  () => import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
+  () => import('./screens/v1/SecondarySchoolCareer/SecondarySchoolCareer'),
 )
 
 const SecondarySchoolGraduationOverview = lazy(
   () =>
     import(
-      './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+      './screens/v1/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
     ),
 )
 
 const SecondarySchoolGraduationSingle = lazy(
   () =>
     import(
-      './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+      './screens/v1/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
     ),
 )
 
 const SecondarySchoolGraduationDetail = lazy(
   () =>
     import(
-      './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+      './screens/v1/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
     ),
 )
 
 const DrivingLessonsBook = lazy(
-  () => import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
+  () => import('./screens/v1/DrivingLessonsBook/DrivingLessonsBook'),
 )
 
 export const educationModule: PortalModule = {
@@ -63,12 +65,13 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: (
-        <Navigate
-          to={EducationPaths.EducationPrimarySchoolAssessment}
-          replace
-        />
-      ),
+      element: <Navigate to={EducationPaths.EducationOverview} replace />,
+    },
+    {
+      name: 'Mín menntun',
+      path: EducationPaths.EducationOverview,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <Overview />,
     },
 
     // Grunnskóli - Elementary

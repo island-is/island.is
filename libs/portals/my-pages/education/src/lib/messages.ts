@@ -1,5 +1,16 @@
 import { defineMessages } from 'react-intl'
 
+export const m = defineMessages({
+  myEducation: {
+    id: 'sp.education:my-education',
+    defaultMessage: 'Mín menntun',
+  },
+  myEducationIntro: {
+    id: 'sp.education:my-education-intro',
+    defaultMessage: 'Hér koma grunnupplýsingar um mína menntun',
+  },
+})
+
 export const edMessage = defineMessages({
   studentAssessment: {
     id: 'sp.education-secondary-school:student-assessment',

@@ -10,9 +10,9 @@ import {
 import { Box, Column, SkeletonLoader } from '@island.is/island-ui/core'
 
 import { useGetInnaPeriodsQuery } from './Periods.generated'
-import { tagSelector } from '../../utils/tagSelector'
+import { tagSelector } from '../../../utils/tagSelector'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { edMessage } from '../../lib/messages'
+import { edMessage } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const EducationGraduationDetail = () => {
