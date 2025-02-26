@@ -70,7 +70,13 @@ jobs:
       - name: Debug find projects without tests
         run: |
           set -euo pipefail
-          for project in $(yarn nx show projects --with-target test --projects "${AFFECTED_PROJECTS}"); do
+
+          PROJECTS=$(git diff --name-only origin/main |
+            xargs nx show projects --affected --projects="$AFFECTED_PROJECTS" --json --files |
+            jq -rc '. | join(",") | "PROJECTS=\(.)"')
+          echo "PROJECTS=$PROJECTS" | tee "$GITHUB_ENV"
+
+          for project in $PROJECTS; do
             if ! yarn nx run --skip-nx-cache --output-style=stream "${project}:test" -- --listTests | grep -q "^${project}: "; then
               echo "${project} has no tests 😱"
             fi
@@ -80,13 +86,13 @@ jobs:
         run: |
           set -x
           yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${AFFECTED_PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${AFFECTED_PROJECTS//,/|}): " | cut -d':' -f1 | sort -u | tee /tmp/projects-with-tests
-          echo -e "${AFFECTED_PROJECTS}" | sed 's/,/\n/g' | sort -u | tee /tmp/projects-all
+          echo -e "${PROJECTS}" | sed 's/,/\n/g' | sort -u | tee /tmp/projects-all
           if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
             echo "These projects don't have any tests:"
             echo "${d}"
             exit 1
           fi
-          echo "All projects ($AFFECTED_PROJECTS) have tests."
+          echo "All projects ($PROJECTS) have tests."
 
   e2e:
     needs:
