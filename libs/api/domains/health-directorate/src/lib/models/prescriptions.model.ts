@@ -1,6 +1,7 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
+  PrescribedItemCategoryEnum,
   PrescribedItemRenewalBlockedReasonEnum,
   PrescribedItemRenewalStatusEnum,
 } from './enums'
@@ -22,11 +23,14 @@ export class Prescription {
   @Field({ nullable: true })
   url?: string
 
-  @Field(() => Int, { nullable: true })
-  quantity?: number
+  @Field({ nullable: true })
+  quantity?: string
 
-  @Field()
-  prescriberName!: string
+  @Field(() => PrescribedItemCategoryEnum, { nullable: true })
+  category?: PrescribedItemCategoryEnum
+
+  @Field({ nullable: true })
+  prescriberName?: string
 
   @Field(() => Date)
   issueDate!: Date

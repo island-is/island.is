@@ -21,7 +21,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
   TokenGuard,
@@ -79,7 +79,7 @@ export class LimitedAccessCaseController {
   ) {}
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
     CaseReadGuard,
@@ -116,7 +116,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -145,7 +145,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     LimitedAccessCaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -197,7 +197,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -226,7 +226,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard(indictmentCases),
@@ -268,7 +268,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -298,7 +298,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -325,7 +325,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
@@ -361,7 +361,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard(indictmentCases),
@@ -393,7 +393,7 @@ export class LimitedAccessCaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([
