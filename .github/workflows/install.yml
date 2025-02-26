@@ -137,6 +137,7 @@ jobs:
         id: prepare-merge-queue
         if: ${{ inputs.run_merge_queue == true }}
         run: |
+          yarn --cwd scripts/ci/docker install
           node scripts/ci/docker/generate-tag.mjs
 
       # This is to increase the retention days for our GitHub Actions run events

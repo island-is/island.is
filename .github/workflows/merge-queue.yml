@@ -96,6 +96,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
       - name: Set id for matrix
         run: |
+          yarn --cwd scripts/ci/docker install
           node ./scripts/ci/docker/create-id.mjs
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -208,12 +209,15 @@ jobs:
       - name: Prepare artifact to be uploaded
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
-        run: node scripts/ci/docker/write-data.mjs
+        run: |
+          yarn --cwd scripts/ci/docker install
+          node scripts/ci/docker/write-data.mjs
       - name: Get manifest data
         id: manifest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/ci/docker/get-data.mjs
+        run: |
+          node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
         if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
