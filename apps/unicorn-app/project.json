@@ -94,6 +94,12 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "e2e-ci": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'Fake e2e'"
+      }
+    },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
     }
