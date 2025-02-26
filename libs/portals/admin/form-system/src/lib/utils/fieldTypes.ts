@@ -1,5 +1,5 @@
 import { Option } from '@island.is/island-ui/core'
-import { FieldTypesEnum } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 /* eslint-disable @typescript-eslint/naming-convention */
 enum FieldTypes {
@@ -20,7 +20,7 @@ enum FieldTypes {
   EMAIL = 'Netfang',
   PROPERTY_NUMBER = 'Fasteignanúmer',
   PHONE_NUMBER = 'Símanúmer',
-  DOCUMENT = 'Skjal',
+  FILE = 'Skjal',
   MESSAGE = 'Textalýsing',
   TEXTBOX = 'Textabox',
   NUMBERBOX = 'Tölubox',

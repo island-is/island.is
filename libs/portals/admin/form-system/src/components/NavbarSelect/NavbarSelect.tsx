@@ -10,7 +10,8 @@ import {
 } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 const filterSections = (
   sections: Maybe<Maybe<FormSystemSection>[]> | undefined,

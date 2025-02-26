@@ -27,10 +27,6 @@ export const Forms = () => {
 
         <Box marginTop={5}></Box>
 
-        {/* <Box marginTop={5}>
-          <Box width="half"></Box>
-        </Box> */}
-
         <TableRowHeader />
         {forms &&
           formsState?.map((f) => {

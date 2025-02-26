@@ -15,7 +15,6 @@ interface Props {
 export const FormsHeader = (props: Props) => {
   const { setFormsState } = props
   const navigate = useNavigate()
-  // const { forms } = useLoaderData() as FormsLoaderResponse
   const { formatMessage } = useIntl()
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {

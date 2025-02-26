@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
 import { CreationOptional } from 'sequelize'
-import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 @Table({ tableName: 'organization_field_type' })
 export class OrganizationFieldType extends Model<OrganizationFieldType> {

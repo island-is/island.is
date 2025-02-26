@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 import { FormSystemSection } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const defaultStep: FormSystemSection = {
   id: uuid(),

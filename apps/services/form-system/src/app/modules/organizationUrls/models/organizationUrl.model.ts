@@ -9,8 +9,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-import { UrlMethods } from '../../../enums/urlMethods'
-import { UrlTypes } from '../../../enums/urlTypes'
+import { UrlMethods } from '@island.is/form-system/enums'
+import { UrlTypes } from '@island.is/form-system/enums'
 
 @Table({ tableName: 'organization_url' })
 export class OrganizationUrl extends Model<OrganizationUrl> {

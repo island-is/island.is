@@ -155,9 +155,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:save-and-continue',
     defaultMessage: 'Vista og halda áfram',
   },
-  addStep: {
-    id: 'portals-admin.form-system:add-step',
-    defaultMessage: 'Bæta við skrefi',
+  addSection: {
+    id: 'portals-admin.form-system:add-section',
+    defaultMessage: 'Bæta við kafla',
   },
   allowFileTypes: {
     id: 'portals-admin.form-system:allow-file-types',
