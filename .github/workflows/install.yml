@@ -117,14 +117,31 @@ jobs:
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
+        if: ${{ inputs.run_merge_queue == false }}
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
       - name: Set base/head sha output
+        if:
         id: export-sha
         shell: bash
         run: |
+          if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
+            # In merge que we always want to use the last 
+            # commit as head
+            # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
+            #
+            # If we do not do this we will get the wrong base sha
+            # :(
+            export NX_HEAD=${{ github.sha }}
+            export NX_BASE=$(git rev-parse HEAD^1)
+            echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
+            echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
+            echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
+            echo BASE="$NX_BASE" >> "$GITHUB_ENV"
+            exit 0
+          fi
           echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
           echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
           # NOTE: we reference BASE and HEAD elsewhere
