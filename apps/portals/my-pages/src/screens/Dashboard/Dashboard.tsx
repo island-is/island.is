@@ -42,8 +42,6 @@ import * as styles from './Dashboard.css'
 export const Dashboard = () => {
   const userInfo = useUserInfo()
 
-  const k = 8
-
   const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
