@@ -1,8 +1,7 @@
-version: '3.3'
-
+name: islandis-shared
 services:
   redis-cluster:
-    container_name: gha_cache_redis_cluster
+    container_name: redis_cluster
     image: docker.io/grokzen/redis-cluster:6.0.16
     privileged: true
     environment:
