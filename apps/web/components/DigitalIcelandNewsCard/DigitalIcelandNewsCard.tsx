@@ -53,7 +53,7 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
 
           <Stack space={1}>
             {item.date && (
-              <Text variant="h5" color="purple400">
+              <Text variant="eyebrow" color="purple400">
                 {format(new Date(item.date), 'do MMMM yyyy')}
               </Text>
             )}
