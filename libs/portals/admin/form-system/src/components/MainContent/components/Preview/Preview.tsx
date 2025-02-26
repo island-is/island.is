@@ -25,7 +25,6 @@ interface Props {
 }
 
 export const Preview = ({ data }: Props) => {
-  // const type = data.fieldType as unknown as FieldTypesEnum
   const type = data.fieldType
   const { formatMessage } = useIntl()
   return (
