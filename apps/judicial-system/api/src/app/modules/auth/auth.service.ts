@@ -29,7 +29,7 @@ export class AuthService {
     private readonly logger: Logger,
   ) {}
 
-  async findUsersByNatinoalId(nationalId: string): Promise<User[] | undefined> {
+  async findUsersByNationalId(nationalId: string): Promise<User[] | undefined> {
     const res = await fetch(
       `${this.config.backendUrl}/api/user/?nationalId=${nationalId}`,
       {
