@@ -50,7 +50,7 @@ auth-admin-web:
         nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'identity-server.dev01.devland.is'
+        - host: 'innskra.dev01.devland.is'
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
