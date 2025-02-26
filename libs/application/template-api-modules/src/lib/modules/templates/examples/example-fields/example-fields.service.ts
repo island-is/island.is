@@ -60,16 +60,6 @@ export class ExampleFieldsService extends BaseTemplateApiService {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // const token = await this.sharedTemplateAPIService.createAssignToken(
-    //   application,
-    //   TWO_HOURS_IN_SECONDS,
-    // )
-
-    // await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-    //   generateAssignApplicationEmail,
-    //   application,
-    //   token,
-    // )
 
     return {
       id: 1337,
