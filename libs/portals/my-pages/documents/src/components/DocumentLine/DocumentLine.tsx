@@ -17,7 +17,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom'
-import { useDocumentListV3 } from '../../hooks/useDocumentListV3'
+import { useDocumentList } from '../../hooks/useDocumentList'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
@@ -75,7 +75,7 @@ export const DocumentLine: FC<Props> = ({
     bookmarkSuccess,
   } = useMailAction()
 
-  const { fetchObject, refetch } = useDocumentListV3()
+  const { fetchObject, refetch } = useDocumentList()
 
   const {
     setActiveDocument,

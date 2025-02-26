@@ -25,7 +25,7 @@ import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { FavAndStash } from '../../components/FavAndStash/FavAndStash'
 import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
-import { pageSize, useDocumentListV3 } from '../../hooks/useDocumentListV3'
+import { pageSize, useDocumentList } from '../../hooks/useDocumentList'
 import { useKeyDown } from '../../hooks/useKeyDown'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
@@ -62,7 +62,7 @@ export const DocumentsOverview = () => {
     totalPages,
     filteredDocuments,
     totalCount,
-  } = useDocumentListV3()
+  } = useDocumentList()
 
   const { handlePageChange, handleSearchChange } = useDocumentFilters()
 

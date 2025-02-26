@@ -7,6 +7,7 @@ import { ActiveDocumentType2 } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentRenderer.css'
+import { usePdfRendererLazyQuery } from './PdfRenderer.generated'
 
 type PdfDocumentProps = {
   document: ActiveDocumentType2
@@ -24,6 +25,8 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
   const [scalePDF, setScalePDF] = useState(initScale)
   const ref = useRef<HTMLDivElement>(null)
   const { formatMessage } = useLocale()
+
+  const [pdfRendererQuery] = usePdfRendererLazyQuery()
 
   useEffect(() => {
     if (scalePDF > 1) {
@@ -101,6 +104,27 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
           file={`data:application/pdf;base64,${document.document.value}`}
           scale={scalePDF}
           autoWidth={false}
+          onLoadingError={(error) => {
+            console.error('PdfViewer loading error', error)
+            pdfRendererQuery({
+              variables: {
+                input: {
+                  id: document.id,
+                  success: false,
+                },
+              },
+            })
+          }}
+          onLoadingSuccess={() => {
+            pdfRendererQuery({
+              variables: {
+                input: {
+                  id: document.id,
+                  success: true,
+                },
+              },
+            })
+          }}
           errorComponent={
             <Box>
               <Problem

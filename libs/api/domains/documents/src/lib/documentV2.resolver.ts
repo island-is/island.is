@@ -19,7 +19,6 @@ import {
 import {
   FeatureFlagGuard,
   FeatureFlagService,
-  Features,
 } from '@island.is/nest/feature-flags'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { DocumentInput } from './models/v2/document.input'
@@ -37,6 +36,10 @@ import type { Locale } from '@island.is/shared/types'
 import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
 import { DocumentConfirmActions } from './models/v2/confirmActions.model'
 import { isDefined } from '@island.is/shared/utils'
+import {
+  DocumentPdfRenderer,
+  DocumentPdfRendererInput,
+} from './models/v2/pdfRenderer.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -126,6 +129,39 @@ export class DocumentResolverV2 {
       confirmed: input.confirmed,
     })
     return { id: input.id, confirmed: input.confirmed }
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentPdfRenderer, {
+    nullable: true,
+    name: 'documentV2PdfRenderer',
+  })
+  async pdfRenderer(
+    @Args('input') input: DocumentPdfRendererInput,
+    @CurrentUser() user: User,
+  ) {
+    this.auditService.audit({
+      auth: user,
+      namespace: '@island.is/api/document-v2',
+      action: 'pdfRenderer',
+      resources: input.id,
+      meta: { success: input.success },
+    })
+    if (!input.success) {
+      this.logger.error('failed to render document pdf', {
+        category: LOG_CATEGORY,
+        id: input.id,
+        success: input.success,
+      })
+    } else {
+      this.logger.info('rendered document pdf', {
+        category: LOG_CATEGORY,
+        id: input.id,
+        success: input.success,
+      })
+    }
+
+    return { id: input.id, success: input.success }
   }
 
   @ResolveField('categories', () => [Category])

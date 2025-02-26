@@ -22,7 +22,7 @@ import {
 import {
   DocumentLine,
   DocumentsPaths,
-  useDocumentListV3,
+  useDocumentList,
 } from '@island.is/portals/my-pages/documents'
 import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -49,9 +49,7 @@ export const Dashboard = () => {
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
   const hasDelegationAccess = userInfo?.scopes?.includes(DocumentsScope.main)
 
-  const { filteredDocuments, data, loading } = useDocumentListV3({
-    defaultPageSize: 8,
-  })
+  const { filteredDocuments, data, loading } = useDocumentList()
 
   useEffect(() => {
     PlausiblePageviewDetail(
