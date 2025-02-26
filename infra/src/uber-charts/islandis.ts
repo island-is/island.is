@@ -288,8 +288,8 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   //userNotificationService,
   //userNotificationWorkerService,
-  userNotificationCleanupWorkerService,
-  //userNotificationBirthdayWorkerService,
+  //userNotificationCleanupWorkerService,
+  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
