@@ -100,38 +100,23 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - name: Checkout code
+      - name: checkout
         uses: actions/checkout@v4
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Debug find projects without tests
-        run: |
-          set -euo pipefail
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
-          PROJECTS=$(git diff --name-only "$NX_BASE" |
-            xargs yarn nx show projects --affected --projects="$AFFECTED_PROJECTS" --json --files |
-            jq -rc '. | join(",") | "PROJECTS=\(.)"')
-          echo "PROJECTS=$PROJECTS" | tee "$GITHUB_ENV"
-
-          for project in $PROJECTS; do
-            if ! yarn nx run --skip-nx-cache --output-style=stream "${project}:test" -- --listTests | grep -q "^${project}: "; then
-              echo "${project} has no tests 😱"
-            fi
-          done
-
-      - name: Verify that affected projects have any tests
-        run: |
-          set -x
-          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${AFFECTED_PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${AFFECTED_PROJECTS//,/|}): " | cut -d':' -f1 | sort -u | tee /tmp/projects-with-tests
-          echo -e "${PROJECTS}" | sed 's/,/\n/g' | sort -u | tee /tmp/projects-all
-          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
-            echo "These projects don't have any tests:"
-            echo "${d}"
-            exit 1
-          fi
-          echo "All projects ($PROJECTS) have tests."
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   e2e:
     needs:
