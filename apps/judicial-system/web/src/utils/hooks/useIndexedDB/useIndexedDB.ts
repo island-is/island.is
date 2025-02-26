@@ -13,7 +13,11 @@ export const Database = {
 
 type LawyerWithCreated = Lawyer & { created: Date }
 
-export const useIndexedDB = (databaseName: string, tableName: string) => {
+export const useIndexedDB = (
+  databaseName: string,
+  tableName: string,
+  shouldFetchLawyers: boolean,
+) => {
   const [allLawyers, setAllLawyers] = useState<Lawyer[]>([])
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
   const lawyers = useGetLawyers(shouldFetch)
@@ -51,8 +55,10 @@ export const useIndexedDB = (databaseName: string, tableName: string) => {
       }
     }
 
-    syncData()
-  }, [])
+    if (shouldFetchLawyers) {
+      syncData()
+    }
+  }, [shouldFetchLawyers])
 
   useEffect(() => {
     if (shouldFetch && lawyers.length > 0) {

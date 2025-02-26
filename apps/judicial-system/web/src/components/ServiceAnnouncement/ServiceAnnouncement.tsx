@@ -1,9 +1,12 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { type Lawyer } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  type Lawyer,
+} from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   ServiceStatus,
@@ -15,6 +18,7 @@ import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { UserContext } from '../UserProvider/UserProvider'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
@@ -97,13 +101,18 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
+  const { user } = useContext(UserContext)
   const [lawyer, setLawyer] = useState<Lawyer>()
 
   const { subpoena, subpoenaLoading } = useSubpoena(localSubpoena)
 
   const { formatMessage } = useIntl()
 
-  const { allLawyers } = useIndexedDB(Database.name, Database.lawyerTable)
+  const { allLawyers } = useIndexedDB(
+    Database.name,
+    Database.lawyerTable,
+    isDistrictCourtUser(user),
+  )
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena

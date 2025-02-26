@@ -83,7 +83,11 @@ const HeaderContainer = () => {
   const [isRobot, setIsRobot] = useState<boolean>()
 
   const { countryCode } = useGeoLocation()
-  const { allLawyers } = useIndexedDB(Database.name, Database.lawyerTable)
+  const { allLawyers } = useIndexedDB(
+    Database.name,
+    Database.lawyerTable,
+    isDistrictCourtUser(user) || isDefenceUser(user),
+  )
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')

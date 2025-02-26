@@ -1,10 +1,20 @@
-import { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { type Lawyer } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  type Lawyer,
+} from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
@@ -16,6 +26,7 @@ import {
   Database,
   useIndexedDB,
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { UserContext } from '../UserProvider/UserProvider'
 import {
   emailLabelStrings,
   nameLabelStrings,
@@ -80,10 +91,16 @@ const InputAdvocate: FC<Props> = ({
   disabled,
 }) => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
-  const { allLawyers } = useIndexedDB(Database.name, Database.lawyerTable)
+
+  const { allLawyers } = useIndexedDB(
+    Database.name,
+    Database.lawyerTable,
+    isDistrictCourtUser(user),
+  )
 
   const options = useMemo(
     () =>
