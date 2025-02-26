@@ -17,7 +17,7 @@ runs:
       with:
         repository: island-is/helm-values
         ref: main
-        ssh-key: ${{ inputs.gh_token_pat }}
+        ssh-key: ${{ inputs.ssh-key }}
         path: helm-values
     - name: Copy affected helm charts from island.is repository to helm-values repository
       shell: bash
