@@ -21,6 +21,7 @@ export const ReviewForm: Form = buildForm({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
       alertTitle: conclusion.approvedForAssignee.alertMessage,
+      alertMessage: '',
       expandableHeader: conclusion.approvedForAssignee.expandableHeader,
       expandableDescription:
         conclusion.approvedForAssignee.expandableDescription,
@@ -29,6 +30,7 @@ export const ReviewForm: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       alertTitle: conclusion.rejected.alertMessage,
+      alertMessage: '',
       multiFieldTitle: conclusion.general.title,
       accordion: false,
       alertType: 'error',

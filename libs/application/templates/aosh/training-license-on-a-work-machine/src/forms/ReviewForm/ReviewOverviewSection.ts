@@ -26,7 +26,6 @@ export const reviewOverviewSection = buildSection({
         buildOverviewField({
           id: 'overviewApplicant',
           title: '',
-          // backId: unde,
           bottomLine: false,
           items: (answers, externalData) =>
             getApplicantOverviewInformation(answers, externalData, true),
@@ -34,28 +33,24 @@ export const reviewOverviewSection = buildSection({
         buildOverviewField({
           id: 'overviewApplicant',
           title: '',
-          // backId: 'certificateOfTenureMultiField',
           bottomLine: false,
           items: getMachineTenureOverviewInformation,
         }),
         buildOverviewField({
           id: 'overviewAssignee',
           title: '',
-          // backId: 'assigneeInformationMultiField',
           bottomLine: false,
           items: getAssigneeOverviewInformation,
           condition: (answers) => !isContractor(answers),
         }),
-        buildCustomField(
-          {
-            id: 'reviewOverview',
-            title: '',
-            component: 'Overview',
-          },
-          {
-            hideActionButtons: true,
-          },
-        ),
+        buildHiddenInput({
+          id: 'rejected',
+        }),
+        buildCustomField({
+          id: 'reviewOverviewSection.handleReject',
+          title: '',
+          component: 'HandleReject',
+        }),
         buildSubmitField({
           id: 'submitReview',
           placement: 'footer',
@@ -72,14 +67,6 @@ export const reviewOverviewSection = buildSection({
               type: 'primary',
             },
           ],
-        }),
-        buildHiddenInput({
-          id: 'rejected',
-        }),
-        buildCustomField({
-          id: 'reviewOverviewSection.handleReject',
-          title: '',
-          component: 'HandleReject',
         }),
       ],
     }),

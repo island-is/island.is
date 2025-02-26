@@ -13,6 +13,7 @@ export const Rejected: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       alertTitle: conclusion.rejected.alertMessage,
+      alertMessage: '',
       multiFieldTitle: conclusion.general.title,
       accordion: false,
       alertType: 'error',

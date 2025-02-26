@@ -15,6 +15,7 @@ export const Conclusion: Form = buildForm({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
       alertTitle: conclusion.default.alertMessage,
+      alertMessage: '',
       expandableHeader: conclusion.default.expandableHeader,
       expandableDescription: conclusion.default.expandableDescription,
       condition: (answers) => !isContractor(answers),
@@ -23,6 +24,7 @@ export const Conclusion: Form = buildForm({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
       alertTitle: conclusion.approvedForApplicant.alertMessage,
+      alertMessage: '',
       expandableHeader: conclusion.approvedForApplicant.expandableHeader,
       expandableDescription:
         conclusion.approvedForApplicant.expandableDescription,
