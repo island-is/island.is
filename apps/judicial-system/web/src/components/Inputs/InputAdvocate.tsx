@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
@@ -87,39 +80,19 @@ const InputAdvocate: FC<Props> = ({
   disabled,
 }) => {
   const { formatMessage } = useIntl()
-  const [lawyers, setLawyers] = useState<Lawyer[]>([])
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
-  const { getAllLawyers, isDBConnecting } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-  )
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (lawyers.length === 0) {
-        const allLawyers = await getAllLawyers()
-
-        if (allLawyers.length > 0) {
-          setLawyers(allLawyers)
-        }
-      }
-    }
-
-    if (isDBConnecting === false) {
-      fetchData()
-    }
-  }, [getAllLawyers, isDBConnecting, lawyers.length])
+  const { allLawyers } = useIndexedDB(Database.name, Database.lawyerTable)
 
   const options = useMemo(
     () =>
-      lawyers?.map((l: Lawyer) => ({
+      allLawyers?.map((l: Lawyer) => ({
         label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
         value: l.email,
       })),
 
-    [lawyers],
+    [allLawyers],
   )
 
   const handleAdvocateChange = useCallback(
@@ -134,7 +107,7 @@ const InputAdvocate: FC<Props> = ({
 
         onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
 
-        const lawyer = lawyers?.find(
+        const lawyer = allLawyers?.find(
           (l: Lawyer) => l.email === (value as string),
         )
 
@@ -148,7 +121,7 @@ const InputAdvocate: FC<Props> = ({
       setPhoneNumberErrorMessage('')
       onAdvocateChange(name, nationalId, email, phoneNumber)
     },
-    [onAdvocateChange, onAdvocateNotFound, lawyers],
+    [onAdvocateChange, onAdvocateNotFound, allLawyers],
   )
 
   const handleEmailChange = useCallback(

@@ -14,11 +14,9 @@ export const Database = {
 type LawyerWithCreated = Lawyer & { created: Date }
 
 export const useIndexedDB = (databaseName: string, tableName: string) => {
-  const [db, setDB] = useState<IDBDatabase | null>(null)
-  const [dbExists, setDBExists] = useState<boolean | null>(null)
-  const [createdDate, setCreatedDate] = useState<Date | null>(null)
-  const [isDBConnecting, setIsDBConnecting] = useState<boolean>(false)
-  const lawyers = useGetLawyers(true)
+  const [allLawyers, setAllLawyers] = useState<Lawyer[]>([])
+  const [shouldFetch, setShouldFetch] = useState<boolean>(false)
+  const lawyers = useGetLawyers(shouldFetch)
 
   useEffect(() => {
     const syncData = async () => {
@@ -28,7 +26,7 @@ export const useIndexedDB = (databaseName: string, tableName: string) => {
         const store = transaction.objectStore(Database.lawyerTable)
         const request = store.getAll()
 
-        request.onsuccess = async () => {
+        request.onsuccess = () => {
           const records: LawyerWithCreated[] = request.result
           const now = new Date()
           const shouldRefresh =
@@ -38,9 +36,10 @@ export const useIndexedDB = (databaseName: string, tableName: string) => {
 
           if (shouldRefresh) {
             console.log('Refreshing IndexedDB data...')
-            await clearAndFetchData()
+            setShouldFetch(true)
           } else {
             console.log('Using cached IndexedDB data.')
+            setAllLawyers(request.result)
           }
         }
 
@@ -52,10 +51,14 @@ export const useIndexedDB = (databaseName: string, tableName: string) => {
       }
     }
 
-    if (lawyers.length > 0) {
-      syncData()
+    syncData()
+  }, [])
+
+  useEffect(() => {
+    if (shouldFetch && lawyers.length > 0) {
+      refreshData(lawyers)
     }
-  }, [lawyers])
+  }, [shouldFetch, lawyers])
 
   const openDB = (): Promise<IDBDatabase> => {
     return new Promise((resolve, reject) => {
@@ -86,79 +89,23 @@ export const useIndexedDB = (databaseName: string, tableName: string) => {
     })
   }
 
-  const clearAndFetchData = async () => {
+  const refreshData = async (lawyers: Lawyer[]) => {
     const db = await openDB()
     const transaction = db.transaction(Database.lawyerTable, 'readwrite')
     const store = transaction.objectStore(Database.lawyerTable)
     const now = new Date()
 
     store.clear()
+    setAllLawyers(lawyers)
 
     lawyers.map((lawyer) => {
       store.add({ ...lawyer, created: now })
     })
   }
 
-  const getAllLawyers = (): Promise<Lawyer[]> => {
-    return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open(
-        Database.lawyerTable,
-        Database.version,
-      )
-
-      request.onsuccess = function () {
-        const db = request.result
-        console.log(db)
-        const transaction = db.transaction(Database.lawyerTable, 'readonly')
-        const store = transaction.objectStore(Database.lawyerTable)
-        const getAllRequest = store.getAll()
-
-        getAllRequest.onsuccess = function () {
-          resolve(
-            getAllRequest.result.sort((a: Lawyer, b: Lawyer) =>
-              a.name.localeCompare(b.name),
-            ),
-          )
-        }
-
-        getAllRequest.onerror = function () {
-          reject(getAllRequest.error)
-        }
-      }
-
-      request.onerror = function () {
-        reject(request.error)
-      }
-    })
+  return {
+    allLawyers: allLawyers.sort((a: Lawyer, b: Lawyer) =>
+      a.name.localeCompare(b.name),
+    ),
   }
-
-  // const getCreatedDate = (): Promise<Date> => {
-  //   return new Promise((resolve, reject) => {
-  //     const request = window.indexedDB.open(
-  //       Database.lawyerTable,
-  //       Database.version,
-  //     )
-
-  //     request.onsuccess = function () {
-  //       const db = request.result
-  //       const transaction = db.transaction('misc-table', 'readonly')
-  //       const store = transaction.objectStore('misc-table')
-  //       const lastUpdated = store.get('last_updated')
-
-  //       lastUpdated.onsuccess = function () {
-  //         resolve(lastUpdated.result)
-  //       }
-
-  //       lastUpdated.onerror = function () {
-  //         reject(lastUpdated.error)
-  //       }
-  //     }
-
-  //     request.onerror = function () {
-  //       reject(request.error)
-  //     }
-  //   })
-  // }
-
-  return { isDBConnecting, db, getAllLawyers }
 }

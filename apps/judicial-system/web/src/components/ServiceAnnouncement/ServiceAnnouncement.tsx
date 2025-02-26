@@ -103,7 +103,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   const { formatMessage } = useIntl()
 
-  const { db } = useIndexedDB(Database.name, Database.lawyerTable)
+  const { allLawyers } = useIndexedDB(Database.name, Database.lawyerTable)
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena
@@ -120,19 +120,22 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
           return
         }
 
-        // const data = await getLawyerByNationalId(
-        //   db,
-        //   subpoena.defenderNationalId,
-        // )
+        const data = allLawyers.find(
+          (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
+        )
 
-        setLawyer(undefined)
+        if (!data) {
+          return
+        }
+
+        setLawyer(data)
       } catch (error) {
         console.error('Failed to fetch customer:', error)
       }
     }
 
     fetchLawyer()
-  }, [db, subpoena?.defenderNationalId, subpoena?.serviceStatus])
+  }, [allLawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
 
   return subpoenaLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>

@@ -79,14 +79,25 @@ const Container: FC<PropsWithChildren> = ({ children }) => {
 const HeaderContainer = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
+  const [lawyer, setLawyer] = useState<Lawyer>()
   const [isRobot, setIsRobot] = useState<boolean>()
 
   const { countryCode } = useGeoLocation()
-  useIndexedDB(Database.name, Database.lawyerTable)
+  const { allLawyers } = useIndexedDB(Database.name, Database.lawyerTable)
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
   }, [countryCode])
+
+  useEffect(() => {
+    const fetchLawyer = () => {
+      setLawyer(
+        allLawyers.find((lawyer) => lawyer.nationalId === user?.nationalId),
+      )
+    }
+
+    fetchLawyer()
+  }, [allLawyers, user])
 
   const logoHref =
     !user || !isAuthenticated
@@ -167,7 +178,7 @@ const HeaderContainer = () => {
                         )}
                       </Text>
                     </Box>
-                    {/* <Box marginBottom={2}>
+                    <Box marginBottom={2}>
                       <Text>
                         {capitalize(
                           isDefenceUser(user) && lawyer
@@ -191,7 +202,7 @@ const HeaderContainer = () => {
                           ? lawyer.email
                           : user.email}
                       </Text>
-                    </Box> */}
+                    </Box>
                   </Box>
                 </div>
                 <div className={styles.dropdownItem}>
