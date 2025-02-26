@@ -112,13 +112,12 @@ describe('Old Age Pension Template', () => {
       )
 
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.EDIT,
+        type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('draft')
+      expect(newState).toBe('additionalDocumentsRequired')
     })
   })
-
   describe('state transitions', () => {
     it('should transition from tryggingastofnunSubmitted to dismissed on dismissed', () => {
       const helper = new ApplicationTemplateHelper(
