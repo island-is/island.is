@@ -511,12 +511,14 @@ export const buildSubmitField = (data: {
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean
   actions: CallToAction[]
+  condition?: Condition
 }): SubmitField => {
   const {
     id,
     placement = 'footer',
     title,
     actions,
+    condition,
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
@@ -527,6 +529,7 @@ export const buildSubmitField = (data: {
     title,
     actions,
     placement,
+    condition,
     doesNotRequireAnswer: true,
     refetchApplicationAfterSubmit:
       typeof refetchApplicationAfterSubmit !== 'undefined'

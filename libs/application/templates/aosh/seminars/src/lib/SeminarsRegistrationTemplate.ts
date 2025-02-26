@@ -153,10 +153,7 @@ const template: ApplicationTemplate<
                   application.answers,
                   'paymentArrangement.paymentOptions',
                 )
-                return (
-                  paymentOptions === PaymentOptions.putIntoAccount &&
-                  isCompany(application.answers)
-                )
+                return paymentOptions === PaymentOptions.putIntoAccount
               },
             },
             {

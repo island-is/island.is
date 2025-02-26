@@ -1,5 +1,6 @@
 import {
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildTextField,
   getValueViaPath,
@@ -7,7 +8,8 @@ import {
 
 import { personal as personalMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { isCompanyType } from '../../../utils'
+import { isCompanyType, isPersonType } from '../../../utils'
+import { RegisterNumber } from '../../../shared/contstants'
 
 export const personalInformationSection = buildSection({
   id: 'personalInformation',
@@ -56,6 +58,57 @@ export const personalInformationSection = buildSection({
 
             return name
           },
+        }),
+        buildTextField({
+          id: 'applicant.email',
+          title: personalMessages.labels.userEmail,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const email = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+              '',
+            )
+
+            return email
+          },
+        }),
+        buildTextField({
+          id: 'applicant.phoneNumber',
+          title: personalMessages.labels.userPhoneNumber,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const phone = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+              '',
+            )
+
+            return phone
+          },
+        }),
+        buildRadioField({
+          id: 'applicant.registerManyQuestion',
+          title: personalMessages.labels.isApplyinForOthers,
+          width: 'half',
+          required: true,
+          condition: (_, externalData) => {
+            return isPersonType(externalData)
+          },
+          options: [
+            {
+              value: RegisterNumber.one,
+              label: personalMessages.labels.isApplyinForOthersRadioNo,
+            },
+            {
+              value: RegisterNumber.many,
+              label: personalMessages.labels.isApplyinForOthersRadioYes,
+            },
+          ],
         }),
       ],
     }),

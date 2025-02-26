@@ -1,18 +1,14 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  ExternalData,
-  FormatMessage,
-  FormValue,
-} from '@island.is/application/types'
+import { FormatMessage, FormValue } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { PaymentArrangementType } from '../shared/types'
 import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
 import { paymentArrangement } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'
+import { isApplyingForMultiple } from './isApplyingForMultiple'
 
 export const getPaymentArrangementForOverview = (
   answers: FormValue,
-  externalData: ExternalData,
   formatMessage: FormatMessage,
 ) => {
   const paymentArrangementAnswers = getValueViaPath<PaymentArrangementType>(
@@ -20,18 +16,32 @@ export const getPaymentArrangementForOverview = (
     'paymentArrangement',
   )
 
-  return paymentArrangementAnswers?.individualOrCompany ===
-    IndividualOrCompany.individual
+  const userIsApplyingForMultiple = isApplyingForMultiple(answers)
+
+  const applicantEmail = getValueViaPath<string>(answers, 'applicant.email')
+
+  const applicantPhone = getValueViaPath<string>(
+    answers,
+    'applicant.phoneNumber',
+  )
+
+  return !userIsApplyingForMultiple ||
+    paymentArrangementAnswers?.individualOrCompany ===
+      IndividualOrCompany.individual
     ? [
         `${formatMessage(paymentArrangement.labels.cashOnDelivery)}`,
         `${formatMessage(paymentArrangement.labels.email)}: ${
-          paymentArrangementAnswers?.individualInfo?.email
+          !userIsApplyingForMultiple
+            ? applicantEmail
+            : paymentArrangementAnswers?.individualInfo?.email
         }`,
-        `${formatMessage(
-          paymentArrangement.labels.phonenumber,
-        )}: ${formatPhoneNumber(
-          paymentArrangementAnswers?.individualInfo?.phone ?? '',
-        )}`,
+        `${formatMessage(paymentArrangement.labels.phonenumber)}: ${
+          !userIsApplyingForMultiple
+            ? formatPhoneNumber(applicantPhone ?? '')
+            : formatPhoneNumber(
+                paymentArrangementAnswers?.individualInfo?.phone ?? '',
+              )
+        }`,
       ]
     : [
         `${

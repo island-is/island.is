@@ -24,11 +24,16 @@ import {
   isCompany,
   isCompanyType,
   isPersonType,
+  isApplyingForMultiple,
 } from '../../../utils'
 
 export const paymentArrangementSection = buildSection({
   id: 'paymentArrangementSection',
   title: paymentArrangement.general.sectionTitle,
+  condition: (answers: FormValue) => {
+    const userIsApplyingForMultiple = isApplyingForMultiple(answers)
+    return userIsApplyingForMultiple
+  },
   children: [
     buildMultiField({
       id: 'paymentArrangementMultiField',

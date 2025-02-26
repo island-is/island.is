@@ -7,7 +7,14 @@ import {
 import { IdentityApi as IdentityApiProvider } from '@island.is/application/types'
 import { ApiActions } from '../shared/contstants'
 
-export { UserProfileApi } from '@island.is/application/types'
+import { UserProfileApi as UserProfileApiProvider } from '@island.is/application/types'
+
+export const UserProfileApi = UserProfileApiProvider.configure({
+  params: {
+    validatePhoneNumber: true,
+    validateEmail: true,
+  },
+})
 
 export const VinnueftirlitidPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
@@ -21,6 +28,7 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
     params: {
       organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
     },
+    externalDataId: 'payment',
   })
 
 export const IdentityApi = IdentityApiProvider.configure({

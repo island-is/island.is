@@ -35,6 +35,10 @@ export class SeminarsClientService {
     })
   }
 
+  async getAllSeminars(auth: User): Promise<Array<CourseDTO>> {
+    return this.courseApiWithAuth(auth).apiCourseGet()
+  }
+
   async isCompanyValid(auth: User, nationalId: string): Promise<CompanyDTO> {
     return this.companyApiWithAuth(auth).apiCompanyGet({
       nationalId,

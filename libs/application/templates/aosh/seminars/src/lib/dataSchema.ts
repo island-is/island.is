@@ -1,6 +1,10 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
+import {
+  IndividualOrCompany,
+  PaymentOptions,
+  RegisterNumber,
+} from '../shared/contstants'
 import { isValidEmail, isValidPhoneNumber } from '../utils'
 import { YES } from '@island.is/application/types'
 
@@ -16,6 +20,9 @@ const UserSchemaBase = z.object({
           kennitala.info(nationalId).age >= 18),
     ),
   name: z.string().min(1),
+  email: z.string().refine((x) => isValidEmail(x)),
+  phoneNumber: z.string().refine((x) => isValidPhoneNumber(x)),
+  registerManyQuestion: z.nativeEnum(RegisterNumber).optional(),
 })
 
 export const PaymentArrangementSchema = z

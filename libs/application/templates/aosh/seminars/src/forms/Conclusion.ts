@@ -4,6 +4,7 @@ import { Logo } from '../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion } from '../lib/messages'
 import { PaymentOptions } from '../shared/contstants'
+import { isApplyingForMultiple, isIndividual } from '../utils'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
@@ -33,9 +34,16 @@ export const Conclusion: Form = buildForm({
           application.answers,
           'paymentArrangement.paymentOptions',
         )
-        return paymentOptions === PaymentOptions.cashOnDelivery
+        const userIsApplyingForMultiple = isApplyingForMultiple(
+          application.answers,
+        )
+
+        const userIsIndividual = isIndividual(application.answers)
+        return userIsIndividual || !userIsApplyingForMultiple
           ? conclusion.default.accordionTextCashOnDelivery
-          : conclusion.default.accordionTextPutIntoAccount
+          : paymentOptions === PaymentOptions.putIntoAccount
+          ? conclusion.default.accordionTextPutIntoAccount
+          : conclusion.default.accordionTextCashOnDelivery
       },
     }),
   ],

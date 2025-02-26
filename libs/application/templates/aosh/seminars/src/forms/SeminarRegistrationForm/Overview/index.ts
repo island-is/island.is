@@ -3,9 +3,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { PaymentOptions } from '../../../shared/contstants'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -23,7 +25,15 @@ export const overviewSection = buildSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
+          condition: (answers) => {
+            const paymentOptions = getValueViaPath<PaymentOptions>(
+              answers,
+              'paymentArrangement.paymentOptions',
+            )
+            return paymentOptions === PaymentOptions.putIntoAccount
+          },
           title: overview.general.approveButton,
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,

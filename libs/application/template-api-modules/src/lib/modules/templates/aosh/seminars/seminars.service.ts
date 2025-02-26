@@ -15,6 +15,7 @@ import {
   externalData as externalDataMessages,
   application as applicationMessages,
   IndividualOrCompany,
+  RegisterNumber,
 } from '@island.is/application/templates/aosh/seminars'
 @Injectable()
 export class SeminarsTemplateService extends BaseTemplateApiService {
@@ -63,6 +64,12 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    const registeringMany = getValueViaPath<string>(
+      application.answers,
+      'applicant.registerManyQuestion',
+      '',
+    )
+
     const paymentArrangement = getValueViaPath<
       SeminarAnswers['paymentArrangement']
     >(application.answers, 'paymentArrangement')
@@ -70,6 +77,11 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
     const participantList = getValueViaPath<SeminarAnswers['participantList']>(
       application.answers,
       'participantList',
+    )
+
+    const applicant = getValueViaPath<SeminarAnswers['applicant']>(
+      application.answers,
+      'applicant',
     )
 
     const seminarQueryId =
@@ -88,12 +100,12 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
               paymentArrangement?.individualOrCompany ===
               IndividualOrCompany.company
                 ? paymentArrangement?.contactInfo?.email
-                : paymentArrangement?.individualInfo?.email,
+                : applicant?.email,
             phoneNumber:
               paymentArrangement?.individualOrCompany ===
               IndividualOrCompany.company
                 ? paymentArrangement?.contactInfo?.phone
-                : paymentArrangement?.individualInfo?.phone,
+                : applicant?.phoneNumber,
           },
           paymentInfo: {
             paymentType:
@@ -111,12 +123,22 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
             paymentId: chargeId,
             paymentExplanation: paymentArrangement?.explanation ?? '',
           },
-          students: participantList?.map((participants) => ({
-            name: participants.nationalIdWithName.name,
-            nationalId: participants.nationalIdWithName.nationalId,
-            email: participants.email,
-            phoneNumber: participants.phoneNumber,
-          })),
+          students:
+            registeringMany === RegisterNumber.many
+              ? participantList?.map((participants) => ({
+                  name: participants.nationalIdWithName.name,
+                  nationalId: participants.nationalIdWithName.nationalId,
+                  email: participants.email,
+                  phoneNumber: participants.phoneNumber,
+                }))
+              : [
+                  {
+                    name: applicant?.name,
+                    nationalId: applicant?.nationalId,
+                    email: applicant?.email,
+                    phoneNumber: applicant?.phoneNumber,
+                  },
+                ],
         },
       })
       .catch(() => {

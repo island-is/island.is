@@ -13,6 +13,7 @@ import {
   getPaymentArrangementForOverview,
   getPersonalInformationForOverview,
   getSeminarInformationForOverview,
+  isApplyingForMultiple,
 } from '../../utils'
 import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
 import { getValueViaPath } from '@island.is/application/core'
@@ -23,6 +24,8 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { application, goToScreen } = props
   const { formatMessage } = useLocale()
+
+  const userIsApplyingForMultiple = isApplyingForMultiple(application.answers)
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
@@ -65,8 +68,16 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </ReviewGroup>
 
       <ReviewGroup
-        handleClick={() => onClick('paymentArrangementMultiField')}
-        editMessage={formatMessage(overview.labels.editMessage)}
+        handleClick={
+          userIsApplyingForMultiple
+            ? () => onClick('paymentArrangementMultiField')
+            : undefined
+        }
+        editMessage={
+          userIsApplyingForMultiple
+            ? formatMessage(overview.labels.editMessage)
+            : ''
+        }
         title={formatMessage(overview.labels.paymentArrangement)}
       >
         <KeyValueFormField
@@ -79,28 +90,29 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             label: '',
             value: getPaymentArrangementForOverview(
               application.answers,
-              application.externalData,
               formatMessage,
             ),
           }}
         />
       </ReviewGroup>
 
-      <ReviewGroup
-        handleClick={() => onClick('participantsMultiField')}
-        editMessage={formatMessage(overview.labels.editMessage)}
-        title={formatMessage(overview.labels.participants)}
-        isLast
-      >
-        <ParticipantsOverviewExpandableTable
-          data={
-            getValueViaPath<Participant[]>(
-              application.answers,
-              'participantList',
-            ) ?? []
-          }
-        />
-      </ReviewGroup>
+      {userIsApplyingForMultiple && (
+        <ReviewGroup
+          handleClick={() => onClick('participantsMultiField')}
+          editMessage={formatMessage(overview.labels.editMessage)}
+          title={formatMessage(overview.labels.participants)}
+          isLast
+        >
+          <ParticipantsOverviewExpandableTable
+            data={
+              getValueViaPath<Participant[]>(
+                application.answers,
+                'participantList',
+              ) ?? []
+            }
+          />
+        </ReviewGroup>
+      )}
     </Box>
   )
 }

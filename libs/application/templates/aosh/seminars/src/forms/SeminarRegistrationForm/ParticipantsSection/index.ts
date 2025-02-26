@@ -15,10 +15,15 @@ import {
 } from '@island.is/api/schema'
 import { ARE_INDIVIDUALS_VALID } from '../../../graphql/queries'
 import { Participant } from '../../../shared/types'
+import { isApplyingForMultiple } from '../../../utils'
 
 export const participantsSection = buildSection({
   id: 'participants',
   title: participantMessages.general.sectionTitle,
+  condition: (answers: FormValue) => {
+    const userIsApplyingForMultiple = isApplyingForMultiple(answers)
+    return userIsApplyingForMultiple
+  },
   children: [
     buildMultiField({
       id: 'participantsMultiField',
@@ -42,7 +47,7 @@ export const participantsSection = buildSection({
             const nationalIds =
               tableItems?.map((x) => x.nationalIdWithName.nationalId) ?? []
             const { data } = await apolloClient.query<
-              { areIndividualsValid: Array<SeminarsIndividualValidationItem> }, //TODO get this correct from schemas
+              { areIndividualsValid: Array<SeminarsIndividualValidationItem> },
               QueryAreIndividualsValidArgs
             >({
               query: ARE_INDIVIDUALS_VALID,

@@ -12,3 +12,8 @@ export enum PaymentOptions {
   cashOnDelivery = 'cashOnDelivery',
   putIntoAccount = 'putIntoAccount',
 }
+
+export enum RegisterNumber {
+  one = 'one',
+  many = 'many',
+}

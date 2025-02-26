@@ -29,5 +29,31 @@ export const personal = {
       defaultMessage: 'Kennitala',
       description: `user nationalId `,
     },
+    userEmail: {
+      id: 'aosh.sem.application:personal.labels.userEmail',
+      defaultMessage: 'Netfang',
+      description: `user email `,
+    },
+    userPhoneNumber: {
+      id: 'aosh.sem.application:personal.labels.userPhoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: `user phone number `,
+    },
+    isApplyinForOthers: {
+      id: 'aosh.sem.application:personal.labels.isApplyinForOthers',
+      defaultMessage:
+        'Vinsamlegast tilgreindu hvort þú sért að skrá sjálfan þig eða fleiri einstaklinga',
+      description: `is applying for others`,
+    },
+    isApplyinForOthersRadioYes: {
+      id: 'aosh.sem.application:personal.labels.isApplyinForOthersRadioYes',
+      defaultMessage: 'Skrá mig og fleiri',
+      description: `is applying for others radio yes`,
+    },
+    isApplyinForOthersRadioNo: {
+      id: 'aosh.sem.application:personal.labels.isApplyinForOthersRadioNo',
+      defaultMessage: 'Skrá bara mig',
+      description: `is applying for others radio no`,
+    },
   }),
 }
