@@ -67,9 +67,18 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Verify that affected projects have any tests
+      - name: Debug find projects without tests
         env:
           AFFECTED_PROJECTS: api,web,application-system-api,clients-consultation-portal,clients-rights-portal
+        run: |
+          set -euo pipefail
+          for project in $(yarn nx show projects --with-target test --projects "${AFFECTED_PROJECTS}"); do
+            if ! yarn nx run --skip-nx-cache --output-style=stream "${project}:test" -- --listTests | grep -q "^${project}: "; then
+              echo "${project} has no tests 😱"
+            fi
+          done
+
+      - name: Verify that affected projects have any tests
         run: |
           yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${AFFECTED_PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${AFFECTED_PROJECTS//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
           echo -e "${AFFECTED_PROJECTS//,/\n}" | sort > /tmp/projects-all
