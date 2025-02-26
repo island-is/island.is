@@ -7,8 +7,8 @@ import { RentalPeriodOtherFees } from './rentalPeriod/rentalPeriodOtherFees'
 
 import { application } from '../lib/messages'
 
-export const RentalPeriod = buildSection({
-  id: 'rentalPeriod',
+export const RentalPeriodSection = buildSection({
+  id: 'rentalPeriodSection',
   title: application.rentalPeriodSectionName,
   children: [
     RentalPeriodDetails,

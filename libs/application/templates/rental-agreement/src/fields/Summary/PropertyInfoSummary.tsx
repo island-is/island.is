@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import {
   Box,
   Button,
@@ -23,9 +24,9 @@ import { SummaryCard } from './components/SummaryCard'
 
 import { fileLink, fileLinksList } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
+import { FieldBaseProps } from '@island.is/application/types'
 
-interface Props {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   categoryRoute?: Routes
   propertyInfoRoute?: Routes
@@ -34,20 +35,24 @@ interface Props {
   propertyConditionRoute?: Routes
   fileUploadRoute?: Routes
   fireProtectionsRoute?: Routes
+  hasChangeButton: boolean
 }
 
-export const PropertyInfoSummary = ({
-  answers,
-  goToScreen,
-  categoryRoute,
-  propertyInfoRoute,
-  propertyDescriptionRoute,
-  specialProvisionsRoute,
-  propertyConditionRoute,
-  fileUploadRoute,
-  fireProtectionsRoute,
-}: Props) => {
+export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const {
+    application,
+    goToScreen,
+    categoryRoute,
+    propertyInfoRoute,
+    propertyDescriptionRoute,
+    specialProvisionsRoute,
+    propertyConditionRoute,
+    fileUploadRoute,
+    fireProtectionsRoute,
+    hasChangeButton,
+  } = props
+  const answers = application.answers as RentalAgreement
 
   const propertyType = (answer: string) => {
     const options = getPropertyTypeOptions()
@@ -71,7 +76,11 @@ export const PropertyInfoSummary = ({
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
-      <SummaryCardRow editAction={goToScreen} route={categoryRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={categoryRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.propertyTypeLabel}
@@ -106,14 +115,18 @@ export const PropertyInfoSummary = ({
           )}
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={propertyInfoRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={propertyInfoRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
             value={
-              (answers.registerProperty.searchResults &&
-                answers.registerProperty.searchResults[0].propertyIds[0]
-                  .units[0].numberOfRooms) ||
+              (answers.registerProperty.searchresults &&
+                answers.registerProperty.searchresults.propertyIds[0].units[0]
+                  .numberOfRooms) ||
               '-'
             }
           />
@@ -122,16 +135,20 @@ export const PropertyInfoSummary = ({
           <KeyValue
             label={summary.propertySizeLabel}
             value={
-              (answers.registerProperty.searchResults &&
-                answers.registerProperty.searchResults[0].propertyIds[0]
-                  .units[0].size) ||
+              (answers.registerProperty.searchresults &&
+                answers.registerProperty.searchresults.propertyIds[0].units[0]
+                  .size) ||
               '-'
             }
           />
         </GridColumn>
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={propertyDescriptionRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={propertyDescriptionRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.propertyDescriptionLabel}
@@ -140,7 +157,11 @@ export const PropertyInfoSummary = ({
         </GridColumn>
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={specialProvisionsRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={specialProvisionsRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.PropertySpecialProvisionsLabel}
@@ -149,7 +170,11 @@ export const PropertyInfoSummary = ({
         </GridColumn>
       </SummaryCardRow>
 
-      <SummaryCardRow editAction={goToScreen} route={propertyConditionRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={propertyConditionRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '4/12']}>
           <KeyValue
             label={summary.propertyConditionInspectorLabel}
@@ -177,7 +202,11 @@ export const PropertyInfoSummary = ({
       </SummaryCardRow>
 
       {uploadFiles.length > 0 && (
-        <SummaryCardRow editAction={goToScreen} route={fileUploadRoute}>
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={fileUploadRoute}
+          hasChangeButton={hasChangeButton}
+        >
           <GridColumn span={['12/12']}>
             <Box paddingY={'p2'}>
               <Text
@@ -216,6 +245,7 @@ export const PropertyInfoSummary = ({
       <SummaryCardRow
         editAction={goToScreen}
         route={fireProtectionsRoute}
+        hasChangeButton={hasChangeButton}
         isLast={true}
       >
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>

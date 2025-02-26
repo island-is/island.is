@@ -6,22 +6,23 @@ import {
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { IS_REPRESENTATIVE } from '../../lib/constants'
 import { Routes } from '../../lib/constants'
-import { tenantDetails } from '../../lib/messages'
+import { landlordDetails } from '../../lib/messages'
 
-export const RentalHousingTenantInfo = buildSubSection({
-  id: Routes.TENANTINFORMATION,
-  title: tenantDetails.subSectionName,
+export const RentalHousingLandlordInfo = buildSubSection({
+  id: Routes.LANDLORDINFORMATION,
+  title: landlordDetails.subSectionName,
   children: [
     buildMultiField({
-      id: Routes.TENANTINFORMATION,
-      title: tenantDetails.pageTitle,
-      description: tenantDetails.pageDescription,
+      id: Routes.LANDLORDINFORMATION,
+      title: landlordDetails.pageTitle,
+      description: landlordDetails.pageDescription,
       children: [
         buildTableRepeaterField({
-          id: 'tenantInfo.table',
+          id: 'landlordInfo.table',
           title: '',
           editField: true,
           marginTop: 1,
+          maxRows: 10,
           fields: {
             nationalIdWithName: {
               component: 'nationalIdWithName',
@@ -31,30 +32,29 @@ export const RentalHousingTenantInfo = buildSubSection({
             phone: {
               component: 'phone',
               required: true,
-              label: tenantDetails.phoneInputLabel,
+              label: landlordDetails.phoneInputLabel,
               enableCountrySelector: true,
               width: 'half',
             },
             email: {
               component: 'input',
               required: true,
-              label: tenantDetails.emailInputLabel,
+              label: landlordDetails.emailInputLabel,
               type: 'email',
               width: 'half',
             },
             address: {
               component: 'input',
               required: true,
-              label: tenantDetails.addressInputLabel,
+              label: landlordDetails.addressInputLabel,
               maxLength: 100,
             },
             isRepresentative: {
               component: 'checkbox',
-              label: tenantDetails.representativeLabel,
               large: true,
               options: [
                 {
-                  label: tenantDetails.representativeLabel,
+                  label: landlordDetails.representativeLabel,
                   value: IS_REPRESENTATIVE,
                 },
               ],
@@ -62,17 +62,19 @@ export const RentalHousingTenantInfo = buildSubSection({
           },
           table: {
             format: {
-              name: (value) => value,
               phone: (value) => value && formatPhoneNumber(value),
               nationalId: (value) => value && formatNationalId(value),
+              isRepresentative: (value) =>
+                value?.includes(IS_REPRESENTATIVE) ? '✅' : '',
             },
             header: [
-              tenantDetails.nameInputLabel,
-              tenantDetails.phoneInputLabel,
-              tenantDetails.nationalIdHeaderLabel,
-              tenantDetails.emailInputLabel,
+              landlordDetails.nameInputLabel,
+              landlordDetails.phoneInputLabel,
+              landlordDetails.nationalIdHeaderLabel,
+              landlordDetails.emailInputLabel,
+              landlordDetails.isRepresentative,
             ],
-            rows: ['name', 'phone', 'nationalId', 'email'],
+            rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
           },
         }),
       ],

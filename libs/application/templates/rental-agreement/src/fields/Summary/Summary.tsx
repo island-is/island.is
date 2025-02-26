@@ -4,15 +4,8 @@ import {
   ApplicationConfigurations,
   FieldBaseProps,
 } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Bullet,
-  BulletList,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { CopyLink } from '@island.is/application/ui-components'
-import { RentalAgreement } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
@@ -27,44 +20,8 @@ import { summary } from '../../lib/messages'
 export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
 }) => {
-  const { application, field, goToScreen, setSubmitButtonDisabled } = props
+  const { application, field, goToScreen } = props
   const { formatMessage } = useLocale()
-
-  const answers = application.answers as RentalAgreement
-
-  const isFireProtectionsPresent =
-    answers.fireProtections.smokeDetectors &&
-    answers.fireProtections.fireExtinguisher &&
-    answers.fireProtections.emergencyExits
-
-  const isConditionPresent = answers.condition.resultsDescription
-
-  const isOtherFeesPresent =
-    answers.otherFees.electricityCost &&
-    answers.otherFees.heatingCost &&
-    answers.otherFees.housingFund
-
-  const AlertMessageConditions = [
-    {
-      isFilled: isFireProtectionsPresent,
-      route: Routes.FIREPROTECTIONS,
-      message: summary.alertMissingInfoFireProtections,
-    },
-    {
-      isFilled: isConditionPresent,
-      route: Routes.CONDITION,
-      message: summary.alertMissingInfoCondition,
-    },
-    {
-      isFilled: isOtherFeesPresent,
-      route: Routes.OTHERFEES,
-      message: summary.alertMissingInfoOtherFees,
-    },
-  ]
-
-  const unfilledConditions = AlertMessageConditions.filter(
-    (condition) => !condition.isFilled,
-  )
 
   return (
     <Box className={summaryWrap}>
@@ -74,7 +31,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         goToScreen={goToScreen}
         landlordsRoute={Routes.LANDLORDINFORMATION}
         tenantsRoute={Routes.TENANTINFORMATION}
-        hasChangeButton={true}
+        hasChangeButton={false}
       />
       <ApplicantsRepresentativesSummary
         application={application}
@@ -82,7 +39,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         goToScreen={goToScreen}
         landlordsRoute={Routes.LANDLORDINFORMATION}
         tenantsRoute={Routes.TENANTINFORMATION}
-        hasChangeButton={true}
+        hasChangeButton={false}
       />
       <RentalInfoSummary
         application={application}
@@ -91,7 +48,7 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         rentalPeriodRoute={Routes.RENTALPERIOD}
         rentalAmountRoute={Routes.RENTALAMOUNT}
         securityDepositRoute={Routes.SECURITYDEPOSIT}
-        hasChangeButton={true}
+        hasChangeButton={false}
       />
       <PropertyInfoSummary
         application={application}
@@ -104,14 +61,14 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         propertyConditionRoute={Routes.CONDITION}
         fileUploadRoute={Routes.CONDITION}
         fireProtectionsRoute={Routes.FIREPROTECTIONS}
-        hasChangeButton={true}
+        hasChangeButton={false}
       />
       <OtherFeesSummary
         application={application}
         field={field}
         goToScreen={goToScreen}
         route={Routes.OTHERFEES}
-        hasChangeButton={true}
+        hasChangeButton={false}
       />
       <SummaryCard
         cardLabel={formatMessage(summary.shareLinkLabel)}
@@ -122,38 +79,6 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
         />
       </SummaryCard>
-
-      {!isFireProtectionsPresent ||
-      !isConditionPresent ||
-      !isOtherFeesPresent ? (
-        <Box marginTop={4} marginBottom={4}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(summary.alertMissingInfoTitle)}
-            message={
-              <BulletList>
-                {unfilledConditions.map((condition, index) => (
-                  <Bullet key={`${index}_${condition.route}`}>
-                    <Button
-                      onClick={() => {
-                        setSubmitButtonDisabled &&
-                          setSubmitButtonDisabled(false)
-                        goToScreen?.(condition.route)
-                      }}
-                      variant="text"
-                      size="small"
-                    >
-                      {formatMessage(condition.message)}
-                    </Button>
-                  </Bullet>
-                ))}
-              </BulletList>
-            }
-          />
-        </Box>
-      ) : (
-        ''
-      )}
     </Box>
   )
 }

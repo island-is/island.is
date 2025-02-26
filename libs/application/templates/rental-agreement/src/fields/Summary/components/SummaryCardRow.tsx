@@ -4,19 +4,23 @@ import { Button, GridRow } from '@island.is/island-ui/core'
 import { summary } from '../../../lib/messages'
 import { Routes } from '../../../lib/constants'
 import { Divider } from './Divider'
-import { gridRow, changeButton } from '../summaryStyles.css'
+import {
+  gridRow,
+  changeButton,
+  gridRowChangeButton,
+} from '../summaryStyles.css'
 
 interface SummaryCardProps {
   children: ReactNode
   editAction?: (id: string) => void
   route?: Routes
-  isChangeButton?: boolean
+  hasChangeButton: boolean
   isLast?: boolean
 }
 
 export const SummaryCardRow = ({
   children,
-  isChangeButton = true,
+  hasChangeButton = true,
   editAction,
   route,
   isLast = false,
@@ -25,13 +29,16 @@ export const SummaryCardRow = ({
 
   return (
     <>
-      <GridRow className={gridRow}>
+      <GridRow
+        className={`${gridRow} ${hasChangeButton ? gridRowChangeButton : ''}`}
+      >
         {children}
-        {isChangeButton && editAction && route && (
+        {hasChangeButton && editAction && route && (
           <div className={changeButton}>
             <Button
               variant="ghost"
               size="small"
+              icon="pencil"
               onClick={() => editAction?.(route)}
             >
               {formatMessage(summary.changeSectionButtonLabel)}
@@ -39,7 +46,7 @@ export const SummaryCardRow = ({
           </div>
         )}
       </GridRow>
-      {!isLast && <Divider />}
+      <Divider strong={isLast} />
     </>
   )
 }

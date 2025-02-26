@@ -1,5 +1,6 @@
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { OtherFeesPayeeOptions, Routes } from '../../lib/constants'
 import {
@@ -12,15 +13,18 @@ import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
 import { summary } from '../../lib/messages'
+import { FC } from 'react'
 
-type Props = {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   route?: Routes
+  hasChangeButton: boolean
 }
 
-export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
+export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const { application, goToScreen, route, hasChangeButton } = props
+  const answers = application.answers as RentalAgreement
 
   const otherFeesPayee = (answer: string) => {
     const options = getOtherFeesPayeeOptions()
@@ -46,6 +50,7 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
       <SummaryCardRow
         editAction={goToScreen}
         route={route}
+        hasChangeButton={hasChangeButton}
         isLast={
           !tenantPaysHouseFund && !tenantPaysElectricity && !tenantPaysHeating
         }
@@ -82,6 +87,7 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={route}
+          hasChangeButton={hasChangeButton}
           isLast={!tenantPaysHouseFund && !tenantPaysHeating}
         >
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -115,6 +121,7 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
         <SummaryCardRow
           editAction={goToScreen}
           route={route}
+          hasChangeButton={hasChangeButton}
           isLast={!tenantPaysHouseFund}
         >
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -145,7 +152,12 @@ export const OtherFeesSummary = ({ answers, goToScreen, route }: Props) => {
       )}
 
       {tenantPaysHouseFund && (
-        <SummaryCardRow editAction={goToScreen} route={route} isLast={true}>
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={route}
+          hasChangeButton={hasChangeButton}
+          isLast={true}
+        >
           <GridColumn span={['12/12']}>
             <KeyValue
               label={summary.houseFundAmountLabel}

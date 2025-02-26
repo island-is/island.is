@@ -39,7 +39,7 @@ export const landlordDetails = defineMessages({
   },
   isRepresentative: {
     id: 'ra.application:landlordDetails.isRepresentative',
-    defaultMessage: 'umboðsaðili',
+    defaultMessage: 'Umb.',
     description: 'Landlord is representative',
   },
   emailInputLabel: {

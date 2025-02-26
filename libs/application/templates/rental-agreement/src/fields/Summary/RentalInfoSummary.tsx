@@ -1,5 +1,7 @@
+import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import {
   AnswerOptions,
@@ -25,22 +27,25 @@ import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
 import { summary } from '../../lib/messages'
 
-type Props = {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   rentalPeriodRoute?: Routes
   rentalAmountRoute?: Routes
   securityDepositRoute?: Routes
+  hasChangeButton: boolean
 }
 
-export const RentalInfoSummary = ({
-  answers,
-  goToScreen,
-  rentalAmountRoute,
-  rentalPeriodRoute,
-  securityDepositRoute,
-}: Props) => {
+export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const {
+    application,
+    goToScreen,
+    rentalPeriodRoute,
+    rentalAmountRoute,
+    securityDepositRoute,
+    hasChangeButton,
+  } = props
+  const answers = application.answers as RentalAgreement
 
   const isSecurityDepositRequired =
     answers.rentalAmount.isPaymentInsuranceRequired?.includes(AnswerOptions.YES)
@@ -101,14 +106,14 @@ export const RentalInfoSummary = ({
   return (
     <SummaryCard>
       {/* Property Address */}
-      <SummaryCardRow isChangeButton={false}>
+      <SummaryCardRow hasChangeButton={false}>
         <GridColumn span={['12/12']}>
-          {answers.registerProperty.searchResults && (
+          {answers.registerProperty.searchresults && (
             <KeyValue
-              label={`${answers.registerProperty.searchResults[0].streetAddress}, ${answers.registerProperty.searchResults[0].regionNumber} ${answers.registerProperty.searchResults[0].cityName}`}
+              label={`${answers.registerProperty.searchresults.streetAddress}, ${answers.registerProperty.searchresults.regionNumber} ${answers.registerProperty.searchresults.cityName}`}
               value={
                 `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                  answers.registerProperty.searchResults[0].propertyIds[0]
+                  answers.registerProperty.searchresults.propertyIds[0]
                     .propertyId
                 }` || '-'
               }
@@ -122,7 +127,11 @@ export const RentalInfoSummary = ({
       </SummaryCardRow>
 
       {/* Rental period */}
-      <SummaryCardRow editAction={goToScreen} route={rentalPeriodRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={rentalPeriodRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalPeriodStartDateLabel}
@@ -151,7 +160,11 @@ export const RentalInfoSummary = ({
       </SummaryCardRow>
 
       {/* Rental amount */}
-      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={rentalAmountRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalAmountLabel}
@@ -180,7 +193,11 @@ export const RentalInfoSummary = ({
 
       {/* Security deposit */}
       {isSecurityDepositRequired && (
-        <SummaryCardRow editAction={goToScreen} route={securityDepositRoute}>
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={securityDepositRoute}
+          hasChangeButton={hasChangeButton}
+        >
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue
               label={summary.securityDepositLabel}
@@ -249,7 +266,11 @@ export const RentalInfoSummary = ({
       )}
 
       {/* Payment method */}
-      <SummaryCardRow editAction={goToScreen} route={rentalAmountRoute}>
+      <SummaryCardRow
+        editAction={goToScreen}
+        route={rentalAmountRoute}
+        hasChangeButton={hasChangeButton}
+      >
         <GridColumn
           span={
             answers.rentalAmount.paymentMethodOptions ===

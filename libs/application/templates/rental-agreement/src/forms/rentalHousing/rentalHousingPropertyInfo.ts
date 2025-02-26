@@ -31,7 +31,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   title: registerProperty.subsection.name,
   children: [
     buildMultiField({
-      id: Routes.PROPERTYINFORMATION_SERCH,
+      id: Routes.PROPERTYINFORMATION_SEARCH,
       title: messagesInfo.pageTitle,
       description: messagesInfo.pageDescription,
       children: [

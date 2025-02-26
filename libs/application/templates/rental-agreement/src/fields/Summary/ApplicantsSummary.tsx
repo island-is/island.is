@@ -1,5 +1,7 @@
+import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
@@ -8,20 +10,23 @@ import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { summary } from '../../lib/messages'
 
-type Props = {
-  answers: RentalAgreement
+interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   landlordsRoute?: Routes
   tenantsRoute?: Routes
+  hasChangeButton: boolean
 }
 
-export const ApplicantsSummary = ({
-  answers,
-  goToScreen,
-  landlordsRoute,
-  tenantsRoute,
-}: Props) => {
+export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
   const { formatMessage } = useLocale()
+  const {
+    application,
+    goToScreen,
+    landlordsRoute,
+    tenantsRoute,
+    hasChangeButton,
+  } = props
+  const answers = application.answers as RentalAgreement
 
   const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
     (landlord) =>
@@ -49,6 +54,7 @@ export const ApplicantsSummary = ({
               key={landlord.nationalIdWithName?.nationalId}
               editAction={goToScreen}
               route={landlordsRoute}
+              hasChangeButton={hasChangeButton}
             >
               <GridColumn span={['12/12']}>
                 <KeyValue
@@ -93,6 +99,7 @@ export const ApplicantsSummary = ({
               key={tenant.nationalIdWithName?.nationalId}
               editAction={goToScreen}
               route={tenantsRoute}
+              hasChangeButton={hasChangeButton}
             >
               <GridColumn span={['12/12']}>
                 <KeyValue

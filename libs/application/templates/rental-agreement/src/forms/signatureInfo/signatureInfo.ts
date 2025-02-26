@@ -76,11 +76,17 @@ export const SignatureInfo = buildSection({
         buildSubmitField({
           id: 'signatureInfo.submit',
           title: '',
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
               name: signatureInfo.submitButtonText,
               type: 'sign',
+            },
+            {
+              event: DefaultEvents.EDIT,
+              name: 'Til baka í yfirlit',
+              type: 'subtle',
             },
           ],
         }),

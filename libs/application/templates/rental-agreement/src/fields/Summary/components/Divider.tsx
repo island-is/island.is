@@ -1,5 +1,9 @@
 import { divider } from '../summaryStyles.css'
 
-export const Divider = () => {
-  return <div className={divider} />
+interface DividerProps {
+  strong?: boolean
+}
+
+export const Divider = ({ strong }: DividerProps) => {
+  return <div className={`${divider} ${strong && strong}`} />
 }
