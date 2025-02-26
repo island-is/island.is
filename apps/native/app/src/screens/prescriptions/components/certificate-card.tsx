@@ -92,6 +92,22 @@ export function CertificateCard({
       data: certificate.doctor,
       label: 'health.prescriptions.nameOfDoctor',
     },
+    {
+      data: certificate.methylDoctors?.map((doctor) => doctor.name).join(', '),
+      label: 'health.prescriptions.methylDoctors',
+    },
+    {
+      data: certificate.rejected
+        ? intl.formatMessage({ id: 'health.prescriptions.rejected' })
+        : !certificate.processed
+        ? intl.formatMessage({ id: 'health.prescriptions.inProcess' })
+        : certificate.valid
+        ? intl.formatMessage({ id: 'health.prescriptions.valid' })
+        : certificate.expired
+        ? intl.formatMessage({ id: 'health.prescriptions.expired' })
+        : undefined,
+      label: 'health.prescriptions.status',
+    },
   ]
 
   return (

@@ -716,6 +716,7 @@ export const is = {
   'health.prescriptions.expired': 'Útrunnið',
   'health.prescriptions.rejected': 'Hafnað',
   'health.prescriptions.inProcess': 'Í vinnslu',
+  'health.prescriptions.valid': 'Í gildi',
   'health.prescriptions.furtherInformation': 'Nánari upplýsingar',
   'health.prescriptions.drugName': 'Lyfjaheiti',
   'health.prescriptions.atcCode': 'ATC flokkur',
@@ -723,4 +724,6 @@ export const is = {
   'health.prescriptions.validFrom': 'Gildir frá',
   'health.prescriptions.validUntil': 'Gildir til',
   'health.prescriptions.nameOfDoctor': 'Heiti læknis',
+  'health.prescriptions.methylDoctors': 'Aukalæknar skráðir á skírteini',
+  'health.prescriptions.status': 'Staða',
 }

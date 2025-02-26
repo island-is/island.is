@@ -716,6 +716,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.expired': 'Expired',
   'health.prescriptions.rejected': 'Rejected',
   'health.prescriptions.inProcess': 'In process',
+  'health.prescriptions.valid': 'Valid',
   'health.prescriptions.furtherInformation': 'Further information',
   'health.prescriptions.drugName': 'Drug name',
   'health.prescriptions.atcCode': 'ATC code',
@@ -723,4 +724,6 @@ export const en: TranslatedMessages = {
   'health.prescriptions.validFrom': 'Valid from',
   'health.prescriptions.validUntil': 'Valid to',
   'health.prescriptions.nameOfDoctor': 'Name of doctor',
+  'health.prescriptions.methylDoctors': 'Extra doctors registered on license',
+  'health.prescriptions.status': 'Status',
 }
