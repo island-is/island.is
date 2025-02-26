@@ -13,10 +13,11 @@ import {
 } from '@island.is/clients/mms/frigg'
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-
-import { KeyOptionModel } from './frigg/keyOption.model'
-import { FriggOptionListInput } from './frigg/optionList.input'
-import { FriggOrganizationModel } from './frigg/organization.model'
+import {
+  KeyOptionModel,
+  FriggOptionListInput,
+  FriggOrganizationModel,
+} from '../models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)

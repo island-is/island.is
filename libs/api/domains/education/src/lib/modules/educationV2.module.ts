@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { GradesClientModule } from '@island.is/clients/mms/grade'
-import { GradesResolver } from './graphql/grades.resolver'
-import { EducationServiceV2 } from './educationV2.service'
+import { GradesResolver } from '../resolvers/v2/grades.resolver'
+import { EducationServiceV2 } from '../services/educationV2.service'
 
 @Module({
   imports: [GradesClientModule],

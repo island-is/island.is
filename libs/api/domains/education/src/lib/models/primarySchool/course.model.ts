@@ -1,15 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { CourseCompetence } from './competence.model'
 import { GradeCategory } from './gradeCategory.model'
-import { Grade } from './grade.model'
+import { PrimarySchoolGrade } from './grade.model'
 
 @ObjectType('EducationPrimarySchoolCourse')
-export class Course {
+export class PrimarySchoolCourse {
   @Field()
   label!: string
 
-  @Field(() => Grade, { nullable: true })
-  totalGrade?: Grade
+  @Field(() => PrimarySchoolGrade, { nullable: true })
+  totalGrade?: PrimarySchoolGrade
 
   @Field(() => CourseCompetence)
   competence!: CourseCompetence

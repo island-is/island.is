@@ -1,12 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { GradeClientService } from '@island.is/clients/mms/grade'
 import { User } from '@island.is/auth-nest-tools'
-import { mapCareer } from './educationMapper'
+import { mapCareer } from '../mappers/educationMapper'
 import { isDefined, unmaskString } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { ExamFamilyMemberInput } from './graphql/grade/dto/familyExamResult.input'
-import { FamilyPrimarySchoolCareer } from './graphql/models/familyCareer.model'
-import { StudentCareer } from './graphql/models/studentCareer.model'
+import {
+  FamilyPrimarySchoolCareer,
+  ExamFamilyMemberInput,
+  StudentCareer,
+} from '../models'
 
 @Injectable()
 export class EducationServiceV2 {

@@ -2,7 +2,6 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Mutation, Resolver, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -11,14 +10,14 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
-
-import { EducationService } from '../education.service'
+import { EducationService } from '../services/education.service'
 import {
   EducationLicense,
   EducationSignedLicense,
+  ExamFamilyOverview,
+  ExamResult,
   FetchEducationSignedLicenseUrlInput,
-} from './license'
-import { ExamFamilyOverview, ExamResult } from './grade'
+} from '../models'
 
 const namespace = '@island.is/api/education'
 

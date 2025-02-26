@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { GradeDetail } from './gradeDetail.model'
 
 @ObjectType('EducationPrimarySchoolGrade')
-export class Grade {
+export class PrimarySchoolGrade {
   @Field(() => GradeDetail)
   primarySchoolGrade!: GradeDetail
 

@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing'
-import { EducationService } from './education.service'
 import { LoggingModule } from '@island.is/logging'
 import type { Config } from './education.module'
 import {
@@ -24,6 +23,7 @@ import { Student } from './education.type'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
 import { AwsModule } from '@island.is/nest/aws'
+import { EducationService } from './services/education.service'
 
 const config = {
   fileDownloadBucket: '',

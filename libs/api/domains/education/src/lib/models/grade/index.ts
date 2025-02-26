@@ -1,0 +1,7 @@
+export * from './examResult.model'
+export * from './examFamilyOverview.model'
+export * from './dto/familyExamResult.input'
+export * from './courseGrade.model'
+export * from './grade.model'
+export * from './gradeResult.model'
+export * from './gradeType.model'

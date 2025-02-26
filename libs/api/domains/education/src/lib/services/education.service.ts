@@ -9,19 +9,14 @@ import {
   GradeTypeResult,
   GradeResult,
 } from '@island.is/clients/mms'
-
-import type { Config } from './education.module'
-import {
-  EducationLicense,
-  ExamFamilyOverview,
-  ExamResult,
-  Student,
-} from './education.type'
-import { getYearInterval } from './education.utils'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { isDefined } from '@island.is/shared/utils'
 import { S3Service } from '@island.is/nest/aws'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Config } from '../modules/education.module'
+import { Student } from '../education.type'
+import { EducationLicense, ExamFamilyOverview, ExamResult } from '../models'
+import { getYearInterval } from '../utils'
 
 @Injectable()
 export class EducationService {

@@ -1,0 +1,5 @@
+export * from './frigg'
+export * from './primarySchool'
+export * from './license'
+export * from './grade'
+export * from './inna'

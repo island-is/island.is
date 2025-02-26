@@ -9,10 +9,12 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { EducationServiceV2 } from '../educationV2.service'
-import { ExamFamilyMemberInput } from './grade/dto/familyExamResult.input'
-import { FamilyPrimarySchoolCareer } from './models/familyCareer.model'
-import { StudentCareer } from './models/studentCareer.model'
+import { EducationServiceV2 } from '../../services/educationV2.service'
+import {
+  ExamFamilyMemberInput,
+  FamilyPrimarySchoolCareer,
+  StudentCareer,
+} from '../../models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/education/grade' })
