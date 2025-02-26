@@ -98,14 +98,13 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: Find unicorn projects
-        env:
-          UNICORNS: unicorn-app,system-e2e,foo,bar
         run: |
-          jq -ncr --argjson chunks "$CHUNKS" --arg unicorns "$UNICORNS" '
+          unicorns=$(nx show projects --affected --projects=tag:unicorn --json)
+          jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
             [
                 $chunks.projects
               | .[]
-              | select( . | IN( $unicorns | split(",") | .[] ) )
+              | select( . | IN( $unicorns | .[] ) )
             ]
             | "AFFECTED_PROJECTS=\(. | join(","))"
           ' | tee -a "$GITHUB_ENV"
