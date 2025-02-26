@@ -38,10 +38,6 @@ export class ExampleCommonActionsService extends BaseTemplateApiService {
       },
     })
 
-    // const name = getValueViaPath<string>(
-    //   application.externalData,
-    //   'nationalRegistry.data.fullName',
-    // )
 
     return {
       referenceData: {
