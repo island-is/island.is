@@ -103,14 +103,6 @@ jobs:
           fetch-depth: 0  
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-      
-      - name: Update helm-values repository
-        uses: ./.github/actions/update-helm-values
-        with:
-          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
-          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
-      - run: |
-          exit 1
       - name: load-deps
         uses: ./.github/actions/load-deps
       - id: get-branch
