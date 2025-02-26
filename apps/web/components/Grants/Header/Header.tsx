@@ -52,12 +52,7 @@ export const GrantsHeader = (props: HeaderWithImageProps) => {
     }
 
     return (
-      <Box
-        marginTop={6}
-        component="form"
-        aria-label="Search grants"
-        action={props.searchUrl}
-      >
+      <Box marginTop={6} component="form" action={props.searchUrl}>
         <Input
           id="query"
           name="search query"
