@@ -5,8 +5,8 @@ inputs:
   files:
     description: 'Comma seperated string of paths to copy'
     required: true
-  gh_token_pat:
-    description: 'PAT token so the action can fetch the helm-values repository'
+  ssh-key:
+    description: 'SSH key so the action can fetch and push to the helm-values repository'
     required: true
 
 runs:
@@ -17,7 +17,7 @@ runs:
       with:
         repository: island-is/helm-values
         ref: main
-        token: ${{ inputs.gh_token_pat }}
+        ssh-key: ${{ inputs.gh_token_pat }}
         path: helm-values
     - name: Copy affected helm charts from island.is repository to helm-values repository
       shell: bash
