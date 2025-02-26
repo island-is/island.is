@@ -57,11 +57,6 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.nationalId),
-            value: t.socialSecurityNumber ?? '',
-          },
-          {
-            type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.publisher),
             value: 'Ríkislögreglustjóri',
           },
