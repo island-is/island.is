@@ -71,7 +71,6 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: Verify that unicorns have some tests
-        if: ${{ steps.prepare.outputs.is-unicorn == 'true' }}
         env:
           projects: ${{ env.AFFECTED_PROJECTS }}
         run: |
