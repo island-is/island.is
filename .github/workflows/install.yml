@@ -87,6 +87,9 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
+    permissions:
+      contents: 'read'
+      actions: 'read'
     steps:
       - name: Set outputs
         id: set-outputs
@@ -97,8 +100,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
+          fetch-depth: 0  
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
@@ -111,6 +113,7 @@ jobs:
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
+        if: ${{ inputs.run_merge_queue == false }}
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
@@ -119,6 +122,23 @@ jobs:
         id: export-sha
         shell: bash
         run: |
+          if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
+            # In merge que we always want to use the last 
+            # commit as head - last commit sha is alway succesful
+            # since else it won't get merged!
+            # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
+            # when this gets merged we can remove this hack!
+            #
+            # If we do not do this we will get the wrong base sha
+            # :(
+            export NX_HEAD=${{ github.sha }}
+            export NX_BASE=$(git rev-parse HEAD^1)
+            echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
+            echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
+            echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
+            echo BASE="$NX_BASE" >> "$GITHUB_ENV"
+            exit 0
+          fi
           echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
           echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
           # NOTE: we reference BASE and HEAD elsewhere
@@ -137,7 +157,6 @@ jobs:
         id: prepare-merge-queue
         if: ${{ inputs.run_merge_queue == true }}
         run: |
-          yarn --cwd scripts/ci/docker install
           node scripts/ci/docker/generate-tag.mjs
 
       # This is to increase the retention days for our GitHub Actions run events
@@ -147,7 +166,7 @@ jobs:
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
 
         # Don't run this step locally
-        if: ${{ !github.event.localrun }}
+        if: ${{ !github.event.localrun && inputs.run_merge_queue == false }}
         with:
           name: pr-event
           path: event.json

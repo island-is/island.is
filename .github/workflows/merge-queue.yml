@@ -96,7 +96,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
       - name: Set id for matrix
         run: |
-          yarn --cwd scripts/ci/docker install
           node ./scripts/ci/docker/create-id.mjs
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -210,7 +209,6 @@ jobs:
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
         run: |
-          yarn --cwd scripts/ci/docker install
           node scripts/ci/docker/write-data.mjs
       - name: Get manifest data
         id: manifest
