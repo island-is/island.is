@@ -16,7 +16,6 @@ import {
   Application,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
 import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
@@ -48,7 +47,6 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitidAccident],
-  featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
