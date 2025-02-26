@@ -1,7 +1,6 @@
 query Cases {
   cases {
     id
-    created
     type
     decision
     state
@@ -24,6 +23,7 @@ query Cases {
       caseId
       nationalId
       name
+      gender
       noNationalId
       defenderChoice
       verdictViewDate
@@ -110,5 +110,11 @@ query Cases {
     indictmentDecision
     indictmentCompletedDate
     courtSessionType
+    caseSentToCourtDate
+    isCompletedWithoutRuling
+    eventLogs {
+      id
+      eventType
+    }
   }
 }

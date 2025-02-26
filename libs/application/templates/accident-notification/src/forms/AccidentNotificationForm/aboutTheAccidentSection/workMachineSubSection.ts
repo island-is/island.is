@@ -3,6 +3,8 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { application, workMachine } from '../../../lib/messages'
 import {
@@ -10,7 +12,6 @@ import {
   isGeneralWorkplaceAccident,
   isSportAccidentAndEmployee,
 } from '../../../utils/occupationUtils'
-import { NO, YES } from '@island.is/application/types'
 
 // Workmachine information only applicable to generic workplace accidents
 export const workMachineSubSection = buildSubSection({
@@ -28,7 +29,6 @@ export const workMachineSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'workMachineRadio',
-          title: '',
           backgroundColor: 'blue',
           width: 'half',
           required: true,

@@ -56,7 +56,7 @@ export const LinkFormField = ({ field, application }: Props) => {
         variant={variant}
       >
         {formatTextWithLocale(
-          field.title,
+          field.title ?? '',
           application,
           locale as Locale,
           formatMessage,

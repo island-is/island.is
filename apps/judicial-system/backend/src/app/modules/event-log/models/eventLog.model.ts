@@ -18,6 +18,14 @@ import { Case } from '../../case/models/case.model'
   timestamps: false,
 })
 export class EventLog extends Model {
+  static caseSentToCourtEvent(eventLogs?: EventLog[]) {
+    return eventLogs?.find(
+      (eventLog) =>
+        eventLog.eventType === EventType.CASE_SENT_TO_COURT ||
+        eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -56,4 +64,16 @@ export class EventLog extends Model {
   })
   @ApiPropertyOptional({ enum: UserRole })
   userRole?: UserRole
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userTitle?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  institutionName?: string
 }

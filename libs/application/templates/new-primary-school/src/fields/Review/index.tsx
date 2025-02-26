@@ -4,7 +4,6 @@ import {
   Application,
   DefaultEvents,
   Field,
-  NO,
   RecordObject,
 } from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -24,14 +23,16 @@ import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
 import { Contacts } from './review-groups/Contacts'
+import { CurrentNursery } from './review-groups/CurrentNursery'
 import { CurrentSchool } from './review-groups/CurrentSchool'
 import { FreeSchoolMeal } from './review-groups/FreeSchoolMeal'
-import { Languages } from './review-groups/Languages'
 import { Guardians } from './review-groups/Guardians'
+import { Languages } from './review-groups/Languages'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
+import { NO } from '@island.is/application/core'
 
 interface ReviewScreenProps {
   application: Application
@@ -167,6 +168,9 @@ export const Review: FC<ReviewScreenProps> = ({
       <Contacts {...childProps} />
       {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
         <CurrentSchool {...childProps} />
+      )}
+      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
+        <CurrentNursery {...childProps} />
       )}
       <School {...childProps} />
       {(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||

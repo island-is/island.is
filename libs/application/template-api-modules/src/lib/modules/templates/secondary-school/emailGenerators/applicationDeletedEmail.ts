@@ -4,6 +4,7 @@ import { EmailRecipient } from '../types'
 import { pathToAsset } from '../utils'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
+import kennitala from 'kennitala'
 
 export type ApplicationDeletedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -29,13 +30,18 @@ export const generateApplicationDeletedEmail: ApplicationDeletedEmail = (
     'applicant.name',
   )
 
+  if (!applicantNationalId) throw new Error('Application national id empty')
+  if (!applicantName) throw new Error('Application name empty')
+
   const subject = 'Umsókn um framhaldsskóla eytt!'
 
   const message =
     `<span>Umsókn nemandans:</span><br/>` +
-    `<span>${applicantName}, kt. ${applicantNationalId},</span><br/>` +
+    `<span>${applicantName}, kt. ${kennitala.format(
+      applicantNationalId,
+    )},</span><br/>` +
     `<span>um nám í framhaldsskóla hefur verið eytt.</span><br/>` +
-    `<span>Þú getur farið inn á mínar síður og skoðað sögu umsóknarinnar.</span>`
+    `<span>Hægt er að gera nýja umsókn á Ísland.is.</span>`
 
   return {
     from: {
@@ -74,8 +80,8 @@ export const generateApplicationDeletedEmail: ApplicationDeletedEmail = (
         {
           component: 'Button',
           context: {
-            copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.SecondarySchool.slug}/${application.id}`,
+            copy: 'Opna nýja umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.SecondarySchool.slug}`,
           },
         },
       ],

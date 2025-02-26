@@ -1,5 +1,6 @@
 import {
   CodeOwners,
+  Context,
   ref,
   service,
   ServiceBuilder,
@@ -49,6 +50,16 @@ import {
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
+/**
+ * Make sure that each feature deployment has its own bull prefix. Since each
+ * feature deployment has its own database and applications, we don't want bull
+ * jobs to jump between environments.
+ */
+const APPLICATION_SYSTEM_BULL_PREFIX = (ctx: Context) =>
+  ctx.featureDeploymentName
+    ? `application_system_api_bull_module.${ctx.featureDeploymentName}`
+    : 'application_system_api_bull_module'
+
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
@@ -97,6 +108,7 @@ export const workerSetup = (services: {
       USER_NOTIFICATION_API_URL: ref(
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
+      APPLICATION_SYSTEM_BULL_PREFIX,
     })
     .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
     .secrets({
@@ -274,6 +286,7 @@ export const serviceSetup = (services: {
       USER_NOTIFICATION_API_URL: ref(
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
+      APPLICATION_SYSTEM_BULL_PREFIX,
     })
     .xroad(
       Base,

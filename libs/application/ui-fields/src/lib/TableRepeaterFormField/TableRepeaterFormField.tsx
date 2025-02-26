@@ -49,7 +49,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     marginTop = 6,
     marginBottom,
     getStaticTableData,
-    title,
+    title = '',
     titleVariant = 'h4',
     addItemButtonText = coreMessages.buttonAdd,
     cancelButtonText = coreMessages.buttonCancel,
@@ -96,6 +96,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     control: methods.control,
     name: data.id,
   })
+  const [isEditing, setIsEditing] = useState(false)
 
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
@@ -118,11 +119,15 @@ export const TableRepeaterFormField: FC<Props> = ({
       setActiveIndex(-1)
       load()
     }
+    setIsEditing(false)
   }
 
   const handleCancelItem = (index: number) => {
     setActiveIndex(-1)
-    remove(index)
+    if (!isEditing) {
+      remove(index)
+    }
+    setIsEditing(false)
   }
 
   const handleNewItem = () => {
@@ -139,9 +144,11 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const handleEditItem = (index: number) => {
     setActiveIndex(index)
+    setIsEditing(true)
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {
+    item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn ? formatFn(item[key]) : item[key]
     return typeof formatted === 'string'

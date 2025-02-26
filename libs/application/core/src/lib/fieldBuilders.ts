@@ -50,6 +50,7 @@ import {
   BankAccountField,
   TitleField,
   TitleVariants,
+  OverviewField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -71,7 +72,7 @@ const extractCommonFields = (
     disabled = false,
     doesNotRequireAnswer = false,
     id,
-    title,
+    title = '',
     dataTestId,
     width = 'full',
     nextButtonText,
@@ -505,18 +506,18 @@ export const buildKeyValueField = (data: {
 
 export const buildSubmitField = (data: {
   id: string
-  title: FormText
+  title?: FormText
   placement?: 'footer' | 'screen'
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
-  refetchApplicationAfterSubmit?: boolean
+  refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
   actions: CallToAction[]
   condition?: Condition
 }): SubmitField => {
   const {
     id,
     placement = 'footer',
-    title,
+    title = '',
     actions,
     condition,
     refetchApplicationAfterSubmit,
@@ -580,11 +581,11 @@ export const buildFieldRequired = (
 
 export const buildRedirectToServicePortalField = (data: {
   id: string
-  title: FormText
+  title?: FormText
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
 }): RedirectToServicePortalField => {
-  const { id, title, marginTop, marginBottom } = data
+  const { id, title = '', marginTop, marginBottom } = data
   return {
     children: undefined,
     id,
@@ -613,12 +614,11 @@ export const buildPaymentPendingField = (data: {
 export const buildMessageWithLinkButtonField = (
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField => {
-  const { id, title, url, message, buttonTitle } = data
+  const { id, url, message, buttonTitle } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
-    title,
     url,
     message,
     buttonTitle,
@@ -630,12 +630,11 @@ export const buildMessageWithLinkButtonField = (
 export const buildExpandableDescriptionField = (
   data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
 ): ExpandableDescriptionField => {
-  const { id, title, description, introText, startExpanded } = data
+  const { id, description, introText, startExpanded } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
-    title,
     description,
     introText,
     startExpanded,
@@ -685,13 +684,11 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
-    data
+  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
-    title,
     forPaymentLabel,
     totalLabel,
     getSelectedChargeItems,
@@ -705,7 +702,6 @@ export const buildImageField = (
 ): ImageField => {
   const {
     id,
-    title,
     image,
     alt,
     condition,
@@ -718,7 +714,6 @@ export const buildImageField = (
     ...extractCommonFields(data),
     children: undefined,
     id,
-    title,
     image,
     alt,
     imageWidth,
@@ -924,7 +919,6 @@ export const buildFieldsRepeaterField = (
 ): FieldsRepeaterField => {
   const {
     fields,
-    title,
     titleVariant,
     formTitle,
     formTitleVariant,
@@ -942,7 +936,6 @@ export const buildFieldsRepeaterField = (
     type: FieldTypes.FIELDS_REPEATER,
     component: FieldComponents.FIELDS_REPEATER,
     fields,
-    title,
     titleVariant,
     formTitle,
     formTitleVariant,
@@ -973,7 +966,7 @@ export const buildStaticTableField = (
     header,
     condition,
     dataTestId,
-    title,
+    title = '',
     description,
     rows,
     summary,
@@ -1007,7 +1000,7 @@ export const buildSliderField = (
 ): SliderField => {
   const {
     id,
-    title,
+    title = '',
     titleVariant = 'h2',
     condition,
     min = 0,
@@ -1097,7 +1090,6 @@ export const buildDisplayField = (
   data: Omit<DisplayField, 'type' | 'component' | 'children'>,
 ): DisplayField => {
   const {
-    title,
     titleVariant,
     label,
     variant,
@@ -1108,7 +1100,6 @@ export const buildDisplayField = (
   } = data
   return {
     ...extractCommonFields(data),
-    title,
     titleVariant,
     label,
     variant,
@@ -1127,7 +1118,7 @@ export const buildAccordionField = (
 ): AccordionField => {
   const {
     accordionItems,
-    title,
+    title = '',
     titleVariant,
     id,
     marginTop,
@@ -1150,7 +1141,7 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title, id, marginBottom, marginTop, titleVariant } = data
+  const { title = '', id, marginBottom, marginTop, titleVariant } = data
   return {
     children: undefined,
     id,
@@ -1160,5 +1151,24 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+  }
+}
+
+export const buildOverviewField = (
+  data: Omit<OverviewField, 'type' | 'component' | 'children'>,
+): OverviewField => {
+  const { id, title, description, backId, items, attachments, tableData } = data
+  return {
+    ...extractCommonFields(data),
+    id,
+    title,
+    description,
+    backId,
+    items,
+    attachments,
+    tableData,
+    type: FieldTypes.OVERVIEW,
+    component: FieldComponents.OVERVIEW,
+    children: undefined,
   }
 }

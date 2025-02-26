@@ -29,6 +29,8 @@ import {
   StarfsrettindiModel,
   VedbandayfirlitRegluverkGeneralSvar,
   Skip,
+  Brennuleyfi,
+  TrufelogOgLisskodunarfelogModel,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -72,6 +74,8 @@ import {
   ShipDetail,
   MortgageCertificateValidation,
   MortgageCertificate,
+  BurningPermit,
+  ReligiousOrganization,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -570,6 +574,34 @@ export const mapProfessionRight = (
     name: professionRight.nafn ?? undefined,
     profession: professionRight.starfsrettindi ?? undefined,
     nationalId: professionRight.kennitala ?? undefined,
+  }
+}
+
+export const mapBurningPermits = (permit: Brennuleyfi): BurningPermit => {
+  return {
+    dateFrom: permit.dagsetningFra,
+    timeFrom: permit.timiFra,
+    dateTo: permit.dagsetningTil,
+    timeTo: permit.timiTil,
+    type: permit.tegund,
+    subtype: permit.undirtegund,
+    responsibleParty: permit.abyrgdaradili,
+    office: permit.embaetti,
+    licensee: permit.leyfishafi,
+    place: permit.stadur,
+    size: permit.staerd,
+  }
+}
+
+export const mapReligiousOrganization = (
+  religiousOrganization: TrufelogOgLisskodunarfelogModel,
+): ReligiousOrganization => {
+  return {
+    director: religiousOrganization.forstodumadur,
+    homeAddress: religiousOrganization.heimili,
+    name: religiousOrganization.nafnFelags ?? '',
+    postalCode: religiousOrganization.postnumer,
+    municipality: religiousOrganization.sveitarfelag,
   }
 }
 

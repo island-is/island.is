@@ -6,7 +6,6 @@ import { prerequisitesSection } from './prerequisitesSection'
 
 export const DrivingLicenseBookUpdateInstructorForm: Form = buildForm({
   id: 'DrivingLicenseBookUpdateInstructorFormDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

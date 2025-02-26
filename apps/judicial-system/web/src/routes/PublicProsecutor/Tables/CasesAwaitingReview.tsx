@@ -50,16 +50,13 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: {
-                    isSortable: true,
-                    key: 'indictmentAppealDeadline',
-                  },
+                  sortBy: 'indictmentAppealDeadline',
                 },
               ]}
               data={cases}
@@ -92,11 +89,10 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 {
                   cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
                     />
                   ),
                 },

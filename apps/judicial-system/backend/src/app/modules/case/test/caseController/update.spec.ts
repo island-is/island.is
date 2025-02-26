@@ -855,6 +855,7 @@ describe('CaseController - Update', () => {
     const updatedCase = {
       ...theCase,
       type: CaseType.INDICTMENT,
+      origin: CaseOrigin.LOKE,
       dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
       defendants: [
         { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
@@ -884,6 +885,12 @@ describe('CaseController - Update', () => {
       ])
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
           user,
           caseId: theCase.id,
@@ -894,6 +901,12 @@ describe('CaseController - Update', () => {
           user,
           caseId: theCase.id,
           elementId: [defendantId1, subpoenaId1],
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
         },
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,

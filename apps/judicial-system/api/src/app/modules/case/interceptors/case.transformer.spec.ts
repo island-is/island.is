@@ -658,9 +658,9 @@ describe('getIndictmentInfo', () => {
     // Arrange
 
     // Act
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
-    )
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+    })
 
     // Assert
     expect(indictmentInfo).toEqual({})
@@ -669,13 +669,14 @@ describe('getIndictmentInfo', () => {
   it('should return correct indictment info when ruling date is provided', () => {
     const rulingDate = '2022-06-15T19:50:08.033Z'
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       rulingDate,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-13T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })
@@ -683,19 +684,21 @@ describe('getIndictmentInfo', () => {
 
   it('should return correct indictment info when some defendants have yet to view the verdict', () => {
     const rulingDate = '2022-06-14T19:50:08.033Z'
+
     const defendants = [
       { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
       { verdictViewDate: undefined } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       rulingDate,
       defendants,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: false,
       indictmentVerdictAppealDeadlineExpired: false,
     })
@@ -711,20 +714,22 @@ describe('getIndictmentInfo', () => {
       } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.RULING,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       rulingDate,
       defendants,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2022-07-12T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
-      indictmentVerdictAppealDeadlineExpired: false,
+      indictmentVerdictAppealDeadlineExpired: true,
     })
   })
 
   it('should return correct indictment info when the indictment ruling decision is FINE and the appeal deadline is not expired', () => {
+    const courtEndTime = new Date()
     const rulingDate = new Date()
     const defendants = [
       {
@@ -733,16 +738,17 @@ describe('getIndictmentInfo', () => {
       } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.FINE,
-      rulingDate.toISOString(),
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+      rulingDate: rulingDate.toISOString(),
       defendants,
-    )
+    })
 
-    const expectedIndictmentAppealDeadline = endOfDay(addDays(rulingDate, 3))
+    const expectedIndictmentAppealDeadline = endOfDay(addDays(courtEndTime, 3))
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: expectedIndictmentAppealDeadline.toISOString(),
+      indictmentCompletedDate: rulingDate.toISOString(),
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: false,
     })
@@ -757,14 +763,15 @@ describe('getIndictmentInfo', () => {
       } as Defendant,
     ]
 
-    const indictmentInfo = getIndictmentInfo(
-      CaseIndictmentRulingDecision.FINE,
+    const indictmentInfo = getIndictmentInfo({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
       rulingDate,
       defendants,
-    )
+    })
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: '2024-05-29T23:59:59.999Z',
+      indictmentCompletedDate: rulingDate,
       indictmentVerdictViewedByAll: true,
       indictmentVerdictAppealDeadlineExpired: true,
     })

@@ -42,6 +42,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -108,6 +109,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
+        HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
         BifrostUniversityCareerClientConfig,
         UniversityOfAkureyriCareerClientConfig,

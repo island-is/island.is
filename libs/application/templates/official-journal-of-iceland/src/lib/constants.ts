@@ -9,11 +9,6 @@ export const OJOI_DF = 'd. MMMM yyyy.'
 export const VERDSKRA_LINK =
   'https://www.stjornartidindi.is/PdfVersions.aspx?recordId=0f574646-eb9d-430b-bbe7-936e7c9389a0'
 
-export enum AnswerOption {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export const DEPARTMENT_A = 'a-deild'
 export const DEPARTMENT_B = 'b-deild'
 export const DEPARTMENT_C = 'c-deild'
@@ -66,13 +61,6 @@ export enum FileNames {
 }
 
 export const OJOI_INPUT_HEIGHT = 64
-
-export type SignatureType = 'regular' | 'committee'
-export enum SignatureTypes {
-  REGULAR = 'regular',
-  COMMITTEE = 'committee',
-}
-
 export const ONE = 1
 export const MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 1
 export const DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT = 1

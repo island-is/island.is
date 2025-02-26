@@ -305,11 +305,15 @@ services-auth-admin-api:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+    NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/services-auth/NOVA_URL'
+    NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
     ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
+    ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -334,7 +338,7 @@ services-auth-delegation-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
     SYSLUMENN_TIMEOUT: '3000'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'https://user-notification.internal.island.is'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -476,7 +480,7 @@ services-auth-ids-api:
         nginxRequestsIrate: 5
       replicas:
         max: 15
-        min: 2
+        min: 6
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
   initContainer:
@@ -521,9 +525,9 @@ services-auth-ids-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
+    default: 6
     max: 15
-    min: 2
+    min: 6
   resources:
     limits:
       cpu: '800m'

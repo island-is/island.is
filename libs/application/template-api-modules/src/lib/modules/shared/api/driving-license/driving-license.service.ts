@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
 
 import {
   StudentAssessment,
   DrivingLicenseFakeData,
   HasQualityPhoto,
-  YES,
   DrivingLicense,
   HasQualitySignature,
 } from './types'
@@ -177,13 +176,16 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     )
 
     // Validate that user has the necessary categories
+    const today = new Date()
     if (
       params?.validCategories &&
       (!drivingLicense?.categories ||
-        !drivingLicense.categories.some((x) =>
-          params.validCategories?.includes(
-            params?.useLegacyVersion ? x.name : x.nr || '',
-          ),
+        !drivingLicense.categories.some(
+          (x) =>
+            (!x.expires || x.expires >= today) &&
+            params.validCategories?.includes(
+              params?.useLegacyVersion ? x.name : x.nr || '',
+            ),
         ))
     ) {
       throw new TemplateApiError(

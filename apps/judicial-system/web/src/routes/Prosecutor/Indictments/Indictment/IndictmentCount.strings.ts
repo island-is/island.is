@@ -95,6 +95,24 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "vínandamagn" svæði á ákæruliða skrefi í ákærum.',
   },
+  speedingTitle: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.speeding',
+    defaultMessage: 'Hraði',
+    description:
+      'Notaður sem titill á "Hraði" svæði á ákæruliða skrefi í ákærum.',
+  },
+  recordedSpeedLabel: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.recorded_speed_label',
+    defaultMessage: 'Mældur hraði (km/klst)',
+    description:
+      'Notaður sem titill á "Mældur hraði" innsláttarsvæði á ákæruliða skrefi í ákærum.',
+  },
+  speedLimitLabel: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.speed_limit_label',
+    defaultMessage: 'Leyfilegur hámarkshraði (km/klst)',
+    description:
+      'Notaður sem titill á "Leyfilegur hámarkshraði" innsláttarsvæði á ákæruliða skrefi í ákærum.',
+  },
   lawsBrokenTitle: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_title',
     defaultMessage: 'Lagaákvæði',
@@ -118,10 +136,21 @@ export const indictmentCount = defineMessages({
     defaultMessage: '{paragraph}. mgr. {article}. gr. umfl.',
     description: 'Notaður sem texti í lagaákvæði taggi.',
   },
+  lawsBrokenTagArticleOnly: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.laws_broken_tag_article_only',
+    defaultMessage: '{article}. gr. umfl.',
+    description: 'Notaður sem texti í lagaákvæði taggi.',
+  },
+  incidentDescriptionShortAutofill: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_short_auto_fill',
+    defaultMessage: 'fyrir umferðarlagabrot með því að hafa, {incidentDate}',
+    description:
+      'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum þegar "annað" umferðarlagabrot er valið.',
+  },
   incidentDescriptionAutofill: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_auto_fill',
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_auto_fill_v1',
     defaultMessage:
-      'fyrir umferðarlagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {reason} um {incidentLocation}, þar sem lögregla stöðvaði aksturinn.',
+      'fyrir umferðarlagabrot með því að hafa, {incidentDate}, ekið bifreiðinni {vehicleRegistrationNumber} {reason} um {incidentLocation}, {isSpeeding, select, true {á {recordedSpeed} km hraða á klukkustund, að teknu tilliti til vikmarka, þar sem leyfður hámarkshraði var {speedLimit} km/klst} other {þar sem lögregla stöðvaði aksturinn}}.',
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum.',
   },
