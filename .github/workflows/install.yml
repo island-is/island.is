@@ -100,11 +100,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - name: Set Directory as Safe
-        run: |
-          git config --system --add safe.directory "$GITHUB_WORKSPACE"
-        
+          fetch-depth: 0  
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
@@ -129,8 +125,10 @@ jobs:
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
             # In merge que we always want to use the last 
-            # commit as head
+            # commit as head - last commit sha is alway succesful
+            # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
+            # when this gets merged we can remove this hack!
             #
             # If we do not do this we will get the wrong base sha
             # :(
