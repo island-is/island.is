@@ -216,9 +216,3 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })
-    .grantNamespaces(
-      'nginx-ingress-internal',
-      'islandis',
-      'identity-server-delegation',
-      'application-system',
-    )
