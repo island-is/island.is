@@ -23,7 +23,7 @@ runs:
       id: get-token
       shell: bash
       env: 
-        APP_ID: ${{ secrets.app-id }}
+        APP_ID: ${{ inputs.app-id }}
         PRIVATE_KEY: ${{ inputs.ssh-key }}
       run: |
         node scripts/ci/docker/get-github-token.mjs
