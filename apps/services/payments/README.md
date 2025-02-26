@@ -1,6 +1,6 @@
-# Payments microservice
+# Payments service
 
-This microservice handles the creation and fetching of payment flows
+This service handles the creation and fetching of payment flows
 
 Payment flows are initialised by either processes (like an application from the application system) or people working for organizations.
 

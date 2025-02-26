@@ -183,7 +183,6 @@ export default function PaymentPage({
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isVerifyingCard, setIsVerifyingCard] = useState(false)
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [threeDSecureData, setThreeDSecureData] = useState(null)
   const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
 
@@ -357,7 +356,6 @@ export default function PaymentPage({
 
     try {
       if (selectedPaymentMethod === 'card') {
-        setIsProcessingPayment(true)
         await payWithCard(data)
         return // No need to set isSubmitting to false
       } else {
@@ -381,7 +379,6 @@ export default function PaymentPage({
         return
       }
     } catch (e) {
-      setIsProcessingPayment(false)
       setVerificationStatus(false)
 
       if (e.message !== CardErrorCode.VerificationCancelledByUser) {
