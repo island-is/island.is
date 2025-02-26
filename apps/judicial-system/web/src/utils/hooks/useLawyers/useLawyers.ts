@@ -1,5 +1,5 @@
 import { useIntl } from 'react-intl'
-import useSWR from 'swr'
+import useSWRImmutable from 'swr/immutable'
 
 import { toast } from '@island.is/island-ui/core'
 import { type Lawyer } from '@island.is/judicial-system/types'
@@ -16,17 +16,14 @@ export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
       return res.json()
     })
 
-  const { data, error } = useSWR<Lawyer[]>(
+  const { data, error } = useSWRImmutable<Lawyer[]>(
     shouldFetch ? '/api/defender/lawyerRegistry' : null,
     fetcher,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
       shouldRetryOnError: false,
+      errorRetryCount: 0,
     },
   )
-
   if (error) {
     toast.error(formatMessage(errorMessages.fetchLawyers))
     return []

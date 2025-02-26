@@ -4,6 +4,7 @@ import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { Lawyer } from '@island.is/judicial-system/types'
 
 import { useGetLawyers } from '../useLawyers/useLawyers'
+import differenceInSeconds from 'date-fns/differenceInSeconds'
 
 export const Database = {
   name: 'lawyer-registry',
@@ -35,15 +36,16 @@ export const useIndexedDB = (
           const now = new Date()
           const shouldRefresh =
             records.length > 0
-              ? differenceInMinutes(now, records[0].created) > 1
+              ? differenceInSeconds(now, records[0].created) > 5
               : true
+
+          setAllLawyers(request.result)
 
           if (shouldRefresh) {
             console.log('Refreshing IndexedDB data...')
             setShouldFetch(true)
           } else {
             console.log('Using cached IndexedDB data.')
-            setAllLawyers(request.result)
           }
         }
 
@@ -64,7 +66,7 @@ export const useIndexedDB = (
     if (shouldFetch && lawyers.length > 0) {
       refreshData(lawyers)
     }
-  }, [shouldFetch, lawyers])
+  }, [shouldFetch])
 
   const openDB = (): Promise<IDBDatabase> => {
     return new Promise((resolve, reject) => {
