@@ -4,20 +4,35 @@ description: 'Copys the changeset in charts folder to helm-values repository'
 inputs:
   files:
     description: 'Comma seperated string of paths to copy'
-    required: true
+    default: ''
+    required: false
   ssh-key:
     description: 'SSH key so the action can fetch and push to the helm-values repository'
+    required: true
+  app-id:
+    description: 'App ID for the GitHub App'
     required: true
 
 runs:
   using: 'composite'
   steps:
+    - name: Login with Private key
+      shell: bash
+      run: |
+    - name: Get token
+      id: get-token
+      shell: bash
+      env: 
+        APP_ID: ${{ secrets.app-id }}
+        PRIVATE_KEY: ${{ inputs.ssh-key }}
+      run: |
+        node scripts/ci/docker/get-github-token.mjs
     - name: Checkout helm-values repository
       uses: actions/checkout@v4
       with:
         repository: island-is/helm-values
         ref: main
-        ssh-key: ${{ inputs.ssh-key }}
+        token: ${{ steps.get-token.outputs.token }}
         path: helm-values
     - name: Copy affected helm charts from island.is repository to helm-values repository
       shell: bash
@@ -36,6 +51,7 @@ runs:
           cp "$path" "$DEST"
         done
     - name: Commit and push changes to helm-values repository
+      if: ${{ inputs.files != '' }}
       shell: bash
       run: |
         cd helm-values

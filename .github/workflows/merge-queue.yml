@@ -221,7 +221,8 @@ jobs:
         if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
         with:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
-          gh_token_pat: ${{ secrets.GH_HELM_VALUES_PAT }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4

@@ -11,8 +11,8 @@ if (!APP_ID || !PRIVATE_KEY) {
 }
 
 const authData = await githubAppJwt({
-    id: APP_ID,            // GitHub App's ID (or Client ID)
-    privateKey: PRIVATE_KEY  // the PEM private key string
+    id: APP_ID,           
+    privateKey: PRIVATE_KEY  
 });
 
 
@@ -24,5 +24,6 @@ const installationRest = await fetch(`https://api.github.com/app/installations/$
 });
 
 const installationJson = await installationRest.json();
-core.setOutput('NEW_TOKEN', installationJson.token);
+core.setSecret(installationJson.token);
+core.setOutput('token', installationJson.token);
 
