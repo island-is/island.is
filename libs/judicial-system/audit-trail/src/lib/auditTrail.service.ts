@@ -64,6 +64,7 @@ export enum AuditedAction {
   CREATE_OFFENSE = 'CREATE_OFFENSE',
   UPDATE_OFFENSE = 'UPDATE_OFFENSE',
   DELETE_OFFENSE = 'DELETE_OFFENSE',
+  DELIVER_SUBPOENA_TO_POLICE = 'DELIVER_SUBPOENA_TO_POLICE',
 }
 
 @Injectable()
@@ -79,16 +80,24 @@ export class AuditTrailService {
 
   private trail?: Logger
 
-  private formatMessage(
-    userId: string,
-    action: AuditedAction,
-    ids: string | string[] | undefined,
-    error?: unknown,
-  ) {
+  private formatMessage({
+    userId,
+    action,
+    ids,
+    details,
+    error,
+  }: {
+    userId: string
+    action: AuditedAction
+    ids: string | string[] | undefined
+    details?: { [key: string]: string | Date | boolean | undefined | null }
+    error?: unknown
+  }) {
     const message = {
       user: userId,
       action,
       entities: ids,
+      details,
       error,
     }
 
@@ -129,30 +138,55 @@ export class AuditTrailService {
     }
   }
 
-  private writeToTrail(
-    userId: string,
-    actionType: AuditedAction,
-    ids: string | string[] | undefined,
-    error?: unknown,
-  ) {
+  private writeToTrail({
+    userId,
+    actionType,
+    ids,
+    details,
+    error,
+  }: {
+    userId: string
+    actionType: AuditedAction
+    ids: string | string[] | undefined
+    details?: { [key: string]: string | Date | boolean | undefined | null }
+    error?: unknown
+  }) {
     if (!this.trail) {
       throw new ReferenceError('Audit trail has not been initialized')
     }
 
-    this.trail.info(this.formatMessage(userId, actionType, ids, error))
+    this.trail.info(
+      this.formatMessage({ userId, action: actionType, ids, details, error }),
+    )
   }
 
-  private async auditResult<R>(
-    userId: string,
-    actionType: AuditedAction,
-    result: R,
-    auditedResult: string | ((result: R) => string | string[]),
-  ): Promise<R> {
-    this.writeToTrail(
+  private async auditResult<R>({
+    userId,
+    actionType,
+    result,
+    auditedResult,
+    getAuditDetails,
+  }: {
+    userId: string
+    actionType: AuditedAction
+    result: R
+    auditedResult: string | ((result: R) => string | string[])
+    getAuditDetails?: (
+      res: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>
+  }): Promise<R> {
+    const auditDetails = getAuditDetails
+      ? { details: await getAuditDetails(result) }
+      : {}
+    this.writeToTrail({
       userId,
       actionType,
-      typeof auditedResult === 'string' ? auditedResult : auditedResult(result),
-    )
+      ids:
+        typeof auditedResult === 'string'
+          ? auditedResult
+          : auditedResult(result),
+      ...auditDetails,
+    })
 
     return result
   }
@@ -162,18 +196,27 @@ export class AuditTrailService {
     actionType: AuditedAction,
     action: Promise<R>,
     auditedResult: string | ((result: R) => string | string[]),
+    getAuditDetails?: (
+      res: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>,
   ): Promise<R> {
     try {
       const result = await action
 
-      return await this.auditResult(userId, actionType, result, auditedResult)
-    } catch (e) {
-      this.writeToTrail(
+      return await this.auditResult({
         userId,
         actionType,
-        typeof auditedResult === 'string' ? auditedResult : undefined,
-        e,
-      )
+        result,
+        auditedResult,
+        getAuditDetails,
+      })
+    } catch (e) {
+      this.writeToTrail({
+        userId,
+        actionType,
+        ids: typeof auditedResult === 'string' ? auditedResult : undefined,
+        error: e,
+      })
 
       throw e
     }
@@ -184,6 +227,9 @@ export class AuditTrailService {
     actionType: AuditedAction,
     action: Promise<R> | R,
     auditedResult: string | ((result: R) => string | string[]),
+    getAuditDetails?: (
+      res: R,
+    ) => Promise<{ [key: string]: string | Date | boolean | undefined | null }>,
   ): Promise<R> {
     if (action instanceof Promise) {
       return await this.auditPromisedResult<R>(
@@ -191,9 +237,16 @@ export class AuditTrailService {
         actionType,
         action,
         auditedResult,
+        getAuditDetails,
       )
     } else {
-      return await this.auditResult(userId, actionType, action, auditedResult)
+      return await this.auditResult({
+        userId,
+        actionType,
+        result: action,
+        auditedResult,
+        getAuditDetails,
+      })
     }
   }
 }
