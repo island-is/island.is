@@ -396,7 +396,6 @@ export class WorkMachinesClientService {
     auth: Auth,
     requestParameters: ApiMachineLicenseTeachingApplicationPostRequest,
   ) {
-    console.log('requestParameters', requestParameters)
     return await this.machineLicenseTeachingApplicationApiWithAuth(
       auth,
     ).apiMachineLicenseTeachingApplicationPost(requestParameters)
