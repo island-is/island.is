@@ -17,7 +17,6 @@ import {
   UserProvider,
   ViewportProvider,
 } from '../src/components'
-import { LawyerRegistryProvider } from '../src/components/LawyerRegistryProvider/LawyerRegistryProvider'
 
 const {
   publicRuntimeConfig: {
@@ -104,7 +103,6 @@ class JudicialSystemApplication extends App<Props> {
           <ApolloProvider client={client}>
             <FeatureProvider>
               <UserProvider>
-                {/* <LawyerRegistryProvider> */}
                 <LocaleProvider locale="is" messages={translations || {}}>
                   <>
                     <ServiceInterruptionBanner />
@@ -176,7 +174,6 @@ class JudicialSystemApplication extends App<Props> {
                     `}</style>
                   </>
                 </LocaleProvider>
-                {/* </LawyerRegistryProvider> */}
               </UserProvider>
             </FeatureProvider>
           </ApolloProvider>
