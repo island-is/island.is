@@ -18,7 +18,7 @@ import {
   Query,
   QuerySecondarySchoolProgramsBySchoolIdArgs,
   SecondarySchoolProgram,
-} from '@island.is/api/schema'
+} from './types/schema'
 import { PROGRAMS_BY_SCHOOLS_ID_QUERY } from '../graphql/queries'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
