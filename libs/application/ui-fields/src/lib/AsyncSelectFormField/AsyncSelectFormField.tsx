@@ -59,14 +59,16 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     ? JSON.stringify(watch(updateOnSelect))
     : ''
 
-  const load = async (selectedValue?: string | string[]) => {
+  const load = async (watchedValue?: string) => {
     try {
       setHasLoadingError(false)
       setIsLoading(true)
+      const selectedValues: string[] | undefined =
+        watchedValue && JSON.parse(watchedValue)
       const loaded = await loadOptions({
         application,
         apolloClient,
-        selectedValue,
+        selectedValues,
       })
       setOptions(loaded)
       setIsLoading(false)

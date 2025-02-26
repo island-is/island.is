@@ -56,7 +56,11 @@ export const newSchoolSubSection = buildSubSection({
           placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           updateOnSelect: ['newSchool.municipality'],
-          loadOptions: async ({ application, apolloClient, selectedValue }) => {
+          loadOptions: async ({
+            application,
+            apolloClient,
+            selectedValues,
+          }) => {
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
@@ -68,7 +72,7 @@ export const newSchoolSubSection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValue)
+                ?.find(({ name }) => name === selectedValues?.[0])
                 ?.children?.filter((school) =>
                   school.gradeLevels?.includes(childGradeLevel),
                 )
