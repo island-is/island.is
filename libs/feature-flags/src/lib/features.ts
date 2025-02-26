@@ -28,7 +28,6 @@ export enum Features {
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
-  WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
@@ -41,6 +40,9 @@ export enum Features {
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
   servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
   servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
+  servicePortalHealthReferralsPageEnabled = 'isServicePortalReferralsPageEnabled',
+  servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
+  servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled

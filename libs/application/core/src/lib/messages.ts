@@ -390,6 +390,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
   },
+  uploadMultipleNotAllowed: {
+    id: 'application.system:core.error.file.uploadMultipleNotAllowed',
+    defaultMessage:
+      'Það má bara hlaða upp einni skrá',
+    description: 'Error message when multi upload is not allowed.',
+  },
   fileRemove: {
     id: 'application.system:core.error.file.remove',
     defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
