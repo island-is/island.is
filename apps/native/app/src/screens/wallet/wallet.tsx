@@ -133,7 +133,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   // Filter licenses
   const licenseItems = useMemo(() => {
     if ((!res.loading && !res.error) || res.data) {
-      return (res.data?.genericLicenseCollection.licenses ?? []).filter(
+      return (res.data?.genericLicenseCollection?.licenses ?? []).filter(
         ({ license }) => {
           if (license.status === 'Unknown') {
             return false
