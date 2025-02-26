@@ -79,7 +79,7 @@ jobs:
       - name: Verify that affected projects have any tests
         run: |
           yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${AFFECTED_PROJECTS}" --parallel --verbose -- --listTests | grep -P "^(${AFFECTED_PROJECTS//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
-          echo -e "${AFFECTED_PROJECTS//,/\n}" | sort > /tmp/projects-all
+          echo -e "${AFFECTED_PROJECTS//,/\\n}" | sort > /tmp/projects-all
           if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
             code=$?
             echo "These projects don't have any tests:"
