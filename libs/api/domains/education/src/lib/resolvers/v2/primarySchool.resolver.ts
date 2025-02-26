@@ -17,9 +17,9 @@ import {
 } from '../../models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Audit({ namespace: '@island.is/api/education/grade' })
+@Audit({ namespace: '@island.is/api/education/primarySchool' })
 @Resolver()
-export class GradesResolver {
+export class PrimarySchoolResolver {
   constructor(private readonly educationService: EducationServiceV2) {}
 
   @Query(() => FamilyPrimarySchoolCareer)
