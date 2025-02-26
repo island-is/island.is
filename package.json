@@ -66,6 +66,8 @@
     "mock": "nx mock"
   },
   "dependencies": {
+    "@actions/core": "1.11.1",
+    "@actions/github": "6.0.0",
     "@apollo/client": "3.7.15",
     "@apollo/gateway": "2.1.1",
     "@apollo/subgraph": "2.1.1",
