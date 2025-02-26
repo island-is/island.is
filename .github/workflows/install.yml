@@ -20,6 +20,8 @@ on:
         value: ${{ jobs.install.outputs.NX_BASE }}
       DEPLOY_FEATURE:
         value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
+      is-unicorn:
+        value: ${{ jobs.install.outputs.is-unicorn }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
@@ -62,6 +64,7 @@ jobs:
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
+      is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
     runs-on: arc-runners
     steps:
       - name: Set outputs
@@ -198,3 +201,9 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set unicorn
+        id: unicorn
+        run: |
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
+          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
