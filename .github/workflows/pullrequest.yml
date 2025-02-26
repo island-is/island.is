@@ -70,7 +70,7 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Verify that unicorns have some tests
+      - name: Verify that projects have some tests
         env:
           projects: ${{ env.AFFECTED_PROJECTS }}
         run: |
