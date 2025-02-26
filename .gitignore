@@ -14,7 +14,6 @@ infra/helm/**/*.tgz
 
 # dependencies
 node_modules/
-scripts/ci/docker/node_modules/
 **/.yarn/*
 !**/.yarn/patches
 !**/.yarn/releases
