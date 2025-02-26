@@ -7,7 +7,7 @@ import { AuthGuard } from '@nestjs/passport'
 import type { User } from '@island.is/judicial-system/types'
 
 @Injectable()
-export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
+export class JwtGraphQlAuthUserGuard extends AuthGuard('jwt') {
   constructor(private readonly allowNonUsers = false) {
     super()
   }
