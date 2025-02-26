@@ -15,7 +15,11 @@ export const getIncidentDescriptionReason = (
   formatMessage: IntlShape['formatMessage'],
 ) => {
   let reason = offenses
-    .filter((o) => o.offense !== IndictmentCountOffense.SPEEDING)
+    .filter(
+      (o) =>
+        o.offense !== IndictmentCountOffense.SPEEDING &&
+        o.offense !== IndictmentCountOffense.OTHER,
+    )
     .reduce((acc, o, index) => {
       if (
         (offenses.length > 1 && index === offenses.length - 1) ||
