@@ -246,7 +246,7 @@ export class AuthController {
         }
       | undefined
 
-    const users = await this.authService.findUsersByNatinoalId(
+    const users = await this.authService.findUsersByNationalId(
       authUser.nationalId,
     )
     let user = users && users.length > 0 ? users[0] : undefined
