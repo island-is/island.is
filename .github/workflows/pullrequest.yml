@@ -68,8 +68,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
 
       - name: Debug find projects without tests
-        env:
-          AFFECTED_PROJECTS: api,web,application-system-api,clients-consultation-portal,clients-rights-portal
         run: |
           set -euo pipefail
           for project in $(yarn nx show projects --with-target test --projects "${AFFECTED_PROJECTS}"); do
