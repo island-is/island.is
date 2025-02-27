@@ -365,7 +365,11 @@ export default function PaymentPage({
       throw new Error(chargeCardResponse.responseCode)
     }
 
-    router.reload()
+    if (paymentFlow.redirectToReturnUrlOnSuccess && paymentFlow.returnUrl) {
+      router.push(paymentFlow.returnUrl)
+    } else {
+      router.reload()
+    }
   }
 
   const onSubmit: SubmitHandler<Record<string, unknown>> = async (data) => {

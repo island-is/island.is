@@ -86,4 +86,11 @@ export class GetPaymentFlowDTO {
     type: String,
   })
   returnUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'If user should be redirected to the returnUrl after the payment flow has been completed successfully',
+    type: Boolean,
+  })
+  redirectToReturnUrlOnSuccess?: boolean
 }

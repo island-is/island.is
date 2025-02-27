@@ -11,6 +11,7 @@ import {
   Matches,
   IsPositive,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { GraphQLJSONObject } from 'graphql-type-json'
@@ -115,4 +116,13 @@ export class CreatePaymentFlowInput {
   @IsString()
   @IsOptional()
   returnUrl?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'If true the user will be redirected to the returnUrl after the payment flow has been completed successfully',
+  })
+  @IsBoolean()
+  @IsOptional()
+  redirectToReturnUrlOnSuccess?: boolean
 }
