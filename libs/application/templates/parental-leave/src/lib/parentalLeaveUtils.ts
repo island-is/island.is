@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   Application,
   ApplicationLifecycle,
@@ -42,7 +42,6 @@ import {
   AttachmentTypes,
   FileType,
   MANUAL,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -56,7 +55,6 @@ import {
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
@@ -78,7 +76,6 @@ import {
   PregnancyStatusAndRightsResults,
   SelectOption,
   VMSTPeriod,
-  YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 import { ApplicationRights } from '@island.is/clients/vmst'
@@ -1267,7 +1264,7 @@ export const getOtherParentName = (
   if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
     const spouse = getSpouse(application)
 
-    if (!spouse || !spouse.name) {
+    if (!spouse || !spouse.name || otherParent === MANUAL) {
       return otherParentName
     }
 

@@ -106,6 +106,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
@@ -411,6 +412,7 @@ const environment = getConfig
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
+        HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,

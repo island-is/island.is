@@ -12133,6 +12133,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@floating-ui/core@npm:^1.6.0":
+  version: 1.6.9
+  resolution: "@floating-ui/core@npm:1.6.9"
+  dependencies:
+    "@floating-ui/utils": "npm:^0.2.9"
+  checksum: 10/656fcd383da17fffca2efa0635cbe3c0b835c3312949e30bd19d05bf42479f2ac22aaf336a6a31cb160621fc6f35cfc9e115e76c5cf48ba96e33474d123ced22
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^1.0.0":
+  version: 1.6.13
+  resolution: "@floating-ui/dom@npm:1.6.13"
+  dependencies:
+    "@floating-ui/core": "npm:^1.6.0"
+    "@floating-ui/utils": "npm:^0.2.9"
+  checksum: 10/4bb732baf3270007741bcdc91be1de767b2bb5d8b891eb838e5f1e7c4cccad998643dbdd4e8b8cec4c5d12c9898f80febc68e9793dd6e26a445283c4fb1b6a78
+  languageName: node
+  linkType: hard
+
 "@floating-ui/dom@npm:^1.0.1":
   version: 1.4.4
   resolution: "@floating-ui/dom@npm:1.4.4"
@@ -12164,10 +12183,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@floating-ui/react-dom@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@floating-ui/react-dom@npm:2.1.2"
+  dependencies:
+    "@floating-ui/dom": "npm:^1.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10/2a67dc8499674e42ff32c7246bded185bb0fdd492150067caf9568569557ac4756a67787421d8604b0f241e5337de10762aee270d9aeef106d078a0ff13596c4
+  languageName: node
+  linkType: hard
+
+"@floating-ui/react@npm:^0.26.2":
+  version: 0.26.28
+  resolution: "@floating-ui/react@npm:0.26.28"
+  dependencies:
+    "@floating-ui/react-dom": "npm:^2.1.2"
+    "@floating-ui/utils": "npm:^0.2.8"
+    tabbable: "npm:^6.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10/7f8e6b27db48b68ca94756687af21857be04e7360ac922d7c8e22411f2895df6384af7bd40f4b48663d3cc5809bb5c6574cd9c9ea15543ec747b9a8e1c8c3008
+  languageName: node
+  linkType: hard
+
 "@floating-ui/utils@npm:^0.1.1":
   version: 0.1.2
   resolution: "@floating-ui/utils@npm:0.1.2"
   checksum: 10/b53d3904481afe65f95cd924cc5d05e7e47fcabde48d90c449e2d044d0255cfb4ef5bf5689a0b3e3b17a29b46714ca89b4f401e04ab6e5774b1822fed3eb720f
+  languageName: node
+  linkType: hard
+
+"@floating-ui/utils@npm:^0.2.8, @floating-ui/utils@npm:^0.2.9":
+  version: 0.2.9
+  resolution: "@floating-ui/utils@npm:0.2.9"
+  checksum: 10/0ca786347db3dd8d9034b86d1449fabb96642788e5900cc5f2aee433cd7b243efbcd7a165bead50b004ee3f20a90ddebb6a35296fc41d43cfd361b6f01b69ffb
   languageName: node
   linkType: hard
 
@@ -13614,7 +13666,7 @@ __metadata:
     babel-loader: "npm:^8.3.0"
     babel-plugin-formatjs: "npm:10.3.9"
     compare-versions: "npm:6.1.1"
-    configcat-js: "npm:7.0.0"
+    configcat-js: "npm:9.5.0"
     dynamic-color: "npm:0.3.0"
     expo: "npm:51.0.25"
     expo-file-system: "npm:17.0.1"
@@ -29128,43 +29180,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"configcat-common@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "configcat-common@npm:7.0.1"
+"configcat-common@npm:9.3.0":
+  version: 9.3.0
+  resolution: "configcat-common@npm:9.3.0"
   dependencies:
     tslib: "npm:^2.4.1"
-  checksum: 10/70347ab77ab9aba72a5f57a24ae1fb12b4b22e35a7211f5f7c2d4d7635fc3de705446b838991b6fc2ddabedb3b2a6c754025a4ae77ddceb0161692325708a51b
+  checksum: 10/c6d00bb02133707291d0963d00fefd1d10aec239f985337bff1c132563c37020d0eb8bd2bde278fae6a0d77caca68cd38ca5a878555645c77409da1a7c6f9927
   languageName: node
   linkType: hard
 
-"configcat-js@npm:7.0.0":
-  version: 7.0.0
-  resolution: "configcat-js@npm:7.0.0"
+"configcat-js@npm:9.5.0":
+  version: 9.5.0
+  resolution: "configcat-js@npm:9.5.0"
   dependencies:
-    configcat-common: "npm:^7.0.1"
+    configcat-common: "npm:9.3.0"
     tslib: "npm:^2.4.1"
-  checksum: 10/18d815bd0610860ffd87660004c0c4732c97834e97ceda73e38675d6ef291f50503f9ac0bc9b1cbf689ac595d7531020fea3bdfd9aa719044ac4dcadd2049fdb
+  checksum: 10/c6d919c77cfc21c7d6fed8feb063811a20629df7f5ecf04ffe619a8d1391165c373c1aa6b3ab0ead2451ef8176c40f84f89015bd906582d26a1f6912c787fccd
   languageName: node
   linkType: hard
 
-"configcat-js@npm:7.0.1":
-  version: 7.0.1
-  resolution: "configcat-js@npm:7.0.1"
+"configcat-node@npm:11.3.0":
+  version: 11.3.0
+  resolution: "configcat-node@npm:11.3.0"
   dependencies:
-    configcat-common: "npm:^7.0.1"
-    tslib: "npm:^2.4.1"
-  checksum: 10/6ecb37104e5c4e598b114b7e7ad2082bc1c5048d7dae243a6bd8191eb3a2e1431a23fd7ed139d875c03034a7f03d392eb62888bf93a539938f5907156dabea2c
-  languageName: node
-  linkType: hard
-
-"configcat-node@npm:9.1.1":
-  version: 9.1.1
-  resolution: "configcat-node@npm:9.1.1"
-  dependencies:
-    configcat-common: "npm:^7.0.1"
+    configcat-common: "npm:9.3.0"
     tslib: "npm:^2.4.1"
     tunnel: "npm:0.0.6"
-  checksum: 10/b2ed9f6ae0266d021588fffb591ba42e7bbe56a63412106da04f57976c90459d5cfca16969f86958f8c1241409600a138dff5d5651679dfd998b34566fe3676f
+  checksum: 10/27e46a0fd7d72e1a3cf34b7a869be71e00dbf74e42986c0658a0d84d6b80cbd3f39d03621e92f8dc809bb61219f80dbcafdff6a2db16e9b17d2bf333d4473440
   languageName: node
   linkType: hard
 
@@ -30775,7 +30817,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns@npm:^2.29.3":
+"date-fns@npm:^2.29.3, date-fns@npm:^2.30.0":
   version: 2.30.0
   resolution: "date-fns@npm:2.30.0"
   dependencies:
@@ -33464,10 +33506,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-local-rules@npm:1.0.1":
-  version: 1.0.1
-  resolution: "eslint-plugin-local-rules@npm:1.0.1"
-  checksum: 10/481750b6d42160d16754b5ec01e2032ed23d5b886594be92439fb38ff3e762c77fc0dc57674d8c5f41d6476cc1b53469f9eec4f955a81a72407a56f07299cc99
+"eslint-plugin-local-rules@npm:3.0.2":
+  version: 3.0.2
+  resolution: "eslint-plugin-local-rules@npm:3.0.2"
+  checksum: 10/6ec5a9e6d5a0a8f56ed22307761d1bc2bebee75ebfc9518e0eeed0d334c45c84713aff1969eefa5ac0fdeca63e427fee53b3912333caa9e70cc1f87e4c198f11
   languageName: node
   linkType: hard
 
@@ -39397,8 +39439,8 @@ __metadata:
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.0"
     classnames: "npm:2.2.6"
-    configcat-js: "npm:7.0.1"
-    configcat-node: "npm:9.1.1"
+    configcat-js: "npm:9.5.0"
+    configcat-node: "npm:11.3.0"
     contentful: "npm:8.2.0"
     contentful-cli: "npm:1.5.14"
     contentful-management: "npm:10.12.0"
@@ -39432,7 +39474,7 @@ __metadata:
     eslint-plugin-cypress: "npm:2.14.0"
     eslint-plugin-import: "npm:2.27.5"
     eslint-plugin-jsx-a11y: "npm:6.7.1"
-    eslint-plugin-local-rules: "npm:1.0.1"
+    eslint-plugin-local-rules: "npm:3.0.2"
     eslint-plugin-playwright: "npm:0.15.3"
     eslint-plugin-react: "npm:7.32.2"
     eslint-plugin-react-hooks: "npm:4.6.0"
@@ -39485,7 +39527,7 @@ __metadata:
     juice: "npm:8.0.0"
     jwks-rsa: "npm:3.0.1"
     jwt-decode: "npm:4.0.0"
-    kennitala: "npm:2.0.0-beta.2"
+    kennitala: "npm:@island.is/kennitala@3.1.0"
     keyv: "npm:4.5.2"
     libphonenumber-js: "npm:1.7.53"
     license-checker: "npm:25.0.1"
@@ -39525,7 +39567,7 @@ __metadata:
     react-alice-carousel: "npm:1.19.3"
     react-animate-height: "npm:3.1.2"
     react-csv: "npm:2.0.3"
-    react-datepicker: "npm:4.10.0"
+    react-datepicker: "npm:5.1.0"
     react-dom: "npm:18.3.1"
     react-dropzone: "npm:11.7.1"
     react-focus-lock: "npm:2.9.4"
@@ -41567,10 +41609,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kennitala@npm:2.0.0-beta.2":
-  version: 2.0.0-beta.2
-  resolution: "kennitala@npm:2.0.0-beta.2"
-  checksum: 10/f92779793c6da1f92bdd29377d1b342f3875ce714af448ce964f19cf80c06bcf115f4fcecf06a23c22e4ef50ec455b40413dfa1abb1303058cf83d0cfbeb2cf5
+"kennitala@npm:@island.is/kennitala@3.1.0":
+  version: 3.1.0
+  resolution: "@island.is/kennitala@npm:3.1.0"
+  checksum: 10/80c70efb002013daead183453015104a0c41dfc584003d68b848e9ddfaca89f16bfd7afd06cd3a87c62483f2b251685063d2e46a9927ff6b629dc89adefd225f
   languageName: node
   linkType: hard
 
@@ -49689,20 +49731,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-datepicker@npm:4.10.0":
-  version: 4.10.0
-  resolution: "react-datepicker@npm:4.10.0"
+"react-datepicker@npm:5.1.0":
+  version: 5.1.0
+  resolution: "react-datepicker@npm:5.1.0"
   dependencies:
-    "@popperjs/core": "npm:^2.9.2"
+    "@floating-ui/react": "npm:^0.26.2"
     classnames: "npm:^2.2.6"
-    date-fns: "npm:^2.24.0"
+    date-fns: "npm:^2.30.0"
     prop-types: "npm:^15.7.2"
-    react-onclickoutside: "npm:^6.12.2"
-    react-popper: "npm:^2.3.0"
+    react-onclickoutside: "npm:^6.13.0"
   peerDependencies:
     react: ^16.9.0 || ^17 || ^18
     react-dom: ^16.9.0 || ^17 || ^18
-  checksum: 10/8c23717b6d045d9c7273fbd735ca87317a216fc750ee39979606ec9a4460ae0edcf37fdbbc482f58ff3039b8d93d877ab524dc1f30a744fa2cdccf1c99879fa1
+  checksum: 10/e9ed63ecff71dd9bf584e1b601e299de837c4bb7c89305db3babb998965a66648c76021d62aa93579aa26e0f68d3d2b4390ffae2f3f910158a4046ded8a0370d
   languageName: node
   linkType: hard
 
@@ -50533,13 +50574,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-onclickoutside@npm:^6.12.2":
-  version: 6.12.2
-  resolution: "react-onclickoutside@npm:6.12.2"
+"react-onclickoutside@npm:^6.13.0":
+  version: 6.13.1
+  resolution: "react-onclickoutside@npm:6.13.1"
   peerDependencies:
     react: ^15.5.x || ^16.x || ^17.x || ^18.x
     react-dom: ^15.5.x || ^16.x || ^17.x || ^18.x
-  checksum: 10/25c049191fa4989448eaa51efb38141b6de8d9a146504e5e8ee3e6b6a71660bd1c9994a26f614dd64442cf6b20af8ff8e169f06d4a505a508bd3c51f7ca80e24
+  checksum: 10/bc1f5813ad25d81602661848b19f0c15357b87e224ddf5abc2ac4502ffddbe7ee44688827b0522327868ae63ab229030d2a2f185007ecfe861f1128d3e5319e6
   languageName: node
   linkType: hard
 
@@ -55382,6 +55423,13 @@ __metadata:
     "@pkgr/utils": "npm:^2.3.1"
     tslib: "npm:^2.5.0"
   checksum: 10/fb6798a2db2650ca3a2435ad32d4fc14842da807993a1a350b64d267e0e770aa7f26492b119aa7500892d3d07a5af1eec7bfbd6e23a619451558be0f226a6094
+  languageName: node
+  linkType: hard
+
+"tabbable@npm:^6.0.0":
+  version: 6.2.0
+  resolution: "tabbable@npm:6.2.0"
+  checksum: 10/980fa73476026e99dcacfc0d6e000d41d42c8e670faf4682496d30c625495e412c4369694f2a15cf1e5252d22de3c396f2b62edbe8d60b5dadc40d09e3f2dde3
   languageName: node
   linkType: hard
 

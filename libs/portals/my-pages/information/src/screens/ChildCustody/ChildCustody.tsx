@@ -66,9 +66,6 @@ const ChildCustody = () => {
 
   const nationalId = child?.nationalId
 
-  const parent1 = child?.birthParents ? child.birthParents[0] : undefined
-  const parent2 = child?.birthParents ? child.birthParents[1] : undefined
-
   const custodian1 = child?.custodians?.[0]
   const custodian2 = child?.custodians?.[1]
 
@@ -250,35 +247,6 @@ const ChildCustody = () => {
                 printable
               />
             </Stack>
-            {(parent1 || parent2 || loading) && (
-              <Stack component="ul" space={2}>
-                <TwoColumnUserInfoLine
-                  title={formatMessage(spmm.parent)}
-                  label={formatMessage(m.name)}
-                  firstValue={parent1?.fullName}
-                  secondValue={parent2?.fullName}
-                  loading={loading}
-                  printable
-                />
-                <Box printHidden>
-                  <Divider />
-                </Box>
-                <TwoColumnUserInfoLine
-                  label={formatMessage(m.natreg)}
-                  firstValue={
-                    parent1 ? formatNationalId(parent1.nationalId) : ''
-                  }
-                  secondValue={
-                    parent2 ? formatNationalId(parent2.nationalId) : ''
-                  }
-                  loading={loading}
-                  printable
-                />
-                <Box printHidden>
-                  <Divider />
-                </Box>
-              </Stack>
-            )}
             {!error && (
               <Stack component="ul" space={2}>
                 <TwoColumnUserInfoLine

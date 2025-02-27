@@ -20,6 +20,7 @@ import {
   Frigg,
   HealthDirectorateOrganDonation,
   HealthDirectorateVaccination,
+  HealthDirectorateHealthService,
   HealthInsurance,
   HousingBenefitCalculator,
   Hunting,
@@ -446,6 +447,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
+      HealthDirectorateHealthService,
       WorkAccidents,
       SecondarySchool,
     )

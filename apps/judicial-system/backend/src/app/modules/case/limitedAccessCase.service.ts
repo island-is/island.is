@@ -46,6 +46,7 @@ import {
   getDefenceUserCaseFileCategories,
 } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
@@ -114,6 +115,7 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewDecision',
   'indictmentReviewerId',
   'hasCivilClaims',
+  'isCompletedWithoutRuling',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -212,6 +214,15 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -567,7 +578,7 @@ export class LimitedAccessCaseService {
   }
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const allowedCseFileCategories = getDefenceUserCaseFileCategories(
+    const allowedCaseFileCategories = getDefenceUserCaseFileCategories(
       user.nationalId,
       theCase.type,
       theCase.defendants,
@@ -579,7 +590,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          allowedCseFileCategories.includes(file.category),
+          allowedCaseFileCategories.includes(file.category),
       ) ?? []
 
     const promises: Promise<void>[] = []
@@ -603,12 +614,16 @@ export class LimitedAccessCaseService {
           'Þingbók.pdf',
           filesToZip,
         ),
-        this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getRulingPdf(theCase),
-          'Úrskurður.pdf',
-          filesToZip,
-        ),
       )
+      if (!theCase.isCompletedWithoutRuling) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getRulingPdf(theCase),
+            'Úrskurður.pdf',
+            filesToZip,
+          ),
+        )
+      }
     }
 
     if (

@@ -421,6 +421,14 @@ export interface BurningPermit {
   size?: number | null
 }
 
+export interface ReligiousOrganization {
+  director?: string | null
+  name: string
+  homeAddress?: string | null
+  postalCode?: string | null
+  municipality?: string | null
+}
+
 export interface VehicleRegistration {
   modelName?: string
   manufacturer?: string

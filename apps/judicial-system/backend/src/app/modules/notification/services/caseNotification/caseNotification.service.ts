@@ -752,7 +752,7 @@ export class CaseNotificationService extends BaseNotificationService {
       (d: Defendant) => d.defenderEmail,
     )
     uniqueDefendants.forEach((defendant) => {
-      if (defendant.defenderEmail) {
+      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
         promises.push(
           this.sendPostponedCourtDateEmailNotificationForIndictmentCase(
             theCase,
@@ -887,8 +887,6 @@ export class CaseNotificationService extends BaseNotificationService {
   }
 
   private getRulingEmailNotificationToProsecutorProps = (theCase: Case) => {
-    const isCompleteWithoutRuling =
-      theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
     const sharedHtmlProps = {
       courtCaseNumber: theCase.courtCaseNumber,
       courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
@@ -896,7 +894,7 @@ export class CaseNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     }
     return {
-      subject: isCompleteWithoutRuling
+      subject: theCase.isCompletedWithoutRuling
         ? this.formatMessage(notifications.acceptedWithoutRuling.subject, {
             courtCaseNumber: theCase.courtCaseNumber,
           })
@@ -904,7 +902,7 @@ export class CaseNotificationService extends BaseNotificationService {
             courtCaseNumber: theCase.courtCaseNumber,
             isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
           }),
-      html: isCompleteWithoutRuling
+      html: theCase.isCompletedWithoutRuling
         ? this.formatMessage(
             notifications.acceptedWithoutRuling.prosecutorBody,
             {
@@ -951,26 +949,25 @@ export class CaseNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     }
     // for restrictive and investigation cases
-    const rulingMessage =
-      theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
-        ? {
-            subject: notifications.acceptedWithoutRuling.subject,
-            body: notifications.acceptedWithoutRuling.defenderBody,
-            props: { subject: { courtCaseNumber: theCase.courtCaseNumber } },
-          }
-        : {
-            subject: notifications.signedRuling.subject,
-            body: notifications.signedRuling.defenderBody,
-            props: {
-              subject: {
-                courtCaseNumber: theCase.courtCaseNumber,
-                isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-              },
-              body: {
-                isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
-              },
+    const rulingMessage = theCase.isCompletedWithoutRuling
+      ? {
+          subject: notifications.acceptedWithoutRuling.subject,
+          body: notifications.acceptedWithoutRuling.defenderBody,
+          props: { subject: { courtCaseNumber: theCase.courtCaseNumber } },
+        }
+      : {
+          subject: notifications.signedRuling.subject,
+          body: notifications.signedRuling.defenderBody,
+          props: {
+            subject: {
+              courtCaseNumber: theCase.courtCaseNumber,
+              isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
             },
-          }
+            body: {
+              isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+            },
+          },
+        }
 
     return this.sendEmail({
       subject: isIndictmentCase(theCase.type)
@@ -1090,7 +1087,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail) {
+        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
               theCase,
@@ -1810,6 +1807,18 @@ export class CaseNotificationService extends BaseNotificationService {
       ),
     ]
 
+    if (theCase.registrar) {
+      promises.push(
+        this.sendCaseFilesUpdatedNotification(
+          theCase.courtCaseNumber,
+          theCase.court?.name,
+          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
+
     const uniqueSpokespersons = _uniqBy(
       theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
       (c: CivilClaimant) => c.spokespersonEmail,
@@ -1839,7 +1848,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail) {
+        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
           promises.push(
             this.sendCaseFilesUpdatedNotification(
               theCase.courtCaseNumber,
