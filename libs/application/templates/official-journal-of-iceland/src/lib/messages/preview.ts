@@ -57,6 +57,11 @@ export const preview = {
       defaultMessage: 'Sækja pdf',
       description: 'Label of the fetch pdf button',
     },
+    fetchPdfNoDate: {
+      id: 'ojoi.application:preview.buttons.fetchPdfNoDate',
+      defaultMessage: 'Sækja pdf án dags.',
+      description: 'Label of the fetch pdf button without date',
+    },
     copyPreviewLink: {
       id: 'ojoi.application:preview.buttons.copyPreviewLink',
       defaultMessage: 'Afrita hlekk á forskoðunarskjal',
