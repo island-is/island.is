@@ -1,28 +1,48 @@
+// @ts-check
 import { execSync } from 'child_process'
 import { workspaceRoot } from '@nx/devkit'
 
 // NOTE: Using `console.error` in this script to log, without affecting the "output" to standard output
 
-const arg = JSON.parse(process.argv.slice[2] ?? '{}')
-const baseBranch = process.env.GIT_BASE || process.env.NX_BASE || arg.base
-const nxCmd = [
-  'yarn',
-  'nx',
-  'show',
-  'projects',
-  '--affected',
-  '--projects=tag:unicorn',
-  `--base=${baseBranch}`,
-  '--json',
-]
-console.error(`Running command in ${workspaceRoot}:`, { nxCmd })
-try {
-  const affected = JSON.parse(
-    execSync(`cd ${workspaceRoot} && ${nxCmd.join(' ')}`).toString(),
-  )
-  console.error(`Affected projects:`, affected)
-  console.log(affected.length > 0)
-} catch (e) {
-  console.error(e.message)
-  process.exit(1)
+/**
+ * Determines if there are any affected projects with the "unicorn" tag based on the current Git base branch.
+ *
+ * @param {string[]} args - The input arguments, expected to be a JSON string array where the first element contains the base branch information.
+ */
+const isUnicorn = (args) => {
+  const arg = JSON.parse(args[0] ?? '{}')
+  const baseBranch = process.env.GIT_BASE || process.env.NX_BASE || arg.base
+
+  const nxCmd = [
+    'yarn',
+    'nx',
+    'show',
+    'projects',
+    '--affected',
+    '--projects=tag:unicorn',
+    `--base=${baseBranch}`,
+    '--json',
+  ]
+  console.error(`Running command in ${workspaceRoot}:`, { nxCmd })
+  try {
+    const affected = JSON.parse(
+      execSync(`cd ${workspaceRoot} && ${nxCmd.join(' ')}`).toString(),
+    )
+    console.error(`Affected projects:`, affected)
+    console.log(affected.length > 0)
+  } catch (e) {
+    console.error(e.message)
+    process.exit(1)
+  }
+}
+
+const cmd = process.argv[2]
+const args = process.argv.slice(3)
+switch (cmd) {
+  case 'is-unicorn':
+    isUnicorn(args)
+    break
+  default:
+    console.error(`Unknown command: ${cmd}`)
+    process.exit(1)
 }

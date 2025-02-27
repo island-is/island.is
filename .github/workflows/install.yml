@@ -208,5 +208,5 @@ jobs:
           NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
           NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
         run: |
-          is_unicorn=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
