@@ -83,7 +83,7 @@ export const Languages = ({
                       label={formatMessage(
                         newPrimarySchoolMessages.differentNeeds
                           .languageSelectionTitle,
-                        { no: `${index + 1}` },
+                        { index: `${index + 1}` },
                       )}
                       value={getLanguageByCode(code)?.name}
                     />
