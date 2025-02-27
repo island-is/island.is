@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
+import addDays from 'date-fns/addDays'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -89,9 +90,11 @@ const EventItemImage = ({
 const EventInformationBox = ({
   event,
   namespace,
+  hasEventOccurred,
 }: {
   event: EventModel
   namespace: Record<string, string>
+  hasEventOccurred: boolean
 }) => {
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
@@ -131,7 +134,7 @@ const EventInformationBox = ({
             <EventLocation location={event.location} />
           </Box>
         )}
-        {
+        {!hasEventOccurred && (
           <Box
             display="flex"
             flexWrap="nowrap"
@@ -157,7 +160,7 @@ const EventInformationBox = ({
               }}
             />
           </Box>
-        }
+        )}
       </Stack>
     </Box>
   )
@@ -168,6 +171,7 @@ export interface OrganizationEventArticleProps {
   event: EventModel
   namespace: Record<string, string>
   locale: Locale
+  hasEventOccurred: boolean
 }
 
 type OrganizationEventArticleScreenContext = ScreenContext & {
@@ -177,7 +181,7 @@ type OrganizationEventArticleScreenContext = ScreenContext & {
 const OrganizationEventArticle: Screen<
   OrganizationEventArticleProps,
   OrganizationEventArticleScreenContext
-> = ({ organizationPage, event, namespace, locale }) => {
+> = ({ organizationPage, event, namespace, locale, hasEventOccurred }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -274,7 +278,11 @@ const OrganizationEventArticle: Screen<
               paddingTop={[2, 2, 2, 0, 0]}
               paddingBottom={2}
             >
-              <EventInformationBox event={event} namespace={namespace} />
+              <EventInformationBox
+                event={event}
+                namespace={namespace}
+                hasEventOccurred={hasEventOccurred}
+              />
             </GridColumn>
             {!isSmall && !event.video?.url && event.contentImage?.url && (
               <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
@@ -385,11 +393,18 @@ OrganizationEventArticle.getProps = async ({
     )
   }
 
+  let hasEventOccurred = true
+  if (Boolean(event.endDate) || Boolean(event.startDate)) {
+    const dateString = event.endDate ? event.endDate : event.startDate
+    hasEventOccurred = addDays(new Date(dateString), 1) < new Date()
+  }
+
   return {
     organizationPage,
     event,
     namespace,
     locale: locale as Locale,
+    hasEventOccurred,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
