@@ -45,7 +45,6 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { formatEventLocation } from '@island.is/web/utils/event'
-import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -381,10 +380,6 @@ OrganizationEventArticle.getProps = async ({
       `Could not find event with slug: ${query.eventSlug}`,
     )
   }
-
-  const organizationNamespace = extractNamespaceFromOrganization(
-    organizationPage.organization,
-  )
 
   return {
     organizationPage,
