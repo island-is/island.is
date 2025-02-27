@@ -70,7 +70,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const [propertiesByStadfangNr, setPropertiesByStadfangNr] = useState<
     FasteignByStadfangNrProps[] | undefined
   >(undefined)
-  const [matseiningByFasteignNr, setMatseiningByFasteignNr] = useState<
+  const [adalmatseiningByFasteignNr, setAdalmatseiningByFasteignNr] = useState<
     Record<number, AdalmatseiningProps[]> | undefined
   >(undefined)
 
@@ -91,7 +91,9 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           storedValue.changedValueOfMatseiningRooms || {},
         )
         setPropertiesByStadfangNr(storedValue.propertiesByS || [])
-        setMatseiningByFasteignNr(storedValue.matseiningByFasteignNr || {})
+        // setAdalmatseiningByFasteignNr(
+        //   storedValue.adalmatseiningByFasteignNr || {},
+        // )
       } catch (error) {
         console.error('Error parsing stored value:', error)
       }
@@ -112,26 +114,27 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [propertiesByStadfangNr])
 
-  useEffect(() => {
-    if (matseiningByFasteignNr) {
-      const expandedRows = Object.keys(matseiningByFasteignNr).reduce(
-        (acc: Record<string, boolean>, propertyId) => {
-          const isChecked = matseiningByFasteignNr[Number(propertyId)]?.some(
-            (matseiningar) =>
-              matseiningar.matseiningar.some(
-                (matseining) => checkedMatseiningar[matseining.merking],
-              ),
-          )
-          if (isChecked) {
-            acc[propertyId] = true
-          }
-          return acc
-        },
-        {},
-      )
-      setTableExpanded(expandedRows)
-    }
-  }, [checkedMatseiningar, matseiningByFasteignNr])
+  // useEffect(() => {
+  //   if (adalmatseiningByFasteignNr) {
+  //     const expandedRows = Object.keys(adalmatseiningByFasteignNr).reduce(
+  //       (acc: Record<string, boolean>, propertyId) => {
+  //         const isChecked = adalmatseiningByFasteignNr[
+  //           Number(propertyId)
+  //         ]?.some((matseiningar) =>
+  //           matseiningar.matseiningar.some(
+  //             (matseining) => checkedMatseiningar[matseining.merking],
+  //           ),
+  //         )
+  //         if (isChecked) {
+  //           acc[propertyId] = true
+  //         }
+  //         return acc
+  //       },
+  //       {},
+  //     )
+  //     setTableExpanded(expandedRows)
+  //   }
+  // }, [checkedMatseiningar, adalmatseiningByFasteignNr])
 
   const fetchPropertiesByStadfang = (query = '') => {
     if (query.length < 2) {
@@ -200,38 +203,38 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const fetchMatseiningByFasteignNr = (
     propertiesByStadfangNr: FasteignByStadfangNrProps[],
   ) => {
-    const matseiningMap: Record<number, AdalmatseiningProps[]> = {}
+    const adalmatseiningMap: Record<number, AdalmatseiningProps[]> = {}
 
     propertiesByStadfangNr.filter((property) => {
       const filteredProperties = adalmatseiningByFasteignNrData.filter(
         (matseining: AdalmatseiningProps) =>
           matseining.fastnum === property.fastnum,
       )
-      matseiningMap[property.fastnum] = filteredProperties
+      adalmatseiningMap[property.fastnum] = filteredProperties
     })
-    setMatseiningByFasteignNr(matseiningMap)
+    // setAdalmatseiningByFasteignNr(adalmatseiningMap)
 
     setValue(id, {
       ...getValues(id),
       propertiesByStadfangNr,
-      matseiningByFasteignNr: matseiningMap,
+      adalmatseiningByFasteignNr: adalmatseiningMap,
     })
   }
 
-  const toggleExpand = (propertyId: number) => {
-    const isChecked =
-      matseiningByFasteignNr &&
-      matseiningByFasteignNr[propertyId]?.some((matseiningar) =>
-        matseiningar.matseiningar.some(
-          (matseining) => checkedMatseiningar[matseining.merking] === true,
-        ),
-      )
+  // const toggleExpand = (propertyId: number) => {
+  //   const isChecked =
+  //     adalmatseiningByFasteignNr &&
+  //     adalmatseiningByFasteignNr[propertyId]?.some((matseiningar) =>
+  //       matseiningar.matseiningar.some(
+  //         (matseining) => checkedMatseiningar[matseining.merking] === true,
+  //       ),
+  //     )
 
-    setTableExpanded((prev) => ({
-      ...prev,
-      [propertyId]: isChecked || !prev[propertyId],
-    }))
-  }
+  //   setTableExpanded((prev) => ({
+  //     ...prev,
+  //     [propertyId]: isChecked || !prev[propertyId],
+  //   }))
+  // }
 
   const handleCheckboxChange = (matseiningId: string) => {
     setCheckedMatseiningar((prev) => {
@@ -390,10 +393,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                             className: `${tableCell} ${tableCellExpand}`,
                           }}
                         >
-                          {matseiningByFasteignNr &&
-                            matseiningByFasteignNr[property.fastnum] &&
-                            matseiningByFasteignNr[property.fastnum].length >
-                              0 && (
+                          {/* {adalmatseiningByFasteignNr &&
+                            adalmatseiningByFasteignNr[property.fastnum] &&
+                            adalmatseiningByFasteignNr[property.fastnum]
+                              .length > 0 && (
                               <button
                                 onClick={(e) => {
                                   e.preventDefault()
@@ -406,7 +409,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                   <IconCircleOpen />
                                 )}
                               </button>
-                            )}
+                            )} */}
                         </T.Data>
                         <T.Data
                           box={{
@@ -437,11 +440,12 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                           {'-'}
                         </T.Data>
                       </T.Row>
-                      {matseiningByFasteignNr &&
-                        matseiningByFasteignNr[property.fastnum] &&
-                        matseiningByFasteignNr[property.fastnum].length > 0 && (
+                      {/* {adalmatseiningByFasteignNr &&
+                        adalmatseiningByFasteignNr[property.fastnum] &&
+                        adalmatseiningByFasteignNr[property.fastnum].length >
+                          0 && (
                           <>
-                            {matseiningByFasteignNr[property.fastnum].map(
+                            {adalmatseiningByFasteignNr[property.fastnum].map(
                               (matseiningar) => {
                                 return (
                                   <Fragment key={matseiningar.merking}>
@@ -563,7 +567,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                               },
                             )}
                           </>
-                        )}
+                        )} */}
                     </Fragment>
                   )
                 })}

@@ -56,9 +56,9 @@ export enum RentalHousingCategoryClassGroup {
   SENIOR_CITIZEN_HOUSING = 'seniorCitizenHousing',
   COMMUNE = 'commune',
   HALFWAY_HOUSE = 'halfwayHouse',
-  SOCIAL_HOUSING = 'socialHousing',
   INCOME_BASED_HOUSING = 'incomeBasedHousing',
-  EMPLOYEE_HOUSING = 'employeeHousing',
+  // TODO: Add this option if decision is made to use
+  // EMPLOYEE_HOUSING = 'employeeHousing',
 }
 
 export enum RentalHousingConditionInspector {
@@ -89,7 +89,7 @@ export enum SecurityDepositTypeOptions {
   CAPITAL = 'capital',
   THIRD_PARTY_GUARANTEE = 'thirdPartyGuarantee',
   INSURANCE_COMPANY = 'insuranceCompany',
-  MUTUAL_FUND = 'mutualFund',
+  LANDLORDS_MUTUAL_FUND = 'tenantsMutualFund',
   OTHER = 'other',
 }
 

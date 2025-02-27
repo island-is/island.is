@@ -61,9 +61,10 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
   }
 
   const propertyClass = (answer: string) => {
-    const options = getPropertyClassOptions()
-    const matchingOption = options.find((option) => option.value === answer)
-    return matchingOption ? matchingOption.label : '-'
+    if (answer === RentalHousingCategoryClass.SPECIAL_GROUPS) {
+      return 'Húsnæði fyrir sérstaka hópa'
+    }
+    return 'Almennur markaður'
   }
 
   const propertyClassGroup = (answer: string) => {
@@ -121,26 +122,10 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={summary.PropertyNumOfRoomsLabel}
-            value={
-              (answers.registerProperty.searchresults &&
-                answers.registerProperty.searchresults.propertyIds[0].units[0]
-                  .numberOfRooms) ||
-              '-'
-            }
-          />
+          <KeyValue label={summary.PropertyNumOfRoomsLabel} value={'-'} />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
-          <KeyValue
-            label={summary.propertySizeLabel}
-            value={
-              (answers.registerProperty.searchresults &&
-                answers.registerProperty.searchresults.propertyIds[0].units[0]
-                  .size) ||
-              '-'
-            }
-          />
+          <KeyValue label={summary.propertySizeLabel} value={'-'} />
         </GridColumn>
       </SummaryCardRow>
 

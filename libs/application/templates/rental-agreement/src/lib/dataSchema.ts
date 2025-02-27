@@ -47,20 +47,55 @@ const fileSchema = z.object({
   url: z.string().optional(),
 })
 
-const propertyUnit = z.object({
-  unitId: z.string(),
-  markingNr: z.string(),
-  unitType: z.string(),
-  size: z.string(),
-  numberOfRooms: z.string(),
-})
+const fasteignByStadfangNrDataSchema = z
+  .object({
+    fastnum: z.number().optional(),
+    fasteign_nr: z.number().optional(),
+    landeign_nr: z.number().optional(),
+    stadfang_nr: z.number().optional(),
+    heimilisfang: z.string().optional(),
+    postnumer: z.number().optional(),
+    sveitarfelag: z.string().optional(),
+    merking: z.string().optional(),
+    lysing: z.string().optional(),
+    flatarmal: z.number().optional(),
+    fasteignamat_nuverandi: z.number().optional(),
+    fasteignamat_naesta_ar: z.number().optional(),
+    lodamat_nuverandi: z.number().optional(),
+    lodaamat_naesta_ar: z.number().optional(),
+    brunabotamat: z.number().optional(),
+    tengd_stadfang_nr: z.array(z.number().optional()),
+  })
+  .optional()
 
-const PropertyId = z.object({
-  propertyId: z.string(),
-  marking: z.string(),
-  propertySize: z.string(),
-  units: z.array(propertyUnit),
-})
+const matseiningSchema = z
+  .object({
+    fnum: z.number().optional(),
+    fasteignamat: z.number().optional(),
+    fastnum: z.number().optional(),
+    notkun: z.string().optional(),
+    merking: z.string().optional(),
+    stadfang_nr: z.number().optional(),
+    stadfang_birting: z.string().nullable(),
+    brunabotamat: z.number().optional(),
+    eining: z.string().optional(),
+    einflm: z.number().optional(),
+  })
+  .optional()
+
+const adalmatseiningByFasteignNrDataSchema = z
+  .object({
+    fastnum: z.number().optional(),
+    fasteignanumer: z.number().optional(),
+    fasteignamat: z.number().optional(),
+    brunabotamat: z.number().optional(),
+    notkun: z.string().optional(),
+    stadfang_nr: z.number().optional(),
+    stadfang_birting: z.string().optional(),
+    merking: z.string().optional(),
+    matseiningar: z.array(matseiningSchema).optional(),
+  })
+  .optional()
 
 const landlordInfo = z
   .object({
@@ -182,14 +217,21 @@ const registerProperty = z
   .object({
     searchresults: z
       .object({
-        label: z.string(),
-        value: z.string(),
-        streetAddress: z.string(),
-        regionNumber: z.string(),
-        cityName: z.string(),
-        size: z.string(),
-        numberOfRooms: z.string(),
-        propertyIds: z.array(PropertyId),
+        label: z.string().optional(),
+        value: z.string().optional(),
+        stadfang_nr: z.number().optional(),
+        stadfang: z.string().optional(),
+        sveitarfelag_nafn: z.string().optional(),
+        sveitarfelag_nr: z.number().optional(),
+        birting_sveitarfelag_nr: z.string().optional(),
+        postnumer: z.number().optional(),
+        landeign_nr: z.number().optional(),
+        stadvisir: z.string().optional(),
+        stadgreinir: z.string().optional(),
+        vidskeyti: z.string().nullable(),
+        propertiesByStadfangNr: z
+          .array(fasteignByStadfangNrDataSchema)
+          .optional(),
       })
       .optional(),
     categoryType: z
@@ -472,7 +514,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === SecurityDepositTypeOptions.MUTUAL_FUND &&
+      data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
       !data.mutualFundInfo
     ) {
       ctx.addIssue({
@@ -496,7 +538,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType !== SecurityDepositTypeOptions.MUTUAL_FUND &&
+      data.securityType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
       !data.securityAmount
     ) {
       ctx.addIssue({
@@ -508,7 +550,7 @@ const securityDeposit = z
     }
 
     if (
-      (data.securityType === SecurityDepositTypeOptions.MUTUAL_FUND ||
+      (data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
         data.securityAmount === SecurityDepositAmountOptions.OTHER) &&
       !data.securityAmountOther
     ) {
@@ -521,7 +563,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === SecurityDepositTypeOptions.MUTUAL_FUND &&
+      data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
       Number(data.rentalAmount) * 0.1 < Number(data.securityAmountOther)
     ) {
       ctx.addIssue({
