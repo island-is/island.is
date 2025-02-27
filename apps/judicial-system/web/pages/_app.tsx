@@ -13,11 +13,11 @@ import {
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
+  LawyerRegistryProvider,
   ServiceInterruptionBanner,
   UserProvider,
   ViewportProvider,
 } from '../src/components'
-import { LawyerRegistryProvider } from '../src/components/LawyerRegistryProvider/LawyerRegistryProvider'
 
 const {
   publicRuntimeConfig: {
