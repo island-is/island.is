@@ -6,18 +6,13 @@ import { Lawyer } from '@island.is/judicial-system/types'
 import { useGetLawyers } from '../useLawyers/useLawyers'
 
 export const Database = {
-  name: 'lawyer-registry',
-  lawyerTable: 'lawyers-table3',
-  version: 5,
+  lawyerTable: 'lawyers',
+  version: 0,
 }
 
 type LawyerWithCreated = Lawyer & { created: Date }
 
-export const useIndexedDB = (
-  databaseName: string,
-  tableName: string,
-  shouldFetchLawyers: boolean,
-) => {
+export const useIndexedDB = (shouldFetchLawyers: boolean) => {
   const [allLawyers, setAllLawyers] = useState<Lawyer[]>([])
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
   const lawyers = useGetLawyers(shouldFetch)
@@ -31,7 +26,7 @@ export const useIndexedDB = (
 
       request.onupgradeneeded = () => {
         const db = request.result
-        const objectStore = db.createObjectStore(tableName, {
+        const objectStore = db.createObjectStore(Database.lawyerTable, {
           autoIncrement: true,
           keyPath: 'nationalId',
         })
@@ -49,7 +44,7 @@ export const useIndexedDB = (
         reject(request.error)
       }
     })
-  }, [tableName])
+  }, [])
 
   const refreshData = useCallback(
     async (lawyers: Lawyer[]) => {
