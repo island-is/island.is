@@ -2,7 +2,7 @@
 
 ### Description
 
-The Training License On A Work Machine application allows individual users to to apply for a training license. They can be a contractor and therefore the application would be submitted after draft state, or they have to get someone from a company to approve for them, then the person from the company has to approve.
+The Training License On A Work Machine application allows individual users to apply for a training license. They can be a contractor and therefore the application would be submitted after draft state, or they have to get someone from a company to approve for them, then the person from the company has to approve.
 
 ### URLs
 
@@ -24,7 +24,7 @@ Data fetching from National Registry, User profile and The Administration of Occ
 
 #### Draft
 
-In the Draft state, users input essential information. This includes personal details, information about work machine tenure, and assignee information, or if user is a contractor. After entering this data, users can review an overview page, providing a chance to verify all inputs before submitting. If user is not a contractor we will send email to person representing the company.
+In the Draft state, users input essential information, including personal details, work machine tenure, and assignee information. After entering this data, users can review an overview page, which gives them a chance to verify all inputs before submitting. If the user is not a contractor, we will send an email to a person representing the company.
 
 #### Review
 
@@ -32,7 +32,7 @@ If the user was not a contractor the person from the company has to review on a 
 
 #### Completed
 
-User recieves Hnipp confirmation if not contractor that reports has been successfully submitted
+The user receives a confirmation indicating that the report has been successfully submitted when the user is not a contractor.
 
 ### Localisation
 
