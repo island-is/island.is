@@ -236,8 +236,6 @@ codemagic.yaml                                                                  
 /libs/shared/form-fields/                                                                                 @island-is/norda @island-is/island-ui
 /libs/clients/financial-statements-inao                                                                   @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                              @island-is/norda
-/libs/application/templates/financial-statements-inao/                                                    @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao                @island-is/norda
 /libs/application/templates/inao/                                                                         @island-is/norda
 /libs/application/templates/inao/financial-statement-cemetery/                                            @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                 @island-is/norda

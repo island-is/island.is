@@ -101,6 +101,7 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
     const answers = application.answers
+
     if (!actor) {
       return new Error('Enginn umboðsmaður fannst')
     }
@@ -109,6 +110,17 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     const client = { nationalId }
     const { year, actorsName, contactsAnswer, clientPhone, clientEmail, file } =
       getNeededCemeteryValues(answers)
+
+    if (
+      !clientEmail ||
+      !clientPhone ||
+      !actorsName ||
+      !year ||
+      !contactsAnswer
+    ) {
+      throw new Error('Missing required values')
+    }
+
     const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
     const fileName = file
       ? await this.getAttachmentsAsBase64(application)
