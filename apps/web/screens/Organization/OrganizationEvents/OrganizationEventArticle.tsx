@@ -125,8 +125,9 @@ const EventInformationBox = ({
             />
           </Box>
         )}
-        {((event.location?.useFreeText && event.location?.freeText) ||
-          event.location?.streetAddress) && (
+        {((Boolean(event.location?.useFreeText) &&
+          Boolean(event.location?.freeText)) ||
+          Boolean(event.location?.streetAddress)) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
             <Box>
               <Icon color="blue400" icon="location" type="outline" />

@@ -65,14 +65,18 @@ END:VCALENDAR`
 
 const generateGoogleCalendarLink = (props: CalendarEvent) => {
   const baseUrl = 'https://www.google.com/calendar/render'
+  const isAllDay = !props.startTime
 
-  // Construct start and end date-time strings
-  const startDateTime = props.startTime
-    ? `${props.startDate}T${props.startTime}`
-    : props.startDate
+  // Construct start and end date-time strings in the correct format
+  const startDateTime = isAllDay
+    ? formatDate(props.startDate, true) // YYYYMMDD
+    : formatDate(`${props.startDate}T${props.startTime}`) // Full UTC format
+
   const endDateTime = props.endTime
-    ? `${props.startDate}T${props.endTime}`
-    : null
+    ? formatDate(`${props.startDate}T${props.endTime}`)
+    : isAllDay
+    ? formatDate(props.startDate, true) // Keep YYYYMMDD for all-day
+    : null // No end time for time-based events if not provided
 
   // Prepend event page link to the description
   const fullDescription = `${props.pageUrl}\n\n${props.description}`
@@ -82,9 +86,7 @@ const generateGoogleCalendarLink = (props: CalendarEvent) => {
     text: props.title,
     details: fullDescription,
     location: props.location,
-    dates: endDateTime
-      ? `${formatDate(startDateTime)}/${formatDate(endDateTime)}`
-      : formatDate(startDateTime),
+    dates: endDateTime ? `${startDateTime}/${endDateTime}` : startDateTime,
   })
 
   return `${baseUrl}?${params.toString()}`
