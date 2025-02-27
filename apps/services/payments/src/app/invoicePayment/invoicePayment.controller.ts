@@ -108,4 +108,4 @@ export class InvoicePaymentController {
       throw new BadRequestException(code)
     }
   }
-
+}
