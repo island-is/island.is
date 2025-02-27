@@ -85,7 +85,7 @@ jobs:
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
     runs-on: arc-runners
     env:
-      CHUNKS: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     steps:
       - name: checkout
