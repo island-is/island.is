@@ -31,7 +31,7 @@ const downloadICSFile = ({
   startTime,
   endTime,
 }: CalendarEvent): void => {
-  const isAllDay = !startTime // Check if it's an all-day event
+  const isAllDay = !startTime
   const startDateTime = isAllDay ? startDate : `${startDate}T${startTime}`
   const endDateTime = endTime ? `${startDate}T${endTime}` : null
 
@@ -98,14 +98,17 @@ interface AddToCalendarButtonProps {
 
 export const AddToCalendarButton = ({ event }: AddToCalendarButtonProps) => {
   const { activeLocale } = useI18n()
+  const buttonTitle =
+    activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'
+
   return (
     <DropdownMenu
       disclosure={
         <Button variant="text" size="small">
-          {activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'}
+          {buttonTitle}
         </Button>
       }
-      title={activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'}
+      title={buttonTitle}
       items={[
         {
           title: 'iCalendar',
