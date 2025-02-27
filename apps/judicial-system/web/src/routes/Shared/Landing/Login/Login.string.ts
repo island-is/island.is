@@ -29,5 +29,9 @@ export const strings = {
       title: 'Ógildur notandi',
       message: 'Þú valdir ógildan notanda.',
     },
+    loginError: {
+      title: 'Villa við innskráningu',
+      message: 'Villa kom upp við innskráningu. Vinsamlega reynið aftur.',
+    },
   },
 }

@@ -56,6 +56,14 @@ const Login = () => {
             message={strings.error.invalidUser.message}
           />
         )
+      case LoginErrorCodes.LOGIN_ERROR:
+        return (
+          <AlertMessage
+            type="warning"
+            title={strings.error.loginError.title}
+            message={strings.error.loginError.message}
+          />
+        )
       default:
         return null
     }
