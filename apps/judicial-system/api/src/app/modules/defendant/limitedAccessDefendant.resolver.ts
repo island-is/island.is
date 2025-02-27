@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -18,7 +18,7 @@ import { BackendService } from '../backend'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { Defendant } from './models/defendant.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class LimitedAccessDefendantResolver {
   constructor(

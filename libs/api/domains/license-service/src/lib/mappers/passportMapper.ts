@@ -129,8 +129,8 @@ export class PassportMapper implements GenericLicenseMapper {
     formatMessage: FormatMessage,
     licenseName?: string,
   ): Payload {
-    const isExpired = document.expiryStatus === 'EXPIRED'
-    const isLost = document.expiryStatus === 'LOST'
+    const isExpired = document.expiryStatus?.toLowerCase() === 'expired'
+    const isLost = document.expiryStatus?.toLowerCase() === 'lost'
     const isExpiring = document.expiresWithinNoticeTime
     const isInvalid = document.status
       ? document.status.toLowerCase() === 'invalid'
