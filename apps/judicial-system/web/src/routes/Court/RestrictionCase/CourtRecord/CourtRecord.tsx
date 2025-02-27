@@ -12,7 +12,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { lowercase } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   closedCourt,
@@ -206,11 +209,7 @@ export const CourtRecord: FC = () => {
           courtStartDate: workingCase.arraignmentDate?.date,
           courtLocation:
             workingCase.court?.name &&
-            `í ${
-              workingCase.court.name.indexOf('dómur') > -1
-                ? workingCase.court.name.replace('dómur', 'dómi')
-                : workingCase.court.name
-            }`,
+            `í ${applyDativeCaseToCourtName(workingCase.court.name)}`,
           courtAttendees:
             autofillAttendees.length > 0
               ? autofillAttendees.join('')
