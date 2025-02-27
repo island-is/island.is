@@ -65,7 +65,7 @@ END:VCALENDAR`
 
 const generateGoogleCalendarLink = (props: CalendarEvent) => {
   const baseUrl = 'https://www.google.com/calendar/render'
-  const isAllDay = !props.startTime
+  const isAllDay = !props.startTime || !props.endTime
 
   // Construct start and end date-time strings in the correct format
   const startDateTime = isAllDay
