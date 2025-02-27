@@ -113,21 +113,38 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       throw new Error('Payment flow not found')
     }
 
-    const {
-      data: { getOrganizationByNationalId },
-    } = await client.query<
+    const sanitizedNationalId = paymentFlow.organisationId.replace('-', '')
+
+    // First attempt query with the nationalId as is
+    let result = await client.query<
       GetOrganizationByNationalIdQuery,
       GetOrganizationByNationalIdQueryVariables
     >({
       query: GetOrganizationByNationalIdDocument,
-      variables: {
-        input: {
-          nationalId: paymentFlow.organisationId,
-        },
-      },
+      variables: { input: { nationalId: sanitizedNationalId } },
     })
 
-    organization = getOrganizationByNationalId
+    // If the first query fails, try again with the dashed format XXXXXX-XXXX
+    // TODO #1 refactor querying to be reusable
+    // TODO #2 normalise and add validation to the the kennitala field in contentful
+    if (!result.data?.getOrganizationByNationalId) {
+      result = await client.query<
+        GetOrganizationByNationalIdQuery,
+        GetOrganizationByNationalIdQueryVariables
+      >({
+        query: GetOrganizationByNationalIdDocument,
+        variables: {
+          input: {
+            nationalId: `${sanitizedNationalId.slice(
+              0,
+              6,
+            )}-${sanitizedNationalId.slice(6)}`,
+          },
+        },
+      })
+    }
+
+    organization = result.data?.getOrganizationByNationalId
   } catch (e) {
     const problem = findProblemInApolloError(e)
 
