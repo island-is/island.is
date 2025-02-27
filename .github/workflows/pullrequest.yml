@@ -87,6 +87,7 @@ jobs:
     env:
       CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -99,7 +100,7 @@ jobs:
 
       - name: Find unicorn projects
         run: |
-          unicorns=$(yarn nx show projects --affected --projects=tag:unicorn --json)
+          unicorns=$(yarn nx show projects --affected --base="$NX_BASE" --head="$NX_HEAD" --projects=tag:unicorn --json)
           jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
             [
                 $chunks.projects
