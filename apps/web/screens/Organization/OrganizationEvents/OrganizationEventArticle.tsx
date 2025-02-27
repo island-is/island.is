@@ -146,7 +146,7 @@ const EventInformationBox = ({
               event={{
                 title: event.title,
                 description: '',
-                pageUrl: router.asPath,
+                pageUrl: `https://island.is${router.asPath}`,
                 location: formatEventLocation(event.location),
                 startDate: event.startDate,
                 startTime: event.time.startTime,
