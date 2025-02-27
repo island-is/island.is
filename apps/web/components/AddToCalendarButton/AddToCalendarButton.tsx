@@ -12,6 +12,7 @@ interface CalendarEvent {
 }
 
 const formatDate = (dateTime: string, isAllDay = false): string => {
+  if (!dateTime) return ''
   const date = new Date(dateTime)
   return isAllDay
     ? date.toISOString().split('T')[0].replace(/-/g, '') // Format YYYYMMDD for all-day events
@@ -40,7 +41,6 @@ const downloadICSFile = ({
   const formattedStartDate = formatDate(startDateTime, isAllDay)
   const formattedEndDate = endDateTime ? formatDate(endDateTime) : ''
 
-  // ICS file content with improved formatting and line breaks
   const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Ísland.is//EN

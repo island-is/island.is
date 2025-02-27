@@ -155,8 +155,8 @@ const EventInformationBox = ({
                 }${router.asPath}`,
                 location: formatEventLocation(event.location),
                 startDate: event.startDate,
-                startTime: event.time.startTime,
-                endTime: event.time.endTime,
+                startTime: event.time?.startTime,
+                endTime: event.time?.endTime,
               }}
             />
           </Box>
