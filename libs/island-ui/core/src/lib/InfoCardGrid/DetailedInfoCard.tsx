@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import {
   Box,
   GridColumn,
@@ -6,7 +5,6 @@ import {
   Icon,
   IconMapIcon,
   Inline,
-  LinkV2,
   Stack,
   Tag,
   Text,
@@ -27,7 +25,7 @@ export type DetailedProps = BaseProps & {
   //max 5 lines
   detailLines?: Array<{
     icon: IconMapIcon
-    text: string | ReactNode
+    text: string
   }>
   tags?: Array<ActionCardProps['tag']>
 }
@@ -42,7 +40,6 @@ export const DetailedInfoCard = ({
   tags,
   logo,
   logoAlt,
-  link,
 }: DetailedProps) => {
   const renderLogo = () => {
     if (!logo) {
@@ -79,11 +76,7 @@ export const DetailedInfoCard = ({
                 color="blue400"
               />
               <Box marginLeft={2}>
-                {typeof d.text === 'string' ? (
-                  <Text variant="small">{d.text}</Text>
-                ) : (
-                  d.text
-                )}
+                <Text variant="small">{d.text}</Text>
               </Box>
             </Box>
           ))}
@@ -155,7 +148,6 @@ export const DetailedInfoCard = ({
             <Text variant="h3" color="blue400">
               {title}
             </Text>
-
             {description && (
               <Box flexGrow={1} marginTop={1}>
                 <Text variant="medium" fontWeight="light">

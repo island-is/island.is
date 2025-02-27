@@ -1,4 +1,4 @@
-import { Box, GridColumn, GridRow, LinkV2, Text } from '../..'
+import { Box, GridColumn, GridContainer, GridRow, Text } from '../..'
 
 import { BaseProps } from './InfoCard'
 
@@ -9,7 +9,6 @@ export const SimpleInfoCard = ({
   description,
   size = 'medium',
   eyebrow,
-  link,
 }: BaseProps) => {
   const renderHeader = () => {
     if (!eyebrow) {
@@ -38,7 +37,6 @@ export const SimpleInfoCard = ({
             <Text variant="h3" color="blue400">
               {title}
             </Text>
-
             {description && (
               <Box flexGrow={1} marginTop={1}>
                 <Text>{description}</Text>
