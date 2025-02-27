@@ -79,7 +79,7 @@ export const useIndexedDB = (
           const now = new Date()
           const shouldRefresh =
             records.length > 0
-              ? differenceInHours(now, records[0].created) > 1
+              ? differenceInHours(now, records[0].created) > 0
               : true
 
           setAllLawyers(request.result)

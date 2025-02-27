@@ -87,13 +87,11 @@ const HeaderContainer = () => {
   }, [countryCode])
 
   useEffect(() => {
-    const fetchLawyer = () => {
-      setLawyer(
-        lawyers?.find((lawyer) => lawyer.nationalId === user?.nationalId),
-      )
+    if (!lawyers || lawyers.length === 0 || !user) {
+      return
     }
 
-    fetchLawyer()
+    setLawyer(lawyers.find((lawyer) => lawyer.nationalId === user.nationalId))
   }, [lawyers, user])
 
   const logoHref =
