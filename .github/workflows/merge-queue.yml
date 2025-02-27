@@ -271,6 +271,7 @@ jobs:
     needs:
       - prepare
       - tests
+      - docker-build
       - post-docker-build
       # - e2e
       # - build
@@ -282,6 +283,8 @@ jobs:
       # - name: Check e2e success
       #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check build success
+        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
+      - name: Check post-build success
         run: '[[ ${{ needs.post-docker-build.result }} != "failure" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
