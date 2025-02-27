@@ -15,7 +15,6 @@ import { BaseProps } from './InfoCard'
 import { ActionCardProps } from '../ActionCard/types'
 
 import * as styles from './InfoCard.css'
-
 const eyebrowColor = 'blueberry600'
 
 export type DetailedProps = BaseProps & {
