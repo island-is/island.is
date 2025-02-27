@@ -1,6 +1,8 @@
 import { execSync } from 'child_process'
 import { workspaceRoot } from '@nx/devkit'
 
+// NOTE: Using `console.error` in this script to log, without affecting the "output" to standard output
+
 const arg = JSON.parse(process.argv.slice[2] ?? '{}')
 const baseBranch = process.env.GIT_BASE || process.env.NX_BASE || arg.base
 const nxCmd = [
