@@ -1,4 +1,4 @@
-import { Box, DropdownMenu, Text } from '@island.is/island-ui/core'
+import { Button, DropdownMenu } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 
 interface CalendarEvent {
@@ -92,27 +92,16 @@ const generateGoogleCalendarLink = (props: CalendarEvent) => {
 
 interface AddToCalendarButtonProps {
   event: CalendarEvent
-  textVariant?: 'small' | 'default'
 }
 
-export const AddToCalendarButton = ({
-  event,
-  textVariant = 'default',
-}: AddToCalendarButtonProps) => {
+export const AddToCalendarButton = ({ event }: AddToCalendarButtonProps) => {
   const { activeLocale } = useI18n()
   return (
     <DropdownMenu
       disclosure={
-        <Box
-          style={{
-            textDecoration: 'underline',
-            cursor: 'pointer',
-          }}
-        >
-          <Text variant={textVariant}>
-            {activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'}
-          </Text>
-        </Box>
+        <Button variant="text" size="small">
+          {activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'}
+        </Button>
       }
       title={activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'}
       items={[

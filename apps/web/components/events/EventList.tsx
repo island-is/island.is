@@ -1,6 +1,12 @@
 import { ReactNode } from 'react'
 
-import { Box, InfoCard, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  type IconMapIcon,
+  InfoCard,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   EventLocation,
@@ -72,37 +78,45 @@ export const EventList = ({
               event.slug,
             ])
 
+            const detailLines: Array<{
+              icon: IconMapIcon
+              text: string
+            }> = []
+
+            const eventTime = formatEventTime(
+              event.time,
+              n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string,
+            )
+            if (eventTime) {
+              detailLines.push({
+                icon: 'time',
+                text: eventTime,
+              })
+            }
+
+            const eventLocation = formatEventLocation(event.location)
+            if (eventLocation) {
+              detailLines.push({
+                icon: 'location',
+                text: eventLocation,
+              })
+            }
+
             return (
               <InfoCard
                 key={event.id}
                 eyebrow={formattedDate}
                 id={event.id}
-                linkType="title"
                 link={{
                   href: link.href,
-                  label: 'Sjá nánar',
+                  label: activeLocale === 'is' ? 'Sjá nánar' : 'See more',
                 }}
                 size="large"
                 title={event.title}
                 borderColor="borderPrimary"
                 variant="detailed"
                 description=""
-                detailLines={[
-                  {
-                    icon: 'time',
-                    text: formatEventTime(
-                      event.time,
-                      n(
-                        'timeSuffix',
-                        activeLocale === 'is' ? 'til' : 'to',
-                      ) as string,
-                    ),
-                  },
-                  {
-                    icon: 'location',
-                    text: formatEventLocation(event.location),
-                  },
-                ]}
+                detailLines={detailLines}
               />
             )
           })}
