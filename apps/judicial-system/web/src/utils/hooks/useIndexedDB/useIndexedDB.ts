@@ -7,7 +7,7 @@ import { useGetLawyers } from '../useLawyers/useLawyers'
 
 export const Database = {
   lawyerTable: 'lawyers',
-  version: 0,
+  version: 5,
 }
 
 type LawyerWithCreated = Lawyer & { created: Date }

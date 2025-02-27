@@ -19,15 +19,13 @@ export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
   const { data, error } = useSWRImmutable<Lawyer[]>(
     shouldFetch ? '/api/defender/lawyerRegistry' : null,
     fetcher,
-    {
-      shouldRetryOnError: false,
-      errorRetryCount: 0,
-    },
+    { shouldRetryOnError: false },
   )
+
   if (error) {
     toast.error(formatMessage(errorMessages.fetchLawyers))
     return []
   }
 
-  return data || []
+  return data ?? []
 }
