@@ -62,6 +62,7 @@ export const OverviewFormField = ({
       <ReviewGroup
         isLast={!field.bottomLine}
         editAction={() => changeScreens(field.backId ?? '')}
+        isEditable={field.backId !== undefined}
       >
         <GridRow>
           {items &&
@@ -97,16 +98,34 @@ export const OverviewFormField = ({
                         formatMessage,
                       )}
                     </Text>
-                    <Text
-                      fontWeight={item.boldValueText ? 'semiBold' : 'regular'}
-                    >
-                      {formatTextWithLocale(
-                        item?.valueText ?? '',
-                        application,
-                        locale,
-                        formatMessage,
-                      )}
-                    </Text>
+                    {Array.isArray(item?.valueText) ? (
+                      item?.valueText.map((value, index) => (
+                        <Text
+                          key={`${value}-${index}`}
+                          fontWeight={
+                            item.boldValueText ? 'semiBold' : 'regular'
+                          }
+                        >
+                          {formatTextWithLocale(
+                            value,
+                            application,
+                            locale,
+                            formatMessage,
+                          )}
+                        </Text>
+                      ))
+                    ) : (
+                      <Text
+                        fontWeight={item.boldValueText ? 'semiBold' : 'regular'}
+                      >
+                        {formatTextWithLocale(
+                          item?.valueText ?? '',
+                          application,
+                          locale,
+                          formatMessage,
+                        )}
+                      </Text>
+                    )}
                   </Box>
                 </GridColumn>
               )

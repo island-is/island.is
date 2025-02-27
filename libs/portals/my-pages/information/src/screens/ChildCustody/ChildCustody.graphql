@@ -31,10 +31,6 @@ query NationalRegistryChildCustody(
           nationalId
           text
         }
-        birthParents {
-          fullName
-          nationalId
-        }
         birthplace {
           location
         }

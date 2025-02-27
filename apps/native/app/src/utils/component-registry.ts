@@ -73,6 +73,10 @@ export const ButtonRegistry = {
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
   InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
   HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
+  InboxBulkSelectButton: `${prefix}.button.InboxBulkSelectButton`,
+  InboxBulkSelectAllButton: `${prefix}.button.InboxBulkSelectAllButton`,
+  InboxBulkDeselectAllButton: `${prefix}.button.InboxBulkDeselectAllButton`,
+  InboxBulkSelectCancelButton: `${prefix}.button.InboxBulkSelectCancelButton`,
 }
 
 export const StackRegistry = {

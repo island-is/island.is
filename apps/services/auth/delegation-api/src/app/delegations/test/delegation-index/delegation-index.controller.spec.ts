@@ -1,3 +1,4 @@
+import { generatePerson } from 'kennitala'
 import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
 
@@ -14,7 +15,6 @@ import {
 } from '@island.is/shared/types'
 
 import { setupWithAuth } from '../../../../../test/setup'
-import kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 
 const path = '/v1/delegation-index/.id'
@@ -444,19 +444,9 @@ describe('DelegationIndexController', () => {
     it('PUT - should create LegalGuardianMinor delegation record if creating LegalGuardian delegation for child under 16', async () => {
       // Arrange
       const DATE_OF_BIRTH = new Date(addYears(new Date(), -15).toDateString())
-      jest.spyOn(kennitala, 'isValid').mockReturnValue(true)
-      jest.spyOn(kennitala, 'info').mockReturnValue({
-        kt: '0101302399',
-        valid: true,
-        type: 'person',
-        birthday: DATE_OF_BIRTH,
-        birthdayReadable: 'any',
-        age: 15,
-      })
-
       const { toNationalId, fromNationalId, type } = {
         toNationalId: user.nationalId,
-        fromNationalId: '0101302399',
+        fromNationalId: generatePerson(DATE_OF_BIRTH),
         type: AuthDelegationType.LegalGuardian,
       }
 

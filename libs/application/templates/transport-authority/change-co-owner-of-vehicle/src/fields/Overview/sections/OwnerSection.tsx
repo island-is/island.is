@@ -29,7 +29,7 @@ export const OwnerSection: FC<
             {isOwner && `(${formatMessage(review.status.youLabel)})`}
           </Text>
           <Text>{getValueViaPath(answers, 'owner.name', '') as string}</Text>
-          <Text>{kennitala.format(nationalId, '-')}</Text>
+          <Text>{kennitala.format(nationalId)}</Text>
           <Text>{getValueViaPath(answers, 'owner.email', '') as string}</Text>
           <Text>{formatPhoneNumber(phone)}</Text>
         </GridColumn>

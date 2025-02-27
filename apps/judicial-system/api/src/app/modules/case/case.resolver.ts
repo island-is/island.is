@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -30,7 +30,7 @@ import { RequestSignatureResponse } from './models/requestSignature.response'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
