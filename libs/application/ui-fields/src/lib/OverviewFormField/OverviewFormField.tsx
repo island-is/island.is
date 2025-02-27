@@ -41,7 +41,7 @@ export const OverviewFormField = ({
         isLast={!field.bottomLine}
         editAction={() => changeScreens(field.backId ?? '')}
       >
-        <Box marginRight={15}>
+        <Box marginRight={12}>
           {field.title && (
             <Text
               variant="h4"
@@ -128,7 +128,12 @@ export const OverviewFormField = ({
                     attachment.width === 'half' ? '6/12' : '12/12',
                   ]}
                 >
-                  <Box marginTop={0}>
+                  <Box
+                    marginTop={
+                      !field.description && !field.title && i === 0 ? 8 : 0
+                    }
+                    // marginTop={0}
+                  >
                     <FileItem
                       key={i}
                       fileName={formatTextWithLocale(
@@ -156,7 +161,7 @@ export const OverviewFormField = ({
             })}
           {tableData && (
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-              <Box marginTop={0}>
+              <Box marginTop={field.description || field.title ? 0 : 10}>
                 <Table.Table>
                   <Table.Head>
                     <Table.Row>
