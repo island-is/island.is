@@ -13,3 +13,10 @@ export async function getPackageJSON(
   const content = JSON.parse(await readFile(filePath, 'utf-8'))
   return content
 }
+
+export const logger = {
+  debug: console.error,
+  info: console.error,
+  warn: console.error,
+  error: console.error,
+}
