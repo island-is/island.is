@@ -1,0 +1,50 @@
+name: Runs-on caching benchmark
+
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-magic-cache-speeds:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - runs-on=${{github.run_id}}/runner=arc-runners/extras=s3-cache
+          - ubuntu-latest
+        blocks:
+          - 4096 # 4GB
+          - 2048 # 2GB
+          - 512 # 512MB
+          - 64 # 64MB
+    runs-on: ${{ matrix.runner }}
+    env:
+      FILENAME: random-file
+    steps:
+      - uses: runs-on/action@v1
+      - name: Generate file
+        run: |
+          echo "Generating ${{ matrix.blocks }}MiB random file..."
+          dd if=/dev/urandom of=${{ env.FILENAME }} bs=1M count=${{ matrix.blocks }}
+          ls -lh ${{ env.FILENAME }}
+      - name: Save to cache (actions/cache)
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.FILENAME }}
+          key: github-${{github.run_id}}-actions-cache-${{strategy.job-index}}-${{ matrix.blocks }}MiB-${{ env.FILENAME }}
+      - name: Restore from cache (actions/cache)
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.FILENAME }}
+          key: github-${{github.run_id}}-actions-cache-${{strategy.job-index}}-${{ matrix.blocks }}MiB-${{ env.FILENAME }}
+      - name: Restore from cache (actions/cache, restoreKeys)
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.FILENAME }}
+          key: github-${{github.run_id}}-actions-cache-${{strategy.job-index}}-unknown
+          restore-keys: |
+            github-${{github.run_id}}-actions-cache-${{strategy.job-index}}-${{ matrix.blocks }}MiB-
