@@ -16,10 +16,6 @@ elif [[ "${CI_DEBUG:-}" == true ]] && [[ "${TEST_EVERYTHING:-}" != true ]]; then
 else
   # comma-space-separated list of affected targets (e.g. "foo, bar, baz")
   PROJECTS=$("$PROJECT_ROOT"/scripts/ci/_nx-affected-targets.sh "$1")
-  if [[ "${FORCE_UNICORN:-}" == true ]]; then
-    # Set 'unicorn' app as only affected
-    PROJECTS="unicorn-app"
-  fi
   >&2 echo "Projects: ${PROJECTS}"
   CHUNKS=$(node "$PROJECT_ROOT"/scripts/ci/_chunk.js "${PROJECTS}")
   >&2 echo "Chunks: $CHUNKS"

@@ -51,7 +51,6 @@ env:
   COREPACK_HOME: /home/runner/dependencies/corepack
   NODE_PATH: /home/runner/dependencies/node_modules
   COREPACK_ENABLE_STRICT: '0'
-  FORCE_UNICORN: ${{ contains(github.event.pull_request.labels.*.name, 'unicorn') }}
 
 jobs:
   install:
@@ -209,10 +208,5 @@ jobs:
           NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
           NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
         run: |
-          set -x
-          if [[ "${FORCE_UNICORN}" == "true" ]]; then
-            is_unicorn=true
-          else
-            is_unicorn=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
-          fi
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
