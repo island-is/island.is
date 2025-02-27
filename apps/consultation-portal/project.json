@@ -4,7 +4,7 @@
   "sourceRoot": "apps/consultation-portal",
   "projectType": "application",
   "prefix": "consultation-portal",
-  "tags": ["scope:react-next", "unicorn"],
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
