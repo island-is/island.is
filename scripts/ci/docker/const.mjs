@@ -1,2 +1,2 @@
 export const MAIN_BRANCHES = ['main']
-export const RELEASE_BRANCHES = ['release', 'mq-docker'];
+export const RELEASE_BRANCHES = ['release', 'mq-docker-main'];
