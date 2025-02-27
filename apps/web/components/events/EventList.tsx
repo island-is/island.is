@@ -3,7 +3,6 @@ import { ReactNode } from 'react'
 import { Box, InfoCard, Stack, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
-  AddToCalendarButton,
   EventLocation,
   EventTime,
   LatestEventSliceCard,
@@ -102,23 +101,6 @@ export const EventList = ({
                   {
                     icon: 'location',
                     text: formatEventLocation(event.location),
-                  },
-                  {
-                    icon: 'add',
-                    text: (
-                      <AddToCalendarButton
-                        event={{
-                          title: event.title,
-                          description: '',
-                          pageUrl: `https://island.is${link.href}`,
-                          location: formatEventLocation(event.location),
-                          startDate: event.startDate,
-                          startTime: event.time.startTime,
-                          endTime: event.time.endTime,
-                        }}
-                        textVariant="small"
-                      />
-                    ),
                   },
                 ]}
               />

@@ -14,7 +14,6 @@ export interface BaseProps {
     label: string
     href: string
   }
-  linkType?: 'card' | 'title'
 }
 
 export type InfoCardProps =
@@ -25,18 +24,12 @@ export type InfoCardProps =
       variant: 'detailed'
     })
 
-export const InfoCard = ({
-  size,
-  linkType = 'card',
-  ...restOfProps
-}: InfoCardProps) => {
-  const Wrapper = linkType === 'card' ? FocusableBox : Box
-
+export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
   return (
-    <Wrapper
+    <FocusableBox
       aria-label={restOfProps.title}
-      component={linkType === 'card' ? LinkV2 : undefined}
-      href={linkType === 'card' ? restOfProps.link.href : undefined}
+      component={LinkV2}
+      href={restOfProps.link.href}
       background={restOfProps.background ?? 'white'}
       borderColor={restOfProps.borderColor ?? 'white'}
       color="blue"
@@ -46,11 +39,11 @@ export const InfoCard = ({
     >
       <Box width="full" padding={2}>
         {restOfProps.variant === 'detailed' ? (
-          <DetailedInfoCard size={size} linkType={linkType} {...restOfProps} />
+          <DetailedInfoCard size={size} {...restOfProps} />
         ) : (
-          <SimpleInfoCard size={size} linkType={linkType} {...restOfProps} />
+          <SimpleInfoCard size={size} {...restOfProps} />
         )}
       </Box>
-    </Wrapper>
+    </FocusableBox>
   )
 }

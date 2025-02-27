@@ -43,7 +43,6 @@ export const DetailedInfoCard = ({
   logo,
   logoAlt,
   link,
-  linkType = 'card',
 }: DetailedProps) => {
   const renderLogo = () => {
     if (!logo) {
@@ -153,17 +152,9 @@ export const DetailedInfoCard = ({
       return (
         <GridRow direction="row">
           <GridColumn span="8/12">
-            {linkType === 'title' ? (
-              <LinkV2 href={link.href}>
-                <Text variant="h3" color="blue400">
-                  {title}
-                </Text>
-              </LinkV2>
-            ) : (
-              <Text variant="h3" color="blue400">
-                {title}
-              </Text>
-            )}
+            <Text variant="h3" color="blue400">
+              {title}
+            </Text>
 
             {description && (
               <Box flexGrow={1} marginTop={1}>
