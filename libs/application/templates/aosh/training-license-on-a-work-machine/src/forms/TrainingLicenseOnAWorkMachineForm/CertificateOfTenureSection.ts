@@ -105,6 +105,13 @@ export const certificateOfTenureSection = buildSection({
           width: 'half',
           required: true,
           placeholder: certificateOfTenure.labels.datePlaceholder,
+          maxDate: (application) => {
+            const dateTo = getValueViaPath<string>(
+              application.answers,
+              'certificateOfTenure.dateTo',
+            )
+            return dateTo ? new Date(dateTo) : new Date()
+          },
         }),
         buildDateField({
           id: 'certificateOfTenure.dateTo',
@@ -112,6 +119,14 @@ export const certificateOfTenureSection = buildSection({
           width: 'half',
           required: true,
           placeholder: certificateOfTenure.labels.datePlaceholder,
+          minDate: (application) => {
+            const dateFrom = getValueViaPath<string>(
+              application.answers,
+              'certificateOfTenure.dateFrom',
+            )
+            return dateFrom ? new Date(dateFrom) : new Date('1900-01-01')
+          },
+          maxDate: new Date(),
         }),
         buildTextField({
           id: 'certificateOfTenure.tenureInHours',
