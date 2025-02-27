@@ -33,6 +33,7 @@ import {
   phoneNumberLabelStrings,
   placeholderStrings,
 } from './InputAdvocate.strings'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 interface Props {
   advocateType: 'defender' | 'spokesperson' | 'lawyer' | 'legalRightsProtector'
@@ -96,20 +97,16 @@ const InputAdvocate: FC<Props> = ({
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
 
-  const { allLawyers } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    isDistrictCourtUser(user),
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
 
   const options = useMemo(
     () =>
-      allLawyers?.map((l: Lawyer) => ({
+      lawyers?.map((l: Lawyer) => ({
         label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
         value: l.email,
       })),
 
-    [allLawyers],
+    [lawyers],
   )
 
   const handleAdvocateChange = useCallback(
@@ -124,7 +121,7 @@ const InputAdvocate: FC<Props> = ({
 
         onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
 
-        const lawyer = allLawyers?.find(
+        const lawyer = lawyers?.find(
           (l: Lawyer) => l.email === (value as string),
         )
 
@@ -138,7 +135,7 @@ const InputAdvocate: FC<Props> = ({
       setPhoneNumberErrorMessage('')
       onAdvocateChange(name, nationalId, email, phoneNumber)
     },
-    [onAdvocateChange, onAdvocateNotFound, allLawyers],
+    [onAdvocateChange, onAdvocateNotFound, lawyers],
   )
 
   const handleEmailChange = useCallback(

@@ -20,6 +20,7 @@ import {
 } from '../../utils/hooks/useIndexedDB/useIndexedDB'
 import { UserContext } from '../UserProvider/UserProvider'
 import { strings } from './ServiceAnnouncement.strings'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
@@ -108,11 +109,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   const { formatMessage } = useIntl()
 
-  const { allLawyers } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    isDistrictCourtUser(user),
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena
@@ -129,7 +126,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
           return
         }
 
-        const data = allLawyers.find(
+        const data = lawyers?.find(
           (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
         )
 
@@ -144,7 +141,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     }
 
     fetchLawyer()
-  }, [allLawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
+  }, [lawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
 
   return subpoenaLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>

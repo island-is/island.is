@@ -32,15 +32,12 @@ import {
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import { useGeoLocation, useGetLawyers } from '../../utils/hooks'
-import {
-  Database,
-  useIndexedDB,
-} from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { useGeoLocation } from '../../utils/hooks'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
@@ -83,11 +80,7 @@ const HeaderContainer = () => {
   const [isRobot, setIsRobot] = useState<boolean>()
 
   const { countryCode } = useGeoLocation()
-  const { allLawyers } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    isDistrictCourtUser(user) || isDefenceUser(user),
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
@@ -96,12 +89,12 @@ const HeaderContainer = () => {
   useEffect(() => {
     const fetchLawyer = () => {
       setLawyer(
-        allLawyers.find((lawyer) => lawyer.nationalId === user?.nationalId),
+        lawyers?.find((lawyer) => lawyer.nationalId === user?.nationalId),
       )
     }
 
     fetchLawyer()
-  }, [allLawyers, user])
+  }, [lawyers, user])
 
   const logoHref =
     !user || !isAuthenticated

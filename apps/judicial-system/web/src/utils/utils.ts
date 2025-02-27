@@ -15,8 +15,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { Database } from './hooks/useIndexedDB/useIndexedDB'
-
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
     case Gender.MALE: {
