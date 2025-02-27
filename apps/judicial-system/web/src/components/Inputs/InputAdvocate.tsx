@@ -200,6 +200,7 @@ const InputAdvocate: FC<Props> = ({
             lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
           onChange={handleAdvocateChange}
+          noOptionsMessage={formatMessage(nameLabelStrings.noneFoundMessage)}
           isDisabled={Boolean(disabled)}
           isCreatable
           isClearable

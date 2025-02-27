@@ -17,9 +17,9 @@ export const useGetLawyers = (shouldFetch?: boolean): Lawyer[] => {
     })
 
   const { data, error } = useSWRImmutable<Lawyer[]>(
-    shouldFetch ? '/api/defender/lawyerRegistry' : null,
+    shouldFetch ? '/api/defender/lawyerRegistryy' : null,
     fetcher,
-    { shouldRetryOnError: false },
+    { shouldRetryOnError: false, errorRetryCount: 0 },
   )
 
   if (error) {
