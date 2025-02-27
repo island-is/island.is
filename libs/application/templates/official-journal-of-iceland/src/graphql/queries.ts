@@ -320,6 +320,8 @@ export const GET_PRESIGNED_URL_MUTATION = gql`
   ) {
     officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
       url
+      key
+      cdn
     }
   }
 `

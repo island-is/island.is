@@ -9,7 +9,7 @@ docker:
 
 backend:
 	./${CWD}scripts/_wait-for.sh localhost:5432  # postgresql
-	./${CWD}scripts/_wait-for.sh localhost:7000  # redis-cluster
+	./${CWD}scripts/_wait-for.sh localhost:7010  # redis-cluster
 	yarn --cwd ${CWD} start air-discount-scheme-backend
 
 services: docker backend
