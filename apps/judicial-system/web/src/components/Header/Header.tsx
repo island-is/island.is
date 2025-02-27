@@ -80,6 +80,8 @@ const HeaderContainer = () => {
   const { countryCode } = useGeoLocation()
   const { lawyers } = useContext(LawyerRegistryContext)
 
+  const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
+
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
   }, [countryCode])
@@ -176,7 +178,7 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {capitalize(
-                          isDefenceUser(user) && lawyer
+                          isLawyerInLawyersRegistry
                             ? lawyer.practice
                             : user.institution?.name,
                         )}
@@ -185,7 +187,7 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {formatPhoneNumber(
-                          isDefenceUser(user) && lawyer
+                          isLawyerInLawyersRegistry
                             ? lawyer.phoneNr
                             : user.mobileNumber,
                         )}
@@ -193,9 +195,7 @@ const HeaderContainer = () => {
                     </Box>
                     <Box>
                       <Text>
-                        {isDefenceUser(user) && lawyer
-                          ? lawyer.email
-                          : user.email}
+                        {isLawyerInLawyersRegistry ? lawyer.email : user.email}
                       </Text>
                     </Box>
                   </Box>
@@ -209,7 +209,7 @@ const HeaderContainer = () => {
                     />
                   </Box>
                   <Box>
-                    {isDefenceUser(user) ? (
+                    {isLawyerInLawyersRegistry ? (
                       <Text>
                         {formatMessage(header.tipDisclaimerDefenders)}
                       </Text>
