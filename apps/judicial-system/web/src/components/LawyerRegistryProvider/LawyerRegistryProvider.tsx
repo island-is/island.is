@@ -28,4 +28,3 @@ export const LawyerRegistryProvider: FC<PropsWithChildren> = ({ children }) => {
     </LawyerRegistryContext.Provider>
   )
 }
-export const useLawyerRegistry = () => useContext(LawyerRegistryContext)
