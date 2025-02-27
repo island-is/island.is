@@ -1,14 +1,7 @@
 import { execSync } from 'child_process'
 import { workspaceRoot } from '@nx/devkit'
-import { logger } from './_common.mjs'
 
-const argSlice = process.argv[2]
-logger.info('Running utils with args:', {
-  procargv: process.argv,
-  argSlice,
-})
-const arg = JSON.parse(argSlice)
-logger.info('Running utils with args:', { arg })
+const arg = JSON.parse(process.argv.slice[2] ?? '{}')
 const baseBranch = process.env.GIT_BASE || process.env.NX_BASE || arg.base
 const nxCmd = [
   'yarn',
@@ -20,14 +13,14 @@ const nxCmd = [
   `--base=${baseBranch}`,
   '--json',
 ]
-logger.info(`Running command:`, { nxCmd })
+console.error(`Running command in ${workspaceRoot}:`, { nxCmd })
 try {
   const affected = JSON.parse(
     execSync(`cd ${workspaceRoot} && ${nxCmd.join(' ')}`).toString(),
   )
-  logger.info('Affected output:', { affected })
+  console.error(`Affected projects:`, affected)
   console.log(affected.length > 0)
 } catch (e) {
-  logger.error(e.message)
+  console.error(e.message)
   process.exit(1)
 }
