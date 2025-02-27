@@ -194,11 +194,23 @@ export class PaymentService {
     extraData: ExtraData[] | undefined,
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
+    console.log('=========================================')
+    console.log('chargeItems')
+    console.dir(chargeItems, { depth: null })
+    console.log('=========================================')
+    console.log('extraData')
+    console.dir(extraData, { depth: null })
+    console.log('=========================================')
+
     //1. Retrieve charge items from FJS
     const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
       chargeItems,
     )
+    console.log('=========================================')
+    console.log('catalogChargeItems')
+    console.dir(catalogChargeItems, { depth: null })
+    console.log('=========================================')
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
@@ -206,6 +218,11 @@ export class PaymentService {
 
     if (paymentModel) {
       //payment Model already exists something has previously gone wrong.
+
+      console.log('=========================================')
+      console.log('paymentModel EXISTS')
+      console.dir(paymentModel, { depth: null })
+      console.log('=========================================')
 
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
     } else {
@@ -240,18 +257,29 @@ export class PaymentService {
           },
         })
 
+      console.log('=========================================')
+      console.log('paymentResult')
+      console.dir(paymentResult, { depth: null })
+      console.log('=========================================')
+
       paymentUrl =
         locale && locale === 'en'
           ? paymentResult.urls.en
           : paymentResult.urls.is
 
       await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
+      await paymentModel.reload()
     }
 
     //5. Update payment with user4 from charge result
 
     await this.setUser4(applicationId, paymentModel.id, 'user4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
+
+    console.log('=========================================')
+    console.log('paymentModel')
+    console.dir(paymentModel, { depth: null })
+    console.log('=========================================')
 
     return {
       id: paymentModel.id,
