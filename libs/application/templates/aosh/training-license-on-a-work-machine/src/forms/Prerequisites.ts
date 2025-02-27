@@ -26,7 +26,6 @@ export const PrerequisitesForm: Form = buildForm({
   children: [
     buildSection({
       id: 'informationSection',
-      title: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
           title: externalData.dataProvider.pageTitle,
