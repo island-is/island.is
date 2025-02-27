@@ -205,7 +205,11 @@ jobs:
 
       - name: Set unicorn
         id: unicorn
+        env:
+          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
         run: |
+          set -x
           if [[ "${FORCE_UNICORN}" == "true" ]]; then
             is_unicorn=true
           else
