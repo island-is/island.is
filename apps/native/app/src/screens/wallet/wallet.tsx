@@ -163,7 +163,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useEffect(() => {
     const indexItems = licenseItems.map((item) => {
       return {
-        title: item.license.type,
+        title: item.payload?.metadata?.name ?? item.license.type,
+        type: item.license.type,
         uniqueIdentifier: `/wallet/${item.license.type}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
