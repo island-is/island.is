@@ -17,14 +17,14 @@ export class SharedAuthService {
     private readonly config: ConfigType<typeof sharedAuthModuleConfig>,
   ) {}
 
-  signJwt(user: User, csrfToken?: string) {
-    return sign(
-      {
-        user,
-        csrfToken,
-      } as Credentials,
-      this.config.jwtSecret,
-      { expiresIn: EXPIRES_IN_SECONDS },
-    )
+  signJwt(currentUserIdx: number, eligibleUsers: User[], csrfToken?: string) {
+    const credentials: Credentials = {
+      currentUserIdx,
+      eligibleUsers,
+      csrfToken,
+    }
+    return sign(credentials, this.config.jwtSecret, {
+      expiresIn: EXPIRES_IN_SECONDS,
+    })
   }
 }
