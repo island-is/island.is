@@ -99,7 +99,7 @@ jobs:
 
       - name: Find unicorn projects
         run: |
-          unicorns=$(nx show projects --affected --projects=tag:unicorn --json)
+          unicorns=$(yarn nx show projects --affected --projects=tag:unicorn --json)
           jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
             [
                 $chunks.projects
