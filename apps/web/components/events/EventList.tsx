@@ -17,7 +17,10 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { formatEventLocation } from '@island.is/web/utils/event'
+import {
+  formatEventLocation,
+  formatEventTime,
+} from '@island.is/web/utils/event'
 
 interface EventListProps {
   namespace: Record<string, string>
@@ -88,11 +91,17 @@ export const EventList = ({
                 detailLines={[
                   {
                     icon: 'time',
-                    text: event.time.startTime,
+                    text: formatEventTime(
+                      event.time,
+                      n(
+                        'timeSuffix',
+                        activeLocale === 'is' ? 'til' : 'to',
+                      ) as string,
+                    ),
                   },
                   {
                     icon: 'location',
-                    text: 'asdf',
+                    text: formatEventLocation(event.location),
                   },
                   {
                     icon: 'add',
@@ -107,6 +116,7 @@ export const EventList = ({
                           startTime: event.time.startTime,
                           endTime: event.time.endTime,
                         }}
+                        textVariant="small"
                       />
                     ),
                   },

@@ -92,9 +92,13 @@ const generateGoogleCalendarLink = (props: CalendarEvent) => {
 
 interface AddToCalendarButtonProps {
   event: CalendarEvent
+  textVariant?: 'small' | 'default'
 }
 
-export const AddToCalendarButton = ({ event }: AddToCalendarButtonProps) => {
+export const AddToCalendarButton = ({
+  event,
+  textVariant = 'default',
+}: AddToCalendarButtonProps) => {
   const { activeLocale } = useI18n()
   return (
     <DropdownMenu
@@ -105,7 +109,7 @@ export const AddToCalendarButton = ({ event }: AddToCalendarButtonProps) => {
             cursor: 'pointer',
           }}
         >
-          <Text variant="small">
+          <Text variant={textVariant}>
             {activeLocale === 'is' ? 'Bæta við í dagatal' : 'Add to calendar'}
           </Text>
         </Box>
