@@ -3,10 +3,7 @@ import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  isDistrictCourtUser,
-  type Lawyer,
-} from '@island.is/judicial-system/types'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   ServiceStatus,
@@ -14,13 +11,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useSubpoena } from '../../utils/hooks'
-import {
-  Database,
-  useIndexedDB,
-} from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { UserContext } from '../UserProvider/UserProvider'
-import { strings } from './ServiceAnnouncement.strings'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
+import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
@@ -102,7 +94,6 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
-  const { user } = useContext(UserContext)
   const [lawyer, setLawyer] = useState<Lawyer>()
 
   const { subpoena, subpoenaLoading } = useSubpoena(localSubpoena)

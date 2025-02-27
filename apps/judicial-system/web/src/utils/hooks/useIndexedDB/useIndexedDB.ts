@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
+import { useCallback, useEffect, useState } from 'react'
+import differenceInHours from 'date-fns/differenceInHours'
 
 import { Lawyer } from '@island.is/judicial-system/types'
 
 import { useGetLawyers } from '../useLawyers/useLawyers'
-import differenceInSeconds from 'date-fns/differenceInSeconds'
 
 export const Database = {
   name: 'lawyer-registry',
@@ -23,52 +22,7 @@ export const useIndexedDB = (
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
   const lawyers = useGetLawyers(shouldFetch)
 
-  useEffect(() => {
-    const syncData = async () => {
-      try {
-        const db = await openDB()
-        const transaction = db.transaction(Database.lawyerTable, 'readonly')
-        const store = transaction.objectStore(Database.lawyerTable)
-        const request = store.getAll()
-
-        request.onsuccess = () => {
-          const records: LawyerWithCreated[] = request.result
-          const now = new Date()
-          const shouldRefresh =
-            records.length > 0
-              ? differenceInSeconds(now, records[0].created) > 5
-              : true
-
-          setAllLawyers(request.result)
-
-          if (shouldRefresh) {
-            console.log('Refreshing IndexedDB data...')
-            setShouldFetch(true)
-          } else {
-            console.log('Using cached IndexedDB data.')
-          }
-        }
-
-        request.onerror = () => {
-          console.error('Failed to access IndexedDB.')
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    if (shouldFetchLawyers) {
-      syncData()
-    }
-  }, [shouldFetchLawyers])
-
-  useEffect(() => {
-    if (shouldFetch && lawyers.length > 0) {
-      refreshData(lawyers)
-    }
-  }, [shouldFetch])
-
-  const openDB = (): Promise<IDBDatabase> => {
+  const openDB = useCallback((): Promise<IDBDatabase> => {
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.open(
         Database.lawyerTable,
@@ -95,21 +49,67 @@ export const useIndexedDB = (
         reject(request.error)
       }
     })
-  }
+  }, [tableName])
 
-  const refreshData = async (lawyers: Lawyer[]) => {
-    const db = await openDB()
-    const transaction = db.transaction(Database.lawyerTable, 'readwrite')
-    const store = transaction.objectStore(Database.lawyerTable)
-    const now = new Date()
+  const refreshData = useCallback(
+    async (lawyers: Lawyer[]) => {
+      const db = await openDB()
+      const transaction = db.transaction(Database.lawyerTable, 'readwrite')
+      const store = transaction.objectStore(Database.lawyerTable)
+      const now = new Date()
 
-    store.clear()
-    setAllLawyers(lawyers)
+      store.clear()
+      setAllLawyers(lawyers)
 
-    lawyers.map((lawyer) => {
-      store.add({ ...lawyer, created: now })
-    })
-  }
+      lawyers.forEach((lawyer) => store.add({ ...lawyer, created: now }))
+    },
+    [openDB],
+  )
+
+  useEffect(() => {
+    const syncData = async () => {
+      try {
+        const db = await openDB()
+        const transaction = db.transaction(Database.lawyerTable, 'readonly')
+        const store = transaction.objectStore(Database.lawyerTable)
+        const request = store.getAll()
+
+        request.onsuccess = () => {
+          const records: LawyerWithCreated[] = request.result
+          const now = new Date()
+          const shouldRefresh =
+            records.length > 0
+              ? differenceInHours(now, records[0].created) > 1
+              : true
+
+          setAllLawyers(request.result)
+
+          if (shouldRefresh) {
+            console.log('Refreshing IndexedDB data...')
+            setShouldFetch(true)
+          } else {
+            console.log('Using cached IndexedDB data.')
+          }
+        }
+
+        request.onerror = () => {
+          console.error('Failed to access IndexedDB.')
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if (shouldFetchLawyers) {
+      syncData()
+    }
+  }, [shouldFetchLawyers, openDB])
+
+  useEffect(() => {
+    if (shouldFetch && lawyers.length > 0) {
+      refreshData(lawyers)
+    }
+  }, [shouldFetch, lawyers, refreshData])
 
   return {
     allLawyers: allLawyers.sort((a: Lawyer, b: Lawyer) =>

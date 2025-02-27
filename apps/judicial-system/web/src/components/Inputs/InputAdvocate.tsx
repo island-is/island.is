@@ -11,10 +11,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import {
-  isDistrictCourtUser,
-  type Lawyer,
-} from '@island.is/judicial-system/types'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
@@ -22,18 +19,13 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import {
-  Database,
-  useIndexedDB,
-} from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { UserContext } from '../UserProvider/UserProvider'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import {
   emailLabelStrings,
   nameLabelStrings,
   phoneNumberLabelStrings,
   placeholderStrings,
 } from './InputAdvocate.strings'
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 interface Props {
   advocateType: 'defender' | 'spokesperson' | 'lawyer' | 'legalRightsProtector'
@@ -92,7 +84,6 @@ const InputAdvocate: FC<Props> = ({
   disabled,
 }) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')

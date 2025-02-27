@@ -7,11 +7,9 @@ import router from 'next/router'
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,

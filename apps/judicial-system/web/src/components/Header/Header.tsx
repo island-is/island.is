@@ -25,19 +25,17 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
-  isDistrictCourtUser,
   isPrisonSystemUser,
-  isProsecutionUser,
   Lawyer,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import { useGeoLocation } from '../../utils/hooks'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 

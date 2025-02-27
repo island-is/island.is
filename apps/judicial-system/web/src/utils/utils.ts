@@ -3,7 +3,7 @@ import {
   formatDate,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isProsecutionUser, Lawyer } from '@island.is/judicial-system/types'
+import { isProsecutionUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
