@@ -108,30 +108,20 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     : []
 
   useEffect(() => {
-    const fetchLawyer = async () => {
-      try {
-        if (
-          !subpoena?.defenderNationalId ||
-          subpoena?.serviceStatus !== ServiceStatus.DEFENDER
-        ) {
-          return
-        }
-
-        const data = lawyers?.find(
-          (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
-        )
-
-        if (!data) {
-          return
-        }
-
-        setLawyer(data)
-      } catch (error) {
-        console.error('Failed to fetch customer:', error)
-      }
+    if (
+      !subpoena?.defenderNationalId ||
+      subpoena?.serviceStatus !== ServiceStatus.DEFENDER ||
+      !lawyers ||
+      lawyers.length === 0
+    ) {
+      return
     }
 
-    fetchLawyer()
+    setLawyer(
+      lawyers.find(
+        (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
+      ),
+    )
   }, [lawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
 
   return subpoenaLoading ? (
