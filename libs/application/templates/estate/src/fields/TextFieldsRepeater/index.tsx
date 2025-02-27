@@ -198,7 +198,7 @@ export const TextFieldsRepeater: FC<
                     <InputController
                       id={`${fieldIndex}.${field.id}`}
                       name={`${fieldIndex}.${field.id}`}
-                      defaultValue={repeaterField[field.id] || '?'}
+                      defaultValue={repeaterField[field.id] || ''}
                       format={field.format}
                       label={formatMessage(field.title)}
                       placeholder={field.placeholder}

@@ -172,7 +172,7 @@ export const estateAssets = buildSection({
                     currency: true,
                   },
                   {
-                    title: 'Áfallnir vextir á dánardegi',
+                    title: m.bankAccountInterestRate,
                     id: 'exchangeRateOrInterest',
                     required: true,
                     currency: true,
