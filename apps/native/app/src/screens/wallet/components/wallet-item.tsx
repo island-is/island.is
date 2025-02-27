@@ -80,7 +80,6 @@ export const WalletItem = React.memo(
             </SafeAreaView>
           ) : (
             <Pressable
-              style={style}
               onPress={() => {
                 navigateTo(
                   `/walletpassport/${item?.payload?.metadata?.licenseId}`,
