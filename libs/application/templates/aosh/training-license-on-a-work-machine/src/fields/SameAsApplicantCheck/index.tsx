@@ -17,5 +17,5 @@ export const SameAsApplicantCheck: FC<
     return [true, null]
   })
 
-  return <></>
+  return null
 }

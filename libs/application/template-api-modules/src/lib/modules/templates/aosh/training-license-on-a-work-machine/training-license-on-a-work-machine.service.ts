@@ -156,10 +156,11 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // Send Hnipp to applicant if company rejects application
-    const applicantName = getValueViaPath(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-    ) as string
+    const applicantName =
+      getValueViaPath<string>(
+        application.externalData,
+        'nationalRegistry.data.fullName',
+      ) ?? ''
     this.notificationsService.sendNotification({
       type: NotificationType.TrainingLicenseOnWorkMachineRejected,
       messageParties: {
@@ -183,10 +184,11 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
       'assigneeInformation.isContractor',
     )
     if (!isContractor?.includes('yes')) {
-      const applicantName = getValueViaPath(
-        application.externalData,
-        'nationalRegistry.data.fullName',
-      ) as string
+      const applicantName =
+        getValueViaPath<string>(
+          application.externalData,
+          'nationalRegistry.data.fullName',
+        ) ?? ''
       this.notificationsService.sendNotification({
         type: NotificationType.TrainingLicenseOnWorkMachineApproved,
         messageParties: {

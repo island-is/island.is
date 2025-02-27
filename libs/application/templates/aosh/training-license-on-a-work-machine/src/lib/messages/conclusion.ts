@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// TODO: Change to be correct
 export const conclusion = {
   general: defineMessages({
     title: {
@@ -72,7 +71,7 @@ export const conclusion = {
   }),
   rejected: defineMessages({
     alertMessage: {
-      id: 'aosh.tmo.application:conclusion.rejected.alertMessage',
+      id: 'aosh.tlwm.application:conclusion.rejected.alertMessage',
       defaultMessage: 'Samþykktaraðili hefur hafnað!',
       description: 'Conclusion rejected alert message',
     },

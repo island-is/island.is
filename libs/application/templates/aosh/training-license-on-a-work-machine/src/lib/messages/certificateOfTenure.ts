@@ -1,4 +1,3 @@
-import { buildCheckboxField } from '@island.is/application/core'
 import { defineMessages } from 'react-intl'
 
 export const certificateOfTenure = {

@@ -7,7 +7,6 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
-// import { postalCodes } from '@island.is/shared/utils'
 
 export const informationSection = buildSection({
   id: 'informationSection',

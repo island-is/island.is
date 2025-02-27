@@ -64,14 +64,21 @@ export const getCleanCompanyInformation = (
   const companyInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachine['assigneeInformation']
   >(application.answers, 'assigneeInformation')
+  const isContractor = companyInformation?.isContractor
 
   return {
-    companyName: companyInformation?.company.name ?? '',
-    companyNationalId: companyInformation?.company.nationalId ?? '',
-    contactNationalId: companyInformation?.assignee.nationalId ?? '',
-    contactName: companyInformation?.assignee.name ?? '',
-    contactPhoneNumber: companyInformation?.assignee.phone ?? '',
-    contactEmail: companyInformation?.assignee.email ?? '',
+    companyName: isContractor ? companyInformation?.company.name ?? '' : '',
+    companyNationalId: isContractor
+      ? companyInformation?.company.nationalId ?? ''
+      : '',
+    contactNationalId: isContractor
+      ? companyInformation?.assignee.nationalId ?? ''
+      : '',
+    contactName: isContractor ? companyInformation?.assignee.name ?? '' : '',
+    contactPhoneNumber: isContractor
+      ? companyInformation?.assignee.phone ?? ''
+      : '',
+    contactEmail: isContractor ? companyInformation?.assignee.email ?? '' : '',
   }
 }
 
