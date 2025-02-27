@@ -102,6 +102,7 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: Find unicorn projects
+        id: unicorn
         run: |
           unicorns=$(yarn nx show projects --affected --base="$NX_BASE" --head="$NX_HEAD" --projects=tag:unicorn --json)
           jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
@@ -110,17 +111,21 @@ jobs:
               | .[]
               | select( . | IN( $unicorns | .[] ) )
             ]
-            | "AFFECTED_PROJECTS=\(. | join(","))"
-          ' | tee -a "$GITHUB_ENV"
+            | "projects=\(. | join(","))"
+          ' | tee -a "$GITHUB_OUTPUT"
 
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+      - name: Verify that projects have some tests
+        env:
+          projects: ${{ steps.unicorn.outputs.projects }}
+        run: |
+          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests | grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u | tee /tmp/projects-with-tests
+          echo -e "${projects}" | sed 's/,/\n/g' | sort -u | tee /tmp/projects-all
+          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
+            echo "These projects don't have any tests:"
+            echo "${d}"
+            exit 1
+          fi
+          echo "All projects ($projects) have tests."
 
   e2e:
     needs:
