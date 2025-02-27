@@ -35,7 +35,7 @@ const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   //REMOVE AFTER DEBUG
   const [applicationState, setApplicationState] = useState<ApplicationStatus>()
