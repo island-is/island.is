@@ -1,5 +1,5 @@
 name: 'Setup yarn'
-description: 'Yarn setup and install dependencies'
+description: 'Yarn setup and install dependencies. This is our authoritative place to set up Yarn, including setting cache locations etc.'
 
 runs:
   using: 'composite'
