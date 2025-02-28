@@ -394,15 +394,13 @@ export const ApplicationConfigurations = {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
   },
-<<<<<<< HEAD
   [ApplicationTypes.PRACTICAL_EXAM]: {
     slug: 'verklegt-prof',
     translation: ['aosh.pe.application'],
-=======
+  },
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     slug: 'kennslurettindi-a-vinnuvel',
     translation: ['aosh.tlwm.application'],
->>>>>>> origin/main
   },
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
