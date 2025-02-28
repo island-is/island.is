@@ -10,6 +10,7 @@ import {
   SecurityDepositTypeOptions,
   TRUE,
   RentalPaymentMethodOptions,
+  RentalHousingCategoryClassGroup,
 } from './constants'
 import * as m from './messages'
 
@@ -68,34 +69,34 @@ const fasteignByStadfangNrDataSchema = z
   })
   .optional()
 
-const matseiningSchema = z
-  .object({
-    fnum: z.number().optional(),
-    fasteignamat: z.number().optional(),
-    fastnum: z.number().optional(),
-    notkun: z.string().optional(),
-    merking: z.string().optional(),
-    stadfang_nr: z.number().optional(),
-    stadfang_birting: z.string().nullable(),
-    brunabotamat: z.number().optional(),
-    eining: z.string().optional(),
-    einflm: z.number().optional(),
-  })
-  .optional()
+// const matseiningSchema = z
+//   .object({
+//     fnum: z.number().optional(),
+//     fasteignamat: z.number().optional(),
+//     fastnum: z.number().optional(),
+//     notkun: z.string().optional(),
+//     merking: z.string().optional(),
+//     stadfang_nr: z.number().optional(),
+//     stadfang_birting: z.string().nullable(),
+//     brunabotamat: z.number().optional(),
+//     eining: z.string().optional(),
+//     einflm: z.number().optional(),
+//   })
+//   .optional()
 
-const adalmatseiningByFasteignNrDataSchema = z
-  .object({
-    fastnum: z.number().optional(),
-    fasteignanumer: z.number().optional(),
-    fasteignamat: z.number().optional(),
-    brunabotamat: z.number().optional(),
-    notkun: z.string().optional(),
-    stadfang_nr: z.number().optional(),
-    stadfang_birting: z.string().optional(),
-    merking: z.string().optional(),
-    matseiningar: z.array(matseiningSchema).optional(),
-  })
-  .optional()
+// const adalmatseiningByFasteignNrDataSchema = z
+//   .object({
+//     fastnum: z.number().optional(),
+//     fasteignanumer: z.number().optional(),
+//     fasteignamat: z.number().optional(),
+//     brunabotamat: z.number().optional(),
+//     notkun: z.string().optional(),
+//     stadfang_nr: z.number().optional(),
+//     stadfang_birting: z.string().optional(),
+//     merking: z.string().optional(),
+//     matseiningar: z.array(matseiningSchema).optional(),
+//   })
+//   .optional()
 
 const landlordInfo = z
   .object({
@@ -247,12 +248,19 @@ const registerProperty = z
         RentalHousingCategoryClass.SPECIAL_GROUPS,
       ])
       .optional(),
-    categoryClassGroup: z.string().optional(),
+    categoryClassGroup: z
+      .enum([
+        RentalHousingCategoryClassGroup.STUDENT_HOUSING,
+        RentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
+        RentalHousingCategoryClassGroup.COMMUNE,
+        RentalHousingCategoryClassGroup.HALFWAY_HOUSE,
+        RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
+      ])
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (
-      data.categoryClass &&
-      data.categoryClass.includes('specialGroups') &&
+      data.categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
       !data.categoryClassGroup
     ) {
       ctx.addIssue({
@@ -345,7 +353,7 @@ const rentalAmount = z
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
         params: m.rentalAmount.paymentDateOtherOptionRequiredError,
-        path: ['paymentDateOther'],
+        path: ['rentalAmount.paymentDateOther'],
       })
     }
 
@@ -362,6 +370,7 @@ const rentalAmount = z
       }
       if (
         data.paymentMethodNationalId &&
+        data.paymentMethodNationalId?.trim().length &&
         !kennitala.isValid(data.paymentMethodNationalId)
       ) {
         ctx.addIssue({
@@ -381,6 +390,7 @@ const rentalAmount = z
       }
       if (
         data.paymentMethodBankAccountNumber &&
+        data.paymentMethodBankAccountNumber?.trim().length &&
         data.paymentMethodBankAccountNumber.length < 7
       ) {
         ctx.addIssue({

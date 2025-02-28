@@ -76,8 +76,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   const storedValue = getValues(id)
 
-  console.log('StoredValue: ', storedValue)
-
   useEffect(() => {
     if (storedValue) {
       try {
@@ -202,7 +200,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   ) => {
     const matseiningMap: Record<number, AdalmatseiningProps[]> = {}
 
-    propertiesByStadfangNr.filter((property) => {
+    propertiesByStadfangNr.forEach((property) => {
       const filteredProperties = adalmatseiningByFasteignNrData.filter(
         (matseining: AdalmatseiningProps) =>
           matseining.fastnum === property.fastnum,

@@ -12,7 +12,6 @@ import {
   SecurityDepositAmountOptions,
   UserRole,
   RentalPaymentMethodOptions,
-  AnswerOptions,
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import format from 'date-fns/format'

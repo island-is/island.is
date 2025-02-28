@@ -169,7 +169,7 @@ export const registerProperty = {
     },
     classGroupSelectLabelStudentHousing: {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelStudentHousing',
-      defaultMessage: 'Námsmannenn',
+      defaultMessage: 'Námsmenn',
       description: 'Label for student housing select option',
     },
     classGroupSelectLabelSeniorCitizenHousing: {

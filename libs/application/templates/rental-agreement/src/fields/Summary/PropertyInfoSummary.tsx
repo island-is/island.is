@@ -15,7 +15,6 @@ import {
 } from '../../lib/constants'
 import {
   getPropertyTypeOptions,
-  getPropertyClassOptions,
   getPropertyClassGroupOptions,
 } from '../../lib/utils'
 import { KeyValue } from './components/KeyValue'
