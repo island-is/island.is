@@ -45,10 +45,12 @@ runs:
       if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'false' }}
       run: |
         yarn install --immutable
-        cp -rf ./node_modules "$HOME/dependencies/node_modules"
-        cp -rf ./.yarn "$HOME/dependencies/.yarn"
-        cp -rf ./yarn.lock "$HOME/dependencies/yarn.lock"
-        cp -rf ./package.json "$HOME/dependencies/package.json"
+        (
+          cp -rf ./node_modules "$HOME/dependencies/node_modules"
+          cp -rf ./.yarn "$HOME/dependencies/.yarn"
+          cp -rf ./yarn.lock "$HOME/dependencies/yarn.lock"
+          cp -rf ./package.json "$HOME/dependencies/package.json"
+        ) || echo "Failed copying back to dependencies
 
     - name: Link pre-installed dependencies
       if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'true' }}
