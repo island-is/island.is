@@ -82,8 +82,15 @@ export class GetPaymentFlowDTO {
 
   @ApiPropertyOptional({
     description:
-      'Optional identifier for an invoice associated with the payment flow',
+      'The URL to redirect the user to after the payment flow has been completed or cancelled',
     type: String,
   })
   returnUrl?: string
+
+  @ApiPropertyOptional({
+    description:
+      'If user should be redirected to the returnUrl after the payment flow has been completed successfully',
+    type: Boolean,
+  })
+  redirectToReturnUrlOnSuccess?: boolean
 }

@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator'
-import { LicenseUpdateType } from '../license.types'
+import { LicenseApiVersion, LicenseUpdateType } from '../license.types'
 
 export class UpdateLicenseRequest {
   @ApiProperty({ enum: LicenseUpdateType, description: 'The update action' })
@@ -30,6 +30,7 @@ export class UpdateLicenseRequest {
   @IsString()
   readonly requestId?: string
 }
+
 export class UpdateLicenseResponse {
   @ApiProperty()
   @IsBoolean()

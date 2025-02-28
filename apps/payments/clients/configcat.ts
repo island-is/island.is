@@ -1,5 +1,4 @@
 import getConfig from 'next/config'
-
 import type { IConfigCatClient } from 'configcat-js'
 
 const { publicRuntimeConfig } = getConfig()
@@ -9,7 +8,13 @@ let configCatClient: IConfigCatClient | null = null
 function getServerSideClient() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const configcat = require('configcat-node')
-  return configcat.createClient(publicRuntimeConfig.configCatSdkKey)
+  return configcat.getClient(
+    publicRuntimeConfig.configCatSdkKey,
+    configcat.PollingMode.AutoPoll,
+    {
+      pollIntervalSeconds: 60,
+    },
+  )
 }
 
 function getBrowserClient() {

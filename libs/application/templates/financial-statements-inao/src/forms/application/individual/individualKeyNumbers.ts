@@ -38,7 +38,6 @@ export const individualKeyNumbersSection = buildSection({
           children: [
             buildCustomField({
               id: 'IndividualIncome',
-              title: '',
               component: 'IndividualElectionOperatingIncome',
               childInputIds: Object.values(INDIVIDUALOPERATIONIDS),
             }),

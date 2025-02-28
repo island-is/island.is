@@ -11,10 +11,17 @@ import {
   Matches,
   IsPositive,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { PaymentMethod } from '../../../types'
+
+import {
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+} from 'class-validator'
 
 export class ChargeInput {
   @IsString()
@@ -85,8 +92,14 @@ export class CreatePaymentFlowInput {
   payerNationalId!: string
 
   @IsString()
+  @Length(10, 10, {
+    message: 'organisationId must be exactly 10 characters long',
+  })
+  @Matches(/^\d+$/, {
+    message: 'organisationId must contain only numeric characters',
+  })
   @ApiProperty({
-    description: 'Identifier for the organization initiating the payment flow',
+    description: 'National id for the organization initiating the payment flow',
     type: String,
   })
   organisationId!: string
@@ -134,4 +147,37 @@ export class CreatePaymentFlowInput {
     type: String,
   })
   returnUrl?: string
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'If true the user will be redirected to the returnUrl after the payment flow has been completed successfully',
+    type: Boolean,
+  })
+  @ReturnUrlRequired() // See validator below
+  redirectToReturnUrlOnSuccess?: boolean
+}
+
+function ReturnUrlRequired(validationOptions?: ValidationOptions) {
+  return function (object: Object, propertyName: string) {
+    registerDecorator({
+      name: 'returnUrlRequired',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          const object = args.object as any
+          if (value && !object.returnUrl) {
+            return false
+          }
+          return true
+        },
+        defaultMessage(args: ValidationArguments) {
+          return `${args.property} can only have a value if returnUrl is also provided.`
+        },
+      },
+    })
+  }
 }

@@ -209,17 +209,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
@@ -395,6 +385,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,

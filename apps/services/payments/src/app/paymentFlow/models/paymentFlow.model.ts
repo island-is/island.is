@@ -169,6 +169,14 @@ export class PaymentFlow extends Model<
   })
   returnUrl?: string
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    field: 'redirect_to_return_url_on_success',
+  })
+  redirectToReturnUrlOnSuccess?: boolean
+
   @CreatedAt
   @Column({
     type: DataType.DATE,

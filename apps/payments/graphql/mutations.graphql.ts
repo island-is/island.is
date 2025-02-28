@@ -38,3 +38,12 @@ export const ChargeCardMutation = gql`
     }
   }
 `
+
+export const CreateInvoiceMutation = gql`
+  mutation createInvoice($input: PaymentsCreateInvoiceInput!) {
+    paymentsCreateInvoice(input: $input) {
+      isSuccess
+      responseCode
+    }
+  }
+`

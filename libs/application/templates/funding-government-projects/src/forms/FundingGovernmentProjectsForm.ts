@@ -123,7 +123,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             }),
             buildSliderField({
               id: 'project.refundableYears',
-              title: '',
               label: {
                 singular: shared.yearSingular,
                 plural: shared.yearPlural,
@@ -159,7 +158,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             ),
             buildFileUploadField({
               id: 'project.attachments',
-              title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadHeader: project.labels.attachmentsUploadHeader,
@@ -187,7 +185,6 @@ export const FundingGovernmentProjectsForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'overview.submitField',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

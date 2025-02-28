@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany, isValid } from 'kennitala'
+import { v4 as uuid } from 'uuid'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -23,7 +24,10 @@ import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { fjsErrorMessageToCode } from '../../utils/fjsCharge'
+import {
+  fjsErrorMessageToCode,
+  generateChargeFJSPayload,
+} from '../../utils/fjsCharge'
 
 @Injectable()
 export class PaymentFlowService {
@@ -47,17 +51,40 @@ export class PaymentFlowService {
     paymentInfo: CreatePaymentFlowInput,
   ): Promise<CreatePaymentFlowDTO> {
     try {
+      const paymentFlowId = uuid()
+
+      const chargeDetails = await this.getPaymentFlowChargeDetails(
+        paymentInfo.organisationId,
+        paymentInfo.charges,
+      )
+
+      await this.chargeFjsV2ClientService.validateCharge(
+        generateChargeFJSPayload({
+          id: paymentFlowId,
+          paymentFlow: {
+            id: paymentFlowId,
+            organisationId: paymentInfo.organisationId,
+            payerNationalId: paymentInfo.payerNationalId,
+          },
+          charges: chargeDetails.catalogItems,
+          totalPrice: chargeDetails.totalPrice,
+          systemId: environment.chargeFjs.systemId,
+          returnUrl: '', // TODO
+        }),
+      )
+
       const paymentFlow = await this.paymentFlowModel.create({
         ...paymentInfo,
+        id: paymentFlowId,
         charges: [],
       })
 
-      const charges = paymentInfo.charges.map((charge) => ({
-        ...charge,
-        paymentFlowId: paymentFlow.id,
-      }))
-
-      await this.paymentFlowChargeModel.bulkCreate(charges)
+      await this.paymentFlowChargeModel.bulkCreate(
+        paymentInfo.charges.map((charge) => ({
+          ...charge,
+          paymentFlowId,
+        })),
+      )
 
       return {
         urls: {
@@ -66,6 +93,7 @@ export class PaymentFlowService {
         },
       }
     } catch (e) {
+      // TODO: Map error codes to PaymentServiceCode
       this.logger.error('Failed to create payment url', e)
       throw new BadRequestException(
         PaymentServiceCode.CouldNotCreatePaymentFlow,
@@ -75,7 +103,7 @@ export class PaymentFlowService {
 
   private async getPaymentFlowChargeDetails(
     organisationId: string,
-    charges: PaymentFlowCharge[],
+    charges: Pick<PaymentFlowCharge, 'chargeItemCode' | 'price' | 'quantity'>[],
   ) {
     const { item } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
@@ -199,10 +227,28 @@ export class PaymentFlowService {
       paymentFlow.charges,
     )
 
+    const isAlreadyPaid = !!paymentFlowSuccessEvent
+    let hasInvoice = !!paymentFlow.existingInvoiceId
+
+    if (!isAlreadyPaid) {
+      const chargeConfirmation = (
+        await this.paymentFlowChargeModel.findOne({
+          where: {
+            paymentFlowId: id,
+          },
+        })
+      )?.toJSON()
+
+      if (chargeConfirmation) {
+        hasInvoice = true
+      }
+    }
+
     return {
       paymentFlow,
       paymentDetails,
       isAlreadyPaid: !!paymentFlowSuccessEvent,
+      hasInvoice,
     }
   }
 
@@ -296,6 +342,17 @@ export class PaymentFlowService {
           receptionId: chargeConfirmation.receptionID,
           user4: chargeConfirmation.user4,
         })
+
+      await this.paymentFlowModel.update(
+        {
+          existingInvoiceId: chargeConfirmation.receptionID,
+        },
+        {
+          where: {
+            id: paymentFlowId,
+          },
+        },
+      )
 
       return newChargeConfirmation
     } catch (e) {

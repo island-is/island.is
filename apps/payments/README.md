@@ -29,4 +29,5 @@ To develop this application locally you need to start a few processes
 
 - `yarn start payments`
 - `yarn start services-payments`
+- `yarn proxies xroad`
 - `yarn start api`

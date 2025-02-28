@@ -7,6 +7,7 @@ import {
   buildDividerField,
   buildSubSection,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { DefaultEvents, StaticText } from '@island.is/application/types'
 import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
@@ -20,7 +21,6 @@ import {
   BE,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
-  YES,
 } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
@@ -143,7 +143,6 @@ export const subSectionSummary = buildSubSection({
         }),
         buildCheckboxField({
           id: 'certificate',
-          title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],

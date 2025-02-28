@@ -19,19 +19,23 @@ import { ChargeCardInput } from './dtos/chargeCard.input'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { BadRequestException } from '@nestjs/common'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+
+const charges = [
+  {
+    chargeItemCode: '123',
+    chargeType: 'A',
+    quantity: 1,
+    price: 1000,
+  },
+]
 
 const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
-  charges: [
-    {
-      chargeItemCode: '123',
-      chargeType: 'A',
-      quantity: 1,
-    },
-  ],
+  charges,
   payerNationalId: '1234567890',
   availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
   onUpdateUrl: '/onUpdate',
-  organisationId: 'organization-id',
+  organisationId: '5534567890',
 })
 
 const TOKEN_SIGNING_SECRET = 'supersecret'
@@ -42,6 +46,7 @@ describe('CardPaymentController', () => {
   let server: request.SuperTest<request.Test>
   let cacheManager: CacheManager
   let paymentFlowService: PaymentFlowService
+  let chargeFjsService: ChargeFjsV2ClientService
   let paymentFlowEventModel: typeof PaymentFlowEvent
 
   let previousPaymentGatewayApiUrl = ''
@@ -49,6 +54,8 @@ describe('CardPaymentController', () => {
   let previousTokenSigningAlgorithm = ''
 
   let paymentFlowId: string
+
+  let logPaymentFlowUpdateSpy: jest.SpyInstance
 
   beforeAll(async () => {
     previousPaymentGatewayApiUrl = process.env.PAYMENTS_GATEWAY_API_URL!
@@ -63,12 +70,6 @@ describe('CardPaymentController', () => {
     app = await testServer({
       appModule: AppModule,
       enableVersioning: true,
-      override: (builder) =>
-        builder.overrideProvider(getModelToken(PaymentFlowEvent)).useClass(
-          jest.fn(() => ({
-            findOne: jest.fn(),
-          })),
-        ),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
@@ -77,7 +78,23 @@ describe('CardPaymentController', () => {
 
     cacheManager = app.get<CacheManager>(CACHE_MANAGER)
     paymentFlowService = app.get<PaymentFlowService>(PaymentFlowService)
+    chargeFjsService = app.get(ChargeFjsV2ClientService)
     paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
+
+    jest
+      .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
+      .mockReturnValue(
+        Promise.resolve({
+          catalogItems: charges,
+          totalPrice: 1000,
+          isAlreadyPaid: false,
+          hasInvoice: false,
+        }),
+      )
+
+    jest
+      .spyOn(ChargeFjsV2ClientService.prototype, 'validateCharge')
+      .mockReturnValue(Promise.resolve(true))
 
     // Create a payment flow
     const createPayload = getCreatePaymentFlowPayload()
@@ -91,6 +108,16 @@ describe('CardPaymentController', () => {
     } = response.body
 
     paymentFlowId = is.split('/').pop()
+  })
+
+  beforeEach(() => {
+    logPaymentFlowUpdateSpy = jest
+      .spyOn(paymentFlowService, 'logPaymentFlowUpdate')
+      .mockReturnValue(Promise.resolve())
+  })
+
+  afterEach(() => {
+    logPaymentFlowUpdateSpy.mockRestore()
   })
 
   afterAll(async () => {
@@ -134,7 +161,7 @@ describe('CardPaymentController', () => {
       }
 
       const paymentFlowServiceAlreadyPaidCheckSpy = jest
-        .spyOn(paymentFlowService, 'isEligibleToBePaid')
+        .spyOn(PaymentFlowService.prototype, 'isEligibleToBePaid')
         .mockReturnValue(Promise.resolve(false))
 
       const response = await server
@@ -375,7 +402,7 @@ describe('CardPaymentController', () => {
       }
 
       const getPaymentFlowWithPaymentDetailsSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
         .mockRejectedValue(
           new BadRequestException(PaymentServiceCode.PaymentFlowNotFound),
         )
@@ -403,11 +430,12 @@ describe('CardPaymentController', () => {
       }
 
       const getPaymentFlowWithPaymentDetailsSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
         .mockResolvedValue({
           isAlreadyPaid: true,
           paymentDetails: {} as any,
           paymentFlow: {} as any,
+          hasInvoice: false,
         })
 
       const response = await server
@@ -423,4 +451,3 @@ describe('CardPaymentController', () => {
     })
   })
 })
-

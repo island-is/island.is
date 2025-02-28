@@ -195,9 +195,9 @@ export const STATEMENT_ROUTE = '/greinargerd'
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
 export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
@@ -237,9 +237,9 @@ export const prosecutorIndictmentRoutes = [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
+  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
   INDICTMENTS_INDICTMENT_ROUTE,
-  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]
 

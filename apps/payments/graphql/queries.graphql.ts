@@ -28,6 +28,7 @@ export const GetPaymentFlow = gql`
       organisationId
       metadata
       returnUrl
+      redirectToReturnUrlOnSuccess
     }
   }
 `

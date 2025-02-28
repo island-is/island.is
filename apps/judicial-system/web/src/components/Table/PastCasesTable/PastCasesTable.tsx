@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  isDistrictCourtUser,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -123,14 +120,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
                       text={formatMessage(indictmentCaseStateTag.text)}
                     />
                   ) : (
-                    <TagCaseState
-                      caseState={row.state}
-                      caseType={row.type}
-                      isCourtRole={isDistrictCourtUser(user)}
-                      isValidToDateInThePast={row.isValidToDateInThePast}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
-                      indictmentDecision={row.indictmentDecision}
-                    />
+                    <TagCaseState theCase={row} />
                   )}
                   {row.appealState && (
                     <TagAppealState

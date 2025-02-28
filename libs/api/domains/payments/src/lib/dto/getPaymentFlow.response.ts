@@ -40,4 +40,7 @@ export class GetPaymentFlowResponse {
 
   @Field(() => String, { nullable: true })
   returnUrl?: string
+
+  @Field(() => Boolean, { nullable: true })
+  redirectToReturnUrlOnSuccess?: boolean
 }

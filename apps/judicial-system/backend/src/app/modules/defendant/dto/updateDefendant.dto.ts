@@ -104,7 +104,7 @@ export class UpdateDefendantDto {
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
-  readonly verdictViewDate?: Date
+  readonly verdictViewDate?: Date | null
 
   @IsOptional()
   @Type(() => Date)

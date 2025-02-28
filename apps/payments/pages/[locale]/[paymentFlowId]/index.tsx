@@ -33,6 +33,7 @@ import {
   ChargeCardMutation,
   useVerifyCardMutation,
   useChargeCardMutation,
+  useCreateInvoiceMutation,
 } from '../../../graphql/mutations.graphql.generated'
 import {
   GetPaymentFlowQuery,
@@ -112,21 +113,38 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       throw new Error('Payment flow not found')
     }
 
-    const {
-      data: { getOrganizationByNationalId },
-    } = await client.query<
+    const sanitizedNationalId = paymentFlow.organisationId.replace('-', '')
+
+    // First attempt query with the nationalId as is
+    let result = await client.query<
       GetOrganizationByNationalIdQuery,
       GetOrganizationByNationalIdQueryVariables
     >({
       query: GetOrganizationByNationalIdDocument,
-      variables: {
-        input: {
-          nationalId: paymentFlow.organisationId,
-        },
-      },
+      variables: { input: { nationalId: sanitizedNationalId } },
     })
 
-    organization = getOrganizationByNationalId
+    // If the first query fails, try again with the dashed format XXXXXX-XXXX
+    // TODO #1 refactor querying to be reusable
+    // TODO #2 normalise and add validation to the the kennitala field in contentful
+    if (!result.data?.getOrganizationByNationalId) {
+      result = await client.query<
+        GetOrganizationByNationalIdQuery,
+        GetOrganizationByNationalIdQueryVariables
+      >({
+        query: GetOrganizationByNationalIdDocument,
+        variables: {
+          input: {
+            nationalId: `${sanitizedNationalId.slice(
+              0,
+              6,
+            )}-${sanitizedNationalId.slice(6)}`,
+          },
+        },
+      })
+    }
+
+    organization = result.data?.getOrganizationByNationalId
   } catch (e) {
     const problem = findProblemInApolloError(e)
 
@@ -164,6 +182,7 @@ export default function PaymentPage({
   const [verifyCardMutation] = useVerifyCardMutation()
   const [chargeCardMutation] = useChargeCardMutation()
   const [getVerificationStatusQuery] = useGetVerificationStatusLazyQuery()
+  const [createInvoiceMutation] = useCreateInvoiceMutation()
 
   const router = useRouter()
   const methods = useForm({
@@ -181,7 +200,6 @@ export default function PaymentPage({
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isVerifyingCard, setIsVerifyingCard] = useState(false)
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [threeDSecureData, setThreeDSecureData] = useState(null)
   const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
 
@@ -262,7 +280,7 @@ export default function PaymentPage({
         throw new Error(problem?.detail)
       }
 
-      throw new Error(CardErrorCode.Unknown)
+      throw new Error(CardErrorCode.UnknownCardError)
     }
   }
 
@@ -296,7 +314,7 @@ export default function PaymentPage({
         throw new Error(problem?.detail)
       }
 
-      throw new Error(CardErrorCode.Unknown)
+      throw new Error(CardErrorCode.UnknownCardError)
     }
   }
 
@@ -347,7 +365,11 @@ export default function PaymentPage({
       throw new Error(chargeCardResponse.responseCode)
     }
 
-    router.reload()
+    if (paymentFlow.redirectToReturnUrlOnSuccess && paymentFlow.returnUrl) {
+      router.push(paymentFlow.returnUrl)
+    } else {
+      router.reload()
+    }
   }
 
   const onSubmit: SubmitHandler<Record<string, unknown>> = async (data) => {
@@ -355,15 +377,29 @@ export default function PaymentPage({
 
     try {
       if (selectedPaymentMethod === 'card') {
-        setIsProcessingPayment(true)
         await payWithCard(data)
         return // No need to set isSubmitting to false
       } else {
-        router.push(`${router.asPath}/krafa-stofnud`)
+        const response = await createInvoiceMutation({
+          variables: {
+            input: {
+              paymentFlowId: paymentFlow.id,
+            },
+          },
+        })
+
+        console.log({
+          response,
+        })
+
+        if (response.data?.paymentsCreateInvoice.isSuccess) {
+          console.log('success!')
+        }
+
+        // router.push(`${router.asPath}/krafa-stofnud`)
         return
       }
     } catch (e) {
-      setIsProcessingPayment(false)
       setVerificationStatus(false)
 
       if (e.message !== CardErrorCode.VerificationCancelledByUser) {

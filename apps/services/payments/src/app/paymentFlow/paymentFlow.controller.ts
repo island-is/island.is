@@ -6,6 +6,7 @@ import {
   Post,
   ParseUUIDPipe,
   UseGuards,
+  Delete,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
@@ -39,6 +40,24 @@ export class PaymentFlowController {
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<GetPaymentFlowDTO | null> {
     return this.paymentFlowService.getPaymentFlow(id)
+  }
+
+  @Delete(':id')
+  @Documentation({
+    description: 'Deletes a PaymentFlow.',
+    response: { status: 200, type: GetPaymentFlowDTO },
+  })
+  deletePaymentFlow(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<GetPaymentFlowDTO | null> {
+    // Check if exists
+    // Check if has been paid
+    // Check if existing invoice
+    //   - Delete invoice if exists
+    // Delete payment flow
+    // Notify onUpdateUrl with status
+
+    return {} as any
   }
 
   @Post()
