@@ -31,7 +31,7 @@ const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
   payerNationalId: '1234567890',
   availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
   onUpdateUrl: '/onUpdate',
-  organisationId: 'organization-id',
+  organisationId: '5534567890',
 })
 
 const TOKEN_SIGNING_SECRET = 'supersecret'
@@ -430,4 +430,3 @@ describe('CardPaymentController', () => {
     })
   })
 })
-

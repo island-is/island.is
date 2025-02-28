@@ -32,7 +32,7 @@ describe('PaymentFlowController', () => {
         payerNationalId: '1234567890',
         availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
         onUpdateUrl: 'https://www.island.is/greida/update',
-        organisationId: 'organization-id',
+        organisationId: '5534567890',
         // existingInvoiceId: 'todo',
       }
 

@@ -33,7 +33,7 @@ describe('PaymentFlowService', () => {
         ],
         payerNationalId: '1234567890',
         onUpdateUrl: 'http://localhost:3333/update',
-        organisationId: 'test',
+        organisationId: '5534567890',
       }
 
       const result = await service.createPaymentUrl(paymentInfo)
