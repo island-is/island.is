@@ -18,11 +18,17 @@ runs:
 
     - name: Setup Yarn
       shell: bash
+      env:
+        COREPACK_CACHE: ${{ format('{}/corepack.tgz', env.COREPACK_HOME) }}
       run: |
-        # Download (with cache), and install
-        corepack install -g || echo "Failed installing corepack, ignoring..."
         # Set shims for e.g. `node`
         corepack enable
+        # Use corepack cache if it exists (see https://github.com/nodejs/corepack?tab=readme-ov-file#offline-workflow)
+        if [[ -e "${COREPACK_CACHE}" ]]; then
+          corepack install -g yarn --cache-only "${COREPACK_CACHE}"
+        else
+          corepack install -g yarn
+        fi
         # Verify yarn is available, and see version
         yarn --version
 
