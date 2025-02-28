@@ -19,7 +19,7 @@ runs:
     - name: Setup Yarn
       shell: bash
       env:
-        COREPACK_CACHE: ${{ format('{}/corepack.tgz', env.COREPACK_HOME) }}
+        COREPACK_CACHE: ${{ format('{0}/corepack.tgz', env.COREPACK_HOME) }}
       run: |
         # Set shims for e.g. `node` and `yarn`
         corepack enable
