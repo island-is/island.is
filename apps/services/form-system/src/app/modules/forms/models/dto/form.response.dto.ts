@@ -32,6 +32,6 @@ export class FormResponseDto {
   @ApiPropertyOptional({ type: [String] })
   organizationNationalIds?: string[]
 
-  // @ApiPropertyOptional({ type: [OrganizationDto] })
-  // organizations?: OrganizationDto[]
+  @ApiPropertyOptional({ type: [OrganizationDto] })
+  organizations?: OrganizationDto[]
 }

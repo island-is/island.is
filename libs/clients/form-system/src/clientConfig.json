@@ -2537,6 +2537,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganizationDto"
+            }
           }
         }
       },

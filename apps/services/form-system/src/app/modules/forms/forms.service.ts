@@ -51,6 +51,7 @@ import { Op } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
+import { jwtDecode } from 'jwt-decode'
 
 @Injectable()
 export class FormsService {
@@ -75,21 +76,29 @@ export class FormsService {
     private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
-
     private readonly sequelize: Sequelize,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
-    const organizationNationalId = user.nationalId
+    const token = jwtDecode<{ name: string; nationalId: string }>(
+      user.authorization,
+    )
+
     let organization = await this.organizationModel.findOne({
       where: { nationalId: nationalId },
     })
 
     if (!organization) {
       organization = await this.organizationModel.create({
-        nationalId: organizationNationalId,
+        nationalId: nationalId,
         name: { is: '', en: '' },
       } as Organization)
+    }
+
+    // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
+    if (nationalId === token.nationalId) {
+      organization.name = { is: token.name, en: organization.name.en }
+      await organization.save()
     }
 
     const forms = await this.formModel.findAll({
@@ -122,6 +131,16 @@ export class FormsService {
           attributes: ['nationalId'],
         })
         .then((organizations) => organizations.map((org) => org.nationalId)),
+      organizations: await this.organizationModel
+        .findAll({
+          attributes: ['nationalId', 'name'],
+        })
+        .then((organizations) =>
+          organizations.map((org) => ({
+            nationalId: org.nationalId,
+            name: org.name,
+          })),
+        ),
     }
 
     return formResponseDto
