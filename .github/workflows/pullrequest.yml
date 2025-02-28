@@ -104,7 +104,7 @@ jobs:
       - name: Find unicorn projects
         id: unicorn
         run: |
-          unicorns=$(yarn nx show projects --affected --base="$NX_BASE" --head="$NX_HEAD" --projects=tag:unicorn --json)
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns --json)
           jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
             [
                 $chunks.projects

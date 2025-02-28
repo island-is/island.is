@@ -39,8 +39,17 @@ const isUnicorn = (args) => {
   }
 }
 
-const showUnicorns = () => {
-  const joined = unicornApps.join(',')
+/**
+ * Displays a list of unicorn applications.
+ * If `--json`, output as a JSON string, otherwise, output as a comma-separated string.
+ *
+ * @param {string[]} args - The command line arguments.
+ * @returns {string[]} The list of unicorn applications.
+ */
+const showUnicorns = (args) => {
+  const joined = args.includes('--json')
+    ? JSON.stringify(unicornApps)
+    : unicornApps.join(',')
   console.error(`Unicorn apps:`, unicornApps)
   console.log(joined)
   return unicornApps
@@ -53,7 +62,7 @@ switch (cmd) {
     isUnicorn(args)
     break
   case 'show-unicorn':
-    showUnicorns()
+    showUnicorns(args)
     break
   default:
     console.error(`Unknown command: ${cmd}`)
