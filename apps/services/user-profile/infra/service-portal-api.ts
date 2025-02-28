@@ -27,7 +27,7 @@ const envVariables: EnvironmentVariables = {
   },
   EMAIL_REGION: 'eu-west-1',
   IDENTITY_SERVER_ISSUER_URL: {
-    dev: 'https://identity-server.dev01.devland.is',
+    dev: 'https://innskra.dev01.devland.is',
     staging: 'https://identity-server.staging01.devland.is',
     prod: 'https://innskra.island.is',
   },
@@ -37,7 +37,7 @@ const envVariables: EnvironmentVariables = {
     prod: 'false',
   },
   AUTH_DELEGATION_API_URL: {
-    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    dev: 'https://auth-delegation-api.internal.innskra.dev01.devland.is',
     staging:
       'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',

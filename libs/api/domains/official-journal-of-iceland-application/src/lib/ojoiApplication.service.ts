@@ -268,6 +268,7 @@ export class OfficialJournalOfIcelandApplicationService {
       const data = await this.ojoiApplicationService.getPdf(
         {
           id: input.id,
+          showDate: input.showDate,
         },
         user,
       )

@@ -121,9 +121,9 @@ export const isPrisonAdminUser = (user?: InstitutionUser): boolean =>
       user.institution?.type === InstitutionType.PRISON_ADMIN,
   )
 
-export const isPrisonStaffUser = (user: InstitutionUser): boolean =>
+export const isPrisonStaffUser = (user?: InstitutionUser): boolean =>
   Boolean(
-    user.role &&
+    user?.role &&
       prisonSystemRoles.includes(user.role) &&
       user.institution?.type === InstitutionType.PRISON,
   )
