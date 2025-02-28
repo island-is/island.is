@@ -414,6 +414,7 @@ const Layout: Screen<LayoutProps> = ({
                     : undefined
                 }
                 customTopLoginButtonItem={customTopLoginButtonItem}
+                loginButtonType={n('minarsidurLoginButtonType', 'dropdown')}
               />
             </ColorSchemeContext.Provider>
           )}
