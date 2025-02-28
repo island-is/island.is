@@ -61,7 +61,7 @@ switch (cmd) {
   case 'is-unicorn':
     isUnicorn(args)
     break
-  case 'show-unicorn':
+  case 'show-unicorns':
     showUnicorns(args)
     break
   default:
