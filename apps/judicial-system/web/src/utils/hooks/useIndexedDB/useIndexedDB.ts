@@ -1,27 +1,65 @@
-import { useEffect, useState } from 'react'
-import differenceInMinutes from 'date-fns/differenceInMinutes'
+import { useCallback, useEffect, useState } from 'react'
+import differenceInHours from 'date-fns/differenceInHours'
 
 import { Lawyer } from '@island.is/judicial-system/types'
 
 import { useGetLawyers } from '../useLawyers/useLawyers'
-import differenceInSeconds from 'date-fns/differenceInSeconds'
 
 export const Database = {
-  name: 'lawyer-registry',
-  lawyerTable: 'lawyers-table3',
+  lawyerTable: 'lawyers',
   version: 5,
 }
 
 type LawyerWithCreated = Lawyer & { created: Date }
 
-export const useIndexedDB = (
-  databaseName: string,
-  tableName: string,
-  shouldFetchLawyers: boolean,
-) => {
+export const useIndexedDB = (shouldFetchLawyers: boolean) => {
   const [allLawyers, setAllLawyers] = useState<Lawyer[]>([])
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
   const lawyers = useGetLawyers(shouldFetch)
+
+  const openDB = useCallback((): Promise<IDBDatabase> => {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.open(
+        Database.lawyerTable,
+        Database.version,
+      )
+
+      request.onupgradeneeded = () => {
+        const db = request.result
+        const objectStore = db.createObjectStore(Database.lawyerTable, {
+          autoIncrement: true,
+          keyPath: 'nationalId',
+        })
+
+        objectStore.createIndex('name', 'name', { unique: false })
+      }
+
+      request.onsuccess = () => {
+        console.log('Connected to IndexedDB')
+        resolve(request.result)
+      }
+
+      request.onerror = () => {
+        console.error('Failed to connect to IndexedDB')
+        reject(request.error)
+      }
+    })
+  }, [])
+
+  const refreshData = useCallback(
+    async (lawyers: Lawyer[]) => {
+      const db = await openDB()
+      const transaction = db.transaction(Database.lawyerTable, 'readwrite')
+      const store = transaction.objectStore(Database.lawyerTable)
+      const now = new Date()
+
+      store.clear()
+      setAllLawyers(lawyers)
+
+      lawyers.forEach((lawyer) => store.add({ ...lawyer, created: now }))
+    },
+    [openDB],
+  )
 
   useEffect(() => {
     const syncData = async () => {
@@ -36,7 +74,7 @@ export const useIndexedDB = (
           const now = new Date()
           const shouldRefresh =
             records.length > 0
-              ? differenceInSeconds(now, records[0].created) > 5
+              ? differenceInHours(now, records[0].created) > 0
               : true
 
           setAllLawyers(request.result)
@@ -60,56 +98,13 @@ export const useIndexedDB = (
     if (shouldFetchLawyers) {
       syncData()
     }
-  }, [shouldFetchLawyers])
+  }, [shouldFetchLawyers, openDB])
 
   useEffect(() => {
     if (shouldFetch && lawyers.length > 0) {
       refreshData(lawyers)
     }
-  }, [shouldFetch])
-
-  const openDB = (): Promise<IDBDatabase> => {
-    return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open(
-        Database.lawyerTable,
-        Database.version,
-      )
-
-      request.onupgradeneeded = () => {
-        const db = request.result
-        const objectStore = db.createObjectStore(tableName, {
-          autoIncrement: true,
-          keyPath: 'nationalId',
-        })
-
-        objectStore.createIndex('name', 'name', { unique: false })
-      }
-
-      request.onsuccess = () => {
-        console.log('Connected to IndexedDB')
-        resolve(request.result)
-      }
-
-      request.onerror = () => {
-        console.error('Failed to connect to IndexedDB')
-        reject(request.error)
-      }
-    })
-  }
-
-  const refreshData = async (lawyers: Lawyer[]) => {
-    const db = await openDB()
-    const transaction = db.transaction(Database.lawyerTable, 'readwrite')
-    const store = transaction.objectStore(Database.lawyerTable)
-    const now = new Date()
-
-    store.clear()
-    setAllLawyers(lawyers)
-
-    lawyers.map((lawyer) => {
-      store.add({ ...lawyer, created: now })
-    })
-  }
+  }, [shouldFetch, lawyers, refreshData])
 
   return {
     allLawyers: allLawyers.sort((a: Lawyer, b: Lawyer) =>

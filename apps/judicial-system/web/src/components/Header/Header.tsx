@@ -25,18 +25,13 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
-  isDistrictCourtUser,
   isPrisonSystemUser,
-  isProsecutionUser,
   Lawyer,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import { useGeoLocation, useGetLawyers } from '../../utils/hooks'
-import {
-  Database,
-  useIndexedDB,
-} from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { useGeoLocation } from '../../utils/hooks'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
@@ -83,25 +78,21 @@ const HeaderContainer = () => {
   const [isRobot, setIsRobot] = useState<boolean>()
 
   const { countryCode } = useGeoLocation()
-  const { allLawyers } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    isDistrictCourtUser(user) || isDefenceUser(user),
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
+
+  const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
   }, [countryCode])
 
   useEffect(() => {
-    const fetchLawyer = () => {
-      setLawyer(
-        allLawyers.find((lawyer) => lawyer.nationalId === user?.nationalId),
-      )
+    if (!lawyers || lawyers.length === 0 || !user) {
+      return
     }
 
-    fetchLawyer()
-  }, [allLawyers, user])
+    setLawyer(lawyers.find((lawyer) => lawyer.nationalId === user.nationalId))
+  }, [lawyers, user])
 
   const logoHref =
     !user || !isAuthenticated
@@ -185,7 +176,7 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {capitalize(
-                          isDefenceUser(user) && lawyer
+                          isLawyerInLawyersRegistry
                             ? lawyer.practice
                             : user.institution?.name,
                         )}
@@ -194,7 +185,7 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {formatPhoneNumber(
-                          isDefenceUser(user) && lawyer
+                          isLawyerInLawyersRegistry
                             ? lawyer.phoneNr
                             : user.mobileNumber,
                         )}
@@ -202,9 +193,7 @@ const HeaderContainer = () => {
                     </Box>
                     <Box>
                       <Text>
-                        {isDefenceUser(user) && lawyer
-                          ? lawyer.email
-                          : user.email}
+                        {isLawyerInLawyersRegistry ? lawyer.email : user.email}
                       </Text>
                     </Box>
                   </Box>
@@ -218,7 +207,7 @@ const HeaderContainer = () => {
                     />
                   </Box>
                   <Box>
-                    {isDefenceUser(user) ? (
+                    {isLawyerInLawyersRegistry ? (
                       <Text>
                         {formatMessage(header.tipDisclaimerDefenders)}
                       </Text>

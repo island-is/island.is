@@ -3,10 +3,7 @@ import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  isDistrictCourtUser,
-  type Lawyer,
-} from '@island.is/judicial-system/types'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   ServiceStatus,
@@ -14,11 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useSubpoena } from '../../utils/hooks'
-import {
-  Database,
-  useIndexedDB,
-} from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { UserContext } from '../UserProvider/UserProvider'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
@@ -101,18 +94,13 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
-  const { user } = useContext(UserContext)
   const [lawyer, setLawyer] = useState<Lawyer>()
 
   const { subpoena, subpoenaLoading } = useSubpoena(localSubpoena)
 
   const { formatMessage } = useIntl()
 
-  const { allLawyers } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    isDistrictCourtUser(user),
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena
@@ -120,31 +108,21 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     : []
 
   useEffect(() => {
-    const fetchLawyer = async () => {
-      try {
-        if (
-          !subpoena?.defenderNationalId ||
-          subpoena?.serviceStatus !== ServiceStatus.DEFENDER
-        ) {
-          return
-        }
-
-        const data = allLawyers.find(
-          (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
-        )
-
-        if (!data) {
-          return
-        }
-
-        setLawyer(data)
-      } catch (error) {
-        console.error('Failed to fetch customer:', error)
-      }
+    if (
+      !subpoena?.defenderNationalId ||
+      subpoena?.serviceStatus !== ServiceStatus.DEFENDER ||
+      !lawyers ||
+      lawyers.length === 0
+    ) {
+      return
     }
 
-    fetchLawyer()
-  }, [allLawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
+    setLawyer(
+      lawyers.find(
+        (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
+      ),
+    )
+  }, [lawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
 
   return subpoenaLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>

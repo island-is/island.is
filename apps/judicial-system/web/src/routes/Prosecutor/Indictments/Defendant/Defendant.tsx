@@ -9,13 +9,11 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  Feature,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,

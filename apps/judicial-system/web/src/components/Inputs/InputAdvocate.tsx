@@ -11,10 +11,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import {
-  isDistrictCourtUser,
-  type Lawyer,
-} from '@island.is/judicial-system/types'
+import { type Lawyer } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
@@ -22,11 +19,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import {
-  Database,
-  useIndexedDB,
-} from '../../utils/hooks/useIndexedDB/useIndexedDB'
-import { UserContext } from '../UserProvider/UserProvider'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import {
   emailLabelStrings,
   nameLabelStrings,
@@ -91,25 +84,20 @@ const InputAdvocate: FC<Props> = ({
   disabled,
 }) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
 
-  const { allLawyers } = useIndexedDB(
-    Database.name,
-    Database.lawyerTable,
-    isDistrictCourtUser(user),
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
 
   const options = useMemo(
     () =>
-      allLawyers?.map((l: Lawyer) => ({
+      lawyers?.map((l: Lawyer) => ({
         label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
         value: l.email,
       })),
 
-    [allLawyers],
+    [lawyers],
   )
 
   const handleAdvocateChange = useCallback(
@@ -124,7 +112,7 @@ const InputAdvocate: FC<Props> = ({
 
         onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
 
-        const lawyer = allLawyers?.find(
+        const lawyer = lawyers?.find(
           (l: Lawyer) => l.email === (value as string),
         )
 
@@ -138,7 +126,7 @@ const InputAdvocate: FC<Props> = ({
       setPhoneNumberErrorMessage('')
       onAdvocateChange(name, nationalId, email, phoneNumber)
     },
-    [onAdvocateChange, onAdvocateNotFound, allLawyers],
+    [onAdvocateChange, onAdvocateNotFound, lawyers],
   )
 
   const handleEmailChange = useCallback(
@@ -212,6 +200,7 @@ const InputAdvocate: FC<Props> = ({
             lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
           onChange={handleAdvocateChange}
+          noOptionsMessage={formatMessage(nameLabelStrings.noneFoundMessage)}
           isDisabled={Boolean(disabled)}
           isCreatable
           isClearable

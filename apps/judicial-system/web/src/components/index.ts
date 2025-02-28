@@ -116,3 +116,4 @@ export {
 } from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
+export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'

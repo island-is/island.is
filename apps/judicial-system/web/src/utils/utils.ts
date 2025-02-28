@@ -3,7 +3,7 @@ import {
   formatDate,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { isProsecutionUser, Lawyer } from '@island.is/judicial-system/types'
+import { isProsecutionUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
@@ -14,8 +14,6 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
-import { Database } from './hooks/useIndexedDB/useIndexedDB'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
