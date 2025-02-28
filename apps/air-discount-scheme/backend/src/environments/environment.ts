@@ -23,7 +23,7 @@ const devConfig = {
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
   identityServerAuth: {
-    issuer: 'https://innskra.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   idsTokenCookieName: 'next-auth.session-token',
