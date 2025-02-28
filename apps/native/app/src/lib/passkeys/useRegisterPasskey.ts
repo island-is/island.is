@@ -74,7 +74,7 @@ export const useRegisterPasskey = () => {
         ) {
           return false
         }
-        console.error('Error registering passkey', error)
+        console.error('Error registering passkey:', error)
         throw new Error('Register: Error registering passkey')
       }
     }

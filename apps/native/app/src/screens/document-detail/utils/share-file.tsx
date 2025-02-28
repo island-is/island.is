@@ -36,7 +36,8 @@ export const shareFile = async ({
       await RNFS.writeFile(path, formattedHtml, 'utf8')
       htmlUrl = path
     } catch (error) {
-      // noop
+      console.error('Failed to write html file', error)
+      return
     }
   }
 
@@ -53,6 +54,7 @@ export const shareFile = async ({
         : content ?? undefined,
     })
   } catch (error) {
-    // noop
+    console.error('Failed to share document', error)
+    return
   }
 }
