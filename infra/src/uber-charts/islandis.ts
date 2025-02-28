@@ -36,8 +36,6 @@ import { serviceSetup as downloadServiceSetup } from '../../../apps/download-ser
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 
-import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
-
 import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
@@ -68,6 +66,7 @@ import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
+import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -108,6 +107,12 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+// const userNotificationService = userNotificationServiceSetup({
+//   userProfileApi: servicePortalApi,
+// })
+
+const formSystemApi = formSystemApiSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -120,6 +125,7 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
+  formSystemService: formSystemApi,
 })
 
 const adminPortal = adminPortalSetup()
@@ -150,7 +156,6 @@ const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
 const unicornApp = unicornAppSetup()
-const formSystemApi = formSystemApiSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -261,7 +266,6 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     licenseApi,
-    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
