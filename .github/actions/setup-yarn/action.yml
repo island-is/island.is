@@ -38,7 +38,7 @@ runs:
       shell: bash
       run: |
         # Download (with cache), and install
-        corepack install -g
+        corepack install -g || echo "Failed installing corepack, ignoring..."
         # Set shims for e.g. `node`
         corepack enable
         # Verify yarn is available, and see version
