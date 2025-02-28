@@ -13,7 +13,7 @@ export const AuthIdsApiClientConfig = defineConfig({
     return {
       basePath: env.required(
         'AUTH_IDS_API_URL',
-        'https://identity-server.dev01.devland.is',
+        'https://innskra.dev01.devland.is',
       ),
     }
   },
