@@ -47,6 +47,8 @@ jobs:
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
+    with:
+      main_branch: ${{ github.base_ref }}
 
   tests:
     needs:
@@ -69,7 +71,6 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
