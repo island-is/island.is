@@ -92,8 +92,14 @@ export class CreatePaymentFlowInput {
   payerNationalId!: string
 
   @IsString()
+  @Length(10, 10, {
+    message: 'organisationId must be exactly 10 characters long',
+  })
+  @Matches(/^\d+$/, {
+    message: 'organisationId must contain only numeric characters',
+  })
   @ApiProperty({
-    description: 'Identifier for the organization initiating the payment flow',
+    description: 'National id for the organization initiating the payment flow',
     type: String,
   })
   organisationId!: string

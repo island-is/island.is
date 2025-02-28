@@ -3,12 +3,7 @@ import { Cache as CacheManager } from 'cache-manager'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { v4 as uuid } from 'uuid'
 
-import {
-  TestApp,
-  testServer,
-  truncate,
-  useDatabase,
-} from '@island.is/testing/nest'
+import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
 import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
 import { PaymentMethod } from '../../types'
@@ -23,15 +18,19 @@ import {
 } from '@island.is/shared/constants'
 import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+
+const charges = [
+  {
+    chargeItemCode: '123',
+    chargeType: 'A',
+    quantity: 1,
+    price: 1000,
+  },
+]
 
 const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
-  charges: [
-    {
-      chargeItemCode: '123',
-      chargeType: 'A',
-      quantity: 1,
-    },
-  ],
+  charges,
   payerNationalId: '1234567890',
   availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
   onUpdateUrl: '/onUpdate',
@@ -54,12 +53,6 @@ describe('InvoicePaymentController', () => {
     app = await testServer({
       appModule: AppModule,
       enableVersioning: true,
-      // override: (builder) =>
-      //   builder.overrideProvider(getModelToken(PaymentFlowEvent)).useClass(
-      //     jest.fn(() => ({
-      //       findOne: jest.fn(),
-      //     })),
-      //   ),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
@@ -69,7 +62,25 @@ describe('InvoicePaymentController', () => {
 
     cacheManager = app.get<CacheManager>(CACHE_MANAGER)
     paymentFlowService = app.get<PaymentFlowService>(PaymentFlowService)
+    const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+      ChargeFjsV2ClientService,
+    )
     paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
+
+    jest
+      .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
+      .mockReturnValue(
+        Promise.resolve({
+          catalogItems: charges,
+          totalPrice: 1000,
+          isAlreadyPaid: false,
+          hasInvoice: false,
+        }),
+      )
+
+    jest
+      .spyOn(chargeFjsService, 'validateCharge')
+      .mockReturnValue(Promise.resolve(true))
   })
 
   beforeEach(async () => {

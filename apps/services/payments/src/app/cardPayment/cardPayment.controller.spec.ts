@@ -19,15 +19,19 @@ import { ChargeCardInput } from './dtos/chargeCard.input'
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { BadRequestException } from '@nestjs/common'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+
+const charges = [
+  {
+    chargeItemCode: '123',
+    chargeType: 'A',
+    quantity: 1,
+    price: 1000,
+  },
+]
 
 const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
-  charges: [
-    {
-      chargeItemCode: '123',
-      chargeType: 'A',
-      quantity: 1,
-    },
-  ],
+  charges,
   payerNationalId: '1234567890',
   availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
   onUpdateUrl: '/onUpdate',
@@ -42,6 +46,7 @@ describe('CardPaymentController', () => {
   let server: request.SuperTest<request.Test>
   let cacheManager: CacheManager
   let paymentFlowService: PaymentFlowService
+  let chargeFjsService: ChargeFjsV2ClientService
   let paymentFlowEventModel: typeof PaymentFlowEvent
 
   let previousPaymentGatewayApiUrl = ''
@@ -73,7 +78,23 @@ describe('CardPaymentController', () => {
 
     cacheManager = app.get<CacheManager>(CACHE_MANAGER)
     paymentFlowService = app.get<PaymentFlowService>(PaymentFlowService)
+    chargeFjsService = app.get(ChargeFjsV2ClientService)
     paymentFlowEventModel = app.get(getModelToken(PaymentFlowEvent))
+
+    jest
+      .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
+      .mockReturnValue(
+        Promise.resolve({
+          catalogItems: charges,
+          totalPrice: 1000,
+          isAlreadyPaid: false,
+          hasInvoice: false,
+        }),
+      )
+
+    jest
+      .spyOn(ChargeFjsV2ClientService.prototype, 'validateCharge')
+      .mockReturnValue(Promise.resolve(true))
 
     // Create a payment flow
     const createPayload = getCreatePaymentFlowPayload()

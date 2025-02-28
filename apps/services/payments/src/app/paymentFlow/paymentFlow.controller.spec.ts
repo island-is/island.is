@@ -5,6 +5,17 @@ import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { PaymentFlowService } from './paymentFlow.service'
+
+const charges = [
+  {
+    chargeItemCode: '123',
+    chargeType: 'A',
+    quantity: 1,
+    price: 1000,
+  },
+]
 
 describe('PaymentFlowController', () => {
   let app: TestApp
@@ -13,10 +24,32 @@ describe('PaymentFlowController', () => {
   beforeAll(async () => {
     app = await setupTestApp()
     server = request(app.getHttpServer())
+
+    const chargeFjsService = app.get<ChargeFjsV2ClientService>(
+      ChargeFjsV2ClientService,
+    )
+
+    jest
+      .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
+      .mockReturnValue(
+        Promise.resolve({
+          catalogItems: charges,
+          totalPrice: 1000,
+          isAlreadyPaid: false,
+          hasInvoice: false,
+        }),
+      )
+
+    jest
+      .spyOn(chargeFjsService, 'validateCharge')
+      .mockReturnValue(Promise.resolve(true))
   })
 
   afterAll(() => {
     app?.cleanUp()
+
+    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   describe('createPaymentUrl', () => {
