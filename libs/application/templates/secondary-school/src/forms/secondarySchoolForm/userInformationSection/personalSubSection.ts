@@ -3,6 +3,7 @@ import {
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSubSection,
   buildTextField,
@@ -64,12 +65,10 @@ export const personalSubSection = buildSubSection({
             return userProfile?.email
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicant.phoneNumber',
           title: userInformation.applicant.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
           condition: (_1, _2, user) => {
             return !checkIsActor(user)
           },

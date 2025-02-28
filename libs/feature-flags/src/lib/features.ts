@@ -19,7 +19,6 @@ export enum Features {
   homeSupport = 'isHomeSupportEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
-  idCardApplication = 'isIdCardApplicationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
@@ -28,7 +27,7 @@ export enum Features {
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
-  WorkAccidentNotificationEnabled = 'isWorkAccidentNotificationEnabled',
+  TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
 
   // Application System Delegations active

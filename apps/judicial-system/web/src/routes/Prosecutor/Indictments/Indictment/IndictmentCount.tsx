@@ -34,6 +34,7 @@ import {
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
@@ -91,6 +92,7 @@ const offenseLawsMap: Record<
     [48, 2],
   ],
   [IndictmentCountOffense.SPEEDING]: [[37, 0]],
+  [IndictmentCountOffense.OTHER]: [],
 }
 
 const generalLaws: [number, number][] = [[95, 1]]
@@ -120,7 +122,10 @@ const getLawsBroken = (
   offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
 ) => {
-  if (!offenses || offenses.length === 0) {
+  const hasOffenses = isNonEmptyArray(offenses)
+  const hasOnlyOtherOffense = offenses?.length === 1 && offenses[0] === IndictmentCountOffense.OTHER
+
+  if (!hasOffenses || hasOnlyOtherOffense) {
     return []
   }
 
@@ -251,6 +256,8 @@ export const IndictmentCount: FC<Props> = ({
       })),
     [lawTag, indictmentCount.lawsBroken],
   )
+
+  const showLegalArticleSelection = indictmentCount.offenses?.some(({offense}) => offense !== IndictmentCountOffense.OTHER)
 
   const handleIndictmentCountChanges = (
     update: UpdateIndictmentCount,
@@ -510,7 +517,7 @@ export const IndictmentCount: FC<Props> = ({
             updateIndictmentCountState={updateIndictmentCountState}
             handleIndictmentCountChanges={handleIndictmentCountChanges}
           />
-          <Box marginBottom={2}>
+          {showLegalArticleSelection && <Box marginBottom={2}>
             <SectionHeading
               heading="h4"
               title={formatMessage(strings.lawsBrokenTitle)}
@@ -540,7 +547,7 @@ export const IndictmentCount: FC<Props> = ({
               }}
               required
             />
-          </Box>
+          </Box>}
           {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
             <Box marginBottom={2}>
               {indictmentCount.lawsBroken.map((brokenLaw) => (
