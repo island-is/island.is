@@ -875,7 +875,9 @@ export class CaseNotificationService extends BaseNotificationService {
       }),
       html: this.formatMessage(notifications.caseCompleted.prosecutorBody, {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+        courtName: theCase.court?.name
+          ? applyDativeCaseToCourtName(theCase.court.name)
+          : 'héraðsdómi',
         caseIndictmentRulingDecision:
           getHumanReadableCaseIndictmentRulingDecision(
             theCase.indictmentRulingDecision,
@@ -889,7 +891,9 @@ export class CaseNotificationService extends BaseNotificationService {
   private getRulingEmailNotificationToProsecutorProps = (theCase: Case) => {
     const sharedHtmlProps = {
       courtCaseNumber: theCase.courtCaseNumber,
-      courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+      courtName: theCase.court?.name
+        ? applyDativeCaseToCourtName(theCase.court.name)
+        : 'héraðsdómi',
       linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     }
@@ -939,7 +943,9 @@ export class CaseNotificationService extends BaseNotificationService {
   ) {
     const sharedHtmlProps = {
       courtCaseNumber: theCase.courtCaseNumber,
-      courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+      courtName: theCase.court?.name
+        ? applyDativeCaseToCourtName(theCase.court.name)
+        : 'héraðsdómi',
       defenderHasAccessToRvg: Boolean(defenderNationalId),
       linkStart: `<a href="${formatDefenderRoute(
         this.config.clientUrl,
@@ -1404,7 +1410,9 @@ export class CaseNotificationService extends BaseNotificationService {
     const html = this.formatMessage(
       notifications.defenderRevokedEmail.indictmentBody,
       {
-        courtName: courtName ? applyDativeCaseToCourtName(courtName) : '',
+        courtName: courtName
+          ? applyDativeCaseToCourtName(courtName)
+          : 'héraðsdómi',
         defenderHasAccessToRvg: Boolean(defenderNationalId),
         linkStart: `<a href="${formatDefenderRoute(
           this.config.clientUrl,
@@ -1778,7 +1786,7 @@ export class CaseNotificationService extends BaseNotificationService {
     })
     const html = this.formatMessage(notifications.caseFilesUpdated.body, {
       courtCaseNumber,
-      court: court ? applyDativeCaseToCourtName(court) : '',
+      court: court ? applyDativeCaseToCourtName(court) : 'héraðsdómi',
       userHasAccessToRVG: Boolean(link),
       linkStart: `<a href="${link}">`,
       linkEnd: '</a>',
@@ -2022,10 +2030,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealedToCourtOfAppeals.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court:
-            theCase.court && theCase.court.name
-              ? applyDativeCaseToCourtName(theCase.court.name)
-              : '',
+          court: theCase.court?.name
+            ? applyDativeCaseToCourtName(theCase.court.name)
+            : 'héraðsdómi',
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
@@ -2143,10 +2150,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealReceivedByCourt.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court:
-            theCase.court && theCase.court.name
-              ? applyDativeCaseToCourtName(theCase.court.name)
-              : '',
+          court: theCase.court?.name
+            ? applyDativeCaseToCourtName(theCase.court.name)
+            : 'héraðsdómi',
           courtCaseNumber: theCase.courtCaseNumber,
           statementDeadline: formatDate(statementDeadline, 'PPPp'),
           linkStart: `<a href="${url}">`,
@@ -2280,10 +2286,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealStatement.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court:
-            theCase.court && theCase.court.name
-              ? applyDativeCaseToCourtName(theCase.court.name)
-              : '',
+          court: theCase.court?.name
+            ? applyDativeCaseToCourtName(theCase.court.name)
+            : 'héraðsdómi',
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${url}">`,
@@ -2493,10 +2498,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealCompleted.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court:
-            theCase.court && theCase.court.name
-              ? applyDativeCaseToCourtName(theCase.court.name)
-              : '',
+          court: theCase.court?.name
+            ? applyDativeCaseToCourtName(theCase.court.name)
+            : 'héraðsdómi',
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCaseNumber,
           appealRulingDecision: getAppealResultTextByValue(
