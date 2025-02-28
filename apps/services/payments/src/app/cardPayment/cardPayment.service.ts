@@ -275,6 +275,7 @@ export class CardPaymentService {
     const data = (await response.json()) as ChargeResponse
 
     if (!data?.isSuccess) {
+      this.logger.error('Failed to charge card', data)
       throw new BadRequestException(mapToCardErrorCode(data.responseCode))
     }
 
