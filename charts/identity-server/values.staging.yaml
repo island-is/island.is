@@ -119,7 +119,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
-    RedisSettings__Address: 'redis.internal'
+    RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
     SERVERSIDE_FEATURES_ON: ''
     SessionsApiSettings__BaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
