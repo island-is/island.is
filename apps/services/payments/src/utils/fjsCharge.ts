@@ -14,8 +14,14 @@ export const generateChargeFJSPayload = ({
   returnUrl = '',
 }: {
   id: string
-  paymentFlow: PaymentFlowAttributes
-  charges: CatalogItemWithQuantity[]
+  paymentFlow: Pick<
+    PaymentFlowAttributes,
+    'payerNationalId' | 'organisationId' | 'id'
+  >
+  charges: Pick<
+    CatalogItemWithQuantity,
+    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity'
+  >[]
   totalPrice: number
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
