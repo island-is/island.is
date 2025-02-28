@@ -54,10 +54,13 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   private async getAttachmentsAsBase64(
     application: Application,
   ): Promise<string> {
-    const attachments: Array<AttachmentData> | undefined = getValueViaPath(
-      application.answers,
-      'attachments.file',
-    ) as Array<{ key: string; name: string }>
+    const attachments: Array<AttachmentData> | undefined = getValueViaPath<
+      Array<{ key: string; name: string }>
+    >(application.answers, 'attachments.file')
+
+    if (!attachments) {
+      throw new Error('No attachments found')
+    }
 
     const attachmentKey = attachments[0].key
 
@@ -100,16 +103,17 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
+
     if (!actor) {
       throw new Error('Enginn umboðsmaður fannst')
     }
 
-    const values = this.prepareValues(application)
-    const year = this.getOperatingYear(application)
-    const fileName = await this.getAttachmentsAsBase64(application)
     const client = { nationalId }
     const contacts = this.prepareContacts(application, actor)
     const digitalSignee = this.prepareDigitalSignee(application)
+    const year = this.getOperatingYear(application)
+    const values = this.prepareValues(application)
+    const fileName = await this.getAttachmentsAsBase64(application)
 
     try {
       const result =

@@ -75,25 +75,23 @@ export const mapValuesToCemeterytype = (answers: FormValue) => {
 }
 
 export const getNeededCemeteryValues = (answers: FormValue) => {
-  const year = getValueViaPath(
+  const year = getValueViaPath<string>(
     answers,
     'conditionalAbout.operatingYear',
-  ) as string
-  const actorsName = getValueViaPath(
+  )
+  const actorsName = getValueViaPath<string>(
     answers,
     'about.powerOfAttorneyName',
-  ) as string
+  )
 
-  const contactsAnswer = getValueViaPath(
+  const contactsAnswer = getValueViaPath<Array<BoardMember>>(
     answers,
     'cemeteryCaretaker',
-  ) as Array<BoardMember>
-  const clientPhone = getValueViaPath(answers, 'about.phoneNumber') as string
-  const clientEmail = getValueViaPath(answers, 'about.email') as string
+  )
+  const clientPhone = getValueViaPath<string>(answers, 'about.phoneNumber')
+  const clientEmail = getValueViaPath<string>(answers, 'about.email')
 
-  const file = getValueViaPath(answers, 'attachments.file')
-
-  return { year, actorsName, contactsAnswer, clientPhone, clientEmail, file }
+  return { year, actorsName, contactsAnswer, clientPhone, clientEmail }
 }
 
 export const mapContactsAnswersToContacts = (

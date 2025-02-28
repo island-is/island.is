@@ -54,10 +54,13 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
   private async getAttachmentsAsBase64(
     application: Application,
   ): Promise<string> {
-    const attachments: Array<AttachmentData> | undefined = getValueViaPath(
-      application.answers,
-      'attachments.file',
-    ) as Array<{ key: string; name: string }>
+    const attachments: Array<AttachmentData> | undefined = getValueViaPath<
+      Array<{ key: string; name: string }>
+    >(application.answers, 'attachments.file')
+
+    if (!attachments) {
+      throw new Error('No attachments found')
+    }
 
     const attachmentKey = attachments[0].key
 
@@ -100,15 +103,13 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
-    const answers = application.answers
+    const { answers } = application
 
     if (!actor) {
       return new Error('Enginn umboðsmaður fannst')
     }
 
-    const values = this.prepareValues(application)
-    const client = { nationalId }
-    const { year, actorsName, contactsAnswer, clientPhone, clientEmail, file } =
+    const { year, actorsName, contactsAnswer, clientPhone, clientEmail } =
       getNeededCemeteryValues(answers)
 
     if (
@@ -121,15 +122,15 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
       throw new Error('Missing required values')
     }
 
-    const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
-    const fileName = file
-      ? await this.getAttachmentsAsBase64(application)
-      : undefined
+    const client = { nationalId }
     const contacts = mapContactsAnswersToContacts(
       actor,
       actorsName,
       contactsAnswer,
     )
+    const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
+    const values = this.prepareValues(application)
+    const fileName = await this.getAttachmentsAsBase64(application)
 
     try {
       const result =
