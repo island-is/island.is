@@ -7,8 +7,6 @@ import {
 import {
   ActionCard,
   CardLoader,
-  FootNote,
-  IntroHeader,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
