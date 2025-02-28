@@ -6,11 +6,9 @@ import {
   RepeaterOptionValue,
 } from '@island.is/application/types'
 import { Program, SecondarySchool } from './types'
-import {
-  checkIsFreshman,
-  getTranslatedProgram,
-  SecondarySchoolAnswers,
-} from '..'
+import { SecondarySchoolAnswers } from '..'
+import { checkIsFreshman } from './checkIsFreshman'
+import { getTranslatedProgram } from './format'
 import { school } from '../lib/messages'
 import { Locale, StaticText } from '@island.is/shared/types'
 import { ApolloClient } from '@apollo/client'
