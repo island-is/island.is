@@ -313,10 +313,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                      @island-is/deloitte
 /libs/clients/mms/frigg                                                                                   @island-is/deloitte
 
-/apps/services/auth/ids-api/                                                                              @island-is/fuglar @island-is/aranja
-/apps/services/auth/admin-api/                                                                            @island-is/fuglar @island-is/aranja
-/apps/services/auth/public-api/                                                                           @island-is/fuglar @island-is/aranja
-/apps/services/auth/delegation-api/                                                                       @island-is/fuglar @island-is/aranja
+/apps/services/auth/                                                                                      @island-is/fuglar @island-is/aranja
 /apps/services/sessions/                                                                                  @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                                     @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                       @island-is/fuglar @island-is/aranja
