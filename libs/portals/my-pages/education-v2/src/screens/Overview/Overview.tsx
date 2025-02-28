@@ -28,7 +28,7 @@ export const Overview = () => {
             label={formatMessage(m.primarySchool)}
             content={
               data?.educationV3StudentCareer.primarySchoolCareer?.primarySchool
-                .name ?? undefined
+                .name ?? formatMessage(coreMessages.noData)
             }
           />
           <InfoLine
@@ -38,6 +38,10 @@ export const Overview = () => {
           <InfoLine
             label={formatMessage(m.university)}
             content="Háskóli Íslands"
+          />
+          <InfoLine
+            label={formatMessage(m.drivingEducation)}
+            content="Engin gögn fundust"
           />
         </InfoLineStack>
       </Box>

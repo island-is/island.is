@@ -2,16 +2,10 @@ query studentInfo {
   educationV3StudentCareer {
     __typename
     id
-    name
     primarySchoolCareer {
       primarySchool {
         id
         name
-      }
-      teacher {
-        id
-        name
-        gradeLevel
       }
     }
   }
