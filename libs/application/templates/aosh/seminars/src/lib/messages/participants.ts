@@ -34,7 +34,7 @@ export const participants = {
     },
     uploadHeader: {
       id: 'aosh.sem.application:participants.labels.uploadHeader',
-      defaultMessage: 'Skrá marga umsækjendur í einu',
+      defaultMessage: 'Skrá marga þáttakendur í einu',
       description: 'participants csv upload header',
     },
     uploadButton: {

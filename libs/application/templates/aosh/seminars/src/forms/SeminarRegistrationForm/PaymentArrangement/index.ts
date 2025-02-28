@@ -218,6 +218,7 @@ export const paymentArrangementSection = buildSection({
         buildTextField({
           id: 'paymentArrangement.explanation',
           title: paymentArrangement.labels.explanation,
+          maxLength: 40,
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
