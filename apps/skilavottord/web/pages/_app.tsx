@@ -16,19 +16,13 @@ import { appWithTranslation } from '../i18n'
 import { userMonitoring } from '@island.is/user-monitoring'
 
 const {
-  publicRuntimeConfig: {
-    ddRumApplicationId,
-    ddRumClientToken,
-    appVersion,
-    environment,
-  },
+  publicRuntimeConfig: { ddLogsClientToken, appVersion, environment },
 } = getConfig()
 
-if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdRum({
+if (ddLogsClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdLogs({
     service: 'skilavottord',
-    applicationId: ddRumApplicationId,
-    clientToken: ddRumClientToken,
+    clientToken: ddLogsClientToken,
     env: environment,
     version: appVersion,
   })
