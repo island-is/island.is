@@ -37,6 +37,8 @@ runs:
     - name: Setup Yarn
       shell: bash
       run: |
+        # Download (with cache), and install
+        corepack install -g
         # Set shims for e.g. `node`
         corepack enable
         # Verify yarn is available, and see version
