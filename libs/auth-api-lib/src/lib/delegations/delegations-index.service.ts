@@ -165,8 +165,8 @@ export class DelegationsIndexService {
       .getValue(Features.delegationTypesWithNotificationsEnabled, '')
       .then((types): Set<string> | '*' | undefined => {
         if (!types?.trim()) return undefined; // Empty value means no delegation types allowed
-        if (types.trim() === '*') return '*'; // All delegation types allowed
-        return new Set(types.split(',').map((type) => type.trim()));
+        if (types?.trim() === '*') return '*'; // All delegation types allowed
+        return new Set(types?.split(',').map((type) => type.trim()));
       });
 
     // Case: No allowed delegation types
