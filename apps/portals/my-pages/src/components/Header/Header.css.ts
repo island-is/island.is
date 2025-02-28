@@ -31,7 +31,7 @@ export const header = style({
 export const hideHeader = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      transform: `translateY(-100%)`,
+      transform: `translateY(-280%)`,
       transition:
         'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
       transitionDelay: '100ms',
