@@ -27,7 +27,7 @@ runs:
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
-        bundled=$(sha256sum "$HOME/dependencies/yarn.lock" | awk '{print $1}') || :
+        bundled=$(sha256sum "$HOME/dependencies/yarn.lock" | awk '{print $1}') || echo "Failed reading bundled yarn.lock, ignoring..."
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
         echo "Current hash: $current"
         echo "Bundled hash: $bundled"
