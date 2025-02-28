@@ -63,6 +63,11 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
+  CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
+  COREPACK_HOME: /home/runner/dependencies/corepack
+  NODE_PATH: /home/runner/dependencies/node_modules
+  COREPACK_ENABLE_STRICT: '0'
 
 jobs:
   install:
@@ -95,7 +100,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
       - name: load-deps
@@ -117,7 +122,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last
+            # In merge que we always want to use the last 
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
