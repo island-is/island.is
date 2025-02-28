@@ -41,7 +41,7 @@ import { IDSAdminExternalPaths } from '../../lib/paths'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
-    'https://identity-server.dev01.devland.is',
+    'https://innskra.dev01.devland.is',
   [AuthAdminEnvironment.Staging]:
     'https://identity-server.staging01.devland.is',
   [AuthAdminEnvironment.Production]: 'https://innskra.island.is',

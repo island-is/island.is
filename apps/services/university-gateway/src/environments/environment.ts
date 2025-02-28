@@ -3,7 +3,7 @@ const devConfig = {
   port: 3380,
   auth: {
     audience: '@island.is',
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
   },
   events: {
     url: process.env.EVENT_URL,

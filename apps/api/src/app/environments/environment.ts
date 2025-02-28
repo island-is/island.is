@@ -139,7 +139,7 @@ const devConfig = () => ({
     xroadID: process.env.XROAD_HEALTH_INSURANCE_ID ?? '',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
     audience: ['@island.is', '@admin.island.is'],
   },
   documentService: {

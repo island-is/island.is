@@ -37,7 +37,7 @@ env:
   FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
-  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
