@@ -37,7 +37,9 @@ runs:
     - name: Setup Yarn
       shell: bash
       run: |
+        # Set shims for e.g. `node`
         corepack enable
+        # Verify yarn is available, and see version
         yarn --version
 
     - name: Run yarn install if yarn.lock changed
