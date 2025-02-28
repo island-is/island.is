@@ -11,3 +11,10 @@ export const floatedImage = style({
     },
   }),
 })
+export const clearBoth = style({
+  ...themeUtils.responsiveStyle({
+    sm: {
+      clear: 'both',
+    },
+  }),
+})

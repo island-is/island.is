@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -8,7 +7,6 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -19,7 +17,6 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -499,7 +496,7 @@ const useSections = (
                 onNavigationTo
                   ? async () =>
                       await onNavigationTo(
-                        constants.INDICTMENTS_PROCESSING_ROUTE,
+                        constants.INDICTMENTS_CASE_FILES_ROUTE,
                       )
                   : undefined,
             },
