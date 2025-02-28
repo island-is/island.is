@@ -39,11 +39,21 @@ const isUnicorn = (args) => {
   }
 }
 
+const showUnicorns = () => {
+  const joined = unicornApps.join(',')
+  console.error(`Unicorn apps:`, unicornApps)
+  console.log(joined)
+  return unicornApps
+}
+
 const cmd = process.argv[2]
 const args = process.argv.slice(3)
 switch (cmd) {
   case 'is-unicorn':
     isUnicorn(args)
+    break
+  case 'show-unicorn':
+    showUnicorns()
     break
   default:
     console.error(`Unknown command: ${cmd}`)
