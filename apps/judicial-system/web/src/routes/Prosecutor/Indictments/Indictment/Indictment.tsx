@@ -66,7 +66,7 @@ export const getIndictmentIntroductionAutofill = (
           court:
             court && court.name
               ? applyDativeCaseToCourtName(court.name)
-              : 'Ekki skráð',
+              : 'héraðsdómi',
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
