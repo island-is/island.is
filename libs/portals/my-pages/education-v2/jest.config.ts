@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'portals-my-pages-education',
+  displayName: 'portals-my-pages-education-v2',
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
@@ -8,5 +8,5 @@ export default {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '<rootDir>/coverage/libs/portals/my-pages/education',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/my-pages/education-v2',
 }

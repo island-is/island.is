@@ -18,7 +18,7 @@ import { StudentCareer } from './models/studentCareer.model'
 export class EducationV3Resolver {
   constructor(private readonly educationService: EducationServiceV3) {}
 
-  @Query(() => StudentCareer)
+  @Query(() => StudentCareer, { name: 'educationV3StudentCareer' })
   @Scopes(ApiScope.education)
   @Audit()
   studentCareer(@CurrentUser() user: User): Promise<StudentCareer | null> {
