@@ -726,4 +726,16 @@ export const en: TranslatedMessages = {
   'health.prescriptions.nameOfDoctor': 'Name of doctor',
   'health.prescriptions.methylDoctors': 'Extra doctors registered on license',
   'health.prescriptions.status': 'Status',
+
+  'health.prescriptions.drug': 'Lyf',
+  'health.prescriptions.type': 'Tegund',
+  'health.prescriptions.indication': 'Lyf er notað við',
+  'health.prescriptions.quantity': 'Ávísað magn',
+  'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
+  'health.prescriptions.amountRemaining': '{amountRemaining} eftir',
+  'health.prescriptions.quantityUnit': '{quantity} stk',
+  'health.prescriptions.fullyUsed': 'Fullafgreitt',
+  'health.prescriptions.issueDate': 'Útgáfudagur',
+  'health.prescriptions.expiresAt': 'Gildir til',
+  'health.prescriptions.doctor': 'Læknir',
 }

@@ -3,16 +3,11 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Badge,
-  ExpandableCard,
-  Skeleton,
-  Typography,
-  dynamicColor,
-} from '../../../ui'
+import { ExpandableCard, Skeleton, Typography, dynamicColor } from '../../../ui'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import clockIcon from '../../../assets/icons/clock.png'
 import { HealthDirectoratePrescription } from '../../../graphql/types/schema'
+import { capitalizeEveryWord } from '../../../utils/capitalize'
 
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
@@ -64,110 +59,133 @@ export function PrescriptionCard({
   const theme = useTheme()
   const [open, setOpen] = useState(false)
 
-  // const isExpired =
-  //   prescription.validTo && new Date(prescription.validTo) < new Date()
+  const isExpired =
+    prescription.expiryDate && new Date(prescription.expiryDate) < new Date()
 
-  // const prescriptionData = [
-  //   {
-  //     data: prescription.dosageInstructions,
-  //     label: 'health.prescriptions.dosageInstructions',
-  //   },
-  //   {
-  //     data: prescription.atcName,
-  //     label: 'health.prescriptions.ingredients',
-  //   },
-  //   {
-  //     data: prescription.validFrom && intl.formatDate(prescription.validFrom),
-  //     label: 'health.prescriptions.validFrom',
-  //   },
-  //   {
-  //     data: prescription.validTo && intl.formatDate(prescription.validTo),
-  //     label: 'health.prescriptions.validUntil',
-  //   },
-  //   {
-  //     data: prescription.doctor,
-  //     label: 'health.prescriptions.nameOfDoctor',
-  //   },
-  // ]
+  const prescriptionDataInformation = [
+    {
+      data: prescription.name
+        ? capitalizeEveryWord(prescription.name)
+        : undefined,
+      label: 'health.prescriptions.drug',
+    },
+    {
+      data: prescription.type,
+      label: 'health.prescriptions.type',
+    },
+    {
+      data: prescription.indication,
+      label: 'health.prescriptions.indication',
+    },
+    {
+      data: prescription.quantity
+        ? intl.formatMessage(
+            { id: 'health.prescriptions.quantityUnit' },
+            { quantity: prescription.quantity },
+          )
+        : undefined,
+      label: 'health.prescriptions.quantity',
+    },
+    {
+      data: prescription.dosageInstructions,
+      label: 'health.prescriptions.dosageInstructions',
+    },
+  ]
+
+  const prescriptionDataIssuedBy = [
+    {
+      data: prescription.issueDate
+        ? intl.formatDate(prescription.issueDate)
+        : undefined,
+      label: 'health.prescriptions.issueDate',
+    },
+    {
+      data: prescription.expiryDate
+        ? intl.formatDate(prescription.expiryDate)
+        : undefined,
+      label: 'health.prescriptions.expiresAt',
+    },
+    {
+      data: prescription.prescriberName,
+      label: 'health.prescriptions.doctor',
+    },
+  ]
 
   return (
-    <View></View>
-    // <ExpandableCard
-    //   title={
-    //     isExpired
-    //       ? intl.formatMessage({ id: 'health.prescriptions.expired' })
-    //       : prescription.validTo
-    //       ? intl.formatMessage(
-    //           { id: 'health.prescriptions.validTo' },
-    //           { date: intl.formatDate(prescription.validTo) },
-    //         )
-    //       : undefined
-    //   }
-    //   titleColor={isExpired ? theme.color.red600 : undefined}
-    //   titleIcon={clockIcon}
-    //   message={prescription.atcName}
-    //   icon={chevronDown}
-    //   value={
-    //     prescription.rejected ? (
-    //       <Badge
-    //         variant={'red'}
-    //         title={intl.formatMessage({ id: 'health.prescriptions.rejected' })}
-    //         outlined
-    //       />
-    //     ) : !prescription.processed ? (
-    //       <Badge
-    //         variant={'darkerBlue'}
-    //         title={intl.formatMessage({ id: 'health.prescriptions.inProcess' })}
-    //         outlined
-    //       />
-    //     ) : undefined
-    //   }
-    //   onPress={() => {
-    //     setOpen((isOpen) => !isOpen)
-    //   }}
-    //   open={open}
-    // >
-    //   <View style={{ width: '100%', padding: theme.spacing[2] }}>
-    //     {loading ? (
-    //       Array.from({ length: 3 }).map((_, index) => (
-    //         <Row key={index}>
-    //           <Cell style={{ flex: 1 }}>
-    //             <Skeleton height={18} />
-    //           </Cell>
-    //         </Row>
-    //       ))
-    //     ) : (
-    //       <View>
-    //         <TableHeader>
-    //           <Typography variant="eyebrow">
-    //             <FormattedMessage id="health.prescriptions.furtherInformation" />
-    //           </Typography>
-    //         </TableHeader>
-    //         {prescriptionData
-    //           .filter((item) => item.data)
-    //           .map((item, visibleIndex) => (
-    //             <TableRow
-    //               key={visibleIndex}
-    //               style={{
-    //                 backgroundColor:
-    //                   visibleIndex % 2 === 0
-    //                     ? theme.color.blue100
-    //                     : theme.color.white,
-    //               }}
-    //             >
-    //               <RowItem>
-    //                 <Typography variant="eyebrow">
-    //                   <FormattedMessage id={item.label} />
-    //                 </Typography>
-    //               </RowItem>
-    //               <RowItem>
-    //                 <Typography variant="body3">{item.data}</Typography>
-    //               </RowItem>
-    //             </TableRow>
-    //           ))}
-    //       </View>
-    //     )}
-    //   </View>
-    // </ExpandableCard>
+    <ExpandableCard
+      title={
+        isExpired
+          ? intl.formatMessage({ id: 'health.prescriptions.expired' })
+          : prescription.expiryDate
+          ? intl.formatMessage(
+              { id: 'health.prescriptions.validTo' },
+              { date: intl.formatDate(prescription.expiryDate) },
+            )
+          : undefined
+      }
+      titleColor={isExpired ? theme.color.red600 : undefined}
+      titleIcon={clockIcon}
+      topRightValue={
+        prescription?.amountRemaining
+          ? intl.formatMessage(
+              { id: 'health.prescriptions.amountRemaining' },
+              { amountRemaining: prescription.amountRemaining },
+            )
+          : prescription?.amountRemaining === '0' ||
+            prescription?.amountRemaining === '0 pk'
+          ? intl.formatMessage({ id: 'health.prescriptions.fullyUsed' })
+          : undefined
+      }
+      message={
+        prescription.name ? capitalizeEveryWord(prescription.name) : undefined
+      }
+      icon={chevronDown}
+      onPress={() => {
+        setOpen((isOpen) => !isOpen)
+      }}
+      open={open}
+    >
+      <View style={{ width: '100%', padding: theme.spacing[2] }}>
+        {loading ? (
+          Array.from({ length: 3 }).map((_, index) => (
+            <Row key={index}>
+              <Cell style={{ flex: 1 }}>
+                <Skeleton height={18} />
+              </Cell>
+            </Row>
+          ))
+        ) : (
+          <View>
+            <TableHeader>
+              <Typography variant="eyebrow">
+                <FormattedMessage id="health.prescriptions.furtherInformation" />
+              </Typography>
+            </TableHeader>
+            {prescriptionDataInformation
+              .filter((item) => item.data)
+              .map((item, visibleIndex) => (
+                <TableRow
+                  key={visibleIndex}
+                  style={{
+                    backgroundColor:
+                      visibleIndex % 2 === 0
+                        ? theme.color.blue100
+                        : theme.color.white,
+                  }}
+                >
+                  <RowItem>
+                    <Typography variant="eyebrow">
+                      <FormattedMessage id={item.label} />
+                    </Typography>
+                  </RowItem>
+                  <RowItem>
+                    <Typography variant="body3">{item.data}</Typography>
+                  </RowItem>
+                </TableRow>
+              ))}
+          </View>
+        )}
+      </View>
+    </ExpandableCard>
   )
 }

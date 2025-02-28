@@ -19,6 +19,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { CertificateCard } from './components/certificate-card'
+import { PrescriptionCard } from './components/prescription-card'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -66,7 +67,8 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const certificatesRes = useGetDrugCertificatesQuery()
 
   const drugCertificates = certificatesRes.data?.rightsPortalDrugCertificates
-  const prescriptions = prescriptionsRes.data?.healthDirectoratePrescriptions
+  const prescriptions =
+    prescriptionsRes.data?.healthDirectoratePrescriptions?.prescriptions
 
   useConnectivityIndicator({
     componentId,
@@ -149,10 +151,10 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                 ? Array.from({ length: 5 }).map((_, index) => (
                     <GeneralCardSkeleton height={90} key={index} />
                   ))
-                : drugCertificates?.map((prescription, index) => (
-                    <CertificateCard
+                : prescriptions?.map((prescription, index) => (
+                    <PrescriptionCard
                       key={`${prescription?.id}-${index}`}
-                      certificate={prescription}
+                      prescription={prescription}
                       loading={
                         prescriptionsRes.loading && !prescriptionsRes.data
                       }
