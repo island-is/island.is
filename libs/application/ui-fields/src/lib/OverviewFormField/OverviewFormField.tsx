@@ -36,34 +36,39 @@ export const OverviewFormField = ({
     if (goToScreen) goToScreen(screen)
   }
   return (
-    <Box>
-      <Box>
-        {field.title && (
-          <Text variant="h4" as="h4" paddingTop={5} paddingBottom={3}>
-            {formatTextWithLocale(
-              field.title,
-              application,
-              locale,
-              formatMessage,
-            )}
-          </Text>
-        )}
-        {field.description && (
-          <Text as="p" paddingBottom={3}>
-            {formatTextWithLocale(
-              field.description,
-              application,
-              locale,
-              formatMessage,
-            )}
-          </Text>
-        )}
-      </Box>
+    <Box paddingTop={3} paddingBottom={3}>
       <ReviewGroup
         isLast={!field.bottomLine}
         editAction={() => changeScreens(field.backId ?? '')}
         isEditable={field.backId !== undefined}
       >
+        <Box marginRight={12}>
+          {field.title && (
+            <Text
+              variant="h4"
+              as="h4"
+              paddingTop={2}
+              paddingBottom={field.description ? 2 : 5}
+            >
+              {formatTextWithLocale(
+                field.title,
+                application,
+                locale,
+                formatMessage,
+              )}
+            </Text>
+          )}
+          {field.description && (
+            <Text as="p" paddingTop={0} paddingBottom={2}>
+              {formatTextWithLocale(
+                field.description,
+                application,
+                locale,
+                formatMessage,
+              )}
+            </Text>
+          )}
+        </Box>
         <GridRow>
           {items &&
             items?.map((item, i) => {
@@ -142,7 +147,11 @@ export const OverviewFormField = ({
                     attachment.width === 'half' ? '6/12' : '12/12',
                   ]}
                 >
-                  <Box marginTop={i === 0 ? 8 : 0}>
+                  <Box
+                    marginTop={
+                      !field.description && !field.title && i === 0 ? 8 : 0
+                    }
+                  >
                     <FileItem
                       key={i}
                       fileName={formatTextWithLocale(
@@ -170,7 +179,7 @@ export const OverviewFormField = ({
             })}
           {tableData && (
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-              <Box marginTop={10}>
+              <Box marginTop={field.description || field.title ? 0 : 10}>
                 <Table.Table>
                   <Table.Head>
                     <Table.Row>
