@@ -32,10 +32,10 @@ runs:
       run: |
         yarn install --immutable
         (
-          cp -rf ./node_modules "/home/runner/dependencies/node_modules"
-          cp -rf ./.yarn "/home/runner/dependencies/.yarn"
-          cp -rf ./yarn.lock "/home/runner/dependencies/yarn.lock"
-          cp -rf ./package.json "/home/runner/dependencies/package.json"
+          cp -rf ./node_modules /home/runner/dependencies/node_modules
+          cp -rf ./.yarn /home/runner/dependencies/.yarn
+          cp -rf ./yarn.lock /home/runner/dependencies/yarn.lock
+          cp -rf ./package.json /home/runner/dependencies/package.json
         ) || echo "Failed copying back to dependencies
 
     - name: Link pre-installed dependencies
@@ -43,7 +43,7 @@ runs:
       shell: bash
       run: |
         rm -rf node_modules
-        ln -s "/home/runner/dependencies/node_modules" .
-        ln -s "/home/runner/dependencies/.yarn/cache" .yarn/
-        ln -s "/home/runner/dependencies/.yarn/install-state.gz" .yarn/
+        ln -s /home/runner/dependencies/node_modules .
+        ln -s /home/runner/dependencies/.yarn/cache .yarn/
+        ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
         echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
