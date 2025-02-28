@@ -21,7 +21,7 @@ const devConfig = {
       process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
     audience: '',
   },
 }
