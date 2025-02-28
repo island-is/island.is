@@ -14,6 +14,7 @@ export class CryptoService {
     private readonly cryptoKeyService: CryptoKeyService,
   ) {}
 
+  k = 0
   /**
    * Encrypts a given text using the AES-256-CBC encryption algorithm.
    *
