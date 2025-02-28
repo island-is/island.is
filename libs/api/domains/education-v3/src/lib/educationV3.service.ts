@@ -15,17 +15,17 @@ export class EducationServiceV3 {
   async getStudentCareer(
     user: User,
     childId?: string,
-  ): Promise<StudentCareer | undefined> {
+  ): Promise<StudentCareer | null> {
     if (!childId) {
       this.logger.info('Missing child id in request')
-      return
+      return null
     }
 
     const childNationalId = await unmaskString(childId, user.nationalId)
 
     if (!childNationalId) {
       this.logger.warn('Child id unmasking failed')
-      return
+      return null
     }
 
     const data = await this.friggClientService.getUserById(

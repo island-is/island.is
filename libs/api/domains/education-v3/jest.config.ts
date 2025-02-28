@@ -11,7 +11,7 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/api/domains/education',
-  displayName: 'api-domains-education',
+  coverageDirectory: '<rootDir>/coverage/libs/api/domains/education-v3',
+  displayName: 'api-domains-education-v3',
   testEnvironment: 'node',
 }

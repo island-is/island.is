@@ -1,7 +1,7 @@
 {
-  "name": "api-domains-education",
+  "name": "api-domains-education-v3",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/domains/education/src",
+  "sourceRoot": "libs/api/domains/education-v3/src",
   "projectType": "library",
   "tags": ["lib:api", "scope:api"],
   "generators": {},
@@ -14,7 +14,7 @@
       "options": {
         "jestConfig": "libs/api/domains/education/jest.config.ts"
       },
-      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/education"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/education-v3"]
     }
   }
 }
