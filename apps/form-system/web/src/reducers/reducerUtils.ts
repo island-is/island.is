@@ -42,7 +42,6 @@ export const incrementWithScreens = (
     if (state.currentSection.index === maxSectionIndex) {
       return state
     }
-
     const nextSection = state.sections[state.currentSection.index + 1]
     return {
       ...state,
@@ -146,6 +145,7 @@ export const decrementWithoutScreens = (
       : undefined,
   }
 }
+
 
 export const setFieldValue = (
   state: ApplicationState,

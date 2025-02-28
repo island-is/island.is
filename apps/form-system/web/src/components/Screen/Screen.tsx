@@ -16,7 +16,6 @@ export const Screen = () => {
   const screenTitle = currentScreen
     ? state.screens?.[currentScreen.index]?.name?.is
     : state.sections?.[currentSection.index]?.name?.is
-  const s = currentScreen ? state.screens[currentScreen?.index] : null
 
   const [externalDataAgreement, setExternalDataAgreement] = useState(state.sections?.[0].isCompleted ?? false)
 

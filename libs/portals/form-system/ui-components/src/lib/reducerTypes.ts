@@ -12,6 +12,7 @@ export interface ApplicationState {
     index: number
     data?: FormSystemScreen
   }
+  errors?: string[]
 }
 
 export interface Action {
