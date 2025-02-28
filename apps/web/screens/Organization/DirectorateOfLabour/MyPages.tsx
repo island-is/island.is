@@ -168,6 +168,10 @@ MyPages.getProps = async ({ apolloClient, locale }) => {
     getOrganizationPage.organization,
   )
 
+  if (organizationNamespace?.myPagesJumpPageIsDisabled) {
+    throw new CustomNextError(404, 'VMST my pages link page has been disabled')
+  }
+
   return {
     organizationPage: getOrganizationPage,
     namespace,
