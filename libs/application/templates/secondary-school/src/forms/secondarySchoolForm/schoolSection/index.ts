@@ -5,6 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { school } from '../../../lib/messages'
+import { Routes } from '../../../utils'
 import {
   clearOnChangeSchool,
   filterSchoolOptions,
@@ -22,13 +23,12 @@ import {
   getUpdateOnSelectFirstProgram,
   getUpdateOnSelectSecondProgram,
   loadProgramOptions,
-  Routes,
   setOnChangeFirstProgram,
   setOnChangeNordicLanguage,
   setOnChangeSchool,
   setOnChangeSecondProgram,
   setOnChangeThirdLanguage,
-} from '../../../utils'
+} from './utils'
 
 export const schoolSection = buildSection({
   id: 'schoolSection',

@@ -1,6 +1,7 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
-import { ApplicationType, hasDuplicates } from '../utils'
+import { ApplicationType } from '../shared'
+import { hasDuplicates } from '../utils'
 import { YES } from '@island.is/application/core'
 import { error } from './messages'
 import * as kennitala from 'kennitala'

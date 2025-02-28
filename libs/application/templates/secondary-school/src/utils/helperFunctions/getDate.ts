@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { SecondarySchoolAnswers } from '..'
+import { SecondarySchoolAnswers } from '../..'
 
 const getRegistrationEndDates = (formValue: FormValue): Date[] => {
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(

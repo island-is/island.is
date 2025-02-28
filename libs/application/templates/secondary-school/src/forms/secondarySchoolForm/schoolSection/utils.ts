@@ -5,11 +5,14 @@ import {
   FormValue,
   RepeaterOptionValue,
 } from '@island.is/application/types'
-import { Program, SecondarySchool } from './types'
-import { SecondarySchoolAnswers } from '..'
-import { checkIsFreshman } from './checkIsFreshman'
-import { getTranslatedProgram } from './format'
-import { school } from '../lib/messages'
+import {
+  checkIsFreshman,
+  getTranslatedProgram,
+  Program,
+  SecondarySchool,
+} from '../../../utils'
+import { SecondarySchoolAnswers } from '../../..'
+import { school } from '../../../lib/messages'
 import { Locale, StaticText } from '@island.is/shared/types'
 import { ApolloClient } from '@apollo/client'
 import {
@@ -17,7 +20,7 @@ import {
   QuerySecondarySchoolProgramsBySchoolIdArgs,
   SecondarySchoolProgram,
 } from '@island.is/api/schema'
-import { PROGRAMS_BY_SCHOOLS_ID_QUERY } from '../graphql/queries'
+import { PROGRAMS_BY_SCHOOLS_ID_QUERY } from '../../../graphql/queries'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 

@@ -1,7 +1,7 @@
 import { Application } from '@island.is/application/types'
-import { States } from './enums'
+import { States } from '../enums'
 import { getValueViaPath } from '@island.is/application/core'
-import { SecondarySchoolAnswers } from '..'
+import { SecondarySchoolAnswers } from '../..'
 
 export const checkUseAnswersCopy = (application: Application): boolean => {
   // It is only relevant to look at copy answers in states IN_REVIEW and COMPLETED
