@@ -11,8 +11,8 @@ import {
 } from '@island.is/application/core'
 import { error, userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import { ApplicationType } from '../../../shared'
 import {
-  ApplicationType,
   checkIsActor,
   checkIsFreshman,
   Routes,
