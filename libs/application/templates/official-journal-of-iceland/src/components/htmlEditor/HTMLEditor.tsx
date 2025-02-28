@@ -14,6 +14,7 @@ type Props = {
   error?: string
   readOnly?: boolean
   controller?: boolean
+  fileUploader: EditorFileUploader
 }
 
 export const HTMLEditor = ({
@@ -26,6 +27,7 @@ export const HTMLEditor = ({
   hideWarnings,
   readOnly = false,
   controller = true,
+  fileUploader,
 }: Props) => {
   const [initialValue, setInitalValue] = useState(value)
   const valueRef = useRef(() => value)
@@ -39,10 +41,6 @@ export const HTMLEditor = ({
       }
     }
   }, [value, readOnly])
-
-  const fileUploader = (): EditorFileUploader => async (blob) => {
-    throw new Error('Not implemented')
-  }
 
   return controller ? (
     <Controller
