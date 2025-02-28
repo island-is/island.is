@@ -31,9 +31,10 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       RedisSettings__Address: {
-        dev: 'redis.internal',
-        staging: 'redis.internal',
-        prod: 'redis.internal',
+        dev: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
+        prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
       },
       RedisSettings__Port: {
         dev: '6379',
