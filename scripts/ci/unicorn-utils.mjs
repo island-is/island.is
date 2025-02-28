@@ -65,6 +65,6 @@ switch (cmd) {
     showUnicorns(args)
     break
   default:
-    console.error(`Unknown command: ${cmd}`)
+    console.error(`Unknown unicorn utils command: ${cmd}`)
     process.exit(1)
 }
