@@ -80,7 +80,7 @@ export {
 } from './SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
-export { UserProvider, UserContext } from './UserProvider/UserProvider'
+export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
   ViewportContext,

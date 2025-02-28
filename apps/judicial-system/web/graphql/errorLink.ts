@@ -1,5 +1,8 @@
+import Cookies from 'js-cookie'
 import { ErrorResponse, onError } from '@apollo/client/link/error'
 
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import { userRef } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
@@ -11,9 +14,17 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     graphQLErrors.forEach(async (err) => {
       switch (err.extensions?.code) {
         case 'UNAUTHENTICATED':
-          window.location.assign(
-            `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
-          )
+          {
+            const userId = userRef.current?.id ? `/${userRef.current.id}` : ''
+            const userNationalId =
+              Cookies.get(CSRF_COOKIE_NAME) === 'undefined' &&
+              userRef.current?.nationalId
+                ? `nationalId=${userRef.current.nationalId}&`
+                : ''
+            window.location.assign(
+              `${api.apiUrl}/api/auth/login${userId}?${userNationalId}redirectRoute=${window.location.pathname}`,
+            )
+          }
           return
         case 'FORBIDDEN':
           return

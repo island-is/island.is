@@ -41,10 +41,11 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
-  InstitutionType,
+  isAdminUser,
+  isCourtOfAppealsUser,
+  isDefenceUser,
   isPrisonSystemUser,
   type User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
@@ -106,9 +107,10 @@ export class AuthController {
     this.defaultCookieOptions.secure = this.config.production
   }
 
-  @Get('login')
+  @Get(['login', 'login/:userId'])
   async login(
     @Res() res: Response,
+    @Param('userId') userId?: string,
     @Query('redirectRoute') redirectRoute?: string,
     @Query('nationalId') nationalId?: string,
   ) {
@@ -119,7 +121,12 @@ export class AuthController {
       if (this.config.allowAuthBypass && nationalId) {
         this.logger.debug(`Logging in using development mode`)
 
-        await this.redirectAuthenticatedUser(nationalId, res, redirectRoute)
+        await this.redirectAuthenticatedUser(
+          nationalId,
+          res,
+          userId,
+          redirectRoute,
+        )
 
         return
       }
@@ -186,7 +193,8 @@ export class AuthController {
     try {
       this.logger.debug('Received callback request')
 
-      const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
+      const { userId, redirectRoute } =
+        req.cookies[this.redirectCookie.name] ?? {}
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
 
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
@@ -200,6 +208,7 @@ export class AuthController {
         await this.redirectAuthenticatedUser(
           verifiedUserToken.nationalId,
           res,
+          userId,
           redirectRoute,
           idsTokens.id_token,
           new Entropy({ bits: 128 }).string(),
@@ -342,6 +351,7 @@ export class AuthController {
   private async redirectAuthenticatedUser(
     nationalId: string,
     res: Response,
+    userId?: string,
     requestedRedirectRoute?: string,
     idToken?: string,
     csrfToken?: string,
@@ -358,7 +368,13 @@ export class AuthController {
       return
     }
 
-    const currentUserIdx = eligibleUsers.length === 1 ? 0 : -1
+    const currentUserIdx =
+      eligibleUsers.length === 1
+        ? 0
+        : userId
+        ? // attempt to find the user with the given userId
+          eligibleUsers.findIndex((user) => user.id === userId)
+        : -1
 
     if (idToken) {
       res.cookie(this.idToken.name, idToken, {
@@ -431,13 +447,14 @@ export class AuthController {
   ) {
     const redirectRoute = !currentUser
       ? '/'
-      : requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
+      : // Guard against invalid redirects
+      requestedRedirectRoute && requestedRedirectRoute.startsWith('/')
       ? requestedRedirectRoute
-      : currentUser.role === UserRole.ADMIN
+      : isAdminUser(currentUser)
       ? USERS_ROUTE
-      : currentUser.role === UserRole.DEFENDER
+      : isDefenceUser(currentUser)
       ? DEFENDER_CASES_ROUTE
-      : currentUser.institution?.type === InstitutionType.COURT_OF_APPEALS
+      : isCourtOfAppealsUser(currentUser)
       ? COURT_OF_APPEAL_CASES_ROUTE
       : isPrisonSystemUser(currentUser)
       ? PRISON_CASES_ROUTE
