@@ -12,6 +12,8 @@ const InformationSchema = z.object({
       (nationalId) =>
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().email(),
 })
 
 const PaymentArrangementSchema = z

@@ -15,10 +15,8 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   Application,
-  defineTemplateApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { buildPaymentState } from '@island.is/application/utils'
 import { PracticalExamAnswersSchema } from './dataSchema'

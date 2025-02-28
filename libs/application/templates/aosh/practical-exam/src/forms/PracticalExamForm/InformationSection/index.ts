@@ -1,14 +1,18 @@
 import {
-  buildAlertMessageField,
+  buildDescriptionField,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSection,
+  buildSelectField,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages/information'
 import { shared } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { SelfOrOthers } from '../../../utils/types'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 
 export const informationSection = buildSection({
   id: 'informationSection',
@@ -48,46 +52,82 @@ export const informationSection = buildSection({
             return name
           },
         }),
-        // buildAlertMessageField({
-        //   id: 'userInformation.alert',
-        //   title: '',
-        //   alertType: 'info',
-        //   message: information.alerts.alertMessage,
-        //   links: [
-        //     {
-        //       title: information.alerts.alertMessageLinkTitle,
-        //       url: information.alerts.alertMessageLink,
-        //       isExternal: false,
-        //     },
-        //   ],
-        // }),
-        // buildTextField({
-        //   id: 'information.email',
-        //   title: shared.labels.email,
-        //   width: 'half',
-        //   variant: 'email',
-        //   readOnly: true,
-        //   defaultValue: (application: Application) => {
-        //     const email = getValueViaPath<string>(
-        //       application.externalData,
-        //       'userProfile.data.email',
-        //     )
-        //     return email
-        //   },
-        // }),
-        // buildPhoneField({
-        //   id: 'information.phoneNumber',
-        //   title: shared.labels.phone,
-        //   width: 'half',
-        //   readOnly: true,
-        //   defaultValue: (application: Application) => {
-        //     const phoneNumber = getValueViaPath<string>(
-        //       application.externalData,
-        //       'userProfile.data.mobilePhoneNumber',
-        //     )
-        //     return phoneNumber
-        //   },
-        // }),
+        buildTextField({
+          id: 'information.email',
+          title: shared.labels.email,
+          backgroundColor: 'blue',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+            ) ?? '',
+        }),
+        buildPhoneField({
+          id: 'information.phone',
+          title: shared.labels.phone,
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ) ?? '',
+        }),
+        buildDescriptionField({
+          id: 'information.descriptionField',
+          title: information.general.descriptionField,
+          titleVariant: 'h5',
+        }),
+        buildRadioField({
+          id: 'information.selfOrOthers',
+          width: 'half',
+          options: [
+            {
+              value: SelfOrOthers.self,
+              label: information.general.registerSelf,
+            },
+            {
+              value: SelfOrOthers.others,
+              label: information.general.registerOthers,
+            },
+          ],
+          clearOnChange: ['information.countryOfIssue', 'information.licenseNumber'],
+        }),
+        buildTextField({
+          id: 'information.licenseNumber',
+          width: 'half',
+          format: '########',
+          required: true,
+        }),
+        buildSelectField({
+          id: `information.countryOfIssue`,
+          width: 'half',
+          options: () => {
+            const iceland = {
+              name: 'Iceland',
+              name_is: 'Ísland',
+              format: '###-####',
+              flag: '🇮🇸',
+              code: 'IS',
+              dial_code: '+354',
+            }
+
+            const countries = getAllCountryCodes().filter(
+              (country) => country.code !== 'IS',
+            )
+
+            return [
+              { label: iceland.name_is || iceland.name, value: iceland.code },
+              ...countries.map((country) => ({
+                label: country.name_is || country.name,
+                value: country.code,
+              })),
+            ]
+          },
+          required: true,
+        }),
       ],
     }),
   ],

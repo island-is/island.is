@@ -12,30 +12,26 @@ export const information = {
       defaultMessage: 'Upplýsingar um skráningaraðila',
       description: `Information page description`,
     },
-
     sectionTitle: {
       id: 'aosh.pe.application:information.general.sectionTitle',
       defaultMessage: 'Persónuupplýsingar',
       description: `Information section title`,
     },
+    descriptionField: {
+      id: 'aosh.pe.application:information.general.descriptionField',
+      defaultMessage:
+        'Vinsamlegast tilgreindu hvort þú sért að skrá sjálfan þig eða fleiri einstaklinga',
+      description: `h5 description field above radio field`,
+    },
+    registerSelf: {
+      id: 'aosh.pe.application:information.general.registerSelf',
+      defaultMessage: 'Skrá bara mig',
+      description: `radio label for registering self`,
+    },
+    registerOthers: {
+      id: 'aosh.pe.application:information.general.registerOthers',
+      defaultMessage: 'Skrá fleiri',
+      description: `radio label for registering others`,
+    },
   }),
-  // alerts: defineMessages({
-  //   alertMessage: {
-  //     id: 'aosh.pe.application:alerts.alertMessage#markdown',
-  //     defaultMessage:
-  //       'Ef netfang og símanúmer er ekki rétt hér að neðan þá verður að breyta þeim upplýsingum á mínum síðum.',
-  //     description:
-  //       'Alerting user to update their email and phone number on my pages',
-  //   },
-  //   alertMessageLink: {
-  //     id: 'aosh.pe.application:alerts.alertMessageLink',
-  //     defaultMessage: '/minarsidur',
-  //     description: 'Link for mínar síður',
-  //   },
-  //   alertMessageLinkTitle: {
-  //     id: 'aosh.pe.application:alerts.alertMessageLinkTitle',
-  //     defaultMessage: 'Fara á mínar síður',
-  //     description: 'title for mínar síður link',
-  //   },
-  // }),
 }

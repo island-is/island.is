@@ -33,5 +33,5 @@ export const WatchCompanyNationalId: FC<
   //   return [false, '']
   // })
 
-  return <></>
+  return null
 }
