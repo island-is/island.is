@@ -1,6 +1,6 @@
 {
   "name": "island.is",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
@@ -66,6 +66,8 @@
     "mock": "nx mock"
   },
   "dependencies": {
+    "@actions/core": "1.11.1",
+    "@actions/github": "6.0.0",
     "@apollo/client": "3.7.15",
     "@apollo/gateway": "2.1.1",
     "@apollo/subgraph": "2.1.1",
@@ -303,6 +305,7 @@
     "tslib": "2.6.2",
     "ua-parser-js": "1.0.33",
     "unified": "9.2.0",
+    "universal-github-app-jwt": "2.2.0",
     "uuidv4": "6.0.8",
     "vm-browserify": "1.1.2",
     "winston": "3.7.2",

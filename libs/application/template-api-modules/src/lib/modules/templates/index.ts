@@ -142,6 +142,8 @@ import { SeminarsTemplateService } from './aosh/seminars/seminars.service'
 import { SeminarsTemplateModule } from './aosh/seminars/seminars.module'
 import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
+import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
+import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -216,6 +218,7 @@ export const modules = [
   SocialInsuranceAdministrationModule,
   SeminarsTemplateModule,
   SecondarySchoolModule,
+  TrainingLicenseOnAWorkMachineTemplateModule,
 ]
 
 export const services = [
@@ -290,4 +293,5 @@ export const services = [
   ParliamentaryListSigningService,
   SeminarsTemplateService,
   SecondarySchoolService,
+  TrainingLicenseOnAWorkMachineTemplateService,
 ]

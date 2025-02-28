@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -29,7 +29,7 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
@@ -54,7 +54,7 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => User, { nullable: true })
   async user(
     @Args('input', { type: () => UserQueryInput })
@@ -73,7 +73,7 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(new JwtGraphQlAuthGuard(true))
+  @UseGuards(new JwtGraphQlAuthUserGuard(true))
   @Query(() => User, { nullable: true })
   async currentUser(
     @CurrentGraphQlUser() user: TUser,
@@ -83,7 +83,7 @@ export class UserResolver {
     return user as User
   }
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Mutation(() => User, { nullable: true })
   createUser(
     @Args('input', { type: () => CreateUserInput })
@@ -102,7 +102,7 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Mutation(() => User, { nullable: true })
   updateUser(
     @Args('input', { type: () => UpdateUserInput })
