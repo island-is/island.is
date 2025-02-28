@@ -44,7 +44,10 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isDistrictCourtUser,
   isPrisonSystemUser,
+  isProsecutionUser,
+  isPublicProsecutorUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -440,25 +443,87 @@ export class AuthController {
     this.redirect(res, currentUser, requestedRedirectRoute)
   }
 
+  private getRedirectRouteForUser(
+    currentUser?: User,
+    requestedRedirectRoute?: string,
+  ) {
+    const getRedirectRoute = (
+      defaultRoute: string,
+      allowedPrefixes: string[],
+    ) => {
+      return requestedRedirectRoute &&
+        allowedPrefixes.some((prefix) =>
+          requestedRedirectRoute.startsWith(prefix),
+        )
+        ? requestedRedirectRoute
+        : defaultRoute
+    }
+
+    if (!currentUser) {
+      return '/'
+    }
+
+    if (isProsecutionUser(currentUser)) {
+      return getRedirectRoute(CASES_ROUTE, [
+        '/beinir',
+        '/krafa',
+        '/kaera',
+        '/greinargerd',
+        '/akaera',
+      ])
+    }
+
+    if (isPublicProsecutorUser(currentUser)) {
+      return getRedirectRoute(CASES_ROUTE, [
+        '/beinir',
+        '/krafa/yfirlit',
+        '/rikissaksoknari',
+      ])
+    }
+
+    if (isDistrictCourtUser(currentUser)) {
+      return getRedirectRoute(CASES_ROUTE, [
+        '/beinir',
+        '/krafa/yfirlit',
+        '/domur',
+      ])
+    }
+
+    if (isCourtOfAppealsUser(currentUser)) {
+      return getRedirectRoute(COURT_OF_APPEAL_CASES_ROUTE, ['/landsrettur'])
+    }
+
+    if (isPrisonSystemUser(currentUser)) {
+      return getRedirectRoute(PRISON_CASES_ROUTE, [
+        '/beinir',
+        '/krafa/yfirlit',
+        '/fangelsi',
+      ])
+    }
+
+    if (isDefenceUser(currentUser)) {
+      return getRedirectRoute(DEFENDER_CASES_ROUTE, [
+        '/krafa/yfirlit',
+        '/verjandi',
+      ])
+    }
+
+    if (isAdminUser(currentUser)) {
+      return getRedirectRoute(USERS_ROUTE, ['/notendur'])
+    }
+
+    return '/'
+  }
+
   private redirect(
     res: Response,
     currentUser?: User,
     requestedRedirectRoute?: string,
   ) {
-    const redirectRoute = !currentUser
-      ? '/'
-      : // Guard against invalid redirects
-      requestedRedirectRoute && requestedRedirectRoute.startsWith('/')
-      ? requestedRedirectRoute
-      : isAdminUser(currentUser)
-      ? USERS_ROUTE
-      : isDefenceUser(currentUser)
-      ? DEFENDER_CASES_ROUTE
-      : isCourtOfAppealsUser(currentUser)
-      ? COURT_OF_APPEAL_CASES_ROUTE
-      : isPrisonSystemUser(currentUser)
-      ? PRISON_CASES_ROUTE
-      : CASES_ROUTE
+    const redirectRoute = this.getRedirectRouteForUser(
+      currentUser,
+      requestedRedirectRoute,
+    )
 
     const ret = res.redirect(redirectRoute)
 
