@@ -24,13 +24,7 @@ runs:
         # Set shims for e.g. `node` and `yarn`
         corepack enable
         # Use corepack cache if it exists (see https://github.com/nodejs/corepack?tab=readme-ov-file#offline-workflow)
-        if [[ -e "${COREPACK_CACHE}" ]]; then
-          echo "Using corepack cache..."
-          corepack install -g yarn --cache-only "${COREPACK_CACHE}"
-        else
-          echo "Downloading corepack..."
-          corepack install -g yarn
-        fi
+        [[ -e "${COREPACK_CACHE}" ]] && corepack install -g yarn --cache-only "${COREPACK_CACHE}" || corepack install -g yarn
         # Verify yarn is available, and see version
         yarn --version
 
