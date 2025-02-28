@@ -24,11 +24,15 @@ const hasValidTags = async (filePath: string) => {
   const tags = tagsRaw.map((tag) => tag.split(':'))
 
   const isEmpty = tags.length === 0
+  // Only allow 'scope:*' or 'lib:*' tags
+  const validPrefix = tags.every(
+    ([key]) => key === 'scope' || key === 'lib' || key === 'TODO',
+  )
   // Must have at least one scope tag or be empty
   const hasScopePrefix = tags.some(([key]) => key === 'scope') || isEmpty
   // Are all tags the same?
   const singularTag = new Set(tags.map(([, value]) => value)).size === 1
-  // Is any tag repeated?
+  // Is any tag repeaed?
   const repeatFreeTags = new Set(tagsRaw).size !== tagsRaw.length
 
   let isValid = true
@@ -40,6 +44,10 @@ const hasValidTags = async (filePath: string) => {
   }
   if (!hasScopePrefix) {
     messages.push(chalk.red('- Missing scope tag'))
+    isValid = false
+  }
+  if (!validPrefix) {
+    messages.push(chalk.red('- Unexpected NX tags'))
     isValid = false
   }
   if (!singularTag) {

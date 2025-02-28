@@ -2,6 +2,8 @@
 import { execSync } from 'child_process'
 import { workspaceRoot } from '@nx/devkit'
 
+const unicornApps = ['unicorn-app']
+
 // NOTE: Using `console.error` in this script to log, without affecting the "output" to standard output
 
 /**
@@ -19,7 +21,8 @@ const isUnicorn = (args) => {
     'show',
     'projects',
     '--affected',
-    '--projects=tag:unicorn',
+    // '--projects=tag:unicorn',
+    `--projects=${unicornApps.join(',')}`,
     `--base=${baseBranch}`,
     '--json',
   ]
