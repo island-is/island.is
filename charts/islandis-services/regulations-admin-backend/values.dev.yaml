@@ -25,7 +25,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'regulations_admin_backend'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
-  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
   LOG_LEVEL: 'info'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'

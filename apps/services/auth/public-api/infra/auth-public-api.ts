@@ -13,7 +13,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -32,12 +32,12 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
       PUBLIC_URL: {
-        dev: 'https://identity-server.dev01.devland.is/api',
+        dev: 'https://innskra.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
@@ -104,7 +104,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .ingress({
       primary: {
         host: {
-          dev: 'identity-server.dev01.devland.is',
+          dev: 'innskra.dev01.devland.is',
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
