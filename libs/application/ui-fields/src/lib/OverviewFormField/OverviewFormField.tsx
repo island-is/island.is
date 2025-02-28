@@ -132,7 +132,6 @@ export const OverviewFormField = ({
                     marginTop={
                       !field.description && !field.title && i === 0 ? 8 : 0
                     }
-                    // marginTop={0}
                   >
                     <FileItem
                       key={i}
