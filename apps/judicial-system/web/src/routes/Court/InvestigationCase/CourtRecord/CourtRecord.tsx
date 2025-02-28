@@ -169,9 +169,9 @@ const CourtRecord: FC = () => {
       [
         {
           courtStartDate: workingCase.arraignmentDate?.date,
-          courtLocation:
-            workingCase.court?.name &&
-            `í ${applyDativeCaseToCourtName(workingCase.court.name)}`,
+          courtLocation: workingCase.court?.name
+            ? `í ${applyDativeCaseToCourtName(workingCase.court.name)}`
+            : 'í héraðsdómi',
           courtAttendees:
             autofillAttendees.length > 0
               ? autofillAttendees.join('')
