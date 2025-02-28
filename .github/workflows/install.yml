@@ -171,17 +171,6 @@ jobs:
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Prepare docker build targets
-        id: docker_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
-          echo "CHUNKS: '$CHUNKS'"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
