@@ -115,7 +115,7 @@ export const tableRepeaterSubsection = buildSubSection({
             selectAsyncPrimary: {
               component: 'selectAsync',
               label: 'Primary Select Async',
-              loadOptions: async ({ apolloClient, selectedValue }) => {
+              loadOptions: async ({ apolloClient }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
                     query: friggSchoolsByMunicipalityQuery,
@@ -132,8 +132,8 @@ export const tableRepeaterSubsection = buildSubSection({
             selectAsyncReliant: {
               component: 'selectAsync',
               label: 'Reliant Select Async',
-              updateOnSelect: 'selectAsyncPrimary',
-              loadOptions: async ({ apolloClient, selectedValue }) => {
+              updateOnSelect: ['selectAsyncPrimary'],
+              loadOptions: async ({ apolloClient, selectedValues }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
                     query: friggSchoolsByMunicipalityQuery,
@@ -141,8 +141,8 @@ export const tableRepeaterSubsection = buildSubSection({
 
                 return (
                   data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name} ${selectedValue || ''}`,
-                    label: `${municipality.name} ${selectedValue || ''}`,
+                    value: `${municipality.name} ${selectedValues?.[0] || ''}`,
+                    label: `${municipality.name} ${selectedValues?.[0] || ''}`,
                   })) ?? []
                 )
               },

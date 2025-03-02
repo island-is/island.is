@@ -43,8 +43,8 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
       <Box>
         <GridRow>
           {/* First selection */}
-          <GridColumn span={selection?.[1]?.include ? '1/2' : '1/1'}>
-            {selection?.[1]?.include && (
+          <GridColumn span={selection?.[1]?.school?.id ? '1/2' : '1/1'}>
+            {!!selection?.[1]?.school?.id && (
               <Text variant="h5">
                 {formatMessage(overview.selection.firstSubtitle)}
               </Text>
@@ -81,7 +81,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
           </GridColumn>
 
           {/* Second selection */}
-          {selection?.[1]?.include && (
+          {!!selection?.[1]?.school?.id && (
             <GridColumn span="1/2">
               <Text variant="h5">
                 {formatMessage(overview.selection.secondSubtitle)}
@@ -119,7 +119,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
           )}
 
           {/* Third selection */}
-          {selection?.[2]?.include && (
+          {!!selection?.[2]?.school?.id && (
             <Box marginTop={2}>
               <GridColumn span="1/2">
                 <Text variant="h5">

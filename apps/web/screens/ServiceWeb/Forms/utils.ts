@@ -121,7 +121,7 @@ export const filterSupportCategories = (
         description:
           namespace?.['icelandHealthHeilbrigdisthjonustaDescription'] ||
           (locale === 'is'
-            ? 'Þjálfun, lýtalækningar, tannmál, ferðakostnaður, hjúkrunarheimili, heilsugæsla, greiðsluþátttökukerfi, leguskrá, heilbriðisstafrsfólk og ljósmæður'
+            ? 'Þjálfun, lýtalækningar, innlend tannmál, ferðakostnaður, hjúkrunarheimili, heilsugæsla, greiðsluþátttökukerfi, leguskrá, heilbrigðisstarfsfólk og ljósmæður'
             : ''),
         organization: organization,
         slug: SjukratryggingarCategories.HEILBRIGDISTHJONUSTA,
