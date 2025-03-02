@@ -50,6 +50,7 @@ export const RentalPeriodDetails = buildSubSection({
               label: rentalPeriod.rentalPeriodDefiniteLabel,
             },
           ],
+          clearOnChange: ['rentalPeriod.endDate'],
           spacing: 0,
         }),
         buildDescriptionField({

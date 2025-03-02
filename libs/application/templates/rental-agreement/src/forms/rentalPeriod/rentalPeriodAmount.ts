@@ -68,6 +68,7 @@ export const RentalPeriodAmount = buildSubSection({
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',
           title: '',
+          clearOnChange: ['rentalAmount.indexTypes'],
           options: [
             {
               value: TRUE,

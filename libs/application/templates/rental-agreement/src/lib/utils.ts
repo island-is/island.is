@@ -124,12 +124,12 @@ export const getPropertyTypeOptions = () => [
 
 export const getPropertyClassOptions = () => [
   {
-    value: RentalHousingCategoryClass.GENERAL_MARKET,
-    label: m.registerProperty.category.classSelectLabelGeneralMarket,
+    value: RentalHousingCategoryClass.SPECIAL_GROUPS,
+    label: m.registerProperty.category.classSelectLabelIsSpecialGroups,
   },
   {
-    value: RentalHousingCategoryClass.SPECIAL_GROUPS,
-    label: m.registerProperty.category.classSelectLabelSpecialGroups,
+    value: RentalHousingCategoryClass.GENERAL_MARKET,
+    label: m.registerProperty.category.classSelectLabelNotSpecialGroups,
   },
 ]
 
@@ -152,17 +152,14 @@ export const getPropertyClassGroupOptions = () => [
     label: m.registerProperty.category.classGroupSelectLabelHalfwayHouse,
   },
   {
-    value: RentalHousingCategoryClassGroup.SOCIAL_HOUSING,
-    label: m.registerProperty.category.classGroupSelectLabelSocialHousing,
-  },
-  {
     value: RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
   },
-  {
-    value: RentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
-    label: m.registerProperty.category.classGroupSelectLabelEmployeeHousing,
-  },
+  // TODO: Add this option if decision is made to use
+  // {
+  //   value: RentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
+  //   label: m.registerProperty.category.classGroupSelectLabelEmployeeHousing,
+  // },
 ]
 
 export const getInspectorOptions = () => [
@@ -225,7 +222,7 @@ export const getSecurityDepositTypeOptions = () => [
   },
   {
     label: m.securityDeposit.typeSelectionMutualFundTitle,
-    value: SecurityDepositTypeOptions.MUTUAL_FUND,
+    value: SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND,
   },
   {
     label: m.securityDeposit.typeSelectionOtherTitle,

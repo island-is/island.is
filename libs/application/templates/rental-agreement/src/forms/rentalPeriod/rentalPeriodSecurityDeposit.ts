@@ -55,6 +55,13 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
           id: 'securityDeposit.securityType',
           title: securityDeposit.typeSelectionTitle,
           options: getSecurityDepositTypeOptions,
+          clearOnChange: [
+            'securityDeposit.bankGuaranteeInfo',
+            'securityDeposit.thirdPartyGuaranteeInfo',
+            'securityDeposit.insuranceCompanyInfo',
+            'securityDeposit.mutualFundInfo',
+            'securityDeposit.otherInfo',
+          ],
           placeholder: securityDeposit.typeSelectionPlaceholder,
         }),
 
@@ -134,7 +141,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                SecurityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
             )
           },
         }),
@@ -165,7 +172,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               !securityDeposit ||
               securityDeposit.securityType === undefined ||
               securityDeposit.securityType !==
-                SecurityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
             )
           },
         }),
@@ -182,7 +189,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                SecurityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
             )
           },
         }),
@@ -197,7 +204,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               (securityDeposit.securityType ===
-                SecurityDepositTypeOptions.MUTUAL_FUND ||
+                SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
                 securityDeposit.securityAmount ===
                   SecurityDepositAmountOptions.OTHER)
             )

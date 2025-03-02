@@ -41,6 +41,7 @@ export const RentalPeriodOtherFees = buildSubSection({
         buildRadioField({
           id: 'otherFees.housingFund',
           title: otherFees.housingFundTitle,
+          clearOnChange: ['otherFees.housingFundAmount'],
           options: getOtherFeesHousingFundPayeeOptions,
           width: 'half',
           space: 1,
@@ -58,6 +59,11 @@ export const RentalPeriodOtherFees = buildSubSection({
         buildRadioField({
           id: 'otherFees.electricityCost',
           title: otherFees.electricityCostTitle,
+          clearOnChange: [
+            'otherFees.electricityCostMeterNumber',
+            'otherFees.electricityCostMeterStatus',
+            'otherFees.electricityCostMeterStatusDate',
+          ],
           options: getOtherFeesPayeeOptions,
           width: 'half',
           space: 6,
@@ -90,6 +96,11 @@ export const RentalPeriodOtherFees = buildSubSection({
         buildRadioField({
           id: 'otherFees.heatingCost',
           title: otherFees.heatingCostTitle,
+          clearOnChange: [
+            'otherFees.heatingCostMeterNumber',
+            'otherFees.heatingCostMeterStatus',
+            'otherFees.heatingCostMeterStatusDate',
+          ],
           options: getOtherFeesPayeeOptions,
           width: 'half',
           space: 6,

@@ -30,6 +30,7 @@ export const RentalHousingCondition = buildSubSection({
           title: '',
           description: housingCondition.inspectorDescription,
           options: getInspectorOptions(),
+          clearOnChange: ['condition.inspectorName'],
           defaultValue: RentalHousingConditionInspector.CONTRACT_PARTIES,
           width: 'half',
         }),

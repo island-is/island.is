@@ -21,6 +21,31 @@ export const registerProperty = {
         'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
+    propertySearchPlaceholder: {
+      id: 'ra.application:registerProperty.info.propertySearchPlaceholder',
+      defaultMessage: 'Leitaðu eftir heimilisfangi',
+      description: 'Placeholder for property search',
+    },
+    searchResultHeaderPropertyId: {
+      id: 'ra.application:registerProperty.info.searchResultHeaderPropertyId',
+      defaultMessage: 'Fasteignanúmer',
+      description: 'Search result header for property number',
+    },
+    searchResultHeaderMarking: {
+      id: 'ra.application:registerProperty.info.searchResultHeaderMarking',
+      defaultMessage: 'Merking',
+      description: 'Search result header for "merking"',
+    },
+    searchResultHeaderPropertySize: {
+      id: 'ra.application:registerProperty.info.searchResultHeaderPropertySize',
+      defaultMessage: 'Stærð',
+      description: 'Search result header for property size',
+    },
+    searchResultsHeaderNumOfRooms: {
+      id: 'ra.application:registerProperty.info.searchResultsHeaderNumOfRooms',
+      defaultMessage: 'Herbergi',
+      description: 'Search result header for number of rooms',
+    },
 
     // Error messages
     searchResultsEmptyError: {
@@ -43,15 +68,15 @@ export const registerProperty = {
         'Eftirtaldar upplýsingar eru samantekt af skráningu frá fyrra skrefi. Farðu vel yfir skráninguna til að vera viss um að allar upplýsingar séu réttar. Þú getur farið til baka til að breyta upplýsingum.',
       description: 'Property info summary page description',
     },
-    tableHeaderPropertyId: {
-      id: 'ra.application:registerProperty.infoSummary.tableHeaderPropertyId',
-      defaultMessage: 'Fasteignanúmer',
-      description: 'Summary table header for property number',
+    propertyAddressAnswer: {
+      id: 'ra.application:registerProperty.infoSummary.propertyAddressAnswer',
+      defaultMessage: '{propertyAddress}',
+      description: 'Property address from search result',
     },
-    tableHeaderAddress: {
-      id: 'ra.application:registerProperty.infoSummary.tableHeaderAddress',
-      defaultMessage: 'Heimilisfang',
-      description: 'Summary table header for address',
+    tableHeaderUsablity: {
+      id: 'ra.application:registerProperty.infoSummary.tableHeaderUsablity',
+      defaultMessage: 'Notkun',
+      description: 'Summary table header for property number',
     },
     tableHeaderUnitId: {
       id: 'ra.application:registerProperty.infoSummary.tableHeaderUnitId',
@@ -60,7 +85,7 @@ export const registerProperty = {
     },
     tableHeaderSize: {
       id: 'ra.application:registerProperty.infoSummary.tableHeaderSize',
-      defaultMessage: 'Birt stærð',
+      defaultMessage: 'Stærð',
       description: 'Summary table header for size',
     },
     tableHeaderNumOfRooms: {
@@ -112,23 +137,23 @@ export const registerProperty = {
 
     classTitle: {
       id: 'ra.application:registerProperty.category.classTitle',
-      defaultMessage: 'Flokkun húsnæðis',
+      defaultMessage: 'Sérstakir hópar',
       description: 'Title for property class',
     },
     classDescription: {
       id: 'ra.application:registerProperty.category.classDescription',
       defaultMessage:
-        'Veldu hér hvort húsnæðið sé á almennum leigumarkaði eða fyrir sérstaka hópa, t.d. námsfólk, eldri borgara eða tekjulægri hópa.',
+        'Er húsnæðið ætlað fyrir sérstaka hópa, t.d. námsfólk, eldri borgara eða tekjulægri hópa.',
       description: 'Description for property class',
     },
-    classSelectLabelGeneralMarket: {
-      id: 'ra.application:registerProperty.category.classSelectLabelGeneralMarket',
-      defaultMessage: 'Almennur leigumarkaður',
+    classSelectLabelNotSpecialGroups: {
+      id: 'ra.application:registerProperty.category.classSelectLabelNotSpecialGroups',
+      defaultMessage: 'Nei',
       description: 'Label for general market select option',
     },
-    classSelectLabelSpecialGroups: {
-      id: 'ra.application:registerProperty.category.classSelectLabelSpecialGroups',
-      defaultMessage: 'Húsnæði fyrir sérstaka hópa',
+    classSelectLabelIsSpecialGroups: {
+      id: 'ra.application:registerProperty.category.classSelectLabelIsSpecialGroups',
+      defaultMessage: 'Já',
       description: 'Label for special groups select option',
     },
 
@@ -144,17 +169,17 @@ export const registerProperty = {
     },
     classGroupSelectLabelStudentHousing: {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelStudentHousing',
-      defaultMessage: 'Námsmannaíbúðir',
+      defaultMessage: 'Námsmenn',
       description: 'Label for student housing select option',
     },
     classGroupSelectLabelSeniorCitizenHousing: {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelSeniorCitizenHousing',
-      defaultMessage: 'Íbúðir fyrir eldri borgara',
+      defaultMessage: 'Eldri borgarar',
       description: 'Label for senior citizen housing select option',
     },
     classGroupSelectLabelCommune: {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelCommune',
-      defaultMessage: 'Sambýli',
+      defaultMessage: 'Sambýli og íbúðakjarnar',
       description: 'Label for commune select option',
     },
     classGroupSelectLabelHalfwayHouse: {
@@ -162,14 +187,9 @@ export const registerProperty = {
       defaultMessage: 'Áfangaheimili',
       description: 'Label for halfway house select option',
     },
-    classGroupSelectLabelSocialHousing: {
-      id: 'ra.application:registerProperty.category.classGroupSelectLabelSocialHousing',
-      defaultMessage: 'Félagslegt húsnæði',
-      description: 'Label for social housing select option',
-    },
     classGroupSelectLabelIncomeBasedHousing: {
       id: 'ra.application:registerProperty.category.classGroupSelectLabelIncomeBasedHousing',
-      defaultMessage: 'Tekjumarksíbúð',
+      defaultMessage: 'Tekjumark',
       description: 'Label for income based housing select option',
     },
     classGroupSelectLabelEmployeeHousing: {

@@ -42,77 +42,75 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         }),
       ],
     }),
-
-    buildMultiField({
-      id: 'registerProperty.summary',
-      title: '',
-      condition: (answers) => Boolean(answers.registerProperty),
-      children: [
-        buildStaticTableField({
-          title: messagesSummary.pageTitle,
-          description: messagesSummary.pageDescription,
-          header: [
-            messagesSummary.tableHeaderPropertyId,
-            messagesSummary.tableHeaderAddress,
-            messagesSummary.tableHeaderUnitId,
-            messagesSummary.tableHeaderSize,
-            messagesSummary.tableHeaderNumOfRooms,
-          ],
-          rows({ answers }) {
-            const propertyId = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.propertyId',
-            )
-            const address = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.streetAddress',
-            )
-            const postalCode = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.regionNumber',
-            )
-            const municipality = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.cityName',
-            )
-            const unitId = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.marking',
-            )
-            const size = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.size',
-            )
-            const numOfRooms = getValueViaPath(
-              answers,
-              'registerProperty.searchresults.numberOfRooms',
-            )
-            return [
-              [
-                propertyId ? `F${propertyId}` : '--',
-                address
-                  ? `${address}, ${postalCode && postalCode} ${
-                      municipality && municipality
-                    }`
-                  : '--',
-                unitId ? unitId : '--',
-                size ? `${size} m²` : '--',
-                numOfRooms ? numOfRooms : '--',
-              ],
-            ]
-          },
-        }),
-      ],
-    }),
     buildMultiField({
       id: Routes.PROPERTYCATEGORY,
       title: messagesCategory.pageTitle,
       description: messagesCategory.pageDescription,
       children: [
         buildDescriptionField({
+          id: 'registerProperty.propertyInfoAddress',
+          title: ({ answers }) => {
+            const value = getValueViaPath<string>(
+              answers,
+              'registerProperty.searchresults.label',
+            )
+            return {
+              ...messagesSummary.propertyAddressAnswer,
+              values: { propertyAddress: value },
+            }
+          },
+          titleVariant: 'h3',
+          condition: (answers) => Boolean(answers.registerProperty),
+        }),
+        buildStaticTableField({
+          title: '',
+          condition: (answers) => Boolean(answers.registerProperty),
+          marginBottom: 5,
+          header: [
+            messagesSummary.tableHeaderUsablity,
+            messagesSummary.tableHeaderUnitId,
+            messagesSummary.tableHeaderSize,
+            messagesSummary.tableHeaderNumOfRooms,
+          ],
+          rows({ answers }) {
+            console.log('searchresults: ', answers.registerProperty)
+
+            // const propertyUsageValue = getValueViaPath(
+            //   answers,
+            //   'answers.registerProperty.searchresults?.adalmatseiningByFasteignNr[2522506].notkun',
+            // )
+            // const unitIdValue = getValueViaPath(
+            //   answers,
+            //   'answers.registerProperty.searchresults?.propertiesByStadfangNr[0].merking',
+            // )
+            // const sizeValue = getValueViaPath(
+            //   answers,
+            //   'answers.registerProperty.searchresults?.propertiesByStadfangNr[0].flatarmal',
+            // )
+            // const roomsValue = getValueViaPath(
+            //   answers,
+            //   'answers.registerProperty.searchresults.numberOfRooms',
+            // )
+
+            return [
+              [
+                // propertyUsageValue ? propertyUsageValue : '--',
+                // unitIdValue ? unitIdValue : '--',
+                // sizeValue ? `${sizeValue} m²` : '--',
+                // roomsValue ? roomsValue : '--',
+                'Íbúð á hæð',
+                '010303',
+                '144 m²',
+                '3',
+              ],
+            ]
+          },
+        }),
+
+        buildDescriptionField({
           id: 'registerProperty.categoryTitle',
           title: messagesCategory.typeTitle,
-          titleVariant: 'h4',
+          titleVariant: 'h3',
         }),
         buildSelectField({
           id: 'registerProperty.categoryType',
@@ -121,16 +119,23 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           options: getPropertyTypeOptions(),
           defaultValue: RentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
+          marginBottom: 5,
+        }),
+        buildDescriptionField({
+          id: 'registerProperty.categoryClassTitle',
+          title: messagesCategory.classTitle,
+          titleVariant: 'h3',
         }),
         buildRadioField({
           id: 'registerProperty.categoryClass',
-          title: messagesCategory.classTitle,
+          title: '',
           description: messagesCategory.classDescription,
           options: getPropertyClassOptions(),
+          clearOnChange: ['registerProperty.categoryClassGroup'],
           defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           required: true,
           width: 'half',
-          space: 5,
+          space: 0,
         }),
         buildSelectField({
           id: 'registerProperty.categoryClassGroup',

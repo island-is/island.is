@@ -108,13 +108,14 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       {/* Property Address */}
       <SummaryCardRow hasChangeButton={false}>
         <GridColumn span={['12/12']}>
-          {answers.registerProperty.searchresults && (
+          {answers.registerProperty.searchresults?.propertiesByStadfangNr && (
+            // TODO: Add correct value
             <KeyValue
-              label={`${answers.registerProperty.searchresults.streetAddress}, ${answers.registerProperty.searchresults.regionNumber} ${answers.registerProperty.searchresults.cityName}`}
+              label={`${answers.registerProperty.searchresults.label}`}
               value={
                 `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                  answers.registerProperty.searchresults.propertyIds[0]
-                    .propertyId
+                  answers.registerProperty.searchresults
+                    .propertiesByStadfangNr[0]?.fasteign_nr
                 }` || '-'
               }
               labelVariant="h4"
@@ -247,7 +248,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
                 />
               )}
               {answers.securityDeposit.securityType ===
-                SecurityDepositTypeOptions.MUTUAL_FUND && (
+                SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND && (
                 <KeyValue
                   label={summary.securityTypeMutualFundLabel}
                   value={answers.securityDeposit.mutualFundInfo || '-'}
