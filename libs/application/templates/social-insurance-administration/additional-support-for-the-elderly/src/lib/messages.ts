@@ -81,4 +81,18 @@ export const statesMessages = defineMessages({
     description:
       'The application for additional support for the elderly has been approved',
   },
+  asfteDismissed: {
+    id: 'asfte.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um félagslegan viðbótarstuðning frá',
+    description:
+      'Tryggingastofnun has dismissed your additional support for the elderly application',
+  },
+  asfteDismissedDescription: {
+    id: 'asfte.application:application.dismissed.description',
+    defaultMessage:
+      'Umsókn þinni um félagslegan viðbótarstuðning hefur verið vísað frá',
+    description:
+      'Your additional support for the elderly application has been dimissed',
+  },
 })

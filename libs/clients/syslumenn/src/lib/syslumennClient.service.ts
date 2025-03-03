@@ -70,6 +70,7 @@ import {
   mapPropertyCertificate,
   mapRealEstateAgent,
   mapRealEstateResponse,
+  mapReligiousOrganization,
   mapShipResponse,
   mapSyslumennAuction,
   mapTemporaryEventLicence,
@@ -723,5 +724,14 @@ export class SyslumennService {
       audkenni: id,
     })
     return res.map(mapBurningPermits)
+  }
+
+  async getReligiousOrganizations() {
+    const { id, api } = await this.createApi()
+    const res = await api.trufelogOgLifsskodunarfelogGet({
+      audkenni: id,
+    })
+    const items = res.map(mapReligiousOrganization)
+    return items.filter((item) => Boolean(item?.name))
   }
 }

@@ -127,7 +127,32 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
-  startDate: z.string(),
+  startingSchool: z
+    .object({
+      expectedStartDate: z.string(),
+      temporaryStay: z.string().min(1).optional(),
+      expectedEndDate: z.string().optional(),
+    })
+    .refine(
+      ({ expectedStartDate, expectedEndDate, temporaryStay }) =>
+        !(
+          temporaryStay === YES &&
+          expectedEndDate &&
+          new Date(expectedStartDate) > new Date(expectedEndDate)
+        ),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateMessage,
+      },
+    )
+    .refine(
+      ({ expectedEndDate, temporaryStay }) =>
+        !(temporaryStay === YES && !expectedEndDate),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateRequired,
+      },
+    ),
   languages: z
     .object({
       languageEnvironment: z.string(),
@@ -233,7 +258,7 @@ export const dataSchema = z.object({
       otherAllergies: z.array(z.string()).optional().nullable(),
       usesEpiPen: z.string().optional(),
       hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
-      requestMedicationAssistance: z.enum([YES, NO]),
+      requestsMedicationAdministration: z.enum([YES, NO]),
     })
     .refine(
       ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
@@ -266,8 +291,8 @@ export const dataSchema = z.object({
     ),
   support: z
     .object({
-      developmentalAssessment: z.enum([YES, NO]),
-      specialSupport: z.enum([YES, NO]),
+      hasDiagnoses: z.enum([YES, NO]),
+      hasHadSupport: z.enum([YES, NO]),
       hasIntegratedServices: z.string().optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
@@ -276,23 +301,23 @@ export const dataSchema = z.object({
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
-      requestMeeting: z.array(z.enum([YES, NO])).optional(),
+      requestingMeeting: z.array(z.enum([YES, NO])).optional(),
     })
     .refine(
-      ({ developmentalAssessment, specialSupport, hasIntegratedServices }) =>
-        developmentalAssessment === YES || specialSupport === YES
+      ({ hasDiagnoses, hasHadSupport, hasIntegratedServices }) =>
+        hasDiagnoses === YES || hasHadSupport === YES
           ? !!hasIntegratedServices
           : true,
       { path: ['hasIntegratedServices'] },
     )
     .refine(
       ({
-        developmentalAssessment,
-        specialSupport,
+        hasDiagnoses,
+        hasHadSupport,
         hasIntegratedServices,
         hasCaseManager,
       }) =>
-        (developmentalAssessment === YES || specialSupport === YES) &&
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasIntegratedServices === YES
           ? !!hasCaseManager
           : true,
@@ -300,13 +325,13 @@ export const dataSchema = z.object({
     )
     .refine(
       ({
-        developmentalAssessment,
-        specialSupport,
+        hasDiagnoses,
+        hasHadSupport,
         hasIntegratedServices,
         hasCaseManager,
         caseManager,
       }) =>
-        (developmentalAssessment === YES || specialSupport === YES) &&
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasIntegratedServices === YES &&
         hasCaseManager === YES
           ? caseManager && caseManager.name.length > 0
@@ -315,13 +340,13 @@ export const dataSchema = z.object({
     )
     .refine(
       ({
-        developmentalAssessment,
-        specialSupport,
+        hasDiagnoses,
+        hasHadSupport,
         hasIntegratedServices,
         hasCaseManager,
         caseManager,
       }) =>
-        (developmentalAssessment === YES || specialSupport === YES) &&
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasIntegratedServices === YES &&
         hasCaseManager === YES
           ? caseManager && caseManager.email && caseManager.email.length > 0

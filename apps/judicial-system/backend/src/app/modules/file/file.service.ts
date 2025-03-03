@@ -168,23 +168,19 @@ export class FileService {
       (file.category !== CaseFileCategory.RULING &&
         file.category !== CaseFileCategory.COURT_RECORD)
     ) {
-      return undefined
+      return undefined // This should never happen
     }
 
-    const confirmationEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+    const completedEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
     )
-
-    if (!confirmationEvent || !confirmationEvent.nationalId) {
-      return undefined
-    }
 
     return createConfirmedPdf(
       {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: theCase.rulingDate,
+        date: completedEvent?.created || theCase.rulingDate,
       },
       pdf,
       file.category,

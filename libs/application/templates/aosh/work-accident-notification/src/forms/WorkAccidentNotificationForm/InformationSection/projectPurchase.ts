@@ -41,7 +41,10 @@ export const projectPurchaseSection = buildSubSection({
               label: shared.options.no,
             },
           ],
-          clearOnChange: ['projectPurchase.contractor.name', 'projectPurchase.contractor.nationalId'],
+          clearOnChange: [
+            'projectPurchase.contractor.name',
+            'projectPurchase.contractor.nationalId',
+          ],
         }),
         buildNationalIdWithNameField({
           id: 'projectPurchase.contractor',
@@ -49,7 +52,7 @@ export const projectPurchaseSection = buildSubSection({
           required: true,
           searchCompanies: true,
           searchPersons: false,
-            condition: (answer: FormValue) =>
+          condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),
       ],

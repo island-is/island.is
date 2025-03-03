@@ -309,6 +309,9 @@
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/training-license-on-a-work-machine": [
+        "libs/application/templates/aosh/training-license-on-a-work-machine/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
         "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],

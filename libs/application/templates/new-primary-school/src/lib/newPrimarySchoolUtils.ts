@@ -129,19 +129,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
   ) as YesOrNo
 
-  const requestMedicationAssistance = getValueViaPath(
+  const requestsMedicationAdministration = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.requestMedicationAssistance',
+    'allergiesAndIntolerances.requestsMedicationAdministration',
   ) as YesOrNo
 
-  const developmentalAssessment = getValueViaPath(
+  const hasDiagnoses = getValueViaPath(
     answers,
-    'support.developmentalAssessment',
+    'support.hasDiagnoses',
   ) as YesOrNo
 
-  const specialSupport = getValueViaPath(
+  const hasHadSupport = getValueViaPath(
     answers,
-    'support.specialSupport',
+    'support.hasHadSupport',
   ) as YesOrNo
 
   const hasIntegratedServices = getValueViaPath(
@@ -164,13 +164,32 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.caseManager.email',
   ) as string
 
-  const requestMeeting = getValueViaPath(
+  const requestingMeeting = getValueViaPath(
     answers,
-    'support.requestMeeting[0]',
+    'support.requestingMeeting[0]',
     NO,
   ) as YesOrNo
 
-  const startDate = getValueViaPath(answers, 'startDate') as string
+  const expectedStartDate = getValueViaPath(
+    answers,
+    'startingSchool.expectedStartDate',
+  ) as string
+
+  const expectedStartDateHiddenInput = getValueViaPath(
+    answers,
+    'startingSchool.expectedStartDateHiddenInput',
+  )
+
+  const temporaryStay = getValueViaPath(
+    answers,
+    'startingSchool.temporaryStay',
+    NO,
+  ) as YesOrNo
+
+  const expectedEndDate = getValueViaPath(
+    answers,
+    'startingSchool.expectedEndDate',
+  ) as string
 
   const schoolMunicipality = getValueViaPath(
     answers,
@@ -218,15 +237,18 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherAllergies,
     usesEpiPen,
     hasConfirmedMedicalDiagnoses,
-    requestMedicationAssistance,
-    developmentalAssessment,
-    specialSupport,
+    requestsMedicationAdministration,
+    hasDiagnoses,
+    hasHadSupport,
     hasIntegratedServices,
     hasCaseManager,
     caseManagerName,
     caseManagerEmail,
-    requestMeeting,
-    startDate,
+    requestingMeeting,
+    expectedStartDate,
+    expectedStartDateHiddenInput,
+    temporaryStay,
+    expectedEndDate,
     schoolMunicipality,
     selectedSchool,
     currentNurseryMunicipality,

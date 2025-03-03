@@ -1,6 +1,5 @@
 import React, { MouseEvent } from 'react'
 import { useWindowSize } from 'react-use'
-import cn from 'classnames'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,16 +11,20 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { webLoginButtonSelect } from '@island.is/plausible'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 const minarsidurLink = '/minarsidur/'
 const minarsidurDelegationsLink = '/bff/login?prompt=select_account'
 
-export function LoginButton(props: {
+interface Props {
   colorScheme: ButtonTypes['colorScheme']
   topItem?: LayoutProps['customTopLoginButtonItem']
-}) {
+  type?: 'dropdown' | 'link'
+}
+
+function LoginButtonDropdown(props: Props) {
   const { t } = useI18n()
   const router = useRouter()
   const { width } = useWindowSize()
@@ -130,4 +133,29 @@ export function LoginButton(props: {
       items={items}
     />
   )
+}
+
+const LoginButtonLink = (props: Props) => {
+  const { t } = useI18n()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+
+  return (
+    <a href={ProjectBasePath.ServicePortal} tabIndex={-1}>
+      <Button
+        colorScheme={props.colorScheme}
+        variant="utility"
+        icon="person"
+        title={isMobile ? t.login : undefined}
+        as="span"
+      >
+        {!isMobile && t.login}
+      </Button>
+    </a>
+  )
+}
+
+export const LoginButton = (props: Props) => {
+  if (props.type === 'link') return <LoginButtonLink {...props} />
+  return <LoginButtonDropdown {...props} />
 }

@@ -49,6 +49,7 @@ import {
   BankAccountField,
   TitleField,
   TitleVariants,
+  OverviewField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -77,6 +78,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   } = data
 
   return {
@@ -93,6 +95,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   }
 }
 
@@ -1093,5 +1096,24 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+  }
+}
+
+export const buildOverviewField = (
+  data: Omit<OverviewField, 'type' | 'component' | 'children'>,
+): OverviewField => {
+  const { id, title, description, backId, items, attachments, tableData } = data
+  return {
+    ...extractCommonFields(data),
+    id,
+    title,
+    description,
+    backId,
+    items,
+    attachments,
+    tableData,
+    type: FieldTypes.OVERVIEW,
+    component: FieldComponents.OVERVIEW,
+    children: undefined,
   }
 }
