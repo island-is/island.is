@@ -58,6 +58,8 @@ type AssetFrame = {
 type BankAccount = {
   accountNumber?: string
   balance?: string | number
+  exchangeRateOrInterest?: string | number
+  accountTotal?: string | number
 }
 
 type Stock = {
