@@ -58,7 +58,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
 
   const { format } = useDateUtils()
 
-  const [fetchVerdicts, { loading }] = useLazyQuery<
+  const [fetchVerdicts, { loading, error }] = useLazyQuery<
     GetVerdictsQuery,
     GetVerdictsQueryVariables
   >(GET_VERDICTS_QUERY)
@@ -195,6 +195,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
               display="flex"
               justifyContent="center"
             >
+              {error && (
+                <Box paddingBottom={2}>
+                  <Text variant="medium" color="red600">
+                    Villa kom upp við að sækja fleiri dóma. Vinsamlegast reynið
+                    aftur.
+                  </Text>
+                </Box>
+              )}
               <Button
                 loading={loading}
                 onClick={() => {
