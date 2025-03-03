@@ -441,6 +441,7 @@ export interface TextField extends InputField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  showMaxLength?: boolean
   max?: number
   min?: number
   step?: string
