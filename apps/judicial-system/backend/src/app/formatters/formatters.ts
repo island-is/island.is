@@ -163,14 +163,15 @@ export const formatDefenderResubmittedToCourtEmailNotification = (
   courtCaseNumber?: string,
 ): SubjectAndBody => {
   const cf = notifications.defenderResubmittedToCourt
+  const courtName = applyDativeCaseToCourtName(court || 'héraðsdómi')
   const subject = formatMessage(cf.subject, { courtCaseNumber })
   const body = formatMessage(cf.body, {
     courtCaseNumber,
-    courtName: court ? applyDativeCaseToCourtName(court) : 'héraðsdómi',
+    courtName,
   })
   const link = formatMessage(cf.link, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: court ? applyDativeCaseToCourtName(court) : 'héraðsdómi',
+    courtName,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
@@ -470,7 +471,7 @@ export const formatDefenderCourtDateLinkEmailNotification = (
 
   const info = {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: court ? applyDativeCaseToCourtName(court) : 'Héraðsdómur',
+    courtName: applyDativeCaseToCourtName(court || 'Héraðsdómur'),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   }
