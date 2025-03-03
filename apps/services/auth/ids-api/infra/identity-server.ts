@@ -31,9 +31,10 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       RedisSettings__Address: {
-        dev: 'redis.internal',
-        staging: 'redis.internal',
-        prod: 'redis.internal',
+        dev: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
+        prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
       },
       RedisSettings__Port: {
         dev: '6379',
@@ -56,9 +57,19 @@ export const serviceSetup = (services: {
         prod: 'true',
       },
       IdentityServer__ConsentsScope: '@island.is/auth/consents',
-      PersistenceSettings__BaseAddress: ref(
-        (h) => `http://${h.svc(services.authIdsApi)}`,
-      ),
+      PersistenceSettings__BaseAddress: {
+        local: ref(
+          (h) => `http://${h.svc(services.authIdsApi)}`,
+        ),
+        dev: 'http://services-auth-ids-api',
+        staging:
+        ref(
+          (h) => `http://${h.svc(services.authIdsApi)}`,
+        ),
+        prod: ref(
+          (h) => `http://${h.svc(services.authIdsApi)}`,
+        ),
+      },
       SessionsApiSettings__BaseAddress: {
         dev: 'https://sessions-api.internal.dev01.devland.is',
         staging:
@@ -113,7 +124,7 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'innskra',
+          dev: 'identity-server',
           staging: 'identity-server',
           prod: 'innskra.island.is',
         },
