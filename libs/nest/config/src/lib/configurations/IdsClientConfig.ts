@@ -5,7 +5,7 @@ export const IdsClientConfig = defineConfig({
   load: (env) => ({
     issuer: env.required(
       'IDENTITY_SERVER_ISSUER_URL',
-      'https://innskra.dev01.devland.is',
+      'https://identity-server.dev01.devland.is',
     ),
     clientId: env.required(
       'IDENTITY_SERVER_CLIENT_ID',

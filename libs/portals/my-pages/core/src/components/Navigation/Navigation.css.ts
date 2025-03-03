@@ -173,14 +173,14 @@ export const scrolledMenu = style({
   position: 'relative',
   marginLeft: 0,
   marginRight: 0,
-  transition: 'margin-left 300ms ease, margin-right 300ms ease',
+  transition: 'margin-left 200ms ease, margin-right 200ms ease',
 })
 
 export const scrolledMenuVisible = style({
   borderRadius: 'unset',
   marginLeft: -theme.spacing[2],
   marginRight: -theme.spacing[2],
-  transition: 'margin-left 300ms ease, margin-right 300ms ease',
+  transition: 'margin-left 200ms ease, margin-right 200ms ease',
 })
 
 export const mobileNav = style({

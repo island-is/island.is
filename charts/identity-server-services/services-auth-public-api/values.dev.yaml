@@ -27,7 +27,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'servicesauth'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
-  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1'
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -38,7 +38,7 @@ env:
   PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
   PASSKEY_CORE_RP_ID: 'island.is'
   PASSKEY_CORE_RP_NAME: 'Island.is'
-  PUBLIC_URL: 'https://innskra.dev01.devland.is/api'
+  PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
   REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
@@ -91,7 +91,7 @@ ingress:
       nginx.ingress.kubernetes.io/rewrite-target: '/$2'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'innskra.dev01.devland.is'
+      - host: 'identity-server.dev01.devland.is'
         paths:
           - '/api(/|$)(.*)'
 namespace: 'identity-server-admin'
