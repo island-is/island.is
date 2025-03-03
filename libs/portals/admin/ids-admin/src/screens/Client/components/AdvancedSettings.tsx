@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
   AuthAdminClientEnvironment,
   AuthAdminClientSso,
 } from '@island.is/api/schema'
-import { Checkbox, Input, Box, Stack, Text } from '@island.is/island-ui/core'
+import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import capitalize from 'lodash/capitalize'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
@@ -17,6 +16,8 @@ import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { ClientFormTypes } from '../EditClient.schema'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,
@@ -43,6 +44,20 @@ export const AdvancedSettings = ({
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
   const { client, actionData } = useClient()
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [isSsoSettingsEnabled, setSsoSettingsEnabled] = useState(false)
+
+  useEffect(() => {
+    const checkSsoSettingsEnabled = async () => {
+      const ssoSettingsEnabled = await featureFlagClient.getValue(
+        Features.isIDSAdminSsoSettingEnabled,
+        false,
+      )
+      setSsoSettingsEnabled(ssoSettingsEnabled)
+    }
+
+    checkSsoSettingsEnabled()
+  }, [featureFlagClient])
 
   const customClaimsString = (
     customClaims?.map((claim) => {
@@ -216,25 +231,27 @@ export const AdvancedSettings = ({
             {formatMessage(m.customClaimsDescription)}
           </Text>
         </Stack>
-        <Stack space={1}>
-          <Checkbox
-            label={formatMessage(m.allowSSO)}
-            backgroundColor="blue"
-            large
-            disabled={!isSuperAdmin}
-            defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
-            checked={inputValues.sso  === AuthAdminClientSso.enabled}
-            name="sso"
-            value="true"
-            onChange={(e) => {
-              setInputValues({
-                ...inputValues,
-                sso: e.target.checked ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
-              })
-            }}
-            subLabel={formatMessage(m.allowSSODescription)}
-          />
-        </Stack>
+        {isSsoSettingsEnabled && (
+          <Stack space={1}>
+            <Checkbox
+              label={formatMessage(m.allowSSO)}
+              backgroundColor="blue"
+              large
+              disabled={!isSuperAdmin}
+              defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
+              checked={inputValues.sso  === AuthAdminClientSso.enabled}
+              name="sso"
+              value="true"
+              onChange={(e) => {
+                setInputValues({
+                  ...inputValues,
+                  sso: e.target.checked ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
+                })
+              }}
+              subLabel={formatMessage(m.allowSSODescription)}
+            />
+          </Stack>
+        )}
       </Stack>
     </FormCard>
   )
