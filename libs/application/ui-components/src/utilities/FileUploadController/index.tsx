@@ -22,8 +22,8 @@ import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
 
-const MALWARE_FETCH_ATTEMPTS = 3
-const MALWARE_MS_BETWEEN_FETCHES = 750
+const MALWARE_FETCH_ATTEMPTS = 4
+const MALWARE_MS_BETWEEN_FETCHES = 1000
 
 type UploadFileAnswer = {
   name: string
@@ -299,8 +299,6 @@ export const FileUploadController = ({
     }
 
     onRemove?.(fileToRemove)
-
-    // I need onRemove and deleteAttachment to not throw an error if they are called for a file that has already been removed
 
     // There is a case for not removing the file card in the component if
     // it has malware and we want it there to show that those exact files have errors
