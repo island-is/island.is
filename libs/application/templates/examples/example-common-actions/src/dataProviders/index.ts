@@ -1,14 +1,13 @@
 import { defineTemplateApi } from '@island.is/application/types'
 import { MockProviderApi } from '@island.is/application/types'
 import { NationalRegistryUserApi } from '@island.is/application/types'
-import { ApiActions } from '../shared/constants'
 
 export interface MyParameterType {
   id: number
 }
 
 export const ReferenceDataApi = defineTemplateApi<MyParameterType>({
-  action: ApiActions.getReferenceData,
+  action: 'getReferenceData',
   order: 2,
   params: {
     id: 12,
@@ -21,7 +20,7 @@ export const runsFirst = defineTemplateApi({
 })
 
 export const EphemeralApi = defineTemplateApi({
-  action: ApiActions.getAnotherReferenceData,
+  action: 'getAnotherReferenceData',
   shouldPersistToExternalData: false,
 })
 

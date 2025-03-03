@@ -1,33 +1,43 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import {
-  generateApplicationApprovedEmail,
-  generateAssignApplicationEmail,
-} from './emailGenerators'
-import { ApplicationTypes } from '@island.is/application/types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
-import { TemplateApiError } from '@island.is/nest/problem'
-import { NotificationsService } from '../../../notification/notifications.service'
 
-const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
+import { SharedTemplateApiService } from '../../../shared'
+import { ApplicationTypes } from '@island.is/application/types'
+import { NotificationsService } from '../../../../notification/notifications.service'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { TemplateApiModuleActionProps } from '../../../../types'
+import { getValueViaPath } from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { NotificationType } from '../../../../notification/notificationsTemplates'
+
 @Injectable()
-export class ReferenceTemplateService extends BaseTemplateApiService {
+export class ExampleStateTransfersService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
   ) {
-    super(ApplicationTypes.EXAMPLE)
+    super(ApplicationTypes.EXAMPLE_STATE_TRANSFERS)
   }
 
-  async getReferenceData({ application }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const applicantName = getValueViaPath<string>(
+    const applicantName = getValueViaPath(
       application.externalData,
       'nationalRegistry.data.fullName',
-    )
+    ) as string
+
+    this.notificationsService.sendNotification({
+      type: NotificationType.ChildrenResidenceChange,
+      messageParties: {
+        recipient: auth.nationalId,
+        sender: auth.nationalId,
+      },
+      args: {
+        applicantName,
+        applicationId: application.id,
+      },
+    })
+
 
     return {
       referenceData: {
@@ -60,35 +70,20 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     )
   }
 
-  async createApplication({ application }: TemplateApiModuleActionProps) {
+  async createApplication() {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const token = await this.sharedTemplateAPIService.createAssignToken(
-      application,
-      TWO_HOURS_IN_SECONDS,
-    )
-
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignApplicationEmail,
-      application,
-      token,
-    )
 
     return {
       id: 1337,
     }
   }
 
-  async completeApplication({ application }: TemplateApiModuleActionProps) {
+  async completeApplication() {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Use the shared service to send an email using a custom email generator
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationApprovedEmail,
-      application,
-    )
 
     return {
       id: 1337,
