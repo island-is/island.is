@@ -21,7 +21,7 @@ export const GradeClientProvider: Provider<GradesApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-mms-grade',
-          organizationSlug: 'menntamalastofnun',
+          organizationSlug: 'midstod-menntunar-og-skolathjonustu',
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',
