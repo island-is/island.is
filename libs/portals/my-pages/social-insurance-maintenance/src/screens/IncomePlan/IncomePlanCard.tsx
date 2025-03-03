@@ -7,6 +7,7 @@ import {
 import { m } from '../../lib/messages'
 import { Status } from './types'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
+import { ActionCardProps } from 'libs/island-ui/core/src/lib/ActionCard/types'
 
 interface Props {
   status: Status
@@ -16,7 +17,7 @@ interface Props {
 export const IncomePlanCard = ({ status, registrationDate }: Props) => {
   const { formatMessage } = useLocale()
 
-  const baseActionCard = (text: string) => {
+  const baseActionCard = (text?: string, cta?: boolean) => {
     return (
       <ActionCard
         image={{
@@ -28,52 +29,29 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
         heading={formatMessage(coreMessages.incomePlan)}
         backgroundColor="blue"
         borderColor="blue200"
-        cta={{
-          label: '',
-        }}
+        cta={
+          cta
+            ? {
+                label: formatMessage(m.viewIncomePlan),
+                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                variant: 'text',
+              }
+            : { label: '' }
+        }
       />
     )
-  }
-  const parseSubtext = (
-    status: Status,
-    date: Date,
-    formatMessage: FormatMessage,
-  ) => {
-    switch (status) {
-      case 'modify_accepted':
-      case 'accepted':
-      case 'accepted_no_changes':
-        return `${formatMessage(coreMessages.approved)}: ${formatDate(date)}`
-      default:
-        return
-    }
   }
 
   switch (status) {
     case 'modify_accepted':
     case 'accepted_no_changes':
     case 'accepted': {
-      return (
-        <ActionCard
-          image={{
-            type: 'image',
-            url: './assets/images/tr.svg',
-          }}
-          text={
-            registrationDate
-              ? parseSubtext(status, new Date(registrationDate), formatMessage)
-              : undefined
-          }
-          headingColor="currentColor"
-          heading={formatMessage(coreMessages.incomePlan)}
-          backgroundColor="blue"
-          borderColor="blue200"
-          cta={{
-            label: formatMessage(m.viewIncomePlan),
-            url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
-            variant: 'text',
-          }}
-        />
+      return baseActionCard(
+        registrationDate
+          ? `${formatMessage(coreMessages.approved)}: ${formatDate(
+              registrationDate,
+            )}`
+          : '',
       )
     }
     case 'in_progress': {
