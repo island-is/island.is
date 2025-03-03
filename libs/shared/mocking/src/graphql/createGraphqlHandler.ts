@@ -17,7 +17,7 @@ export const createGraphqlHandler = <T>({
   rest.post(mask, async (req, res, ctx) => {
     const query = req.method === 'POST' ? req.body : req.params
     const isQueryIsh =
-      (typeof query === 'object' && query.query) ||
+      (typeof query === 'object' && query?.query) ||
       (Array.isArray(query) && query.every((query) => query.query))
     if (!isQueryIsh) {
       throw new Error('Expected one or more GraphQL queries.')
