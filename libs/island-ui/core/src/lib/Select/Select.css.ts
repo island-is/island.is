@@ -22,6 +22,13 @@ export const valueContainer = style(
   'valueContainer',
 )
 
+export const multiValueContainer = style(
+  {
+    maxWidth: '100%',
+  },
+  'multiValueContainer',
+)
+
 export const multiValue = style(
   {
     backgroundColor: theme.color.blue200,
@@ -71,6 +78,7 @@ globalStyle(`${wrapper} .island-select__multi-value__remove`, {
   transition: 'background .2s, color .2s',
   fontWeight: theme.typography.medium,
   cursor: 'pointer',
+  flexShrink: 0,
 })
 
 globalStyle(`${wrapper} .island-select__multi-value__remove:hover`, {
@@ -172,6 +180,7 @@ globalStyle(
 
 globalStyle(`${wrapper}  .island-select__menu-list`, {
   padding: 0,
+  maxHeight: '336px',
 })
 
 export const icon = style({

@@ -116,19 +116,13 @@ export interface LayoutProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
   megaMenuData
-  customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
   children?: React.ReactNode
 }
 
-if (
-  publicRuntimeConfig.ddRumApplicationId &&
-  publicRuntimeConfig.ddRumClientToken &&
-  typeof window !== 'undefined'
-) {
-  userMonitoring.initDdRum({
+if (publicRuntimeConfig.ddLogsClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdLogs({
     service: 'islandis',
-    applicationId: publicRuntimeConfig.ddRumApplicationId,
-    clientToken: publicRuntimeConfig.ddRumClientToken,
+    clientToken: publicRuntimeConfig.ddLogsClientToken,
     env: publicRuntimeConfig.environment || 'local',
     version: publicRuntimeConfig.appVersion || 'local',
   })
@@ -159,7 +153,6 @@ const Layout: Screen<LayoutProps> = ({
   respOrigin,
   children,
   megaMenuData,
-  customTopLoginButtonItem,
 }) => {
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -413,7 +406,6 @@ const Layout: Screen<LayoutProps> = ({
                       )
                     : undefined
                 }
-                customTopLoginButtonItem={customTopLoginButtonItem}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -696,13 +688,6 @@ interface LayoutComponentProps {
   article?: GetSingleArticleQuery['getSingleArticle']
   customAlertBanner?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
-  customTopLoginButtonItem?: {
-    href: string
-    imgSrc: string
-    label: string
-    buttonType: string
-    blacklistedPathnames?: string[]
-  }
 }
 
 export const withMainLayout = <T, C extends ScreenContext>(
@@ -748,9 +733,6 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const languageToggleQueryParams =
       layoutComponentProps?.languageToggleQueryParams
 
-    const customTopLoginButtonItem =
-      layoutComponentProps?.customTopLoginButtonItem
-
     return {
       layoutProps: {
         ...layoutProps,
@@ -760,7 +742,6 @@ export const withMainLayout = <T, C extends ScreenContext>(
         articleAlertBannerContent,
         customAlertBannerContent,
         languageToggleQueryParams,
-        customTopLoginButtonItem,
       },
       componentProps,
     }

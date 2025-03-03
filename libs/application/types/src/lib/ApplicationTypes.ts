@@ -77,6 +77,7 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
 }
 
@@ -396,6 +397,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
+  },
+  [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
+    slug: 'kennslurettindi-a-vinnuvel',
+    translation: ['aosh.tlwm.application'],
   },
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
