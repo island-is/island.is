@@ -133,6 +133,10 @@ export const m = defineMessages({
     id: 'api.license-service:type',
     defaultMessage: 'Tegund',
   },
+  licenseType: {
+    id: 'api.license-service:license-type',
+    defaultMessage: 'Tegund skírteinis',
+  },
   name: {
     id: 'api.license-service:name',
     defaultMessage: 'Heiti',
@@ -269,6 +273,10 @@ export const m = defineMessages({
   applyPassportUrl: {
     id: 'api.license-service:passport-apply-url',
     defaultMessage: 'https://island.is/vegabref',
+  },
+  identityDocumentDescription: {
+    id: 'api.license-service:identity-document-description',
+    defaultMessage: 'Hér birtast upplýsingar um nafnskírteini þitt.',
   },
   passportNumberDisplay: {
     id: 'api.license-service:passport-number-display',

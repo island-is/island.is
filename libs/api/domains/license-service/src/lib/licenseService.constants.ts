@@ -100,4 +100,14 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpassVerify: false,
     timeout: 100,
   },
+  {
+    type: GenericLicenseType.IdentityDocument,
+    provider: {
+      id: GenericLicenseProviderId.RegistersIceland,
+      referenceId: '10601',
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+  },
 ]

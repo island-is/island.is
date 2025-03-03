@@ -30,6 +30,7 @@ export enum GenericLicenseType {
   PCard = 'PCard',
   Ehic = 'Ehic',
   Passport = 'Passport',
+  IdentityDocument = 'IdentityDocument',
 }
 
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
