@@ -18,15 +18,15 @@ import { Case } from '../models/case.model'
 const hasValidOpenByPrisonAdminEvent = (
   defendantEventLogs: DefendantEventLog[],
 ) => {
-  const sentToPrisonAdminDate = DefendantEventLog.getDefendantEventLogTypeDate({
+  const sentToPrisonAdminDate = DefendantEventLog.getDefendantEventLogTypeDate(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
     defendantEventLogs,
-    eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-  })
+  )
   const openedByPrisonAdminDate =
-    DefendantEventLog.getDefendantEventLogTypeDate({
+    DefendantEventLog.getDefendantEventLogTypeDate(
+      DefendantEventType.OPENED_BY_PRISON_ADMIN,
       defendantEventLogs,
-      eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-    })
+    )
   return (
     sentToPrisonAdminDate &&
     openedByPrisonAdminDate &&
@@ -40,7 +40,7 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: User = request.user
+    const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     if (isIndictmentCase(theCase.type) && isPrisonAdminUser(user)) {

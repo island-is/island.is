@@ -1,6 +1,6 @@
 {
   "name": "island.is",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
@@ -66,6 +66,8 @@
     "mock": "nx mock"
   },
   "dependencies": {
+    "@actions/core": "1.11.1",
+    "@actions/github": "6.0.0",
     "@apollo/client": "3.7.15",
     "@apollo/gateway": "2.1.1",
     "@apollo/subgraph": "2.1.1",
@@ -90,7 +92,7 @@
     "@contentful/rich-text-plain-text-renderer": "16.0.5",
     "@contentful/rich-text-react-renderer": "15.16.5",
     "@contentful/rich-text-types": "16.2.0",
-    "@datadog/browser-rum": "5.35.0",
+    "@datadog/browser-logs": "6.3.0",
     "@dnd-kit/core": "6.1.0",
     "@dnd-kit/sortable": "8.0.0",
     "@elastic/elasticsearch": "7.7.1",
@@ -213,7 +215,7 @@
     "juice": "8.0.0",
     "jwks-rsa": "3.0.1",
     "jwt-decode": "4.0.0",
-    "kennitala": "2.0.0-beta.2",
+    "kennitala": "npm:@island.is/kennitala@3.1.0",
     "keyv": "4.5.2",
     "libphonenumber-js": "1.7.53",
     "lodash": "4.17.21",
@@ -302,6 +304,7 @@
     "tslib": "2.6.2",
     "ua-parser-js": "1.0.33",
     "unified": "9.2.0",
+    "universal-github-app-jwt": "2.2.0",
     "uuidv4": "6.0.8",
     "vm-browserify": "1.1.2",
     "winston": "3.7.2",

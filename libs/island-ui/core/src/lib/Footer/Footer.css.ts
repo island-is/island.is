@@ -8,3 +8,7 @@ export const withDecorator = style({
     },
   },
 })
+
+export const iconPaddingTop = style({
+  paddingTop: '3px',
+})
