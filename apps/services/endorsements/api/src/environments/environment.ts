@@ -9,7 +9,7 @@ const isProductionEnvironment = process.env.NODE_ENV === 'production'
 const devConfig = {
   production: isProductionEnvironment,
   auth: {
-    issuer: 'https://innskra.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: ['@island.is', '@admin.island.is'],
   },
   apiMock: process.env.API_MOCKS === 'true',
