@@ -1,5 +1,5 @@
 import { ApiScope } from '@island.is/auth/scopes'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -11,6 +11,7 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { EducationServiceV3 } from './educationV3.service'
 import { StudentCareer } from './models/studentCareer.model'
+import { PrimarySchoolCareerInput } from './dtos/studentCareer.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/education-v3' })
@@ -18,10 +19,17 @@ import { StudentCareer } from './models/studentCareer.model'
 export class EducationV3Resolver {
   constructor(private readonly educationService: EducationServiceV3) {}
 
-  @Query(() => StudentCareer, { name: 'educationV3StudentCareer' })
+  @Query(() => StudentCareer, {
+    name: 'educationV3StudentCareer',
+    nullable: true,
+  })
   @Scopes(ApiScope.education)
   @Audit()
-  studentCareer(@CurrentUser() user: User): Promise<StudentCareer | null> {
-    return this.educationService.getStudentCareer(user)
+  studentCareer(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PrimarySchoolCareerInput, nullable: true })
+    input?: PrimarySchoolCareerInput,
+  ): Promise<StudentCareer | null> {
+    return this.educationService.getStudentCareer(user, input?.studentId)
   }
 }

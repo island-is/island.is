@@ -14,26 +14,32 @@ export class EducationServiceV3 {
 
   async getStudentCareer(
     user: User,
-    childId?: string,
+    studentId?: string,
   ): Promise<StudentCareer | null> {
-    if (!childId) {
-      this.logger.info('Missing child id in request')
-      return null
-    }
+    const studentNationalId = studentId
+      ? await unmaskString(studentId, user.nationalId)
+      : user.nationalId
 
-    const childNationalId = await unmaskString(childId, user.nationalId)
-
-    if (!childNationalId) {
-      this.logger.warn('Child id unmasking failed')
+    if (!studentNationalId) {
+      this.logger.warn(
+        studentId
+          ? 'Child id unmasking failed'
+          : 'no national id in user profile',
+      )
       return null
     }
 
     const data = await this.friggClientService.getUserById(
       user,
-      childNationalId,
+      studentNationalId,
     )
+
+    if (!data) {
+      return null
+    }
+
     return {
-      id: childNationalId,
+      id: studentNationalId,
       name: data.preferredName
         ? 'wrong object type for preferreedName'
         : data.name,

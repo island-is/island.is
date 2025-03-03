@@ -1,0 +1,17 @@
+query PrimarySchoolCareer($input: EducationV3PrimarySchoolCareerInput) {
+  educationV3StudentCareer(input: $input) {
+    id
+    name
+    primarySchoolCareer {
+      primarySchool {
+        id
+        name
+      }
+      teacher {
+        id
+        name
+        gradeLevel
+      }
+    }
+  }
+}

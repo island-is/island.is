@@ -32,8 +32,6 @@ export const InstitutionPanel = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
-  console.log(img)
-
   const elements = (
     <Box
       background={backgroundColor}

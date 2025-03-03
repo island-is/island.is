@@ -8,6 +8,7 @@ import {
   FormSubmitSuccessModel,
   UserModel,
 } from '../../gen/fetch'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class FriggClientService {
@@ -29,10 +30,15 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
   }
 
-  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
-    return await this.friggApiWithAuth(user).getUserBySourcedId({
-      nationalId: childNationalId,
-    })
+  async getUserById(
+    user: User,
+    childNationalId: string,
+  ): Promise<UserModel | null> {
+    return await this.friggApiWithAuth(user)
+      .getUserBySourcedId({
+        nationalId: childNationalId,
+      })
+      .catch(handle404)
   }
 
   sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
