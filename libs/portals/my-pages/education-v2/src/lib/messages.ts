@@ -1,14 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const generalEducationMessages = defineMessages({
-  myEducation: {
-    id: 'sp.education-general:my-education',
-    defaultMessage: 'Mín menntun',
-  },
-  myEducationIntro: {
-    id: 'sp.education-general:my-education-intro',
-    defaultMessage: 'Hér koma grunnupplýsingar um mína menntun',
-  },
   primarySchool: {
     id: 'sp.education-general:primary-school',
     defaultMessage: 'Grunnskóli',
@@ -29,6 +21,10 @@ export const generalEducationMessages = defineMessages({
     id: 'sp.education-general:student',
     defaultMessage: 'Nemandi',
   },
+  changeSchools: {
+    id: 'sp.education-general:change-schools',
+    defaultMessage: 'Breyta skólavist',
+  },
 })
 
 export const primarySchoolMessages = defineMessages({
@@ -38,11 +34,7 @@ export const primarySchoolMessages = defineMessages({
   },
   intro: {
     id: 'sp.education-primary-school:intro',
-    defaultMessage: 'Grunnskóli',
-  },
-  email: {
-    id: 'sp.education-primary-school:email',
-    defaultMessage: 'Netfang',
+    defaultMessage: 'Hér koma grunnupplýsingar um grunnskólagöngu barns.',
   },
   primarySchool: {
     id: 'sp.education-primary-school:primary-school',
@@ -55,9 +47,5 @@ export const primarySchoolMessages = defineMessages({
   grade: {
     id: 'sp.education-primary-school:grade',
     defaultMessage: 'Umsjónarbekkur',
-  },
-  meal: {
-    id: 'sp.education-primary-school:meal',
-    defaultMessage: 'Skólamáltíð',
   },
 })

@@ -12,8 +12,8 @@ export const educationNavigationV2: PortalNavigationItem = {
   description: cm.educationDescription,
   children: [
     {
-      name: gm.myEducation,
-      path: EducationPathsV2.MyEducation,
+      name: gm.primarySchool,
+      path: EducationPathsV2.PrimarySchool,
     },
   ],
 }
