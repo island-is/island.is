@@ -20,7 +20,6 @@ export class FileUploadResolver {
   createUploadUrl(
     @Args('filename') filename: string,
   ): Promise<S3PresignedPost> {
-    console.log("Presigned post")
     return this.fileStorageService.generatePresignedPost(filename)
   }
 }

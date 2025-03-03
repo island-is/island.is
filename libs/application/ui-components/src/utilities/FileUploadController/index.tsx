@@ -23,7 +23,7 @@ import { InputImageUpload } from '../../components/InputImageUpload/InputImageUp
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
 
 const MALWARE_FETCH_ATTEMPTS = 4
-const MALWARE_MS_BETWEEN_FETCHES = 1000
+const MALWARE_MIN_MS_BETWEEN_FETCHES = 1000
 
 type UploadFileAnswer = {
   name: string
@@ -125,14 +125,13 @@ export const FileUploadController = ({
     let totalWaitTime = 0
     for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
       // Wait before doing malware tag check
-      const waitTimeThisLoop = MALWARE_MS_BETWEEN_FETCHES * (Math.pow(2, i))
+      const waitTimeThisLoop = MALWARE_MIN_MS_BETWEEN_FETCHES * (Math.pow(2, i))
       totalWaitTime += waitTimeThisLoop
       await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
 
       const { data } = await getAttachmentTags({ url })
       
       const formattedTags = data.getAttachmentTags as Array<{Key: string, Value: string}>
-      console.log('results', data)
 
       guardDutyStatus = formattedTags?.find(tag => tag.Key === 'GuardDutyMalwareScanStatus')?.Value
       if(guardDutyStatus !== undefined) {
@@ -140,7 +139,10 @@ export const FileUploadController = ({
       }
     }
     if(guardDutyStatus === undefined) {
-      console.log(`No guard duty tag on attachment after ${totalWaitTime/1000} seconds`)
+      console.error(`No guard duty tag on attachment after ${totalWaitTime/1000} seconds`)
+      // If guardDuty could not finish scanning the file after many tag fetch attempts
+      // then there might be an issue. For files around 100mb, it should not take more than
+      // 5 seconds to scan and tag the files, and currently we try for 15 seconds total
       return false
     } else {
       if(guardDutyStatus !== 'NO_THREATS_FOUND') {
@@ -252,7 +254,6 @@ export const FileUploadController = ({
         if(!res.isClean) {
           malwareFiles.push(f)
         }
-        console.log('isClean', res.isClean)
         dispatch({
           type: ActionTypes.UPDATE,
           payload: {
