@@ -98,7 +98,7 @@ const mapVacanciesField = (
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
-  fetchErrorOccurred?: boolean
+  fetchErrorOccurred?: boolean | null
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<
