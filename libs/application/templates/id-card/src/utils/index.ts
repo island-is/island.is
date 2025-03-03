@@ -29,7 +29,7 @@ export const getCombinedApplicantInformation = (externalData: any) => {
     '',
   ) as string
 
-  const c = getValueViaPath(
+  const applicantNationalRegistry = getValueViaPath(
     externalData,
     'nationalRegistry.data',
     {},
