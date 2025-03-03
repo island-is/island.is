@@ -1,4 +1,4 @@
-import { FormatMessage, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
   formatDate,
@@ -7,7 +7,6 @@ import {
 import { m } from '../../lib/messages'
 import { Status } from './types'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
-import { ActionCardProps } from 'libs/island-ui/core/src/lib/ActionCard/types'
 
 interface Props {
   status: Status
@@ -63,5 +62,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
     case 'no_data': {
       return baseActionCard(formatMessage(m.noActiveIncomePlan))
     }
+    default:
+      return
   }
 }
