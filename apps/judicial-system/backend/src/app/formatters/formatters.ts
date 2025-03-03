@@ -471,14 +471,17 @@ export const formatDefenderCourtDateLinkEmailNotification = (
 
   const info = {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: applyDativeCaseToCourtName(court || 'Héraðsdómur'),
+    courtName: applyDativeCaseToCourtName(court || 'héraðsdómi'),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   }
 
   const body = requestSharedWithDefender
     ? formatMessage(cf.linkBody, { courtCaseNumber })
-    : formatMessage(cf.linkNoRequestBody, { courtName: court, courtCaseNumber })
+    : formatMessage(cf.linkNoRequestBody, {
+        courtName: applyDativeCaseToCourtName(court || 'Héraðsdómur'),
+        courtCaseNumber,
+      })
 
   const link = requestSharedWithDefender
     ? formatMessage(cf.link, info)
