@@ -439,7 +439,7 @@ export class CmsResolver {
   getSingleNews(
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
-    return this.cmsContentfulService.getNews(lang, slug)
+    return this.cmsContentfulService.getSingleNewsItem(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -473,6 +473,9 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => NewsList)
   async getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
+    if (!input.year && !input.month && !input.tags?.length) {
+      return this.cmsContentfulService.getNews(input)
+    }
     return this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
