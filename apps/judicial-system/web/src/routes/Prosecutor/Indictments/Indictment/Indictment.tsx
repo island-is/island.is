@@ -63,10 +63,7 @@ export const getIndictmentIntroductionAutofill = (
         prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court:
-            court && court.name
-              ? applyDativeCaseToCourtName(court.name)
-              : 'héraðsdómi',
+          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(

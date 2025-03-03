@@ -146,9 +146,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       strings.criminalRecordFilesUploadedEmail.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: courtName
-          ? applyDativeCaseToCourtName(courtName)
-          : 'héraðsdómi',
+        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
