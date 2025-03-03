@@ -20,7 +20,7 @@ export const header = style({
   opacity: 1,
   transform: 'translateY(0%)',
   transition:
-    'opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
+    'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       height: SERVICE_PORTAL_HEADER_HEIGHT_SM,
@@ -31,9 +31,9 @@ export const header = style({
 export const hideHeader = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-      transform: `translateY(-100%)`,
+      transform: `translateY(-280%)`,
       transition:
-        'opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
+        'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
       transitionDelay: '100ms',
     },
   },
@@ -44,7 +44,8 @@ export const showHeader = style({
     [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
       transform: `translateY(0%)`,
       transition:
-        'opacity 350ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 350ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
+        'opacity 250ms cubic-bezier(0.4, 0.0, 0.2, 1), transform 250ms cubic-bezier(0.4, 0.0, 0.2, 1), visibility 0ms',
+      transitionDelay: '100ms',
     },
   },
 })

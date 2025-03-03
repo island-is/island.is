@@ -46,6 +46,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { formatEventLocation } from '@island.is/web/utils/event'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -400,12 +401,17 @@ OrganizationEventArticle.getProps = async ({
     hasEventOccurred = addDays(new Date(dateString), 1) < new Date()
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage?.organization,
+  )
+
   return {
     organizationPage,
     event,
     namespace,
     locale: locale as Locale,
     hasEventOccurred,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
