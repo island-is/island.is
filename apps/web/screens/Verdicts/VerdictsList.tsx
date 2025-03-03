@@ -28,9 +28,12 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import type { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
-import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
+import {
+  type CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
 import {
   GET_VERDICT_CASE_CATEGORIES_QUERY,
   GET_VERDICT_CASE_TYPES_QUERY,
@@ -49,7 +52,7 @@ interface VerdictsListProps {
   }
 }
 
-const VerdictsList: Screen<VerdictsListProps> = ({ initialData }) => {
+const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
 
@@ -209,7 +212,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({ initialData }) => {
   )
 }
 
-VerdictsList.getProps = async ({ apolloClient, query }) => {
+VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   const searchTerm = parseAsString.withDefault('').parseServerSide(query.q)
   const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseCategories,
@@ -257,6 +260,13 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
   ])
 
   const items = verdictListResponse.data.webVerdicts.items
+
+  if (!customPageData?.configJson?.showVerdictListPage) {
+    throw new CustomNextError(
+      404,
+      'Verdict list page has been turned off in the CMS',
+    )
+  }
 
   return {
     initialData: {

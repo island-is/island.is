@@ -14,11 +14,13 @@ import {
   type GetVerdictByIdQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
-import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
+import {
+  type CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
 import * as styles from './VerdictDetails.css'
 
@@ -32,7 +34,7 @@ interface VerdictDetailsProps {
   item: NonNullable<GetVerdictByIdQuery['webVerdictById']>['item']
 }
 
-const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
+const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
   const { width } = useWindowSize()
 
   return (
@@ -76,7 +78,7 @@ const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
   )
 }
 
-VerdictDetails.getProps = async ({ apolloClient, query }) => {
+VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
   const verdictResponse = await apolloClient.query<
     GetVerdictByIdQuery,
     GetVerdictByIdQueryVariables
@@ -95,6 +97,13 @@ VerdictDetails.getProps = async ({ apolloClient, query }) => {
     throw new CustomNextError(
       404,
       `Verdict with id: ${query.id} could not be found`,
+    )
+  }
+
+  if (!customPageData?.configJson?.showVerdictDetailPages) {
+    throw new CustomNextError(
+      404,
+      'Verdict detail pages have been turned off in the CMS',
     )
   }
 
