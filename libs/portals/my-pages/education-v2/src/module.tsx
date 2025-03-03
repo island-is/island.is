@@ -4,14 +4,14 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPathsV2 } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const Overview = lazy(() => import('../src/screens/Overview/Overview'))
+const MyEducation = lazy(() => import('../src/screens/MyEducation/MyEducation'))
 
 export const educationModuleV2: PortalModule = {
-  name: 'Menntun',
+  name: 'V2Menntun',
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
-      name: 'Menntun',
+      name: 'V2Menntun',
       path: EducationPathsV2.Root,
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <Navigate to={EducationPathsV2.MyEducation} replace />,
@@ -20,7 +20,7 @@ export const educationModuleV2: PortalModule = {
       name: 'Mín Menntun',
       path: EducationPathsV2.MyEducation,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Overview />,
+      element: <MyEducation />,
     },
   ],
 }

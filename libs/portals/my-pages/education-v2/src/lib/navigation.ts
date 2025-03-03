@@ -1,18 +1,18 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m as coreMessages } from '@island.is/portals/my-pages/core'
-import { m } from './messages'
+import { m as cm } from '@island.is/portals/my-pages/core'
+import { generalEducationMessages as gm } from './messages'
 import { EducationPathsV2 } from './paths'
 
 export const educationNavigationV2: PortalNavigationItem = {
-  name: coreMessages.education,
+  name: cm.education,
   path: EducationPathsV2.Root,
   icon: {
-    icon: 'school',
+    icon: 'airplane',
   },
-  description: coreMessages.educationDescription,
+  description: cm.educationDescription,
   children: [
     {
-      name: m.myEducation,
+      name: gm.myEducation,
       path: EducationPathsV2.MyEducation,
     },
   ],

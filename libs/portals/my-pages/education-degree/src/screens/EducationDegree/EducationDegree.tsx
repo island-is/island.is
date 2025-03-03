@@ -5,7 +5,7 @@ import { useNamespaces } from '@island.is/localization'
 import {
   FootNote,
   IntroHeader,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { DegreeCards } from './components/DegreeCards'
 
@@ -25,10 +25,10 @@ function EducationDegree() {
             'Hér getur þú fundið yfirlit yfir prófskírteini og lokapróf á öllum námsstigum.',
         })}
         img="./assets/images/educationGrades.svg"
-        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderSlug={MMS_SLUG}
       />
       <DegreeCards />
-      <FootNote serviceProviderSlug={MENNTAMALASTOFNUN_SLUG} />
+      <FootNote serviceProviderSlug={MMS_SLUG} />
     </Box>
   )
 }

@@ -1,6 +1,6 @@
 export const SYSLUMENN_SLUG = 'syslumenn'
 export const ISLANDIS_SLUG = 'stafraent-island'
-export const MENNTAMALASTOFNUN_SLUG = 'menntamalastofnun'
+export const MMS_SLUG = 'midstod-menntunar-og-skolathjonustu'
 export const FJARSYSLAN_SLUG = 'fjarsysla-rikisins'
 export const THJODSKRA_SLUG = 'thjodskra-islands'
 export const SAMGONGUSTOFA_SLUG = 'samgongustofa'

@@ -2,13 +2,13 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../lib/messages'
+import { generalEducationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { useStudentInfoQuery } from './Overview.generated'
+import { useStudentInfoQuery } from './MyEducation.generated'
 
 export const Overview = () => {
   const { formatMessage } = useLocale()
@@ -19,11 +19,15 @@ export const Overview = () => {
     <IntroWrapper
       title={formatMessage(m.myEducation)}
       intro={formatMessage(m.myEducationIntro)}
-      serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+      serviceProviderSlug={MMS_SLUG}
       serviceProviderTooltip={formatMessage(coreMessages.mmsTooltipSecondary)}
     >
       <Box>
-        <InfoLineStack label={formatMessage(coreMessages.baseInfo)}>
+        <InfoLineStack
+          space={1}
+          label={formatMessage(coreMessages.baseInfo)}
+          dividerOnBottom={false}
+        >
           <InfoLine
             label={formatMessage(m.primarySchool)}
             content={

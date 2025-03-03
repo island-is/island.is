@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const m = defineMessages({
+export const generalEducationMessages = defineMessages({
   myEducation: {
     id: 'sp.education-general:my-education',
     defaultMessage: 'Mín menntun',
@@ -24,5 +24,40 @@ export const m = defineMessages({
   drivingEducation: {
     id: 'sp.education-general:driving-education',
     defaultMessage: 'Ökunám',
+  },
+  student: {
+    id: 'sp.education-general:student',
+    defaultMessage: 'Nemandi',
+  },
+})
+
+export const primarySchoolMessages = defineMessages({
+  title: {
+    id: 'sp.education-primary-school:title',
+    defaultMessage: 'Yfirlit grunnskóla',
+  },
+  intro: {
+    id: 'sp.education-primary-school:intro',
+    defaultMessage: 'Grunnskóli',
+  },
+  email: {
+    id: 'sp.education-primary-school:email',
+    defaultMessage: 'Netfang',
+  },
+  primarySchool: {
+    id: 'sp.education-primary-school:primary-school',
+    defaultMessage: 'Grunnskóli',
+  },
+  teacher: {
+    id: 'sp.education-primary-school:teacher',
+    defaultMessage: 'Umsjónarkennari',
+  },
+  grade: {
+    id: 'sp.education-primary-school:grade',
+    defaultMessage: 'Umsjónarbekkur',
+  },
+  meal: {
+    id: 'sp.education-primary-school:meal',
+    defaultMessage: 'Skólamáltíð',
   },
 })

@@ -1,4 +1,4 @@
 export enum EducationPathsV2 {
-  Root = '/menntun-v2',
-  MyEducation = '/menntun-v2/min-menntun',
+  Root = '/v2-menntun',
+  MyEducation = '/v2-menntun/min-menntun',
 }
