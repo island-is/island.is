@@ -9,6 +9,15 @@ export const NEI = 'Nei'
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
+export enum ApiActions {
+  completeApplication = 'completeApplication',
+  syslumennOnEntry = 'syslumennOnEntry',
+}
+
+export enum DataProviderTypes {
+  NationalRegistry = 'NationalRegistryProvider',
+}
+
 export enum States {
   prerequisites = 'prerequisites',
   draft = 'draft',

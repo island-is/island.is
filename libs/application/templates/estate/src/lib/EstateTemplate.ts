@@ -19,9 +19,8 @@ import {
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
-import { EstateEvent, EstateTypes, Roles, States } from './constants'
+import { ApiActions, EstateEvent, EstateTypes, Roles, States } from './constants'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
 import { EstateApi, EstateOnEntryApi } from '../dataProviders'
 import {
   getApplicationFeatureFlags,

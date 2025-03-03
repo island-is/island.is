@@ -1,6 +1,5 @@
 import { UserProfile, Application } from '@island.is/api/schema'
 import {
-  buildDescriptionField,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
