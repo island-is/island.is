@@ -24,10 +24,6 @@ import { XRoadConfig } from '@island.is/nest/config'
         },
       },
     }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [XRoadConfig, NationalRegistryV3ApplicationsClientConfig],
-    }),
     NationalRegistryV3ApplicationsClientModule,
   ],
   providers: [UserNotificationBirthday18WorkerService],
