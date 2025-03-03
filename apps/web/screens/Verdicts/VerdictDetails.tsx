@@ -43,8 +43,8 @@ const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
           ]}
         />
       </GridContainer>
-      <Box paddingY={5} background="overlayDefault">
-        {Boolean(item.pdfString) && (
+      {Boolean(item.pdfString) && (
+        <Box paddingY={5} background="overlayDefault">
           <GridContainer>
             <Box
               display="flex"
@@ -61,13 +61,15 @@ const VerdictDetails: Screen<VerdictDetailsProps> = ({ item }) => {
               />
             </Box>
           </GridContainer>
-        )}
-        {Boolean(item.richText) && (
+        </Box>
+      )}
+      {Boolean(item.richText) && (
+        <Box paddingBottom={5}>
           <GridContainer>
             <Box>{webRichText([item.richText] as SliceType[])}</Box>
           </GridContainer>
-        )}
-      </Box>
+        </Box>
+      )}
     </>
   )
 }
