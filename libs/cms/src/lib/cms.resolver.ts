@@ -473,6 +473,7 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => NewsList)
   async getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
+    // When not filtering, fetch directly from CMS to avoid Elasticsearch's maximum result window size limit (10,000 items)
     if (!input.year && !input.month && !input.tags?.length) {
       return this.cmsContentfulService.getNews(input)
     }
