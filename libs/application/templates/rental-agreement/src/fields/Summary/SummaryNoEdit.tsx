@@ -1,30 +1,24 @@
 import { FC } from 'react'
-import { useLocale } from '@island.is/localization'
-import {
-  ApplicationConfigurations,
-  FieldBaseProps,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { CopyLink } from '@island.is/application/ui-components'
 import { Routes } from '../../lib/constants'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'
 import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
-import { SummaryCard } from './components/SummaryCard'
 
-import { summaryWrap } from './summaryStyles.css'
-import { summary } from '../../lib/messages'
+import { summaryWrap, summaryWrapNoEdit } from './summaryStyles.css'
 
-export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+export const SummaryNoEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
 }) => {
   const { application, field, goToScreen } = props
-  const { formatMessage } = useLocale()
+
+  console.log('applicationAnswers', application.answers)
 
   return (
-    <Box className={summaryWrap}>
+    <Box className={`${summaryWrap} ${summaryWrapNoEdit}`}>
       <ApplicantsSummary
         application={application}
         field={field}
@@ -70,15 +64,6 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         route={Routes.OTHERFEES}
         hasChangeButton={false}
       />
-      <SummaryCard
-        cardLabel={formatMessage(summary.shareLinkLabel)}
-        tooltipText={formatMessage(summary.shareLinkTooltip)}
-      >
-        <CopyLink
-          linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
-          buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
-        />
-      </SummaryCard>
     </Box>
   )
 }

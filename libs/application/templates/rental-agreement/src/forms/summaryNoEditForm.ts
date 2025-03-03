@@ -4,21 +4,18 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-
+import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-
 import { application, summary } from '../lib/messages'
 
-export const summaryApplicantForm: Form = buildForm({
-  id: 'summaryApplicantForm',
+export const SummaryNoEditForm: Form = buildForm({
+  id: 'SummaryNoEditForm',
   title: application.name,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'summary',
@@ -44,32 +41,9 @@ export const summaryApplicantForm: Form = buildForm({
               description: summary.pageDescriptionSecondparagraph,
             }),
             buildCustomField({
-              id: 'summaryComponent',
-              title: 'Samantekt',
-              component: 'Summary',
-            }),
-            buildSubmitField({
-              id: 'toDraft',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.EDIT,
-                  name: 'Uppfæra umsókn',
-                  type: 'signGhost',
-                },
-              ],
-            }),
-            buildSubmitField({
-              id: 'toSigning',
-              title: '',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Áfram í undirritun',
-                  type: 'primary',
-                },
-              ],
+              id: 'SummaryNoEdit',
+              title: 'Samantektblaalædsk',
+              component: 'SummaryNoEdit',
             }),
           ],
         }),
