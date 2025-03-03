@@ -537,6 +537,7 @@ export class CmsContentfulService {
 
   async getNews(input: GetCmsNewsInput): Promise<NewsList> {
     const size = input.size ?? 10
+    const page = input.page ?? 1
 
     const orderPrefix = input.order === 'asc' ? '' : '-'
 
@@ -544,7 +545,7 @@ export class CmsContentfulService {
       ['content_type']: 'news',
       include: 5,
       limit: size,
-      skip: ((input.page ?? 1) - 1) * size,
+      skip: (page - 1) * size,
       'fields.organization.sys.contentType.sys.id': 'organization',
       'fields.organization.fields.slug': input.organization,
       order: `${orderPrefix}fields.date,${orderPrefix}fields.initialPublishDate,${orderPrefix}sys.firstPublishedAt`,
