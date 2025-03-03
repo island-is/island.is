@@ -501,7 +501,7 @@ export const formatPrisonAdministrationRulingNotification = (
   const body = formatMessage(notifications.signedRuling.prisonAdminBody, {
     isModifyingRuling,
     courtCaseNumber: courtCaseNumber ?? '',
-    courtName: courtName ? applyDativeCaseToCourtName(courtName) : 'héraðsdómi',
+    courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: `</a>`,
   })
