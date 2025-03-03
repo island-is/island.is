@@ -1,10 +1,5 @@
 {
-  "extends": [
-    "plugin:@nx/react-typescript",
-    "../../../.eslintrc.json",
-    "next",
-    "next/core-web-vitals"
-  ],
+  "extends": ["plugin:@nx/react-typescript", "../../../.eslintrc.json", "next"],
   "ignorePatterns": ["!**/*"],
   "plugins": ["simple-import-sort"],
   "overrides": [
