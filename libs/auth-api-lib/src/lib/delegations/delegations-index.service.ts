@@ -159,7 +159,7 @@ export class DelegationsIndexService {
   ) {}
 
   private async filterByFeatureFlaggedDelegationTypes(
-    arr: DelegationRecordDTO[],
+    delegations: DelegationRecordDTO[],
   ): Promise<DelegationRecordDTO[]> {
     const featureFlaggedDelegationTypes = await this.featureFlagService
       .getValue(Features.delegationTypesWithNotificationsEnabled, '')
@@ -176,10 +176,10 @@ export class DelegationsIndexService {
 
     // Case: All delegation types are allowed
     if (featureFlaggedDelegationTypes === '*') {
-      return arr;
+      return delegations;
     }
 
-    return arr.filter((delegation) => {
+    return delegations.filter((delegation) => {
       if (delegation.type === AuthDelegationType.Custom || delegation.type === AuthDelegationType.GeneralMandate) {
         const isFromPerson =
           featureFlaggedDelegationTypes.has(`${delegation.type}:person`) &&
