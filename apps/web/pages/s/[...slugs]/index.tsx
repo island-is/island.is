@@ -401,7 +401,9 @@ Component.getProps = async (context) => {
         throw error
       }
     }
+  }
 
+  if (slugs.length === 4) {
     return {
       page: {
         type: PageType.GENERIC_LIST_ITEM,
