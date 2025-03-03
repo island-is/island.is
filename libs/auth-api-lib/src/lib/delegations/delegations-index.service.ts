@@ -179,7 +179,10 @@ export class DelegationsIndexService {
       return delegations;
     }
 
+    // Special case: Custom and GeneralMandate delegation types are stored with a ":person" or ":company" suffix,
+    // indicating if the value is allowing for delegations of the type from a person or a company.
     return delegations.filter((delegation) => {
+
       if (delegation.type === AuthDelegationType.Custom || delegation.type === AuthDelegationType.GeneralMandate) {
         const isFromPerson =
           featureFlaggedDelegationTypes.has(`${delegation.type}:person`) &&
