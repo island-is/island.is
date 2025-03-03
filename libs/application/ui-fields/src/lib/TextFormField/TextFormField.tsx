@@ -97,7 +97,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
                   locale as Locale,
                   formatMessage,
                 )} ${
-                  showMaxLength
+                  maxLength && showMaxLength
                     ? `(${
                         value && value?.length ? value.length : 0
                       }/${maxLength})`
