@@ -18,7 +18,7 @@ export const AuthDelegationApiClientConfig = defineConfig({
       ),
       machineClientScope:
         env.optionalJSON<string[]>('AUTH_DELEGATION_MACHINE_CLIENT_SCOPE') ??
-        ["@island.is/auth/delegations/index:system"],
+        [],
     }
   },
 })
