@@ -40,8 +40,6 @@ class VerdictItem {
 
   @Field(() => String)
   presentings!: string
-
-  // TODO: Add more fields
 }
 
 @ObjectType('WebVerdictsResponse')
