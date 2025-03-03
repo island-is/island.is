@@ -25,7 +25,7 @@ const getEnv = (services: {
   MAIN_QUEUE_NAME,
   DEAD_LETTER_QUEUE_NAME,
   IDENTITY_SERVER_ISSUER_URL: {
-    dev: 'https://innskra.dev01.devland.is',
+    dev: 'https://identity-server.dev01.devland.is',
     staging: 'https://identity-server.staging01.devland.is',
     prod: 'https://innskra.island.is',
   },
@@ -33,7 +33,7 @@ const getEnv = (services: {
     (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
   ),
   AUTH_DELEGATION_API_URL: {
-    dev: 'https://auth-delegation-api.internal.innskra.dev01.devland.is',
+    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
       'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',

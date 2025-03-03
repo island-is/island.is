@@ -35,13 +35,13 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL_LIST: {
         dev: json([
-          'https://innskra.dev01.devland.is',
+          'https://identity-server.dev01.devland.is',
           'https://identity-server.staging01.devland.is',
           'https://innskra.island.is',
         ]),
@@ -103,7 +103,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .ingress({
       primary: {
         host: {
-          dev: 'innskra.dev01.devland.is',
+          dev: 'identity-server.dev01.devland.is',
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },

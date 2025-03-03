@@ -4,7 +4,7 @@ const devConfig = {
     audience: '@island.is',
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
-      'https://innskra.dev01.devland.is',
+      'https://identity-server.dev01.devland.is',
   },
 }
 
