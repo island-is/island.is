@@ -9,7 +9,6 @@ export const extractAnchorPageLinkType = ({
 }: {
   pageType?: string | null
 }): LinkType => {
-  const k = 0
   return pageType === AnchorPageType.DIGITAL_ICELAND_COMMUNITY_PAGE
     ? 'digitalicelandcommunitydetailpage'
     : 'digitalicelandservicesdetailpage'

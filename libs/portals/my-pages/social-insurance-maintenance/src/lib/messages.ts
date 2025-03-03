@@ -92,7 +92,7 @@ export const m = defineMessages({
   },
   viewIncomePlan: {
     id: 'sp.social-insurance-maintenance:view-income-plan',
-    defaultMessage: 'Skoða tekjuáætlun',
+    defaultMessage: 'Skoða núgildandi tekjuáætlun',
   },
   submitIncomePlan: {
     id: 'sp.social-insurance-maintenance:submit-income-plan',
