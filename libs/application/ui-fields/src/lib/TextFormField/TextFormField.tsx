@@ -56,8 +56,6 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage, lang: locale } = useLocale()
   const value = watch(id)
 
-  console.log('Show field name', showFieldName)
-
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {description && (
