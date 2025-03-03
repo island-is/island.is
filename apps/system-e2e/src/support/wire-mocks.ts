@@ -150,9 +150,7 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
 
   const [apiPath, query] = options.apiPath.split('?')
   const queries = query
-    ? Array.from(new URLSearchParams(query)).map(([key, value]) => ({
-        [key]: value,
-      }))
+    ? Object.fromEntries(new URLSearchParams(query))
     : undefined
 
   const stub = new Stub().withPredicate(

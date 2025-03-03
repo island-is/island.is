@@ -390,6 +390,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
   },
+  uploadMultipleNotAllowed: {
+    id: 'application.system:core.error.file.uploadMultipleNotAllowed',
+    defaultMessage:
+      'Það má bara hlaða upp einni skrá',
+    description: 'Error message when multi upload is not allowed.',
+  },
   fileRemove: {
     id: 'application.system:core.error.file.remove',
     defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
@@ -744,6 +750,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',
     defaultMessage: 'Ekki fundust nein tæki',
     description: 'Did not find any machines',
+  },
+  licensesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.licensesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein réttindi',
+    description: 'Did not find any licenses',
   },
   nationalRegistryName: {
     id: 'application.system:core.fetch.data.nationalRegistryName',

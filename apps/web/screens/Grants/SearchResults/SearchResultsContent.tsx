@@ -3,14 +3,9 @@ import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 
-import {
-  Box,
-  Button,
-  Icon,
-  InfoCardGrid,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, InfoCardGrid, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { Problem } from '@island.is/react-spa/shared'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
@@ -18,7 +13,6 @@ import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
 import { generateStatusTag, parseStatus } from '../utils'
-import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
   grants?: Array<Grant>
@@ -37,6 +31,7 @@ export const SearchResultsContent = ({
   const { linkResolver } = useLinkResolver()
 
   const { width } = useWindowSize()
+  const isTablet = width <= theme.breakpoints.lg
   const isMobile = width <= theme.breakpoints.md
 
   const [isGridLayout, setIsGridLayout] = useState(true)
@@ -45,14 +40,11 @@ export const SearchResultsContent = ({
 
   return (
     <>
-      {!isMobile && (
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          marginBottom={3}
-          marginRight={3}
-        >
-          <Text>{subheader}</Text>
+      {!isTablet && (
+        <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
+          <Box display="flex" alignItems="center">
+            <Text>{subheader}</Text>
+          </Box>
           <Button
             variant="utility"
             icon={isGridLayout ? 'menu' : 'gridView'}
