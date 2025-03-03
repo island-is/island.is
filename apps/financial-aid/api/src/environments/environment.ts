@@ -20,7 +20,7 @@ const prodConfig = {
 const devConfig = {
   production: false,
   identityServerAuth: {
-    issuer: 'https://innskra.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@samband.is',
   },
   backend: {
