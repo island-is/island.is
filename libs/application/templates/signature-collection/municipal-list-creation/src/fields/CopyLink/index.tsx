@@ -6,12 +6,12 @@ import { FC } from 'react'
 
 export const CopyLink: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { slug } =
-    (application.externalData.submit?.data as { slug: string }) ?? ''
+  const slug = 
++   ((application.externalData.submit?.data as { slug: string })?.slug) || ''
 
   return (
     <Copy
-      linkUrl={`${document.location.origin}${slug ? slug : "/"}`}
+      linkUrl={`${document.location.origin}${slug}`}
       buttonTitle={formatMessage(m.copyLink)}
     />
   )

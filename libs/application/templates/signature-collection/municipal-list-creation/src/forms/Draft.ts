@@ -86,7 +86,7 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) => {
-                return externalData.nationalRegistry?.data.fullName
+                return externalData.nationalRegistry?.data?.fullName || ''
               },
             }),
             buildPhoneField({
