@@ -151,6 +151,8 @@ export const expandBankAccounts = (
     expandedBankAccounts.push({
       accountNumber: bankAccount.accountNumber ?? '',
       balance: bankAccount.balance ?? '',
+      exchangeRateOrInterest: bankAccount.exchangeRateOrInterest ?? '',
+      accountTotal: bankAccount.accountTotal ?? '',
     })
   })
 
