@@ -6,7 +6,6 @@ import {
   buildSection,
   buildSubmitField,
   buildRedirectToServicePortalField,
-  buildFileUploadField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { ApiActions } from '../../shared'
@@ -32,14 +31,6 @@ export const ExampleForm: Form = buildForm({
     return () => logo
   },
   children: [
-    buildSection({
-      id: 'asdasd',
-      children: [
-        buildFileUploadField({
-          id: 'asdasasdd'
-        })
-      ]
-    }),
     introSection,
     commonActionsSection,
     noInputFieldsSection,
