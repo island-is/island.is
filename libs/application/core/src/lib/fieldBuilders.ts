@@ -50,6 +50,7 @@ import {
   TitleField,
   TitleVariants,
   OverviewField,
+  CopyLinkField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -1114,6 +1115,21 @@ export const buildOverviewField = (
     tableData,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
+    children: undefined,
+  }
+}
+
+export const buildCopyLinkField = (
+  data: Omit<CopyLinkField, 'type' | 'component' | 'children'>,
+): CopyLinkField => {
+  const { id, title, link } = data
+  return {
+    ...extractCommonFields(data),
+    id,
+    title,
+    link,
+    type: FieldTypes.COPY_LINK,
+    component: FieldComponents.COPY_LINK,
     children: undefined,
   }
 }
