@@ -387,6 +387,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
     namespace,
     locale: locale as Locale,
     languageToggleQueryParams,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
