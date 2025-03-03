@@ -16,6 +16,24 @@ interface Props {
 export const IncomePlanCard = ({ status, registrationDate }: Props) => {
   const { formatMessage } = useLocale()
 
+  const baseActionCard = (text: string) => {
+    return (
+      <ActionCard
+        image={{
+          type: 'image',
+          url: './assets/images/tr.svg',
+        }}
+        text={text}
+        headingColor="currentColor"
+        heading={formatMessage(coreMessages.incomePlan)}
+        backgroundColor="blue"
+        borderColor="blue200"
+        cta={{
+          label: '',
+        }}
+      />
+    )
+  }
   const parseSubtext = (
     status: Status,
     date: Date,
@@ -32,31 +50,6 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
   }
 
   switch (status) {
-    case 'in_progress': {
-      return (
-        <ActionCard
-          image={{
-            type: 'image',
-            url: './assets/images/tr.svg',
-          }}
-          text={formatMessage(m.applicationInProgress)}
-          headingColor="currentColor"
-          heading={formatMessage(coreMessages.incomePlan)}
-          backgroundColor="blue"
-          borderColor="blue200"
-          cta={{
-            label: formatMessage(m.continueApplication),
-            url: `${document.location.origin}/${formatMessage(
-              m.incomePlanModifyLink,
-            )}`,
-            variant: 'primary',
-            size: 'medium',
-            icon: 'open',
-            centered: true,
-          }}
-        />
-      )
-    }
     case 'modify_accepted':
     case 'accepted_no_changes':
     case 'accepted': {
@@ -83,53 +76,14 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
         />
       )
     }
-    case 'in_review': {
-      return (
-        <ActionCard
-          image={{
-            type: 'image',
-            url: './assets/images/tr.svg',
-          }}
-          text={formatMessage(m.applicationInReview)}
-          headingColor="currentColor"
-          heading={formatMessage(coreMessages.incomePlan)}
-          backgroundColor="blue"
-          borderColor="blue200"
-          cta={{
-            label: formatMessage(m.modifyIncomePlan),
-            disabled: true,
-            variant: 'primary',
-            size: 'medium',
-            icon: 'open',
-            iconType: 'outline',
-            centered: true,
-          }}
-        />
-      )
+    case 'in_progress': {
+      return baseActionCard(formatMessage(m.applicationInProgress))
     }
-    case 'no_data':
-      return (
-        <ActionCard
-          image={{
-            type: 'image',
-            url: './assets/images/tr.svg',
-          }}
-          text={formatMessage(m.noActiveIncomePlan)}
-          headingColor="currentColor"
-          heading={formatMessage(coreMessages.incomePlan)}
-          backgroundColor="blue"
-          borderColor="blue200"
-          cta={{
-            label: formatMessage(m.submitIncomePlan),
-            url: `${document.location.origin}/${formatMessage(
-              m.incomePlanModifyLink,
-            )}`,
-            variant: 'primary',
-            size: 'medium',
-            icon: 'open',
-            centered: true,
-          }}
-        />
-      )
+    case 'in_review': {
+      return baseActionCard(formatMessage(m.applicationInReview))
+    }
+    case 'no_data': {
+      return baseActionCard(formatMessage(m.noActiveIncomePlan))
+    }
   }
 }

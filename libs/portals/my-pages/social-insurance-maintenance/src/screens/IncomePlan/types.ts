@@ -1,11 +1,11 @@
 export type Status =
-  | 'no_data' // done
-  | 'in_progress' //done
-  | 'in_review' //done
-  | 'accepted' // done
-  | 'accepted_no_changes' // done
-  | 'rejected' // done
-  | 'rejected_no_changes' // done
+  | 'no_data'
+  | 'in_progress'
+  | 'in_review'
+  | 'accepted'
+  | 'accepted_no_changes'
+  | 'rejected'
+  | 'rejected_no_changes'
   | 'modify_accepted'
   | 'error'
   | 'loading'

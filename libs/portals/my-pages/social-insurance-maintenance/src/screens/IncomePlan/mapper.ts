@@ -21,6 +21,9 @@ export const mapStatus = (
   if (!status && !applicationStatus) {
     return 'no_data'
   }
+  if (status === SocialInsuranceIncomePlanStatus.UNKNOWN) {
+    return 'error'
+  }
   //no data from service provider
   switch (applicationStatus) {
     //application is being worked on in application system

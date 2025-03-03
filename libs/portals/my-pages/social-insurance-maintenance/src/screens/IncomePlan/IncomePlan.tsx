@@ -15,9 +15,7 @@ import {
 import { mapStatus } from './mapper'
 import { ApplicationStatus, Status } from './types'
 import { IncomePlanCard } from './IncomePlanCard'
-import { useMemo, useState } from 'react'
-import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
-import { DebugSelectors } from './DebugSelectors'
+import { useMemo } from 'react'
 
 const RENDER_ALERT_BOX_CONDITIONALS: Status[] = [
   'in_review',
@@ -31,18 +29,15 @@ const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
   'rejected',
   'rejected_no_changes',
   'modify_accepted',
+  'no_data',
+  'in_review',
+  'in_progress',
 ]
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage, locale } = useLocale()
 
-  //REMOVE AFTER DEBUG
-  const [applicationState, setApplicationState] = useState<ApplicationStatus>()
-  const [trStatus, setTrStatus] = useState<SocialInsuranceIncomePlanStatus>()
-  const [isEligibleForChange, setIsEligibleForChange] = useState<boolean>(false)
-
-  /* RE-ENABLE AFTER DEBUG
   const { data, loading, error } = useGetIncomePlanQuery()
   const {
     data: applications,
@@ -57,14 +52,7 @@ const IncomePlan = () => {
       locale,
     },
   })
-   */
 
-  //REMOVE AFTER DEBUG
-  const status: Status = useMemo(() => {
-    return mapStatus(trStatus, applicationState, isEligibleForChange)
-  }, [applicationState, isEligibleForChange, trStatus])
-
-  /*RE-ENABLE AFTER DEBUG
   const status: Status = useMemo(() => {
     if (loading || applicationsLoading) {
       return 'loading'
@@ -91,7 +79,7 @@ const IncomePlan = () => {
     data?.socialInsuranceIncomePlan?.status,
     error,
     loading,
-    ]) */
+  ])
 
   const renderAlertBox = () => {
     if (RENDER_ALERT_BOX_CONDITIONALS.includes(status)) {
@@ -115,6 +103,8 @@ const IncomePlan = () => {
           text={formatMessage(
             status === 'modify_accepted'
               ? m.continueApplication
+              : status === 'no_data'
+              ? m.submitIncomePlan
               : m.modifyIncomePlan,
           )}
           disabled={
@@ -133,11 +123,7 @@ const IncomePlan = () => {
   const renderContent = () => {
     switch (status) {
       case 'error':
-        //TODO - RE-ENABLE AFTER DEBUG
-        //return <Problem error={error || applicationsError} noBorder={false} />
-
-        //TODO - REMOVE AFTER DEBUG
-        return <Problem noBorder={false} />
+        return <Problem error={error || applicationsError} noBorder={false} />
       case 'loading':
         return (
           <Box marginBottom={2}>
@@ -176,18 +162,6 @@ const IncomePlan = () => {
         coreMessages.socialInsuranceTooltip,
       )}
     >
-      <Box marginBottom={2}>
-        <DebugSelectors
-          onTrStatusButtonChange={(value) => setTrStatus(value)}
-          onApplicationStatusButtonChange={(value) =>
-            setApplicationState(value)
-          }
-          onIsEligibleForChangeToggle={() =>
-            setIsEligibleForChange(!isEligibleForChange)
-          }
-          currentEligibleForChangeStatus={isEligibleForChange ? 'Já' : 'Nei'}
-        />
-      </Box>
       {renderContent()}
     </IntroWrapper>
   )
