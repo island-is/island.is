@@ -41,6 +41,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    setOnChange,
     isClearable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
@@ -102,6 +103,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // @ts-ignore make web strict
           onSelect={onSelect}
           clearOnChange={clearOnChange}
+          setOnChange={setOnChange}
           isClearable={isClearable}
         />
       </Box>
