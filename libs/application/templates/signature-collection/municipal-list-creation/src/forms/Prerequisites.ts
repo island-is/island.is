@@ -5,7 +5,6 @@ import {
   buildSubmitField,
   buildSection,
   buildMultiField,
-  buildDescriptionField,
   buildImageField,
 } from '@island.is/application/core'
 import {

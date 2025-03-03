@@ -23,7 +23,7 @@ export enum Features {
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
-  MunicipalElectionApplication = 'isMunicipalElectionApplicationEnabled',
+  municipalElectionApplication = 'isMunicipalElectionApplicationEnabled',
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',

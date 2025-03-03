@@ -7,12 +7,11 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
   NationalRegistryUserApi,
   StateLifeCycle,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from './constants'
+import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
@@ -41,8 +40,7 @@ const createListTemplate: ApplicationTemplate<
   name: m.applicationName,
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
-  //TODO: create FF for municipal
-  featureFlag: Features.ParliamentaryElectionApplication,
+  featureFlag: Features.municipalElectionApplication,
   dataSchema,
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]

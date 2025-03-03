@@ -11,7 +11,7 @@ export const CopyLink: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Copy
-      linkUrl={`${document.location.origin}${slug}`}
+      linkUrl={`${document.location.origin}${slug ? slug : "/"}`}
       buttonTitle={formatMessage(m.copyLink)}
     />
   )

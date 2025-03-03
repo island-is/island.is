@@ -303,7 +303,7 @@ export const ApplicationConfigurations = {
     translation: 'pls.application',
   },
   [ApplicationTypes.MUNICIPAL_LIST_CREATION]: {
-    slug: 'sveitastjornar-medmaelasofnun',
+    slug: 'sveitarstjornar-medmaelasofnun',
     translation: 'mlc.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
