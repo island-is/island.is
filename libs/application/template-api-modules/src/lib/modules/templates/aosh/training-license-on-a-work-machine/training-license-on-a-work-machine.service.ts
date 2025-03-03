@@ -153,25 +153,21 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
 
   async rejectApplication({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // Send Hnipp to applicant if company rejects application
-    const applicantName =
-      getValueViaPath<string>(
-        application.externalData,
-        'nationalRegistry.data.fullName',
-      ) ?? ''
-    this.notificationsService.sendNotification({
-      type: NotificationType.TrainingLicenseOnWorkMachineRejected,
-      messageParties: {
-        recipient: auth.nationalId,
-        sender: auth.nationalId,
-      },
-      args: {
-        applicantName,
+    const applicantNationalId = getValueViaPath<string>(
+      application.externalData,
+      'identity.data.nationalId',
+    )
+    if (applicantNationalId) {
+      await this.notificationsService.sendNotification({
+        type: NotificationType.TrainingLicenseOnWorkMachineRejected,
+        messageParties: {
+          recipient: applicantNationalId,
+        },
         applicationId: application.id,
-      },
-    })
+      })
+    }
   }
 
   async submitApplication({
@@ -184,22 +180,19 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
       'assigneeInformation.isContractor',
     )
     if (!isContractor?.includes('yes')) {
-      const applicantName =
-        getValueViaPath<string>(
-          application.externalData,
-          'nationalRegistry.data.fullName',
-        ) ?? ''
-      this.notificationsService.sendNotification({
-        type: NotificationType.TrainingLicenseOnWorkMachineApproved,
-        messageParties: {
-          recipient: auth.nationalId,
-          sender: auth.nationalId,
-        },
-        args: {
-          applicantName,
+      const applicantNationalId = getValueViaPath<string>(
+        application.externalData,
+        'identity.data.nationalId',
+      )
+      if (applicantNationalId) {
+        await this.notificationsService.sendNotification({
+          type: NotificationType.TrainingLicenseOnWorkMachineApproved,
+          messageParties: {
+            recipient: applicantNationalId,
+          },
           applicationId: application.id,
-        },
-      })
+        })
+      }
     }
     // Submit application to AOSH
     const applicant = getCleanApplicantInformation(application)
