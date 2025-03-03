@@ -161,7 +161,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         application.externalData,
         'nationalRegistry.data.fullName',
       ) ?? ''
-    this.notificationsService.sendNotification({
+    await this.notificationsService.sendNotification({
       type: NotificationType.TrainingLicenseOnWorkMachineRejected,
       messageParties: {
         recipient: auth.nationalId,
@@ -189,7 +189,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           application.externalData,
           'nationalRegistry.data.fullName',
         ) ?? ''
-      this.notificationsService.sendNotification({
+      await this.notificationsService.sendNotification({
         type: NotificationType.TrainingLicenseOnWorkMachineApproved,
         messageParties: {
           recipient: auth.nationalId,
