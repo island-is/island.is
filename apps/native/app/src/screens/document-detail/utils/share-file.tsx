@@ -32,7 +32,8 @@ export const shareFile = async ({
     const utf8Prefix = '<meta charset="UTF-8">'
     const formattedHtml = utf8Prefix + content
     try {
-      const path = `${RNFS.TemporaryDirectoryPath}/${document.subject}.html`
+      const encodedSubject = encodeURIComponent(document.subject)
+      const path = `${RNFS.TemporaryDirectoryPath}/${encodedSubject}.html`
       await RNFS.writeFile(path, formattedHtml, 'utf8')
       htmlUrl = path
     } catch (error) {
