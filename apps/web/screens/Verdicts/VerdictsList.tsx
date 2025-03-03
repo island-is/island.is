@@ -15,20 +15,22 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import type {
-  GetVerdictCaseCategoriesQuery,
-  GetVerdictCaseCategoriesQueryVariables,
-  GetVerdictCaseTypesQuery,
-  GetVerdictCaseTypesQueryVariables,
-  GetVerdictKeywordsQuery,
-  GetVerdictKeywordsQueryVariables,
-  GetVerdictsQuery,
-  GetVerdictsQueryVariables,
+import {
+  CustomPageUniqueIdentifier,
+  type GetVerdictCaseCategoriesQuery,
+  type GetVerdictCaseCategoriesQueryVariables,
+  type GetVerdictCaseTypesQuery,
+  type GetVerdictCaseTypesQueryVariables,
+  type GetVerdictKeywordsQuery,
+  type GetVerdictKeywordsQueryVariables,
+  type GetVerdictsQuery,
+  type GetVerdictsQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 
+import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import {
   GET_VERDICT_CASE_CATEGORIES_QUERY,
   GET_VERDICT_CASE_TYPES_QUERY,
@@ -78,6 +80,7 @@ const VerdictsList: Screen<VerdictsListProps> = ({ initialData }) => {
             verdicts.sort((a, b) => {
               if (!a.verdictDate && !b.verdictDate) return 0
               if (!b.verdictDate) return -1
+              if (!a.verdictDate) return 1
               return (
                 new Date(b.verdictDate).getTime() -
                 new Date(a.verdictDate).getTime()
@@ -268,4 +271,6 @@ VerdictsList.getProps = async ({ apolloClient, query }) => {
   }
 }
 
-export default withMainLayout(VerdictsList)
+export default withMainLayout(
+  withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
+)

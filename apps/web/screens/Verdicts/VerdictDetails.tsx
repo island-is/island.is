@@ -8,15 +8,17 @@ import {
   PdfViewer,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import type {
-  GetVerdictByIdQuery,
-  GetVerdictByIdQueryVariables,
+import {
+  CustomPageUniqueIdentifier,
+  type GetVerdictByIdQuery,
+  type GetVerdictByIdQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
+import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
 import * as styles from './VerdictDetails.css'
 
@@ -101,4 +103,6 @@ VerdictDetails.getProps = async ({ apolloClient, query }) => {
   }
 }
 
-export default withMainLayout(VerdictDetails)
+export default withMainLayout(
+  withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictDetails),
+)

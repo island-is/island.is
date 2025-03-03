@@ -50,7 +50,7 @@ export class VerdictsClientService {
       title: string
       court: string
       caseNumber: string
-      verdictDate: Date
+      verdictDate?: Date | null
       presidentJudge?: { name?: string; title?: string }
       keywords: string[]
       presentings: string
@@ -58,19 +58,13 @@ export class VerdictsClientService {
 
     if (goproResponse.status === 'fulfilled') {
       for (const goproItem of goproResponse.value.items ?? []) {
-        if (
-          Boolean(goproItem.id) &&
-          Boolean(goproItem.title) &&
-          Boolean(goproItem.court) &&
-          Boolean(goproItem.caseNumber) &&
-          Boolean(goproItem.verdictDate)
-        ) {
+        if (goproItem.id) {
           items.push({
             id: `${GOPRO_ID_PREFIX}${goproItem.id}`,
-            title: goproItem.title as string,
-            court: goproItem.court as string,
-            caseNumber: goproItem.caseNumber as string,
-            verdictDate: goproItem.verdictDate as Date,
+            title: goproItem.title ?? '',
+            court: goproItem.court ?? '',
+            caseNumber: goproItem.caseNumber ?? '',
+            verdictDate: goproItem.verdictDate,
             presidentJudge: goproItem.judges?.find((judge) =>
               Boolean(judge?.isPresident),
             ),
@@ -83,19 +77,13 @@ export class VerdictsClientService {
 
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const supremeCourtItem of supremeCourtResponse.value.items ?? []) {
-        if (
-          Boolean(supremeCourtItem.id) &&
-          Boolean(supremeCourtItem.title) &&
-          Boolean(supremeCourtItem.court) &&
-          Boolean(supremeCourtItem.caseNumber) &&
-          Boolean(supremeCourtItem.publishDate)
-        ) {
+        if (supremeCourtItem.id) {
           items.push({
             id: `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`,
-            title: supremeCourtItem.title as string,
-            court: supremeCourtItem.court as string,
-            caseNumber: supremeCourtItem.caseNumber as string,
-            verdictDate: supremeCourtItem.publishDate as Date,
+            title: supremeCourtItem.title ?? '',
+            court: supremeCourtItem.court ?? '',
+            caseNumber: supremeCourtItem.caseNumber ?? '',
+            verdictDate: supremeCourtItem.publishDate,
             presidentJudge: supremeCourtItem.judges?.find((judge) =>
               Boolean(judge?.isPresident),
             ),
@@ -109,6 +97,7 @@ export class VerdictsClientService {
     items.sort((a, b) => {
       if (!a.verdictDate && !b.verdictDate) return 0
       if (!b.verdictDate) return -1
+      if (!a.verdictDate) return 1
       return (
         new Date(b.verdictDate).getTime() - new Date(a.verdictDate).getTime()
       )

@@ -29,8 +29,8 @@ class VerdictItem {
   @Field(() => String)
   caseNumber!: string
 
-  @Field(() => Date)
-  verdictDate!: Date
+  @Field(() => Date, { nullable: true })
+  verdictDate?: Date | null
 
   @CacheField(() => VerdictJudge, { nullable: true })
   presidentJudge?: VerdictJudge | null
