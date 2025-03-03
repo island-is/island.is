@@ -8,12 +8,14 @@ import {
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
   PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -36,7 +38,7 @@ type UserType =
 type CaseStatus = 'completed' | 'ongoing'
 
 const routes: Partial<
-  Record<CaseType, Record<UserType, Record<CaseStatus, string>>>
+  Record<CaseType, Record<UserType, Record<CaseStatus, string | null>>>
 > = {
   [CaseType.INDICTMENT]: {
     prosecution: {
