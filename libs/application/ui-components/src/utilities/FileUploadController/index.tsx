@@ -120,6 +120,36 @@ export const FileUploadController = ({
     setValue(id, uploadAnswer)
   }, [state, id, setValue])
 
+  const isFreeOfMalware = async (url: string): Promise<boolean> => {
+    let guardDutyStatus
+    let totalWaitTime = 0
+    for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
+      // Wait before doing malware tag check
+      const waitTimeThisLoop = MALWARE_MS_BETWEEN_FETCHES * (Math.pow(2, i))
+      totalWaitTime += waitTimeThisLoop
+      await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
+
+      const { data } = await getAttachmentTags({ url })
+      
+      const formattedTags = data.getAttachmentTags as Array<{Key: string, Value: string}>
+      console.log('results', data)
+
+      guardDutyStatus = formattedTags?.find(tag => tag.Key === 'GuardDutyMalwareScanStatus')?.Value
+      if(guardDutyStatus !== undefined) {
+        break
+      }
+    }
+    if(guardDutyStatus === undefined) {
+      console.log(`No guard duty tag on attachment after ${totalWaitTime/1000} seconds`)
+      return false
+    } else {
+      if(guardDutyStatus !== 'NO_THREATS_FOUND') {
+        return false
+      }
+    }
+    return true
+  }
+
   const uploadFileFlow = async (file: UploadFile) => {
     try {
       // 1. Get the upload URL
@@ -148,11 +178,10 @@ export const FileUploadController = ({
         },
       })
 
-      // Maybe do this above the dispatch of add attachment?
-      await checkForMalwareIssue(responseUrl)
+      const isClean = await isFreeOfMalware(responseUrl)
 
       // Done!
-      return Promise.resolve({ key: fields.key })
+      return Promise.resolve({ key: fields.key, url: responseUrl, isClean })
     } catch (e) {
       console.error(`Error with FileUploadController ${e}`)
       setUploadError(formatMessage(coreErrorMessages.fileUpload))
@@ -215,27 +244,43 @@ export const FileUploadController = ({
       },
     })
 
-    // Upload each file.
-    newUploadFiles.forEach(async (f: UploadFile) => {
+    const malwareFiles: UploadFile[] = []
+    const uploadPromises = newUploadFiles.map(async (f) => {
       try {
         const res = await uploadFileFlow(f)
 
+        if(!res.isClean) {
+          malwareFiles.push(f)
+        }
+        console.log('isClean', res.isClean)
         dispatch({
           type: ActionTypes.UPDATE,
           payload: {
             file: f,
-            status: 'done',
+            status: res.isClean ? 'done' : 'error',
             percent: 100,
             key: res.key,
+            url: res.url
           },
         })
       } catch {
         setUploadError(formatMessage(coreErrorMessages.fileUpload))
       }
     })
+
+    await Promise.all(uploadPromises)
+
+    if(malwareFiles.length > 0) {
+      const malwareFileNamesFormatted = malwareFiles.map(f => f.name).join(', ')
+
+      for (const f of malwareFiles) {
+        await onRemoveFile(f, false, false)
+      }
+      setUploadError(formatMessage(coreErrorMessages.fileUploadMalware, {files: malwareFileNamesFormatted}))
+    }
   }
 
-  const onRemoveFile = async (fileToRemove: UploadFile) => {
+  const onRemoveFile = async (fileToRemove: UploadFile, overwriteError = true, removeFileCard = true) => {
     // If it's previously been uploaded, remove it from the application attachment.
     if (fileToRemove.key) {
       try {
@@ -255,44 +300,24 @@ export const FileUploadController = ({
 
     onRemove?.(fileToRemove)
 
-    // We remove it from the list if: the delete attachment above succeeded,
-    // or if the user clicked x for a file that failed to upload and is in
-    // an error state.
-    dispatch({
-      type: ActionTypes.REMOVE,
-      payload: {
-        fileToRemove,
-      },
-    })
+    // I need onRemove and deleteAttachment to not throw an error if they are called for a file that has already been removed
 
-    setUploadError(undefined)
-  }
-
-  const checkForMalwareIssue = async (url: string) => {
-    let guardDutyStatus
-    let totalWaitTime = 0
-    for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
-      const { data } = await getAttachmentTags({ url })
-      
-      const formattedTags = data.getAttachmentTags as Array<{Key: string, Value: string}>
-      console.log('results', data)
-
-      guardDutyStatus = formattedTags?.find(tag => tag.Key === 'GuardDutyMalwareScanStatus')?.Value
-      if(guardDutyStatus === 'NO_THREATS_FOUND') {
-        break
-      }
-      // Wait before doing next malware tag check
-      const waitTimeThisLoop = MALWARE_MS_BETWEEN_FETCHES * (Math.pow(2, i))
-      totalWaitTime += waitTimeThisLoop
-      await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
+    // There is a case for not removing the file card in the component if
+    // it has malware and we want it there to show that those exact files have errors
+    if(removeFileCard) {
+      // We remove it from the list if: the delete attachment above succeeded,
+      // or if the user clicked x for a file that failed to upload and is in
+      // an error state.
+      dispatch({
+        type: ActionTypes.REMOVE,
+        payload: {
+          fileToRemove,
+        },
+      })
     }
-    if(guardDutyStatus === undefined) {
-      console.log(`No guard duty tag on attachment after ${totalWaitTime/1000} seconds`)
-    } else {
-      if(guardDutyStatus !== 'NO_THREATS_FOUND') {
-        throw new Error(`Unacceptable GuardDuty status found (${guardDutyStatus}) on file: ${url}`)
-      }
-    }
+
+    if(overwriteError)
+      setUploadError(undefined)
   }
 
   const onFileRejection = (files: FileRejection[]) => {
