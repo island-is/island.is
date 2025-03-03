@@ -42,7 +42,7 @@ export const SummaryNoEditForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'SummaryNoEdit',
-              title: 'Samantektblaalædsk',
+              title: 'Samantekt',
               component: 'SummaryNoEdit',
             }),
           ],

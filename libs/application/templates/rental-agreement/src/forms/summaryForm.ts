@@ -44,9 +44,9 @@ export const SummaryForm: Form = buildForm({
               description: summary.pageDescriptionSecondparagraph,
             }),
             buildCustomField({
-              id: 'summaryCustomComponent',
+              id: 'summary',
               title: 'Samantekt',
-              component: 'Summary',
+              component: 'SummaryEdit',
             }),
             buildSubmitField({
               id: 'toDraft',
