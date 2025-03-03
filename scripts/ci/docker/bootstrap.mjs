@@ -25,8 +25,6 @@ const namespacesToAdd = {};
 
 for (const [chart, deployment] of Object.entries(bootstrap)) {
     for (const [type, name] of Object.entries(deployment)) {
-        // console.log(`Deploying ${chart} to ${type} as ${name}`);
-        console.log(`${chart}}/**/values.${type}.yaml`);
         const files = await glob(
             `${chart}/**/values.${type}.yaml`,
         )
