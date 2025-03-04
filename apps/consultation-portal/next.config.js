@@ -16,13 +16,17 @@ const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
 module.exports = withNx(
   withVanillaExtract({
-    webpack: (config, { isServer }) => {
+    webpack: (config, { isServer, dev }) => {
       if (process.env.ANALYZE === 'true' && !isServer) {
         config.plugins.push(
           new BundleAnalyzerPlugin({
             analyzerMode: 'static',
           }),
         )
+      }
+
+      if (!dev && isServer) {
+        config.devtool = 'source-map'
       }
       return config
     },
