@@ -70,43 +70,51 @@ export function CertificateCard({
   const certificateData = [
     {
       data: certificate.drugName,
-      label: 'health.prescriptions.drugName',
+      label: 'health.drugCertificates.drugName',
     },
     {
       data: certificate.atcCode,
-      label: 'health.prescriptions.atcCode',
+      label: 'health.drugCertificates.atcCode',
     },
     {
       data: certificate.atcName,
-      label: 'health.prescriptions.ingredients',
+      label: 'health.drugCertificates.ingredients',
     },
     {
       data: certificate.validFrom && intl.formatDate(certificate.validFrom),
-      label: 'health.prescriptions.validFrom',
+      label: 'health.drugCertificates.validFrom',
     },
     {
       data: certificate.validTo && intl.formatDate(certificate.validTo),
-      label: 'health.prescriptions.validUntil',
+      label: 'health.drugCertificates.validUntil',
     },
     {
       data: certificate.doctor,
-      label: 'health.prescriptions.nameOfDoctor',
+      label: 'health.drugCertificates.nameOfDoctor',
     },
     {
       data: certificate.methylDoctors?.map((doctor) => doctor.name).join(', '),
-      label: 'health.prescriptions.methylDoctors',
+      label: 'health.drugCertificates.methylDoctors',
     },
     {
       data: certificate.rejected
-        ? intl.formatMessage({ id: 'health.prescriptions.rejected' })
+        ? intl.formatMessage({
+            id: 'health.prescriptionsAndCertificates.rejected',
+          })
         : !certificate.processed
-        ? intl.formatMessage({ id: 'health.prescriptions.inProcess' })
+        ? intl.formatMessage({
+            id: 'health.prescriptionsAndCertificates.inProcess',
+          })
         : certificate.valid
-        ? intl.formatMessage({ id: 'health.prescriptions.valid' })
+        ? intl.formatMessage({
+            id: 'health.prescriptionsAndCertificates.valid',
+          })
         : certificate.expired
-        ? intl.formatMessage({ id: 'health.prescriptions.expired' })
+        ? intl.formatMessage({
+            id: 'health.prescriptionsAndCertificates.expired',
+          })
         : undefined,
-      label: 'health.prescriptions.status',
+      label: 'health.prescriptionsAndCertificates.status',
     },
   ]
 
@@ -114,10 +122,12 @@ export function CertificateCard({
     <ExpandableCard
       title={
         isExpired
-          ? intl.formatMessage({ id: 'health.prescriptions.expired' })
+          ? intl.formatMessage({
+              id: 'health.prescriptionsAndCertificates.expired',
+            })
           : certificate.validTo
           ? intl.formatMessage(
-              { id: 'health.prescriptions.validTo' },
+              { id: 'health.prescriptionsAndCertificates.validTo' },
               { date: intl.formatDate(certificate.validTo) },
             )
           : undefined
@@ -131,13 +141,17 @@ export function CertificateCard({
         certificate.rejected ? (
           <Badge
             variant={'red'}
-            title={intl.formatMessage({ id: 'health.prescriptions.rejected' })}
+            title={intl.formatMessage({
+              id: 'health.prescriptionsAndCertificates.rejected',
+            })}
             outlined
           />
         ) : !certificate.processed ? (
           <Badge
             variant={'darkerBlue'}
-            title={intl.formatMessage({ id: 'health.prescriptions.inProcess' })}
+            title={intl.formatMessage({
+              id: 'health.prescriptionsAndCertificates.inProcess',
+            })}
             outlined
           />
         ) : undefined
@@ -160,7 +174,7 @@ export function CertificateCard({
           <View>
             <TableHeader>
               <Typography variant="eyebrow">
-                <FormattedMessage id="health.prescriptions.furtherInformation" />
+                <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
               </Typography>
             </TableHeader>
             {certificateData

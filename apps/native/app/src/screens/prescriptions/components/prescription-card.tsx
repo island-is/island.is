@@ -115,10 +115,12 @@ export function PrescriptionCard({
     <ExpandableCard
       title={
         isExpired
-          ? intl.formatMessage({ id: 'health.prescriptions.expired' })
+          ? intl.formatMessage({
+              id: 'health.prescriptionsAndCertificates.expired',
+            })
           : prescription.expiryDate
           ? intl.formatMessage(
-              { id: 'health.prescriptions.validTo' },
+              { id: 'health.prescriptionsAndCertificates.validTo' },
               { date: intl.formatDate(prescription.expiryDate) },
             )
           : undefined
@@ -158,7 +160,7 @@ export function PrescriptionCard({
           <View>
             <TableHeader>
               <Typography variant="eyebrow">
-                <FormattedMessage id="health.prescriptions.furtherInformation" />
+                <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
               </Typography>
             </TableHeader>
             {prescriptionDataInformation

@@ -20,6 +20,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { useLocale } from '../../hooks/use-locale'
 import { CertificateCard } from './components/certificate-card'
 import { PrescriptionCard } from './components/prescription-card'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -58,8 +59,9 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
+  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
 
-  const showPrescriptions = selectedTab === 0
+  const showPrescriptions = isPrescriptionsEnabled && selectedTab === 0
 
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
@@ -69,6 +71,21 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const drugCertificates = certificatesRes.data?.rightsPortalDrugCertificates
   const prescriptions =
     prescriptionsRes.data?.healthDirectoratePrescriptions?.prescriptions
+
+  const showPrescriptionError =
+    showPrescriptions && prescriptionsRes.error && !prescriptionsRes.data
+  const showDrugCertificateError =
+    !showPrescriptions && certificatesRes.error && !certificatesRes.data
+
+  const showNoDataError =
+    (!showPrescriptions &&
+      !certificatesRes.error &&
+      !drugCertificates?.length &&
+      !certificatesRes.loading) ||
+    (showPrescriptions &&
+      !prescriptionsRes.error &&
+      !prescriptions?.length &&
+      !prescriptionsRes.loading)
 
   useConnectivityIndicator({
     componentId,
@@ -100,37 +117,53 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
         <Host>
           <Heading>
             <FormattedMessage
-              id="health.prescriptions.title"
-              defaultMessage="Lyfjaávísanir"
+              id={
+                isPrescriptionsEnabled
+                  ? 'health.prescriptions.title'
+                  : 'health.drugCertificates.title'
+              }
+              defaultMessage={
+                isPrescriptionsEnabled ? 'Lyfjaávísanir' : 'Lyfjaskírteini'
+              }
             />
           </Heading>
           <Typography>
             <FormattedMessage
-              id="health.prescriptions.description"
-              defaultMessage="Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini."
+              id={
+                isPrescriptionsEnabled
+                  ? 'health.prescriptions.description'
+                  : 'health.drugCertificates.description'
+              }
+              defaultMessage={
+                isPrescriptionsEnabled
+                  ? 'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.'
+                  : 'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.'
+              }
             />
           </Typography>
-          {!(prescriptionsRes.error && certificatesRes.error) && (
-            <Tabs>
-              <TabButtons
-                buttons={[
-                  {
-                    title: intl.formatMessage({
-                      id: 'health.prescriptions.title',
-                    }),
-                  },
-                  {
-                    title: intl.formatMessage({
-                      id: 'health.prescriptions.drugCertificates',
-                    }),
-                  },
-                ]}
-                selectedTab={selectedTab}
-                setSelectedTab={setSelectedTab}
-              />
-            </Tabs>
-          )}
-          {!certificatesRes.error && !showPrescriptions && (
+          {!(prescriptionsRes.error && certificatesRes.error) &&
+            isPrescriptionsEnabled && (
+              <Tabs>
+                <TabButtons
+                  buttons={[
+                    {
+                      title: intl.formatMessage({
+                        id: 'health.prescriptions.title',
+                      }),
+                    },
+                    {
+                      title: intl.formatMessage({
+                        id: 'health.drugCertificates.title',
+                      }),
+                    },
+                  ]}
+                  selectedTab={selectedTab}
+                  setSelectedTab={setSelectedTab}
+                />
+              </Tabs>
+            )}
+          {!showPrescriptions &&
+          (drugCertificates?.length || certificatesRes.loading) ? (
             <Prescriptions>
               {certificatesRes.loading && !certificatesRes.data
                 ? Array.from({ length: 5 }).map((_, index) => (
@@ -144,8 +177,9 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                     />
                   ))}
             </Prescriptions>
-          )}
-          {!prescriptionsRes.error && showPrescriptions && (
+          ) : null}
+          {(prescriptions?.length || prescriptionsRes.loading) &&
+          showPrescriptions ? (
             <Prescriptions>
               {prescriptionsRes.loading && !prescriptionsRes.data
                 ? Array.from({ length: 5 }).map((_, index) => (
@@ -161,21 +195,22 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                     />
                   ))}
             </Prescriptions>
+          ) : null}
+          {showPrescriptionError && (
+            <ErrorWrapper>
+              <Problem />
+            </ErrorWrapper>
           )}
-          {showPrescriptions &&
-            prescriptionsRes.error &&
-            !prescriptionsRes.data && (
-              <ErrorWrapper>
-                <Problem />
-              </ErrorWrapper>
-            )}
-          {!showPrescriptions &&
-            certificatesRes.error &&
-            !certificatesRes.data && (
-              <ErrorWrapper>
-                <Problem />
-              </ErrorWrapper>
-            )}
+          {showDrugCertificateError && (
+            <ErrorWrapper>
+              <Problem />
+            </ErrorWrapper>
+          )}
+          {showNoDataError && (
+            <ErrorWrapper>
+              <Problem type="no_data" />
+            </ErrorWrapper>
+          )}
         </Host>
       </ScrollView>
     </View>

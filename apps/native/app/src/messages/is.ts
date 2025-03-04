@@ -675,6 +675,7 @@ export const is = {
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
   'health.overview.prescriptions': 'Lyfjaávísanir',
+  'health.overview.drugCertificates': 'Lyfjaskírteini',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',
@@ -707,26 +708,31 @@ export const is = {
     'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 
   // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Útrunnið',
+  'health.prescriptionsAndCertificates.rejected': 'Hafnað',
+  'health.prescriptionsAndCertificates.inProcess': 'Í vinnslu',
+  'health.prescriptionsAndCertificates.valid': 'Í gildi',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Nánari upplýsingar',
+  'health.prescriptionsAndCertificates.status': 'Staða',
+
+  'health.drugCertificates.screenTitle': 'Lyfjaskírteini',
+  'health.drugCertificates.title': 'Lyfjaskírteini',
+  'health.drugCertificates.description':
+    'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+  'health.drugCertificates.drugName': 'Lyfjaheiti',
+  'health.drugCertificates.atcCode': 'ATC flokkur',
+  'health.drugCertificates.ingredients': 'Innihaldsefni',
+  'health.drugCertificates.validFrom': 'Gildir frá',
+  'health.drugCertificates.validUntil': 'Gildir til',
+  'health.drugCertificates.nameOfDoctor': 'Heiti læknis',
+  'health.drugCertificates.methylDoctors': 'Aukalæknar skráðir á skírteini',
+
   'health.prescriptions.screenTitle': 'Lyfjaávísanir',
   'health.prescriptions.title': 'Lyfjaávísanir',
   'health.prescriptions.description':
     'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
-  'health.prescriptions.drugCertificates': 'Lyfjaskírteini',
-  'health.prescriptions.validTo': 'Gildir til: {date}',
-  'health.prescriptions.expired': 'Útrunnið',
-  'health.prescriptions.rejected': 'Hafnað',
-  'health.prescriptions.inProcess': 'Í vinnslu',
-  'health.prescriptions.valid': 'Í gildi',
-  'health.prescriptions.furtherInformation': 'Nánari upplýsingar',
-  'health.prescriptions.drugName': 'Lyfjaheiti',
-  'health.prescriptions.atcCode': 'ATC flokkur',
-  'health.prescriptions.ingredients': 'Innihaldsefni',
-  'health.prescriptions.validFrom': 'Gildir frá',
-  'health.prescriptions.validUntil': 'Gildir til',
-  'health.prescriptions.nameOfDoctor': 'Heiti læknis',
-  'health.prescriptions.methylDoctors': 'Aukalæknar skráðir á skírteini',
-  'health.prescriptions.status': 'Staða',
-
   'health.prescriptions.drug': 'Lyf',
   'health.prescriptions.type': 'Tegund',
   'health.prescriptions.indication': 'Lyf er notað við',

@@ -675,6 +675,7 @@ export const en: TranslatedMessages = {
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
   'health.overview.prescriptions': 'Prescriptions',
+  'health.overview.drugCertificates': 'Medicine licence',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -707,26 +708,32 @@ export const en: TranslatedMessages = {
     'All organs can be used for transplantation except: {limitations}.',
 
   // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Expired',
+  'health.prescriptionsAndCertificates.rejected': 'Rejected',
+  'health.prescriptionsAndCertificates.inProcess': 'In process',
+  'health.prescriptionsAndCertificates.valid': 'Valid',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Further information',
+  'health.prescriptionsAndCertificates.status': 'Status',
+
+  'health.drugCertificates.screenTitle': 'Medicine certificate',
+  'health.drugCertificates.title': 'Medicine certificate',
+  'health.drugCertificates.description':
+    'A doctor applies for a medication certificate for an individual issued by Iceland Health if certain conditions are met according to work regulations.',
+  'health.drugCertificates.drugName': 'Drug name',
+  'health.drugCertificates.atcCode': 'ATC code',
+  'health.drugCertificates.ingredients': 'Ingredient',
+  'health.drugCertificates.validFrom': 'Valid from',
+  'health.drugCertificates.validUntil': 'Valid to',
+  'health.drugCertificates.nameOfDoctor': 'Name of doctor',
+  'health.drugCertificates.methylDoctors':
+    'Extra doctors registered on license',
+
   'health.prescriptions.screenTitle': 'Prescriptions',
   'health.prescriptions.title': 'Prescriptions',
   'health.prescriptions.description':
     'Here you can find an overview of your prescriptions and medication certificates.',
-  'health.prescriptions.drugCertificates': 'Medicine licence',
-  'health.prescriptions.validTo': 'Valid to: {date}',
-  'health.prescriptions.expired': 'Expired',
-  'health.prescriptions.rejected': 'Rejected',
-  'health.prescriptions.inProcess': 'In process',
-  'health.prescriptions.valid': 'Valid',
-  'health.prescriptions.furtherInformation': 'Further information',
-  'health.prescriptions.drugName': 'Drug name',
-  'health.prescriptions.atcCode': 'ATC code',
-  'health.prescriptions.ingredients': 'Ingredient',
-  'health.prescriptions.validFrom': 'Valid from',
-  'health.prescriptions.validUntil': 'Valid to',
-  'health.prescriptions.nameOfDoctor': 'Name of doctor',
-  'health.prescriptions.methylDoctors': 'Extra doctors registered on license',
-  'health.prescriptions.status': 'Status',
-
   'health.prescriptions.drug': 'Lyf',
   'health.prescriptions.type': 'Tegund',
   'health.prescriptions.indication': 'Lyf er notað við',
