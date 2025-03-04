@@ -12,20 +12,40 @@ import {
 import { useLocale } from '@island.is/localization'
 import { usePrimarySchoolCareerLazyQuery } from './PrimarySchoolOverview.generated'
 import { Problem } from '@island.is/react-spa/shared'
-import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { maskString } from '@island.is/shared/utils'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export const PrimarySchoolOverview = () => {
   const { formatMessage } = useLocale()
   const user = useUserInfo()
 
+  const [maskedUserId, setMaskedUserId] = useState<{
+    status: 'initial' | 'noId' | 'masked'
+    value?: string
+  }>({
+    status: 'initial',
+  })
+
   const [primarySchoolCareerQuery, { data, loading, error }] =
     usePrimarySchoolCareerLazyQuery()
 
   useEffect(() => {
-    const queryStudentData = async () => {
+    if (maskedUserId?.status === 'masked' && maskedUserId.value) {
+      primarySchoolCareerQuery({
+        variables: {
+          input: {
+            studentId: maskedUserId.value,
+          },
+        },
+      })
+    } else if (maskedUserId?.status === 'noId') {
+      primarySchoolCareerQuery()
+    }
+  }, [maskedUserId, primarySchoolCareerQuery])
+
+  useEffect(() => {
+    const parseUserId = async () => {
       const maskedString = user.profile.actor
         ? await maskString(
             user.profile.nationalId,
@@ -34,20 +54,19 @@ export const PrimarySchoolOverview = () => {
         : undefined
 
       if (!maskedString) {
-        primarySchoolCareerQuery()
+        setMaskedUserId({
+          status: 'noId',
+        })
       } else {
-        primarySchoolCareerQuery({
-          variables: {
-            input: {
-              studentId: maskedString,
-            },
-          },
+        setMaskedUserId({
+          status: 'masked',
+          value: maskedString,
         })
       }
     }
 
-    queryStudentData()
-  }, [primarySchoolCareerQuery, user])
+    parseUserId()
+  }, [primarySchoolCareerQuery, user.profile])
 
   const studentCareer = data?.educationV3StudentCareer ?? null
 

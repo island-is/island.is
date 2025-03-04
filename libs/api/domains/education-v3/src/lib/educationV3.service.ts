@@ -16,9 +16,20 @@ export class EducationServiceV3 {
     user: User,
     studentId?: string,
   ): Promise<StudentCareer | null> {
-    const studentNationalId = studentId
-      ? await unmaskString(studentId, user.nationalId)
-      : user.nationalId
+    let studentNationalId: string | null
+
+    if (studentId) {
+      if (user.actor?.nationalId) {
+        studentNationalId = await unmaskString(studentId, user.actor.nationalId)
+      } else {
+        this.logger.warn(
+          'Student id supplied but no delegation active. Aborting...',
+        )
+        return null
+      }
+    } else {
+      studentNationalId = user.nationalId
+    }
 
     if (!studentNationalId) {
       this.logger.warn(
