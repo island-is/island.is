@@ -12,7 +12,10 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/newPrimarySchoolUtils'
-import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
+import {
+  FriggSchoolsByMunicipalityQuery,
+  OrganizationModelTypeEnum,
+} from '../../../types/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
@@ -36,17 +39,31 @@ export const newSchoolSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.municipality,
           placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async ({ apolloClient }) => {
+          loadOptions: async ({ application, apolloClient }) => {
+            const { childGradeLevel } = getApplicationExternalData(
+              application.externalData,
+            )
+
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
             return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
-                value: name,
-                label: name,
-              })) ?? []
+              data?.friggSchoolsByMunicipality
+                ?.filter(
+                  ({ type, children }) =>
+                    type === OrganizationModelTypeEnum.Municipality &&
+                    children &&
+                    children.length > 0 &&
+                    children.filter(({ gradeLevels }) =>
+                      gradeLevels?.includes(childGradeLevel),
+                    )?.length > 0,
+                )
+                ?.map(({ name }) => ({
+                  value: name,
+                  label: name,
+                })) ?? []
             )
           },
         }),
@@ -73,8 +90,10 @@ export const newSchoolSubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.find(({ name }) => name === selectedValues?.[0])
-                ?.children?.filter((school) =>
-                  school.gradeLevels?.includes(childGradeLevel),
+                ?.children?.filter(
+                  ({ type, gradeLevels }) =>
+                    type === OrganizationModelTypeEnum.School &&
+                    gradeLevels?.includes(childGradeLevel),
                 )
                 ?.map((school) => ({
                   value: school.id,
