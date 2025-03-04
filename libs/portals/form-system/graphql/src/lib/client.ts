@@ -22,7 +22,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
 
-export const initializeClient = (baseApiUrl: string) => {
+const initializeClient = (baseApiUrl: string) => {
   const httpLink = new HttpLink({
     uri: ({ operationName }) => `${baseApiUrl}/api/graphql/${operationName}`,
     fetch,

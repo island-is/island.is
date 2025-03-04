@@ -52,7 +52,7 @@ export class FormsResolver {
   }
 
   @Query(() => FormResponse, {
-    name: 'formSystemGetAllForms',
+    name: 'formSystemForms',
   })
   async getAllForms(
     @CurrentUser() user: User,
