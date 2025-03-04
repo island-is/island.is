@@ -535,6 +535,8 @@ export const en: TranslatedMessages = {
     completed {Completed}
     rejected {Rejected}
     draft {Application in progress}
+    approved {Approved}
+    notstarted {Not started}
     other {Unknown status}
   }`,
   'applicationStatusCard.draftProgress':
