@@ -601,13 +601,14 @@ export const buildPaymentPendingField = (data: {
 export const buildMessageWithLinkButtonField = (
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField => {
-  const { id, url, message, buttonTitle } = data
+  const { id, url, message, messageColor, buttonTitle } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     url,
     message,
+    messageColor,
     buttonTitle,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
