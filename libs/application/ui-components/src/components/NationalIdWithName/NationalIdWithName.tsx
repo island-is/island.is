@@ -179,8 +179,8 @@ export const NationalIdWithName: FC<
         if (companyData.companyRegistryCompany?.name) {
           setValue(nameField, companyData.companyRegistryCompany?.name)
         } else if (
-          searchPersons &&
-          !searchCompanies &&
+          !searchPersons &&
+          searchCompanies &&
           companyData?.companyRegistryCompany === null
         ) {
           setValue(nameField, '')
