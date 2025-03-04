@@ -23,7 +23,18 @@ export const copyLinkSubsection = buildSubSection({
         buildCopyLinkField({
           id: 'copyLinkField2',
           title: 'Copy link, with your location',
-          link: document.location.origin,
+          link: (_application) => {
+            // build link based on answers or external data
+            return document.location.origin
+          },
+          marginBottom: 4,
+        }),
+        buildCopyLinkField({
+          id: 'copyLinkField2',
+          title: 'Custom button title and semibold text',
+          link: 'https://www.google.com',
+          semiBoldLink: true,
+          buttonTitle: 'Custom button title',
         }),
       ],
     }),
