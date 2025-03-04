@@ -932,6 +932,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
     namespace,
     stepOptionsFromNamespace,
     stepperNamespace,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     organizationNamespace,
     ...getThemeConfig(article),
   }

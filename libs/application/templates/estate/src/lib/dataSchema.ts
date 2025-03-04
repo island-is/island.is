@@ -244,23 +244,38 @@ export const estateSchema = z.object({
   bankAccounts: z
     .object({
       accountNumber: z.string(),
+      exchangeRateOrInterest: z.string(),
       balance: z.string(),
       total: z.number().optional(),
     })
     .refine(
-      ({ accountNumber, balance }) => {
-        return accountNumber !== '' ? isValidString(balance) : true
+      ({ accountNumber, balance, exchangeRateOrInterest }) => {
+        return accountNumber !== '' || exchangeRateOrInterest !== ''
+          ? isValidString(balance)
+          : true
       },
       {
         path: ['balance'],
       },
     )
     .refine(
-      ({ accountNumber, balance }) => {
-        return balance !== '' ? accountNumber !== '' : true
+      ({ accountNumber, balance, exchangeRateOrInterest }) => {
+        return balance !== '' || exchangeRateOrInterest !== ''
+          ? accountNumber !== ''
+          : true
       },
       {
         path: ['accountNumber'],
+      },
+    )
+    .refine(
+      ({ accountNumber, balance, exchangeRateOrInterest }) => {
+        return accountNumber !== '' || balance !== ''
+          ? isValidString(exchangeRateOrInterest)
+          : true
+      },
+      {
+        path: ['exchangeRateOrInterest'],
       },
     )
     .array()

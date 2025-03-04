@@ -57,7 +57,7 @@ export type TableContext = Context & {
 export type AsyncSelectContext = {
   application: Application
   apolloClient: ApolloClient<object>
-  selectedValue?: string | string[]
+  selectedValues?: string[]
 }
 
 export type TagVariant =
@@ -89,7 +89,20 @@ type TableRepeaterOptions =
   | ((
       application: Application,
       activeField?: Record<string, string>,
+      locale?: Locale,
     ) => RepeaterOption[] | [])
+
+type MaybeWithApplicationAndActiveField<T> =
+  | T
+  | ((application: Application, activeField?: Record<string, string>) => T)
+
+type MaybeWithIndex<T> = T | ((index: number) => T)
+
+type MaybeWithAnswersAndExternalData<T> =
+  | T
+  | ((formValue: FormValue, externalData: ExternalData) => T)
+
+export type RepeaterOptionValue = string | readonly string[] | undefined | null
 
 export type RepeaterItem = {
   component: RepeaterFields
@@ -102,13 +115,15 @@ export type RepeaterItem = {
   emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
+  filterOptions?: (
+    options: RepeaterOption[],
+    answers: FormValue,
+    index: number,
+  ) => RepeaterOption[]
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
-  required?: boolean
-  condition?: (
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => boolean
+  required?: MaybeWithApplicationAndActiveField<boolean>
+  condition?: MaybeWithApplicationAndActiveField<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -116,18 +131,10 @@ export type RepeaterItem = {
   emailRequired?: boolean
   searchCompanies?: boolean
   searchPersons?: boolean
-  readonly?:
-    | boolean
-    | ((
-        application: Application,
-        activeField?: Record<string, string>,
-      ) => boolean)
-  disabled?:
-    | boolean
-    | ((
-        application: Application,
-        activeField?: Record<string, string>,
-      ) => boolean)
+  readonly?: MaybeWithApplicationAndActiveField<boolean>
+  disabled?: MaybeWithApplicationAndActiveField<boolean>
+  isClearable?: MaybeWithApplicationAndActiveField<boolean>
+  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
   updateValueObj?: {
     valueModifier: (
       application: Application,
@@ -140,10 +147,15 @@ export type RepeaterItem = {
           activeField?: Record<string, string>,
         ) => string | string[] | undefined)
   }
-  defaultValue?: (
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => unknown
+  clearOnChange?: MaybeWithIndex<string[]>
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((
+        optionValue: RepeaterOptionValue,
+        application: Application,
+        index: number,
+        activeField?: Record<string, string>,
+      ) => { key: string; value: any }[])
 } & (
   | {
       component: 'input'
@@ -197,9 +209,13 @@ export type RepeaterItem = {
       label: StaticText
       isMulti?: boolean
       isSearchable?: boolean
-      loadOptions(c: AsyncSelectContext): Promise<Option[]>
-      clearOnChange?: string[]
-      updateOnSelect?: string
+      loadOptions(
+        c: AsyncSelectContext,
+        lang: Locale,
+        activeField?: Record<string, string>,
+        setValueAtIndex?: (key: string, value: any) => void,
+      ): Promise<Option[]>
+      updateOnSelect?: MaybeWithIndex<string[]>
     }
 )
 
@@ -245,6 +261,9 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((optionValue: RepeaterOptionValue) => { key: string; value: any }[])
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -416,7 +435,8 @@ export interface AsyncSelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
-  updateOnSelect?: string
+  isClearable?: boolean
+  updateOnSelect?: string[]
 }
 
 export interface TextField extends InputField {
@@ -706,7 +726,7 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: StaticText
+  formTitle?: MaybeWithIndex<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
@@ -717,8 +737,8 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: MaybeWithApplicationAndField<number>
-  maxRows?: number
+  minRows?: MaybeWithAnswersAndExternalData<number>
+  maxRows?: MaybeWithAnswersAndExternalData<number>
 }
 
 export type AccordionItem = {

@@ -51,6 +51,7 @@ export class UserProfileController {
       },
     },
   })
+  @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
   @Audit<PaginatedUserProfileDto>({
     resources: (profile) => profile.data.map((p) => p.nationalId),
   })
@@ -81,6 +82,11 @@ export class UserProfileController {
     },
     response: { status: 200, type: UserProfileDto },
   })
+  @ApiSecurity('oauth2', [
+    UserProfileScope.system,
+    UserProfileScope.admin,
+    AdminPortalScope.serviceDesk
+  ])
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
@@ -149,6 +155,9 @@ export class UserProfileController {
     },
     response: { status: 200, type: UserProfileDto },
   })
+  @ApiSecurity('oauth2', [
+    AdminPortalScope.serviceDesk
+  ])
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })

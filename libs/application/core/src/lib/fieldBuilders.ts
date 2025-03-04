@@ -79,6 +79,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   } = data
 
   return {
@@ -95,6 +96,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   }
 }
 
