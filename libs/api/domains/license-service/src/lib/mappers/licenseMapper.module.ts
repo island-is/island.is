@@ -9,6 +9,7 @@ import { EHICCardPayloadMapper } from '../mappers/ehicCardMapper'
 import { HuntingLicensePayloadMapper } from '../mappers/huntingLicenseMapper'
 import { PassportMapper } from '../mappers/passportMapper'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
+import { IdentityDocumentMapper } from './identityDocumentMapper'
 
 @Module({
   imports: [CmsTranslationsModule],
@@ -22,6 +23,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
     PCardPayloadMapper,
     EHICCardPayloadMapper,
     PassportMapper,
+    IdentityDocumentMapper,
   ],
   exports: [
     AdrLicensePayloadMapper,
@@ -33,6 +35,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
     PCardPayloadMapper,
     EHICCardPayloadMapper,
     PassportMapper,
+    IdentityDocumentMapper,
   ],
 })
 export class LicenseMapperModule {}

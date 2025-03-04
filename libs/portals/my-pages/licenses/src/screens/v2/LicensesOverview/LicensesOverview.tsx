@@ -32,6 +32,7 @@ export const LicensesOverviewV2 = () => {
     GenericLicenseType.MachineLicense,
     GenericLicenseType.PCard,
     GenericLicenseType.Passport,
+    GenericLicenseType.IdentityDocument,
   ]
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
