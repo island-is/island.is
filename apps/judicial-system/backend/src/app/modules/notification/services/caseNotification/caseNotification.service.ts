@@ -1362,7 +1362,7 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendRevokedEmailNotificationToDefenderForRequestCase(
+  private sendRevokedEmailNotificationToDefender(
     caseType: CaseType,
     user: User,
     caseId: string,
@@ -1372,10 +1372,14 @@ export class CaseNotificationService extends BaseNotificationService {
     courtName?: string,
     courtCaseNumber?: string,
   ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.subject,
-      { caseType },
-    )
+    const subject = isIndictmentCase(caseType)
+      ? this.formatMessage(
+          notifications.defenderRevokedEmail.indictmentSubject,
+          { courtCaseNumber },
+        )
+      : this.formatMessage(notifications.defenderRevokedEmail.subject, {
+          caseType,
+        })
 
     const html = this.formatMessage(
       notifications.defenderRevokedEmail.indictmentBody,
@@ -1398,46 +1402,7 @@ export class CaseNotificationService extends BaseNotificationService {
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      skipTail: true,
-    })
-  }
-
-  private sendRevokedEmailNotificationToDefenderForIndictmentCase(
-    caseId: string,
-    defenderNationalId?: string,
-    defenderName?: string,
-    defenderEmail?: string,
-    courtName?: string,
-    courtCaseNumber?: string,
-    user?: User,
-  ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentSubject,
-      { courtCaseNumber },
-    )
-
-    const html = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentBody,
-      {
-        actorInstitution: user?.institution?.name,
-        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
-        courtCaseNumber,
-        defenderHasAccessToRvg: Boolean(defenderNationalId),
-        linkStart: `<a href="${formatDefenderRoute(
-          this.config.clientUrl,
-          CaseType.INDICTMENT,
-          caseId,
-        )}">`,
-        linkEnd: '</a>',
-      },
-    )
-
-    return this.sendEmail({
-      subject,
-      html,
-      recipientName: defenderName,
-      recipientEmail: defenderEmail,
-      skipTail: !defenderNationalId,
+      skipTail: isIndictmentCase(caseType) || !defenderNationalId,
     })
   }
 
@@ -1475,7 +1440,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     if (defenderWasNotified && theCase.defendants) {
       promises.push(
-        this.sendRevokedEmailNotificationToDefenderForRequestCase(
+        this.sendRevokedEmailNotificationToDefender(
           theCase.type,
           user,
           theCase.id,
@@ -1579,14 +1544,15 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (defenderWasNotified) {
         promises.push(
-          this.sendRevokedEmailNotificationToDefenderForIndictmentCase(
+          this.sendRevokedEmailNotificationToDefender(
+            theCase.type,
+            user,
             theCase.id,
-            defendant.defenderNationalId,
-            defendant.defenderName,
-            defendant.defenderEmail,
+            theCase.defenderName,
+            theCase.defenderEmail,
+            theCase.defenderNationalId,
             theCase.court?.name,
             theCase.courtCaseNumber,
-            user,
           ),
         )
       }
