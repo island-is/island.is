@@ -1377,15 +1377,20 @@ export class CaseNotificationService extends BaseNotificationService {
       { caseType },
     )
 
-    const html = formatDefenderRevokedEmailNotification(
-      this.formatMessage,
-      caseType,
-      user,
-      this.config.clientUrl,
-      caseId,
-      courtCaseNumber,
-      courtName,
-      defenderNationalId,
+    const html = this.formatMessage(
+      notifications.defenderRevokedEmail.indictmentBody,
+      {
+        actorInstitution: user?.institution?.name,
+        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+        courtCaseNumber,
+        defenderHasAccessToRvg: Boolean(defenderNationalId),
+        linkStart: `<a href="${formatDefenderRoute(
+          this.config.clientUrl,
+          caseType,
+          caseId,
+        )}">`,
+        linkEnd: '</a>',
+      },
     )
 
     return this.sendEmail({

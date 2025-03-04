@@ -9,12 +9,11 @@ import {
   enumerate,
   formatCaseType,
   formatDate,
-  formatNationalId,
   getSupportedCaseCustodyRestrictions,
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { Gender, User, UserRole } from '@island.is/judicial-system/types'
+import { Gender, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -578,28 +577,6 @@ export const formatPrisonRevokedEmailNotification = (
     revokedCaseText,
     defenderText,
     courtCaseNumber,
-  })
-}
-
-export const formatDefenderRevokedEmailNotification = (
-  formatMessage: FormatMessage,
-  type: CaseType,
-  user: User,
-  baseUrl: string,
-  caseId: string,
-  courtCaseNumber?: string,
-  court?: string,
-  defenderNationalId?: string,
-): string => {
-  const cf = notifications.defenderRevokedEmail
-
-  return formatMessage(cf.indictmentBody, {
-    actorInstitution: user.institution?.name,
-    courtName: applyDativeCaseToCourtName(court || 'héraðsdómi'),
-    courtCaseNumber,
-    defenderHasAccessToRvg: Boolean(defenderNationalId),
-    linkStart: `<a href="${formatDefenderRoute(baseUrl, type, caseId)}">`,
-    linkEnd: '</a>',
   })
 }
 
