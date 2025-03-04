@@ -552,7 +552,7 @@ export const notifications = {
       defaultMessage:
         '{actorInstitution} hefur afturkallað {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {ákæru}} í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRvg, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description:
-        'Notaður sem beinagrind á pósti til verjanda þegar ákæra er afturkölluð',
+        'Notaður sem beinagrind á pósti til verjanda þegar mál er afturkallað',
     },
     indictmentSubject: {
       id: 'judicial.system.backend:notifications.defender_revoked_email.indictment_subject_v2',
