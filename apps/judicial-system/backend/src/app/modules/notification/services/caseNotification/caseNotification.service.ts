@@ -62,7 +62,6 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
   formatPrisonAdministrationRulingNotification,
@@ -1381,21 +1380,19 @@ export class CaseNotificationService extends BaseNotificationService {
           caseType,
         })
 
-    const html = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentBody,
-      {
-        actorInstitution: user?.institution?.name,
-        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
-        courtCaseNumber,
-        defenderHasAccessToRvg: Boolean(defenderNationalId),
-        linkStart: `<a href="${formatDefenderRoute(
-          this.config.clientUrl,
-          caseType,
-          caseId,
-        )}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const html = this.formatMessage(notifications.defenderRevokedEmail.bodyV2, {
+      actorInstitution: user?.institution?.name,
+      courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+      courtCaseNumber,
+      caseType,
+      defenderHasAccessToRvg: Boolean(defenderNationalId),
+      linkStart: `<a href="${formatDefenderRoute(
+        this.config.clientUrl,
+        caseType,
+        caseId,
+      )}">`,
+      linkEnd: '</a>',
+    })
 
     return this.sendEmail({
       subject,

@@ -24,7 +24,6 @@ import {
   formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatLegalProvisions,
   formatPrisonAdministrationRulingNotification,
   formatPrisonCourtDateEmailNotification,
