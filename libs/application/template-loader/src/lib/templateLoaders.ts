@@ -3,6 +3,12 @@ import { ApplicationTypes } from '@island.is/application/types'
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.EXAMPLE]: () =>
     import('@island.is/application/templates/reference-template'),
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: () =>
+    import('@island.is/application/templates/examples/example-state-transfers'),
+  [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
+    import('@island.is/application/templates/examples/example-common-actions'),
+  [ApplicationTypes.EXAMPLE_FIELDS]: () =>
+    import('@island.is/application/templates/examples/example-fields'),
   [ApplicationTypes.ESTATE]: () =>
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>

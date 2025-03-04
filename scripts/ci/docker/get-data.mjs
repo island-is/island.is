@@ -29,10 +29,17 @@ if (typeOfDeployment.prod) {
   await prepareManifests('prod');
 }
 
+const _BOOTSTRAP_CHARTS = 'charts/bootstrap'
+
 if (changedFiles.length > 0) {
+  const bootstrapChart = await glob(`${_BOOTSTRAP_CHARTS}/**/values.*.yaml`);
+  for (const file of bootstrapChart) {
+    changedFiles.push(file);
+  }
   console.log(`Changed files is ${changedFiles.join(',')}`)
   core.setOutput(_KEY_HAS_OUTPUT, 'true')
   core.setOutput(_KEY_CHANGED_FILES, changedFiles.join(','))
+  
 } else {
   console.log('No files changed')
   core.setOutput(_KEY_HAS_OUTPUT, 'false')
