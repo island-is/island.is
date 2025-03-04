@@ -1,7 +1,9 @@
 import {
+  AccordionCard,
   AlertMessage,
   Box,
   Button,
+  FocusableBox,
   GridColumn,
   GridRow,
   Icon,
@@ -10,7 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import { m } from '../../lib/messages'
 import { AdminApplication } from '../../types/adminApplication'
 import {
@@ -20,7 +22,10 @@ import {
 } from '@island.is/application/types'
 import copyToClipboard from 'copy-to-clipboard'
 import { ApplicationCard } from '@island.is/application/ui-components'
-
+import {
+  GetApplicationDetailsQuery,
+  useGetApplicationDetailsQuery,
+} from '../../queries/overview.generated'
 interface ValueLineProps {
   title?: string
 }
@@ -56,6 +61,9 @@ export const ApplicationDetails = ({
   shouldShowCardButtons = true,
 }: Props) => {
   const { formatMessage } = useLocale()
+  const [fetchedData, setFetchedData] = useState<string | null>(null)
+
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const handleCopyApplicationId = () => {
     const copied = copyToClipboard(application.id)
@@ -63,6 +71,58 @@ export const ApplicationDetails = ({
     if (copied) {
       toast.success(formatMessage(m.copyIdSuccessful))
     }
+  }
+
+  const { refetch } = useGetApplicationDetailsQuery({
+    variables: {
+      applicationId: application.id,
+    },
+    skip: true, // Skip the initial query
+  })
+
+  const handleDownloadApplicationData = async () => {
+    try {
+      const { data } = await refetch()
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { __typename, ...cleanedData } = data?.getApplicationDetails || {}
+      const dataDogLink = getErrorDataDogLink(data?.getApplicationDetails)
+      setFetchedData(JSON.stringify({ dataDogLink, ...cleanedData }, null, 2))
+    } catch (error) {
+      console.error('Error fetching application data:', error)
+      setFetchedData(JSON.stringify(error, null, 2))
+    }
+  }
+
+  const getErrorDataDogLink = (
+    getApplicationDetails: GetApplicationDetailsQuery['getApplicationDetails'],
+  ): string | undefined => {
+    const { externalData } = getApplicationDetails || {}
+    if (externalData) {
+      for (const key in externalData) {
+        const dataItem = externalData[key]
+        if (dataItem.status === 'failure') {
+          const errorDate = new Date(dataItem.date)
+          const startOfDay = new Date(errorDate.setHours(0, 0, 0, 0))
+          const endOfDay = new Date(errorDate.setHours(23, 59, 59))
+          const dataDogLink = formatDataDogLink(
+            application.id,
+            startOfDay,
+            endOfDay,
+          )
+          return dataDogLink
+        }
+      }
+    }
+    return undefined
+  }
+
+  const formatDataDogLink = (applicationId: string, from: Date, to: Date) => {
+    return `https://app.datadoghq.eu/logs?query=service%3Aapplication-system-api%20%40applicationId%3A${applicationId}&from_ts=${from.getTime()}&to_ts=${to.getTime()}`
+  }
+
+  const handleToggleAccordion = () => {
+    setIsExpanded((prev) => !prev)
+    handleDownloadApplicationData()
   }
 
   return (
@@ -179,6 +239,35 @@ export const ApplicationDetails = ({
           }}
         />
       )}
+
+      <Box marginBottom={2} marginTop={2}>
+        <AccordionCard
+          colorVariant="red"
+          id="id_1"
+          label="Nánari gögn svör og viðbótargögn"
+          labelColor="red600"
+          expanded={isExpanded}
+          onToggle={handleToggleAccordion}
+        >
+          <Box marginBottom={2} marginTop={1}>
+            <Button
+              size="small"
+              variant="text"
+              icon="copy"
+              iconType="outline"
+              onClick={() => onCopyApplicationLink(application)}
+            >
+              {'Afrita gögn'}
+            </Button>
+          </Box>
+
+          <FocusableBox component="code">
+            <Text variant="small" whiteSpace="breakSpaces">
+              {fetchedData || 'No data fetched yet.'}
+            </Text>
+          </FocusableBox>
+        </AccordionCard>
+      </Box>
     </Box>
   )
 }
