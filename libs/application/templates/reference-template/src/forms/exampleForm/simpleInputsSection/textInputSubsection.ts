@@ -17,6 +17,18 @@ export const textInputSubsection = buildSubSection({
           placeholder: 'The most basic text input',
         }),
         buildTextField({
+          id: 'textInputTitle',
+          placeholder: 'The most basic text input',
+          title: 'With a title',
+        }),
+        buildTextField({
+          id: 'textInputMaxLength',
+          placeholder: 'Max length 30',
+          maxLength: 30,
+          showMaxLength: true,
+          title: 'Max length 30',
+        }),
+        buildTextField({
           id: 'halfTextInput',
           placeholder: 'Half width text input',
           width: 'half',
@@ -97,6 +109,8 @@ export const textInputSubsection = buildSubSection({
           placeholder: 'Textarea',
           variant: 'textarea',
           rows: 10,
+          maxLength: 100,
+          showMaxLength: true,
         }),
       ],
     }),

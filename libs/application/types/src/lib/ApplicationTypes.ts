@@ -78,12 +78,27 @@ export enum ApplicationTypes {
   MACHINE_REGISTRATION = 'MachineRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
+  EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_FIELDS = 'ExampleFields',
 }
 
 export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE]: {
     slug: 'example',
     translation: 'example.application',
+  },
+  [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
+    slug: 'example-common-actions',
+    translation: 'eca.application',
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+    slug: 'example-state-transfers',
+    translation: 'ets.application',
+  },
+  [ApplicationTypes.EXAMPLE_FIELDS]: {
+    slug: 'example-fields',
+    translation: 'ef.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
