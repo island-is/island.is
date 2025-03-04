@@ -141,13 +141,23 @@ export const NationalIdWithName: FC<
       `,
       {
         onCompleted: (data) => {
+          console.log('data', data)
           onNameChange && onNameChange(data.identity?.name ?? '')
           if (data.identity?.name) {
+            console.log('data.identity?.name', data.identity?.name)
             setValue(nameField, data.identity?.name)
+          } else if (
+            searchPersons &&
+            !searchCompanies &&
+            data?.identity === null
+          ) {
+            console.log('data.identity === null')
+            setValue(nameField, '')
           } else if (
             searchCompanies &&
             companyData?.companyRegistryCompany === null
           ) {
+            console.log('companyData?.companyRegistryCompany === null')
             setValue(nameField, '')
           }
         },
@@ -171,8 +181,23 @@ export const NationalIdWithName: FC<
         onNameChange &&
           onNameChange(companyData.companyRegistryCompany?.name ?? '')
         if (companyData.companyRegistryCompany?.name) {
+          console.log(
+            'companyData.companyRegistryCompany?.name',
+            companyData.companyRegistryCompany?.name,
+          )
           setValue(nameField, companyData.companyRegistryCompany?.name)
-        } else if (searchPersons && data?.identity === null) {
+        } else if (
+          searchPersons &&
+          !searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          console.log('companyData?.companyRegistryCompany === null')
+          setValue(nameField, '')
+        } else if (
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          console.log('companyData?.companyRegistryCompany === null')
           setValue(nameField, '')
         }
       },

@@ -31,11 +31,12 @@ export const ExampleForm: Form = buildForm({
     return () => logo
   },
   children: [
+    compositeFieldsSection,
     introSection,
     commonActionsSection,
     noInputFieldsSection,
     simpleInputsSection,
-    compositeFieldsSection,
+
     tablesAndRepeatersSection,
     customSection,
     overviewSection,
