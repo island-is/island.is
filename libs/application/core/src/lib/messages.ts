@@ -753,7 +753,7 @@ export const coreErrorMessages = defineMessages({
   cantConnectToVer: {
     id: 'application.system:core.fetch.data.cantConnectToVer',
     defaultMessage: 'Ekki tókst að senda inn umsókn til Vinnueftirlitsins',
-    description: 'Did not find any machines',
+    description: 'Cant connect to Vinnueftirlit',
   },
   licensesEmptyListDefault: {
     id: 'application.system:core.fetch.data.licensesEmptyListDefault',
