@@ -31,6 +31,7 @@ export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormF
 export { VehicleSelectFormField } from './VehicleSelectFormField/VehicleSelectFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
 export { SliderFormField } from './SliderFormField/SliderFormField'
+export { InformationCardFormField } from './InformationCardFormField/InformationCardFormField'
 export { DisplayFormField } from './DisplayFormField/DisplayFormField'
 export { AccordionFormField } from './AccordionFormField/AccordionFormField'
 export { BankAccountFormField } from './BankAccountFormField/BankAccountFormField'
