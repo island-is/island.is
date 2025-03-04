@@ -5,6 +5,7 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  applyDativeCaseToCourtName,
   enumerate,
   formatCaseType,
   formatDate,
@@ -162,14 +163,15 @@ export const formatDefenderResubmittedToCourtEmailNotification = (
   courtCaseNumber?: string,
 ): SubjectAndBody => {
   const cf = notifications.defenderResubmittedToCourt
+  const courtName = applyDativeCaseToCourtName(court || 'héraðsdómi')
   const subject = formatMessage(cf.subject, { courtCaseNumber })
   const body = formatMessage(cf.body, {
     courtCaseNumber,
-    courtName: court?.replace('dómur', 'dómi'),
+    courtName,
   })
   const link = formatMessage(cf.link, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: court?.replace('dómur', 'dómi'),
+    courtName,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
@@ -466,22 +468,24 @@ export const formatDefenderCourtDateLinkEmailNotification = (
   requestSharedWithDefender?: boolean,
 ): string => {
   const cf = notifications.defenderCourtDateEmail
+
+  const info = {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: applyDativeCaseToCourtName(court || 'héraðsdómi'),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  }
+
   const body = requestSharedWithDefender
     ? formatMessage(cf.linkBody, { courtCaseNumber })
-    : formatMessage(cf.linkNoRequestBody, { courtName: court, courtCaseNumber })
+    : formatMessage(cf.linkNoRequestBody, {
+        courtName: court,
+        courtCaseNumber,
+      })
+
   const link = requestSharedWithDefender
-    ? formatMessage(cf.link, {
-        defenderHasAccessToRvg: Boolean(overviewUrl),
-        courtName: court?.replace('dómur', 'dómi'),
-        linkStart: `<a href="${overviewUrl}">`,
-        linkEnd: '</a>',
-      })
-    : formatMessage(cf.linkNoRequest, {
-        defenderHasAccessToRvg: Boolean(overviewUrl),
-        courtName: court?.replace('dómur', 'dómi'),
-        linkStart: `<a href="${overviewUrl}">`,
-        linkEnd: '</a>',
-      })
+    ? formatMessage(cf.link, info)
+    : formatMessage(cf.linkNoRequest, info)
 
   return `${body}${link}`
 }
@@ -500,7 +504,7 @@ export const formatPrisonAdministrationRulingNotification = (
   const body = formatMessage(notifications.signedRuling.prisonAdminBody, {
     isModifyingRuling,
     courtCaseNumber: courtCaseNumber ?? '',
-    courtName: courtName?.replace('dómur', 'dómi') ?? '',
+    courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: `</a>`,
   })
@@ -588,8 +592,8 @@ export const formatDefenderRevokedEmailNotification = (
 ): string => {
   const cf = notifications.defenderRevokedEmail
   const courtText = formatMessage(cf.court, {
-    court: court || 'NONE',
-  }).replace('dómur', 'dómi')
+    court: court ? applyDativeCaseToCourtName(court) : 'NONE',
+  })
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPPp')
@@ -733,7 +737,7 @@ export const formatDefenderReadyForCourtEmailNotification = (
 
   const link = formatMessage(notifications.defenderLink, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName: courtName.replace('dómur', 'dómi'),
+    courtName: applyDativeCaseToCourtName(courtName),
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
