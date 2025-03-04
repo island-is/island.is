@@ -19,7 +19,7 @@ import Logo from '../../assets/Logo'
 import DigitalServices from '../../assets/DigitalServices'
 
 export const Prerequisites: Form = buildForm({
-  id: 'CreateListPrerequisites',
+  id: 'createListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -27,7 +27,6 @@ export const Prerequisites: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
@@ -46,7 +45,6 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      title: m.dataCollection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -80,26 +78,6 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen4',
-      title: m.overview,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.confirmCreation,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen6',
-      title: m.listCreated,
-      children: [],
     }),
   ],
 })

@@ -10,39 +10,15 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Jobs from '../../assets/Jobs'
+import Logo from '../../assets/Logo'
 
 export const Done: Form = buildForm({
   id: 'done',
   mode: FormModes.COMPLETED,
+  logo: Logo,
   children: [
     buildSection({
-      id: 'screen1',
-      title: m.intro,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen2',
-      title: m.dataCollection,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen4',
-      title: m.overview,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.confirmCreation,
-      children: [],
-    }),
-    buildSection({
       id: 'doneScreen',
-      title: m.listCreated,
       children: [
         buildMultiField({
           id: 'doneScreen',

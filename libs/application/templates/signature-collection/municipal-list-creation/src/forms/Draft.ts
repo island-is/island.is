@@ -24,22 +24,12 @@ import {
 } from '@island.is/application/ui-components'
 
 export const Draft: Form = buildForm({
-  id: 'MunicipalListCreationDraft',
+  id: 'municipalListCreationDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   logo: Logo,
   children: [
-    buildSection({
-      id: 'screen1',
-      title: m.intro,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen2',
-      title: m.dataCollection,
-      children: [],
-    }),
     buildSection({
       id: 'listInformationSection',
       title: m.information,
