@@ -50,7 +50,7 @@ export const CommunicationChannels = ({ application }: OJOIFieldBaseProps) => {
     }
   }
 
-  const onRemoveChannel = (index?: number) => {
+  const onRemoveChannel = (index: number) => {
     const currentAnswers = structuredClone(fetchedApplication.answers)
     const currentChannels = currentAnswers.advert?.channels ?? []
     const newChannels = currentChannels.filter((_, i) => i !== index)
