@@ -16,3 +16,8 @@ runs:
         else
           echo "TEST_EVERYTHING=false" >> "$GITHUB_ENV"
         fi
+    - name: Test everything on push to release branches
+      if: ${{ github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/pre-release/')) }}
+      shell: bash
+      run: |
+        echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
