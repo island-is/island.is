@@ -187,7 +187,7 @@ export const Draft: Form = buildForm({
                 },
               ],
             }),
-            buildDividerField({})
+            buildDividerField({}),
           ],
         }),
       ],
