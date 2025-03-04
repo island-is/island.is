@@ -5,9 +5,11 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   GetObjectCommandOutput,
+  GetObjectTaggingCommand,
   HeadObjectCommand,
   PutObjectCommandInput,
   S3Client,
+  Tag,
 } from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { Inject, Injectable } from '@nestjs/common'
@@ -156,6 +158,28 @@ export class S3Service {
         `An error occurred while trying to create a presigned post ${error.message}`,
       )
     }
+  }
+
+  public async getFileTags(
+    BucketKeyPairOrFilename: BucketKeyPair | string,
+  ): Promise<Tag[]> {
+    const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
+    
+    try {
+      const command = new GetObjectTaggingCommand({
+        Bucket: bucket,
+        Key: key,
+      })
+      const results = await this.s3Client.send(command)
+      
+      return results?.TagSet ?? []
+    } catch (error) {
+      this.logger.error(
+        `Error occurred while fetching file tags for key: ${key} in S3 bucket: ${bucket}`,
+        error,
+      )
+    }
+    return []
   }
 
   public async fileExists(
