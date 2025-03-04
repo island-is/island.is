@@ -186,11 +186,11 @@ export const Draft: Form = buildForm({
               label: m.phone,
               width: 'half',
               value: ({ answers }) => {
-                const phone = getValueViaPath(
+                const phone = getValueViaPath<string>(
                   answers,
                   'applicant.phone',
-                ) as string
-                return formatPhone(phone) ?? ''
+                )
+                return phone ? formatPhone(phone) : ''
               },
             }),
             buildKeyValueField({
