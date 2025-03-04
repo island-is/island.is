@@ -301,7 +301,6 @@ export class AuthController {
         return
       }
 
-      // this.clearCookies(res, false)
       this.redirectAuthorizeUser(
         eligibleUsers,
         userIdx,
