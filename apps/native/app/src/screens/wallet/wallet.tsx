@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
 import {
@@ -18,6 +18,7 @@ import {
   Button,
   EmptyList,
   GeneralCardSkeleton,
+  TabButtons,
   TopLine,
   Typography,
 } from '../../ui'
@@ -25,10 +26,7 @@ import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import refreshIcon from '../../assets/icons/refresh.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
-  GenericLicenseType,
   GenericUserLicense,
-  IdentityDocumentModel,
-  useGetIdentityDocumentQuery,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -40,10 +38,15 @@ import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
 import { useLocale } from '../../hooks/use-locale'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
+
+const Tabs = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
 
 type FlatListItem =
   | GenericUserLicense
-  | IdentityDocumentModel
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
 
@@ -107,46 +110,37 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const { dismiss, dismissed } = usePreferencesStore()
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const [selectedTab, setSelectedTab] = useState(0)
 
   // Query list of licenses
   const res = useListLicensesQuery({
     variables: {
       input: {
-        includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-          GenericLicenseType.PCard,
-          GenericLicenseType.Ehic,
-          GenericLicenseType.HuntingLicense,
-        ],
+        includedTypes: INCLUDED_LICENSE_TYPES,
       },
       locale: useLocale(),
     },
     fetchPolicy: 'cache-first',
   })
 
-  // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery()
-
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['licenseScan'] }),
-    queryResult: [res, resPassport],
+    queryResult: res,
     refetching,
   })
 
   // Filter licenses
   const licenseItems = useMemo(() => {
     if ((!res.loading && !res.error) || res.data) {
-      return (res.data?.genericLicenses ?? []).filter(({ license }) => {
-        if (license.status === 'Unknown') {
-          return false
-        }
-        return true
-      })
+      return (res.data?.genericLicenseCollection?.licenses ?? []).filter(
+        ({ license }) => {
+          if (license.status === 'Unknown') {
+            return false
+          }
+          return true
+        },
+      )
     }
 
     return []
@@ -161,11 +155,16 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       : undefined
   }, [licenseItems])
 
+  const hasChildLicenses = licenseItems.some(
+    (license) => license.isOwnerChildOfUser,
+  )
+
   // indexing list for spotlight search IOS
   useEffect(() => {
     const indexItems = licenseItems.map((item) => {
       return {
-        title: item.license.type,
+        title: item.payload?.metadata?.name ?? item.license.type,
+        type: item.license.type,
         uniqueIdentifier: `/wallet/${item.license.type}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
@@ -227,14 +226,21 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       }
 
       if (
-        item.__typename === 'GenericUserLicense' ||
-        item.__typename === 'IdentityDocumentModel'
+        item.__typename === 'GenericUserLicense' &&
+        selectedTab === 0 &&
+        !item.isOwnerChildOfUser
+      ) {
+        return <WalletItem item={item} />
+      } else if (
+        item.__typename === 'GenericUserLicense' &&
+        selectedTab === 1 &&
+        item.isOwnerChildOfUser
       ) {
         return <WalletItem item={item} />
       }
       return null
     },
-    [theme],
+    [theme, selectedTab],
   )
 
   const keyExtractor = useCallback((item: FlatListItem, index: number) => {
@@ -242,27 +248,19 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     const type = item.__typename
 
     if (type === 'GenericUserLicense') {
-      return item.license.type ?? fallback
-    } else if (type === 'IdentityDocumentModel') {
-      return item.number ?? fallback
+      return `${item.license.type}-${fallback}`
     }
 
     return (item as { id: string })?.id ?? fallback
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (
-      (res.loading && !res.data) ||
-      (resPassport.loading && !resPassport.data)
-    ) {
+    if (res.loading && !res.data) {
       return getSkeletonArr()
     }
 
-    return [
-      ...licenseItems,
-      ...(resPassport?.data?.getIdentityDocument ?? []),
-    ] as FlatListItem[]
-  }, [licenseItems, resPassport, res.loading, res.data])
+    return [...licenseItems] as FlatListItem[]
+  }, [licenseItems, res.loading, res.data])
 
   // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
   if (hiddenContent) {
@@ -292,14 +290,36 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         ListHeaderComponent={
-          isIos && !isBarcodeEnabled ? (
+          (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
             <View style={{ marginBottom: 16 }}>
-              <Alert
-                type="info"
-                visible={!dismissed.includes('howToUseLicence')}
-                message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-                onClose={() => dismiss('howToUseLicence')}
-              />
+              {isIos && !isBarcodeEnabled && (
+                <Alert
+                  type="info"
+                  visible={!dismissed.includes('howToUseLicence')}
+                  message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+                  onClose={() => dismiss('howToUseLicence')}
+                />
+              )}
+              {hasChildLicenses && (
+                <Tabs>
+                  <TabButtons
+                    buttons={[
+                      {
+                        title: intl.formatMessage({
+                          id: 'wallet.yourLicenses',
+                        }),
+                      },
+                      {
+                        title: intl.formatMessage({
+                          id: 'wallet.childLicenses',
+                        }),
+                      },
+                    ]}
+                    selectedTab={selectedTab}
+                    setSelectedTab={setSelectedTab}
+                  />
+                </Tabs>
+              )}
             </View>
           ) : null
         }
@@ -325,7 +345,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: theme.spacing[1],
+              marginTop: theme.spacing[3],
             }}
           >
             {lastUpdatedFormatted && (
