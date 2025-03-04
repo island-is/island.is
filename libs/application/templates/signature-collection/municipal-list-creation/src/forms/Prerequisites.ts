@@ -76,26 +76,7 @@ export const Prerequisites: Form = buildForm({
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
-            /*buildDataProviderItem({
-              provider: MunicipalCollectionApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: MunicipalIdentityApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: CandidateApi,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: IsDelegatedToCompanyApi,
-              title: '',
-              subTitle: '',
-            }),*/
+            //Todo: add more providers once known
           ],
         }),
       ],

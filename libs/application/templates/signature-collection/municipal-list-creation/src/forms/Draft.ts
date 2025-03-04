@@ -56,6 +56,7 @@ export const Draft: Form = buildForm({
               title: m.listMunicipality,
               width: 'full',
               readOnly: true,
+              //Todo: use value from externalData once available
               defaultValue: () => 'Borgarbyggð',
             }),
             buildTextField({

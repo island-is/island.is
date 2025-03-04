@@ -132,11 +132,7 @@ const createListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          /*onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),*/
+          //Todo: Add onEntry once ready
           roles: [
             {
               id: Roles.APPLICANT,
