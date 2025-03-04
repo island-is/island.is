@@ -57,7 +57,13 @@ export const FormsHeader = (props: Props) => {
           </Button>
         </Box>
         <Box marginRight={4}>
-          <Button variant="ghost" size="medium">
+          <Button
+            variant="ghost"
+            size="medium"
+            onClick={async () => {
+              navigate(FormSystemPaths.Admin)
+            }}
+          >
             {formatMessage(m.applications)}
           </Button>
         </Box>
