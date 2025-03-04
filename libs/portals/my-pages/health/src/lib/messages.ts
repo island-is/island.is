@@ -703,6 +703,18 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  close: {
+    id: 'sp.health:close',
+    defaultMessage: 'Loka',
+  },
+  detail: {
+    id: 'sp.health:detail',
+    defaultMessage: 'Nánar',
+  },
+  date: {
+    id: 'sp.health:date',
+    defaultMessage: 'Dagsetning',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -765,6 +777,10 @@ export const messages = defineMessages({
   medicineTitle: {
     id: 'sp.health:medicine-title',
     defaultMessage: 'Lyf',
+  },
+  medicineName: {
+    id: 'sp.health:medicine-name',
+    defaultMessage: 'Heiti lyfs',
   },
   medicineTitleIntro: {
     id: 'sp.health:medicine-title-intro',
@@ -1237,6 +1253,50 @@ export const messages = defineMessages({
     id: 'sp.health:renew',
     defaultMessage: 'Endurnýja',
   },
+  prescribedAmount: {
+    id: 'sp.health:prescribed-amount',
+    defaultMessage: 'Ávísað magn',
+  },
+  usage: {
+    id: 'sp.health:usage',
+    defaultMessage: 'Notkun',
+  },
+  usageInstructions: {
+    id: 'sp.health:usage-instructions',
+    defaultMessage: 'Notkunarleiðbeiningar',
+  },
+  dispensations: {
+    id: 'sp.health:first-dispensations',
+    defaultMessage: '{arg}. afgreiðsla',
+  },
+  publicationDate: {
+    id: 'sp.health:publication-date',
+    defaultMessage: 'Útgáfudagur',
+  },
+  dispensingPlace: {
+    id: 'sp.health:dispensing-place',
+    defaultMessage: 'Afhendingarstaður',
+  },
+  allMedicine: {
+    id: 'sp.health:all-medicine',
+    defaultMessage: 'Öll lyf',
+  },
+  regularMedicine: {
+    id: 'sp.health:regular-medicine',
+    defaultMessage: 'Föst lyf',
+  },
+  temporaryMedicine: {
+    id: 'sp.health:temporary-medicine',
+    defaultMessage: 'Tímabundin lyf',
+  },
+  regimenMedicine: {
+    id: 'sp.health:regimen-medicine',
+    defaultMessage: 'Lyfjakúrar',
+  },
+  pickedUpInPharmacy: {
+    id: 'sp.health:picked-up-in-pharmacy',
+    defaultMessage: 'Sótt í {arg} {date}',
+  },
   renewalMedicineRequest: {
     id: 'sp.health:renewal-medicine-request',
     defaultMessage: 'Beiðni um endurnýjun á lyfi',
@@ -1249,6 +1309,10 @@ export const messages = defineMessages({
   medicineInformation: {
     id: 'sp.health:medicine-information',
     defaultMessage: 'Upplýsingar um lyf',
+  },
+  dispensationInformation: {
+    id: 'sp.health:dispensation-information',
+    defaultMessage: 'Upplýsingar um afgreiðslu',
   },
   moreDetailedInfo: {
     id: 'sp.health:more-detailed-info',
@@ -1289,6 +1353,66 @@ export const messages = defineMessages({
   medicinePaymentParticipation: {
     id: 'sp.health:medicine-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
+  },
+  referrals: {
+    id: 'sp.health:referrals',
+    defaultMessage: 'Tilvísanir',
+  },
+  referralsIntro: {
+    id: 'sp.health:referrals-intro',
+    defaultMessage: 'Hér finnur þú tilvísanir ...',
+  },
+  referralFor: {
+    id: 'sp.health:referral-for',
+    defaultMessage: 'Tilvísun fyrir',
+  },
+  referralFrom: {
+    id: 'sp.health:referral-from',
+    defaultMessage: 'Útgefandi',
+  },
+  noReferrals: {
+    id: 'sp.health:no-referrals',
+    defaultMessage: 'Engar tilvísanir',
+  },
+  organizationWebsite: {
+    id: 'sp.health:referrals-org-website',
+    defaultMessage: 'Vefur stofnunar',
+  },
+  waitlists: {
+    id: 'sp.health:waitlists',
+    defaultMessage: 'Biðlistar',
+  },
+  noWaitlists: {
+    id: 'sp.health:no-waitlists',
+    defaultMessage: 'Engin skráning á biðlista finnst',
+  },
+  waitlistsIntro: {
+    id: 'sp.health:waitlists-intro',
+    defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  statusLastUpdated: {
+    id: 'sp.health:waitlist-last-updated',
+    defaultMessage: 'Staða síðast uppfærð',
+  },
+  waitlist: {
+    id: 'sp.health:waitlist',
+    defaultMessage: 'Biðlisti',
+  },
+  organization: {
+    id: 'sp.health:organization',
+    defaultMessage: 'Stofnun',
+  },
+  noDataRegistered: {
+    id: 'sp.health:no-data-registered',
+    defaultMessage: 'Engin gögn skráð',
+  },
+  registeredToList: {
+    id: 'sp.health:registered-to-list',
+    defaultMessage: 'Skráning á lista',
+  },
+  moreDetail: {
+    id: 'sp.health:more-detail',
+    defaultMessage: 'Nánar um ferlið',
   },
   medicineDelegationLookup: {
     id: 'sp.health:medicine-delegation-lookup',
@@ -1369,5 +1493,17 @@ export const messages = defineMessages({
   vaccinationStatusDesc: {
     id: 'sp.health:vaccination-status-desc',
     defaultMessage: 'Útskýring á stöðu bólusetninga',
+  },
+  medicineFullyDispensed: {
+    id: 'sp.health:medicine-fully-dispensed',
+    defaultMessage: 'Fullafgreitt',
+  },
+  recepient: {
+    id: 'sp.health:recepient',
+    defaultMessage: 'viðtakandi',
+  },
+  notRegistered: {
+    id: 'sp.health:not-registered',
+    defaultMessage: 'Ekki skráð',
   },
 })

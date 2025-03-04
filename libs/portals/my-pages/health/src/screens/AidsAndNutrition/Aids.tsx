@@ -10,7 +10,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportAidTable } from '../../utils/FileBreakdown'
-import NestedInfoLines from '../MedicinePrescriptions/components/NestedInfoLines/NestedInfoLines'
+import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
 import { Box, Text, Tooltip, Icon } from '@island.is/island-ui/core'
 
 interface Props {
