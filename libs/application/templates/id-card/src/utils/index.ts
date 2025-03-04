@@ -51,6 +51,7 @@ export const getCombinedApplicantInformation = (externalData: any) => {
     name: applicantName,
     age: applicantNationalRegistry.age,
     nationalId: applicantNationalRegistry.nationalId,
+    citizenship: applicantNationalRegistry.citizenship,
     passport: applicantPassport,
     children: applicantChildren,
   }
