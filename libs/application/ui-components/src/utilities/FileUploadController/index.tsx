@@ -252,6 +252,11 @@ export const FileUploadController = ({
         const res = await uploadFileFlow(f)
 
         if(!res.isClean) {
+          // We need the file to have the key because we are about to remove it
+          // before the dispatch event finishes
+          if(res.key)
+            f.key = res.key
+
           malwareFiles.push(f)
         }
         dispatch({
@@ -269,7 +274,7 @@ export const FileUploadController = ({
       }
     })
 
-    await Promise.all(uploadPromises)
+    await Promise.allSettled(uploadPromises)
 
     if(malwareFiles.length > 0) {
       const malwareFileNamesFormatted = malwareFiles.map(f => f.name).join(', ')
