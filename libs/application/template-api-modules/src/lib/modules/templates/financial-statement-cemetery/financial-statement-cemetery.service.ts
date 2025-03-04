@@ -112,13 +112,7 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     const { year, actorsName, contactsAnswer, clientPhone, clientEmail } =
       getNeededCemeteryValues(answers)
 
-    if (
-      !clientEmail ||
-      !clientPhone ||
-      !actorsName ||
-      !year ||
-      !contactsAnswer
-    ) {
+    if (!clientEmail || !clientPhone || !actorsName || !year) {
       throw new Error('Missing required values')
     }
 

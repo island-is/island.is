@@ -97,7 +97,7 @@ export const getNeededCemeteryValues = (answers: FormValue) => {
 export const mapContactsAnswersToContacts = (
   actor: { nationalId: string; scope: Array<string> },
   actorsName: string,
-  contactsAnswer: Array<BoardMember>,
+  contactsAnswer?: Array<BoardMember>,
 ) => {
   const contacts: Array<Contact> = [
     {
