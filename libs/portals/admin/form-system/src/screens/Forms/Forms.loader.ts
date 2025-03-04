@@ -30,7 +30,6 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
     if (!data) {
       throw new Error('No forms were found')
     }
-    console.log(data.formSystemGetAllForms?.organizations)
 
     const forms = data.formSystemGetAllForms?.forms
       ?.filter((form) => form !== null)
