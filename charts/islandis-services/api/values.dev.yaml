@@ -32,7 +32,7 @@ env:
   APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
   AUTH_ADMIN_API_PATH: 'https://innskra.dev01.devland.is/backend'
   AUTH_ADMIN_API_PATHS: '{"development":"https://innskra.dev01.devland.is/backend"}'
-  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.dev01.devland.is'
+  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is'
   AUTH_IDS_API_URL: 'https://innskra.dev01.devland.is'
   AUTH_PUBLIC_API_URL: 'https://innskra.dev01.devland.is/api'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
