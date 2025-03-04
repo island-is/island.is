@@ -917,7 +917,9 @@ export interface CopyLinkField extends BaseField {
   readonly type: FieldTypes.COPY_LINK
   component: FieldComponents.COPY_LINK
   title: FormText
-  link: string
+  link: FormText
+  buttonTitle?: FormText
+  semiBoldLink?: boolean
 }
 
 export type Field =

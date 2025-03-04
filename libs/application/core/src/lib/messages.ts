@@ -299,6 +299,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hlekkur afritaður',
     description: 'Copy link success toast',
   },
+  copyLinkButtonTitle: {
+    id: 'application.system:copyLinkButtonTitle',
+    defaultMessage: 'Afrita tengil',
+    description: 'Copy link button title',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
