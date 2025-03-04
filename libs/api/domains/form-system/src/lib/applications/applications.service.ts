@@ -55,7 +55,10 @@ export class ApplicationsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
     return response as Application
   }
@@ -71,7 +74,10 @@ export class ApplicationsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response as Application

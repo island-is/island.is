@@ -17,7 +17,7 @@ export class OrganizationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private organizationsApi: OrganizationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -47,7 +47,10 @@ export class OrganizationsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response as Organization
@@ -66,7 +69,10 @@ export class OrganizationsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response as Organization

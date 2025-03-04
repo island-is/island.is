@@ -46,8 +46,12 @@ export class FieldsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to create field'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
+
     return response
   }
 

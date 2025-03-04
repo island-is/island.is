@@ -24,7 +24,7 @@ export class ListItemsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private listItemsApi: ListItemsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -52,8 +52,12 @@ export class ListItemsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
+
     return response
   }
 

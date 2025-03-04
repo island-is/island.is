@@ -48,8 +48,12 @@ export class ScreensService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to create screen'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
+
     return response
   }
 
@@ -69,7 +73,10 @@ export class ScreensService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response

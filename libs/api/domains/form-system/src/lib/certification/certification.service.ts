@@ -20,7 +20,7 @@ export class CertificationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private certificationsApi: FormCertificationTypesApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -50,10 +50,10 @@ export class CertificationsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {
-        id: '',
-        certificationTypeId: '',
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
       }
+      throw response
     }
     return response
   }
