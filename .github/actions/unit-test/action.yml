@@ -21,12 +21,14 @@ runs:
   using: 'composite'
   steps:
     - name: Docker login to ECR repo
+      if: ${{ !github.event.localrun }}
       run: ./scripts/ci/docker-login-ecr.sh
       shell: bash
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
+
     - name: Set Codeconv version numner
       run: |
         echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV

@@ -48,16 +48,15 @@ env:
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '8'
-  MAX_JOBS: '3'
-  NX_PARALLEL: '2'
-  NX_MAX_PARALLEL: '4'
+  CHUNK_SIZE: 8
+  MAX_JOBS: 3
+  NX_PARALLEL: 2
+  NX_MAX_PARALLEL: 4
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -65,11 +64,6 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
-  CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
-  COREPACK_HOME: /home/runner/dependencies/corepack
-  NODE_PATH: /home/runner/dependencies/node_modules
-  COREPACK_ENABLE_STRICT: '0'
 
 jobs:
   install:

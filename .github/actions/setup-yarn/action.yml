@@ -4,12 +4,29 @@ description: 'Yarn setup and install dependencies'
 runs:
   using: 'composite'
   steps:
+    - name: Prep env
+      shell: bash
+      env:
+        YARN_CACHE_FOLDER: $HOME/dependencies/.yarn/cache
+        CYPRESS_CACHE_FOLDER: $HOME/dependencies/.cache
+        COREPACK_HOME: $HOME/dependencies/corepack
+        NODE_PATH: $HOME/dependencies/node_modules
+        COREPACK_ENABLE_STRICT: 1
+      run: |
+        for e in YARN_CACHE_FOLDER CYPRESS_CACHE_FOLDER COREPACK_HOME NODE_PATH COREPACK_ENABLE_STRICT; do
+          # Expand home-dirs with string substitution (matches homes at the beginning of the variable)
+          p=${!e}
+          p=${p/#\$HOME/$HOME}
+          p=${p/#\~/$HOME}
+          echo "${e}=${p}" | tee -a "$GITHUB_ENV"
+        done
+
     - name: Compare yarn.lock files
       shell: bash
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
-        bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
+        bundled=$(sha256sum "$HOME/dependencies/yarn.lock" | awk '{print $1}') || :
         skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
         echo "Current hash: $current"
         echo "Bundled hash: $bundled"
@@ -20,21 +37,24 @@ runs:
       shell: bash
       run: |
         corepack enable
-        corepack prepare --activate
         yarn --version
 
     - name: Run yarn install if yarn.lock changed
       shell: bash
-      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
+      if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'false' }}
       run: |
         yarn install --immutable
+        cp -rf ./node_modules "$HOME/dependencies/node_modules"
+        cp -rf ./.yarn "$HOME/dependencies/.yarn"
+        cp -rf ./yarn.lock "$HOME/dependencies/yarn.lock"
+        cp -rf ./package.json "$HOME/dependencies/package.json"
 
     - name: Link pre-installed dependencies
-      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
+      if: ${{ steps.compare_yarn_lock.outputs.skip_install == 'true' }}
       shell: bash
       run: |
         rm -rf node_modules
-        ln -s /home/runner/dependencies/node_modules .
-        ln -s /home/runner/dependencies/.yarn/cache .yarn/
-        ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
-        echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV
+        ln -sf "$HOME/dependencies/node_modules" .
+        ln -sf "$HOME/dependencies/.yarn/cache" .yarn/
+        ln -sf "$HOME/dependencies/.yarn/install-state.gz" .yarn/
+        echo "NODE_PATH=$HOME/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV

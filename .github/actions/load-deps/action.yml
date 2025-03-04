@@ -1,38 +1,50 @@
 name: 'Load Dependencies'
-description: 'Prerequisite is that the prepare step has already been run'
+description: 'Fetch and extract generated files. Depends on the `setup-yarn` action.'
 
 runs:
   using: 'composite'
   steps:
-    - name: INFO
+    - name: Prep env
       shell: bash
+      id: prep
+      env:
+        GENERATED_FILES: ${{ github.event.localrun && '/tmp/codegen/codegen.tar.gz' || format('{}/{}.tar.gz', github.workspace, github.sha) }}
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES }}"
+        echo "generated files: ${GENERATED_FILES}"
+        echo "GENERATED_FILES=${GENERATED_FILES}" | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
+        mkdir -p "$(dirname "${GENERATED_FILES}")"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ env.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.prep.outputs.GENERATED_FILES }}
+        key: generated-files-${{ steps.prep.outputs.GENERATED_FILES }}
 
     - name: Prepare generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+        ls -lah "$(dirname "${GENERATED_FILES}")"
+        if [ -e "${GENERATED_FILES}" ] && tar -xzvf "${GENERATED_FILES}"; then
+          echo "Found and unpacked existing generated files"
+          exit 0
+        fi
+        node ./scripts/ci/generate-files.mjs "${GENERATED_FILES}"
 
     - name: Extract generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
+      if: ${{ steps.restore-codegen-cache.outputs.cache-hit == 'true' }}
       shell: bash
       run: |
-        tar -xzvf ${{ env.GENERATED_FILES }}
+        echo "::group::Unpack codegen"
+        tar -xzvf "${GENERATED_FILES}"
+        echo "::endgroup::"
 
     - name: Cache Generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ env.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.prep.outputs.GENERATED_FILES }}
+        key: generated-files-${{ steps.prep.outputs.GENERATED_FILES }}

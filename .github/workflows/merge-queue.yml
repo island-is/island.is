@@ -35,7 +35,6 @@ env:
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
 
 jobs:
   pre-checks:
