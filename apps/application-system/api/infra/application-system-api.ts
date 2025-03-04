@@ -288,6 +288,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
     })
     .xroad(
       Base,
