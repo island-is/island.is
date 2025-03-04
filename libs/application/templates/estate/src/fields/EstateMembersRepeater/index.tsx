@@ -245,6 +245,7 @@ export const EstateMembersRepeater: FC<
                   defaultValue={formatNationalId(member.nationalId || '')}
                   backgroundColor="white"
                   disabled={!member.enabled}
+                  readOnly
                   format={'######-####'}
                   error={error && error[index] && error[index].nationalId}
                 />

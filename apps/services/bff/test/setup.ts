@@ -3,8 +3,7 @@ process.env.BFF_NAME = 'testclient'
 process.env.BFF_CACHE_USER_PROFILE_TTL_MS = '3595000' // 1 hour - 5 seconds
 process.env.BFF_LOGIN_ATTEMPT_TTL_MS = '604800000' // 1 week
 process.env.IDENTITY_SERVER_CLIENT_SECRET = 'some secret'
-process.env.IDENTITY_SERVER_ISSUER_URL =
-  'https://identity-server.dev01.devland.is'
+process.env.IDENTITY_SERVER_ISSUER_URL = 'https://identity-server.dev01.devland.is'
 process.env.IDENTITY_SERVER_CLIENT_SCOPES = '["testscope"]'
 process.env.IDENTITY_SERVER_CLIENT_ID = '@test_client_id'
 process.env.BFF_PAR_SUPPORT_ENABLED = 'false'
