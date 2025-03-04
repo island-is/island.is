@@ -12,8 +12,11 @@ import { Audit } from '@island.is/nest/audit'
 import { EducationServiceV3 } from './educationV3.service'
 import { StudentCareer } from './models/studentCareer.model'
 import { PrimarySchoolCareerInput } from './dtos/studentCareer.input'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@CodeOwner(CodeOwners.Hugsmidjan)
 @Audit({ namespace: '@island.is/api/education-v3' })
 @Resolver()
 export class EducationV3Resolver {
