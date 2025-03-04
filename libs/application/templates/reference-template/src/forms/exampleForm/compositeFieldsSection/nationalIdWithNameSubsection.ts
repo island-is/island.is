@@ -10,8 +10,6 @@ export const nationalIdWithNameSubsection = buildSubSection({
     buildNationalIdWithNameField({
       id: 'pickRole.electPerson',
       title: 'Lookup name by national ID',
-      searchPersons: false,
-      searchCompanies: true,
     }),
   ],
 })
