@@ -310,6 +310,7 @@ export enum FieldTypes {
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   TITLE = 'TITLE',
   OVERVIEW = 'OVERVIEW',
+  COPY_LINK = 'COPY_LINK',
 }
 
 export enum FieldComponents {
@@ -350,6 +351,7 @@ export enum FieldComponents {
   BANK_ACCOUNT = 'BankAccountFormField',
   TITLE = 'TitleFormField',
   OVERVIEW = 'OverviewFormField',
+  COPY_LINK = 'CopyLinkFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -550,6 +552,7 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
+  messageColor?: Colors
 }
 
 export interface ExpandableDescriptionField extends BaseField {
@@ -910,6 +913,13 @@ export interface OverviewField extends BaseField {
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
 }
 
+export interface CopyLinkField extends BaseField {
+  readonly type: FieldTypes.COPY_LINK
+  component: FieldComponents.COPY_LINK
+  title: FormText
+  link: string
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -950,3 +960,4 @@ export type Field =
   | BankAccountField
   | TitleField
   | OverviewField
+  | CopyLinkField
