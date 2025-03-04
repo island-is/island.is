@@ -34,7 +34,7 @@ const mockTokenResponse: CachedTokenResponse = {
     delegationType: [],
     locale: 'is',
     birthdate: '1990-01-01',
-    iss: 'https://innskra.dev01.devland.is',
+    iss: 'https://identity-server.dev01.devland.is',
   },
   accessTokenExp: Date.now() + 3600000, // Current time + 1 hour in milliseconds
   encryptedAccessToken: 'encrypted.access.token',

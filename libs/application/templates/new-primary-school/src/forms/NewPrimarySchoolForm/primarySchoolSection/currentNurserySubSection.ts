@@ -51,8 +51,8 @@ export const currentNurserySubSection = buildSubSection({
             newPrimarySchoolMessages.primarySchool.nurseryPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           dataTestId: 'current-nursery-nursery',
-          updateOnSelect: 'currentNursery.municipality',
-          loadOptions: async ({ apolloClient, selectedValue }) => {
+          updateOnSelect: ['currentNursery.municipality'],
+          loadOptions: async ({ apolloClient, selectedValues }) => {
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
                 query: friggSchoolsByMunicipalityQuery,
@@ -60,7 +60,7 @@ export const currentNurserySubSection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValue)
+                ?.find(({ name }) => name === selectedValues?.[0])
                 ?.children?.map((nursery) => ({
                   value: nursery.id,
                   label: nursery.name,

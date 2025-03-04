@@ -127,10 +127,14 @@ const deepNestedSchema = z.object({
 })
 
 const validationSchema = z.object({
-  validationTextField: z.string().min(3, {
-    message: 'Custom validation message',
+  validationTextField: z.string().refine((val) => val.length >= 3, {
+    params: m.about,
   }),
-  validationRadioField: z.nativeEnum(radioValidationExampleEnum),
+  validationRadioField: z
+    .nativeEnum(radioValidationExampleEnum)
+    .refine((val) => Object.values(radioValidationExampleEnum).includes(val), {
+      params: m.about,
+    }),
 })
 
 // The exported dataSchema should be as flat and easy to read as possible.

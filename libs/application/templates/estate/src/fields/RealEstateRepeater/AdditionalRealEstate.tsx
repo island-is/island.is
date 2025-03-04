@@ -161,7 +161,6 @@ export const AdditionalRealEstate = ({
             placeholder="0 kr."
             error={error?.marketValue}
             currency
-            size="sm"
             required
           />
         </GridColumn>
