@@ -27038,7 +27038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base-64@npm:0.1.0":
+"base-64@npm:0.1.0, base-64@npm:^0.1.0":
   version: 0.1.0
   resolution: "base-64@npm:0.1.0"
   checksum: 10/5a42938f82372ab5392cbacc85a5a78115cbbd9dbef9f7540fa47d78763a3a8bd7d598475f0d92341f66285afd377509851a9bb5c67bbecb89686e9255d5b3eb
@@ -39590,6 +39590,7 @@ __metadata:
     react-keyed-flatten-children: "npm:1.2.0"
     react-modal: "npm:3.15.1"
     react-native: "npm:0.74.5"
+    react-native-fs: "npm:2.20.0"
     react-native-svg: "npm:15.2.0"
     react-native-svg-transformer: "npm:1.3.0"
     react-native-web: "npm:^0.19.11"
@@ -50154,6 +50155,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-fs@npm:2.20.0":
+  version: 2.20.0
+  resolution: "react-native-fs@npm:2.20.0"
+  dependencies:
+    base-64: "npm:^0.1.0"
+    utf8: "npm:^3.0.0"
+  peerDependencies:
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    react-native-windows:
+      optional: true
+  checksum: 10/372e59f55d5e544e87093d832896fa3d56ba9802ca140c17b4b8903afe047714e022d3b1a2ddf18d744cb7f4f973593c8083641db9ae0768688b1390078d67a2
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:2.17.1":
   version: 2.17.1
   resolution: "react-native-gesture-handler@npm:2.17.1"
@@ -57556,6 +57573,13 @@ __metadata:
   version: 2.1.2
   resolution: "utf8@npm:2.1.2"
   checksum: 10/7b35ff1203d2e0209db7a28f6852cb64ff292a3bdc3b6a9c52ff2d69abcfeff992647e8d4dc787c4f1c9374613ad11f7e9c682df66985dfa516b8f8c69855860
+  languageName: node
+  linkType: hard
+
+"utf8@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "utf8@npm:3.0.0"
+  checksum: 10/31d19c4faacbb65b09ebc1c21c32b20bdb0919c6f6773cee5001b99bb83f8e503e7233c08fc71ebb34f7cfebd95cec3243b81d90176097aa2f286cccb4ce866e
   languageName: node
   linkType: hard
 
