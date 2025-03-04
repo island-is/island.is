@@ -15,6 +15,17 @@
         "jestConfig": "libs/island-ui/theme/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/island-ui/theme"]
+    },
+    "run-figma-tokens-mapper": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node libs/island-ui/theme/src/lib/tokens/figma-tokens-mapper.js",
+          "prettier --write libs/island-ui/theme/src/lib/tokens/figmaPrimitives.ts",
+          "prettier --write libs/island-ui/theme/src/lib/tokens/figmaColors.ts",
+          "prettier --write libs/island-ui/theme/src/lib/tokens/figmaTypography.ts"
+        ]
+      }
     }
   }
 }
