@@ -121,7 +121,7 @@ const nextConfig = {
       },
     ]
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (process.env.ANALYZE === 'true' && !isServer) {
       config.plugins.push(
         new DuplicatesPlugin({
@@ -154,6 +154,10 @@ const nextConfig = {
           resourceRegExp: /^@island.is\/clients\/middlewares$/,
         }),
       )
+    }
+
+    if (!dev && isServer) {
+      config.devtool = 'source-map'
     }
 
     const modules = path.resolve(__dirname, '../..', 'node_modules')
