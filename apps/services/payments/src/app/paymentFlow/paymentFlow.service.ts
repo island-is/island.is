@@ -64,7 +64,6 @@ export class PaymentFlowService {
 
       await this.chargeFjsV2ClientService.validateCharge(
         generateChargeFJSPayload({
-          id: paymentFlowId,
           paymentFlow: {
             id: paymentFlowId,
             organisationId: paymentInfo.organisationId,

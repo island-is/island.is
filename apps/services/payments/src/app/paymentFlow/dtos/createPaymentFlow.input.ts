@@ -23,6 +23,22 @@ import {
   ValidationArguments,
 } from 'class-validator'
 
+export class ExtraDataItem {
+  @IsString()
+  @ApiProperty({
+    description: 'Key',
+    type: String,
+  })
+  name!: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Value',
+    type: String,
+  })
+  value!: string
+}
+
 export class ChargeInput {
   @IsString()
   @ApiProperty({
@@ -157,6 +173,17 @@ export class CreatePaymentFlowInput {
   })
   @ReturnUrlRequired() // See validator below
   redirectToReturnUrlOnSuccess?: boolean
+
+  @ApiPropertyOptional({
+    description:
+      'Define key-value pairs of extra data that should be included when creating the FJS charge for the payment, example: car license plate, house address etc.',
+    type: [ExtraDataItem],
+  })
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => ExtraDataItem)
+  extraData?: ExtraDataItem[]
 }
 
 function ReturnUrlRequired(validationOptions?: ValidationOptions) {

@@ -309,7 +309,6 @@ export class CardPaymentService {
     totalPrice: number
   }) {
     return generateCardChargeFJSPayload({
-      id,
       paymentFlow,
       charges,
       chargeResponse,

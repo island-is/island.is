@@ -177,6 +177,23 @@ export class PaymentFlow extends Model<
   })
   redirectToReturnUrlOnSuccess?: boolean
 
+  @ApiPropertyOptional({
+    description:
+      'Define key-value pairs of extra data, e.g., car license plate, house address, etc.',
+    type: () => [
+      {
+        name: 'string',
+        value: 'string',
+      },
+    ],
+  })
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+    field: 'extra_data',
+  })
+  extraData?: { name: string; value: string }[]
+
   @CreatedAt
   @Column({
     type: DataType.DATE,

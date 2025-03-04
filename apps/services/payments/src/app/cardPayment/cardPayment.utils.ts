@@ -178,14 +178,12 @@ export function mapToCardErrorCode(originalCode: string): CardErrorCode {
 }
 
 export const generateCardChargeFJSPayload = ({
-  id,
   paymentFlow,
   charges,
   chargeResponse,
   totalPrice,
   systemId,
 }: {
-  id: string
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
   chargeResponse: ChargeResponse
@@ -193,7 +191,6 @@ export const generateCardChargeFJSPayload = ({
   systemId: string
 }): Charge => {
   return generateChargeFJSPayload({
-    id,
     paymentFlow,
     charges,
     systemId,

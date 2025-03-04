@@ -60,7 +60,6 @@ export class InvoicePaymentController {
       const fjsConfirmation = await this.paymentFlowService.createPaymentCharge(
         paymentFlow.id,
         generateChargeFJSPayload({
-          id: paymentFlow.id,
           paymentFlow,
           charges: catalogItems,
           totalPrice,
