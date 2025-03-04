@@ -3,8 +3,8 @@ import {
   buildDescriptionField,
   buildDividerField,
   buildForm,
-  buildKeyValueField,
   buildMultiField,
+  buildOverviewField,
   buildPhoneField,
   buildSection,
   buildSubmitField,
@@ -18,7 +18,10 @@ import { format as formatNationalId } from 'kennitala'
 import Logo from '../../assets/Logo'
 
 import { m } from '../lib/messages'
-import { formatPhone } from '../lib/utils'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const Draft: Form = buildForm({
   id: 'MunicipalListCreationDraft',
@@ -97,12 +100,10 @@ export const Draft: Form = buildForm({
               required: true,
               allowedCountryCodes: ['IS'],
               defaultValue: (application: Application) => {
-                const phone =
-                  (
-                    application.externalData.userProfile?.data as {
-                      mobilePhoneNumber?: string
-                    }
-                  )?.mobilePhoneNumber ?? ''
+                const phone = getValueViaPath<string>(
+                  application.externalData,
+                  'userProfile.data.mobilePhoneNumber',
+                )
 
                 return phone
               },
@@ -130,80 +131,63 @@ export const Draft: Form = buildForm({
           title: m.overview,
           description: m.overviewDescription,
           children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'listOverview',
+            buildOverviewField({
+              id: 'overviewList',
               title: m.listOverviewHeader,
-              titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 3,
+              marginTop: 'none',
+              marginBottom: 'none',
+              items: (answers) => [
+                {
+                  width: 'full',
+                  keyText: m.listMunicipality,
+                  valueText:
+                    getValueViaPath<string>(answers, 'list.municipality') ?? '',
+                },
+                {
+                  width: 'full',
+                  keyText: m.listName,
+                  valueText:
+                    getValueViaPath<string>(answers, 'list.name') ?? '',
+                },
+              ],
             }),
-            buildKeyValueField({
-              label: m.listMunicipality,
-              width: 'full',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'list.municipality') ?? '',
-            }),
-            buildDescriptionField({
-              id: 'space',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.listName,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'list.name') ?? '',
-            }),
-            buildDescriptionField({
-              id: 'space1',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'applicantOverview',
+            buildOverviewField({
+              id: 'overviewApplicant',
               title: m.applicantOverviewHeader,
-              titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 3,
+              marginTop: 'none',
+              marginBottom: 'none',
+              items: (answers) => [
+                {
+                  width: 'half',
+                  keyText: m.nationalId,
+                  valueText:
+                    getValueViaPath<string>(answers, 'applicant.nationalId') ??
+                    '',
+                },
+                {
+                  width: 'half',
+                  keyText: m.name,
+                  valueText:
+                    getValueViaPath<string>(answers, 'applicant.name') ?? '',
+                },
+                {
+                  width: 'half',
+                  keyText: m.phone,
+                  valueText: () => {
+                    const phone =
+                      getValueViaPath<string>(answers, 'applicant.phone') ?? ''
+                    return formatPhoneNumber(removeCountryCode(phone))
+                  },
+                },
+                {
+                  width: 'half',
+                  keyText: m.email,
+                  valueText:
+                    getValueViaPath<string>(answers, 'applicant.email') ?? '',
+                },
+              ],
             }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'applicant.nationalId') ?? '',
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'applicant.name') ?? '',
-            }),
-            buildDescriptionField({
-              id: 'space2',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.phone,
-              width: 'half',
-              value: ({ answers }) => {
-                const phone = getValueViaPath<string>(
-                  answers,
-                  'applicant.phone',
-                )
-                return phone ? formatPhone(phone) : ''
-              },
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'applicant.email') ?? '',
-            }),
-            buildDescriptionField({
-              id: 'space3',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
+            buildDividerField({})
           ],
         }),
       ],

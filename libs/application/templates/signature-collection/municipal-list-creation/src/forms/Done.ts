@@ -67,7 +67,7 @@ export const Done: Form = buildForm({
               id: 'copyLink',
               // Todo: update link when available
               link: 'island.is',
-              title: ''
+              title: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
@@ -75,7 +75,7 @@ export const Done: Form = buildForm({
               url: '/minarsidur/min-gogn/listar/',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
-              //messageColor: 'blue600',
+              messageColor: 'blue600',
             }),
             buildDescriptionField({
               id: 'doneScreenSpace',

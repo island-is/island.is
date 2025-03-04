@@ -82,7 +82,7 @@ export const m = defineMessages({
   },
   listInformationDescription: {
     id: 'mlc.application:listInformationDescription#markdown',
-    defaultMessage: 'Vinsamlegast yfirfarið að upplýsingarnar séu réttar.',
+    defaultMessage: 'Vinsamlegast yfirfarið að upplýsingarnar séu réttar:',
     description: '',
   },
   information: {
