@@ -12,6 +12,7 @@ export const CommunicationChannels = ({ application }: OJOIFieldBaseProps) => {
   const [email, setEmail] = useState<string>('')
   const [phone, setPhone] = useState<string>('')
   const [name, setName] = useState<string>('')
+  const [index, setIndex] = useState<number | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
   return (
@@ -20,15 +21,19 @@ export const CommunicationChannels = ({ application }: OJOIFieldBaseProps) => {
       intro={f(publishing.general.communicationIntro)}
     >
       <ChannelList
-        onEditChannel={(name, email, phone) => {
+        onEditChannel={(index, name, email, phone, ) => {
+          setIndex(index)
           if (name) setName(name)
           if (email) setEmail(email)
           if (phone) setPhone(phone ?? '')
           setIsVisible(true)
+
         }}
         applicationId={application.id}
       />
       <AddChannel
+        indexOfEditingChannel={index}
+        setIndexOfEditingChannel={setIndex}
         defaultName={name}
         defaultEmail={email}
         defaultPhone={phone}

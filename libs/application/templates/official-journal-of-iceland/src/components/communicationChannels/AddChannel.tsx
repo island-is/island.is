@@ -14,6 +14,8 @@ type Props = {
   defaultEmail?: string
   defaultPhone?: string
   defaultVisible?: boolean
+  indexOfEditingChannel: number | null
+  setIndexOfEditingChannel: (index: number | null) => void
 }
 
 export const AddChannel = ({
@@ -22,6 +24,8 @@ export const AddChannel = ({
   defaultEmail,
   defaultPhone,
   defaultVisible,
+  indexOfEditingChannel,
+  setIndexOfEditingChannel
 }: Props) => {
   const { application, updateApplication } = useApplication({
     applicationId,
@@ -43,15 +47,23 @@ export const AddChannel = ({
   const onAddChannel = () => {
     const currentAnswers = structuredClone(application.answers)
     const currentChannels = currentAnswers.advert?.channels ?? []
-    const updatedAnswers = set(currentAnswers, InputFields.advert.channels, [
-      ...currentChannels,
-      { name, email, phone },
-    ])
+    if (indexOfEditingChannel !== null) {
+      currentChannels[indexOfEditingChannel] = { name, email, phone }
+    } else {
+      currentChannels.push({ name, email, phone })
+    }
+    const updatedAnswers = set(
+      currentAnswers,
+      InputFields.advert.channels,
+      currentChannels,
+    )
 
     updateApplication(updatedAnswers)
+    setIsVisible(!isVisible)
     setName('')
     setEmail('')
     setPhone('')
+    setIndexOfEditingChannel(null)
   }
 
   return (
@@ -102,6 +114,7 @@ export const AddChannel = ({
               setName('')
               setEmail('')
               setPhone('')
+              setIndexOfEditingChannel(null)
             }}
           >
             {f(general.cancel)}

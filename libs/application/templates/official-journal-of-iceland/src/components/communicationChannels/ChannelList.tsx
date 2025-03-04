@@ -8,7 +8,12 @@ import { InputFields } from '../../lib/types'
 
 type Props = {
   applicationId: string
-  onEditChannel?: (email?: string, phone?: string, name?: string) => void
+  onEditChannel?: (
+    index: number,
+    email?: string,
+    phone?: string,
+    name?: string,
+  ) => void
 }
 
 export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
@@ -72,7 +77,12 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
                   <button
                     type="button"
                     onClick={() =>
-                      onEditChannel(channel.name, channel.email, channel.phone)
+                      onEditChannel(
+                        i,
+                        channel.name,
+                        channel.email,
+                        channel.phone,
+                      )
                     }
                   >
                     <Icon color="blue400" icon="pencil" />
