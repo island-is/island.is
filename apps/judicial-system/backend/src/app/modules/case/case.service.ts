@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Op } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -1705,46 +1705,31 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    const whereClause: WhereOptions = [
-      { isArchived: false },
-      { type: CaseType.INDICTMENT },
-      { id: { [Op.ne]: caseId } },
-      { state: CaseState.RECEIVED },
-    ]
-
-    if (defendant.noNationalId) {
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id = '${defendant.nationalId}'
-              AND name = '${defendant.name}'
-          )`),
-        },
-      })
-    } else {
-      const [normalizedNationalId, formattedNationalId] =
-        normalizeAndFormatNationalId(defendant.nationalId)
-
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id in ('${normalizedNationalId}', '${formattedNationalId}')
-          )`),
-        },
-      })
-    }
-
     return this.caseModel.findAll({
       include: [
         { model: Institution, as: 'court' },
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          where: defendant.noNationalId
+            ? { nationalId: defendant.nationalId, name: defendant.name }
+            : {
+                nationalId: {
+                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+                },
+              },
+        },
       ],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: { [Op.and]: whereClause },
+      where: {
+        [Op.and]: {
+          isArchived: false,
+          type: CaseType.INDICTMENT,
+          id: { [Op.ne]: caseId },
+          state: CaseState.RECEIVED,
+        },
+      },
     })
   }
 
@@ -1756,8 +1741,11 @@ export class CaseService {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
             creatingProsecutorId: user.id,
-            prosecutorId:
-              user.role === UserRole.PROSECUTOR ? user.id : undefined,
+            prosecutorId: isIndictmentCase(caseToCreate.type)
+              ? caseToCreate.prosecutorId
+              : user.role === UserRole.PROSECUTOR
+              ? user.id
+              : undefined,
             courtId: isRequestCase(caseToCreate.type)
               ? user.institution?.defaultCourtId
               : undefined,
@@ -1861,19 +1849,6 @@ export class CaseService {
     }
   }
 
-  private constructEventLogDTO(
-    eventType: EventType,
-    theCase: Case,
-    user: TUser,
-  ) {
-    return {
-      eventType,
-      caseId: theCase.id,
-      nationalId: user.nationalId,
-      userRole: user.role,
-    }
-  }
-
   private handleEventLogs(
     theCase: Case,
     update: UpdateCase,
@@ -1884,13 +1859,12 @@ export class CaseService {
       update.state === CaseState.RECEIVED &&
       theCase.state === CaseState.SUBMITTED
     ) {
-      const eventLogDTO = this.constructEventLogDTO(
+      return this.eventLogService.createWithUser(
         EventType.CASE_RECEIVED_BY_COURT,
-        theCase,
+        theCase.id,
         user,
+        transaction,
       )
-
-      return this.eventLogService.create(eventLogDTO, transaction)
     }
 
     if (isIndictmentCase(theCase.type)) {
@@ -1898,33 +1872,30 @@ export class CaseService {
         update.state === CaseState.SUBMITTED &&
         theCase.state === CaseState.WAITING_FOR_CONFIRMATION
       ) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.INDICTMENT_CONFIRMED,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
 
       if (update.state === CaseState.COMPLETED) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.INDICTMENT_COMPLETED,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
 
       if (update.indictmentReviewDecision) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.INDICTMENT_REVIEWED,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
     }
 
@@ -1933,13 +1904,12 @@ export class CaseService {
         update.state === CaseState.SUBMITTED &&
         theCase.state === CaseState.DRAFT
       ) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.CASE_SENT_TO_COURT,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
     }
   }

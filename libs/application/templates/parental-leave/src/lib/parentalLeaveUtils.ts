@@ -1264,7 +1264,7 @@ export const getOtherParentName = (
   if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
     const spouse = getSpouse(application)
 
-    if (!spouse || !spouse.name) {
+    if (!spouse || !spouse.name || otherParent === MANUAL) {
       return otherParentName
     }
 

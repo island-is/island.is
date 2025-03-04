@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -40,7 +40,7 @@ import { DefendantService } from './defendant.service'
 
 @Controller('api/case/:caseId/defendant')
 @ApiTags('defendants')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,

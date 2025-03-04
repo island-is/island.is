@@ -52,7 +52,6 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -88,40 +87,41 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: feature-checkout
+      - name: Derive appropriate SHAs
+        uses: ./.github/actions/set-shas
+
+      - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
         uses: ./.github/actions/feature-checkout
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
-      - name: prerelease-checkout
+      - name: Prepare pre-release
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-        # NOTE: checkout features
-      - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-        run: |
-          set -euo pipefail
-          git checkout "$GITHUB_HEAD_REF"
-          git checkout "$GITHUB_BASE_REF"
-          git checkout "$GITHUB_SHA"
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
-          BASE_SHA=${{ env.NX_BASE }}
-          HEAD_SHA=${{ env.NX_HEAD }}
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+      #   # NOTE: checkout features
+      # - name: Checkout branches for feature deployment
+      #   if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
+      #   run: |
+      #     set -euo pipefail
+      #     git checkout "$GITHUB_HEAD_REF"
+      #     git checkout "$GITHUB_BASE_REF"
+      #     git checkout "$GITHUB_SHA"
+      #     git config --global user.email "ci@island.is"
+      #     git config --global user.name "CI Bot"
+      #
+      #     # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+      #     # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+      #     BASE_SHA=${{ env.NX_BASE }}
+      #     HEAD_SHA=${{ env.NX_HEAD }}
+      #     echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
+      #     echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       # NOTE: checkout main
-      - name: Checking out relevant branches for a branch build
+      - name: Checkout main branch
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
           set -euo pipefail
@@ -187,11 +187,6 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
-      - run: |
-          echo HEAD="$GITHUB_SHA" >> "$GITHUB_ENV"
-        id: git_nx_head
-        name: Preparing HEAD tag
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
@@ -234,7 +229,8 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
+            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
@@ -243,11 +239,13 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          CHUNKS="${{ steps.build_map.outputs.BUILD_CHUNKS }}"
+          CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
+            # NOTE: validate the jq command to trigger failure
+            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
+            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
@@ -385,7 +383,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: arc-runners
     timeout-minutes: 30
     env:
@@ -435,7 +433,8 @@ jobs:
 
   deploy:
     runs-on: arc-runners
-    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result != 'failure' }}
+    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
+
     needs:
       - pre-checks
       - prepare

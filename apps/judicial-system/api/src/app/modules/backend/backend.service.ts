@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
+import { DateType, type User } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -21,7 +21,6 @@ import {
   DeleteCivilClaimantResponse,
   DeleteDefendantResponse,
 } from '../defendant'
-import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
   DeleteFileResponse,
@@ -545,17 +544,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
+  createEventLog(createEventLog: unknown) {
     return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${this.config.secretToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...eventLog,
-        userRole,
-      }),
+      body: JSON.stringify(createEventLog),
     })
   }
 }

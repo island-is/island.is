@@ -26,10 +26,11 @@ env:
   DB_USER: 'services_form_system_api'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'islandis'
+  - 'nginx-ingress-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -38,7 +39,7 @@ healthCheck:
     timeoutSeconds: 3
   readiness:
     initialDelaySeconds: 3
-    path: '/readiness'
+    path: '/liveness'
     timeoutSeconds: 3
 hpa:
   scaling:
@@ -50,6 +51,15 @@ hpa:
       min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
+ingress:
+  primary-alb:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external-alb'
+      nginx.ingress.kubernetes.io/service-upstream: 'true'
+    hosts:
+      - host: 'beta.dev01.devland.is'
+        paths:
+          - '/form'
 initContainer:
   containers:
     - args:
@@ -96,11 +106,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '200m'
-    memory: '256Mi'
+    cpu: '400m'
+    memory: '512Mi'
   requests:
-    cpu: '100m'
-    memory: '128Mi'
+    cpu: '50m'
+    memory: '256Mi'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'

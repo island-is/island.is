@@ -33,4 +33,5 @@ const useEventLog = () => {
     createEventLog,
   }
 }
+
 export default useEventLog

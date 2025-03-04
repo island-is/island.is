@@ -203,7 +203,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               order: 1,
             }),
             defineTemplateApi({
-              action: 'getAnotherReferenceData',
+              action: ApiActions.getAnotherReferenceData,
               order: 2,
             }),
           ],
