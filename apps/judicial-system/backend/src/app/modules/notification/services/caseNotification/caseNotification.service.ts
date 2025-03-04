@@ -1401,6 +1401,7 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderEmail?: string,
     courtName?: string,
     courtCaseNumber?: string,
+    user?: User,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.defenderRevokedEmail.indictmentSubject,
@@ -1410,7 +1411,9 @@ export class CaseNotificationService extends BaseNotificationService {
     const html = this.formatMessage(
       notifications.defenderRevokedEmail.indictmentBody,
       {
+        actorInstitution: user?.institution?.name,
         courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+        courtCaseNumber,
         defenderHasAccessToRvg: Boolean(defenderNationalId),
         linkStart: `<a href="${formatDefenderRoute(
           this.config.clientUrl,
@@ -1520,6 +1523,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private async sendRevokeNotificationsForIndictmentCase(
     theCase: Case,
+    user: User,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -1573,6 +1577,7 @@ export class CaseNotificationService extends BaseNotificationService {
             defendant.defenderEmail,
             theCase.court?.name,
             theCase.courtCaseNumber,
+            user,
           ),
         )
       }
@@ -1592,11 +1597,14 @@ export class CaseNotificationService extends BaseNotificationService {
     )
   }
 
-  private sendRevokedNotifications(theCase: Case): Promise<DeliverResponse> {
+  private sendRevokedNotifications(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
     if (isRequestCase(theCase.type)) {
       return this.sendRevokedNotificationsForRequestCase(theCase)
     } else {
-      return this.sendRevokeNotificationsForIndictmentCase(theCase)
+      return this.sendRevokeNotificationsForIndictmentCase(theCase, user)
     }
   }
   //#endregion
@@ -2741,7 +2749,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.MODIFIED:
         return this.sendModifiedNotifications(theCase, user)
       case CaseNotificationType.REVOKED:
-        return this.sendRevokedNotifications(theCase)
+        return this.sendRevokedNotifications(theCase, user)
       case CaseNotificationType.ADVOCATE_ASSIGNED:
         return this.sendAdvocateAssignedNotifications(theCase)
       case CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
