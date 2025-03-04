@@ -62,7 +62,6 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
   formatPrisonAdministrationRulingNotification,
@@ -1362,76 +1361,51 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendRevokedEmailNotificationToDefenderForRequestCase(
+  private sendRevokedEmailNotificationToDefender(
     caseType: CaseType,
-    defendant: Defendant,
-    defenderName?: string,
-    defenderEmail?: string,
-    arraignmentDate?: Date,
-    courtName?: string,
-  ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.subject,
-      { caseType },
-    )
-
-    const html = formatDefenderRevokedEmailNotification(
-      this.formatMessage,
-      caseType,
-      defendant.nationalId,
-      defendant.name,
-      defendant.noNationalId,
-      courtName,
-      arraignmentDate,
-    )
-
-    return this.sendEmail({
-      subject,
-      html,
-      recipientName: defenderName,
-      recipientEmail: defenderEmail,
-      skipTail: true,
-    })
-  }
-
-  private sendRevokedEmailNotificationToDefenderForIndictmentCase(
+    user: User,
     caseId: string,
-    defenderNationalId?: string,
     defenderName?: string,
     defenderEmail?: string,
+    defenderNationalId?: string,
     courtName?: string,
     courtCaseNumber?: string,
   ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentSubject,
-      { courtCaseNumber },
-    )
+    const subject = isIndictmentCase(caseType)
+      ? this.formatMessage(
+          notifications.defenderRevokedEmail.indictmentSubject,
+          { courtCaseNumber },
+        )
+      : this.formatMessage(notifications.defenderRevokedEmail.subject, {
+          caseType,
+        })
 
-    const html = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentBody,
-      {
-        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
-        defenderHasAccessToRvg: Boolean(defenderNationalId),
-        linkStart: `<a href="${formatDefenderRoute(
-          this.config.clientUrl,
-          CaseType.INDICTMENT,
-          caseId,
-        )}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const html = this.formatMessage(notifications.defenderRevokedEmail.bodyV2, {
+      actorInstitution: user?.institution?.name,
+      courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+      courtCaseNumber,
+      caseType,
+      defenderHasAccessToRvg: Boolean(defenderNationalId),
+      linkStart: `<a href="${formatDefenderRoute(
+        this.config.clientUrl,
+        caseType,
+        caseId,
+      )}">`,
+      linkEnd: '</a>',
+    })
 
     return this.sendEmail({
       subject,
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      skipTail: !defenderNationalId,
+      skipTail: isIndictmentCase(caseType) || !defenderNationalId,
     })
   }
 
   private async sendRevokedNotificationsForRequestCase(
     theCase: Case,
+    user: User,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -1462,16 +1436,16 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     if (defenderWasNotified && theCase.defendants) {
-      const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
-
       promises.push(
-        this.sendRevokedEmailNotificationToDefenderForRequestCase(
+        this.sendRevokedEmailNotificationToDefender(
           theCase.type,
-          theCase.defendants[0],
+          user,
+          theCase.id,
           theCase.defenderName,
           theCase.defenderEmail,
-          arraignmentDate,
+          theCase.defenderNationalId,
           theCase.court?.name,
+          theCase.courtCaseNumber,
         ),
       )
     }
@@ -1520,6 +1494,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private async sendRevokeNotificationsForIndictmentCase(
     theCase: Case,
+    user: User,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -1566,11 +1541,13 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (defenderWasNotified) {
         promises.push(
-          this.sendRevokedEmailNotificationToDefenderForIndictmentCase(
+          this.sendRevokedEmailNotificationToDefender(
+            theCase.type,
+            user,
             theCase.id,
-            defendant.defenderNationalId,
-            defendant.defenderName,
-            defendant.defenderEmail,
+            theCase.defenderName,
+            theCase.defenderEmail,
+            theCase.defenderNationalId,
             theCase.court?.name,
             theCase.courtCaseNumber,
           ),
@@ -1592,11 +1569,14 @@ export class CaseNotificationService extends BaseNotificationService {
     )
   }
 
-  private sendRevokedNotifications(theCase: Case): Promise<DeliverResponse> {
+  private sendRevokedNotifications(
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
     if (isRequestCase(theCase.type)) {
-      return this.sendRevokedNotificationsForRequestCase(theCase)
+      return this.sendRevokedNotificationsForRequestCase(theCase, user)
     } else {
-      return this.sendRevokeNotificationsForIndictmentCase(theCase)
+      return this.sendRevokeNotificationsForIndictmentCase(theCase, user)
     }
   }
   //#endregion
@@ -2741,7 +2721,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.MODIFIED:
         return this.sendModifiedNotifications(theCase, user)
       case CaseNotificationType.REVOKED:
-        return this.sendRevokedNotifications(theCase)
+        return this.sendRevokedNotifications(theCase, user)
       case CaseNotificationType.ADVOCATE_ASSIGNED:
         return this.sendAdvocateAssignedNotifications(theCase)
       case CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
