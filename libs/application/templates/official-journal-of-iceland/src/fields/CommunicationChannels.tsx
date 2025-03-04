@@ -70,11 +70,6 @@ export const CommunicationChannels = ({ application }: OJOIFieldBaseProps) => {
   const onAddChannel = () => {
     const currentAnswers = structuredClone(fetchedApplication.answers)
     const currentChannels = currentAnswers.advert?.channels ?? []
-    console.log('currentChannels', currentChannels)
-    console.log('name', name)
-    console.log('email', email)
-    console.log('phone', phone)
-    console.log('index', index)
     if (index !== null) {
       currentChannels[index] = { name, email, phone }
     } else {
