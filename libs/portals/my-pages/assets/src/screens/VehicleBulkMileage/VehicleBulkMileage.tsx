@@ -53,7 +53,7 @@ const VehicleBulkMileage = () => {
           page,
           pageSize: 10,
           query: undefined,
-          filterOnlyRequiredMileageRegistration: false,
+          filterOnlyRequiredMileageRegistration: true,
         },
       },
     })
@@ -68,7 +68,7 @@ const VehicleBulkMileage = () => {
             page,
             pageSize: 10,
             query: search ?? undefined,
-            filterOnlyRequiredMileageRegistration: false,
+            filterOnlyRequiredMileageRegistration: true,
           },
         },
       }).then((res) => {
