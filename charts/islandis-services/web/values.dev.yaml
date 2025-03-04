@@ -26,7 +26,7 @@ env:
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'dev'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.dev01.devland.is'
 grantNamespaces:

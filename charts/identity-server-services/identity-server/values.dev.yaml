@@ -46,7 +46,7 @@ env:
   IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
   LOG_LEVEL: 'info'
   MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
-  NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
   PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
   PersistenceSettings__DelegationsCacheEnabled: 'false'
   RedisSettings__Address: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com'
