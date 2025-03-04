@@ -80,7 +80,7 @@ export const Done: Form = buildForm({
               url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
-              messageColor: 'blue600',
+              //messageColor: 'blue600',
             }),
             buildMessageWithLinkButtonField({
               condition: (_, externalData) => {
@@ -95,7 +95,7 @@ export const Done: Form = buildForm({
               url: '/minarsidur/fyrirtaeki/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonCompanyTitle,
               message: m.linkFieldCompanyMessage,
-              messageColor: 'blue600',
+              //messageColor: 'blue600',
             }),
             buildDescriptionField({
               id: 'doneScreenSpace',
