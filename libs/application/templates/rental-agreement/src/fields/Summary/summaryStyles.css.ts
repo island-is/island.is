@@ -5,6 +5,10 @@ export const summaryWrap = style({
   paddingBottom: '.75rem',
 })
 
+export const summaryWrapNoEdit = style({
+  marginBottom: '4rem',
+})
+
 export const summaryNoBorder = style({
   border: 'none',
   padding: '0',

@@ -120,8 +120,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/summaryApplicantForm').then((module) =>
-                  Promise.resolve(module.summaryApplicantForm),
+                import('../forms/summaryForm').then((module) =>
+                  Promise.resolve(module.SummaryForm),
                 ),
               actions: [
                 {
@@ -143,8 +143,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/summaryAssigneeForm').then((module) =>
-                  Promise.resolve(module.summaryAssigneeForm),
+                import('../forms/summaryNoEditForm').then((module) =>
+                  Promise.resolve(module.SummaryNoEditForm),
                 ),
               read: 'all',
               api: [UserProfileApi],
