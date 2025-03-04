@@ -9,8 +9,8 @@ import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { application, summary } from '../lib/messages'
 
-export const summaryAssigneeForm: Form = buildForm({
-  id: 'summaryAssigneeForm',
+export const SummaryNoEditForm: Form = buildForm({
+  id: 'SummaryNoEditForm',
   title: application.name,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
@@ -21,29 +21,29 @@ export const summaryAssigneeForm: Form = buildForm({
       id: 'summary',
       title: summary.sectionName,
       children: [
-        buildDescriptionField({
-          id: 'summaryTitle',
-          title: summary.pageTitle,
-          marginBottom: 3,
-        }),
-        buildDescriptionField({
-          id: 'summaryFirstDescription',
-          title: '',
-          description: summary.pageDescriptionFirstParagraph,
-        }),
-        buildDescriptionField({
-          id: 'summarySecondDescription',
-          title: '',
-          description: summary.pageDescriptionSecondparagraph,
-        }),
         buildMultiField({
           id: 'summary',
           title: '',
           children: [
+            buildDescriptionField({
+              id: 'summaryTitle',
+              title: summary.pageTitle,
+              marginBottom: 3,
+            }),
+            buildDescriptionField({
+              id: 'summaryFirstDescription',
+              title: '',
+              description: summary.pageDescriptionFirstParagraph,
+            }),
+            buildDescriptionField({
+              id: 'summarySecondDescription',
+              title: '',
+              description: summary.pageDescriptionSecondparagraph,
+            }),
             buildCustomField({
-              id: 'summaryComponent',
+              id: 'SummaryNoEdit',
               title: 'Samantekt',
-              component: 'Summary',
+              component: 'SummaryNoEdit',
             }),
           ],
         }),

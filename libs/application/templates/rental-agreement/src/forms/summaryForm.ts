@@ -12,8 +12,8 @@ import Logo from '../assets/Logo'
 
 import { application, summary } from '../lib/messages'
 
-export const summaryApplicantForm: Form = buildForm({
-  id: 'summaryApplicantForm',
+export const SummaryForm: Form = buildForm({
+  id: 'summaryForm',
   title: application.name,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
@@ -44,9 +44,9 @@ export const summaryApplicantForm: Form = buildForm({
               description: summary.pageDescriptionSecondparagraph,
             }),
             buildCustomField({
-              id: 'summaryComponent',
+              id: 'summary',
               title: 'Samantekt',
-              component: 'Summary',
+              component: 'SummaryEdit',
             }),
             buildSubmitField({
               id: 'toDraft',

@@ -61,18 +61,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (condition) => !condition.isFilled,
   )
 
-  // useEffect(() => {
-  //   if (unfilledConditions && unfilledConditions.length > 0) {
-  //     setSubmitButtonDisabled && setSubmitButtonDisabled(true)
-  //   } else {
-  //     setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-  //   }
-
-  //   return () => {
-  //     setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-  //   }
-  // }, [unfilledConditions, setSubmitButtonDisabled])
-
   return (
     <Box className={summaryWrap}>
       <ApplicantsSummary
