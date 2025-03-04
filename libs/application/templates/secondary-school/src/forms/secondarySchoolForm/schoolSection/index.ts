@@ -13,12 +13,14 @@ import {
   getConditionSecondProgram,
   getFormTitle,
   getIsClearableSecondProgram,
+  getNordicLanguageCondition,
   getNordicLanguageOptions,
   getRequestDormitoryCondition,
   getRequestDormitoryOptions,
   getRequiredSecondProgram,
   getRowsLimitCount,
   getSchoolOptions,
+  getThirdLanguageCondition,
   getThirdLanguageOptions,
   getUpdateOnSelectFirstProgram,
   getUpdateOnSelectSecondProgram,
@@ -121,6 +123,8 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.thirdLanguageLabel,
               isClearable: true,
+              condition: (application, activeField) =>
+                getThirdLanguageCondition(application, activeField),
               options: (application, activeField) =>
                 getThirdLanguageOptions(application, activeField),
               setOnChange: (option, application, index, activeField) =>
@@ -135,6 +139,8 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.nordicLanguageLabel,
               isClearable: true,
+              condition: (application, activeField) =>
+                getNordicLanguageCondition(application, activeField),
               options: (application, activeField) =>
                 getNordicLanguageOptions(application, activeField),
               setOnChange: (option, application, index, activeField) =>

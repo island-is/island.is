@@ -62,6 +62,12 @@ import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
+import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
+import { ExampleStateTransfersModule } from './examples/example-state-transfers/example-state-transfers.module'
+import { ExampleStateTransfersService } from './examples/example-state-transfers/example-state-transfers.service'
+import { ExampleFieldsModule } from './examples/example-fields/example-fields.module'
+import { ExampleFieldsService } from './examples/example-fields/example-fields.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -145,6 +151,10 @@ export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
   ReferenceTemplateModule,
+  ExampleCommonActionsModule,
+  ExampleStateTransfersModule,
+  ExampleFieldsModule,
+  ExamplePaymentActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
@@ -159,7 +169,6 @@ export const modules = [
   CriminalRecordSubmissionModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
-  ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
   MarriageConditionsSubmissionModule,
@@ -217,6 +226,10 @@ export const modules = [
 
 export const services = [
   ReferenceTemplateService,
+  ExampleCommonActionsService,
+  ExampleStateTransfersService,
+  ExampleFieldsService,
+  ExamplePaymentActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PublicDebtPaymentPlanTemplateService,
@@ -233,7 +246,6 @@ export const services = [
   CriminalRecordSubmissionService,
   PSignSubmissionService,
   AnnouncementOfDeathService,
-  ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
   FinancialAidService,
