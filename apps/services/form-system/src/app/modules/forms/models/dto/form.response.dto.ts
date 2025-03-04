@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { FormDto } from './form.dto'
 import { ApplicantType } from '../../../../dataTypes/applicantTypes/applicantType.model'
 import { FieldType } from '../../../../dataTypes/fieldTypes/fieldType.model'
@@ -7,6 +7,16 @@ import { CertificationType } from '../../../../dataTypes/certificationTypes/cert
 import { OrganizationUrlDto } from '../../../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 
+export class Option {
+  @ApiProperty()
+  value!: string
+
+  @ApiProperty()
+  label!: string
+
+  @ApiProperty()
+  isSelected!: boolean
+}
 export class FormResponseDto {
   @ApiPropertyOptional({ type: FormDto })
   form?: FormDto
@@ -32,6 +42,6 @@ export class FormResponseDto {
   @ApiPropertyOptional({ type: [String] })
   organizationNationalIds?: string[]
 
-  @ApiPropertyOptional({ type: [OrganizationDto] })
-  organizations?: OrganizationDto[]
+  @ApiPropertyOptional({ type: [Option] })
+  organizations?: Option[]
 }

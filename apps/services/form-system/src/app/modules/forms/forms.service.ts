@@ -13,7 +13,7 @@ import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
 import { FormDto } from './models/dto/form.dto'
-import { FormResponseDto } from './models/dto/form.response.dto'
+import { FormResponseDto, Option } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
@@ -84,6 +84,11 @@ export class FormsService {
       user.authorization,
     )
 
+    // the loader is not sending the nationalId
+    if (nationalId === '0') {
+      nationalId = token.nationalId
+    }
+
     let organization = await this.organizationModel.findOne({
       where: { nationalId: nationalId },
     })
@@ -136,10 +141,14 @@ export class FormsService {
           attributes: ['nationalId', 'name'],
         })
         .then((organizations) =>
-          organizations.map((org) => ({
-            nationalId: org.nationalId,
-            name: org.name,
-          })),
+          organizations.map(
+            (org) =>
+              ({
+                value: org.nationalId,
+                label: org.name.is,
+                isSelected: org.nationalId === nationalId,
+              } as Option),
+          ),
         ),
     }
 

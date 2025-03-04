@@ -158,6 +158,17 @@ export class FormResponse {
   @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
   urls?: OrganizationUrl[]
 
-  @Field(() => [Organization], { nullable: 'itemsAndList' })
-  organizations?: Organization[]
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
+}
+@ObjectType('FormSystemOption')
+export class Option {
+  @Field(() => String)
+  value!: string
+
+  @Field(() => String)
+  label!: string
+
+  @Field(() => Boolean)
+  isSelected!: boolean
 }
