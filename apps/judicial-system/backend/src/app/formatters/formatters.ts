@@ -479,7 +479,7 @@ export const formatDefenderCourtDateLinkEmailNotification = (
   const body = requestSharedWithDefender
     ? formatMessage(cf.linkBody, { courtCaseNumber })
     : formatMessage(cf.linkNoRequestBody, {
-        courtName: applyDativeCaseToCourtName(court || 'Héraðsdómur'),
+        courtName: court,
         courtCaseNumber,
       })
 
