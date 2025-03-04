@@ -12,8 +12,8 @@ export const ReviewForm: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     applicationStatusSection,
     reviewOverviewSection,
@@ -23,6 +23,7 @@ export const ReviewForm: Form = buildForm({
       alertTitle: conclusion.approvedForAssignee.alertMessage,
       alertMessage: '',
       expandableHeader: conclusion.approvedForAssignee.expandableHeader,
+      expandableIntro: '',
       expandableDescription:
         conclusion.approvedForAssignee.expandableDescription,
       condition: (answers) => !isRejected(answers),
