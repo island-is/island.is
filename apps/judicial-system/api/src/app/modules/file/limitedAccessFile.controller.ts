@@ -23,7 +23,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
-@UseGuards(new JwtInjectBearerAuthGuard(true))
+@UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/case/:id/limitedAccess')
 export class LimitedAccessFileController {
   constructor(
@@ -149,7 +149,12 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
+  @Get([
+    'indictment',
+    'indictment/:fileName',
+    'mergedCase/:mergedCaseId/indictment',
+    'mergedCase/:mergedCaseId/indictment/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   async getIndictmentPdf(
     @Param('id') id: string,

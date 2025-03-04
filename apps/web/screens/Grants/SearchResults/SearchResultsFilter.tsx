@@ -73,9 +73,10 @@ export const GrantsSearchResultsFilter = ({
         resultCount={hits}
         onFilterClear={onReset}
         variant={variant}
-        align={'left'}
+        align={'right'}
+        usePopoverDiscloureButtonStyling
       >
-        <Box background="white" padding={[1, 1, 2]} borderRadius="large">
+        <Box background="white" borderRadius="large">
           <FilterMultiChoice
             labelClear={formatMessage(m.search.clearFilterCategory)}
             onChange={({ categoryId, selected }) => {
