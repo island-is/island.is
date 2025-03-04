@@ -82,7 +82,9 @@ export const OverviewFormField = ({
                   key={i}
                   span={
                     item.width === 'full'
-                      ? ['12/12', '12/12', '12/12', '12/12']
+                      ? field.title || field.description
+                        ? ['12/12', '12/12', '12/12', '12/12']
+                        : ['10/12', '10/12', '10/12', '10/12']
                       : item.width === 'half'
                       ? ['9/12', '9/12', '9/12', '5/12']
                       : undefined

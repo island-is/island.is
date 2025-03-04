@@ -55,7 +55,7 @@ export interface OrganizationNewsListProps {
   selectedMonth: number
   selectedPage: number
   selectedTag: string | string[]
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   locale: Locale
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -76,8 +76,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+
   const n = useNamespaceStrict(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -175,8 +174,6 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       sidebarContent={
         <NewsListSidebar
           months={months}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
           namespace={namespace}
           newsOverviewUrl={newsOverviewUrl}
           selectedMonth={selectedMonth}
@@ -190,8 +187,6 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       }
     >
       <NewsList
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         namespace={namespace}
         newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}
@@ -212,7 +207,8 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         // @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
         variant={
-          organizationHasDigitalIcelandNewsVisuals(organizationPage.slug)
+          organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
+          (namespace?.digitalIcelandNewsVisualsEnabled ?? false)
             ? 'digital-iceland'
             : 'default'
         }
