@@ -22,7 +22,7 @@ export class ApplicantsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formApplicantTypesApi: FormApplicantTypesApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -52,8 +52,12 @@ export class ApplicantsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
+
     return response as Applicant
   }
 

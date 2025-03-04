@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_SCREEN_DISPLAY_ORDER = gql`
-  mutation FormSystemUpdateScreensDisplayOrder(
+  mutation UpdateFormSystemScreensDisplayOrder(
     $input: FormSystemUpdateScreensDisplayOrderInput!
   ) {
-    formSystemUpdateScreensDisplayOrder(input: $input)
+    updateFormSystemScreensDisplayOrder(input: $input)
   }
 `

@@ -79,7 +79,7 @@ export const Navbar = () => {
           type: 'ADD_SECTION',
           payload: {
             section: removeTypename(
-              newSection.data?.formSystemCreateSection,
+              newSection.data?.createFormSystemSection,
             ) as FormSystemSection,
           },
         })
@@ -94,7 +94,7 @@ export const Navbar = () => {
               updateSectionsDisplayOrderDto: {
                 sectionsDisplayOrderDto: [
                   ...(updatedSections ?? []),
-                  { id: newSection.data?.formSystemCreateSection.id },
+                  { id: newSection.data?.createFormSystemSection.id },
                 ],
               },
             },

@@ -23,7 +23,7 @@ export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) { }
 
   @Query(() => Application, {
-    name: 'formSystemGetApplication',
+    name: 'formSystemApplication',
   })
   async getApplication(
     @Args('input', { type: () => GetApplicationInput })
@@ -34,7 +34,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemCreateApplication',
+    name: 'createFormSystemApplication',
   })
   async createApplication(
     @Args('input', { type: () => CreateApplicationInput })
@@ -45,7 +45,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateApplicationDependencies',
+    name: 'updateFormSystemApplicationDependencies',
   })
   async updateApplicationDependencies(
     @Args('input', { type: () => UpdateApplicationDependenciesInput })
@@ -56,7 +56,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemSubmitApplication'
+    name: 'submitFormSystemApplication'
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })
@@ -67,7 +67,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemSubmitScreen',
+    name: 'submitFormSystemScreen',
   })
   async submitScreen(
     @Args('input', { type: () => SubmitScreenInput })

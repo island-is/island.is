@@ -2,10 +2,10 @@ import { gql } from '@apollo/client'
 import { ApplicationFragment } from '../fragments/application'
 
 export const CREATE_APPLICATION = gql`
-  mutation FormSystemCreateApplication(
+  mutation CreateFormSystemApplication(
     $input: FormSystemCreateApplicationInput!
   ) {
-    formSystemCreateApplication(input: $input) {
+    createFormSystemApplication(input: $input) {
       ...Application
     }
   }

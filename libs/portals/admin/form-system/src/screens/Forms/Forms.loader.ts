@@ -4,7 +4,7 @@ import { GET_FORMS } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 
 export interface FormsLoaderQueryResponse {
-  formSystemGetAllForms?: FormSystemFormResponse
+  formSystemForms?: FormSystemFormResponse
 }
 
 export interface FormsLoaderResponse {
@@ -23,7 +23,7 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
       throw new Error('No forms were found')
     }
     return {
-      forms: data.formSystemGetAllForms?.forms
+      forms: data.formSystemForms?.forms
         ?.filter((form) => form !== null)
         .map((form) => removeTypename(form)) as FormSystemForm[],
     }

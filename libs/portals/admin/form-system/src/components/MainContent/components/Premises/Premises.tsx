@@ -48,7 +48,7 @@ export const Premises = () => {
             },
           },
         }).then((res) => {
-          return removeTypename(res.data?.formSystemCreateCertification)
+          return removeTypename(res.data?.createFormSystemCertification)
         })
         controlDispatch({
           type: 'CHANGE_CERTIFICATION',

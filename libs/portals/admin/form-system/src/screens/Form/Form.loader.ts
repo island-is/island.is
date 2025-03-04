@@ -8,7 +8,7 @@ export interface FormLoaderResponse {
 }
 
 interface FormLoaderQueryResponse {
-  formSystemGetForm: FormSystemFormResponse
+  formSystemForm: FormSystemFormResponse
 }
 
 export const formLoader: WrappedLoaderFn = ({ client }) => {
@@ -31,7 +31,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
       }
 
       return {
-        formBuilder: removeTypename(data.formSystemGetForm),
+        formBuilder: removeTypename(data.formSystemForm),
       }
     } catch (error) {
       throw new Error(`Failed to load form: ${error.message}`)

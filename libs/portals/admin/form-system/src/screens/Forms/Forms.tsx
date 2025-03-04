@@ -30,7 +30,7 @@ export const Forms = () => {
                 navigate(
                   FormSystemPaths.Form.replace(
                     ':formId',
-                    String(data?.formSystemCreateForm?.form?.id),
+                    String(data?.createFormSystemForm?.form?.id),
                   ),
                 )
               }}

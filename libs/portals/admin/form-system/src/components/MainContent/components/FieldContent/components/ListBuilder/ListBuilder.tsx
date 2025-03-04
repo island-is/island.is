@@ -88,7 +88,7 @@ export const ListBuilder = () => {
         type: 'ADD_LIST_ITEM',
         payload: {
           newListItem: removeTypename(
-            newListItem.data.formSystemCreateListItem,
+            newListItem.data.createFormSystemListItem,
           ),
         },
       })
