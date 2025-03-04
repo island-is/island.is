@@ -52,7 +52,7 @@ import {
 } from '../../../graphql/queries.graphql.generated'
 import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
-import { InvoiceReceipt } from 'apps/payments/components/InvoiceReceipt'
+import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 
 interface PaymentPageProps {
   locale: string
