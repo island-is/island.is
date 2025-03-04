@@ -36,7 +36,10 @@ export const OverviewFormField = ({
     if (goToScreen) goToScreen(screen)
   }
   return (
-    <Box paddingTop={3} paddingBottom={3}>
+    <Box
+      paddingTop={field.marginTop ? field.marginTop : 3}
+      paddingBottom={field.marginBottom ? field.marginBottom : 3}
+    >
       <ReviewGroup
         isLast={!field.bottomLine}
         editAction={() => changeScreens(field.backId ?? '')}

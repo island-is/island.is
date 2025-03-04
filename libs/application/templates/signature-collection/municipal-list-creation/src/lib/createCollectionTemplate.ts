@@ -7,11 +7,10 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from './constants'
+import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
@@ -19,24 +18,34 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
+import {
+  CandidateApi,
+  IsDelegatedToCompanyApi,
+  MunicipalCollectionApi,
+  MunicipalIdentityApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
 
-const signListTemplate: ApplicationTemplate<
+const createListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
+  type: ApplicationTypes.MUNICIPAL_LIST_CREATION,
   name: m.applicationName,
   codeOwner: CodeOwners.Juni,
   institution: m.institution,
-  initialQueryParameter: 'candidate',
-  featureFlag: Features.ParliamentaryElectionApplication,
+  featureFlag: Features.municipalElectionApplication,
   dataSchema,
   translationNamespaces: [
-    ApplicationConfigurations[ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]
+    ApplicationConfigurations[ApplicationTypes.MUNICIPAL_LIST_CREATION]
       .translation,
+  ],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
   ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -67,9 +76,10 @@ const signListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                CurrentCollectionApi,
-                CanSignApi,
-                GetListApi,
+                CandidateApi,
+                MunicipalCollectionApi,
+                MunicipalIdentityApi,
+                IsDelegatedToCompanyApi,
               ],
             },
           ],
@@ -106,7 +116,7 @@ const signListTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: m.logListSigned,
+                logMessage: m.logListCreated,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -122,11 +132,7 @@ const signListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
+          //Todo: Add onEntry once ready
           roles: [
             {
               id: Roles.APPLICANT,
@@ -152,4 +158,4 @@ const signListTemplate: ApplicationTemplate<
   },
 }
 
-export default signListTemplate
+export default createListTemplate
