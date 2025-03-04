@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsArray, IsEnum } from 'class-validator'
-import { PaymentMethod } from '../../../types'
+import { PaymentMethod, PaymentStatus } from '../../../types'
 
 export class GetPaymentFlowDTO {
   @ApiProperty({
@@ -67,10 +67,10 @@ export class GetPaymentFlowDTO {
   organisationId!: string
 
   @ApiProperty({
-    description: 'Indiciates if the payment flow has been paid',
-    type: Boolean,
+    description: 'Status of the payment: unpaid, pending invoice or paid',
+    enum: PaymentStatus,
   })
-  isPaid!: boolean
+  paymentStatus!: PaymentStatus
 
   @ApiPropertyOptional({
     description:
@@ -93,4 +93,10 @@ export class GetPaymentFlowDTO {
     type: Boolean,
   })
   redirectToReturnUrlOnSuccess?: boolean
+
+  @ApiProperty({
+    description: 'Last updated at',
+    type: Date,
+  })
+  updatedAt!: Date
 }

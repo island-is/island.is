@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid'
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
 import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
-import { PaymentMethod } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { AppModule } from '../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
@@ -122,10 +122,10 @@ describe('InvoicePaymentController', () => {
         .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
         .mockReturnValue(
           Promise.resolve({
-            isAlreadyPaid: true,
             paymentDetails: {} as any,
             paymentFlow: {} as any,
-            hasInvoice: false,
+            paymentStatus: PaymentStatus.PAID,
+            updatedAt: new Date(),
           }),
         )
 
@@ -146,10 +146,10 @@ describe('InvoicePaymentController', () => {
         .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
         .mockReturnValue(
           Promise.resolve({
-            isAlreadyPaid: false,
             paymentDetails: {} as any,
             paymentFlow: {} as any,
-            hasInvoice: true,
+            paymentStatus: PaymentStatus.INVOICE_PENDING,
+            updatedAt: new Date(),
           }),
         )
 
@@ -170,7 +170,6 @@ describe('InvoicePaymentController', () => {
         .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
         .mockReturnValue(
           Promise.resolve({
-            isAlreadyPaid: false,
             paymentDetails: {
               catalogItems: [
                 {
@@ -182,7 +181,8 @@ describe('InvoicePaymentController', () => {
             paymentFlow: {
               id: paymentFlowId,
             } as any,
-            hasInvoice: false,
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
           }),
         )
 

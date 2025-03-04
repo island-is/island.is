@@ -7,19 +7,21 @@ import { useLocale } from '@island.is/localization'
 import { generic } from '../../messages'
 import { todoCallGlobalFormatUtilFunction } from '../../utils'
 
-interface PaymentReceiptProps {
+interface InvoiceReceiptProps {
   productTitle: string
   amount: number
-  paidAt: Date
+  payerNationalId: string
+  payerName: string
 }
 
-const lines: [MessageDescriptor, keyof PaymentReceiptProps][] = [
+const lines: [MessageDescriptor, keyof InvoiceReceiptProps][] = [
   [generic.product, 'productTitle'],
   [generic.amount, 'amount'],
-  [generic.paidAt, 'paidAt'],
+  [generic.nationalId, 'payerNationalId'],
+  [generic.name, 'payerName'],
 ]
 
-export const PaymentReceipt = (props: PaymentReceiptProps) => {
+export const InvoiceReceipt = (props: InvoiceReceiptProps) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -38,8 +40,8 @@ export const PaymentReceipt = (props: PaymentReceiptProps) => {
           <Text variant="medium" textAlign="left">
             {key === 'amount'
               ? todoCallGlobalFormatUtilFunction(props[key])
-              : key === 'paidAt'
-              ? format(new Date(props[key]), 'yyyy-MM-dd HH:MM')
+              : key === 'payerNationalId'
+              ? `${props[key].slice(0, 6)}-${props[key].slice(6, 10)}`
               : props[key]}
           </Text>
         </Box>

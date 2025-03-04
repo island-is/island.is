@@ -46,6 +46,16 @@ export const generic = defineMessages({
     defaultMessage: 'Greiðslutími',
     description: 'Paid at',
   },
+  nationalId: {
+    id: 'payments.generic:nationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National id',
+  },
+  name: {
+    id: 'payments.generic:name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
 })
 
 export const genericError = defineMessages({

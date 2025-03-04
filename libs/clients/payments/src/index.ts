@@ -11,4 +11,5 @@ export {
   VerifyCardResponse,
   ChargeCardResponse,
   Configuration as PaymentsApiConfiguration,
+  GetPaymentFlowDTOPaymentStatusEnum,
 } from '../gen/fetch'

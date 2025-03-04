@@ -173,12 +173,12 @@ export class CardPaymentController {
       const {
         paymentFlow,
         paymentDetails: { catalogItems, totalPrice },
-        isAlreadyPaid,
+        paymentStatus,
       } = await this.paymentFlowService.getPaymentFlowWithPaymentDetails(
         chargeCardInput.paymentFlowId,
       )
 
-      if (isAlreadyPaid) {
+      if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
 

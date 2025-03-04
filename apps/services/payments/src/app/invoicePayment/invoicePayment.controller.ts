@@ -44,17 +44,16 @@ export class InvoicePaymentController {
       const {
         paymentFlow,
         paymentDetails: { catalogItems, totalPrice },
-        isAlreadyPaid,
-        hasInvoice,
+        paymentStatus,
       } = await this.paymentFlowService.getPaymentFlowWithPaymentDetails(
         createInvoiceInput.paymentFlowId,
       )
 
-      if (isAlreadyPaid) {
+      if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
 
-      if (hasInvoice) {
+      if (paymentStatus === 'invoice_pending') {
         throw new BadRequestException(InvoiceErrorCode.InvoiceAlreadyExists)
       }
 

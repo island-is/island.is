@@ -16,6 +16,9 @@ generates:
         JSON: '{ [key: string]: any }'
       namingConvention:
         typeNames: change-case#pascalCase
+      enumsAsTypes: false
+      enumPrefix: false
+      onlyOperationTypes: false
 hooks:
   afterAllFileWrite:
     - prettier --write
