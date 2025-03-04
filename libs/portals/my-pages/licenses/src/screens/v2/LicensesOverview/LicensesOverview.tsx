@@ -17,6 +17,7 @@ import {
 import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
+import { PkPass } from '../../../components/QRCodeModal/PkPass'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
@@ -31,8 +32,8 @@ export const LicensesOverviewV2 = () => {
     GenericLicenseType.HuntingLicense,
     GenericLicenseType.MachineLicense,
     GenericLicenseType.PCard,
-    GenericLicenseType.Passport,
     GenericLicenseType.IdentityDocument,
+    GenericLicenseType.Passport,
   ]
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({

@@ -91,7 +91,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
   },
   {
-    type: GenericLicenseType.Passport,
+    type: GenericLicenseType.IdentityDocument,
     provider: {
       id: GenericLicenseProviderId.RegistersIceland,
       referenceId: '10601',
@@ -101,7 +101,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
   },
   {
-    type: GenericLicenseType.IdentityDocument,
+    type: GenericLicenseType.Passport,
     provider: {
       id: GenericLicenseProviderId.RegistersIceland,
       referenceId: '10601',
