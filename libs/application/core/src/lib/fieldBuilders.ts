@@ -78,6 +78,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   } = data
 
   return {
@@ -94,6 +95,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   }
 }
 
@@ -297,6 +299,7 @@ export const buildTextField = (
     rows,
     required,
     maxLength,
+    showMaxLength,
     max,
     min,
     readOnly,
@@ -315,6 +318,7 @@ export const buildTextField = (
     rows,
     required,
     maxLength,
+    showMaxLength,
     readOnly,
     rightAlign,
     max,
