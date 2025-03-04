@@ -28,13 +28,12 @@ export const Done: Form = buildForm({
             buildImageField({
               id: 'doneImage',
               image: Jobs,
-              imageWidth: '50%',
+              imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'none',
             }),
             buildDescriptionField({
               id: 'nextStepsTitle',
-              title: '',
               description: m.nextStepsDescription,
               titleVariant: 'h4',
               marginBottom: 'gutter',
@@ -44,23 +43,18 @@ export const Done: Form = buildForm({
               // Todo: update link when available
               link: 'island.is',
               title: '',
+              marginBottom: 'none'
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              title: '',
               url: '/minarsidur/min-gogn/listar/',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
               messageColor: 'blue600',
+              marginBottom: "containerGutter"
             }),
             buildDescriptionField({
-              id: 'doneScreenSpace',
-              title: '',
-              space: 'containerGutter',
-            }),
-            buildDescriptionField({
-              id: 'doneScreenSpace2',
-              title: '',
+              id: 'doneScreenBottomSpace',
               space: 'containerGutter',
             }),
           ],

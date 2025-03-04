@@ -36,7 +36,7 @@ export const Prerequisites: Form = buildForm({
             buildImageField({
               id: 'introImage',
               image: DigitalServices,
-              imageWidth: '50%',
+              imageWidth: 'auto',
               imagePosition: 'center',
             }),
           ],
