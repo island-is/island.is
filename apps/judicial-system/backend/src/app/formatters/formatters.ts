@@ -14,7 +14,7 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { Gender, UserRole } from '@island.is/judicial-system/types'
+import { Gender, User, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -584,48 +584,22 @@ export const formatPrisonRevokedEmailNotification = (
 export const formatDefenderRevokedEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
-  defendantNationalId?: string,
-  defendantName?: string,
-  defendantNoNationalId?: boolean,
+  user: User,
+  baseUrl: string,
+  caseId: string,
+  courtCaseNumber?: string,
   court?: string,
-  courtDate?: Date,
+  defenderNationalId?: string,
 ): string => {
   const cf = notifications.defenderRevokedEmail
-  const courtText = formatMessage(cf.court, {
-    court: court ? applyDativeCaseToCourtName(court) : 'NONE',
-  })
-  const courtDateText = formatMessage(cf.courtDate, {
-    courtDate: courtDate
-      ? formatDate(courtDate, 'PPPPp')
-          ?.replace('dagur,', 'daginn')
-          ?.replace(' kl.', ', kl.')
-      : 'NONE',
-  })
-  const revokedText = formatMessage(cf.revoked, {
-    courtText,
-    courtDateText,
-    investigationPrefix:
-      type === CaseType.OTHER
-        ? 'onlyPrefix'
-        : isInvestigationCase(type)
-        ? 'withPrefix'
-        : 'noPrefix',
-    courtTypeName: formatCaseType(type),
-  })
-  const defendantNationalIdText = defendantNoNationalId
-    ? defendantNationalId || 'NONE'
-    : formatNationalId(defendantNationalId || 'NONE')
-  const defendantText = formatMessage(cf.defendant, {
-    defendantName: defendantName || 'NONE',
-    defendantNationalId: defendantNationalIdText,
-    defendantNoNationalId: defendantNoNationalId ? 'NONE' : 'SOME',
-  })
-  const defenderAssignedText = formatMessage(cf.defenderAssigned)
 
-  return formatMessage(cf.body, {
-    revokedText,
-    defendantText,
-    defenderAssignedText,
+  return formatMessage(cf.indictmentBody, {
+    actorInstitution: user.institution?.name,
+    courtName: applyDativeCaseToCourtName(court || 'héraðsdómi'),
+    courtCaseNumber,
+    defenderHasAccessToRvg: Boolean(defenderNationalId),
+    linkStart: `<a href="${formatDefenderRoute(baseUrl, type, caseId)}">`,
+    linkEnd: '</a>',
   })
 }
 

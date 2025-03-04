@@ -1364,11 +1364,13 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private sendRevokedEmailNotificationToDefenderForRequestCase(
     caseType: CaseType,
-    defendant: Defendant,
+    user: User,
+    caseId: string,
     defenderName?: string,
     defenderEmail?: string,
-    arraignmentDate?: Date,
+    defenderNationalId?: string,
     courtName?: string,
+    courtCaseNumber?: string,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.defenderRevokedEmail.subject,
@@ -1378,11 +1380,12 @@ export class CaseNotificationService extends BaseNotificationService {
     const html = formatDefenderRevokedEmailNotification(
       this.formatMessage,
       caseType,
-      defendant.nationalId,
-      defendant.name,
-      defendant.noNationalId,
+      user,
+      this.config.clientUrl,
+      caseId,
+      courtCaseNumber,
       courtName,
-      arraignmentDate,
+      defenderNationalId,
     )
 
     return this.sendEmail({
@@ -1435,6 +1438,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private async sendRevokedNotificationsForRequestCase(
     theCase: Case,
+    user: User,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -1465,16 +1469,16 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     if (defenderWasNotified && theCase.defendants) {
-      const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
-
       promises.push(
         this.sendRevokedEmailNotificationToDefenderForRequestCase(
           theCase.type,
-          theCase.defendants[0],
+          user,
+          theCase.id,
           theCase.defenderName,
           theCase.defenderEmail,
-          arraignmentDate,
+          theCase.defenderNationalId,
           theCase.court?.name,
+          theCase.courtCaseNumber,
         ),
       )
     }
@@ -1602,7 +1606,7 @@ export class CaseNotificationService extends BaseNotificationService {
     user: User,
   ): Promise<DeliverResponse> {
     if (isRequestCase(theCase.type)) {
-      return this.sendRevokedNotificationsForRequestCase(theCase)
+      return this.sendRevokedNotificationsForRequestCase(theCase, user)
     } else {
       return this.sendRevokeNotificationsForIndictmentCase(theCase, user)
     }
