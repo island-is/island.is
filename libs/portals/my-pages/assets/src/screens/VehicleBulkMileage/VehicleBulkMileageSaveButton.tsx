@@ -47,7 +47,7 @@ export const VehicleBulkMileageSaveButton = ({
       loading={submissionStatus === 'loading'}
       variant="text"
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || submissionStatus === 'success'}
     >
       {tag.text}
     </Button>
