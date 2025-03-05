@@ -31,7 +31,7 @@ export class FormCertificationTypeDtoInput {
   certificationTypeId?: string
 }
 
-@InputType('FormSystemCreateCertificationDtoInput')
+@InputType('CreateFormSystemCertificationDtoInput')
 export class CreateCertificationDtoInput {
   @Field(() => String, { nullable: true })
   formId?: string
@@ -40,20 +40,20 @@ export class CreateCertificationDtoInput {
   certificationTypeId?: string
 }
 
-@InputType('FormSystemCreateCertificationInput')
+@InputType('CreateFormSystemCertificationInput')
 export class CreateCertificationInput {
   @Field(() => CreateCertificationDtoInput, { nullable: true })
   createFormCertificationTypeDto?: CreateCertificationDtoInput
 }
 
-@InputType('FormSystemDeleteCertificationInput')
+@InputType('DeleteFormSystemCertificationInput')
 export class DeleteCertificationInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 }
 
-@InputType('FormSystemCreateFormCertificationTypeInput')
+@InputType('CreateFormSystemFormCertificationTypeInput')
 export class FormCertificationTypeCreateInput {
-  @Field(() => FormCertificationTypeDtoInput, { nullable: true })
-  createFormCertificationTypeDto?: FormCertificationTypeDtoInput
+  @Field(() => FormCertificationTypeDtoInput)
+  createFormCertificationTypeDto!: FormCertificationTypeDtoInput
 }

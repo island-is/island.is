@@ -5,17 +5,17 @@ import { Value } from './value.model'
 
 @ObjectType('FormSystemFieldType')
 export class FieldType {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+  @Field(() => LanguageType)
+  name!: LanguageType
 
-  @Field(() => LanguageType, { nullable: true })
-  description?: LanguageType
+  @Field(() => LanguageType)
+  description!: LanguageType
 
-  @Field(() => Boolean, { nullable: true })
-  isCommon?: boolean
+  @Field(() => Boolean)
+  isCommon!: boolean
 
   @Field(() => FieldSettings, { nullable: true })
   fieldSettings?: FieldSettings

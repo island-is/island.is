@@ -3,8 +3,8 @@ import { LanguageType } from './languageType.model'
 
 @ObjectType('FormSystemListItem')
 export class ListItem {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageType, { nullable: true })
   label?: LanguageType

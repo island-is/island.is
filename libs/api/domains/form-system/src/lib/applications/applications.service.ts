@@ -17,7 +17,7 @@ import {
   SubmitScreenInput,
 } from '../../dto/application.input'
 import { Application } from '../../models/applications.model'
-import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
+import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
 export class ApplicationsService {

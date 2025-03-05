@@ -3,8 +3,8 @@ import { LanguageType } from './languageType.model'
 
 @ObjectType('FormSystemFormApplicant')
 export class FormApplicant {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageType, { nullable: true })
   description?: LanguageType

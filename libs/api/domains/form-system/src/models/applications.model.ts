@@ -17,8 +17,8 @@ export class ApplicationEventDto {
 
 @ObjectType('FormSystemApplication')
 export class Application {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageType, { nullable: true })
   organizationName?: LanguageType

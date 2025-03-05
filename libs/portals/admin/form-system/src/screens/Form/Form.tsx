@@ -6,7 +6,7 @@ import { FormLayout } from '../../components/FormLayout/FormLayout'
 export const Form = () => {
   const { formBuilder } = useLoaderData() as FormLoaderResponse
   const { form } = formBuilder
-
+  console.log(formBuilder)
   if (!form || !formBuilder) {
     return <div>Loading...</div>
   }

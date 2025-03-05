@@ -4,7 +4,7 @@ import { LanguageTypeInput } from './languageType.input'
 import { ListItemInput } from './listItem.input'
 import { ValueDtoInput } from './value.input'
 
-@InputType('FormSystemCreateFieldDtoInput')
+@InputType('CreateFormSystemFieldDtoInput')
 export class CreateFieldDtoInput {
   @Field(() => String, { nullable: true })
   screenId?: string

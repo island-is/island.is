@@ -2,34 +2,34 @@ import { Field, InputType } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { DependencyInput } from './form.input'
 
-@InputType('FormSystemCreateApplicantDtoInput')
-export class FormSystemCreateApplicantDtoInput {
-  @Field(() => String, { nullable: true })
-  formId?: string
+@InputType('CreateFormSystemApplicantDtoInput')
+export class CreateApplicantDtoInput {
+  @Field(() => String)
+  formId!: string
 
-  @Field(() => String, { nullable: true })
-  applicantTypeId?: string
+  @Field(() => String)
+  applicantTypeId!: string
 }
 
-@InputType('FormSystemUpdateApplicantDtoInput')
+@InputType('UpdateFormSystemApplicantDtoInput')
 export class FormSystemUpdateApplicantDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 }
 
-@InputType('FormSystemCreateApplicantInput')
+@InputType('CreateFormSystemApplicantInput')
 export class CreateApplicantInput {
-  @Field(() => FormSystemCreateApplicantDtoInput, { nullable: true })
-  createFormApplicantTypeDto?: FormSystemCreateApplicantDtoInput
+  @Field(() => CreateApplicantDtoInput, { nullable: true })
+  createFormApplicantTypeDto?: CreateApplicantDtoInput
 }
 
-@InputType('FormSystemDeleteApplicantInput')
+@InputType('DeleteFormSystemApplicantInput')
 export class DeleteApplicantInput {
   @Field(() => String, { nullable: true })
   id?: string
 }
 
-@InputType('FormSystemUpdateApplicantInput')
+@InputType('UpdateFormSystemApplicantInput')
 export class UpdateApplicantInput {
   @Field(() => String, { nullable: true })
   id?: string
@@ -38,19 +38,10 @@ export class UpdateApplicantInput {
   updateFormApplicantTypeDto?: FormSystemUpdateApplicantDtoInput
 }
 
-@InputType('FormSystemUpdateApplicationDependenciesInput')
-export class UpdateApplicationDependenciesInput {
-  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
-  dependencies?: DependencyInput[]
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  completed?: string[]
-}
-
 @InputType('FormSystemFormApplicantInput')
 export class FormApplicantInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
@@ -71,17 +62,17 @@ export class FormApplicantTypeDtoInput {
   name?: LanguageTypeInput
 }
 
-@InputType('FormSystemFormApplicantTypeUpdateInput')
+@InputType('UpdateFormSystemFormApplicantTypeInput')
 export class FormApplicantTypeUpdateInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => FormApplicantTypeDtoInput, { nullable: true })
   updateFormApplicantTypeDto?: FormApplicantTypeDtoInput
 }
 
-@InputType('FormSystemFormApplicantTypeDeleteInput')
+@InputType('DeleteFormSystemFormApplicantTypeInput')
 export class FormApplicantTypeDeleteInput {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 }

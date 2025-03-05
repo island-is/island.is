@@ -14,7 +14,7 @@ import {
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
-import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
+import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)

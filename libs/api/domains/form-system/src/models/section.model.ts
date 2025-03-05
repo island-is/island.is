@@ -4,8 +4,8 @@ import { Screen as ScreenModel } from './screen.model'
 
 @ObjectType('FormSystemSection')
 export class Section {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
@@ -22,8 +22,8 @@ export class Section {
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  isCompleted?: boolean
+  @Field(() => Boolean)
+  isCompleted!: boolean
 
   @Field(() => [ScreenModel], { nullable: 'itemsAndList' })
   screens?: ScreenModel[]
