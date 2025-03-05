@@ -10,6 +10,8 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetReferralsDetailQuery } from './Referrals.generated'
+import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -20,13 +22,14 @@ const ReferencesDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data } = useGetReferralsDetailQuery({
+  const { data, loading } = useGetReferralsDetailQuery({
     variables: { locale: lang },
   })
 
   const referral = data?.healthDirectorateReferrals.referrals.find(
     (item) => item.id === id,
   )
+  const error = true
 
   return (
     <IntroWrapper
@@ -38,28 +41,52 @@ const ReferencesDetail: React.FC = () => {
       )}
       marginBottom={6}
     >
-      <InfoLineStack space={1}>
-        <InfoLine
-          label={formatMessage(messages.referralFor)}
-          content={referral?.reason ?? ''}
-        />
-        <InfoLine
-          label={formatMessage(messages.referralFrom)}
-          content={referral?.fromContactInfo?.name ?? ''}
-        />
-        <InfoLine
-          label={formatMessage(messages.medicineValidTo)}
-          content={formatDate(referral?.validUntilDate)}
-        />
-        <InfoLine
-          label={formatMessage(messages.vaccinatedStatus)}
-          content={referral?.stateDisplay ?? ''}
-        />
-        <InfoLine
-          label={formatMessage(messages.recepient)}
-          content={referral?.toContactInfo.name ?? ''}
-        />
-      </InfoLineStack>
+      {error && !loading && (
+        <Problem error={{ name: 'ee', message: 'error' }} noBorder={false} />
+      )}
+
+      {!error && !loading && isDefined(referral) && (
+        <InfoLineStack space={1}>
+          <InfoLine
+            label={formatMessage(messages.referralFor)}
+            content={
+              referral?.reason ?? formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.referralFrom)}
+            content={
+              referral?.fromContactInfo?.name ??
+              formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.medicineValidTo)}
+            content={
+              formatDate(referral?.validUntilDate) ??
+              formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.vaccinatedStatus)}
+            content={
+              referral?.stateDisplay ?? formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.recepientUpperCase)}
+            content={
+              referral?.toContactInfo?.name ??
+              formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+        </InfoLineStack>
+      )}
     </IntroWrapper>
   )
 }

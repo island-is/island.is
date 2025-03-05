@@ -61,7 +61,7 @@ const References: React.FC = () => {
               variant: 'blue',
             }}
             cta={{
-              url: HealthPaths.HealthReferencesDetail.replace(
+              url: HealthPaths.HealthReferralsDetail.replace(
                 ':id',
                 referral?.id ?? '',
               ),

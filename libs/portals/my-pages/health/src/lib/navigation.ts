@@ -160,11 +160,11 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.referrals,
-      path: HealthPaths.HealthReferences,
+      path: HealthPaths.HealthReferrals,
       children: [
         {
           name: messages.referrals,
-          path: HealthPaths.HealthReferencesDetail,
+          path: HealthPaths.HealthReferralsDetail,
           navHide: true,
         },
       ],

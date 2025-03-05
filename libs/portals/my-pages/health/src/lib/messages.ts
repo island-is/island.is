@@ -1158,6 +1158,10 @@ export const messages = defineMessages({
     defaultMessage: 'viðtakandi',
     id: 'sp.health:recepient',
   },
+  recepientUpperCase: {
+    defaultMessage: 'Viðtakandi',
+    id: 'sp.health:recepient-upper-case',
+  },
   referralFor: {
     defaultMessage: 'Tilvísun fyrir',
     id: 'sp.health:referral-for',

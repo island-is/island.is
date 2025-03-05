@@ -75,6 +75,16 @@ const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
+const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
+
+const ReferralsDetail = lazy(() =>
+  import('./screens/Referrals/ReferralsDetail'),
+)
+
+const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
+
+const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 export const healthModule: PortalModule = {
@@ -254,6 +264,34 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferrals,
+      // key: 'Referrals',
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <Referrals />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferralsDetail,
+      // key: 'Referrals',
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <ReferralsDetail />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      // key: 'HealthWaitlists',
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <Waitlist />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsDetail,
+      // key: 'HealthWaitlists',
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <WaitlistDetail />,
     },
   ],
 }
