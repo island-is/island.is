@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MultiValue, SingleValue } from 'react-select'
-import { clearInputsOnChange } from '@island.is/shared/utils'
+import { clearInputsOnChange, setInputsOnChange } from '@island.is/shared/utils'
 
 interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   error?: string
@@ -35,6 +35,11 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   internalKey?: string
   filterConfig?: SelectProps<Value, IsMulti>['filterConfig']
   clearOnChange?: string[]
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((
+        optionValue: MultiValue<Value> | SingleValue<Value> | undefined,
+      ) => { key: string; value: any }[])
 }
 
 export const SelectController = <Value, IsMulti extends boolean = false>({
@@ -59,6 +64,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   internalKey,
   filterConfig,
   clearOnChange,
+  setOnChange,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -138,6 +144,19 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
 
             if (isClearable && newVal === null) {
               clearInputsOnChange([id], setValue)
+            }
+
+            if (setOnChange) {
+              setInputsOnChange(
+                typeof setOnChange === 'function'
+                  ? setOnChange(
+                      isMultiValue(newVal)
+                        ? newVal?.map((v) => v.value)
+                        : newVal?.value,
+                    )
+                  : setOnChange,
+                setValue,
+              )
             }
           }}
         />

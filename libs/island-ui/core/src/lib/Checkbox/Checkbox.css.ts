@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import {
   inputErrorState,
@@ -115,4 +115,10 @@ export const tooltipLargeContainer = style({
 export const fixJumpingContentFromFontWeightToggle = style({
   visibility: 'hidden',
   height: 0,
+})
+
+export const labelChildrenFontWeightToggle = style({})
+
+globalStyle(`${labelChildrenFontWeightToggle} p`, {
+  fontWeight: `${theme.typography.semiBold} !important`,
 })

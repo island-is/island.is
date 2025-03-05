@@ -38,6 +38,10 @@ Application has been approved by TR.
 
 Application has been rejected by TR.
 
+#### Dismissed
+
+Application has been dismissed by TR.
+
 ### Localisation
 
 All localisation can be found on Contentful.
