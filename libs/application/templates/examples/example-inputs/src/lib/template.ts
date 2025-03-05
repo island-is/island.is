@@ -16,6 +16,7 @@ import { dataSchema } from './dataSchema'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { NationalRegistryApi, ReferenceDataApi } from '../dataProviders'
 import { assign } from 'xstate'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -28,6 +29,7 @@ const template: ApplicationTemplate<
   institution: 'Stafrænt Ísland',
   translationNamespaces: [ApplicationConfigurations.ExampleInputs.translation],
   dataSchema,
+  featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
