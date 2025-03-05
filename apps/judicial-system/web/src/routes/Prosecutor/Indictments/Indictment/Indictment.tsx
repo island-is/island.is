@@ -10,11 +10,9 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -226,6 +224,7 @@ const Indictment = () => {
         return
       }
 
+      // TODO!!
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
