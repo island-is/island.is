@@ -14,7 +14,13 @@ import { m } from '@island.is/form-system/ui'
 import { Dispatch, SetStateAction } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 
-export const AdminHeader = () => {
+interface Props {
+  organizations: Option<string>[]
+  onOrganizationChange: (selected: { value: string }) => void
+}
+
+export const ApplicationsHeader = (props: Props) => {
+  const { organizations, onOrganizationChange } = props
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
@@ -37,12 +43,28 @@ export const AdminHeader = () => {
             variant="ghost"
             size="medium"
             onClick={async () => {
-              navigate(FormSystemPaths.Applications)
+              navigate(FormSystemPaths.Admin)
             }}
           >
-            {formatMessage(m.applications)}
+            {formatMessage(m.administration)}
           </Button>
         </Box>
+        {organizations.length > 1 && (
+          <Box>
+            <Select
+              name="organizations"
+              label="stofnun"
+              options={organizations}
+              size="sm"
+              defaultValue={organizations.find((org) => org.isSelected)}
+              onChange={async (selected) => {
+                if (selected) {
+                  onOrganizationChange({ value: selected.value })
+                }
+              }}
+            ></Select>
+          </Box>
+        )}
       </Row>
     </Box>
   )

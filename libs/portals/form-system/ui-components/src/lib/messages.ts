@@ -21,6 +21,10 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:applications',
     defaultMessage: 'Umsóknir',
   },
+  administration: {
+    id: 'portals-admin.form-system:administration',
+    defaultMessage: 'Kerfisstjórnun',
+  },
   overview: {
     id: 'portals-admin.form-system:overview',
     defaultMessage: 'Yfirlitsíða',

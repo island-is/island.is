@@ -9,20 +9,33 @@ import { m } from '@island.is/form-system/ui'
 import { useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
-import { divide } from 'lodash'
-import { AdminHeader } from './AdminHeader'
+import { ApplicationsLoaderResponse } from './Applications.loader'
+import { ApplicationsHeader } from './ApplicationsHeader'
 // import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
-export const Admin = () => {
+export const Applications = () => {
   const navigate = useNavigate()
+  const { forms, organizations } = useLoaderData() as ApplicationsLoaderResponse
   const { formatMessage } = useIntl()
-  const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
-  const [getFormsQuery] = useLazyQuery(GET_FORMS)
 
+  const [organizationsState, setOrganizationsState] = useState(organizations)
+
+  const handleOrganizationChange = async (selected: {
+    value: string | undefined
+  }) => {
+    const updatedOrganizations = organizationsState.map((org) => ({
+      ...org,
+      isSelected: org.value === selected.value,
+    }))
+    setOrganizationsState(updatedOrganizations)
+  }
   return (
     <>
-      <AdminHeader />
-      <div>Admin</div>
+      <ApplicationsHeader
+        organizations={organizationsState}
+        onOrganizationChange={handleOrganizationChange}
+      />
+      <div>Applicaions</div>
     </>
   )
 }

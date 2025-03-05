@@ -61,26 +61,39 @@ export const FormsHeader = (props: Props) => {
             variant="ghost"
             size="medium"
             onClick={async () => {
-              navigate(FormSystemPaths.Admin)
+              navigate(FormSystemPaths.Applications)
             }}
           >
             {formatMessage(m.applications)}
           </Button>
         </Box>
-        <Box>
-          <Select
-            name="organizations"
-            label="stofnun"
-            options={organizations}
-            size="sm"
-            defaultValue={organizations.find((org) => org.isSelected)}
-            onChange={async (selected) => {
-              if (selected) {
-                onOrganizationChange({ value: selected.value })
-              }
+        <Box marginRight={4}>
+          <Button
+            variant="ghost"
+            size="medium"
+            onClick={async () => {
+              navigate(FormSystemPaths.Admin)
             }}
-          ></Select>
+          >
+            {formatMessage(m.administration)}
+          </Button>
         </Box>
+        {organizations.length > 1 && (
+          <Box>
+            <Select
+              name="organizations"
+              label="stofnun"
+              options={organizations}
+              size="sm"
+              defaultValue={organizations.find((org) => org.isSelected)}
+              onChange={async (selected) => {
+                if (selected) {
+                  onOrganizationChange({ value: selected.value })
+                }
+              }}
+            ></Select>
+          </Box>
+        )}
       </Row>
     </Box>
   )
