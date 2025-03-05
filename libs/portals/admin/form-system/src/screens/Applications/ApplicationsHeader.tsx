@@ -31,7 +31,7 @@ export const ApplicationsHeader = (props: Props) => {
         <Box marginRight={4}>
           <Button
             variant="ghost"
-            size="medium"
+            size="default"
             onClick={async () => {
               navigate(FormSystemPaths.FormSystemRoot)
             }}
@@ -44,7 +44,7 @@ export const ApplicationsHeader = (props: Props) => {
             <Box marginRight={4}>
               <Button
                 variant="ghost"
-                size="medium"
+                size="default"
                 onClick={async () => {
                   navigate(FormSystemPaths.Admin)
                 }}

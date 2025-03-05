@@ -43,7 +43,7 @@ export const FormsHeader = (props: Props) => {
         <Box marginRight={4}>
           <Button
             variant="ghost"
-            size="medium"
+            size="default"
             onClick={async () => {
               const { data } = await formSystemCreateFormMutation()
               navigate(
@@ -60,7 +60,7 @@ export const FormsHeader = (props: Props) => {
         <Box marginRight={4}>
           <Button
             variant="ghost"
-            size="medium"
+            size="default"
             onClick={async () => {
               navigate(FormSystemPaths.Applications)
             }}
@@ -73,7 +73,7 @@ export const FormsHeader = (props: Props) => {
             <Box marginRight={4}>
               <Button
                 variant="ghost"
-                size="medium"
+                size="default"
                 onClick={async () => {
                   navigate(FormSystemPaths.Admin)
                 }}

@@ -24,7 +24,7 @@ export const AdminHeader = () => {
         <Box marginRight={4}>
           <Button
             variant="ghost"
-            size="medium"
+            size="default"
             onClick={async () => {
               navigate(FormSystemPaths.FormSystemRoot)
             }}
@@ -35,7 +35,7 @@ export const AdminHeader = () => {
         <Box marginRight={4}>
           <Button
             variant="ghost"
-            size="medium"
+            size="default"
             onClick={async () => {
               navigate(FormSystemPaths.Applications)
             }}

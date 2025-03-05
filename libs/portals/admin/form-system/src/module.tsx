@@ -16,7 +16,7 @@ const Form = lazy(() => import('./screens/Form/Form'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.formSystem,
-  AdminPortalScope.formSystemSuperUser,
+  AdminPortalScope.formSystemAdmin,
 ]
 
 export const formSystemModule: PortalModule = {

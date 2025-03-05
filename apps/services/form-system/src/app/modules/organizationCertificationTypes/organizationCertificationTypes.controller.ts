@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -22,7 +23,7 @@ import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(AdminPortalScope.formSystemSuperUser)
+@Scopes(AdminPortalScope.formSystemAdmin)
 @ApiTags('organization certification types')
 @Controller({
   path: 'organizationCertificationTypes',

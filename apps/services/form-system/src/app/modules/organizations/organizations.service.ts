@@ -9,6 +9,8 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { FormDto } from '../forms/models/dto/form.dto'
+import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
+import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
 
 @Injectable()
 export class OrganizationsService {
@@ -37,6 +39,36 @@ export class OrganizationsService {
     organizationsResponse.organizations = organizationsDto
 
     return organizationsResponse
+  }
+
+  async findAdmin(nationalId: string): Promise<OrganizationAdminDto> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId },
+      include: [
+        'organizationCertificationTypes',
+        'organizationFieldTypes',
+        'organizationListTypes',
+      ],
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${nationalId} not found`,
+      )
+    }
+
+    const organizationAdminDto: OrganizationAdminDto =
+      new OrganizationAdminDto()
+    if (organization.organizationCertificationTypes) {
+      organizationAdminDto.selectedCertificationTypes =
+        organization.organizationCertificationTypes.map(
+          (certificationType) => certificationType.id,
+        )
+    }
+
+    organizationAdminDto.certificationTypes = CertificationTypes
+
+    return organizationAdminDto
   }
 
   async findOne(id: string): Promise<OrganizationDto> {
