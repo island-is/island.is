@@ -18,10 +18,11 @@ interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
   organizations: Option<string>[]
   onOrganizationChange: (selected: { value: string }) => void
+  isAdmin: boolean
 }
 
 export const FormsHeader = (props: Props) => {
-  const { setFormsState, organizations, onOrganizationChange } = props
+  const { setFormsState, organizations, onOrganizationChange, isAdmin } = props
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
@@ -67,32 +68,36 @@ export const FormsHeader = (props: Props) => {
             {formatMessage(m.applications)}
           </Button>
         </Box>
-        <Box marginRight={4}>
-          <Button
-            variant="ghost"
-            size="medium"
-            onClick={async () => {
-              navigate(FormSystemPaths.Admin)
-            }}
-          >
-            {formatMessage(m.administration)}
-          </Button>
-        </Box>
-        {organizations.length > 1 && (
-          <Box>
-            <Select
-              name="organizations"
-              label="stofnun"
-              options={organizations}
-              size="sm"
-              defaultValue={organizations.find((org) => org.isSelected)}
-              onChange={async (selected) => {
-                if (selected) {
-                  onOrganizationChange({ value: selected.value })
-                }
-              }}
-            ></Select>
-          </Box>
+        {isAdmin && (
+          <>
+            <Box marginRight={4}>
+              <Button
+                variant="ghost"
+                size="medium"
+                onClick={async () => {
+                  navigate(FormSystemPaths.Admin)
+                }}
+              >
+                {formatMessage(m.administration)}
+              </Button>
+            </Box>
+            {organizations.length > 1 && (
+              <Box>
+                <Select
+                  name="organizations"
+                  label="stofnun"
+                  options={organizations}
+                  size="sm"
+                  defaultValue={organizations.find((org) => org.isSelected)}
+                  onChange={async (selected) => {
+                    if (selected) {
+                      onOrganizationChange({ value: selected.value })
+                    }
+                  }}
+                ></Select>
+              </Box>
+            )}
+          </>
         )}
       </Row>
     </Box>

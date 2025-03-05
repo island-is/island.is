@@ -11,9 +11,10 @@ export interface ApplicationsLoaderQueryResponse {
 export interface ApplicationsLoaderResponse {
   forms: FormSystemForm[]
   organizations: Option<string>[]
+  isAdmin: boolean
 }
 
-export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
+export const applicationsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async (): Promise<ApplicationsLoaderResponse> => {
     const { data, error } = await client.query<ApplicationsLoaderQueryResponse>(
       {
@@ -45,9 +46,14 @@ export const applicationsLoader: WrappedLoaderFn = ({ client }) => {
       }),
     ) as Option<string>[]
 
+    const isAdmin = userInfo?.scopes.includes(
+      '@admin.island.is/form-system:admin',
+    )
+
     return {
       forms,
       organizations,
+      isAdmin,
     }
   }
 }

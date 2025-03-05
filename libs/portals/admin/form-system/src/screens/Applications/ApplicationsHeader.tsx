@@ -17,10 +17,11 @@ import { FormSystemForm } from '@island.is/api/schema'
 interface Props {
   organizations: Option<string>[]
   onOrganizationChange: (selected: { value: string }) => void
+  isAdmin: boolean
 }
 
 export const ApplicationsHeader = (props: Props) => {
-  const { organizations, onOrganizationChange } = props
+  const { organizations, onOrganizationChange, isAdmin } = props
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
@@ -38,32 +39,36 @@ export const ApplicationsHeader = (props: Props) => {
             {formatMessage(m.form)}
           </Button>
         </Box>
-        <Box marginRight={4}>
-          <Button
-            variant="ghost"
-            size="medium"
-            onClick={async () => {
-              navigate(FormSystemPaths.Admin)
-            }}
-          >
-            {formatMessage(m.administration)}
-          </Button>
-        </Box>
-        {organizations.length > 1 && (
-          <Box>
-            <Select
-              name="organizations"
-              label="stofnun"
-              options={organizations}
-              size="sm"
-              defaultValue={organizations.find((org) => org.isSelected)}
-              onChange={async (selected) => {
-                if (selected) {
-                  onOrganizationChange({ value: selected.value })
-                }
-              }}
-            ></Select>
-          </Box>
+        {isAdmin && (
+          <>
+            <Box marginRight={4}>
+              <Button
+                variant="ghost"
+                size="medium"
+                onClick={async () => {
+                  navigate(FormSystemPaths.Admin)
+                }}
+              >
+                {formatMessage(m.administration)}
+              </Button>
+            </Box>
+            {organizations.length > 1 && (
+              <Box>
+                <Select
+                  name="organizations"
+                  label="stofnun"
+                  options={organizations}
+                  size="sm"
+                  defaultValue={organizations.find((org) => org.isSelected)}
+                  onChange={async (selected) => {
+                    if (selected) {
+                      onOrganizationChange({ value: selected.value })
+                    }
+                  }}
+                ></Select>
+              </Box>
+            )}
+          </>
         )}
       </Row>
     </Box>

@@ -11,9 +11,10 @@ export interface FormsLoaderQueryResponse {
 export interface FormsLoaderResponse {
   forms: FormSystemForm[]
   organizations: Option<string>[]
+  isAdmin: boolean
 }
 
-export const formsLoader: WrappedLoaderFn = ({ client }) => {
+export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async (): Promise<FormsLoaderResponse> => {
     const { data, error } = await client.query<FormsLoaderQueryResponse>({
       query: GET_FORMS,
@@ -43,9 +44,14 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
       }),
     ) as Option<string>[]
 
+    const isAdmin = userInfo?.scopes.includes(
+      '@admin.island.is/form-system:admin',
+    )
+
     return {
       forms,
       organizations,
+      isAdmin,
     }
   }
 }

@@ -15,7 +15,8 @@ import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 
 export const Forms = () => {
   const navigate = useNavigate()
-  const { forms, organizations } = useLoaderData() as FormsLoaderResponse
+  const { forms, organizations, isAdmin } =
+    useLoaderData() as FormsLoaderResponse
   const { formatMessage } = useIntl()
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
   const [getFormsQuery] = useLazyQuery(GET_FORMS)
@@ -51,6 +52,7 @@ export const Forms = () => {
           setFormsState={setFormsState}
           organizations={organizationsState}
           onOrganizationChange={handleOrganizationChange}
+          isAdmin={isAdmin}
         />
 
         <Box marginTop={5}></Box>

@@ -15,7 +15,8 @@ import { ApplicationsHeader } from './ApplicationsHeader'
 
 export const Applications = () => {
   const navigate = useNavigate()
-  const { forms, organizations } = useLoaderData() as ApplicationsLoaderResponse
+  const { forms, organizations, isAdmin } =
+    useLoaderData() as ApplicationsLoaderResponse
   const { formatMessage } = useIntl()
 
   const [organizationsState, setOrganizationsState] = useState(organizations)
@@ -34,6 +35,7 @@ export const Applications = () => {
       <ApplicationsHeader
         organizations={organizationsState}
         onOrganizationChange={handleOrganizationChange}
+        isAdmin={isAdmin}
       />
       <div>Applicaions</div>
     </>
