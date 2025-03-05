@@ -119,11 +119,12 @@ const SignListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
+          //Todo: add back when needed
+          /*onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),
+          }),*/
           roles: [
             {
               id: Roles.APPLICANT,

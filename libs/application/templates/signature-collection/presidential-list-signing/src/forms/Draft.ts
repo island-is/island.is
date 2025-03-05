@@ -21,16 +21,6 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: false,
   children: [
     buildSection({
-      id: 'screen1',
-      title: m.intro,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen2',
-      title: m.dataCollection,
-      children: [],
-    }),
-    buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
       condition: (_, externalData) => {
@@ -94,7 +84,7 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'candidateInfoHeader',
               title: m.candidateInformationHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
             }),
             buildTextField({
               id: 'candidateName',
@@ -126,7 +116,7 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'signeeInfoHeader',
               title: m.signeeInformationHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               space: 'containerGutter',
             }),
             buildTextField({
@@ -177,11 +167,6 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'done',
-      title: m.listSignedShort,
-      children: [],
     }),
   ],
 })
