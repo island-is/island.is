@@ -1,32 +1,35 @@
-import { AsyncSearchInput, Box } from '@island.is/island-ui/core'
-import { use, useCallback, useMemo, useRef, useState } from 'react'
+import { AsyncSearchInput, Box, Button, Text } from '@island.is/island-ui/core'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
-import { m } from '@island.is/portals/my-pages/core'
+import { useCombobox } from 'downshift'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 
 interface ModuleSet {
   title: string
   content?: string
   keywords?: Array<string>
-  subSet?: Array<ModuleSet>
+  uri: string
 }
 
 const data: Array<ModuleSet> = [
   {
     title: 'Pósthólf', //m.documents,
     content: 'Erindi til þín frá opinberum aðilum', //m.documentsDescription,
+    uri: '/postholf',
   },
   {
-    title: 'Umsoknir', //m.applications,
+    title: 'Umsóknir', //m.applications,
     content: 'Staða umsókna sem þú hefur sótt um í gegnum island.is', //m.applicationsDescription,
+    uri: '/umsoknir',
   },
   {
     title: 'Mínar upplýsingar', //m.userInfo,
     content: 'Gögn um þig og fjölskylduna þína', //m.userInfoDescription,
-    subSet: [
-      {
-        title: 'Maki', //m.familySpouse,
-      },
-    ],
+    uri: '/min-gogn/yfirlit',
+  },
+  {
+    title: 'Hugverkaréttindi', //m.intellectualProperties
+    uri: '/eignir/hugverkarettindi',
   },
 ]
 
@@ -38,17 +41,35 @@ const options: IFuseOptions<ModuleSet> = {
   //ignoreLocation: true,
   keys: [
     { name: 'title', weight: 2 },
-    //{ name: 'content', weight: 0.5 },
-    {
-      name: 'title.subset.title',
-      weight: 1.5,
-    },
+    { name: 'content', weight: 0.5 },
   ],
   shouldSort: true,
 }
 
 export const SearchInput = () => {
   const fuse = useMemo(() => new Fuse(data, options), [])
+
+  const [items, setItems] = useState<ModuleSet[]>([])
+
+  const {
+    getInputProps,
+    getItemProps,
+    getLabelProps,
+    getMenuProps,
+    getToggleButtonProps,
+    closeMenu,
+    isOpen,
+    highlightedIndex,
+    inputValue,
+  } = useCombobox({
+    onInputValueChange({ inputValue }) {
+      search(inputValue ?? '')
+    },
+    items,
+    itemToString(item) {
+      return item ? item.title : ''
+    },
+  })
 
   const [hasFocus, setHasFocus] = useState<boolean>(false)
 
@@ -60,10 +81,8 @@ export const SearchInput = () => {
   }, [setHasFocus])
 
   const search = (query: string) => {
-    console.log('searching for ' + query)
     const result = fuse.search(query)
-
-    console.log(result)
+    setItems(result.map((r) => r.item))
   }
 
   const onSubmit = () => {
@@ -72,48 +91,53 @@ export const SearchInput = () => {
     }
   }
 
+  const shouldShowItems = items.length > 0 && isOpen
+
   return (
     <AsyncSearchInput
       ref={ref}
       hasFocus={hasFocus}
-      //loading={loading}
-      //hasError={hasError}
-      //errorMessage={errorMessage}
-      //rootProps={getRootProps({ refKey: 'ref' }, { suppressRefError: true })}
       inputProps={{
-        /*...getInputProps({
+        ...getInputProps({
           value: inputValue,
           onFocus,
           onBlur,
           ref,
           spellCheck: true,
-          ...(onSubmit && { onKeyDown }),
-          }),*/
+        }),
         inputSize: 'medium',
-        //isOpen: shouldShowItems,
-        //colored,
-        //hasLabel,
+        isOpen: shouldShowItems,
         placeholder: 'Leita',
         onKeyDown: (event) => {
           if (event.key === 'Enter') {
             onSubmit()
           }
         },
-        //color: inputColor,
       }}
       buttonProps={{
         onFocus,
         onBlur,
-        onClick: (event) => onSubmit(),
+        onClick: () => {
+          closeMenu()
+          onSubmit()
+        },
       }}
-      //label={label}
-      //required={required}
-      //labelProps={getLabelProps()}
-      //menuProps={{
-      // ...getMenuProps(),
-      // isOpen,
-      // shouldShowItems,
-      //}}
-    />
+      labelProps={getLabelProps()}
+      menuProps={{
+        ...getMenuProps(),
+        isOpen,
+        shouldShowItems,
+      }}
+    >
+      <Box display="flex" as="ul" flexDirection="row">
+        {items.map((item) => (
+          <LinkResolver href={item.uri}>
+            <Button as="span" size="small" variant="text" unfocusable>
+              {item.title}
+            </Button>
+          </LinkResolver>
+        ))}
+      </Box>
+    </AsyncSearchInput>
   )
 }
