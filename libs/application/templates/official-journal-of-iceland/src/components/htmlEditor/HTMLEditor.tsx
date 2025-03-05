@@ -1,6 +1,6 @@
 import { HTMLText } from '@island.is/regulations'
 import { Editor, EditorFileUploader } from '@island.is/regulations-tools/Editor'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
@@ -44,15 +44,12 @@ export const HTMLEditor = ({
     }
   }, [value, readOnly])
 
-  const onInputChange = (value: HTMLText) => {
-    onChange && onChange(value)
-  }
-  const debouncedhandleChange = debounce(onInputChange, DEBOUNCE_INPUT_TIMER)
-
-  const handleChange = (value: HTMLText) => {
-    debouncedhandleChange.cancel()
-    debouncedhandleChange(value)
-  }
+  const handleChange = useCallback(
+    debounce((value: HTMLText) => {
+      onChange?.(value)
+    }, DEBOUNCE_INPUT_TIMER),
+    [onChange],
+  )
 
   return controller ? (
     <Controller
