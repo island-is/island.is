@@ -89,9 +89,9 @@ export const attachments = {
       }),
       appendixNumeric: defineMessages({
         label: {
-          id: 'ojoi.application:attachments.radio.appendix.labelNumberic',
+          id: 'ojoi.application:attachments.radio.appendix.labelNumeric',
           defaultMessage: 'Viðauki (1, 2, 3..)',
-          description: 'Label of the apppendix radio button with numbers',
+          description: 'Label of the appendix radio button with numbers',
         },
       }),
       appendixRoman: defineMessages({
@@ -103,7 +103,7 @@ export const attachments = {
       }),
       attachmentNumeric: defineMessages({
         label: {
-          id: 'ojoi.application:attachments.radio.attachments.labelNumberic',
+          id: 'ojoi.application:attachments.radio.attachments.labelNumeric',
           defaultMessage: 'Fylgiskjal (1, 2, 3..)',
           description: 'Label of the attachments radio button with numbers',
         },
