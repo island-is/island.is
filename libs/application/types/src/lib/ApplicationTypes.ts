@@ -80,7 +80,7 @@ export enum ApplicationTypes {
   SECONDARY_SCHOOL = 'SecondarySchool',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
-  EXAMPLE_FIELDS = 'ExampleFields',
+  EXAMPLE_INPUTS = 'ExampleInputs',
 }
 
 export const ApplicationConfigurations = {
@@ -96,8 +96,8 @@ export const ApplicationConfigurations = {
     slug: 'example-state-transfers',
     translation: 'ets.application',
   },
-  [ApplicationTypes.EXAMPLE_FIELDS]: {
-    slug: 'example-fields',
+  [ApplicationTypes.EXAMPLE_INPUTS]: {
+    slug: 'example-inputs',
     translation: 'ef.application',
   },
   [ApplicationTypes.PASSPORT]: {
