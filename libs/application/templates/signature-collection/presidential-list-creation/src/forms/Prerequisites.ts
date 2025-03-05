@@ -17,12 +17,14 @@ import {
 
 import { m } from '../lib/messages'
 import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
+import Logo from '../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'intro',

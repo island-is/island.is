@@ -21,12 +21,15 @@ import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/application/ui-components'
+import Logo from '../../assets/Logo'
 
 export const Draft: Form = buildForm({
   id: 'PresidentialListCreationDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'listInformationSection',
@@ -40,7 +43,7 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'applicantHeader',
               title: m.applicantHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
             }),
             buildTextField({
               id: 'applicant.name',
@@ -89,7 +92,7 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'collectionHeader',
               title: m.collectionHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               space: 'containerGutter',
             }),
             buildTextField({
@@ -132,8 +135,9 @@ export const Draft: Form = buildForm({
             buildOverviewField({
               id: 'listOverview',
               title: m.applicantOverviewHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               marginBottom: 'none',
+              bottomLine: true,
               items: () => [
                 {
                   width: 'half',
@@ -150,8 +154,10 @@ export const Draft: Form = buildForm({
                 {
                   width: 'half',
                   keyText: m.phone,
-                  valueText: ({ answers }) =>
-                    getValueViaPath(answers, 'applicant.phone'),
+                  valueText: ({ answers }) => {
+                    const phone = getValueViaPath<string>(answers, 'applicant.phone')
+                    return formatPhoneNumber(removeCountryCode(phone || ''))
+                  }
                 },
                 {
                   width: 'half',
@@ -165,12 +171,13 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'listOverview',
               title: m.listOverviewHeader,
-              titleVariant: 'h3',
-              space: 'containerGutter',
+              titleVariant: 'h4',
+              space: "gutter",
+              marginBottom: 1
             }),
             buildActionCardListField({
               id: 'createdLists',
-              title: '',
+              title: m.listOverviewHeader,
               items: ({ answers, externalData }) => {
                 const areas = getValueViaPath(
                   externalData,
@@ -209,12 +216,6 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
-    }),
-    /* Section setup for the stepper */
-    buildSection({
-      id: 'done',
-      title: m.listCreated,
-      children: [],
     }),
   ],
 })
