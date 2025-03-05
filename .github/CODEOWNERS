@@ -231,7 +231,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/inao/financial-statement-cemetery/                                            @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                 @island-is/norda
 /libs/application/templates/inao/financial-statement-political-party/                                     @island-is/norda
-
 /libs/application/templates/institution-collaboration/                                                    @island-is/norda @island-is/fuglar
 /libs/application/templates/login-service/                                                                @island-is/norda
 /libs/application/templates/public-debt-payment-plan/                                                     @island-is/norda
