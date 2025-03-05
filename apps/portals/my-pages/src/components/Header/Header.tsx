@@ -29,12 +29,14 @@ import { Link } from 'react-router-dom'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
+import { SearchInput } from '../SearchInput/SearchInput'
 
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
   position: number
+  includeSearchInHeader?: boolean
 }
-export const Header = ({ position }: Props) => {
+export const Header = ({ position, includeSearchInHeader = true }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
@@ -146,6 +148,8 @@ export const Header = ({ position }: Props) => {
                           </LinkResolver>
                         </Box>
                       </Hidden>
+
+                      {includeSearchInHeader && <SearchInput />}
 
                       <NotificationButton
                         setMenuState={(val: MenuTypes) => setMenuOpen(val)}
