@@ -899,6 +899,7 @@ export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
   title: FormText
+  titleVariant?: TitleVariants
   description?: FormText
   backId?: string
   bottomLine?: boolean

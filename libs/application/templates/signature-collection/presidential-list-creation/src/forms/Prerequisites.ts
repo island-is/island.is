@@ -26,7 +26,6 @@ export const Prerequisites: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
@@ -42,7 +41,6 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      title: m.dataCollection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -85,21 +83,6 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen4',
-      title: m.overview,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.listCreated,
-      children: [],
     }),
   ],
 })

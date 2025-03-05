@@ -45,8 +45,8 @@ export const OverviewFormField = ({
         <Box marginRight={12}>
           {field.title && (
             <Text
-              variant="h4"
-              as="h4"
+              variant={field.titleVariant ? field.titleVariant : 'h4'}
+              as={field.titleVariant ? field.titleVariant : 'h4'}
               paddingTop={2}
               paddingBottom={field.description ? 2 : 5}
             >

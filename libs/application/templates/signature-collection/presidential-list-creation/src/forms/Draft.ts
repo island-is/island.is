@@ -1,21 +1,25 @@
 import {
-  buildCustomField,
+  buildActionCardListField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
-  buildKeyValueField,
   buildMultiField,
+  buildOverviewField,
   buildPhoneField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Application, UserProfile } from '@island.is/api/schema'
+import {
+  Application,
+  SignatureCollectionArea,
+  UserProfile,
+} from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 
 import { m } from '../lib/messages'
-import { formatPhone } from '../lib/utils'
 import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
@@ -24,11 +28,6 @@ export const Draft: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    buildSection({
-      id: 'screen1',
-      title: m.dataCollection,
-      children: [],
-    }),
     buildSection({
       id: 'listInformationSection',
       title: m.information,
@@ -130,61 +129,69 @@ export const Draft: Form = buildForm({
           title: m.overview,
           description: m.overviewDescription,
           children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'applicantOverview',
+            buildOverviewField({
+              id: 'listOverview',
               title: m.applicantOverviewHeader,
               titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 3,
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: ({ answers }) => {
-                return (answers.applicant as any).name
-              },
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: ({ answers }) => {
-                return (answers.applicant as any).nationalId
-              },
-            }),
-            buildDescriptionField({
-              id: 'space',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.phone,
-              width: 'half',
-              value: ({ answers }) => {
-                return formatPhone((answers.applicant as any).phone)
-              },
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: ({ answers }) => {
-                return (answers.applicant as any).email
-              },
-            }),
-            buildDescriptionField({
-              id: 'space1',
-              space: 'gutter',
+              marginBottom: 'none',
+              items: () => [
+                {
+                  width: 'half',
+                  keyText: m.name,
+                  valueText: ({ answers }) =>
+                    getValueViaPath(answers, 'applicant.name'),
+                },
+                {
+                  width: 'half',
+                  keyText: m.nationalId,
+                  valueText: ({ answers }) =>
+                    getValueViaPath(answers, 'applicant.nationalId'),
+                },
+                {
+                  width: 'half',
+                  keyText: m.phone,
+                  valueText: ({ answers }) =>
+                    getValueViaPath(answers, 'applicant.phone'),
+                },
+                {
+                  width: 'half',
+                  keyText: m.email,
+                  valueText: ({ answers }) =>
+                    getValueViaPath(answers, 'applicant.email'),
+                },
+              ],
             }),
             buildDividerField({}),
             buildDescriptionField({
               id: 'listOverview',
               title: m.listOverviewHeader,
               titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 3,
+              space: 'containerGutter',
             }),
-            buildCustomField({
+            buildActionCardListField({
               id: 'createdLists',
-              component: 'ListsInOverview',
+              title: '',
+              items: ({ answers, externalData }) => {
+                const areas = getValueViaPath(
+                  externalData,
+                  'currentCollection.data.areas',
+                ) as SignatureCollectionArea[]
+                return areas?.map((area) => ({
+                  heading:
+                    getValueViaPath(answers, 'applicant.name') +
+                    ' - ' +
+                    area.name,
+                  eyebrow:
+                    m.listDateTil.defaultMessage +
+                    ': ' +
+                    getValueViaPath(answers, 'collection.dateTil'),
+                  progressMeter: {
+                    currentProgress: 0,
+                    maxProgress: area.max ?? 0,
+                    withLabel: true,
+                  },
+                }))
+              },
             }),
             buildSubmitField({
               id: 'submit',
