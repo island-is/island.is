@@ -535,6 +535,8 @@ export const is = {
     completed {Afgreidd}
     rejected {Hafnað}
     draft {Í vinnslu hjá þér}
+    approved {Samþykkt}
+    notstarted {Ekki hafin}
     other {Staða óþekkt}
   }`,
   'applicationStatusCard.draftProgress':
