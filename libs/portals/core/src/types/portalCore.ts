@@ -21,8 +21,6 @@ export interface PortalNavigationItem {
   icon?: Pick<IconProps, 'icon' | 'type'>
   children?: PortalNavigationItem[]
 
-  searchTags?: string[]
-
   /**
    * Hides the child item from the navigation bar, displays the breadcrumb.
    */
@@ -51,6 +49,12 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+
+  /**
+   * Search tags for module
+   */
+  searchTags?: MessageDescriptor[]
+
   /**
    * Active state for navigation item
    */
