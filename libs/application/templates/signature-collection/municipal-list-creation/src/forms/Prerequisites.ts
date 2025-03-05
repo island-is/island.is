@@ -15,8 +15,8 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '../../assets/Logo'
-import DigitalServices from '../../assets/DigitalServices'
+import Logo from '../../../assets/Logo'
+import DigitalServices from '../../../assets/DigitalServices'
 
 export const Prerequisites: Form = buildForm({
   id: 'createListPrerequisites',

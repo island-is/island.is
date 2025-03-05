@@ -7,11 +7,13 @@ import {
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Jobs from '../../assets/Jobs'
+import Logo from '../../../assets/Logo'
+import Jobs from '../../../assets/Jobs'
 
 export const Done: Form = buildForm({
   id: 'done',
   mode: FormModes.COMPLETED,
+  logo: Logo,
   children: [
     buildSection({
       id: 'doneScreen',

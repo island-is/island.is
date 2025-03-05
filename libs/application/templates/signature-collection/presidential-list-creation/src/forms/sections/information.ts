@@ -30,9 +30,9 @@ export const information = buildSection({
           title: m.name,
           width: 'full',
           readOnly: true,
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.fullName
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ||
+            '',
         }),
         buildTextField({
           id: 'applicant.nationalId',

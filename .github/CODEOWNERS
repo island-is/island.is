@@ -85,6 +85,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/               @island-is/juni
 /libs/application/templates/inheritance-report/                                                           @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                       @island-is/juni
+/libs/application/templates/signature-collection/assets                                                   @island-is/juni
 /libs/application/templates/signature-collection/parliamentary-list-creation                              @island-is/juni
 /libs/application/templates/signature-collection/parliamentary-list-signing                               @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-creation                               @island-is/juni

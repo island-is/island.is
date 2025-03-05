@@ -10,8 +10,8 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '../../assets/Logo'
-import Jobs from '../../assets/Jobs'
+import Logo from '../../../assets/Logo'
+import Jobs from '../../../assets/Jobs'
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -20,7 +20,6 @@ export const Done: Form = buildForm({
   children: [
     buildSection({
       id: 'doneScreen',
-      title: '',
       children: [
         buildMultiField({
           id: 'doneScreen',

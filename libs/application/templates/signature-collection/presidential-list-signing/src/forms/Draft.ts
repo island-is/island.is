@@ -13,12 +13,14 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
+import Logo from '../../../assets/Logo'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
+  logo: Logo,
   children: [
     buildSection({
       id: 'selectCandidateSection',
@@ -125,7 +127,10 @@ export const Draft: Form = buildForm({
               width: 'full',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>
-                externalData.nationalRegistry?.data.fullName,
+                getValueViaPath(
+                  externalData,
+                  'nationalRegistry.data.fullName',
+                ) || '',
             }),
             buildTextField({
               id: 'signee.nationalId',
@@ -141,7 +146,7 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>
-                externalData.canSign?.data.area.name,
+                getValueViaPath(externalData, 'canSign.data.area.name') || '',
             }),
             buildTextField({
               id: 'signee.address',
@@ -149,7 +154,10 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>
-                externalData.nationalRegistry?.data.address?.streetAddress,
+                getValueViaPath(
+                  externalData,
+                  'nationalRegistry.data.address.streetAddress',
+                ) || '',
             }),
             buildSubmitField({
               id: 'submit',

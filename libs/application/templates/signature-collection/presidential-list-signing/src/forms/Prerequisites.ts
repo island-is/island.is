@@ -1,8 +1,8 @@
 import {
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -16,12 +16,15 @@ import {
 
 import { m } from '../lib/messages'
 import { CanSignApi, GetListApi } from '../dataProviders/index'
+import DigitalServices from '../../../assets/DigitalServices'
+import Logo from '../../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'intro',
@@ -31,8 +34,11 @@ export const Prerequisites: Form = buildForm({
           title: m.introTitle,
           description: m.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'introText',
+            buildImageField({
+              id: 'introImage',
+              image: DigitalServices,
+              imageWidth: 'auto',
+              imagePosition: 'center',
             }),
           ],
         }),

@@ -14,10 +14,10 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { Logo } from '../../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
-import Logo from '../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
