@@ -1,26 +1,11 @@
-version: '3.3'
-
+name: islandis-ads-backend
 services:
   db_ads_backend:
     image: public.ecr.aws/docker/library/postgres:15.3-alpine
     container_name: db_ads_backend
-    networks:
-      - local
     environment:
       - POSTGRES_DB=dev_db
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
       - 5432:5432
-
-  redis-cluster:
-    container_name: ads_redis_cluster
-    image: docker.io/grokzen/redis-cluster:6.0.16
-    privileged: true
-    environment:
-      - IP=0.0.0.0
-    ports:
-      - '7000-7005:7000-7005'
-
-networks:
-  local:

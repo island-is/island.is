@@ -756,6 +756,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ekki fundust nein tæki',
     description: 'Did not find any machines',
   },
+  licensesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.licensesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein réttindi',
+    description: 'Did not find any licenses',
+  },
   nationalRegistryName: {
     id: 'application.system:core.fetch.data.nationalRegistryName',
     defaultMessage: 'Nafn',

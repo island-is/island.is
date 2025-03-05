@@ -220,7 +220,13 @@ export const ValueContainer = <
   // @ts-ignore make web strict
   props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => (
-  <components.ValueContainer className={styles.valueContainer} {...props}>
+  <components.ValueContainer
+    className={cn(
+      styles.valueContainer,
+      props.isMulti && styles.multiValueContainer,
+    )}
+    {...props}
+  >
     {props.children}
   </components.ValueContainer>
 )

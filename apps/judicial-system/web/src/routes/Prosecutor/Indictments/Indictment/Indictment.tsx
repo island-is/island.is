@@ -6,7 +6,10 @@ import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -60,7 +63,7 @@ export const getIndictmentIntroductionAutofill = (
         prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court: court?.name?.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
@@ -164,12 +167,7 @@ const Indictment = () => {
         )
       }
     },
-    [
-      formatMessage,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -518,6 +516,7 @@ const Indictment = () => {
             caseId={workingCase.id}
             title={formatMessage(strings.pdfButtonIndictment)}
             pdfType="indictment"
+            elementId="Ákæra"
           />
         </Box>
       </FormContentContainer>

@@ -30,7 +30,6 @@ export const OwnerSection: FC<
           <Text>
             {kennitala.format(
               getValueViaPath(answers, 'owner.nationalId', '') as string,
-              '-',
             )}
           </Text>
           <Text>{getValueViaPath(answers, 'owner.email', '') as string}</Text>

@@ -13,6 +13,7 @@ import { IntlService } from '@island.is/cms-translations'
 import { expiryTag } from '../utils/expiryTag'
 import { formatDate } from '../utils'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -105,6 +106,12 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
                 arg: t.malsnumer?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                isExpired === undefined
+                  ? ExpiryStatus.UNKNOWN
+                  : isExpired
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.ACTIVE,
               expired: isExpired,
               expireDate: t.gildistimi?.toISOString(),
               displayTag: expiryTag(formatMessage, isExpired),

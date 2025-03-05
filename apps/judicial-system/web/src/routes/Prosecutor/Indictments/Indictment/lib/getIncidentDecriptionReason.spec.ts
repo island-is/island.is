@@ -18,6 +18,23 @@ describe('getIncidentDescriptionReason', () => {
     expect(result).toBe('sviptur ökurétti')
   })
 
+  test('should return a description for one offense for two offenses', () => {
+    const offenses = [
+      {
+        offense: IndictmentCountOffense.DRIVING_WITHOUT_LICENCE,
+        substances: {},
+      },
+      {
+        offense: IndictmentCountOffense.OTHER,
+        substances: {},
+      },
+    ] as Offense[]
+
+    const result = getIncidentDescriptionReason(offenses, formatMessage)
+
+    expect(result).toBe('sviptur ökurétti')
+  })
+
   test('should return a description for two offense', () => {
     const offenses = [
       {

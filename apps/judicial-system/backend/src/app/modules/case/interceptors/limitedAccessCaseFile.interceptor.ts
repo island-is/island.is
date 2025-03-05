@@ -15,7 +15,7 @@ import { canLimitedAccessUserViewCaseFile } from '../../file'
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     return next.handle().pipe(
       map((theCase) => {

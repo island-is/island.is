@@ -34,9 +34,6 @@ test.describe.serial('Indictment tests', () => {
     await page.getByTestId('policeCaseNumber0').click()
     await page.getByTestId('policeCaseNumber0').fill(policeCaseNumber)
 
-    await page.locator('#prosecutor').click()
-    await page.getByRole('option', { name: 'Test Sækjandi' }).click()
-
     await page.getByText('Sakarefni *Veldu sakarefni').click()
     await page.getByRole('option', { name: 'Umferðarlagabrot' }).click()
     await page.getByPlaceholder('Sláðu inn vettvang').click()

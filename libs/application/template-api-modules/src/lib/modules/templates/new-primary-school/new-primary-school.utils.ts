@@ -48,6 +48,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     caseManagerEmail,
     requestingMeeting,
     expectedStartDate,
+    // expectedEndDate, // TODO: Add this when Júní has added school type
     selectedSchool,
   } = getApplicationAnswers(application.answers)
 
@@ -114,7 +115,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
             expectedStartDate: new Date(expectedStartDate),
-            // expectedEndDate: new Date(), // TODO: Add this when Júní has added school type
+            // expectedEndDate: new Date(expectedEndDate), // TODO: Add this when Júní has added school type and use school type to determine if value should be used
           }
         : {}),
       reason: reasonForApplication, // TODO: Add a condition for this when Júní has added school type
