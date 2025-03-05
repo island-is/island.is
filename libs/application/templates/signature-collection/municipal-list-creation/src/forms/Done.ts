@@ -6,6 +6,7 @@ import {
   buildDescriptionField,
   buildImageField,
   buildCopyLinkField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -40,10 +41,12 @@ export const Done: Form = buildForm({
             }),
             buildCopyLinkField({
               id: 'copyLink',
-              // Todo: update link when available
-              link: 'island.is',
+              link: ({ externalData }) =>
+                getValueViaPath(externalData, 'createLists.data.slug') ??
+                'https://island.is/',
               title: '',
-              marginBottom: 'none'
+              semiBoldLink: true,
+              marginBottom: 'none',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
@@ -51,7 +54,7 @@ export const Done: Form = buildForm({
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
               messageColor: 'blue600',
-              marginBottom: "containerGutter"
+              marginBottom: 'containerGutter',
             }),
             buildDescriptionField({
               id: 'doneScreenBottomSpace',

@@ -43,9 +43,11 @@ export const Done: Form = buildForm({
             buildCopyLinkField({
               id: 'copyLink',
               title: '',
-              link: ({ externalData }) => getValueViaPath(externalData, 'createLists.data.slug') ?? 'https://island.is/',
+              link: ({ externalData }) =>
+                getValueViaPath(externalData, 'createLists.data.slug') ??
+                'https://island.is/',
               semiBoldLink: true,
-              marginBottom: 'none'
+              marginBottom: 'none',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
@@ -53,7 +55,7 @@ export const Done: Form = buildForm({
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
               marginBottom: 'containerGutter',
-              messageColor: 'blue600'
+              messageColor: 'blue600',
             }),
             buildDescriptionField({
               id: 'space',
