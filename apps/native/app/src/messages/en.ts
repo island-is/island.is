@@ -708,6 +708,7 @@ export const en: TranslatedMessages = {
     'All organs can be used for transplantation except: {limitations}.',
 
   // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Medicine',
   'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
   'health.prescriptionsAndCertificates.expired': 'Expired',
   'health.prescriptionsAndCertificates.rejected': 'Rejected',
@@ -730,7 +731,6 @@ export const en: TranslatedMessages = {
   'health.drugCertificates.methylDoctors':
     'Extra doctors registered on license',
 
-  'health.prescriptions.screenTitle': 'Prescriptions',
   'health.prescriptions.title': 'Prescriptions',
   'health.prescriptions.description':
     'Here you can find an overview of your prescriptions and medication certificates.',

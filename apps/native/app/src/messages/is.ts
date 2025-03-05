@@ -708,6 +708,7 @@ export const is = {
     'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 
   // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Lyf',
   'health.prescriptionsAndCertificates.validTo': 'Gildir til: {date}',
   'health.prescriptionsAndCertificates.expired': 'Útrunnið',
   'health.prescriptionsAndCertificates.rejected': 'Hafnað',
@@ -729,7 +730,6 @@ export const is = {
   'health.drugCertificates.nameOfDoctor': 'Heiti læknis',
   'health.drugCertificates.methylDoctors': 'Aukalæknar skráðir á skírteini',
 
-  'health.prescriptions.screenTitle': 'Lyfjaávísanir',
   'health.prescriptions.title': 'Lyfjaávísanir',
   'health.prescriptions.description':
     'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',

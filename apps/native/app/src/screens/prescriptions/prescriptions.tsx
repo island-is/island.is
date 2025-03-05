@@ -1,16 +1,13 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import styled from 'styled-components/native'
 
-import {
-  GeneralCardSkeleton,
-  Heading,
-  Problem,
-  TabButtons,
-  Typography,
-} from '../../ui'
+import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
 import {
   useGetDrugCertificatesQuery,
   useGetDrugPrescriptionsQuery,
@@ -39,11 +36,17 @@ const ErrorWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
+const Top = styled(Typography)`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
     topBar: {
       title: {
-        text: intl.formatMessage({ id: 'health.prescriptions.screenTitle' }),
+        text: intl.formatMessage({
+          id: 'health.prescriptionsAndCertificates.screenTitle',
+        }),
       },
     },
     bottomTabs: {
@@ -93,6 +96,20 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     queryResult: [prescriptionsRes, certificatesRes],
   })
 
+  useEffect(() => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        title: {
+          text: intl.formatMessage({
+            id: isPrescriptionsEnabled
+              ? 'health.prescriptionsAndCertificates.screenTitle'
+              : 'health.drugCertificates.screenTitle',
+          }),
+        },
+      },
+    })
+  }, [isPrescriptionsEnabled, intl, componentId])
+
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
@@ -115,19 +132,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
         style={{ flex: 1 }}
       >
         <Host>
-          <Heading>
-            <FormattedMessage
-              id={
-                isPrescriptionsEnabled
-                  ? 'health.prescriptions.title'
-                  : 'health.drugCertificates.title'
-              }
-              defaultMessage={
-                isPrescriptionsEnabled ? 'Lyfjaávísanir' : 'Lyfjaskírteini'
-              }
-            />
-          </Heading>
-          <Typography>
+          <Top>
             <FormattedMessage
               id={
                 isPrescriptionsEnabled
@@ -140,7 +145,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                   : 'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.'
               }
             />
-          </Typography>
+          </Top>
           {!(prescriptionsRes.error && certificatesRes.error) &&
             isPrescriptionsEnabled && (
               <Tabs>
