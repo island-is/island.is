@@ -260,7 +260,6 @@ codemagic.yaml                                                                  
 
 /libs/api/domains/company-registry                                                                        @island-is/norda
 /libs/api/domains/financial-statements-inao/                                                              @island-is/norda
-
 /libs/api/domains/fishing-license/                                                                        @island-is/norda
 /libs/api/domains/health-insurance/                                                                       @island-is/norda
 /libs/api/domains/payment-schedule/                                                                       @island-is/norda
