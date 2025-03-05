@@ -1,4 +1,5 @@
 import {
+  AsyncSearchInput,
   Box,
   GridColumn,
   GridContainer,
@@ -10,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './Greeting.css'
+import Search from '../Search/Search'
 
 const Greeting = () => {
   const { formatMessage } = useLocale()
@@ -20,16 +22,16 @@ const Greeting = () => {
 
   return (
     <GridContainer>
-      <GridRow className={styles.greetingContainer}>
+      <GridRow className={styles.greetingContainer} marginTop={5}>
         <GridColumn
           span={['12/12', '12/12', '12/12', '5/12']}
           offset={['0', '0', '0', '1/12']}
+          paddingTop={4}
         >
           <Box
             marginTop={[2, 3, 3, 0]}
             paddingLeft={[0, 0, 0, 0]}
             data-testid="greeting"
-            className={styles.greetingTextBox}
           >
             <Text
               variant="eyebrow"
@@ -48,17 +50,13 @@ const Greeting = () => {
               {formatMessage(m.greetingIntro)}
             </Text>
           </Box>
+
+          <Search />
         </GridColumn>
         <GridColumn span={'6/12'}>
           <Hidden below="lg">
-            <Box display="flex" justifyContent="center">
-              <img
-                src={
-                  'https://images.ctfassets.net/8k0h54kbe6bj/FkLayBlYHDlSq15d4qjbp/1bc08bc72413a20e746917b082ffeaeb/Skraut.svg'
-                }
-                className={styles.greetingSvg}
-                alt=""
-              />
+            <Box display="flex" justifyContent="flexEnd">
+              <img src={'./assets/images/greeting.svg'} alt="" aria-hidden />
             </Box>
           </Hidden>
         </GridColumn>

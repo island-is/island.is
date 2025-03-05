@@ -8,6 +8,7 @@ import {
   GridRow,
   Hidden,
   Logo,
+  Input,
 } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -126,6 +127,30 @@ export const Header = ({ position }: Props) => {
                       flexWrap="nowrap"
                       marginLeft={[1, 1, 2]}
                     >
+                      <Box marginRight={2}>
+                        <Input
+                          name="search"
+                          size="sm"
+                          placeholder="Leitaðu á mínum síðum"
+                          // icon={{ name: 'search', type: 'outline' }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              console.log('searching from enter')
+                              // search()
+                            }
+                          }}
+                          buttons={[
+                            {
+                              name: 'search',
+                              type: 'outline',
+                              label: 'Leita',
+                              onClick: () =>
+                                console.log('searching from button'),
+                            },
+                          ]}
+                        />
+                      </Box>
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
                           <LinkResolver
