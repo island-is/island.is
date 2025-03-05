@@ -44,10 +44,11 @@ export const HTMLEditor = ({
     }
   }, [value, readOnly])
 
-  const dOnchanged = (value: HTMLText) => {
+  const onInputChange = (value: HTMLText) => {
     onChange && onChange(value)
   }
-  const debouncedhandleChange = debounce(dOnchanged, DEBOUNCE_INPUT_TIMER)
+  const debouncedhandleChange = debounce(onInputChange, DEBOUNCE_INPUT_TIMER)
+
   const handleChange = (value: HTMLText) => {
     debouncedhandleChange.cancel()
     debouncedhandleChange(value)
