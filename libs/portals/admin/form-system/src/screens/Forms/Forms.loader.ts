@@ -1,18 +1,14 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemForm, FormSystemFormResponse } from '@island.is/api/schema'
-import { GET_FORMS } from '@island.is/form-system/graphql'
+import { GET_FORMS, LoaderResponse } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 
 export interface FormsLoaderQueryResponse {
-  formSystemForms?: FormSystemFormResponse
-}
-
-export interface FormsLoaderResponse {
-  forms: FormSystemForm[]
+  formSystemForms: FormSystemFormResponse
 }
 
 export const formsLoader: WrappedLoaderFn = ({ client }) => {
-  return async (): Promise<FormsLoaderResponse> => {
+  return async (): Promise<LoaderResponse> => {
     const { data, error } = await client.query<FormsLoaderQueryResponse>({
       query: GET_FORMS
     })
@@ -22,11 +18,9 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
     if (!data) {
       throw new Error('No forms were found')
     }
-    console.log(data.formSystemForms)
+    const forms = removeTypename(data.formSystemForms?.forms) as FormSystemForm[]
     return {
-      forms: data.formSystemForms?.forms
-        ?.filter((form) => form !== null)
-        .map((form) => removeTypename(form)) as FormSystemForm[],
+      forms
     }
   }
 }
