@@ -12,7 +12,6 @@ import {
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
 import {
-  DEBOUNCE_INPUT_TIMER,
   DEFAULT_ADDITIONS_COUNT,
   MAXIMUM_ADDITIONS_COUNT,
 } from '../../lib/constants'
@@ -22,7 +21,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { InputFields, OJOIApplication } from '../../lib/types'
 import set from 'lodash/set'
-import debounce from 'lodash/debounce'
 import { useLocale } from '@island.is/localization'
 import { attachments } from '../../lib/messages'
 import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
@@ -62,6 +60,8 @@ export const Additions = ({ application }: Props) => {
       ? additions
       : [getAddition(DEFAULT_ADDITIONS_COUNT, false)]
   }
+
+  const additions = getAdditions()
 
   const onRemoveAddition = (index: number) => {
     const filtered = additions.filter((_, i) => i !== index)
@@ -144,6 +144,7 @@ export const Additions = ({ application }: Props) => {
   }
 
   const onAdditionChange = (index: number, value: string) => {
+    console.log('onAdditionChange', index, value)
     const currentAnswers = structuredClone(currentApplication.answers)
     const updatedAdditions = additions.map((addition, i) =>
       i === index ? { ...addition, content: value } : addition,
@@ -158,18 +159,6 @@ export const Additions = ({ application }: Props) => {
     setValue(InputFields.advert.additions, updatedAdditions)
     updateApplication(updatedAnswers)
   }
-
-  const debouncedAdditionChange = debounce(
-    onAdditionChange,
-    DEBOUNCE_INPUT_TIMER,
-  )
-
-  const additionChangeHandler = (index: number, value: string) => {
-    debouncedAdditionChange.cancel()
-    debouncedAdditionChange(index, value)
-  }
-
-  const additions = getAdditions()
 
   return (
     <Stack space={2}>
@@ -208,9 +197,7 @@ export const Additions = ({ application }: Props) => {
                   key={addition.id}
                   value={defaultValue as HTMLText}
                   fileUploader={fileUploader()}
-                  onChange={(value) =>
-                    additionChangeHandler(additionIndex, value)
-                  }
+                  onChange={(value) => onAdditionChange(additionIndex, value)}
                 />
                 <Button
                   variant="utility"

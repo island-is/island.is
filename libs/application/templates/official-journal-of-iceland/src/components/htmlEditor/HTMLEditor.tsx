@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { classes, editorWrapper, errorStyle } from './HTMLEditor.css'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
+import debounce from 'lodash/debounce'
+import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
 type Props = {
   title?: string
   name: string
@@ -41,6 +43,12 @@ export const HTMLEditor = ({
       }
     }
   }, [value, readOnly])
+
+  const handleChange = (value: HTMLText) => {
+    debounce(() => {
+      onChange && onChange(value)
+    }, DEBOUNCE_INPUT_TIMER)
+  }
 
   return controller ? (
     <Controller
@@ -99,7 +107,7 @@ export const HTMLEditor = ({
           valueRef={valueRef}
           classes={classes}
           onChange={() => {
-            onChange && onChange(valueRef.current())
+            handleChange(valueRef.current())
           }}
           onBlur={() => {
             onChange && onChange(valueRef.current())
