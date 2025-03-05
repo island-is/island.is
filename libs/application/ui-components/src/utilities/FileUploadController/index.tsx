@@ -130,7 +130,6 @@ export const FileUploadController = ({
       await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
 
       const { data } = await getFileUploadTags({ filename: fileKey })
-      console.log('data', data)
       
       const formattedTags = data.getFileUploadTags as Array<{ key: string, value: string }>
 
