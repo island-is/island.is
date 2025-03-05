@@ -30,7 +30,7 @@ export const copyLinkSubsection = buildSubSection({
           marginBottom: 4,
         }),
         buildCopyLinkField({
-          id: 'copyLinkField2',
+          id: 'copyLinkField3',
           title: 'Custom button title and semibold text',
           link: 'https://www.google.com',
           semiBoldLink: true,
