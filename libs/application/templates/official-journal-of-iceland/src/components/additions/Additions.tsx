@@ -61,8 +61,6 @@ export const Additions = ({ application }: Props) => {
       : [getAddition(DEFAULT_ADDITIONS_COUNT, false)]
   }
 
-  const additions = getAdditions()
-
   const onRemoveAddition = (index: number) => {
     const filtered = additions.filter((_, i) => i !== index)
     const mapped = filtered.map((addition, i) => {
@@ -144,7 +142,6 @@ export const Additions = ({ application }: Props) => {
   }
 
   const onAdditionChange = (index: number, value: string) => {
-    console.log('onAdditionChange', index, value)
     const currentAnswers = structuredClone(currentApplication.answers)
     const updatedAdditions = additions.map((addition, i) =>
       i === index ? { ...addition, content: value } : addition,
@@ -159,6 +156,8 @@ export const Additions = ({ application }: Props) => {
     setValue(InputFields.advert.additions, updatedAdditions)
     updateApplication(updatedAnswers)
   }
+
+  const additions = getAdditions()
 
   return (
     <Stack space={2}>
