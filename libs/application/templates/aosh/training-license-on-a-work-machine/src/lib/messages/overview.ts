@@ -13,6 +13,12 @@ export const overview = {
         'Vinsamlegast farðu vel yfir allar upplýsingar hér að neðan áður en skráningin er send.',
       description: 'Description of overview page',
     },
+    descriptionAssignee: {
+      id: 'aosh.tlwm.application:overview.general.descriptionAssignee',
+      defaultMessage:
+        'Vinsamlegast farðu vel yfir allar upplýsingar hér að neðan áður en beiðnin er samþykkt.',
+      description: 'Description for assignee of overview page',
+    },
     pageTitle: {
       id: 'aosh.tlwm.application:overview.general.pageTitle',
       defaultMessage: 'Yfirlit skráningar',
@@ -99,6 +105,11 @@ export const overview = {
       id: 'aosh.tlwm.application:overview.assignee.companyName',
       defaultMessage: 'Nafn fyrirtækis: {value}',
       description: `Overview assignee information name label`,
+    },
+    companyNationalId: {
+      id: 'aosh.tlwm.application:overview.assignee.companyNationalId',
+      defaultMessage: 'Kennitala fyrirtækis: {value}',
+      description: `Overview assignee information national id label`,
     },
     assigneeName: {
       id: 'aosh.tlwm.application:overview.assignee.assigneeName',
