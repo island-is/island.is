@@ -2,18 +2,21 @@ import { Args, Resolver, Mutation, Query } from '@nestjs/graphql'
 import { PresignedPost } from './presignedPost.model'
 import { FileStorageService } from '@island.is/file-storage'
 import { PresignedPost as S3PresignedPost } from '@aws-sdk/s3-presigned-post'
-import { TagType } from './getAttachmentTags.model'
-import { Tag } from '@aws-sdk/client-s3'
+import { FileUploadTag } from './getAttachmentTags.model'
 
 @Resolver()
 export class FileUploadResolver {
   constructor(private fileStorageService: FileStorageService) {}
 
-  @Query(() => [TagType])
-  async getAttachmentTags(
-    @Args('url') url: string,
-  ): Promise<Tag[]> {
-    return this.fileStorageService.getAttachmentTags(url)
+  @Query(() => [FileUploadTag])
+  async getFileUploadTags(
+    @Args('filename') filename: string,
+  ): Promise<FileUploadTag[]> {
+    const tags = await this.fileStorageService.getFileTags(filename)
+    return Object.values(tags.map( tag => ({
+      key: tag.Key ?? '',
+      value: tag.Value ?? ''
+    })))
   }
 
   @Mutation(() => PresignedPost)

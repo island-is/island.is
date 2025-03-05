@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class TagType {
+export class FileUploadTag {
   @Field(() => String)
-  Key!: string
+  key!: string
 
   @Field(() => String)
-  Value!: string
+  value!: string
 }

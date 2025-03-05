@@ -78,7 +78,15 @@ export class FileStorageService {
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }
 
-  async getAttachmentTags(url: string): Promise<Tag[]> {
-    return this.s3Service.getFileTags(url)
+  async getFileTags(filename: string): Promise<Tag[]> {
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
+    }
+
+    if (!filename) {
+      throw new Error('Missing filename.')
+    }
+
+    return this.s3Service.getFileTags({ bucket: this.config.uploadBucket, key: filename })
   }
 }

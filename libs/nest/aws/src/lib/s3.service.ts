@@ -178,8 +178,8 @@ export class S3Service {
         `Error occurred while fetching file tags for key: ${key} in S3 bucket: ${bucket}`,
         error,
       )
+      throw error
     }
-    return []
   }
 
   public async fileExists(

@@ -15,7 +15,7 @@ import {
   CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
-  GET_ATTACHMENT_TAGS
+  GET_FILE_UPLOAD_TAGS,
 } from '@island.is/application/graphql'
 
 import { Action, ActionTypes } from './types'
@@ -103,7 +103,7 @@ export const FileUploadController = ({
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
-  const { refetch: getAttachmentTags } = useQuery(GET_ATTACHMENT_TAGS, { skip: true })
+  const { refetch: getFileUploadTags } = useQuery(GET_FILE_UPLOAD_TAGS, { skip: true })
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
@@ -120,7 +120,7 @@ export const FileUploadController = ({
     setValue(id, uploadAnswer)
   }, [state, id, setValue])
 
-  const isFreeOfMalware = async (url: string): Promise<boolean> => {
+  const isFreeOfMalware = async (fileKey: string): Promise<boolean> => {
     let guardDutyStatus
     let totalWaitTime = 0
     for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
@@ -129,11 +129,12 @@ export const FileUploadController = ({
       totalWaitTime += waitTimeThisLoop
       await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
 
-      const { data } = await getAttachmentTags({ url })
+      const { data } = await getFileUploadTags({ filename: fileKey })
+      console.log('data', data)
       
-      const formattedTags = data.getAttachmentTags as Array<{Key: string, Value: string}>
+      const formattedTags = data.getFileUploadTags as Array<{ key: string, value: string }>
 
-      guardDutyStatus = formattedTags?.find(tag => tag.Key === 'GuardDutyMalwareScanStatus')?.Value
+      guardDutyStatus = formattedTags?.find(tag => tag.key === 'GuardDutyMalwareScanStatus')?.value
       if(guardDutyStatus !== undefined) {
         break
       }
@@ -180,7 +181,7 @@ export const FileUploadController = ({
         },
       })
 
-      const isClean = await isFreeOfMalware(responseUrl)
+      const isClean = await isFreeOfMalware(fields.key)
 
       // Done!
       return Promise.resolve({ key: fields.key, url: responseUrl, isClean })
