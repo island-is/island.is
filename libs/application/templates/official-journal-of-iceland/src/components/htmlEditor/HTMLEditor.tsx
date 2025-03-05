@@ -44,10 +44,13 @@ export const HTMLEditor = ({
     }
   }, [value, readOnly])
 
+  const dOnchanged = (value: HTMLText) => {
+    onChange && onChange(value)
+  }
+  const debouncedhandleChange = debounce(dOnchanged, DEBOUNCE_INPUT_TIMER)
   const handleChange = (value: HTMLText) => {
-    debounce(() => {
-      onChange && onChange(value)
-    }, DEBOUNCE_INPUT_TIMER)
+    debouncedhandleChange.cancel()
+    debouncedhandleChange(value)
   }
 
   return controller ? (
