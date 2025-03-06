@@ -65,7 +65,7 @@ export class IndictmentCountService {
             legalArguments: '', // currently we set traffic violation legal arguments based on laws broken
           }
         : update
-  
+
       if (isTrafficViolationSubtypeRemoved) {
         // currently offenses only exist for traffic violation indictment subtype.
         // if we support other offenses per subtype in the future we have to take the subtype into account
@@ -82,11 +82,10 @@ export class IndictmentCountService {
       })
     }
 
-    const updateWithInternalTransaction = () => {
-      return this.sequelize.transaction(async (transaction) => {
-        return updateWithTransaction(transaction)
-      })
-    }
+    const updateWithInternalTransaction = () =>
+      this.sequelize.transaction(async (transaction) =>
+        updateWithTransaction(transaction),
+      )
 
     const promisedUpdate = transaction
       ? updateWithTransaction(transaction)

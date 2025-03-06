@@ -255,7 +255,6 @@ export const PoliceCaseInfo: FC<Props> = ({
                   const remainingSubtypes = subtypes.filter(
                     (s) => s !== subtype,
                   )
-                  console.log({remainingSubtypes})
 
                   updatePoliceCase(index, {
                     policeCaseNumber: policeCaseNumbers[index],
