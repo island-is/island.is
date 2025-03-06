@@ -134,17 +134,26 @@ export const tableRepeaterSubsection = buildSubSection({
               label: 'Reliant Select Async',
               updateOnSelect: ['selectAsyncPrimary'],
               loadOptions: async ({ apolloClient, selectedValues }) => {
-                const { data } =
-                  await apolloClient.query<FriggSchoolsByMunicipality>({
-                    query: friggSchoolsByMunicipalityQuery,
-                  })
+                try {
+                  const { data } =
+                    await apolloClient.query<FriggSchoolsByMunicipality>({
+                      query: friggSchoolsByMunicipalityQuery,
+                    })
 
-                return (
-                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name} ${selectedValues?.[0] || ''}`,
-                    label: `${municipality.name} ${selectedValues?.[0] || ''}`,
-                  })) ?? []
-                )
+                  return (
+                    data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                      value: `${municipality.name} ${
+                        selectedValues?.[0] || ''
+                      }`,
+                      label: `${municipality.name} ${
+                        selectedValues?.[0] || ''
+                      }`,
+                    })) ?? []
+                  )
+                } catch (error) {
+                  console.error('Error loading options:', error)
+                  return []
+                }
               },
             },
           },
