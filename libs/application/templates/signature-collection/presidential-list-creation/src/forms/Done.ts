@@ -41,7 +41,6 @@ export const Done: Form = buildForm({
             }),
             buildCopyLinkField({
               id: 'copyLink',
-              title: '',
               link: ({ externalData }) =>
                 getValueViaPath(externalData, 'createLists.data.slug') ??
                 'https://island.is/',

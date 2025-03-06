@@ -44,7 +44,6 @@ export const Done: Form = buildForm({
               link: ({ externalData }) =>
                 getValueViaPath(externalData, 'createLists.data.slug') ??
                 'https://island.is/',
-              title: '',
               semiBoldLink: true,
               marginBottom: 'none',
             }),
