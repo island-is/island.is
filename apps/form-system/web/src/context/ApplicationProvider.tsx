@@ -44,7 +44,6 @@ export const ApplicationLoader = ({ id }: LoaderProps) => {
   if (error) {
     return <div>Error</div>
   }
-  console.log(data)
   return (
     <ApplicationProvider application={removeTypename(data?.formSystemGetApplication)} />
   )
