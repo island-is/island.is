@@ -1363,8 +1363,8 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private sendRevokedEmailNotificationToDefender(
     caseType: CaseType,
-    user: User,
     caseId: string,
+    actorInstitution?: string,
     defenderName?: string,
     defenderEmail?: string,
     defenderNationalId?: string,
@@ -1381,7 +1381,7 @@ export class CaseNotificationService extends BaseNotificationService {
         })
 
     const html = this.formatMessage(notifications.defenderRevokedEmail.bodyV2, {
-      actorInstitution: user?.institution?.name,
+      actorInstitution,
       courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
       courtCaseNumber,
       caseType,
@@ -1405,7 +1405,6 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private async sendRevokedNotificationsForRequestCase(
     theCase: Case,
-    user: User,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -1439,8 +1438,8 @@ export class CaseNotificationService extends BaseNotificationService {
       promises.push(
         this.sendRevokedEmailNotificationToDefender(
           theCase.type,
-          user,
           theCase.id,
+          theCase.creatingProsecutor?.institution?.name,
           theCase.defenderName,
           theCase.defenderEmail,
           theCase.defenderNationalId,
@@ -1494,7 +1493,6 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private async sendRevokeNotificationsForIndictmentCase(
     theCase: Case,
-    user: User,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -1543,11 +1541,11 @@ export class CaseNotificationService extends BaseNotificationService {
         promises.push(
           this.sendRevokedEmailNotificationToDefender(
             theCase.type,
-            user,
             theCase.id,
-            theCase.defenderName,
-            theCase.defenderEmail,
-            theCase.defenderNationalId,
+            theCase.creatingProsecutor?.institution?.name,
+            defendant.defenderName,
+            defendant.defenderEmail,
+            defendant.defenderNationalId,
             theCase.court?.name,
             theCase.courtCaseNumber,
           ),
@@ -1569,14 +1567,11 @@ export class CaseNotificationService extends BaseNotificationService {
     )
   }
 
-  private sendRevokedNotifications(
-    theCase: Case,
-    user: User,
-  ): Promise<DeliverResponse> {
+  private sendRevokedNotifications(theCase: Case): Promise<DeliverResponse> {
     if (isRequestCase(theCase.type)) {
-      return this.sendRevokedNotificationsForRequestCase(theCase, user)
+      return this.sendRevokedNotificationsForRequestCase(theCase)
     } else {
-      return this.sendRevokeNotificationsForIndictmentCase(theCase, user)
+      return this.sendRevokeNotificationsForIndictmentCase(theCase)
     }
   }
   //#endregion
@@ -2495,7 +2490,6 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2533,7 +2527,6 @@ export class CaseNotificationService extends BaseNotificationService {
         html,
         recipientName: theCase.defenderName,
         recipientEmail: theCase.defenderEmail,
-
         skipTail: !theCase.defenderNationalId,
       }),
     )
@@ -2721,7 +2714,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.MODIFIED:
         return this.sendModifiedNotifications(theCase, user)
       case CaseNotificationType.REVOKED:
-        return this.sendRevokedNotifications(theCase, user)
+        return this.sendRevokedNotifications(theCase)
       case CaseNotificationType.ADVOCATE_ASSIGNED:
         return this.sendAdvocateAssignedNotifications(theCase)
       case CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
