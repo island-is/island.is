@@ -1883,7 +1883,7 @@ search-indexer-service:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'search-indexer-service.devland.is'
+        - host: 'search-indexer-service.island.is'
           paths:
             - '/'
   initContainer:
