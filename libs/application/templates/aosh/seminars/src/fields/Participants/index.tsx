@@ -21,6 +21,7 @@ import { DescriptionFormField } from '@island.is/application/ui-fields'
 import { validateFields } from '../../utils'
 import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
 import { getValueViaPath } from '@island.is/application/core'
+import { SeminarIndividual } from '@island.is/api/schema'
 
 interface IndexableObject {
   [index: number]: Array<string>
@@ -75,12 +76,20 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
   const courseID =
     getValueViaPath<string>(application.answers, 'initialQuery', '') ?? ''
+
+  const registererNationalId =
+    getValueViaPath<string>(
+      application.externalData,
+      'nationalRegistry.nationalId',
+      '',
+    ) ?? ''
   const getAreIndividualsValid = useLazyAreIndividualsValid()
   const getIsCompanyValidCallback = useCallback(
-    async (nationalIds: string[]) => {
+    async (individuals: Array<SeminarIndividual>) => {
       const { data } = await getAreIndividualsValid({
+        input: { individuals: individuals },
         courseID,
-        nationalIds,
+        nationalIdOfRegisterer: registererNationalId,
       })
       return data
     },
@@ -129,9 +138,13 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             }
           },
         )
-        const response = await getIsCompanyValidCallback(
-          answerValue.map((x) => x.nationalIdWithName.nationalId),
-        )
+        const individuals: Array<SeminarIndividual> = answerValue.map((x) => {
+          return {
+            nationalId: x.nationalIdWithName.nationalId,
+            email: x.email,
+          }
+        })
+        const response = await getIsCompanyValidCallback(individuals)
         const hasDisabledParticipant = response?.areIndividualsValid?.find(
           (x) => x.mayTakeCourse === false,
         )
