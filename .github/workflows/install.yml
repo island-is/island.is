@@ -266,6 +266,13 @@ jobs:
           is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
 
+      - name: Docker login to ECR repo
+        if: github.event_name == 'merge_group'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Check if cached buildx image exists
         id: cache-check
         if: github.event_name == 'merge_group'
