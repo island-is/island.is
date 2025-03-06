@@ -28,7 +28,7 @@ export const serviceSetup = (services: {
       BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
       API_URL: {
-        dev: "http://api",
+        dev: "http://api.islandis.svc.cluster.local",
         staging: ref((h) => `http://${h.svc(services.api)}`),
         prod: ref((h) => `http://${h.svc(services.api)}`),
       },
