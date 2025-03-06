@@ -193,13 +193,15 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
               key={page}
               paddingTop={4}
               display="flex"
+              flexDirection="column"
+              alignItems="center"
               justifyContent="center"
             >
               {error && (
                 <Box paddingBottom={2}>
                   <Text variant="medium" color="red600">
                     Villa kom upp við að sækja fleiri dóma. Vinsamlegast reynið
-                    aftur.
+                    aftur síðar.
                   </Text>
                 </Box>
               )}
