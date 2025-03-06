@@ -29,7 +29,7 @@ export const configs = [
   {
     name: 'Development',
     ids: {
-      issuer: 'https://innskra.dev01.devland.is/',
+      issuer: 'https://identity-server.dev01.devland.is/',
       ...identityServer,
     },
     apiUrl: 'https://beta.dev01.devland.is/api',

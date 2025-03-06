@@ -31,7 +31,7 @@ env:
   CONTENTFUL_ENVIRONMENT: 'test'
   CONTENTFUL_HOST: 'preview.contentful.com'
   HIDDEN_FEATURES: ''
-  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''

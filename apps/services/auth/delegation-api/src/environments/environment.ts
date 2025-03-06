@@ -5,7 +5,7 @@ const devConfig = {
     defaultNamespace: '@island.is/auth/delegation-api',
   },
   auth: {
-    issuer: 'https://innskra.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience,
   },
   port: 5333,

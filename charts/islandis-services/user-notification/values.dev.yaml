@@ -24,7 +24,7 @@ command:
   - 'node'
 enabled: true
 env:
-  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.dev01.devland.is'
+  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
   CODE_OWNER: 'juni'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -35,7 +35,7 @@ env:
   DB_USER: 'user_notification'
   DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
   EMAIL_FROM_ADDRESS: 'development@island.is'
-  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   MAIN_QUEUE_NAME: 'user-notification'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'

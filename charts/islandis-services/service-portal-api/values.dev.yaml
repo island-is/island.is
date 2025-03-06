@@ -19,7 +19,7 @@ global:
 name: 'service-portal-api'
 enabled: true
 env:
-  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.dev01.devland.is'
+  AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
   CODE_OWNER: 'aranja'
   DB_HOST: 'postgres-applications.internal'
@@ -27,7 +27,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'service_portal_api'
   EMAIL_REGION: 'eu-west-1'
-  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   ISLYKILL_CERT: '/etc/config/islyklar.p12'
   LOG_LEVEL: 'info'
   NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'

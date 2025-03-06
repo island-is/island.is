@@ -98,7 +98,7 @@ export const serviceSetup = (services: {
         prod: 'island-is-prod-upload-api',
       },
       AUTH_PUBLIC_API_URL: {
-        dev: 'https://innskra.dev01.devland.is/api',
+        dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
@@ -165,13 +165,13 @@ export const serviceSetup = (services: {
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       AUTH_DELEGATION_API_URL: {
-        dev: 'https://auth-delegation-api.internal.dev01.devland.is',
+        dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
         staging:
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -211,26 +211,26 @@ export const serviceSetup = (services: {
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
       AUTH_ADMIN_API_PATH: {
-        dev: 'https://innskra.dev01.devland.is/backend',
+        dev: 'https://identity-server.dev01.devland.is/backend',
         staging: 'https://identity-server.staging01.devland.is/backend',
         prod: 'https://innskra.island.is/backend',
       },
       AUTH_ADMIN_API_PATHS: {
         dev: json({
-          development: 'https://innskra.dev01.devland.is/backend',
+          development: 'https://identity-server.dev01.devland.is/backend',
         }),
         staging: json({
-          development: 'https://innskra.dev01.devland.is/backend',
+          development: 'https://identity-server.dev01.devland.is/backend',
           staging: 'https://identity-server.staging01.devland.is/backend',
         }),
         prod: json({
-          development: 'https://innskra.dev01.devland.is/backend',
+          development: 'https://identity-server.dev01.devland.is/backend',
           staging: 'https://identity-server.staging01.devland.is/backend',
           production: 'https://innskra.island.is/backend',
         }),
       },
       AUTH_IDS_API_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },

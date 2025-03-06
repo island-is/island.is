@@ -121,7 +121,7 @@ describe('Feature-deployment support', () => {
     expect(values.services['services-bff-portals-admin'].env).toEqual({
       IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes('stjornbord')),
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-stjornbord`,
-      IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is',
+      IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_BASE_PATH: '/stjornbord',
       BFF_GLOBAL_PREFIX: `/stjornbord/bff`,

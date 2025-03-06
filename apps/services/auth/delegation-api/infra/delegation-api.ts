@@ -37,7 +37,7 @@ export const serviceSetup = (services: {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -108,7 +108,7 @@ export const serviceSetup = (services: {
     .ingress({
       internal: {
         host: {
-          dev: 'auth-delegation-api',
+          dev: 'auth-delegation-api.internal.identity-server.dev01.devland.is',
           staging: 'auth-delegation-api',
           prod: 'auth-delegation-api.internal.innskra.island.is',
         },
