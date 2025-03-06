@@ -13,12 +13,15 @@ const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
   throw new Error('process.exit mock called')
 })
 
+// Mock console methods for cleaner test output
+jest.spyOn(console, 'log').mockImplementation(() => {})
+jest.spyOn(console, 'info').mockImplementation(() => {})
+jest.spyOn(console, 'error').mockImplementation(() => {})
+
 // Mock core module
 jest.mock('@actions/core', () => ({
   setOutput: jest.fn(),
 }))
-
-// Don't mock glob - we'll use a different approach
 
 // Mock fs operations
 jest.spyOn(fs, 'existsSync').mockImplementation(() => false)
@@ -44,17 +47,20 @@ jest.mock('js-yaml', () => ({
   dump: jest.fn((data) => JSON.stringify(data)),
 }))
 
-describe('get-data script functions', () => {
+describe('get-data.mjs', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   afterAll(() => {
     mockExit.mockRestore()
+    console.log.mockRestore()
+    console.info.mockRestore()
+    console.error.mockRestore()
   })
 
-  describe('getBranch function', () => {
-    test('returns the branch name from merge_group event', () => {
+  describe('Function: getBranch', () => {
+    test('extracts branch name from merge_group event', () => {
       const mockContext = {
         eventName: 'merge_group',
         payload: {
@@ -68,87 +74,113 @@ describe('get-data script functions', () => {
       expect(result).toBe('main')
     })
 
-    test('throws error for unsupported event', () => {
-      const mockContext = {
-        eventName: 'push',
-        payload: {},
-      }
-
-      expect(() => getBranch(mockContext)).toThrow('Unsupported event: push')
-    })
-
-    test('handles different branch names correctly', () => {
+    test('extracts branch name without refs/heads/ prefix', () => {
       const mockContext = {
         eventName: 'merge_group',
         payload: {
           merge_group: {
-            base_ref: 'refs/heads/release',
+            base_ref: 'refs/heads/some-branch',
           },
         },
       }
 
       const result = getBranch(mockContext)
-      expect(result).toBe('release')
+      expect(result).toBe('some-branch')
+    })
+
+    test('throws error for unsupported event types', () => {
+      const eventTypes = ['push', 'pull_request', 'issue_comment', 'release']
+
+      eventTypes.forEach((eventType) => {
+        const mockContext = {
+          eventName: eventType,
+          payload: {},
+        }
+
+        expect(() => getBranch(mockContext)).toThrow(
+          `Unsupported event: ${eventType}`,
+        )
+      })
+    })
+
+    test('handles missing context gracefully', () => {
+      expect(() => getBranch()).toThrow('Unsupported event: undefined')
+    })
+
+    test('handles missing payload gracefully', () => {
+      const mockContext = {
+        eventName: 'merge_group',
+        payload: undefined,
+      }
+
+      expect(() => getBranch(mockContext)).toThrow(TypeError)
     })
   })
 
-  describe('getTypeOfDeployment function', () => {
+  describe('Function: getTypeOfDeployment', () => {
     test('returns dev configuration for main branch', () => {
       const result = getTypeOfDeployment('main')
 
-      expect(result.dev).toBe(true)
-      expect(result.staging).toBe(false)
-      expect(result.prod).toBe(false)
+      expect(result).toEqual({
+        dev: true,
+        staging: false,
+        prod: false,
+      })
     })
 
     test('returns staging and prod configuration for release branch', () => {
       const result = getTypeOfDeployment('release')
 
-      expect(result.dev).toBe(false)
-      expect(result.staging).toBe(true)
-      expect(result.prod).toBe(true)
+      expect(result).toEqual({
+        dev: false,
+        staging: true,
+        prod: true,
+      })
     })
 
     test('throws error for unsupported branch', () => {
-      expect(() => getTypeOfDeployment('feature')).toThrow(
-        'Unsupported branch: feature',
+      const unsupportedBranches = [
+        'feature',
+        'develop',
+        'hotfix',
+        'random-branch',
+      ]
+
+      unsupportedBranches.forEach((branch) => {
+        expect(() => getTypeOfDeployment(branch)).toThrow(
+          `Unsupported branch: ${branch}`,
+        )
+      })
+    })
+
+    test('handles empty branch name', () => {
+      expect(() => getTypeOfDeployment('')).toThrow('Unsupported branch: ')
+    })
+
+    test('handles undefined branch name', () => {
+      expect(() => getTypeOfDeployment(undefined)).toThrow(
+        'Unsupported branch: undefined',
       )
     })
 
-    // Test with array of branches to ensure all supported branches work
-    test.each([['main']])('handles %s as a valid main branch', (branch) => {
-      const result = getTypeOfDeployment(branch)
-      expect(result.dev).toBe(true)
+    test('is case sensitive for branch names', () => {
+      // Should throw error for 'Main' (uppercase M) since it doesn't match 'main'
+      expect(() => getTypeOfDeployment('Main')).toThrow(
+        'Unsupported branch: Main',
+      )
     })
-
-    test.each([['release']])(
-      'handles %s as a valid release branch',
-      (branch) => {
-        const result = getTypeOfDeployment(branch)
-        expect(result.staging).toBe(true)
-        expect(result.prod).toBe(true)
-      },
-    )
   })
 
-  describe('main function integration', () => {
-    // Skip tests that would require mocking glob
-    test.skip('handles main branch deployment correctly', async () => {
-      console.log('Skipping test that requires glob mocking')
-    })
+  describe('Integration: main function', () => {
+    let main
 
-    test.skip('handles release branch deployment correctly', async () => {
-      console.log('Skipping test that requires glob mocking')
-    })
-
-    test('handles no file changes correctly', async () => {
-      // We can test this case without relying on glob
+    beforeEach(async () => {
       jest.resetModules()
+      const module = await import('./get-data.mjs')
+      main = module.main
+    })
 
-      // Dynamically import the module to get the main function
-      const { main } = await import('./get-data.mjs')
-
-      // Test context for main branch
+    test('exits when data.json does not exist', async () => {
       const testContext = {
         eventName: 'merge_group',
         payload: {
@@ -159,35 +191,22 @@ describe('get-data script functions', () => {
         sha: 'test-sha-123',
       }
 
-      // Mock file doesn't exist - this is important for this test
       fs.existsSync.mockReturnValue(false)
-
-      // Without mocking glob, the test will naturally try to use the real glob
-      // But since there are no real files to find, it will return empty arrays
 
       try {
         await main(testContext)
-
-        // If no process.exit was called, we should see the MQ_HAS_OUTPUT = false
+        // If we get here without process.exit being called, we should see MQ_HAS_OUTPUT = false
         expect(core.setOutput).toHaveBeenCalledWith('MQ_HAS_OUTPUT', 'false')
       } catch (error) {
-        // If process.exit was called due to missing data.json, that's also acceptable
         if (error.message === 'process.exit mock called') {
           expect(mockExit).toHaveBeenCalledWith(0)
         } else {
-          // Any other error is a test failure
           throw error
         }
       }
     })
 
-    test('exits gracefully when data.json does not exist', async () => {
-      jest.resetModules()
-
-      // Dynamically import the module to get the main function
-      const { main } = await import('./get-data.mjs')
-
-      // Test context for main branch
+    test('sets MQ_HAS_OUTPUT to false when no files are changed', async () => {
       const testContext = {
         eventName: 'merge_group',
         payload: {
@@ -195,64 +214,118 @@ describe('get-data script functions', () => {
             base_ref: 'refs/heads/main',
           },
         },
-        sha: 'test-sha-123',
+        sha: 'test-sha-456',
       }
 
-      // Mock file doesn't exist
+      // No data.json, so no files will be processed
       fs.existsSync.mockReturnValue(false)
 
-      // Run main function and expect process.exit to be called
       try {
         await main(testContext)
-        // Check if we got to the end without calling process.exit
         expect(core.setOutput).toHaveBeenCalledWith('MQ_HAS_OUTPUT', 'false')
+        expect(core.setOutput).not.toHaveBeenCalledWith(
+          'MQ_CHANGED_FILES',
+          expect.anything(),
+        )
       } catch (error) {
-        // We expect an error to be thrown from our mock if process.exit was called
-        if (error.message === 'process.exit mock called') {
-          expect(mockExit).toHaveBeenCalledWith(0)
-        } else {
+        if (error.message !== 'process.exit mock called') {
           throw error
         }
       }
     })
   })
 
-  // Test specific parts of get-data that don't require glob mocking
-  describe('additional function tests', () => {
-    test('branches are properly defined', () => {
-      // This test verifies the branch configuration without needing to mock glob
-      const mainBranches = ['main']
-      const releaseBranches = ['release']
-
-      for (const branch of mainBranches) {
-        const deployment = getTypeOfDeployment(branch)
-        expect(deployment.dev).toBe(true)
-        expect(deployment.staging).toBe(false)
-        expect(deployment.prod).toBe(false)
-      }
-
-      for (const branch of releaseBranches) {
-        const deployment = getTypeOfDeployment(branch)
-        expect(deployment.dev).toBe(false)
-        expect(deployment.staging).toBe(true)
-        expect(deployment.prod).toBe(true)
-      }
+  describe('Error handling', () => {
+    test('getBranch throws with descriptive error for unsupported events', () => {
+      expect(() => getBranch({ eventName: 'random-event' })).toThrow(
+        'Unsupported event: random-event',
+      )
     })
 
-    test('event name handling', () => {
-      // Test different event names
-      expect(() =>
-        getBranch({
+    test('getTypeOfDeployment throws with descriptive error for unsupported branches', () => {
+      expect(() => getTypeOfDeployment('random-branch')).toThrow(
+        'Unsupported branch: random-branch',
+      )
+    })
+  })
+
+  describe('Branch configuration', () => {
+    test('main branches are configured correctly', () => {
+      const deployment = getTypeOfDeployment('main')
+      expect(deployment.dev).toBe(true)
+      expect(deployment.staging).toBe(false)
+      expect(deployment.prod).toBe(false)
+    })
+
+    test('release branches are configured correctly', () => {
+      const deployment = getTypeOfDeployment('release')
+      expect(deployment.dev).toBe(false)
+      expect(deployment.staging).toBe(true)
+      expect(deployment.prod).toBe(true)
+    })
+  })
+
+  describe('Input validation', () => {
+    test('getBranch handles various context formats', () => {
+      // Valid context
+      const validContext = {
+        eventName: 'merge_group',
+        payload: {
+          merge_group: {
+            base_ref: 'refs/heads/main',
+          },
+        },
+      }
+      expect(getBranch(validContext)).toBe('main')
+
+      // Invalid eventName
+      expect(() => getBranch({ eventName: 'invalid' })).toThrow()
+
+      // Missing payload
+      expect(() => getBranch({ eventName: 'merge_group' })).toThrow()
+    })
+  })
+
+  describe('Edge cases', () => {
+    test('handles branch names with special characters', () => {
+      // Special characters in branch name should still be extracted correctly
+      const mockContext = {
+        eventName: 'merge_group',
+        payload: {
+          merge_group: {
+            base_ref: 'refs/heads/feature/special-branch-name',
+          },
+        },
+      }
+
+      // This should extract the branch name, but then throw because it's not a supported branch
+      expect(() => getBranch(mockContext)).not.toThrow('Unsupported event')
+      expect(() => {
+        const branch = getBranch(mockContext)
+        getTypeOfDeployment(branch)
+      }).toThrow('Unsupported branch: feature/special-branch-name')
+    })
+
+    test('branch name extraction strips refs/heads/ prefix correctly', () => {
+      const testCases = [
+        { input: 'refs/heads/main', expected: 'main' },
+        { input: 'refs/heads/release', expected: 'release' },
+        { input: 'refs/heads/feature/test', expected: 'feature/test' },
+        { input: 'refs/heads/', expected: '' },
+      ]
+
+      testCases.forEach(({ input, expected }) => {
+        const mockContext = {
           eventName: 'merge_group',
-          payload: { merge_group: { base_ref: 'refs/heads/main' } },
-        }),
-      ).not.toThrow()
-      expect(() => getBranch({ eventName: 'push', payload: {} })).toThrow(
-        'Unsupported event: push',
-      )
-      expect(() =>
-        getBranch({ eventName: 'pull_request', payload: {} }),
-      ).toThrow('Unsupported event: pull_request')
+          payload: {
+            merge_group: {
+              base_ref: input,
+            },
+          },
+        }
+
+        expect(getBranch(mockContext)).toBe(expected)
+      })
     })
   })
 })
