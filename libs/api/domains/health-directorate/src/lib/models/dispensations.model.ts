@@ -44,6 +44,9 @@ export class Dispensation {
   @Field(() => Date, { nullable: true })
   lastDispensationDate?: Date
 
+  @Field(() => Date, { nullable: true })
+  nextDispensationDate?: Date
+
   @Field()
   count!: number
 
