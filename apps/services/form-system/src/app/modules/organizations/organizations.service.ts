@@ -78,7 +78,7 @@ export class OrganizationsService {
     if (organization.organizationCertificationTypes) {
       organizationAdminDto.selectedCertificationTypes =
         organization.organizationCertificationTypes.map(
-          (certificationType) => certificationType.id,
+          (certificationType) => certificationType.certificationTypeId,
         )
     }
 
@@ -98,7 +98,6 @@ export class OrganizationsService {
         })
       })
 
-    console.log(JSON.stringify(organizationAdminDto, null, 2))
     return organizationAdminDto
   }
 

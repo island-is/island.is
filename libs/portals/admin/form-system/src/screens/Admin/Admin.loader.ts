@@ -34,8 +34,6 @@ export const adminLoader: WrappedLoaderFn = ({ client }) => {
       throw new Error('No organization admin was found')
     }
 
-    console.log(data)
-
     const selectedCertificationTypes =
       data.formSystemGetOrganizationAdmin?.selectedCertificationTypes?.map(
         (certType) => certType,

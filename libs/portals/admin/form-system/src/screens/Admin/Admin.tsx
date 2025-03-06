@@ -2,7 +2,11 @@ import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
-import { CREATE_FORM, GET_FORMS } from '@island.is/form-system/graphql'
+import {
+  CREATE_FORM,
+  GET_FORMS,
+  GET_ORGANIZATION_ADMIN,
+} from '@island.is/form-system/graphql'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
@@ -10,19 +14,24 @@ import { useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { divide } from 'lodash'
-import { AdminHeader } from './AdminHeader'
+import { AdminHeader } from '../../components/Admin/AdminHeader'
 import { AdminLoaderResponse } from './Admin.loader'
+import { CertificationTypesList } from '../../components/Admin/CertificationTypes/CertificationTypesList'
 // import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
 export const Admin = () => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
-  const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
-  const [getFormsQuery] = useLazyQuery(GET_FORMS)
+
+  const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN)
   const { selectedCertificationTypes, certficationTypes, organizations } =
     useLoaderData() as AdminLoaderResponse
 
   const [organizationsState, setOrganizationsState] = useState(organizations)
+  const [selectedCertificationTypesState, setSelectedCertificationTypesState] =
+    useState(selectedCertificationTypes)
+  // const [certificationTypesState, setCertificationTypesState] =
+  //   useState(certficationTypes)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
@@ -33,15 +42,22 @@ export const Admin = () => {
     }))
     setOrganizationsState(updatedOrganizations)
 
-    // const { data } = await getFormsQuery({
-    //   variables: {
-    //     input: {
-    //       nationalId: selected.value,
-    //     },
-    //   },
-    // })
-    // if (data?.formSystemGetAllForms?.forms) {
-    //   setFormsState(data.formSystemGetAllForms.forms)
+    const { data } = await getAdminQuery({
+      variables: {
+        input: {
+          nationalId: selected.value,
+        },
+      },
+    })
+    if (data?.formSystemGetOrganizationAdmin.selectedCertificationTypes) {
+      setSelectedCertificationTypesState(
+        data.formSystemGetOrganizationAdmin.selectedCertificationTypes,
+      )
+    }
+    // if (data?.formSystemGetOrganizationAdmin.certficationTypes) {
+    //   setCertificationTypesState(
+    //     data.formSystemGetOrganizationAdmin.certficationTypes,
+    //   )
     // }
   }
 
@@ -50,6 +66,10 @@ export const Admin = () => {
       <AdminHeader
         organizations={organizationsState}
         onOrganizationChange={handleOrganizationChange}
+      />
+      <CertificationTypesList
+        selectedCertificationTypes={selectedCertificationTypesState}
+        certficationTypes={certficationTypes}
       />
     </>
   )

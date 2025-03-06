@@ -1,7 +1,7 @@
 import { GridRow as Row, GridColumn as Column } from '@island.is/island-ui/core'
 import { MainContentColumn } from './components/MainColumns'
 import { NavbarColumn } from './components/NavbarColumn'
-import { FormHeader } from '../../screens/Form/FormHeader'
+import { FormHeader } from '../Headers/FormHeader'
 
 export const FormLayout = () => (
   <>

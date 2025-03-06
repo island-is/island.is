@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { ApplicationsLoaderResponse } from './Applications.loader'
-import { ApplicationsHeader } from './ApplicationsHeader'
+import { ApplicationsHeader } from '../../components/Headers/ApplicationsHeader'
 // import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
 export const Applications = () => {
