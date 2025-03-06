@@ -75,17 +75,19 @@ export const overview = buildSection({
           id: 'createdLists',
           title: m.listOverviewHeader,
           items: ({ answers, externalData }) => {
-            const areas = getValueViaPath(
-              externalData,
-              'currentCollection.data.areas',
-            ) as SignatureCollectionArea[]
+            const areas =
+              getValueViaPath<SignatureCollectionArea[]>(
+                externalData,
+                'currentCollection.data.areas',
+              ) || []
             return areas?.map((area) => ({
-              heading:
-                getValueViaPath(answers, 'applicant.name') + ' - ' + area.name,
-              eyebrow:
-                m.listDateTil.defaultMessage +
-                ': ' +
-                getValueViaPath(answers, 'collection.dateTil'),
+              heading: `${getValueViaPath(answers, 'applicant.name')} - ${
+                area.name
+              }`,
+              eyebrow: `${m.listDateTil.defaultMessage}: ${getValueViaPath(
+                answers,
+                'collection.dateTil',
+              )}`,
               progressMeter: {
                 currentProgress: 0,
                 maxProgress: area.min ?? 0,
