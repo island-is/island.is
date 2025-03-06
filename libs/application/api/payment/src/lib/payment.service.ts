@@ -247,8 +247,10 @@ export class PaymentService {
             })),
             payerNationalId: user.nationalId,
             organisationId: performingOrganizationID,
+            // onUpdateUrl:
+            //   'http://localhost:3333/application-payment/api-client-payment-callback/',
             onUpdateUrl:
-              'http://localhost:3333/application-payment/api-client-payment-callback/',
+              'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
