@@ -158,7 +158,7 @@ const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
 const unicornApp = unicornAppSetup()
-const formSystemApi = formSystemApiSetup()
+// const formSystemApi = formSystemApiSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -269,7 +269,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     licenseApi,
-    formSystemApi,
+    // formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,

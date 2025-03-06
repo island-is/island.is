@@ -69,3 +69,10 @@ const validatePhoneNumber = (value?: string) => {
   return phoneNumberRegex.test(value)
 }
 
+const validateNationalId = (nationalId?: string, name?: string) => {
+  if (!nationalId || !name) return false
+  const nationalIdRegex = /^\d{6}-\d{4}$/
+  if (!nationalIdRegex.test(nationalId)) return false
+  if (name.length < 2) return false
+  return true
+}

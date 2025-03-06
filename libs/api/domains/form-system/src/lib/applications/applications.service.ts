@@ -49,6 +49,7 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<Application> {
+    console.log('creating application', input)
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
@@ -56,6 +57,7 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to create application'),
       )
+    console.log('response', response)
     if (!response || response instanceof ApolloError) {
       return {}
     }
