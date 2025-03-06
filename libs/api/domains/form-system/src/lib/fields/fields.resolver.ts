@@ -23,7 +23,7 @@ export class FieldsResolver {
   constructor(private readonly fieldsService: FieldsService) { }
 
   @Mutation(() => Field, {
-    name: 'formSystemCreateField',
+    name: 'createFormSystemField',
   })
   async createField(
     @Args('input', { type: () => CreateFieldInput }) input: CreateFieldInput,
@@ -33,7 +33,7 @@ export class FieldsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateField',
+    name: 'updateFormSystemField',
     nullable: true,
   })
   async updateField(
@@ -44,7 +44,7 @@ export class FieldsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteField',
+    name: 'deleteFormSystemField',
     nullable: true,
   })
   async deleteField(
@@ -55,7 +55,7 @@ export class FieldsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateFieldsDisplayOrder',
+    name: 'updateFormSystemFieldsDisplayOrder',
     nullable: true,
   })
   async updateFieldsDisplayOrder(

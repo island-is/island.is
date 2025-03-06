@@ -24,7 +24,7 @@ export class SectionsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sectionsService: SectionsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -47,7 +47,10 @@ export class SectionsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to create section'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response
@@ -71,7 +74,10 @@ export class SectionsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to update section'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response

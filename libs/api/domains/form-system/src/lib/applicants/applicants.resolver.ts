@@ -22,7 +22,7 @@ export class ApplicantsResolver {
   constructor(private readonly applicantsService: ApplicantsService) { }
 
   @Mutation(() => Applicant, {
-    name: 'formSystemCreateApplicant',
+    name: 'createFormSystemApplicant',
   })
   async createApplicant(
     @Args('input') input: CreateApplicantInput,
@@ -32,7 +32,7 @@ export class ApplicantsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteApplicant',
+    name: 'deleteFormSystemApplicant',
     nullable: true,
   })
   async deleteApplicant(
@@ -43,7 +43,7 @@ export class ApplicantsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateApplicant',
+    name: 'updateFormSystemApplicant',
     nullable: true,
   })
   async updateApplicant(

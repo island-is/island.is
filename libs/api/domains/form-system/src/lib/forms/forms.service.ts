@@ -44,9 +44,14 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerCreate()
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
+
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
+
     return response as FormResponse
   }
 
@@ -66,8 +71,12 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
+
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response as Form
@@ -78,10 +87,13 @@ export class FormsService {
   ): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindAll()
-    // .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
 
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response as FormResponse
@@ -93,7 +105,10 @@ export class FormsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
 
     if (!response || response instanceof ApolloError) {
-      return void 0
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
 
     return response

@@ -11,22 +11,9 @@ import { FormSystemFormApplicant } from '@island.is/api/schema'
 import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { FormApplicantTypes } from './components/FormApplicantTypes'
+import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
 
-const applicantTypeGroups = {
-  individual: [ApplicantTypesEnum.INDIVIDUAL],
-  individualDelegation: [
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
-    ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
-  ],
-  legalEntityDelegation: [
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
-    ApplicantTypesEnum.LEGAL_ENTITY,
-  ],
-  procuration: [
-    ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
-    ApplicantTypesEnum.LEGAL_ENTITY,
-  ],
-}
+
 
 export const RelevantParties = () => {
   const [createApplicant] = useMutation(CREATE_APPLICANT)
@@ -60,7 +47,7 @@ export const RelevantParties = () => {
                 },
               },
             })
-            return removeTypename(newApplicant.data.formSystemCreateApplicant)
+            return removeTypename(newApplicant.data.createFormSystemApplicant)
           }),
         )
         setFormApplicants([...formApplicants, ...newApplicants])

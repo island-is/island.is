@@ -58,7 +58,7 @@ export const NavButtons = () => {
           type: 'ADD_SCREEN',
           payload: {
             screen: removeTypename(
-              newScreen.data?.formSystemCreateScreen,
+              newScreen.data?.createFormSystemScreen,
             ) as FormSystemScreen,
           },
         })
@@ -80,7 +80,7 @@ export const NavButtons = () => {
           type: 'ADD_FIELD',
           payload: {
             field: removeTypename(
-              newField.data?.formSystemCreateField,
+              newField.data?.createFormSystemField,
             ) as FormSystemField,
           },
         })

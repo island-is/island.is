@@ -6,14 +6,14 @@ import { ValueDto } from './value.model'
 
 @ObjectType('FormSystemField')
 export class Field {
-  @FieldType(() => String, { nullable: true })
-  id?: string
+  @FieldType(() => String)
+  id!: string
 
-  @FieldType(() => String, { nullable: true })
-  screenId?: string
+  @FieldType(() => String)
+  screenId!: string
 
-  @FieldType(() => LanguageType, { nullable: true })
-  name?: LanguageType
+  @FieldType(() => LanguageType)
+  name!: LanguageType
 
   @FieldType(() => Int, { nullable: true })
   displayOrder?: number
@@ -21,8 +21,8 @@ export class Field {
   @FieldType(() => LanguageType, { nullable: true })
   description?: LanguageType
 
-  @FieldType(() => Boolean, { nullable: true })
-  isPartOfMultiset?: boolean
+  @FieldType(() => Boolean)
+  isPartOfMultiset!: boolean
 
   @FieldType(() => FieldSettings, { nullable: true })
   fieldSettings?: FieldSettings
@@ -39,6 +39,6 @@ export class Field {
   @FieldType(() => Boolean, { nullable: true })
   isHidden?: boolean
 
-  @FieldType(() => Boolean, { nullable: true })
-  isRequired?: boolean
+  @FieldType(() => Boolean)
+  isRequired!: boolean
 }

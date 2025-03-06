@@ -12,8 +12,7 @@ export const FormSystemClientConfig = defineConfig({
     return {
       // TODO: Switch to .required() when we have a value in all environments.
       basePath:
-        env.optional('FORM_SYSTEM_API_BASE_PATH', 'http://bakendi:3434') ??
-        '',
+        env.required('FORM_SYSTEM_API_BASE_PATH', 'http://bakendi:3434'),
     }
   },
 })

@@ -2,18 +2,8 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { OrganizationInput } from './organization.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
-import { ValueDtoInput } from './value.input'
-import { FormCertificationTypeDtoInput } from './certification.input'
-import { FormApplicantTypeDtoInput } from './applicant.input'
-import { LanguageTypeInput } from './languageType.input'
 
-@InputType('FormSystemCreateApplicationDtoInput')
-export class CreateApplicationDtoInput {
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-}
-
-@InputType('FormSystemCreateApplicationInput')
+@InputType('CreateFormSystemApplicationInput')
 export class CreateApplicationInput {
   @Field(() => String, { nullable: true })
   slug?: string
@@ -22,10 +12,16 @@ export class CreateApplicationInput {
   createApplicationDto?: CreateApplicationDtoInput
 }
 
-@InputType('FormSystemGetApplicationInput')
+@InputType('FormSystemApplicationInput')
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
+}
+
+@InputType('SubmitFormSystemScreenInput')
+export class SubmitScreenInput {
+  @Field(() => String, { nullable: true })
+  screenId?: string
 }
 
 @InputType('FormSystemApplicationEventDtoInput')
@@ -83,38 +79,13 @@ export class ApplicationInput {
 
   @Field(() => [SectionInput], { nullable: 'itemsAndList' })
   sections?: SectionInput[]
-
-  @Field(() => [ValueDtoInput], { nullable: 'itemsAndList' })
-  files?: ValueDtoInput[]
-
-  @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationTypeDtoInput[]
-
-  @Field(() => [FormApplicantTypeDtoInput], { nullable: 'itemsAndList' })
-  applicantTypes?: FormApplicantTypeDtoInput[]
 }
 
-@InputType('FormSystemSubmitScreenInput')
-export class SubmitScreenInput {
-  @Field(() => String, { nullable: true })
-  screenId?: string
+@InputType('UpdateFormSystemApplicationDependenciesInput')
+export class UpdateApplicationDependenciesInput {
+  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
+  dependencies?: DependencyInput[]
 
-  @Field(() => ApplicationInput, { nullable: true })
-  applicationDto?: ApplicationInput
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  completed?: string[]
 }
-
-@InputType('FormSystemGetAllApplicationsInput')
-export class GetAllApplicationsInput {
-  @Field(() => String, { nullable: true })
-  formId?: string
-
-  @Field(() => Int, { nullable: true })
-  page?: number
-
-  @Field(() => Int, { nullable: true })
-  limit?: number
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-}
-

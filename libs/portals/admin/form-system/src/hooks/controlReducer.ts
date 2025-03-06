@@ -13,6 +13,19 @@ import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { SectionTypes } from '@island.is/form-system/ui'
 
+// TODO 
+// This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
+// For example create sepeare reducers for
+// ActiveItem
+// Screen
+// Field
+// Section
+// Dnd
+// Form-level settings (form-wide settings like setting form name, validation and certification etc)
+// InputSettings (field-specific settings like for file upload, add list item etc)
+
+// And then combine into a main reducer that could be called "controlReducer"
+
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
   | {
@@ -304,10 +317,11 @@ export const controlReducer = (
     }
     case 'CHANGE_FIELD_TYPE': {
       const { newValue, fieldSettings, update } = action.payload
+      const currentData = activeItem.data as FormSystemField
       const newActive = {
         ...activeItem,
         data: {
-          ...activeItem.data,
+          ...currentData,
           fieldType: newValue,
           fieldSettings: removeTypename(fieldSettings),
         },
@@ -374,29 +388,51 @@ export const controlReducer = (
     // Change
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
-      const newActive = {
-        ...activeItem,
-        data: {
-          ...activeItem.data,
+      let newData
+      if (activeItem.type === 'Section') {
+        newData = {
+          ...(activeItem.data as FormSystemSection),
           name: {
-            ...activeItem.data?.name,
+            ...((activeItem.data as FormSystemSection).name),
             [lang]: newValue,
           },
-        },
+        }
+      } else if (activeItem.type === 'Screen') {
+        newData = {
+          ...(activeItem.data as FormSystemScreen),
+          name: {
+            ...((activeItem.data as FormSystemScreen).name),
+            [lang]: newValue,
+          },
+        }
+      } else if (activeItem.type === 'Field') {
+        newData = {
+          ...(activeItem.data as FormSystemField),
+          name: {
+            ...((activeItem.data as FormSystemField).name),
+            [lang]: newValue,
+          },
+        }
+      } else {
+        newData = activeItem.data
+      }
+      const newActive = {
+        ...activeItem,
+        data: newData,
       }
       const { type } = activeItem
       let updatedList
       if (type === 'Section') {
         updatedList = sections?.map((s) =>
-          s?.id === activeItem.data?.id ? newActive.data : s,
+          s?.id === newData?.id ? newActive.data : s,
         )
       } else if (type === 'Screen') {
         updatedList = screens?.map((g) =>
-          g?.id === activeItem.data?.id ? newActive.data : g,
+          g?.id === newData?.id ? newActive.data : g,
         )
       } else if (type === 'Field') {
         updatedList = fields?.map((i) =>
-          i?.id === activeItem.data?.id ? newActive.data : i,
+          i?.id === newData?.id ? newActive.data : i,
         )
       }
       return {

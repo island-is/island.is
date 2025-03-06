@@ -18,7 +18,7 @@ export class FormApplicantTypesResolver {
   constructor(private readonly formApplicantTypesService: FormApplicantTypesService) { }
 
   @Mutation(() => FormApplicantType, {
-    name: 'formSystemCreateFormApplicantType',
+    name: 'createFormSystemApplicantType',
   })
   async createFormApplicantType(
     @Args('input', { type: () => FormApplicantTypeCreateInput })
@@ -29,7 +29,7 @@ export class FormApplicantTypesResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteFormApplicantType',
+    name: 'deleteFormSystemApplicantType',
   })
   async deleteFormApplicantType(
     @Args('input', { type: () => FormApplicantTypeDeleteInput })
@@ -40,7 +40,7 @@ export class FormApplicantTypesResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateFormApplicantType'
+    name: 'updateFormSystemApplicantType'
   })
   async updateFormApplicantType(
     @Args('input', { type: () => FormApplicantTypeUpdateInput })

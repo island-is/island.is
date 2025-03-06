@@ -24,7 +24,7 @@ export class ScreensResolver {
   constructor(private readonly screensService: ScreensService) { }
 
   @Mutation(() => Screen, {
-    name: 'formSystemCreateScreen',
+    name: 'createFormSystemScreen',
   })
   async createScreen(
     @Args('input') input: CreateScreenInput,
@@ -34,7 +34,7 @@ export class ScreensResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteScreen',
+    name: 'deleteFormSystemScreen',
     nullable: true,
   })
   async deleteScreen(
@@ -44,9 +44,8 @@ export class ScreensResolver {
     return this.screensService.deleteScreen(user, input)
   }
 
-  @Mutation(() => Boolean, {
-    name: 'formSystemUpdateScreen',
-    nullable: true
+  @Mutation(() => Screen, {
+    name: 'updateFormSystemScreen',
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,
@@ -56,7 +55,7 @@ export class ScreensResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateScreensDisplayOrder',
+    name: 'updateFormSystemScreensDisplayOrder',
     nullable: true,
   })
   async updateScreensDisplayOrder(

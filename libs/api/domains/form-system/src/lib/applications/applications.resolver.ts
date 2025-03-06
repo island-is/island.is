@@ -15,7 +15,7 @@ import {
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
-import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
+import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -24,7 +24,7 @@ export class ApplicationsResolver {
   constructor(private readonly applicationsService: ApplicationsService) { }
 
   @Query(() => Application, {
-    name: 'formSystemGetApplication',
+    name: 'formSystemApplication',
   })
   async getApplication(
     @Args('input', { type: () => GetApplicationInput })
@@ -34,8 +34,8 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplication(user, input)
   }
 
-  @Mutation(() => Application, {
-    name: 'formSystemCreateApplication',
+  @Mutation(() => Boolean, {
+    name: 'createFormSystemApplication',
   })
   async createApplication(
     @Args('input', { type: () => CreateApplicationInput })
@@ -46,7 +46,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateApplicationDependencies',
+    name: 'updateFormSystemApplicationDependencies',
   })
   async updateApplicationDependencies(
     @Args('input', { type: () => UpdateApplicationDependenciesInput })
@@ -57,7 +57,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemSubmitApplication'
+    name: 'submitFormSystemApplication'
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })
@@ -68,8 +68,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemSubmitScreen',
-    nullable: true,
+    name: 'submitFormSystemScreen',
   })
   async submitScreen(
     @Args('input', { type: () => SubmitScreenInput })

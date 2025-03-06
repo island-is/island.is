@@ -18,9 +18,8 @@ import {
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
-import { Application, ApplicationListDto } from '../../models/applications.model'
-import { UpdateApplicationDependenciesInput } from '../../dto/applicant.input'
-import { removeNullProperties } from '../../utils/removeNull'
+import { Application } from '../../models/applications.model'
+import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -59,7 +58,10 @@ export class ApplicationsService {
       )
     console.log('response', response)
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
     return response as Application
   }
@@ -74,7 +76,10 @@ export class ApplicationsService {
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
     if (!response || response instanceof ApolloError) {
-      return {}
+      if (!(response instanceof ApolloError)) {
+        throw new ApolloError({ errorMessage: JSON.stringify(response) })
+      }
+      throw response
     }
     return response as Application
   }

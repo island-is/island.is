@@ -23,7 +23,7 @@ export class SectionsResolver {
   constructor(private readonly sectionsService: SectionsService) { }
 
   @Mutation(() => Section, {
-    name: 'formSystemCreateSection',
+    name: 'createFormSystemSection',
   })
   async createSection(
     @Args('input', { type: () => CreateSectionInput })
@@ -34,7 +34,7 @@ export class SectionsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteSection',
+    name: 'deleteFormSystemSection',
     nullable: true,
   })
   async deleteSection(
@@ -46,7 +46,7 @@ export class SectionsResolver {
   }
 
   @Mutation(() => Section, {
-    name: 'formSystemUpdateSection',
+    name: 'updateFormSystemSection',
   })
   async updateSection(
     @Args('input', { type: () => UpdateSectionInput })
@@ -57,7 +57,7 @@ export class SectionsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateSectionsDisplayOrder',
+    name: 'updateFormSystemSectionsDisplayOrder',
     nullable: true,
   })
   async updateSectionsDisplayOrder(

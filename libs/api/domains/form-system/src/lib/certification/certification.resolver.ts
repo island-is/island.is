@@ -21,7 +21,7 @@ export class CertificationsResolver {
   constructor(private readonly certificationsService: CertificationsService) { }
 
   @Mutation(() => FormCertificationTypeDto, {
-    name: 'formSystemCreateCertification',
+    name: 'createFormSystemCertification',
   })
   async createCertification(
     @Args('input', { type: () => CreateCertificationInput })
@@ -32,7 +32,7 @@ export class CertificationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteCertification',
+    name: 'deleteFormSystemCertification',
     nullable: true,
   })
   async deleteCertification(
