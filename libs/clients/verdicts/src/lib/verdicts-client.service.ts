@@ -58,39 +58,37 @@ export class VerdictsClientService {
 
     if (goproResponse.status === 'fulfilled') {
       for (const goproItem of goproResponse.value.items ?? []) {
-        if (goproItem.id) {
-          items.push({
-            id: `${GOPRO_ID_PREFIX}${goproItem.id}`,
-            title: goproItem.title ?? '',
-            court: goproItem.court ?? '',
-            caseNumber: goproItem.caseNumber ?? '',
-            verdictDate: goproItem.verdictDate,
-            presidentJudge: goproItem.judges?.find((judge) =>
-              Boolean(judge?.isPresident),
-            ),
-            keywords: goproItem.keywords ?? [],
-            presentings: goproItem.presentings ?? '',
-          })
-        }
+        items.push({
+          id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
+          title: goproItem.title ?? '',
+          court: goproItem.court ?? '',
+          caseNumber: goproItem.caseNumber ?? '',
+          verdictDate: goproItem.verdictDate,
+          presidentJudge: goproItem.judges?.find((judge) =>
+            Boolean(judge?.isPresident),
+          ),
+          keywords: goproItem.keywords ?? [],
+          presentings: goproItem.presentings ?? '',
+        })
       }
     }
 
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const supremeCourtItem of supremeCourtResponse.value.items ?? []) {
-        if (supremeCourtItem.id) {
-          items.push({
-            id: `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`,
-            title: supremeCourtItem.title ?? '',
-            court: supremeCourtItem.court ?? '',
-            caseNumber: supremeCourtItem.caseNumber ?? '',
-            verdictDate: supremeCourtItem.publishDate,
-            presidentJudge: supremeCourtItem.judges?.find((judge) =>
-              Boolean(judge?.isPresident),
-            ),
-            keywords: supremeCourtItem.keywords ?? [],
-            presentings: '',
-          })
-        }
+        items.push({
+          id: supremeCourtItem.id
+            ? `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`
+            : '',
+          title: supremeCourtItem.title ?? '',
+          court: supremeCourtItem.court ?? '',
+          caseNumber: supremeCourtItem.caseNumber ?? '',
+          verdictDate: supremeCourtItem.publishDate,
+          presidentJudge: supremeCourtItem.judges?.find((judge) =>
+            Boolean(judge?.isPresident),
+          ),
+          keywords: supremeCourtItem.keywords ?? [],
+          presentings: '',
+        })
       }
     }
 
@@ -107,11 +105,13 @@ export class VerdictsClientService {
       total:
         Number(
           supremeCourtResponse.status === 'fulfilled'
-            ? supremeCourtResponse.value.total
+            ? supremeCourtResponse.value.total ?? 0
             : 0,
         ) +
         Number(
-          goproResponse.status === 'fulfilled' ? goproResponse.value.total : 0,
+          goproResponse.status === 'fulfilled'
+            ? goproResponse.value.total ?? 0
+            : 0,
         ),
       items,
     }

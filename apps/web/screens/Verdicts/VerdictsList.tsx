@@ -55,7 +55,6 @@ interface VerdictsListProps {
 const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
-
   const { format } = useDateUtils()
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
@@ -77,9 +76,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
         },
         onCompleted(response) {
           setData((prevData) => {
-            const verdicts = response.webVerdicts.items.concat(
-              prevData.invisibleVerdicts,
-            )
+            const verdicts = response.webVerdicts.items
+              .concat(prevData.invisibleVerdicts)
+              // Remove all duplicate verdicts in case there were new verdicts published since last page load
+              .filter(
+                (verdict) =>
+                  Boolean(verdict.id) &&
+                  !prevData.visibleVerdicts
+                    .map(({ id }) => id)
+                    .includes(verdict.id),
+              )
+
             verdicts.sort((a, b) => {
               if (!a.verdictDate && !b.verdictDate) return 0
               if (!b.verdictDate) return -1
@@ -95,7 +102,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
                 verdicts.slice(0, ITEMS_PER_PAGE),
               ),
               invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
-              total: response.webVerdicts.total,
+              total: initialData.total,
             }
           })
         },
