@@ -108,8 +108,8 @@ export const asyncSelectSubsection = buildSubSection({
           title: 'Dependent Async Select',
           placeholder: 'Will re-fetch when the primary async select is changed',
           loadingError: 'Loading error',
-          updateOnSelect: 'primaryAsyncSelect',
-          loadOptions: async ({ apolloClient, selectedValue }) => {
+          updateOnSelect: ['primaryAsyncSelect'],
+          loadOptions: async ({ apolloClient, selectedValues }) => {
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipality>({
                 query: friggSchoolsByMunicipalityQuery,
@@ -117,8 +117,8 @@ export const asyncSelectSubsection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: `${municipality.name} ${selectedValue || ''}`,
-                label: `${municipality.name} ${selectedValue || ''}`,
+                value: `${municipality.name} ${selectedValues?.[0] || ''}`,
+                label: `${municipality.name} ${selectedValues?.[0] || ''}`,
               })) ?? []
             )
           },

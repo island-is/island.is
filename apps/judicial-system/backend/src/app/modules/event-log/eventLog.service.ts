@@ -11,6 +11,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { CreateEventLogDto } from './dto/createEventLog.dto'
@@ -41,17 +42,42 @@ export class EventLogService {
     private readonly logger: Logger,
   ) {}
 
+  async createWithUser(
+    eventType: EventType,
+    caseId: string,
+    user: User,
+    transaction?: Transaction,
+  ): Promise<void> {
+    await this.create(
+      {
+        eventType,
+        caseId,
+        nationalId: user.nationalId,
+        userRole: user.role,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      transaction,
+    )
+  }
+
   async create(
     event: CreateEventLogDto,
     transaction?: Transaction,
   ): Promise<void> {
-    const { eventType, caseId, userRole, nationalId } = event
+    const { eventType, caseId, userRole, nationalId, institutionName } = event
 
     if (!allowMultiple.includes(event.eventType)) {
       const where = Object.fromEntries(
-        Object.entries({ caseId, eventType, nationalId, userRole }).filter(
-          ([_, value]) => value !== undefined,
-        ),
+        // The user name and title do not matter when checking for duplicates
+        Object.entries({
+          eventType,
+          caseId,
+          nationalId,
+          userRole,
+          institutionName,
+        }).filter(([_, value]) => value !== undefined),
       )
 
       const eventExists = await this.eventLogModel.findOne({ where })
@@ -62,10 +88,7 @@ export class EventLogService {
     }
 
     try {
-      await this.eventLogModel.create(
-        { eventType, caseId, nationalId, userRole },
-        { transaction },
-      )
+      await this.eventLogModel.create({ ...event }, { transaction })
     } catch (error) {
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
@@ -81,9 +104,10 @@ export class EventLogService {
   ): Promise<Map<string, { latest: Date; count: number }>> {
     return this.eventLogModel
       .count({
-        group: ['nationalId'],
+        group: ['nationalId', 'institutionName'],
         attributes: [
           'nationalId',
+          'institutionName',
           [Sequelize.fn('max', Sequelize.col('created')), 'latest'],
           [Sequelize.fn('count', Sequelize.col('national_id')), 'count'],
         ],
@@ -96,7 +120,7 @@ export class EventLogService {
         (logs) =>
           new Map(
             logs.map((log) => [
-              log.nationalId as string,
+              `${log.nationalId}-${log.institutionName}`,
               { latest: log.latest as Date, count: log.count },
             ]),
           ),

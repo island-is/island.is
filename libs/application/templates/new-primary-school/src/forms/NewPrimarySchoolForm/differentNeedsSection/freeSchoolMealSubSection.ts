@@ -30,10 +30,12 @@ export const freeSchoolMealSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'accept-free-school-lunch',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-accept-free-school-lunch',
               value: NO,
             },
           ],
@@ -47,10 +49,12 @@ export const freeSchoolMealSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'has-special-needs',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-has-special-needs',
               value: NO,
             },
           ],

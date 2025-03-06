@@ -34,9 +34,11 @@ export const MultiSelectDropdown: FC<
         isMulti={true}
         label={group.name}
         closeMenuOnSelect={false}
+        hideSelectedOptions={false}
         placeholder={formatMessage(
           causeAndConsequences.shared.selectPlaceholder,
         )}
+        isClearable={false}
         options={options.map((option) => ({
           value: option.code,
           label: option.name,

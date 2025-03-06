@@ -9,8 +9,7 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
-  DD_RUM_APPLICATION_ID,
-  DD_RUM_CLIENT_TOKEN,
+  DD_LOGS_CLIENT_TOKEN,
 } = process.env
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
@@ -31,8 +30,7 @@ module.exports = withNx(
       // Will be available on both server and client
       graphqlUrl: '',
       graphqlEndpoint: graphqlPath,
-      ddRumApplicationId: DD_RUM_APPLICATION_ID,
-      ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+      ddLogsClientToken: DD_LOGS_CLIENT_TOKEN,
       appVersion: APP_VERSION,
       environment: ENVIRONMENT,
       configCatSdkKey: CONFIGCAT_SDK_KEY,

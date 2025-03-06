@@ -18,15 +18,15 @@ export const transformDefendants = (defendants?: Defendant[]) => {
   return defendants?.map((defendant) => ({
     ...defendant.toJSON(),
     sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
-      ? DefendantEventLog.getDefendantEventLogTypeDate({
-          defendantEventLogs: defendant.eventLogs,
-          eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-        })
+      ? DefendantEventLog.getDefendantEventLogTypeDate(
+          DefendantEventType.SENT_TO_PRISON_ADMIN,
+          defendant.eventLogs,
+        )
       : undefined,
-    openedByPrisonAdminDate: DefendantEventLog.getDefendantEventLogTypeDate({
-      defendantEventLogs: defendant.eventLogs,
-      eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-    }),
+    openedByPrisonAdminDate: DefendantEventLog.getDefendantEventLogTypeDate(
+      DefendantEventType.OPENED_BY_PRISON_ADMIN,
+      defendant.eventLogs,
+    ),
   }))
 }
 

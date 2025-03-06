@@ -13,7 +13,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -36,7 +36,7 @@ import { NotificationService } from './notification.service'
 
 @Controller('api/case/:caseId/notification')
 @ApiTags('notifications')
-@UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard)
 export class NotificationController {
   constructor(
     private readonly notificationService: NotificationService,
