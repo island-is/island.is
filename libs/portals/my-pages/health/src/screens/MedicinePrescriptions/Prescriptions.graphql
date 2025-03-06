@@ -27,33 +27,3 @@ query GetMedicinePrescriptions($locale: String) {
     }
   }
 }
-
-query GetMedicineHistory($locale: String) {
-  healthDirectorateMedicineHistory(locale: $locale) {
-    medicineHistory {
-      id
-      name
-      strength
-      atcCode
-      indication
-      lastDispensationDate
-      dispensationCount
-      dispensations {
-        id
-        name
-        agentName
-        date
-        strength
-        quantity
-        unit
-        type
-        indication
-        dosageInstructions
-        issueDate
-        prescriberName
-        expirationDate
-        isExpired
-      }
-    }
-  }
-}

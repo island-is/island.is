@@ -1,5 +1,5 @@
 import { HealthDirectorateMedicineHistoryDispensation } from '@island.is/api/schema'
-import { Box, Icon, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   EmptyTable,
@@ -9,13 +9,16 @@ import {
   SortableTable,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { messages } from '../../lib/messages'
-import { useGetMedicineHistoryQuery } from '../MedicinePrescriptions/Prescriptions.generated'
+import { useEffect, useState } from 'react'
 import DispensingContainer from '../../components/DispensingContainer/DispensingContainer'
 import DispensingDetailModal from '../../components/DispensingContainer/DispensingDetailModal'
+import { messages } from '../../lib/messages'
+import {
+  useGetMedicineHistoryQuery,
+  useGetMedicineDispensationForAtcLazyQuery,
+} from './MedicineHistory.generated'
 
+const MAX_DISPENSATIONS = 3
 interface ActiveDispensation {
   id: string
   activeDispensation: HealthDirectorateMedicineHistoryDispensation
@@ -24,16 +27,38 @@ interface ActiveDispensation {
 
 const MedicinePrescriptionHistory = () => {
   const { formatMessage, lang } = useLocale()
-  const navigate = useNavigate()
   const [activeDispensation, setActiveDispensation] = useState<
     ActiveDispensation | undefined
   >(undefined)
   const [openModal, setOpenModal] = useState(false)
+  const [atcCode, setAtcCode] = useState<string>()
+
+  const [dispensations, setDispensations] = useState<{
+    id?: string
+    data: Array<HealthDirectorateMedicineHistoryDispensation>
+  }>()
+
   const { data, loading, error } = useGetMedicineHistoryQuery({
     variables: { locale: lang },
   })
 
-  const history = data?.healthDirectorateMedicineHistory.medicineHistory
+  const [
+    getMedicineDispensationsATC,
+    { loading: atcLoading, error: atcError, data: atcData },
+  ] = useGetMedicineDispensationForAtcLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
+
+  const history = data?.healthDirectorateMedicineHistory.medicineHistory ?? []
+
+  useEffect(() => {
+    if (atcData) {
+      setDispensations({
+        id: atcCode,
+        data: atcData.healthDirectorateMedicineDispensationsATC.dispensations,
+      })
+    }
+  }, [atcData])
 
   return (
     <IntroWrapper
@@ -51,7 +76,7 @@ const MedicinePrescriptionHistory = () => {
             medicine: formatMessage(messages.medicineTitle),
             usedFor: formatMessage(messages.usedFor),
             lastDispensed: formatMessage(messages.lastDispensed),
-            processCount: formatMessage(messages.process),
+            numberOfDispensations: formatMessage(messages.process),
           }}
           expandable
           align="left"
@@ -64,50 +89,87 @@ const MedicinePrescriptionHistory = () => {
               medicine: item?.name ?? '',
               usedFor: item?.indication ?? '',
               lastDispensed: formatDate(item?.lastDispensationDate),
+              numberOfDispensations: item.dispensationCount,
               children: (
                 <Box padding={1} background={'blue100'}>
-                  <Stack space={2}>
-                    <DispensingContainer
-                      backgroundColor="blue"
-                      label={formatMessage(messages.dispenseHistory)}
-                      showMedicineName
-                      data={item?.dispensations.map((subItem, subIndex) => {
-                        return {
-                          pharmacy:
-                            subItem.agentName ??
-                            formatMessage(messages.notRegistered),
-                          icon: (
-                            <Icon
-                              icon={subItem?.date ? 'checkmark' : 'remove'}
-                              size="medium"
-                              color={subItem?.date ? 'mint600' : 'dark300'}
-                              type="outline"
-                            />
-                          ),
-                          date: formatDate(subItem.date),
-                          medicine:
-                            subItem?.name ??
-                            item.name ??
-                            formatMessage(messages.notRegistered),
-                          number: (subIndex + 1).toString(),
-                          quantity: subItem.quantity ?? '',
-                          button: {
-                            text: formatMessage(messages.detail),
-                            onClick: () => {
-                              setActiveDispensation({
-                                id:
-                                  subItem.id ||
-                                  subItem.name + '-' + subIndex.toString(),
-                                dispensationNumber: subIndex + 1,
-                                activeDispensation: subItem,
-                              })
-                              setOpenModal(true)
-                            },
+                  <DispensingContainer
+                    backgroundColor="blue"
+                    label={formatMessage(messages.dispenseHistory)}
+                    showMedicineName
+                    data={(dispensations && dispensations.id === item.atcCode
+                      ? dispensations.data
+                      : item.dispensations
+                    )?.map((subItem, subIndex) => {
+                      return {
+                        pharmacy:
+                          subItem.agentName ??
+                          formatMessage(messages.notRegistered),
+                        icon: (
+                          <Icon
+                            icon={subItem?.date ? 'checkmark' : 'remove'}
+                            size="medium"
+                            color={subItem?.date ? 'mint600' : 'dark300'}
+                            type="outline"
+                          />
+                        ),
+                        date: formatDate(subItem.date),
+                        medicine:
+                          subItem?.name ??
+                          item.name ??
+                          formatMessage(messages.notRegistered),
+                        number: (subIndex + 1).toString(),
+                        quantity: subItem.quantity ?? '',
+                        button: {
+                          text: formatMessage(messages.detail),
+                          onClick: () => {
+                            setActiveDispensation({
+                              id:
+                                subItem.id ||
+                                subItem.name + '-' + subIndex.toString(),
+                              dispensationNumber: subIndex + 1,
+                              activeDispensation: subItem,
+                            })
+                            setOpenModal(true)
                           },
-                        }
-                      })}
-                    />
-                  </Stack>
+                        },
+                      }
+                    })}
+                  />
+                  {(dispensations?.data.length ??
+                    MAX_DISPENSATIONS < MAX_DISPENSATIONS + 1) &&
+                    item.atcCode &&
+                    (item.dispensationCount || 0) > MAX_DISPENSATIONS && (
+                      <Box
+                        display="flex"
+                        justifyContent={[
+                          'flexStart',
+                          'flexStart',
+                          'flexStart',
+                          'center',
+                        ]}
+                        marginBottom={[0, 0, 0, 1, 2]}
+                        marginTop={[2, 2, 2, 0, 0]}
+                      >
+                        <Button
+                          variant="text"
+                          size="small"
+                          loading={atcLoading}
+                          onClick={() => {
+                            if (item.atcCode) {
+                              setAtcCode(item.atcCode)
+                              getMedicineDispensationsATC({
+                                variables: {
+                                  input: { atcCode: item.atcCode },
+                                  locale: lang,
+                                },
+                              })
+                            }
+                          }}
+                        >
+                          {formatMessage(messages.fetchMore)}
+                        </Button>
+                      </Box>
+                    )}
                 </Box>
               ),
             })) ?? []

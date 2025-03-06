@@ -1241,6 +1241,10 @@ export const messages = defineMessages({
     id: 'sp.health:process',
     defaultMessage: 'Afgreiðslur',
   },
+  fetchMore: {
+    id: 'sp.health:fetch-more',
+    defaultMessage: 'Sækja meira',
+  },
   lastDispensed: {
     id: 'sp.health:last-dispensed',
     defaultMessage: 'Síðast afgreitt',

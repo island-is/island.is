@@ -100,6 +100,14 @@ const MedicinePrescriptions = () => {
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
     >
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {!error && filteredData.length === 0 && (
+        <EmptyTable
+          loading={loading}
+          message={formatMessage(messages.noDataFound, { arg: 'lyf' })}
+        />
+      )}
       {!loading && !error && filteredData?.length > 0 && (
         <Box>
           <Box display="flex" flexDirection="row" flexWrap={'wrap'}>
@@ -245,14 +253,7 @@ const MedicinePrescriptions = () => {
           isVisible={openModal}
         />
       )}
-      {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {!error && filteredData.length === 0 && (
-        <EmptyTable
-          loading={loading}
-          message={formatMessage(messages.noDataFound, { arg: 'lyf' })}
-        />
-      )}
       {totalPages > 0 ? (
         <Box paddingTop={8}>
           <Pagination
