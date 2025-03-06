@@ -2,7 +2,7 @@ import { Args, Resolver, Mutation, Query } from '@nestjs/graphql'
 import { PresignedPost } from './presignedPost.model'
 import { FileStorageService } from '@island.is/file-storage'
 import { PresignedPost as S3PresignedPost } from '@aws-sdk/s3-presigned-post'
-import { MalwareScanStatus } from '@island.is/application/types'
+import { MalwareScanStatus } from './malwareScanStatus.model'
 
 const MALWARE_FETCH_ATTEMPTS = 4
 const MALWARE_MIN_MS_BETWEEN_FETCHES = 1000
