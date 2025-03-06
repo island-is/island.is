@@ -66,7 +66,7 @@ export const serviceSetup = (services: {
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
-  formSystemService: ServiceBuilder<'api-domains-form-system'>
+  formSystemService: ServiceBuilder<'services-form-system-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')

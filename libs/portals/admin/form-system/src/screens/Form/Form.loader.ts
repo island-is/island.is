@@ -25,9 +25,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
       if (!loading && !data) {
         throw new Error('No form data found')
       }
-      const form = removeTypename(data.formSystemForm) as FormLoaderResponse
-      console.log('form', form)
-      return form
+      return removeTypename(data.formSystemForm) as FormLoaderResponse
     } catch (error) {
       throw new Error(`Failed to load form: ${error.message}`)
     }

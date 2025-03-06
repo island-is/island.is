@@ -18,9 +18,9 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
     if (!data) {
       throw new Error('No forms were found')
     }
-    const forms = removeTypename(data.formSystemForms?.forms) as FormSystemForm[]
     return {
-      forms
+      forms: removeTypename(data.formSystemForms?.forms) as FormSystemForm[]
     }
+
   }
 }
