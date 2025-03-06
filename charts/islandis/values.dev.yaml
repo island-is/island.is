@@ -3097,7 +3097,7 @@ services-university-gateway-worker:
 skilavottord-web:
   enabled: true
   env:
-    API_URL: 'http://api'
+    API_URL: 'http://skilavottord-ws'
     ENVIRONMENT: 'dev'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'

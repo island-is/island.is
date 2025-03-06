@@ -25,7 +25,7 @@ export const serviceSetup = (services: {
     })
     .env({
       API_URL: {
-        dev: "http://api",
+        dev: "http://skilavottord-ws",
         staging: ref((h) => `http://${h.svc(services.api)}`),
         prod: ref((h) => `http://${h.svc(services.api)}`),
       },
