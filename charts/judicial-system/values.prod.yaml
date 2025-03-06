@@ -107,6 +107,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
     CONTENTFUL_ENVIRONMENT: 'master'

@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -30,7 +30,7 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UpdateFilesResponse } from './models/updateFiles.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class FileResolver {
   constructor(

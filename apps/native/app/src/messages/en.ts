@@ -237,6 +237,22 @@ export const en: TranslatedMessages = {
   'inbox.filterDateConfirm': 'Confirm',
   'inbox.filterDateCancel': 'Cancel',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Select documents',
+  'inbox.bulkSelectAllButton': 'Select all',
+  'inbox.bulkDeselectAllButton': 'Deselect all',
+  'inbox.bulkSelectCancelButton': 'Cancel',
+  'inbox.bulkSelectActionStar': 'Star',
+  'inbox.bulkSelectActionArchive': 'Archive',
+  'inbox.bulkSelectActionRead': 'Mark as read',
+  'inbox.bulkSelect.starSuccess': 'Selected documents starred',
+  'inbox.bulkSelect.archiveSuccess': 'Selected documents archived',
+  'inbox.bulkSelect.markAsReadSuccess': 'Selected documents marked as read',
+  'inbox.bulkSelect.starError': 'Could not star documents',
+  'inbox.bulkSelect.archiveError': 'Could not archive documents',
+  'inbox.bulkSelect.markAsReadError': 'Could not mark documents as read',
+  'inbox.bulkSelect.pleaseTryAgain': 'Please try again later',
+
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
@@ -519,6 +535,8 @@ export const en: TranslatedMessages = {
     completed {Completed}
     rejected {Rejected}
     draft {Application in progress}
+    approved {Approved}
+    notstarted {Not started}
     other {Unknown status}
   }`,
   'applicationStatusCard.draftProgress':

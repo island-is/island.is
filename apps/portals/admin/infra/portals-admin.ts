@@ -24,6 +24,7 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
       SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
       SI_PUBLIC_FORM_SYSTEM_MIDEIND_KEY: '/k8s/portals-admin/FORM_SYSTEM_MIDEIND_KEY',
+      SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {

@@ -261,7 +261,7 @@ export class EventService {
     if (info) {
       let property: keyof typeof info
       for (property in info) {
-        infoText = `${infoText}${property}: ${info[property]}\n`
+        infoText = `${infoText}${property}: ${info[property] ?? 'Ekki skráð'}\n`
       }
     }
 

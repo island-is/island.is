@@ -181,6 +181,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         pageSize: 15,
       },
     },
+    fetchPolicy: 'cache-first',
     skip: !vehiclesWidgetEnabled,
   })
 

@@ -30,7 +30,6 @@ export const EmployeeAccordionItem: FC<
 
   return (
     <>
-      <Text>{formatMessage(overview.labels.employeeDescription)}</Text>
       <Box
         marginTop={1}
         width="full"

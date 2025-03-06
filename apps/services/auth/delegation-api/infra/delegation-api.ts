@@ -14,7 +14,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -108,7 +108,7 @@ export const serviceSetup = (services: {
     .ingress({
       internal: {
         host: {
-          dev: 'auth-delegation-api',
+          dev: 'auth-delegation-api.internal.identity-server.dev01.devland.is',
           staging: 'auth-delegation-api',
           prod: 'auth-delegation-api.internal.innskra.island.is',
         },

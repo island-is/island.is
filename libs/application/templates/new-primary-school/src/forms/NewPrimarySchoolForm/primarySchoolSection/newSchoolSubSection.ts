@@ -12,7 +12,10 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/newPrimarySchoolUtils'
-import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
+import {
+  FriggSchoolsByMunicipalityQuery,
+  OrganizationModelTypeEnum,
+} from '../../../types/schema'
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
@@ -36,29 +39,7 @@ export const newSchoolSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.municipality,
           placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
-          dataTestId: 'new-school-municipality',
-          loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
-                query: friggSchoolsByMunicipalityQuery,
-              })
-
-            return (
-              data?.friggSchoolsByMunicipality?.map(({ name }) => ({
-                value: name,
-                label: name,
-              })) ?? []
-            )
-          },
-        }),
-        buildAsyncSelectField({
-          id: 'newSchool.school',
-          title: newPrimarySchoolMessages.shared.school,
-          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
-          loadingError: coreErrorMessages.failedDataProvider,
-          dataTestId: 'new-school-school',
-          updateOnSelect: 'newSchool.municipality',
-          loadOptions: async ({ application, apolloClient, selectedValue }) => {
+          loadOptions: async ({ application, apolloClient }) => {
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
@@ -70,9 +51,49 @@ export const newSchoolSubSection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValue)
-                ?.children?.filter((school) =>
-                  school.gradeLevels?.includes(childGradeLevel),
+                ?.filter(
+                  ({ type, children }) =>
+                    type === OrganizationModelTypeEnum.Municipality &&
+                    children &&
+                    children.length > 0 &&
+                    children.filter(({ gradeLevels }) =>
+                      gradeLevels?.includes(childGradeLevel),
+                    )?.length > 0,
+                )
+                ?.map(({ name }) => ({
+                  value: name,
+                  label: name,
+                })) ?? []
+            )
+          },
+        }),
+        buildAsyncSelectField({
+          id: 'newSchool.school',
+          title: newPrimarySchoolMessages.shared.school,
+          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
+          loadingError: coreErrorMessages.failedDataProvider,
+          updateOnSelect: ['newSchool.municipality'],
+          loadOptions: async ({
+            application,
+            apolloClient,
+            selectedValues,
+          }) => {
+            const { childGradeLevel } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            const { data } =
+              await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+                query: friggSchoolsByMunicipalityQuery,
+              })
+
+            return (
+              data?.friggSchoolsByMunicipality
+                ?.find(({ name }) => name === selectedValues?.[0])
+                ?.children?.filter(
+                  ({ type, gradeLevels }) =>
+                    type === OrganizationModelTypeEnum.School &&
+                    gradeLevels?.includes(childGradeLevel),
                 )
                 ?.map((school) => ({
                   value: school.id,

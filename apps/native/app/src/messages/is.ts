@@ -237,6 +237,22 @@ export const is = {
   'inbox.filterDateConfirm': 'Staðfesta',
   'inbox.filterDateCancel': 'Hætta við',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Velja skjöl',
+  'inbox.bulkSelectAllButton': 'Velja allt',
+  'inbox.bulkDeselectAllButton': 'Afvelja allt',
+  'inbox.bulkSelectCancelButton': 'Hætta við',
+  'inbox.bulkSelectActionStar': 'Stjörnumerkja',
+  'inbox.bulkSelectActionArchive': 'Geymsla',
+  'inbox.bulkSelectActionRead': 'Merkja lesið',
+  'inbox.bulkSelect.starSuccess': 'Valin skjöl stjörnumerkt',
+  'inbox.bulkSelect.archiveSuccess': 'Valin skjöl færð í geymslu',
+  'inbox.bulkSelect.markAsReadSuccess': 'Valin skjöl merkt sem lesin',
+  'inbox.bulkSelect.starError': 'Ekki tókst að stjörnumerkja skjöl',
+  'inbox.bulkSelect.archiveError': 'Ekki tókst að færa skjöl í geymslu',
+  'inbox.bulkSelect.markAsReadError': 'Ekki tókst að merkja skjöl sem lesin',
+  'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
@@ -519,6 +535,8 @@ export const is = {
     completed {Afgreidd}
     rejected {Hafnað}
     draft {Í vinnslu hjá þér}
+    approved {Samþykkt}
+    notstarted {Ekki hafin}
     other {Staða óþekkt}
   }`,
   'applicationStatusCard.draftProgress':
