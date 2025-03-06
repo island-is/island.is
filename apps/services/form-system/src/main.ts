@@ -9,7 +9,7 @@ import { bootstrap } from '@island.is/infra-nest-server'
 
 bootstrap({
   appModule: AppModule,
-  name: 'services-form-system',
+  name: 'services-form-system-api',
   openApi,
   swaggerPath: 'api/swagger',
   port: 3434,

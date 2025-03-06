@@ -43,7 +43,7 @@ Go to localhost:4200.
 To sign in you'll need to configure these environment variables:
 
 - `NEXTAUTH_URL=http://localhost:4200`
-- `IDENTITY_SERVER_DOMAIN=identity-server.dev01.devland.is`
+- `IDENTITY_SERVER_DOMAIN=innskra.dev01.devland.is`
 - `IDENTITY_SERVER_SECRET=` - get a client secret for the `@samband.is/financial-aid` client.
 
 You can sign in to Veita using Gervimaður Færeyjar (0102399).

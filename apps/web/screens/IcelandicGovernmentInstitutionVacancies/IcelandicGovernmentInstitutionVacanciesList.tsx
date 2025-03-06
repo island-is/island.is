@@ -39,7 +39,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
+import { shortenText } from '@island.is/web/utils/shortenText'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
@@ -52,29 +52,6 @@ type Vacancy =
 
 const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
-
-export const shortenText = (text: string, maxLength: number) => {
-  if (!text) return text
-
-  if (text.length <= maxLength) {
-    return text
-  }
-
-  const shortenedText = text.slice(0, maxLength)
-
-  if (text[maxLength] === ' ') {
-    return `${shortenedText} ...`
-  }
-
-  // Search for the nearest space before the maxLength
-  const spaceIndex = shortenedText.lastIndexOf(' ')
-
-  if (spaceIndex < 0) {
-    return `${shortenedText} ...`
-  }
-
-  return `${text.slice(0, spaceIndex)} ...`
-}
 
 const mapVacanciesField = (
   vacancies: Vacancy[],

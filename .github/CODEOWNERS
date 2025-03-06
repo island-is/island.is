@@ -130,7 +130,7 @@ codemagic.yaml                                                                  
 /apps/portals/my-pages*/                                                                                  @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                 @island-is/hugsmidjan
 /apps/services/user-profile/                                                                              @island-is/hugsmidjan @island-is/juni @island-is/aranja
-/apps/web/components/Grant/                                                                               @island-is/hugsmidjan
+/apps/web/components/Grants/                                                                              @island-is/hugsmidjan
 /apps/web/components/GrantCardsList/                                                                      @island-is/hugsmidjan
 /apps/web/screens/Grants/                                                                                 @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                            @island-is/hugsmidjan
@@ -178,6 +178,7 @@ codemagic.yaml                                                                  
 /libs/clients/intellectual-properties/                                                                    @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                   @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                       @island-is/hugsmidjan
+/libs/clients/national-registry/v3-applications/                                                          @island-is/juni
 /libs/clients/district-commissioners-licenses/                                                            @island-is/hugsmidjan
 /libs/clients/regulations/                                                                                @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                   @island-is/hugsmidjan @island-is/stefna
@@ -396,6 +397,7 @@ codemagic.yaml                                                                  
 /.githooks/                                                                                               @island-is/devops
 /apps/reference-backend/                                                                                  @island-is/devops
 /apps/github-actions-cache/                                                                               @island-is/devops
+/apps/unicorn-app/                                                                                        @island-is/devops
 /infra/                                                                                                   @island-is/devops
 **/infra/                                                                                                 @island-is/devops
 /libs/logging/                                                                                            @island-is/devops

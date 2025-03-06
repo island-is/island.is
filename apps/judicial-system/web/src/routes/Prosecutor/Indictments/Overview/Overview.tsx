@@ -316,7 +316,7 @@ const Overview: FC = () => {
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
+              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             userCanSendIndictmentToCourt

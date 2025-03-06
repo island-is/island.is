@@ -18,7 +18,6 @@ export const displayFieldSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'displayFieldDescription',
-          title: '',
           description:
             'Display field is just a read only input field behind the scenes. What is special about the display field is that the value takes a function that listens to changes in answers and updates the value accordingly. This is useful for displaying sums, multiples or anything else that is calculated from other fields.',
         }),

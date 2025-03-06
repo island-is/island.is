@@ -50,7 +50,6 @@ export const sectionInformation = buildSection({
         }),
         buildCustomField({
           id: 'categories',
-          title: '',
           component: 'CurrentLicense',
         }),
       ],

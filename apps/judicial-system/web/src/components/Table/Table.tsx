@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useContext, useMemo } from 'react'
+import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -13,7 +13,6 @@ import {
 import {
   CaseType,
   isCompletedCase,
-  isDistrictCourtUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -25,7 +24,7 @@ import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
-import { UserContext } from '../UserProvider/UserProvider'
+import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
@@ -93,7 +92,6 @@ const Table: FC<TableProps> = (props) => {
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
   const { isTransitioningCase } = useCase()
   const { width } = useViewport()
-  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
   const handleCaseClick = (theCase: CaseListEntry) => {
@@ -181,6 +179,8 @@ const Table: FC<TableProps> = (props) => {
         return courtAbbreviation
           ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
           : entry.courtCaseNumber ?? ''
+      case 'state':
+        return mapCaseStateToTagVariant(formatMessage, entry).text
       default:
         return entry[column]?.toString() ?? ''
     }
@@ -208,7 +208,6 @@ const Table: FC<TableProps> = (props) => {
           <MobileCase
             onClick={() => handleCaseClick(theCase)}
             theCase={theCase}
-            isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {renderProsecutorText(theCase.state, theCase.prosecutor?.name)}

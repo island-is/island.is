@@ -94,7 +94,12 @@ const getRedisClusterOptions = (
 ): RedisOptions | ClusterOptions => {
   const redisOptions: RedisOptions = {}
   if (options.ssl) {
-    redisOptions['tls'] = {}
+    redisOptions['tls'] = {
+      checkServerIdentity: (servername, cert) => {
+        // skip certificate hostname validation
+        return undefined;
+      },
+    }
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,

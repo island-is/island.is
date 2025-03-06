@@ -9,7 +9,7 @@ const devConfig = {
     defaultNamespace: '@island.is/applications',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
     audience: ['@island.is', '@admin.island.is'],
     allowClientNationalId: true,
   },

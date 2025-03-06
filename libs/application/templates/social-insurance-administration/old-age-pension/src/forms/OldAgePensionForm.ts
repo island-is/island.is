@@ -12,6 +12,8 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
@@ -36,8 +38,6 @@ import {
   Form,
   FormModes,
   FormValue,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -109,7 +109,6 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -345,7 +344,6 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'onePaymentPerYear.question',
-                  title: '',
                   options: getYesNoOptions(),
                   defaultValue: NO,
                   width: 'half',
@@ -381,7 +379,6 @@ export const OldAgePensionForm: Form = buildForm({
                 buildCustomField({
                   id: 'residenceHistory.table',
                   doesNotRequireAnswer: true,
-                  title: '',
                   component: 'ResidenceHistory',
                   condition: (_, externalData) => {
                     const { residenceHistory } =
@@ -507,7 +504,6 @@ export const OldAgePensionForm: Form = buildForm({
                     }),
                     buildRadioField({
                       id: 'ratioType',
-                      title: '',
                       width: 'half',
                       space: 3,
                       options: [
@@ -539,7 +535,6 @@ export const OldAgePensionForm: Form = buildForm({
                     }),
                     buildCustomField({
                       id: 'ratioMonthly',
-                      title: '',
                       component: 'EmployersRatioMonthly',
                       condition: (answers) => {
                         const { rawEmployers } = getApplicationAnswers(answers)
@@ -702,7 +697,6 @@ export const OldAgePensionForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(
@@ -762,7 +756,6 @@ export const OldAgePensionForm: Form = buildForm({
             buildCustomField({
               component: 'Conclusion',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
           ],

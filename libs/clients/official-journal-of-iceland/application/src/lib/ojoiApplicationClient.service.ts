@@ -4,7 +4,6 @@ import {
   GetCommentsRequest,
   PostCommentRequest,
   PostApplicationRequest,
-  GetCaseCommentsResponse,
   GetPriceRequest,
   CasePriceResponse,
   GetPdfUrlResponse,
@@ -20,9 +19,9 @@ import {
   GetApplicationCaseResponse,
   GetPdfRespone,
   GetSignaturesForInvolvedPartyRequest,
-  Signature,
   GetApplicationAdvertTemplateRequest,
-  AdvertTemplateDetailsSlugEnum,
+  GetComments,
+  GetSignature,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -48,7 +47,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getComments(
     params: GetCommentsRequest,
     auth: Auth,
-  ): Promise<GetCaseCommentsResponse> {
+  ): Promise<GetComments> {
     try {
       return await this.ojoiApplicationApiWithAuth(auth).getComments(params)
     } catch (error) {
@@ -244,7 +243,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getSignaturesForInvolvedParty(
     params: GetSignaturesForInvolvedPartyRequest,
     auth: Auth,
-  ): Promise<Signature> {
+  ): Promise<GetSignature> {
     try {
       return await this.ojoiApplicationApiWithAuth(
         auth,

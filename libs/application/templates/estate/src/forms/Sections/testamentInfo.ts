@@ -59,7 +59,6 @@ export const testamentInfo = buildSection({
         }),
         buildDescriptionField({
           id: 'spaceTestamentInfo',
-          title: '',
           marginBottom: 2,
         }),
         buildTextField({

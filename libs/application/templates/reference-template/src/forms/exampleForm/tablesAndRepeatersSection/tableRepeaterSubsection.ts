@@ -4,6 +4,8 @@ import {
   buildSubSection,
   buildTableRepeaterField,
 } from '@island.is/application/core'
+import { FriggSchoolsByMunicipality } from '../../../utils/types'
+import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
 
 export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
@@ -15,16 +17,14 @@ export const tableRepeaterSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'tableRepeaterDescription',
-          title: '',
           description:
             'In the table repeater, you create a small form that the user fills out and the answers are then sorted into a table. Only one instance of this form is visible at a time. In the table, you can delete and edit rows, and you can disable this functionality. You can also insert data into the table from answers or external data, similar to staticTable.',
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'tableRepeaterDescription2',
-          title: '',
           description:
-            'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone. The nationalIdWithName field can, just like the regular one, be set to enable company search.',
+            'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone as well as async select fields. The nationalIdWithName field can, just like the regular one, be set to enable company search. The async select fields can be used to load data from a remote source and they can also be set to update based on selections in other fields in the current form instance.',
         }),
         buildTableRepeaterField({
           id: 'tableRepeater',
@@ -111,6 +111,41 @@ export const tableRepeaterSubsection = buildSubSection({
               component: 'phone',
               label: 'Phone',
               width: 'half',
+            },
+            selectAsyncPrimary: {
+              component: 'selectAsync',
+              label: 'Primary Select Async',
+              loadOptions: async ({ apolloClient, selectedValue }) => {
+                const { data } =
+                  await apolloClient.query<FriggSchoolsByMunicipality>({
+                    query: friggSchoolsByMunicipalityQuery,
+                  })
+
+                return (
+                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                    value: `${municipality.name}`,
+                    label: `${municipality.name}`,
+                  })) ?? []
+                )
+              },
+            },
+            selectAsyncReliant: {
+              component: 'selectAsync',
+              label: 'Reliant Select Async',
+              updateOnSelect: 'selectAsyncPrimary',
+              loadOptions: async ({ apolloClient, selectedValue }) => {
+                const { data } =
+                  await apolloClient.query<FriggSchoolsByMunicipality>({
+                    query: friggSchoolsByMunicipalityQuery,
+                  })
+
+                return (
+                  data?.friggSchoolsByMunicipality?.map((municipality) => ({
+                    value: `${municipality.name} ${selectedValue || ''}`,
+                    label: `${municipality.name} ${selectedValue || ''}`,
+                  })) ?? []
+                )
+              },
             },
           },
           table: {

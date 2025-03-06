@@ -23,7 +23,7 @@ env:
   DB_NAME: 'services_documents'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'services_documents'
-  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''

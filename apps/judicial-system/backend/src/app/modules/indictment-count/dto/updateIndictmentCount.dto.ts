@@ -34,7 +34,7 @@ export class UpdateIndictmentCountDto {
   @IsArray()
   @IsEnum(IndictmentCountOffense, { each: true })
   @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  readonly offenses?: IndictmentCountOffense[]
+  readonly deprecatedOffenses?: IndictmentCountOffense[]
 
   @IsOptional()
   @IsObject()

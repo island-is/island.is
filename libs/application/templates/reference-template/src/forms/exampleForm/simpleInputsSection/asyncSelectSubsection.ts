@@ -117,8 +117,8 @@ export const asyncSelectSubsection = buildSubSection({
 
             return (
               data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                value: municipality.name + ' ' + selectedValue,
-                label: municipality.name + ' ' + selectedValue,
+                value: `${municipality.name} ${selectedValue || ''}`,
+                label: `${municipality.name} ${selectedValue || ''}`,
               })) ?? []
             )
           },

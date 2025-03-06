@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   Application,
   ApplicationLifecycle,
@@ -42,7 +42,6 @@ import {
   AttachmentTypes,
   FileType,
   MANUAL,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -56,7 +55,6 @@ import {
   States,
   TransferRightsOption,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
@@ -78,7 +76,6 @@ import {
   PregnancyStatusAndRightsResults,
   SelectOption,
   VMSTPeriod,
-  YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 import { ApplicationRights } from '@island.is/clients/vmst'
@@ -1267,7 +1264,7 @@ export const getOtherParentName = (
   if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
     const spouse = getSpouse(application)
 
-    if (!spouse || !spouse.name) {
+    if (!spouse || !spouse.name || otherParent === MANUAL) {
       return otherParentName
     }
 
@@ -1621,33 +1618,30 @@ export const synchronizeVMSTPeriods = (
       firstPeriodStart = 'specificDate'
     }
 
-    if (!period.rightsCodePeriod.includes('DVAL')) {
-      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-      const obj = {
-        startDate: period.from,
-        endDate: period.to,
-        ratio: period.ratio.split(',')[0],
-        rawIndex: index,
-        firstPeriodStart: firstPeriodStart,
-        useLength: NO as YesOrNo,
-        rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days,
-        paid: period.paid,
-        approved: period.approved,
-      }
-
-      if (period.paid) {
-        newPeriods.push(obj)
-      } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDate() >= 20) {
-          newPeriods.push(obj)
-        }
-      } else if (new Date(period.from).getTime() <= today.getTime()) {
-        newPeriods.push(obj)
-      }
-      temptVMSTPeriods.push(obj)
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: NO as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+      daysToUse: period.days,
+      paid: period.paid,
+      approved: period.approved,
     }
+
+    if (period.paid) {
+      newPeriods.push(obj)
+    } else if (isThisMonth(new Date(period.from))) {
+      if (today.getDate() >= 20) {
+        newPeriods.push(obj)
+      }
+    } else if (new Date(period.from).getTime() <= today.getTime()) {
+      newPeriods.push(obj)
+    }
+    temptVMSTPeriods.push(obj)
   })
 
   let index = newPeriods.length

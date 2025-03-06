@@ -27,6 +27,7 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isClearable?: boolean
+  isLoading?: boolean
   isMulti?: IsMulti
   required?: boolean
   rules?: RegisterOptions
@@ -50,6 +51,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   isSearchable,
   isMulti,
   isClearable = false,
+  isLoading,
   dataTestId,
   required = false,
   rules,
@@ -111,6 +113,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
           filterConfig={filterConfig}
           isMulti={isMulti}
           isClearable={isClearable}
+          isLoading={isLoading}
           size={size}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict

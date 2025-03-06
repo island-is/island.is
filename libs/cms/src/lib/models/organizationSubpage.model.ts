@@ -59,6 +59,9 @@ export class OrganizationSubpage {
 
   @CacheField(() => EmbeddedVideo, { nullable: true })
   signLanguageVideo?: EmbeddedVideo | null
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  bottomSlices?: Array<typeof SliceUnion | null>
 }
 
 export const mapOrganizationSubpage = ({
@@ -88,4 +91,7 @@ export const mapOrganizationSubpage = ({
   signLanguageVideo: fields.signLanguageVideo
     ? mapEmbeddedVideo(fields.signLanguageVideo)
     : null,
+  bottomSlices: (fields.bottomSlices ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
 })

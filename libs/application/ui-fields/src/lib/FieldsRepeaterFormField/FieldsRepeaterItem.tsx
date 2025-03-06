@@ -3,7 +3,15 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, RepeaterItem } from '@island.is/application/types'
+import {
+  FieldComponents,
+  Application,
+  AsyncSelectContext,
+  RepeaterItem,
+  Option,
+  FieldTypes,
+  AsyncSelectField,
+} from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useRef } from 'react'
@@ -18,6 +26,7 @@ import {
   PhoneInputController,
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
+import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -26,6 +35,9 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
+  loadOptions?: (c: AsyncSelectContext) => Promise<Option[]>
+  clearOnChange?: boolean
+  updateOnSelect?: string
 }
 
 const componentMapper = {
@@ -80,7 +92,14 @@ export const Item = ({
   } = item
 
   const span = getSpan(component, width)
-  const Component = componentMapper[component]
+  let Component: React.ComponentType<any>
+
+  if (component === 'selectAsync') {
+    Component = AsyncSelectFormField
+  } else {
+    Component = componentMapper[component]
+  }
+
   const id = `${dataId}[${index}].${itemId}`
   const activeValues = index >= 0 && values ? values[index] : undefined
 
@@ -202,6 +221,23 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
+  let selectAsyncProps: AsyncSelectField | undefined
+  if (component === 'selectAsync') {
+    selectAsyncProps = {
+      id: id,
+      title: label,
+      type: FieldTypes.ASYNC_SELECT,
+      component: FieldComponents.ASYNC_SELECT,
+      children: undefined,
+      backgroundColor: backgroundColor,
+      isSearchable: item.isSearchable,
+      isMulti: item.isMulti,
+      loadOptions: item.loadOptions,
+      clearOnChange: item.clearOnChange,
+      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
+    }
+  }
+
   if (condition && !condition(application, activeValues)) {
     return null
   }
@@ -213,28 +249,41 @@ export const Item = ({
           {formatText(label, application, formatMessage)}
         </Text>
       )}
-      <Component
-        id={id}
-        name={id}
-        label={formatText(label, application, formatMessage)}
-        options={translatedOptions}
-        placeholder={formatText(placeholder, application, formatMessage)}
-        split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
-        error={getFieldError(itemId)}
-        control={control}
-        readOnly={Readonly}
-        disabled={Disabled}
-        backgroundColor={backgroundColor}
-        onChange={() => {
-          if (error) {
-            clearErrors(id)
-          }
-        }}
-        application={application}
-        defaultValue={DefaultValue}
-        large={true}
-        {...props}
-      />
+      {component === 'selectAsync' && selectAsyncProps && (
+        <AsyncSelectFormField
+          application={application}
+          error={getFieldError(itemId)}
+          field={{
+            ...selectAsyncProps,
+          }}
+        />
+      )}
+      {component !== 'selectAsync' && (
+        <Component
+          id={id}
+          name={id}
+          label={formatMessage(label, {
+            index: index + 1,
+          })}
+          options={translatedOptions}
+          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+          error={getFieldError(itemId)}
+          control={control}
+          readOnly={Readonly}
+          disabled={Disabled}
+          backgroundColor={backgroundColor}
+          onChange={() => {
+            if (error) {
+              clearErrors(id)
+            }
+          }}
+          application={application}
+          defaultValue={DefaultValue}
+          large={true}
+          placeholder={formatText(placeholder, application, formatMessage)}
+          {...props}
+        />
+      )}
     </GridColumn>
   )
 }

@@ -12,22 +12,15 @@ import {
   mapGenericOverviewPage,
 } from './models/genericOverviewPage.model'
 import { News, mapNews } from './models/news.model'
-import {
-  AdgerdirFrontpage,
-  mapAdgerdirFrontpage,
-} from './models/adgerdirFrontpage.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
+
 import { GetContentSlugInput } from './dto/getContentSlug.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { AnchorPage, mapAnchorPage } from './models/anchorPage.model'
-import { AdgerdirTags } from './models/adgerdirTags.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
-import { mapAdgerdirTag } from './models/adgerdirTag.model'
 import { mapOrganization } from './models/organization.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { mapOrganizationTag } from './models/organizationTag.model'
@@ -146,39 +139,6 @@ const ArticleFields = (
 @Injectable()
 export class CmsContentfulService {
   constructor(private contentfulRepository: ContentfulRepository) {}
-
-  async getAdgerdirFrontpage(lang = 'is-IS'): Promise<AdgerdirFrontpage> {
-    const params = {
-      ['content_type']: 'vidspyrna-frontpage',
-      include: 10,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaFrontpageFields>(lang, params)
-      .catch(errorHandler('getVidspyrnaFrontpage'))
-
-    return (
-      (result.items as types.IVidspyrnaFrontpage[]).map(
-        mapAdgerdirFrontpage,
-      )[0] ?? null
-    )
-  }
-
-  async getAdgerdirPages(lang = 'is-IS'): Promise<AdgerdirPages> {
-    const params = {
-      ['content_type']: 'vidspyrnaPage',
-      include: 10,
-      limit: 100,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
-      .catch(errorHandler('getAdgerdirPages'))
-
-    return {
-      items: (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage),
-    }
-  }
 
   async getOrganizations(input: GetOrganizationsInput): Promise<Organizations> {
     const organizationTitles = input?.organizationTitles && {
@@ -300,22 +260,6 @@ export class CmsContentfulService {
     })
   }
 
-  async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
-    const params = {
-      ['content_type']: 'vidspyrnaTag',
-      include: 10,
-      limit: 100,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaTagFields>(lang, params)
-      .catch(errorHandler('getAdgerdirTags'))
-
-    return {
-      items: (result.items as types.IVidspyrnaTag[]).map(mapAdgerdirTag),
-    }
-  }
-
   async getOrganizationTags(lang = 'is-IS'): Promise<OrganizationTags> {
     const params = {
       ['content_type']: 'organizationTag',
@@ -330,22 +274,6 @@ export class CmsContentfulService {
     return {
       items: (result.items as types.IOrganizationTag[]).map(mapOrganizationTag),
     }
-  }
-
-  async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
-    const params = {
-      ['content_type']: 'vidspyrnaPage',
-      include: 10,
-      'fields.slug': slug,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
-      .catch(errorHandler('getAdgerdirPage'))
-
-    return (
-      (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage)[0] ?? null
-    )
   }
 
   private async getOrganizationBy(

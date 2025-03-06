@@ -3,8 +3,8 @@ import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { info, sharedFields } from '../../lib/messages'
 import { OnBehalf } from '../../lib/dataSchema'
-import { NO, YES } from '../../shared'
 import { MessageDescriptor } from '@formatjs/intl'
+import { NO, YES } from '@island.is/application/core'
 
 export const onBehalfValueLabelMapper = {
   [OnBehalf.MYSELF]: info.labels.myself,

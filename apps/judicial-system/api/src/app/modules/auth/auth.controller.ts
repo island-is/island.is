@@ -32,6 +32,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
 import { AuthUser, Cookie } from './auth.types'
@@ -78,6 +79,7 @@ export class AuthController {
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
+    private readonly backendService: BackendService,
     private readonly sharedAuthService: SharedAuthService,
 
     @Inject(LOGGER_PROVIDER)
@@ -234,15 +236,25 @@ export class AuthController {
     authUser: AuthUser,
     csrfToken: string | undefined,
     requestedRedirectRoute: string,
+    loginBypass: boolean,
   ) {
-    const user = await this.authService.findUser(authUser.nationalId)
+    let authorization:
+      | {
+          userId: string
+          jwtToken: string
+          redirectRoute: string
+        }
+      | undefined
 
-    if (user) {
-      return {
+    const users = await this.authService.findUsersByNationalId(
+      authUser.nationalId,
+    )
+    let user = users && users.length > 0 ? users[0] : undefined
+
+    if (users && user) {
+      authorization = {
         userId: user.id,
-        userNationalId: user.nationalId,
-        userRole: user.role,
-        jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
+        jwtToken: this.sharedAuthService.signJwt(0, users, csrfToken),
         redirectRoute:
           requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
             ? requestedRedirectRoute
@@ -256,18 +268,37 @@ export class AuthController {
             ? PRISON_CASES_ROUTE
             : CASES_ROUTE,
       }
-    }
+    } else {
+      user = await this.authService.findDefender(authUser.nationalId)
 
-    const defender = await this.authService.findDefender(authUser.nationalId)
-
-    if (defender) {
-      return {
-        userId: defender.id,
-        userNationalId: defender.nationalId,
-        jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
-        redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
+      if (user) {
+        authorization = {
+          userId: user.id,
+          jwtToken: this.sharedAuthService.signJwt(0, [user], csrfToken),
+          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
+        }
       }
     }
+
+    if (authorization) {
+      this.backendService.createEventLog({
+        eventType: loginBypass ? EventType.LOGIN_BYPASS : EventType.LOGIN,
+        nationalId: user?.nationalId,
+        userRole: user?.role,
+        userName: user?.name,
+        userTitle: user?.title,
+        institutionName: user?.institution?.name,
+      })
+
+      return authorization
+    }
+
+    this.backendService.createEventLog({
+      eventType: loginBypass
+        ? EventType.LOGIN_BYPASS_UNAUTHORIZED
+        : EventType.LOGIN_UNAUTHORIZED,
+      nationalId: authUser.nationalId,
+    })
 
     return undefined
   }
@@ -283,29 +314,16 @@ export class AuthController {
       authUser,
       csrfToken,
       requestedRedirectRoute,
+      !idToken,
     )
 
     if (!authorization) {
       this.logger.info('Blocking login attempt from an unauthorized user')
 
-      this.authService.logLogin(
-        idToken
-          ? EventType.LOGIN_UNAUTHORIZED
-          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
-        authUser.nationalId,
-      )
-
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
-    const { userId, userNationalId, userRole, jwtToken, redirectRoute } =
-      authorization
-
-    this.authService.logLogin(
-      idToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
-      userNationalId,
-      userRole,
-    )
+    const { userId, jwtToken, redirectRoute } = authorization
 
     this.auditTrailService.audit(
       userId,

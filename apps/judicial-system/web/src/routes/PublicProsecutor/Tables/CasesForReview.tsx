@@ -103,12 +103,10 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 {
                   cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
                     />
                   ),
                 },

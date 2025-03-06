@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 
 import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
 import {
+  getThemeConfig,
   OpenApiView,
   OrganizationWrapper,
   ServiceInformation,
@@ -107,38 +108,36 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   )
 
   return (
-    <>
-      <OrganizationWrapper
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        pageTitle={service.title ?? ''}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage={organizationPage}
-        showReadSpeaker={false}
-        breadcrumbItems={[
-          {
-            title: 'Ísland.is',
-            href: linkResolver('homepage').href,
-          },
-          {
-            title: organizationPage?.title ?? '',
-            href: linkResolver('organizationpage', [
-              organizationPage?.slug ?? '',
-            ]).href,
-          },
-          {
-            title: n('linkServicesText'),
-            href: linkResolver('apicataloguepage').href,
-          },
-        ]}
-        navigationData={{
-          title: n('navigationTitle', 'Efnisyfirlit'),
-          items: navList,
-        }}
-        showSecondaryMenu={false}
-      >
-        {!service ? (
+    <OrganizationWrapper
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      pageTitle={service.title ?? ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      organizationPage={organizationPage}
+      showReadSpeaker={false}
+      breadcrumbItems={[
+        {
+          title: 'Ísland.is',
+          href: linkResolver('homepage').href,
+        },
+        {
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
+        },
+        {
+          title: n('linkServicesText'),
+          href: linkResolver('apicataloguepage').href,
+        },
+      ]}
+      navigationData={{
+        title: n('navigationTitle', 'Efnisyfirlit'),
+        items: navList,
+      }}
+      showSecondaryMenu={false}
+      mainContent={
+        !service ? (
           <Box>
             <Text variant="h3" as="h3">
               {nfc('serviceNotFound')}
@@ -152,29 +151,32 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               setApiContent(selectedServiceDetail)
             }
           />
-        )}
-      </OrganizationWrapper>
-      <SubpageLayout
-        main={null}
-        details={
-          <SubpageDetailsContent
-            header={
-              <Text variant="h4" color="blue600">
-                {noa('title')}
-              </Text>
-            }
-            content={
-              selectedGetOpenApiInput && (
-                <OpenApiView
-                  strings={openApiContent}
-                  openApiInput={selectedGetOpenApiInput}
-                />
-              )
-            }
-          />
-        }
-      />
-    </>
+        )
+      }
+    >
+      <Box paddingBottom={3}>
+        <SubpageLayout
+          main={null}
+          details={
+            <SubpageDetailsContent
+              header={
+                <Text variant="h4" color="blue600">
+                  {noa('title')}
+                </Text>
+              }
+              content={
+                selectedGetOpenApiInput && (
+                  <OpenApiView
+                    strings={openApiContent}
+                    openApiInput={selectedGetOpenApiInput}
+                  />
+                )
+              }
+            />
+          }
+        />
+      </Box>
+    </OrganizationWrapper>
   )
 }
 
@@ -267,6 +269,10 @@ ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
     filterContent: filterContent,
     openApiContent: openApiContent,
     service: service,
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

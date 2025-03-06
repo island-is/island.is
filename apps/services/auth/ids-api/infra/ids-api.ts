@@ -18,7 +18,7 @@ const imageName = 'services-auth-ids-api'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -36,18 +36,18 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
       PASSKEY_CORE_MAX_AGE_DAYS: '365',
       PUBLIC_URL: {
-        dev: 'https://identity-server.dev01.devland.is/api',
+        dev: 'https://innskra.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
       USER_PROFILE_CLIENT_URL: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
         staging:
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
@@ -138,8 +138,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       },
     })
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 6,
+      min: 6,
       max: 15,
     })
     .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')
@@ -168,7 +168,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },

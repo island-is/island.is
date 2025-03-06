@@ -31,7 +31,7 @@ judicial-system-api:
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'preview.contentful.com'
     HIDDEN_FEATURES: ''
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -107,6 +107,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://judicial-system.dev01.devland.is'
     CONTENTFUL_ENVIRONMENT: 'test'
@@ -252,7 +255,7 @@ judicial-system-digital-mailbox-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''

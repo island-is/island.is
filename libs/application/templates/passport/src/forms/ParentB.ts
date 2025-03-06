@@ -105,7 +105,6 @@ export const ParentB: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

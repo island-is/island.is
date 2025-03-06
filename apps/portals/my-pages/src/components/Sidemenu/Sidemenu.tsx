@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect } from 'react'
 import {
   Box,
   GridContainer,
@@ -10,13 +10,12 @@ import {
 import {
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
+  useIsMobile,
 } from '@island.is/portals/my-pages/core'
 import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import SidemenuItem from './SidemenuItem'
 import { m } from '@island.is/portals/my-pages/core'
@@ -34,9 +33,21 @@ const Sidemenu = ({
   useNamespaces(['service.portal'])
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
-  const { width } = useWindowSize()
 
-  const isMobile = width < theme.breakpoints.md
+  const isMobile = useIsMobile()
+
+  // In your component logic, you can toggle the attribute on the HTML element
+  useEffect(() => {
+    if (sideMenuOpen) {
+      document.documentElement.setAttribute('data-sidemenu-open', 'true')
+    } else {
+      document.documentElement.setAttribute('data-sidemenu-open', 'false')
+    }
+
+    return () => {
+      document.documentElement.removeAttribute('data-sidemenu-open')
+    }
+  }, [sideMenuOpen])
 
   const onClose = () => {
     setSideMenuOpen(false)
@@ -115,7 +126,11 @@ const Sidemenu = ({
   )
 
   return isMobile ? (
-    <Box display={sideMenuOpen ? 'flex' : 'none'} height="full">
+    <Box
+      display={sideMenuOpen ? 'flex' : 'none'}
+      height="full"
+      id="sidemenu-mobile"
+    >
       {content}
     </Box>
   ) : (

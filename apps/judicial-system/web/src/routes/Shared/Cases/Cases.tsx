@@ -30,9 +30,11 @@ import {
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
+  EventType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -168,9 +170,23 @@ export const Cases: FC = () => {
 
       if (isDistrictCourtUser(user)) {
         if (isIndictmentCase(c.type)) {
-          return !isCompletedCase(c.state)
+          const sentToPublicProsecutor = c.eventLogs?.some(
+            (log) =>
+              log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          )
+          const isFineOrRuling =
+            c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
+            c.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+          return (
+            !isCompletedCase(c.state) ||
+            (isFineOrRuling && !sentToPublicProsecutor)
+          )
         } else {
-          return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+          return !(
+            isCompletedCase(c.state) &&
+            (c.rulingSignatureDate || c.isCompletedWithoutRuling)
+          )
         }
       }
 

@@ -18,7 +18,6 @@ export const schoolSection = buildSection({
         buildCustomField({
           component: 'SchoolSelection',
           id: 'selection',
-          title: '',
           description: '',
         }),
       ],

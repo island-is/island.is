@@ -9,7 +9,6 @@ import { grant } from '../../lib/messages/grant'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

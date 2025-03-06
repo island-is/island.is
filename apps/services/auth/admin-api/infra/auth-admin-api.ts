@@ -14,7 +14,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -35,13 +35,13 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        dev: 'https://innskra.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL_LIST: {
         dev: json([
-          'https://identity-server.dev01.devland.is',
+          'https://innskra.dev01.devland.is',
           'https://identity-server.staging01.devland.is',
           'https://innskra.island.is',
         ]),
@@ -79,10 +79,15 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       },
     })
     .secrets({
+      NOVA_URL: '/k8s/services-auth/NOVA_URL',
+      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
+      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
       ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
+      ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION',
       CLIENT_SECRET_ENCRYPTION_KEY:
         '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -98,7 +103,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .ingress({
       primary: {
         host: {
-          dev: 'identity-server.dev01.devland.is',
+          dev: 'innskra.dev01.devland.is',
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },

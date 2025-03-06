@@ -3,19 +3,13 @@ import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
-import { AdgerdirPage } from './models/adgerdirPage.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
-import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
 import { GetOrganizationTagsInput } from './dto/getOrganizationTags.input'
-import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
-import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AlertBanner } from './models/alertBanner.model'
@@ -29,8 +23,6 @@ import { GetAnchorPageInput } from './dto/getAnchorPage.input'
 import { GetAnchorPagesInput } from './dto/getAnchorPages.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
-import { AdgerdirTags } from './models/adgerdirTags.model'
-import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { AnchorPage } from './models/anchorPage.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
@@ -202,17 +194,6 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => AdgerdirPage, { nullable: true })
-  getAdgerdirPage(
-    @Args('input') input: GetAdgerdirPageInput,
-  ): Promise<AdgerdirPage | null> {
-    return this.cmsContentfulService.getAdgerdirPage(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
-    )
-  }
-
-  @CacheControl(defaultCache)
   @Query(() => ErrorPage, { nullable: true })
   getErrorPage(
     @Args('input') input: GetErrorPageInput,
@@ -318,14 +299,6 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => AdgerdirPages)
-  getAdgerdirPages(
-    @Args('input') input: GetAdgerdirPagesInput,
-  ): Promise<AdgerdirPages> {
-    return this.cmsContentfulService.getAdgerdirPages(input?.lang ?? 'is-IS')
-  }
-
-  @CacheControl(defaultCache)
   @Query(() => Organizations)
   getOrganizations(
     @Args('input', { nullable: true }) input: GetOrganizationsInput,
@@ -334,29 +307,11 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => AdgerdirTags, { nullable: true })
-  getAdgerdirTags(
-    @Args('input') input: GetAdgerdirTagsInput,
-  ): Promise<AdgerdirTags | null> {
-    return this.cmsContentfulService.getAdgerdirTags(input?.lang ?? 'is-IS')
-  }
-
-  @CacheControl(defaultCache)
   @Query(() => OrganizationTags, { nullable: true })
   getOrganizationTags(
     @Args('input') input: GetOrganizationTagsInput,
   ): Promise<OrganizationTags | null> {
     return this.cmsContentfulService.getOrganizationTags(input?.lang ?? 'is-IS')
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => AdgerdirFrontpage, { nullable: true })
-  getAdgerdirFrontpage(
-    @Args('input') input: GetAdgerdirFrontpageInput,
-  ): Promise<AdgerdirFrontpage | null> {
-    return this.cmsContentfulService.getAdgerdirFrontpage(
-      input?.lang ?? 'is-IS',
-    )
   }
 
   @CacheControl(defaultCache)

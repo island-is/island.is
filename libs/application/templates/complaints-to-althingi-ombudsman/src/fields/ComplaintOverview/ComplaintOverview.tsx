@@ -1,4 +1,4 @@
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
@@ -15,6 +15,7 @@ import { yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
 import { DocumentCard } from '../components'
 import { useLocale } from '@island.is/localization'
+import { YES } from '@island.is/application/core'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 

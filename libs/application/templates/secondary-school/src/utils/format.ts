@@ -9,7 +9,7 @@ export const formatPhoneNumber = (phoneNumber: string | undefined): string => {
 
 export const formatKennitala = (nationalId: string | undefined): string => {
   if (!nationalId) return ''
-  return kennitala.format(nationalId, '-')
+  return kennitala.format(nationalId)
 }
 
 export const getTranslatedProgram = (

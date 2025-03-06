@@ -86,10 +86,12 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         }
       }
     } catch (e) {
-      logger.error(
-        'Error fetching quality photo and signature for digital tachograph drivers card',
-        e,
-      )
+      if (e.response?.status !== 404) {
+        logger.error(
+          'Error fetching quality photo and signature for digital tachograph drivers card',
+          e,
+        )
+      }
 
       throw new TemplateApiError(
         {

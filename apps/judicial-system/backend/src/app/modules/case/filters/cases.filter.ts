@@ -108,52 +108,38 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
     },
   ]
 
-  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
-    options.push(
-      { type: indictmentCases },
+  options.push({
+    [Op.or]: [
       {
-        state: [
-          CaseState.SUBMITTED,
-          CaseState.WAITING_FOR_CANCELLATION,
-          CaseState.RECEIVED,
-          CaseState.COMPLETED,
+        [Op.and]: [
+          { type: [...restrictionCases, ...investigationCases] },
+          {
+            state: [
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+              CaseState.ACCEPTED,
+              CaseState.REJECTED,
+              CaseState.DISMISSED,
+            ],
+          },
         ],
       },
-    )
-  } else {
-    options.push({
-      [Op.or]: [
-        {
-          [Op.and]: [
-            { type: [...restrictionCases, ...investigationCases] },
-            {
-              state: [
-                CaseState.DRAFT,
-                CaseState.SUBMITTED,
-                CaseState.RECEIVED,
-                CaseState.ACCEPTED,
-                CaseState.REJECTED,
-                CaseState.DISMISSED,
-              ],
-            },
-          ],
-        },
-        {
-          [Op.and]: [
-            { type: indictmentCases },
-            {
-              state: [
-                CaseState.SUBMITTED,
-                CaseState.WAITING_FOR_CANCELLATION,
-                CaseState.RECEIVED,
-                CaseState.COMPLETED,
-              ],
-            },
-          ],
-        },
-      ],
-    })
-  }
+      {
+        [Op.and]: [
+          { type: indictmentCases },
+          {
+            state: [
+              CaseState.SUBMITTED,
+              CaseState.WAITING_FOR_CANCELLATION,
+              CaseState.RECEIVED,
+              CaseState.COMPLETED,
+            ],
+          },
+        ],
+      },
+    ],
+  })
 
   return {
     [Op.and]: options,

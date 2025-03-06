@@ -151,7 +151,12 @@ export class FileController {
     )
   }
 
-  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
+  @Get([
+    'indictment',
+    'indictment/:fileName',
+    'mergedCase/:mergedCaseId/indictment',
+    'mergedCase/:mergedCaseId/indictment/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
     @Param('id') id: string,
@@ -177,7 +182,12 @@ export class FileController {
     )
   }
 
-  @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
+  @Get([
+    'subpoena/:defendantId',
+    'subpoena/:defendantId/:fileName',
+    'subpoena/:defendantId/:subpoenaId',
+    'subpoena/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,

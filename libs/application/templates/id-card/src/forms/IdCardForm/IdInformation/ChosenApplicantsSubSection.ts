@@ -23,7 +23,6 @@ export const ChosenApplicantsSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: Routes.CHOSENAPPLICANTS,
-          title: '',
           largeButtons: true,
           required: true,
           options: (application) => {
@@ -108,7 +107,6 @@ export const ChosenApplicantsSubSection = buildSubSection({
         buildCustomField({
           id: 'clearAnswers',
           component: 'ClearAnswers',
-          title: '',
           description: '',
         }),
       ],

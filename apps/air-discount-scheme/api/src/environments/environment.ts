@@ -13,7 +13,7 @@ const devConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: 'https://innskra.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   auth: {

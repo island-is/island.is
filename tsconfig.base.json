@@ -320,6 +320,9 @@
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/training-license-on-a-work-machine": [
+        "libs/application/templates/aosh/training-license-on-a-work-machine/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
         "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
@@ -551,14 +554,8 @@
       "@island.is/application/templates/transport-authority/change-operator-of-vehicle": [
         "libs/application/templates/transport-authority/change-operator-of-vehicle/src/index.ts"
       ],
-      "@island.is/application/templates/transport-authority/digital-tachograph-company-card": [
-        "libs/application/templates/transport-authority/digital-tachograph-company-card/src/index.ts"
-      ],
       "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
         "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
-      ],
-      "@island.is/application/templates/transport-authority/digital-tachograph-workshop-card": [
-        "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/license-plate-renewal": [
         "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
@@ -778,6 +775,9 @@
       ],
       "@island.is/clients/national-registry-v3": [
         "libs/clients/national-registry/v3/src/index.ts"
+      ],
+      "@island.is/clients/national-registry-v3-applications": [
+        "libs/clients/national-registry/v3-applications/src/index.ts"
       ],
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"

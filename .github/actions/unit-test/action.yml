@@ -32,14 +32,6 @@ runs:
         echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
       shell: bash
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
-
-    - name: Setup yarn
-      run: corepack enable
-      shell: bash
-
     - name: Running tests
       run: ./scripts/ci/30_test.sh
       shell: bash

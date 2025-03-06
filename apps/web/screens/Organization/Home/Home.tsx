@@ -13,6 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  DigitalIcelandLatestNewsSlice,
   getThemeConfig,
   IconTitleCard,
   OrganizationWrapper,
@@ -30,6 +31,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
+import { organizationHasDigitalIcelandNewsVisuals } from '@island.is/web/utils/organization'
 
 import { Screen, ScreenContext } from '../../../types'
 import {
@@ -204,21 +206,39 @@ const OrganizationHomePage = ({
             : 0
         }
       >
-        {organizationPage?.bottomSlices.map((slice) => (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            namespace={namespace}
-            slug={organizationPage.slug}
-            fullWidth={true}
-            params={{
-              latestNewsSliceColorVariant:
-                organizationPage.theme === 'landing_page' ? 'blue' : 'default',
-            }}
-          />
-        ))}
+        {organizationPage?.bottomSlices.map((slice) => {
+          if (
+            organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
+            slice.__typename === 'LatestNewsSlice' &&
+            slice.news.length >= 3
+          ) {
+            return (
+              <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={organizationPage.slug}
+                />
+              </Box>
+            )
+          }
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              namespace={namespace}
+              slug={organizationPage.slug}
+              fullWidth={true}
+              params={{
+                latestNewsSliceColorVariant:
+                  organizationPage.theme === 'landing_page'
+                    ? 'blue'
+                    : 'default',
+              }}
+            />
+          )
+        })}
       </Stack>
       {organizationPage?.theme === 'landing_page' && (
         <LandingPageFooter
@@ -324,7 +344,6 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
-    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
       getOrganization ?? getOrganizationPage?.organization,

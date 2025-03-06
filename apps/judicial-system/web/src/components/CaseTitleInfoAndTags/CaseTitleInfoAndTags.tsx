@@ -11,10 +11,11 @@ import {
   UserRole,
 } from '../../graphql/schema'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
+import DateLabel from '../DateLabel/DateLabel'
+import RulingDateLabel from '../DateLabel/RulingDateLabel'
 import { FormContext } from '../FormProvider/FormProvider'
 import PageTitle from '../PageTitle/PageTitle'
 import RestrictionTags from '../RestrictionTags/RestrictionTags'
-import RulingDateLabel from '../RulingDateLabel/RulingDateLabel'
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseTitleInfoAndTags as strings } from './CaseTitleInfoAndTags.strings'
 
@@ -34,9 +35,15 @@ const CaseTitleInfoAndTags: FC = () => {
         <PageTitle marginBottom={1}>
           {titleForCase(formatMessage, workingCase)}
         </PageTitle>
-        {workingCase.rulingDate && (
-          <RulingDateLabel rulingDate={workingCase.rulingDate} />
-        )}
+        {workingCase.rulingDate &&
+          (workingCase.isCompletedWithoutRuling ? (
+            <DateLabel
+              date={workingCase.rulingDate}
+              text={formatMessage(strings.caseCompletedDatePrefix)}
+            />
+          ) : (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} />
+          ))}
         {workingCase.appealedDate && (
           <>
             <Box marginTop={1}>

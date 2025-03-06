@@ -2,15 +2,10 @@ import { createUnionType } from '@nestjs/graphql'
 import { Article, mapArticle } from '../models/article.model'
 import { mapSubArticle, SubArticle } from '../models/subArticle.model'
 import { AnchorPage, mapAnchorPage } from '../models/anchorPage.model'
-import { AdgerdirPage, mapAdgerdirPage } from '../models/adgerdirPage.model'
 import {
   mapOrganizationPage,
   OrganizationPage,
 } from '../models/organizationPage.model'
-import {
-  AdgerdirFrontpage,
-  mapAdgerdirFrontpage,
-} from '../models/adgerdirFrontpage.model'
 import {
   IArticle,
   IArticleCategory,
@@ -20,8 +15,6 @@ import {
   IOrganizationPage,
   IOrganizationSubpage,
   ISubArticle,
-  IVidspyrnaFrontpage,
-  IVidspyrnaPage,
   IProjectPage,
 } from '../generated/contentfulTypes'
 import { ApolloError } from 'apollo-server-express'
@@ -42,8 +35,6 @@ export type PageTypes =
   | ISubArticle
   | ILifeEventPage
   | IAnchorPage
-  | IVidspyrnaPage
-  | IVidspyrnaFrontpage
   | INews
   | IArticleCategory
   | IOrganizationPage
@@ -57,8 +48,6 @@ export const PageUnion = createUnionType({
     SubArticle,
     AnchorPage,
     LifeEventPage,
-    AdgerdirPage,
-    AdgerdirFrontpage,
     News,
     ArticleCategory,
     OrganizationPage,
@@ -82,12 +71,6 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
     }
     case 'anchorPage': {
       return mapAnchorPage(page as IAnchorPage)
-    }
-    case 'vidspyrnaPage': {
-      return mapAdgerdirPage(page as IVidspyrnaPage)
-    }
-    case 'vidspyrna-frontpage': {
-      return mapAdgerdirFrontpage(page as IVidspyrnaFrontpage)
     }
     case 'news': {
       return mapNews(page as INews)

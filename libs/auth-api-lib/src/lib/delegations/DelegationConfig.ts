@@ -94,11 +94,19 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
           AuthDelegationType.Custom,
         ],
       },
+      {
+        // This scope is not in use in our repo hence plain string instead of enum.
+        scopeName: '@sass.is/urgangstorg-sveitarfelag',
+        onlyForDelegationType: [
+          AuthDelegationType.ProcurationHolder,
+          AuthDelegationType.Custom,
+        ],
+      },
     ],
     userInfoUrl:
       env.required(
         'IDENTITY_SERVER_ISSUER_URL',
-        'https://identity-server.dev01.devland.is',
+        'https://innskra.dev01.devland.is',
       ) + '/connect/userinfo',
     defaultValidityPeriodInDays:
       env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,

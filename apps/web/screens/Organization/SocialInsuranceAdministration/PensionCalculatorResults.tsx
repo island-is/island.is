@@ -40,7 +40,6 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { formatCurrency } from '@island.is/web/utils/currency'
-import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 
 import {
   CustomScreen,
@@ -741,9 +740,6 @@ PensionCalculatorResults.getProps = async ({
   const queryParams = convertToQueryParams(calculationInput)
   const queryParamsObject = Object.fromEntries(queryParams)
 
-  const organizationNamespace =
-    extractNamespaceFromOrganization(getOrganization)
-
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
@@ -752,7 +748,6 @@ PensionCalculatorResults.getProps = async ({
     calculationInput,
     dateOfCalculationsOptions,
     queryParamString: queryParams.toString(),
-    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
