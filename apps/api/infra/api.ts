@@ -75,7 +75,7 @@ export const serviceSetup = (services: {
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
     .env({
       APPLICATION_SYSTEM_API_URL: {
-        dev: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
+        dev: "http://application-system-api.application-system.svc.cluster.local",
         staging: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
         prod: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
       },
