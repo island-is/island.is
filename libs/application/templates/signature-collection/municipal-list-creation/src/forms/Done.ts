@@ -10,8 +10,8 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '../../../assets/Logo'
-import Jobs from '../../../assets/Jobs'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
 
 export const Done: Form = buildForm({
   id: 'done',
