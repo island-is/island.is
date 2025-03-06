@@ -19,19 +19,13 @@ import {
 } from '../src/components'
 
 const {
-  publicRuntimeConfig: {
-    ddRumApplicationId,
-    ddRumClientToken,
-    appVersion,
-    environment,
-  },
+  publicRuntimeConfig: { ddLogsClientToken, appVersion, environment },
 } = getConfig()
 
-if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
-  userMonitoring.initDdRum({
+if (ddLogsClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdLogs({
     service: 'judicial-system-web',
-    applicationId: ddRumApplicationId,
-    clientToken: ddRumClientToken,
+    clientToken: ddLogsClientToken,
     env: environment,
     version: appVersion,
   })

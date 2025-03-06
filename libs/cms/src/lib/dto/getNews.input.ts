@@ -44,3 +44,30 @@ export class GetNewsInput {
   @IsOptional()
   organization?: string
 }
+
+@InputType()
+export class GetCmsNewsInput {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  lang: ElasticsearchIndexLocale = 'is'
+
+  @Field({ nullable: true })
+  @IsEnum(['asc', 'desc'])
+  @IsOptional()
+  order?: 'asc' | 'desc' = 'desc'
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  page?: number = 1
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  size?: number = 10
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  organization?: string
+}

@@ -29,8 +29,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
