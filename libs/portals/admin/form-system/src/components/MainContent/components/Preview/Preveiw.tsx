@@ -14,7 +14,6 @@ import {
   TimeInput,
   Checkbox,
   List,
-  HomestayOverview,
   m,
   FieldTypesEnum,
 } from '@island.is/form-system/ui'
@@ -61,7 +60,6 @@ export const Preview = ({ data }: Props) => {
       {type === FieldTypesEnum.PROPERTY_NUMBER && (
         <PropertyNumber item={data} />
       )}
-      {type === FieldTypesEnum.HOMESTAY_OVERVIEW && <HomestayOverview />}
     </Box>
   )
 }
