@@ -20,7 +20,13 @@ import { OrganizationsService } from './organizations.service'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 
@@ -62,9 +68,11 @@ export class OrganizationsController {
   @ApiParam({ name: 'nationalId', type: String })
   @Get('admin/:nationalId')
   async findAdmin(
+    @CurrentUser()
+    user: User,
     @Param('nationalId') nationalId: string,
   ): Promise<OrganizationAdminDto> {
-    return await this.organizationsService.findAdmin(nationalId)
+    return await this.organizationsService.findAdmin(user, nationalId)
   }
 
   @ApiOperation({ summary: 'Get an organization by id' })

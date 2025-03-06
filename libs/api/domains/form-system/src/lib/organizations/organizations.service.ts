@@ -6,10 +6,17 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   OrganizationsApi,
   OrganizationsControllerCreateRequest,
+  OrganizationsControllerFindAdminRequest,
   OrganizationsControllerFindOneRequest,
 } from '@island.is/clients/form-system'
-import { GetOrganizationInput } from '../../dto/organization.input'
-import { Organization } from '../../models/organization.model'
+import {
+  GetOrganizationAdminInput,
+  GetOrganizationInput,
+} from '../../dto/organization.input'
+import {
+  Organization,
+  OrganizationAdmin,
+} from '../../models/organization.model'
 
 @Injectable()
 export class OrganizationsService {
@@ -70,5 +77,20 @@ export class OrganizationsService {
     }
 
     return response as Organization
+  }
+
+  async getOrganizationAdmin(
+    auth: User,
+    input: GetOrganizationAdminInput,
+  ): Promise<OrganizationAdmin> {
+    const response = await this.organizationsApiWithAuth(auth)
+      .organizationsControllerFindAdmin(
+        input as OrganizationsControllerFindAdminRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get organization admin'),
+      )
+
+    return response as OrganizationAdmin
   }
 }

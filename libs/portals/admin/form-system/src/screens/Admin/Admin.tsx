@@ -11,6 +11,7 @@ import { FormSystemForm } from '@island.is/api/schema'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { divide } from 'lodash'
 import { AdminHeader } from './AdminHeader'
+import { AdminLoaderResponse } from './Admin.loader'
 // import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
 export const Admin = () => {
@@ -18,11 +19,38 @@ export const Admin = () => {
   const { formatMessage } = useIntl()
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
   const [getFormsQuery] = useLazyQuery(GET_FORMS)
+  const { selectedCertificationTypes, certficationTypes, organizations } =
+    useLoaderData() as AdminLoaderResponse
+
+  const [organizationsState, setOrganizationsState] = useState(organizations)
+
+  const handleOrganizationChange = async (selected: {
+    value: string | undefined
+  }) => {
+    const updatedOrganizations = organizationsState.map((org) => ({
+      ...org,
+      isSelected: org.value === selected.value,
+    }))
+    setOrganizationsState(updatedOrganizations)
+
+    // const { data } = await getFormsQuery({
+    //   variables: {
+    //     input: {
+    //       nationalId: selected.value,
+    //     },
+    //   },
+    // })
+    // if (data?.formSystemGetAllForms?.forms) {
+    //   setFormsState(data.formSystemGetAllForms.forms)
+    // }
+  }
 
   return (
     <>
-      <AdminHeader />
-      <div>Admin</div>
+      <AdminHeader
+        organizations={organizationsState}
+        onOrganizationChange={handleOrganizationChange}
+      />
     </>
   )
 }

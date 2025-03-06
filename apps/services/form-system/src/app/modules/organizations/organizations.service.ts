@@ -11,6 +11,9 @@ import zipObject from 'lodash/zipObject'
 import { FormDto } from '../forms/models/dto/form.dto'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
+import { Option } from '../../dataTypes/option.model'
+import { User } from '@island.is/auth-nest-tools'
+import { jwtDecode } from 'jwt-decode'
 
 @Injectable()
 export class OrganizationsService {
@@ -41,7 +44,19 @@ export class OrganizationsService {
     return organizationsResponse
   }
 
-  async findAdmin(nationalId: string): Promise<OrganizationAdminDto> {
+  async findAdmin(
+    user: User,
+    nationalId: string,
+  ): Promise<OrganizationAdminDto> {
+    const token = jwtDecode<{ name: string; nationalId: string }>(
+      user.authorization,
+    )
+
+    // the loader is not sending the nationalId
+    if (nationalId === '0') {
+      nationalId = token.nationalId
+    }
+
     const organization = await this.organizationModel.findOne({
       where: { nationalId },
       include: [
@@ -59,6 +74,7 @@ export class OrganizationsService {
 
     const organizationAdminDto: OrganizationAdminDto =
       new OrganizationAdminDto()
+
     if (organization.organizationCertificationTypes) {
       organizationAdminDto.selectedCertificationTypes =
         organization.organizationCertificationTypes.map(
@@ -68,6 +84,21 @@ export class OrganizationsService {
 
     organizationAdminDto.certificationTypes = CertificationTypes
 
+    organizationAdminDto.organizations = await this.organizationModel
+      .findAll({
+        attributes: ['name', 'nationalId'],
+      })
+      .then((organizations) => {
+        return organizations.map((organization) => {
+          return {
+            label: organization.name.is,
+            value: organization.nationalId,
+            isSelected: organization.nationalId === nationalId,
+          } as Option
+        })
+      })
+
+    console.log(JSON.stringify(organizationAdminDto, null, 2))
     return organizationAdminDto
   }
 

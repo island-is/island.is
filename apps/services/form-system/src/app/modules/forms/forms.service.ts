@@ -13,7 +13,7 @@ import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
 import { FormDto } from './models/dto/form.dto'
-import { FormResponseDto, Option } from './models/dto/form.response.dto'
+import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
@@ -47,11 +47,14 @@ import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.mode
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '@island.is/form-system/enums'
+import { Option } from '../../dataTypes/option.model'
 import { Op } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
+import { CmsService, GetOrganizationByNationalId } from '@island.is/clients/cms'
+import { locale } from 'yargs'
 
 @Injectable()
 export class FormsService {
@@ -77,6 +80,7 @@ export class FormsService {
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
+    private readonly cmsService: CmsService,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -88,6 +92,12 @@ export class FormsService {
     if (nationalId === '0') {
       nationalId = token.nationalId
     }
+
+    // const res = await this.cmsService.fetchData(GetOrganizationByNationalId, {
+    //   nationalId: nationalId,
+    //   locale: 'en',
+    // })
+    // console.log('res', res)
 
     let organization = await this.organizationModel.findOne({
       where: { nationalId: nationalId },

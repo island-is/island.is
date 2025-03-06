@@ -20,6 +20,8 @@ import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/o
 import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
 import { FormUrlsModule } from './modules/formUrls/formUrls.module'
 import { ServicesModule } from './modules/services/services.module'
+import { ConfigModule } from '@nestjs/config'
+import { CmsConfig } from '@island.is/clients/cms'
 
 @Module({
   imports: [
@@ -28,6 +30,10 @@ import { ServicesModule } from './modules/services/services.module'
     LoggingModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [CmsConfig],
     }),
     OrganizationsModule,
     FormsModule,

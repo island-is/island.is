@@ -11,6 +11,7 @@ import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
 import { Organization } from './organization.model'
+import { Option } from './option.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -160,15 +161,4 @@ export class FormResponse {
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
-}
-@ObjectType('FormSystemOption')
-export class Option {
-  @Field(() => String)
-  value!: string
-
-  @Field(() => String)
-  label!: string
-
-  @Field(() => Boolean)
-  isSelected!: boolean
 }

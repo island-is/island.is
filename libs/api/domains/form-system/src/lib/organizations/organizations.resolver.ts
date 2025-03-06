@@ -7,15 +7,21 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Organization } from '../../models/organization.model'
-import { GetOrganizationInput } from '../../dto/organization.input'
+import {
+  Organization,
+  OrganizationAdmin,
+} from '../../models/organization.model'
+import {
+  GetOrganizationAdminInput,
+  GetOrganizationInput,
+} from '../../dto/organization.input'
 import { UseGuards } from '@nestjs/common'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class OrganizationsResolver {
-  constructor(private readonly organizationsService: OrganizationsService) { }
+  constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Query(() => Organization, {
     name: 'formSystemGetOrganization',
@@ -26,6 +32,17 @@ export class OrganizationsResolver {
     @CurrentUser() user: User,
   ): Promise<Organization> {
     return this.organizationsService.getOrganization(user, input)
+  }
+
+  @Query(() => OrganizationAdmin, {
+    name: 'formSystemGetOrganizationAdmin',
+  })
+  async getOrganizationAdmin(
+    @Args('input', { type: () => GetOrganizationAdminInput })
+    input: GetOrganizationAdminInput,
+    @CurrentUser() user: User,
+  ): Promise<OrganizationAdmin> {
+    return this.organizationsService.getOrganizationAdmin(user, input)
   }
 
   @Mutation(() => Organization, {

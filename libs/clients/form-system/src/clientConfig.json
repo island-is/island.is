@@ -254,6 +254,37 @@
         ]
       }
     },
+    "/organizations/admin/{nationalId}": {
+      "get": {
+        "operationId": "OrganizationsController_findAdmin",
+        "summary": "Get organization admin",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get organization admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationAdminDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "organizations"
+        ]
+      }
+    },
     "/organizations/{id}": {
       "get": {
         "operationId": "OrganizationsController_findOne",
@@ -2357,6 +2388,71 @@
           "organizations"
         ]
       },
+      "CertificationType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isCommon": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isCommon"
+        ]
+      },
+      "Option": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "isSelected": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "value",
+          "label",
+          "isSelected"
+        ]
+      },
+      "OrganizationAdminDto": {
+        "type": "object",
+        "properties": {
+          "selectedCertificationTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "certificationTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificationType"
+            }
+          },
+          "organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Option"
+            }
+          }
+        }
+      },
       "FieldType": {
         "type": "object",
         "properties": {
@@ -2380,29 +2476,6 @@
             "items": {
               "$ref": "#/components/schemas/ValueDto"
             }
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "isCommon"
-        ]
-      },
-      "CertificationType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isCommon": {
-            "type": "boolean"
           }
         },
         "required": [
@@ -2488,25 +2561,6 @@
           "isTest",
           "type",
           "method"
-        ]
-      },
-      "Option": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          },
-          "isSelected": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "value",
-          "label",
-          "isSelected"
         ]
       },
       "FormResponseDto": {
