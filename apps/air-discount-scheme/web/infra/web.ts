@@ -15,9 +15,9 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .env({
       API_URL: {
-        dev: "http://api",
-        staging: "http://web-api",
-        prod: "http://web-api",
+        dev: "http://air-discount-scheme-api",
+        staging: ref((h) => `http://${h.svc(services.adsApi)}`),
+        prod: ref((h) => `http://${h.svc(services.adsApi)}`),
       },
       IDENTITY_SERVER_ISSUER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',

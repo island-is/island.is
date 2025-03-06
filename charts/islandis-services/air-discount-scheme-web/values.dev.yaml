@@ -19,7 +19,7 @@ global:
 name: 'air-discount-scheme-web'
 enabled: true
 env:
-  API_URL: 'http://api'
+  API_URL: 'http://air-discount-scheme-api'
   ENVIRONMENT: 'dev'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
