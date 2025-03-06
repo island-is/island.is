@@ -15,15 +15,12 @@ import {
   CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
-  GET_FILE_UPLOAD_TAGS,
+  GET_MALWARE_SCAN_STATUS,
 } from '@island.is/application/graphql'
 
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
-
-const MALWARE_FETCH_ATTEMPTS = 4
-const MALWARE_MIN_MS_BETWEEN_FETCHES = 1000
 
 type UploadFileAnswer = {
   name: string
@@ -103,7 +100,7 @@ export const FileUploadController = ({
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
-  const { refetch: getFileUploadTags } = useQuery(GET_FILE_UPLOAD_TAGS, { skip: true })
+  const { refetch: fileUploadMalwareStatus } = useQuery(GET_MALWARE_SCAN_STATUS, { skip: true })
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
@@ -121,35 +118,11 @@ export const FileUploadController = ({
   }, [state, id, setValue])
 
   const isFreeOfMalware = async (fileKey: string): Promise<boolean> => {
-    let guardDutyStatus
-    let totalWaitTime = 0
-    for (let i = 0; i < MALWARE_FETCH_ATTEMPTS; i++) {
-      // Wait before doing malware tag check
-      const waitTimeThisLoop = MALWARE_MIN_MS_BETWEEN_FETCHES * (Math.pow(2, i))
-      totalWaitTime += waitTimeThisLoop
-      await new Promise((resolve) => setTimeout(resolve, waitTimeThisLoop))
-
-      const { data } = await getFileUploadTags({ filename: fileKey })
-      
-      const formattedTags = data.getFileUploadTags as Array<{ key: string, value: string }>
-
-      guardDutyStatus = formattedTags?.find(tag => tag.key === 'GuardDutyMalwareScanStatus')?.value
-      if(guardDutyStatus !== undefined) {
-        break
-      }
-    }
-    if(guardDutyStatus === undefined) {
-      console.error(`No guard duty tag on attachment after ${totalWaitTime/1000} seconds`)
-      // If guardDuty could not finish scanning the file after many tag fetch attempts
-      // then there might be an issue. For files around 100mb, it should not take more than
-      // 5 seconds to scan and tag the files, and currently we try for 15 seconds total
-      return false
-    } else {
-      if(guardDutyStatus !== 'NO_THREATS_FOUND') {
-        return false
-      }
-    }
-    return true
+    console.log('starting malware check')
+    const { data } = await fileUploadMalwareStatus({ filename: fileKey })
+    const status = data?.status as string | undefined
+    console.log('data:', data)
+    return status !== undefined && status === 'SAFE'
   }
 
   const uploadFileFlow = async (file: UploadFile) => {
