@@ -21,6 +21,5 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
     return {
       forms: removeTypename(data.formSystemForms?.forms) as FormSystemForm[]
     }
-
   }
 }
