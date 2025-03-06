@@ -112,7 +112,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
         expect.objectContaining({
           to: [{ address: defender.email, name: defender.name }],
           subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `Dómstóllinn hafði skráð þig sem verjanda í málinu.<br /><br />Sjá nánar á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
