@@ -21,6 +21,7 @@ import {
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
+import { MalwareScanStatus } from '@island.is/api/schema'
 
 type UploadFileAnswer = {
   name: string
@@ -118,11 +119,9 @@ export const FileUploadController = ({
   }, [state, id, setValue])
 
   const isFreeOfMalware = async (fileKey: string): Promise<boolean> => {
-    console.log('starting malware check')
     const { data } = await fileUploadMalwareStatus({ filename: fileKey })
-    const status = data?.status as string | undefined
-    console.log('data:', data)
-    return status !== undefined && status === 'SAFE'
+    const status = data?.malwareScanStatus ?? MalwareScanStatus.UNKNOWN
+    return status !== undefined && status === MalwareScanStatus.SAFE
   }
 
   const uploadFileFlow = async (file: UploadFile) => {
