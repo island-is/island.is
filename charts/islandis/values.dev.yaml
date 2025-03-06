@@ -1002,7 +1002,7 @@ application-system-form:
 consultation-portal:
   enabled: true
   env:
-    API_URL: 'http://api'
+    API_URL: 'http://api.islandis.svc.cluster.local'
     BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     CODE_OWNER: 'Advania'
