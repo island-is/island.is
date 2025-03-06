@@ -30,6 +30,7 @@ import {
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
+import { setupNativeMocking } from '@island.is/api/mocks'
 
 const Host = styled.View`
   flex: 1;
@@ -113,6 +114,12 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   }, [])
 
   const onLoginPress = async () => {
+    // Skip all login functionality if we are in mock environment
+    if (environment.id === 'mock') {
+      await setupNativeMocking()
+      await nextOnboardingStep()
+      return
+    }
     const isCognitoAuth =
       cognito?.accessToken && cognito?.expiresAt > Date.now()
     if (
@@ -152,6 +159,11 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
           ],
         )
         return
+
+        // if environments.mock ->
+        //   update auth store as needed
+        //   setup mocking
+        //   send user to onboarding/home screen
       }
     }
 
