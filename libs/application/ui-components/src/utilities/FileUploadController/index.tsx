@@ -21,7 +21,7 @@ import {
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
-import { MalwareScanStatus } from '@island.is/api/schema'
+import { MalwareScanStatus } from '@island.is/application/types'
 
 type UploadFileAnswer = {
   name: string
