@@ -394,6 +394,6 @@ export class PaymentService {
     }
 
     // return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
-    return `https://as-test-new-payment-beta.dev01.devland.is/umsoknir/greida/${applicationId}`
+    return `https://as-test-new-payment-beta.dev01.devland.is/umsoknir/greida/${applicationId}?done`
   }
 }
