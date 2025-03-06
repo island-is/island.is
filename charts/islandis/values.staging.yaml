@@ -197,7 +197,7 @@ air-discount-scheme-backend:
 air-discount-scheme-web:
   enabled: true
   env:
-    API_URL: 'http://web-air-discount-scheme-api'
+    API_URL: 'http://web-api'
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'

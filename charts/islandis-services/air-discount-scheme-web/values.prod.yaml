@@ -19,7 +19,7 @@ global:
 name: 'air-discount-scheme-web'
 enabled: true
 env:
-  API_URL: 'http://web-air-discount-scheme-api'
+  API_URL: 'http://web-api'
   ENVIRONMENT: 'prod'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   LOG_LEVEL: 'info'

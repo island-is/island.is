@@ -27,7 +27,11 @@ export const serviceSetup = (services: {
     .env({
       BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
-      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      API_URL: {
+        dev: "http://api",
+        staging: ref((h) => `http://${h.svc(services.api)}`),
+        prod: ref((h) => `http://${h.svc(services.api)}`),
+      },
       IDENTITY_SERVER_ISSUER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',
