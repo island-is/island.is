@@ -1125,12 +1125,14 @@ export const buildOverviewField = (
 export const buildCopyLinkField = (
   data: Omit<CopyLinkField, 'type' | 'component' | 'children'>,
 ): CopyLinkField => {
-  const { id, title, link } = data
+  const { id, title, link, buttonTitle, semiBoldLink } = data
   return {
     ...extractCommonFields(data),
     id,
     title,
     link,
+    buttonTitle,
+    semiBoldLink,
     type: FieldTypes.COPY_LINK,
     component: FieldComponents.COPY_LINK,
     children: undefined,
