@@ -13,7 +13,7 @@ import { BifrostUniversityApplicationClientConfig } from '@island.is/clients/uni
 import { IcelandUniversityOfTheArtsApplicationClientConfig } from '@island.is/clients/university-application/iceland-university-of-the-arts'
 import { AgriculturalUniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/agricultural-university-of-iceland'
 import { HolarUniversityApplicationClientConfig } from '@island.is/clients/university-application/holar-university'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { environment } from '../environments'
 import { AuthModule } from '@island.is/auth-nest-tools'
 
@@ -22,7 +22,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
     UniversityApplicationModule,
     ProgramModule,
     UniversityModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -39,6 +39,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
         IcelandUniversityOfTheArtsApplicationClientConfig,
         AgriculturalUniversityOfIcelandApplicationClientConfig,
         HolarUniversityApplicationClientConfig,
+        AuditConfig
       ],
     }),
   ],

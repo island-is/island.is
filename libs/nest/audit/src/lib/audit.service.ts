@@ -29,6 +29,7 @@ export class AuditService {
     @Inject(AUDIT_OPTIONS)
     private options: AuditOptions,
   ) {
+    console.log('AuditService -> constructor -> options', JSON.stringify(options, null, 2))
     this.useDevLogger =
       options.groupName === undefined && process.env.NODE_ENV !== 'production'
     this.defaultNamespace = options.defaultNamespace

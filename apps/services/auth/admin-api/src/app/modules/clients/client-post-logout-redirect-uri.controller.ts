@@ -25,7 +25,7 @@ import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
 
-const namespace = `${environment.audit.defaultNamespace}/client-post-logout-redirect-uri`
+const namespace = `@island.is/auth-admin-api/client-post-logout-redirect-uri`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()

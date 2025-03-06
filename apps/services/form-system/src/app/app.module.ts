@@ -1,6 +1,6 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
@@ -15,11 +15,12 @@ import { CertificationsModule } from './modules/certifications/certifications.mo
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   imports: [
     AuthModule.register(environment.auth),
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     LoggingModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -34,6 +35,10 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [AuditConfig],
+    })
   ],
 })
 export class AppModule {}

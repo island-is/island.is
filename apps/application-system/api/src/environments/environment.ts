@@ -5,9 +5,6 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
-  audit: {
-    defaultNamespace: '@island.is/applications',
-  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: ['@island.is', '@admin.island.is'],
@@ -49,11 +46,6 @@ const prodConfig = {
   environment: process.env.ENVIRONMENT,
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
-  audit: {
-    defaultNamespace: '@island.is/applications',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'application-system-api',
-  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: ['@island.is', '@admin.island.is'],

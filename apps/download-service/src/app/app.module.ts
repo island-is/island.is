@@ -9,7 +9,7 @@ import {
   FinanceClientConfig,
   FinanceClientModule,
 } from '@island.is/clients/finance'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditConfig, AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
   IdsClientConfig,
@@ -77,7 +77,7 @@ import {
     OccupationalLicensesController,
   ],
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     DocumentsClientModule,
     FinanceClientModule,
@@ -111,6 +111,7 @@ import {
         RightsPortalClientConfig,
         DocumentClientConfig,
         FeatureFlagConfig,
+        AuditConfig
       ],
     }),
   ],

@@ -12,7 +12,7 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditConfig, AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
   IdsClientConfig,
@@ -31,7 +31,7 @@ import { ScopesModule } from './scopes/scopes.module'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -56,6 +56,7 @@ import { ScopesModule } from './scopes/scopes.module'
         DelegationApiUserSystemNotificationConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
+        AuditConfig
       ],
     }),
   ],

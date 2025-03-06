@@ -13,9 +13,6 @@ const devConfig = {
     audience: ['@island.is', '@admin.island.is'],
   },
   apiMock: process.env.API_MOCKS === 'true',
-  audit: {
-    defaultNamespace: '@island.is/services-endorsements-api',
-  },
   email: {
     sender: 'devland.is',
     address: 'development@island.is',
@@ -30,11 +27,6 @@ const prodConfig = {
     audience: ['@island.is', '@admin.island.is'],
   },
   apiMock: false,
-  audit: {
-    groupName: process.env.AUDIT_GROUP_NAME, // used in cloudwatch
-    serviceName: 'services-endorsements-api', // used in cloudwatch
-    defaultNamespace: '@island.is/services-endorsements-api',
-  },
   email: {
     sender: process.env.EMAIL_FROM_NAME ?? '',
     address: process.env.EMAIL_FROM_ADDRESS ?? '',

@@ -11,7 +11,7 @@ import {
 } from '@island.is/clients/license-client'
 import { LoggingModule } from '@island.is/logging'
 
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditConfig, AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
 import { LicenseConfig } from '@island.is/services/license'
@@ -22,7 +22,7 @@ import { LicenseModule } from './modules/license/license.module'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     ProblemModule,
     LoggingModule,
@@ -39,6 +39,7 @@ import { LicenseModule } from './modules/license/license.module'
         MachineDigitalLicenseClientConfig,
         HuntingDigitalLicenseClientConfig,
         LicenseConfig,
+        AuditConfig
       ],
     }),
     LicenseModule,

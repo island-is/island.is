@@ -6,9 +6,6 @@ const devConfig = {
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
   },
-  audit: {
-    defaultNamespace: '@island.is/user-profile',
-  },
   auth: {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
@@ -24,11 +21,6 @@ const prodConfig = {
     cert: process.env.ISLYKILL_CERT ?? '',
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
-  },
-  audit: {
-    defaultNamespace: '@island.is/user-profile',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-user-profile',
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',

@@ -14,10 +14,9 @@ import {
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { environment } from '../../../environments'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
-const namespace = `${environment.audit.defaultNamespace}/personal-representatives`
+const namespace = '@island.is/personal-representative-public/personal-representatives'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.publicPersonalRepresentative)

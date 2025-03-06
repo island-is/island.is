@@ -26,9 +26,8 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { LicenseTypeScopesGuard } from './guards/licenseTypeScope.guard'
 import { LicenseApiScope } from '@island.is/auth/scopes'
 import { NationalId } from '@island.is/nest/core'
-import { environment } from '../../../environments'
 
-const namespace = `${environment.audit.defaultNamespace}`
+const namespace = '@island.is/license-api'
 
 @ApiHeader({
   name: 'X-Param-NationalId',

@@ -26,12 +26,11 @@ import {
 import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
 import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 
-import { environment } from '../../../environments'
-const namespace = `${environment.audit.defaultNamespace}/draft_regulation_cancel`
 
 import { DraftRegulationCancel } from '@island.is/regulations/admin'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
+const namespace = '@island.is/services/regulations-admin-backend/draft_regulation_change'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.regulationAdmin)
 @Controller('api')

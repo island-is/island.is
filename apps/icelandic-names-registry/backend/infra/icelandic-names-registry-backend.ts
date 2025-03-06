@@ -14,6 +14,8 @@ export const serviceSetup =
           staging: 'https://identity-server.staging01.devland.is',
           prod: 'https://innskra.island.is',
         },
+        AUDIT_DEFAULT_NAMESPACE: '@island.is/icelandic-names-registry',
+        AUDIT_SERVICE_NAME: 'icelandic-names-registry-backend',
       })
       .grantNamespaces('islandis')
       .liveness('/liveness')

@@ -57,7 +57,7 @@ export class FindTagPaginationComboDto extends IntersectionType(
 ) {}
 
 @Audit({
-  namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
+  namespace: '@island.is/services-endorsements-api/endorsement-list',
 })
 @ApiTags('endorsementList')
 @ApiOAuth2([])

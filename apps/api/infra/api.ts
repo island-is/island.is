@@ -279,8 +279,9 @@ export const serviceSetup = (services: {
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/api',
+      AUDIT_SERVICE_NAME: 'api',
     })
-
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',

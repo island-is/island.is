@@ -104,6 +104,8 @@ export const workerSetup = (services: {
         prod: 'https://island.is/umsoknir',
         local: 'http://localhost:4200/umsoknir',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/applications',
+      AUDIT_SERVICE_NAME: 'application-system-api',
       USER_NOTIFICATION_API_URL: ref(
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),

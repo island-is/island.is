@@ -32,7 +32,7 @@ import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
 
-const namespace = `${environment.audit.defaultNamespace}/idp-restriction`
+const namespace = `@island.is/auth-admin-api/idp-restriction`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()

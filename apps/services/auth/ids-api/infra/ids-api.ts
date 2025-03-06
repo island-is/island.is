@@ -105,6 +105,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'false',
         prod: 'false',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-api',
+      AUDIT_SERVICE_NAME: 'services-auth-api',
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',

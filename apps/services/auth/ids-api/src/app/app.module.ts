@@ -14,7 +14,7 @@ import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import {
   ConfigModule,
   IdsClientConfig,
@@ -39,7 +39,7 @@ import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     ProblemModule,
     SequelizeModule.forRootAsync({
@@ -72,6 +72,7 @@ import { UsersModule } from './users/users.module'
         smsModuleConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
+        AuditConfig
       ],
     }),
   ],

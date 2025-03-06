@@ -10,7 +10,7 @@ import {
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 
 import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
@@ -31,7 +31,7 @@ import {
     ApplicationChargeModule,
     ApplicationFilesModule,
     UserNotificationEagerClientModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -39,6 +39,7 @@ import {
         signingModuleConfig,
         ApplicationFilesConfig,
         FileStorageConfig,
+        AuditConfig
       ],
     }),
   ],

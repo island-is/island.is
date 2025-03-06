@@ -77,6 +77,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-admin-api',
+      AUDIT_SERVICE_NAME: 'services-auth-admin-api',
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',

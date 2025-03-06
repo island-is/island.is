@@ -37,7 +37,7 @@ import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
 
-const namespace = `${environment.audit.defaultNamespace}/translation`
+const namespace = `@island.is/auth-admin-api/translation`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()

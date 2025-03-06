@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditConfig, AuditModule } from '@island.is/nest/audit'
 import { NameType, StatusType } from '@island.is/icelandic-names-registry-types'
 import { LoggingModule } from '@island.is/logging'
 
@@ -10,6 +10,7 @@ import { IcelandicNameController } from '../../icelandic-name.controller'
 import { IcelandicNameService } from '../../icelandic-name.service'
 import { IcelandicName } from '../../icelandic-name.model'
 import { CreateIcelandicNameBodyDto } from '../../dto'
+import { ConfigModule } from '@nestjs/config'
 
 describe('IcelandicNameController', () => {
   let icelandicNameController: IcelandicNameController
@@ -46,6 +47,10 @@ describe('IcelandicNameController', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [AuditConfig]
+        }),
         LoggingModule,
         AuditModule.forRoot({
           defaultNamespace: '@island.is/icelandic-names-registry',

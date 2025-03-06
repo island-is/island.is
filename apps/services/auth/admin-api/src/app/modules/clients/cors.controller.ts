@@ -25,7 +25,7 @@ import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
 
-const namespace = `${environment.audit.defaultNamespace}/cors`
+const namespace = `@island.is/auth-admin-api/cors`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
