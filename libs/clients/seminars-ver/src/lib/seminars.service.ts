@@ -9,6 +9,7 @@ import {
   RegistrationApi,
   IndividualApi,
   IndividualDTO,
+  IndividualCourseValidationDto,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -54,12 +55,19 @@ export class SeminarsClientService {
 
   async checkIndividuals(
     auth: User,
-    nationalIds: Array<string>,
+    individuals: Array<IndividualCourseValidationDto>,
     courseID: string,
+    nationalIdOfRegisterer?: string,
   ): Promise<Array<IndividualDTO>> {
-    return this.individualApiWithAuth(auth).apiIndividualGet({
-      courseID,
-      nationalIds,
+    return this.individualApiWithAuth(auth).apiIndividualPost({
+      courseEligabilityDto: {
+        courseId: courseID,
+        nationalIdOfRegisterer,
+        individuals: individuals.map((individual) => ({
+          nationalId: individual.nationalId,
+          email: individual.email,
+        })),
+      },
     })
   }
 }

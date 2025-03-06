@@ -105,28 +105,27 @@
       }
     },
     "/api/Individual": {
-      "get": {
+      "post": {
         "tags": ["Individual"],
-        "parameters": [
-          {
-            "name": "courseID",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "nationalIds",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseEligabilityDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseEligabilityDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseEligabilityDto"
               }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -263,6 +262,35 @@
           "time": {
             "type": "string",
             "nullable": true
+          },
+          "feeCodeDirectPayment": {
+            "type": "string",
+            "nullable": true
+          },
+          "feeCodeInvoice": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CourseEligabilityDto": {
+        "type": "object",
+        "properties": {
+          "courseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nationalIdOfRegisterer": {
+            "type": "string",
+            "nullable": true
+          },
+          "individuals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IndividualCourseValidationDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -290,6 +318,20 @@
         },
         "additionalProperties": false
       },
+      "IndividualCourseValidationDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "IndividualDTO": {
         "type": "object",
         "properties": {
@@ -299,6 +341,10 @@
           },
           "mayTakeCourse": {
             "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -343,6 +389,10 @@
           "paymentExplanation": {
             "type": "string",
             "nullable": true
+          },
+          "totalPrice": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

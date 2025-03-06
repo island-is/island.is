@@ -11,6 +11,7 @@ import { participants as participantMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import {
   QueryAreIndividualsValidArgs,
+  SeminarIndividual,
   SeminarsIndividualValidationItem,
 } from '@island.is/api/schema'
 import { ARE_INDIVIDUALS_VALID } from '../../../graphql/queries'
@@ -44,8 +45,18 @@ export const participantsSection = buildSection({
                 'initialQuery',
                 '',
               ) ?? ''
-            const nationalIds =
-              tableItems?.map((x) => x.nationalIdWithName.nationalId) ?? []
+            const nationalIdOfApplicant = getValueViaPath<string>(
+              application.externalData,
+              'nationalRegistry.nationalId',
+              '',
+            )
+            const individuals: Array<SeminarIndividual> =
+              tableItems?.map((x) => {
+                return {
+                  nationalId: x.nationalIdWithName.nationalId,
+                  email: x.email,
+                }
+              }) ?? []
             const { data } = await apolloClient.query<
               { areIndividualsValid: Array<SeminarsIndividualValidationItem> },
               QueryAreIndividualsValidArgs
@@ -53,7 +64,8 @@ export const participantsSection = buildSection({
               query: ARE_INDIVIDUALS_VALID,
               variables: {
                 courseID: courseID,
-                nationalIds: nationalIds,
+                nationalIdOfRegisterer: nationalIdOfApplicant,
+                input: { individuals: individuals },
               },
             })
 

@@ -10,8 +10,16 @@ export const IS_COMPANY_VALID = `
 `
 
 export const ARE_INDIVIDUALS_VALID = gql`
-  query AreIndividualsValid($nationalIds: [String!]!, $courseID: String!) {
-    areIndividualsValid(nationalIds: $nationalIds, courseID: $courseID) {
+  query AreIndividualsValid(
+    $input: ValidateSeminarIndividualsInput!
+    $courseID: String!
+    $nationalIdOfRegisterer: String
+  ) {
+    areIndividualsValid(
+      input: $input
+      courseID: $courseID
+      nationalIdOfRegisterer: $nationalIdOfRegisterer
+    ) {
       nationalID
       mayTakeCourse
     }

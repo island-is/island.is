@@ -1,5 +1,6 @@
 import {
   CompanyDTO,
+  IndividualCourseValidationDto,
   IndividualDTO,
   SeminarsClientService,
 } from '@island.is/clients/seminars-ver'
@@ -22,14 +23,16 @@ export class SeminarsService {
 
   async checkIndividuals(
     auth: User,
-    nationalIds: Array<string>,
+    individuals: Array<IndividualCourseValidationDto>,
     courseID: string,
+    nationalIdOfRegisterer?: string,
   ): Promise<Array<IndividualDTO>> {
-    const individuals = this.seminarsService.checkIndividuals(
+    const returnedIndividuals = this.seminarsService.checkIndividuals(
       auth,
-      nationalIds,
+      individuals,
       courseID,
+      nationalIdOfRegisterer,
     )
-    return individuals
+    return returnedIndividuals
   }
 }

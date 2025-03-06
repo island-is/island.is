@@ -76,11 +76,8 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
-<<<<<<< HEAD
   SEMINAR_REGISTRATION = 'SeminarRegistration',
-=======
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
->>>>>>> origin
   SECONDARY_SCHOOL = 'SecondarySchool',
 }
 

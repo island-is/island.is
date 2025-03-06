@@ -6,7 +6,7 @@ import {
   RegisterNumber,
 } from '../shared/contstants'
 import { isValidEmail, isValidPhoneNumber } from '../utils'
-import { YES } from '@island.is/application/types'
+import { YES } from '@island.is/application/core'
 
 const UserSchemaBase = z.object({
   nationalId: z

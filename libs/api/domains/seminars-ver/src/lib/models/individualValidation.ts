@@ -7,4 +7,7 @@ export class IndividualValidationItem {
 
   @Field(() => Boolean, { nullable: true })
   mayTakeCourse?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  errorMessage?: string | null
 }

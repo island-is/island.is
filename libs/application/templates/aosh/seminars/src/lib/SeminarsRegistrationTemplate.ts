@@ -33,6 +33,7 @@ import { ApiActions, PaymentOptions } from '../shared/contstants'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems, isCompany } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -44,6 +45,7 @@ const template: ApplicationTemplate<
   institution: applicationMessage.institutionName,
   translationNamespaces:
     ApplicationConfigurations.SeminarRegistration.translation,
+  codeOwner: CodeOwners.Origo,
   initialQueryParameter: 'seminarId',
   dataSchema: SeminarAnswersSchema,
   allowedDelegations: [

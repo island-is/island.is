@@ -10,6 +10,7 @@ import {
   buildSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
 import { IndividualOrCompany, PaymentOptions } from '../../../shared/contstants'
@@ -17,7 +18,6 @@ import {
   Application,
   ExternalData,
   FormValue,
-  YES,
 } from '@island.is/application/types'
 import {
   isIndividual,

@@ -13,6 +13,7 @@ import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { SeminarsService } from './seminars.service'
 import { CompanyValidationItem } from './models/companyValidation'
 import { IndividualValidationItem } from './models/individualValidation'
+import { ValidateSeminarIndividualsInput } from './dto/individuals.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -34,9 +35,16 @@ export class SeminarsResolver {
   @Audit()
   async areIndividualsValid(
     @CurrentUser() auth: User,
-    @Args('nationalIds', { type: () => [String] }) nationalIds: Array<string>,
+    @Args('input') input: ValidateSeminarIndividualsInput,
     @Args('courseID', { type: () => String }) courseID: string,
+    @Args('nationalIdOfRegisterer', { type: () => String, nullable: true })
+    nationalIdOfRegisterer?: string,
   ) {
-    return this.seminarsService.checkIndividuals(auth, nationalIds, courseID)
+    return this.seminarsService.checkIndividuals(
+      auth,
+      input.individuals,
+      courseID,
+      nationalIdOfRegisterer,
+    )
   }
 }
