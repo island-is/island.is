@@ -6,7 +6,7 @@ import { RentalHousingSpecialProvisions } from './rentalHousing/rentalHousingSpe
 import { RentalHousingCondition } from './rentalHousing/rentalHousingCondition'
 import { RentalHousingFireProtections } from './rentalHousing/rentalHousingFireProtections'
 
-import { application } from '../lib/messages'
+import { application } from '../../lib/messages'
 
 export const RentalHousingSection = buildSection({
   id: 'rentalHousingSection',

@@ -46,10 +46,10 @@ export const SummaryForm: Form = buildForm({
             buildCustomField({
               id: 'summary',
               title: 'Samantekt',
-              component: 'SummaryEdit',
+              component: 'SummaryNoEdit',
             }),
             buildSubmitField({
-              id: 'toDraft',
+              id: 'summarySubmit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
@@ -58,12 +58,6 @@ export const SummaryForm: Form = buildForm({
                   name: 'Uppfæra umsókn',
                   type: 'signGhost',
                 },
-              ],
-            }),
-            buildSubmitField({
-              id: 'toSigning',
-              title: '',
-              actions: [
                 {
                   event: DefaultEvents.SUBMIT,
                   name: 'Áfram í undirritun',

@@ -10,33 +10,33 @@ import { DefaultEvents } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { TRUE } from '../../lib/constants'
-import { signatureInfo } from '../../lib/messages'
+import { inReview } from '../../lib/messages'
 
-export const SignatureInfo = buildSection({
-  id: 'signature',
-  title: signatureInfo.sectionName,
+export const PreSignatureInfoSection = buildSection({
+  id: 'preSignatureInfo',
+  title: inReview.preSignatureInfo.sectionName,
   children: [
     buildMultiField({
-      id: 'signatureInfo',
-      title: signatureInfo.sectionName,
-      description: signatureInfo.pageDescription,
+      id: 'preSignatureInfo',
+      title: inReview.preSignatureInfo.sectionName,
+      description: inReview.preSignatureInfo.pageDescription,
       nextButtonText: '',
       children: [
         buildDescriptionField({
-          id: 'signatureInfo.info',
-          title: signatureInfo.infoHeading,
-          description: signatureInfo.infoBullets,
+          id: 'preSignatureInfo.info',
+          title: inReview.preSignatureInfo.infoHeading,
+          description: inReview.preSignatureInfo.infoBullets,
           titleVariant: 'h3',
           space: 0,
         }),
         buildStaticTableField({
-          title: signatureInfo.tableTitle,
+          title: inReview.preSignatureInfo.tableTitle,
           marginTop: 6,
           header: [
-            signatureInfo.tableHeaderName,
-            signatureInfo.tableHeaderId,
-            signatureInfo.tableHeaderPhone,
-            signatureInfo.tableHeaderEmail,
+            inReview.preSignatureInfo.tableHeaderName,
+            inReview.preSignatureInfo.tableHeaderId,
+            inReview.preSignatureInfo.tableHeaderPhone,
+            inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
             const { landlordInfo, tenantInfo } =
@@ -61,32 +61,32 @@ export const SignatureInfo = buildSection({
           },
         }),
         buildCheckboxField({
-          id: 'signatureInfo.statement',
+          id: 'preSignatureInfo.statement',
           title: '',
           required: true,
           options: [
             {
               value: TRUE,
-              label: signatureInfo.statementLabel,
+              label: inReview.preSignatureInfo.statementLabel,
             },
           ],
           large: true,
           marginTop: 9,
         }),
         buildSubmitField({
-          id: 'signatureInfo.submit',
+          id: 'preSignatureInfo.buttons',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
-              event: DefaultEvents.SUBMIT,
-              name: signatureInfo.submitButtonText,
-              type: 'sign',
+              event: DefaultEvents.EDIT,
+              name: inReview.preSignatureInfo.editButtonText,
+              type: 'subtle',
             },
             {
-              event: DefaultEvents.EDIT,
-              name: 'Til baka í yfirlit',
-              type: 'subtle',
+              event: DefaultEvents.SUBMIT,
+              name: inReview.preSignatureInfo.submitButtonText,
+              type: 'sign',
             },
           ],
         }),

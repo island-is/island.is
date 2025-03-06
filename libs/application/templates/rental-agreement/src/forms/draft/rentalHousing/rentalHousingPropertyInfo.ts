@@ -13,14 +13,14 @@ import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
   Routes,
-} from '../../lib/constants'
+} from '../../../lib/constants'
 import {
   getApplicationAnswers,
   getPropertyTypeOptions,
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
-} from '../../lib/utils'
-import { registerProperty } from '../../lib/messages'
+} from '../../../lib/utils'
+import { registerProperty } from '../../../lib/messages'
 
 const messagesInfo = registerProperty.info
 const messagesSummary = registerProperty.infoSummary

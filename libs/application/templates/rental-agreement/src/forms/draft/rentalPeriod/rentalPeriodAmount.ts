@@ -16,13 +16,13 @@ import {
   RentalPaymentMethodOptions,
   Routes,
   TRUE,
-} from '../../lib/constants'
+} from '../../../lib/constants'
 import {
   getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
-} from '../../lib/utils'
-import { rentalAmount } from '../../lib/messages'
+} from '../../../lib/utils'
+import { rentalAmount } from '../../../lib/messages'
 
 const rentalAmountConnectedToIndex = (answers: FormValue) => {
   const isAmountConnectedToIndex = getValueViaPath(

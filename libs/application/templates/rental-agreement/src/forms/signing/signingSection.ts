@@ -10,8 +10,8 @@ import { signing } from '../../lib/messages/signing'
 
 import RA from '../../assets/RA'
 
-export const Signing: Section = buildSection({
-  id: 'signing',
+export const SigningSection: Section = buildSection({
+  id: 'SigningSection',
   title: signing.sectionName,
   children: [
     buildMultiField({

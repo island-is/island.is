@@ -10,9 +10,9 @@ import {
   getApplicationAnswers,
   getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
-} from '../../lib/utils'
-import { OtherFeesPayeeOptions, Routes } from '../../lib/constants'
-import { otherFees } from '../../lib/messages'
+} from '../../../lib/utils'
+import { OtherFeesPayeeOptions, Routes } from '../../../lib/constants'
+import { otherFees } from '../../../lib/messages'
 
 const housingFundAmountPayedByTenant = (answers: FormValue) => {
   const { otherFeesHousingFund } = getApplicationAnswers(answers)

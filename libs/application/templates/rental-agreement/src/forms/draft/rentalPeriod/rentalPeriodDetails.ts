@@ -7,8 +7,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { Routes, TRUE } from '../../lib/constants'
-import { rentalPeriod } from '../../lib/messages'
+import { Routes, TRUE } from '../../../lib/constants'
+import { rentalPeriod } from '../../../lib/messages'
 
 const rentalPeriodIsDefinite = (answers: FormValue) => {
   const rentalPeriodDefinite = getValueViaPath(

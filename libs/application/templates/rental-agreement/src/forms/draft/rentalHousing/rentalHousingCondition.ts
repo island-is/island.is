@@ -6,9 +6,9 @@ import {
   buildTextField,
   buildFileUploadField,
 } from '@island.is/application/core'
-import { getApplicationAnswers, getInspectorOptions } from '../../lib/utils'
-import { RentalHousingConditionInspector, Routes } from '../../lib/constants'
-import { housingCondition } from '../../lib/messages'
+import { getApplicationAnswers, getInspectorOptions } from '../../../lib/utils'
+import { RentalHousingConditionInspector, Routes } from '../../../lib/constants'
+import { housingCondition } from '../../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({
   id: Routes.CONDITION,

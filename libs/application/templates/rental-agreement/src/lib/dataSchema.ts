@@ -731,12 +731,12 @@ const otherFees = z
     return true
   })
 
-const signatureInfo = z.object({
+const preSignatureInfo = z.object({
   statement: z
     .string()
     .array()
     .refine((x) => x.includes(TRUE), {
-      params: m.signatureInfo.statementError,
+      params: m.inReview.preSignatureInfo.statementError,
     }),
 })
 
@@ -753,7 +753,7 @@ export const dataSchema = z.object({
   condition,
   fireProtections,
   otherFees,
-  signatureInfo,
+  preSignatureInfo,
 })
 
 export type RentalAgreement = z.TypeOf<typeof dataSchema>

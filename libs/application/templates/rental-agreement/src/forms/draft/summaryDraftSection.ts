@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { summary } from '../lib/messages'
+import { summary } from '../../lib/messages'
 
 export const SummaryDraftSection = buildSection({
   id: 'summary',

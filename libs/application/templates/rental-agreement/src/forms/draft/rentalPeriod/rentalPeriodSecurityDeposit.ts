@@ -15,12 +15,12 @@ import {
   SecurityDepositAmountOptions,
   Routes,
   AnswerOptions,
-} from '../../lib/constants'
+} from '../../../lib/constants'
 import {
   getSecurityDepositTypeOptions,
   getSecurityAmountOptions,
-} from '../../lib/utils'
-import { securityDeposit } from '../../lib/messages'
+} from '../../../lib/utils'
+import { securityDeposit } from '../../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   condition: (answers) => {

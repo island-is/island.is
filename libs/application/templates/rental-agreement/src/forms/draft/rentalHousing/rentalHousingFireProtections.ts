@@ -5,8 +5,8 @@ import {
   buildTextField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-import { Routes } from '../../lib/constants'
-import { housingFireProtections } from '../../lib/messages'
+import { Routes } from '../../../lib/constants'
+import { housingFireProtections } from '../../../lib/messages'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
