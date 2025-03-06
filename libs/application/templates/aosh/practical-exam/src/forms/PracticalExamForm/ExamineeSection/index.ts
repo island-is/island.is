@@ -3,13 +3,20 @@ import {
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { examinee, shared } from '../../../lib/messages'
 import { getAllCountryCodes } from '@island.is/shared/utils'
+import { FormValue } from '@island.is/application/types'
+import { SelfOrOthers } from '../../../utils/types'
 
 export const examineeSection = buildSection({
   id: 'examineeSection',
   title: examinee.general.sectionTitle,
+  condition: (answers: FormValue) => {
+    const selfOrOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+    return selfOrOthers === SelfOrOthers.others ? true : false
+  },
   children: [
     buildMultiField({
       title: examinee.general.pageTitle,
@@ -50,6 +57,7 @@ export const examineeSection = buildSection({
               placeholder: examinee.labels.pickCountry,
               width: 'half',
               displayInTable: false,
+              // TODO Add Iceland at top ? if so create a util and utilize in other places...
               options: getAllCountryCodes().map((country) => ({
                 label: country.name,
                 value: country.name,
@@ -62,9 +70,12 @@ export const examineeSection = buildSection({
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
+          //onSubmitLoad: async ({apolloClient, application, tableItems}) => {
+
+          //}
         }),
         buildCustomField({
-          id: '',
+          id: 'examinees.examineeValidation',
           title: '',
           component: 'ExamineeValidation',
         }),

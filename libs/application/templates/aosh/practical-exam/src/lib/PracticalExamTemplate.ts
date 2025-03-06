@@ -31,6 +31,7 @@ import { shared } from './messages/shared'
 import { getChargeItems, isCompany } from '../utils'
 import { PaymentOptions } from '../shared/constants'
 import { CodeOwners } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -52,7 +53,7 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitid],
-  //featureFlag: Features.WorkAccidentNotificationEnabled,
+  featureFlag: Features.PracticalExamEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -120,7 +121,11 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,

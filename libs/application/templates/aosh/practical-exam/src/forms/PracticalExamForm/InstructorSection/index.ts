@@ -46,6 +46,9 @@ export const instructorSection = buildSection({
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
+          //onSubmitLoad: ({apolloClient, application, tableItems }) => {
+
+          //}
         }),
         buildCustomField({
           id: '',

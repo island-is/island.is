@@ -13,7 +13,7 @@ import {
 import { getChargeItems } from '../../utils'
 import { conclusion, payment } from '../../lib/messages'
 import { PaymentOptions } from '../../shared/constants'
-import { examCategoriesSection } from './ExamCategories'
+import { examCategoriesSectionOthers, examCategoriesSectionSelf } from './ExamCategories'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
@@ -24,11 +24,12 @@ export const PracticalExamForm: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     informationSection,
-    examineeSection,
+    examineeSection, // Rendered if user is registered not only himself
     instructorSection,
-    examCategoriesSection,
+    examCategoriesSectionSelf, // Conditional on registering only himself
+    examCategoriesSectionOthers, // Conditional on registering multiple examinees
     paymentArrangementSection,
-    overviewSection,
+    overviewSection, // TODO(balli) Different depending on user choice of self/others in informationSection
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (_) =>
@@ -39,7 +40,7 @@ export const PracticalExamForm: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.pageTitle,
-      alertTitle: conclusion.default.alertTitle, // TODO: Add seminar name from answers
+      alertTitle: conclusion.default.alertTitle,
       alertMessage: '',
       expandableHeader: conclusion.default.accordionTitle,
       expandableIntro: '',

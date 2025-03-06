@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages/information'
 import { shared } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { SelfOrOthers } from '../../../utils/types'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 
@@ -97,13 +97,24 @@ export const informationSection = buildSection({
         }),
         buildTextField({
           id: 'information.licenseNumber',
+          title: information.general.licenseNumberLabel,
           width: 'half',
           format: '########',
           required: true,
+          condition: (answers: FormValue) => {
+            const isForOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+            return isForOthers === SelfOrOthers.others ? true : false
+          },
         }),
         buildSelectField({
           id: `information.countryOfIssue`,
           width: 'half',
+          title: information.general.countryLabel,
+          defaultValue: SelfOrOthers.self,
+          condition: (answers: FormValue) => {
+            const isForOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+            return isForOthers === SelfOrOthers.others ? true : false
+          },
           options: () => {
             const iceland = {
               name: 'Iceland',
@@ -127,6 +138,7 @@ export const informationSection = buildSection({
             ]
           },
           required: true,
+          isClearable: true,
         }),
       ],
     }),

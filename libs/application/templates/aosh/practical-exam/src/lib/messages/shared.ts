@@ -30,6 +30,12 @@ export const shared = {
       description:
         'Description of application state/status when the application is in progress',
     },
+    prerequisiteTabTitle: {
+      id: 'aosh.pe.application:shared.application.prerequisiteTabTitle',
+      defaultMessage: 'Gagnaöflun',
+      description:
+        'Browser tab title for prerequisite section',
+    },
   }),
   labels: defineMessages({
     ssn: {

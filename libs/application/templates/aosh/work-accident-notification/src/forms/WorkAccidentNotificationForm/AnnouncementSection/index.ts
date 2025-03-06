@@ -5,12 +5,11 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { externalData } from '../../../lib/messages/externalData'
-import { FormValue } from '@island.is/application/types'
 
 export const announcementSection = buildSection({
   id: 'externalData',
   title: externalData.dataProvider.announcement,
-  condition: (formValue: FormValue, externalData, user) => {
+  condition: (_, externalData) => {
     const type = getValueViaPath<string>(externalData, 'identity.data.type')
     return type === 'person'
   },

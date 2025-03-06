@@ -5,7 +5,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { externalData } from '../../lib/messages'
+import { externalData, shared } from '../../lib/messages'
 import {
   UserProfileApi,
   IdentityApi,
@@ -16,6 +16,7 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
   id: 'externalData',
+  tabTitle: shared.application.prerequisiteTabTitle,
   title: '',
   children: [
     buildExternalDataProvider({

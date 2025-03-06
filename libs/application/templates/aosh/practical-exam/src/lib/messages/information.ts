@@ -14,7 +14,7 @@ export const information = {
     },
     sectionTitle: {
       id: 'aosh.pe.application:information.general.sectionTitle',
-      defaultMessage: 'Persónuupplýsingar',
+      defaultMessage: 'Skráningaraðili',
       description: `Information section title`,
     },
     descriptionField: {
@@ -32,6 +32,16 @@ export const information = {
       id: 'aosh.pe.application:information.general.registerOthers',
       defaultMessage: 'Skrá fleiri',
       description: `radio label for registering others`,
+    },
+    countryLabel: {
+      id: 'aosh.pe.application:information.general.countryLabel',
+      defaultMessage: 'Útgáfuland',
+      description: `Label for country of issue input`,
+    },
+    licenseNumberLabel: {
+      id: 'aosh.pe.application:information.general.licenseNumberLabel',
+      defaultMessage: 'Ökuskirteinisnúmer',
+      description: `Label for licence number input`,
     },
   }),
 }

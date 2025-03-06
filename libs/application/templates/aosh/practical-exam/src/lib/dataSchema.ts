@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import { isValidEmail } from '../utils'
 import { isValidPhoneNumber } from '../utils/validation'
 import { IndividualOrCompany, PaymentOptions } from '../shared/constants'
+import { SelfOrOthers } from '../utils/types'
 
 const InformationSchema = z.object({
   name: z.string().min(1).max(256),
@@ -12,8 +13,20 @@ const InformationSchema = z.object({
       (nationalId) =>
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
-  phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  email: z.string().email(),
+  phone: z.string().optional(),//.refine((v) => isValidPhoneNumber(v)), // TODO Refine again, dev issues with no email/phone
+  email: z.string().optional(), // TODO Remove optional add .email(), dev issues with no email/phone
+  selfOrOthers: z.nativeEnum(SelfOrOthers),
+  licenseNumber: z.string().optional(),
+  countryOfIssue: z.string().nullish(),
+}).refine((data) => {
+  if (data.selfOrOthers === SelfOrOthers.others) {
+    // TODO(balli) Create util function to validate license number ??
+    return data.licenseNumber && data.countryOfIssue
+  }
+
+  return true
+}, {
+  path: ['']
 })
 
 const PaymentArrangementSchema = z
