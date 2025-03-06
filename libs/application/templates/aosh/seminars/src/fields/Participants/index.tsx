@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   InputFileUpload,
+  LoadingDots,
   UploadFile,
 } from '@island.is/island-ui/core'
 import {
@@ -74,6 +75,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
   const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
+  const [csvIsLoading, setCsvIsLoading] = useState<boolean>(false)
   const courseID =
     getValueViaPath<string>(application.answers, 'initialQuery', '') ?? ''
 
@@ -98,85 +100,93 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
-    reader.onload = function (e) {
+    reader.onload = function(e) {
       if (typeof reader.result !== 'string') {
         setValue('participantCsvError', true)
         throw new TypeError(
-          `Expected reader.result to be a string, but got ${
-            reader.result === null ? 'null' : typeof reader.result
+          `Expected reader.result to be a string, but got ${reader.result === null ? 'null' : typeof reader.result
           }.`,
         )
       }
       const csvData = reader.result
+
+      setCsvIsLoading(true)
       parse(csvData, async (err, data) => {
-        if (err) {
-          rejectFile()
-          return
-        }
-        const headers = data.shift()
-        const validHeaders = checkHeaders(headers[0])
-        if (!validHeaders) {
-          rejectFile()
-          return
-        }
-        const errorListFromAnswers: Array<CSVError> = []
-        const answerValue: Array<Participant> = data.map(
-          (value: Array<string>, index: number) => {
-            const participantList = parseDataToParticipantList(value[0])
-            if (participantList === null) {
-              setValue('participantCsvError', true)
-              return []
-            } else {
-              const errorMessages = validateFields(value[0])
-              if (errorMessages.length > 0) {
-                errorListFromAnswers.push({
-                  itemIndex: index,
-                  errorList: errorMessages,
-                })
-              }
-              return participantList
-            }
-          },
-        )
-        const individuals: Array<SeminarIndividual> = answerValue.map((x) => {
-          return {
-            nationalId: x.nationalIdWithName.nationalId,
-            email: x.email,
+        try {
+
+
+          if (err) {
+            rejectFile()
+            return
           }
-        })
-        const response = await getIsCompanyValidCallback(individuals)
-        const hasDisabledParticipant = response?.areIndividualsValid?.find(
-          (x) => x.mayTakeCourse === false,
-        )
-        if (hasDisabledParticipant) {
-          setValue('participantValidityError', true)
-          setFoundNotValid(true)
-        }
-        if (errorListFromAnswers.length > 0) {
-          setCsvInputError(errorListFromAnswers)
-        } else {
-          setCsvInputError([])
-          const fileWithSuccessStatus: UploadFile = props[0]
-          Object.assign(fileWithSuccessStatus, {
-            status: FileUploadStatus.done,
-          })
-          const finalAnswerValue = answerValue.map<Participant>((x) => {
-            const participantInRes = response?.areIndividualsValid?.find(
-              (z) => z.nationalID === x.nationalIdWithName.nationalId,
-            )
+          const headers = data.shift()
+          const validHeaders = checkHeaders(headers[0])
+          if (!validHeaders) {
+            rejectFile()
+            return
+          }
+          const errorListFromAnswers: Array<CSVError> = []
+          const answerValue: Array<Participant> = data.map(
+            (value: Array<string>, index: number) => {
+              const participantList = parseDataToParticipantList(value[0])
+              if (participantList === null) {
+                setValue('participantCsvError', true)
+                return []
+              } else {
+                const errorMessages = validateFields(value[0])
+                if (errorMessages.length > 0) {
+                  errorListFromAnswers.push({
+                    itemIndex: index,
+                    errorList: errorMessages,
+                  })
+                }
+                return participantList
+              }
+            },
+          )
+          const individuals: Array<SeminarIndividual> = answerValue.map((x) => {
             return {
-              ...x,
-              disabled: (!participantInRes?.mayTakeCourse).toString(),
+              nationalId: x.nationalIdWithName.nationalId,
+              email: x.email,
             }
           })
-          setValue('participantCsvError', false)
-          setFileState([fileWithSuccessStatus])
-          setParticipantList(finalAnswerValue)
-          setValue('participantList', finalAnswerValue)
+          const response = await getIsCompanyValidCallback(individuals)
+          const hasDisabledParticipant = response?.areIndividualsValid?.find(
+            (x) => x.mayTakeCourse === false,
+          )
+          if (hasDisabledParticipant) {
+            setValue('participantValidityError', true)
+            setFoundNotValid(true)
+          }
+          if (errorListFromAnswers.length > 0) {
+            setCsvInputError(errorListFromAnswers)
+          } else {
+            setCsvInputError([])
+            const fileWithSuccessStatus: UploadFile = props[0]
+            Object.assign(fileWithSuccessStatus, {
+              status: FileUploadStatus.done,
+            })
+            const finalAnswerValue = answerValue.map<Participant>((x) => {
+              const participantInRes = response?.areIndividualsValid?.find(
+                (z) => z.nationalID === x.nationalIdWithName.nationalId,
+              )
+              return {
+                ...x,
+                disabled: (!participantInRes?.mayTakeCourse).toString(),
+              }
+            })
+            setValue('participantCsvError', false)
+            setFileState([fileWithSuccessStatus])
+            setParticipantList(finalAnswerValue)
+            setValue('participantList', finalAnswerValue)
+          }
+        } finally {
+          setCsvIsLoading(false)
         }
       })
     }
     reader.readAsText(props[0] as unknown as Blob)
+
     return
   }
 
@@ -255,7 +265,13 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           {formatMessage(participantMessages.labels.csvButtonText)}
         </Button>
       </Box>
-
+      {
+        csvIsLoading && (
+          <Box width='full' display={'flex'} justifyContent={'center'} marginY={2}>
+            <LoadingDots large />
+          </Box>
+        )
+      }
       <Controller
         name="csv-upload-participants"
         render={() => (
