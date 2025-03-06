@@ -13,7 +13,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '../../../assets/Logo'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
