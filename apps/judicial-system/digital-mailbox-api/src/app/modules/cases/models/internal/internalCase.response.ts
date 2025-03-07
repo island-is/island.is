@@ -47,6 +47,7 @@ interface DateLog {
 
 interface Subpoena {
   id: string
+  created: Date
   subpoenaId: string
   serviceStatus?: ServiceStatus
 }
