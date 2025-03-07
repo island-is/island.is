@@ -1,19 +1,21 @@
 import {
   AlertMessage,
-  Button,
   Link,
   LinkContext,
   Text,
-  Divider,
 } from '@island.is/island-ui/core'
-
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { coreMessages, formatText } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Bus } from '../../assets'
+import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 
 type ConfirmationFieldProps = {
   field: {
@@ -37,32 +39,9 @@ type ConfirmationFieldProps = {
 
 export const ConfirmationField: FC<
   React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
-> = ({ application }) => {
+> = (props) => {
+  const { application } = props
   const { formatMessage } = useLocale()
-
-  const renderFooter = () => {
-    return (
-      <>
-        <Divider />
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          paddingTop={4}
-          marginBottom={4}
-        >
-          <Button
-            icon="arrowForward"
-            iconType="outline"
-            onClick={() => {
-              window.open(`${window.location.origin}/minarsidur`, '_blank')
-            }}
-          >
-            {formatText(m.openMySites, application, formatMessage)}
-          </Button>
-        </Box>
-      </>
-    )
-  }
 
   return (
     <>
@@ -126,23 +105,17 @@ export const ConfirmationField: FC<
         </LinkContext.Provider>
       </Box>
 
-      <Button
-        icon="open"
-        iconType="outline"
-        onClick={() => {
-          window.open(
-            formatText(
-              `${window.location.origin}/minarsidur/postholf`,
-              application,
-              formatMessage,
-            ),
-            '_blank',
-          )
+      <MessageWithLinkButtonFormField
+        application={application}
+        field={{
+          ...props.field,
+          type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+          component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+          url: '/minarsidur/umsoknir',
+          buttonTitle: coreMessages.openServicePortalButtonTitle,
+          message: coreMessages.openServicePortalMessageText,
         }}
-        variant="text"
-      >
-        {formatText(m.criminalRecordInboxText, application, formatMessage)}
-      </Button>
+      />
 
       <Box
         display="flex"
@@ -152,8 +125,6 @@ export const ConfirmationField: FC<
       >
         <Bus />
       </Box>
-
-      {renderFooter()}
     </>
   )
 }
