@@ -51,13 +51,6 @@ export class ListItemsService {
         handle4xx(e, this.handleError, 'failed to create list item'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
     return response
   }
 
@@ -68,9 +61,6 @@ export class ListItemsService {
         handle4xx(e, this.handleError, 'failed to delete list item'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 
@@ -81,9 +71,6 @@ export class ListItemsService {
         handle4xx(e, this.handleError, 'failed to update list item'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 
@@ -99,9 +86,6 @@ export class ListItemsService {
         handle4xx(e, this.handleError, 'failed to update list item'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 }

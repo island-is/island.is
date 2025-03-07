@@ -34,13 +34,6 @@ export class FormApplicantTypesService {
       .formApplicantTypesControllerCreate(input as FormApplicantTypesControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form applicant type'))
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
     return response
   }
 
@@ -49,9 +42,6 @@ export class FormApplicantTypesService {
       .formApplicantTypesControllerDelete(input as FormApplicantTypesControllerDeleteRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete form applicant type'))
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
   }
 
   async updateFormApplicantType(auth: User, input: FormApplicantTypeUpdateInput): Promise<void> {
@@ -59,9 +49,6 @@ export class FormApplicantTypesService {
       .formApplicantTypesControllerUpdate(input as FormApplicantTypesControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update form applicant type'))
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 }

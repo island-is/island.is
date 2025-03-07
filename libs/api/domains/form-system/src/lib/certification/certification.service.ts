@@ -49,12 +49,6 @@ export class CertificationsService {
         handle4xx(e, this.handleError, 'failed to create certification'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
     return response
   }
 

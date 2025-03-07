@@ -60,9 +60,6 @@ export class FieldsService {
       .fieldsControllerDelete(input as FieldsControllerDeleteRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete field'))
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 
@@ -70,9 +67,6 @@ export class FieldsService {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerUpdate(input as unknown as FieldsControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update field'))
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 
@@ -91,9 +85,6 @@ export class FieldsService {
         handle4xx(e, this.handleError, 'failed to update field display order'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 }

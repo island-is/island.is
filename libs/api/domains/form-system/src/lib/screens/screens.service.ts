@@ -47,13 +47,6 @@ export class ScreensService {
       .screensControllerCreate(input as ScreensControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create screen'))
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
     return response
   }
 
@@ -72,13 +65,6 @@ export class ScreensService {
       .screensControllerUpdate(input as ScreensControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
     return response
   }
 
@@ -91,10 +77,6 @@ export class ScreensService {
         input as ScreensControllerUpdateDisplayOrderRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
 
     return
   }

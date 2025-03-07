@@ -51,13 +51,6 @@ export class ApplicantsService {
         handle4xx(e, this.handleError, 'failed to create applicant'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
     return response as Applicant
   }
 
@@ -72,10 +65,6 @@ export class ApplicantsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to delete applicant'),
       )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 
@@ -91,9 +80,6 @@ export class ApplicantsService {
         handle4xx(e, this.handleError, 'failed to update applicant'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
     return response
   }
 }
