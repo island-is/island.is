@@ -5,13 +5,14 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
-  UserProfileApi,
   DefaultEvents,
   FormModes,
+  UserProfileApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { exampleSchema } from './dataSchema'
+import { dataSchema } from './dataSchema'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { NationalRegistryApi, ReferenceDataApi } from '../dataProviders'
 import { assign } from 'xstate'
@@ -22,11 +23,12 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
-  name: 'Example Common Actions',
+  type: ApplicationTypes.EXAMPLE_INPUTS,
+  name: 'Example Inputs',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
-  dataSchema: exampleSchema,
+  translationNamespaces: [ApplicationConfigurations.ExampleInputs.translation],
+  dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
@@ -109,7 +111,8 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
-          status: 'completed',
+          progress: 1,
+          status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -118,8 +121,8 @@ const template: ApplicationTemplate<
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
                 ),
-              write: 'all',
               read: 'all',
+              delete: true,
             },
           ],
         },
