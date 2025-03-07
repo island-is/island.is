@@ -68,8 +68,8 @@ import { ExampleCommonActionsModule } from './examples/example-common-actions/ex
 import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
 import { ExampleStateTransfersModule } from './examples/example-state-transfers/example-state-transfers.module'
 import { ExampleStateTransfersService } from './examples/example-state-transfers/example-state-transfers.service'
-import { ExampleFieldsModule } from './examples/example-fields/example-fields.module'
-import { ExampleFieldsService } from './examples/example-fields/example-fields.service'
+import { ExampleInputsModule } from './examples/example-inputs/example-inputs.module'
+import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -155,7 +155,7 @@ export const modules = [
   ReferenceTemplateModule,
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
-  ExampleFieldsModule,
+  ExampleInputsModule,
   ExamplePaymentActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
@@ -231,7 +231,7 @@ export const services = [
   ReferenceTemplateService,
   ExampleCommonActionsService,
   ExampleStateTransfersService,
-  ExampleFieldsService,
+  ExampleInputsService,
   ExamplePaymentActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
