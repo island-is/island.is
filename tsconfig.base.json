@@ -381,6 +381,15 @@
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
+      "@island.is/application/templates/examples/example-common-actions": [
+        "libs/application/templates/examples/example-common-actions/src/index.ts"
+      ],
+      "@island.is/application/templates/examples/example-fields": [
+        "libs/application/templates/examples/example-fields/src/index.ts"
+      ],
+      "@island.is/application/templates/examples/example-state-transfers": [
+        "libs/application/templates/examples/example-state-transfers/src/index.ts"
+      ],
       "@island.is/application/templates/family-matters-core/*": [
         "libs/application/templates/family-matters/core/src/*"
       ],
@@ -497,6 +506,12 @@
       ],
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/assets/*": [
+        "libs/application/templates/signature-collection/assets/*"
+      ],
+      "@island.is/application/templates/signature-collection/municipal-list-creation": [
+        "libs/application/templates/signature-collection/municipal-list-creation/src/index.ts"
       ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
