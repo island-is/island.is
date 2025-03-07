@@ -93,7 +93,6 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
                 renderTextLayer={true}
                 renderAnnotationLayer={true}
                 scale={scale}
-                onGetTextSuccess={(text) => console.log(text)}
               />
             ))
           ) : (
@@ -102,7 +101,6 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
               renderAnnotationLayer={true}
               pageNumber={pageNumber}
               scale={scale}
-              onGetTextSuccess={(text) => console.log(text)}
             />
           )}
         </pdfLib.Document>
