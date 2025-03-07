@@ -7,14 +7,14 @@ import { AuthGuard } from '@nestjs/passport'
 import { AuthUser } from '../auth.types'
 
 @Injectable()
-export class JwtGraphQlAuthUserGuard extends AuthGuard('jwt') {
+export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
     return ctx.getContext().req
   }
 
   handleRequest<TUser extends AuthUser>(err: Error, user?: TUser): TUser {
-    if (err || !user?.currentUser) {
+    if (err || !user) {
       throw new AuthenticationError(err?.message ?? 'Unauthorized')
     }
 
