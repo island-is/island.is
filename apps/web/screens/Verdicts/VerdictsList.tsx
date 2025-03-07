@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useDebounce } from 'react-use'
 import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
@@ -40,6 +41,7 @@ import {
   GET_VERDICT_KEYWORDS_QUERY,
   GET_VERDICTS_QUERY,
 } from '../queries/Verdicts'
+import { m } from './translations.strings'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME = 300
@@ -56,6 +58,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
+  const { formatMessage } = useIntl()
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
     GetVerdictsQuery,
@@ -118,9 +121,9 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
         <Stack space={3}>
           <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
           <Text variant="h1" as="h1">
-            Dómar og úrskurðir
+            {formatMessage(m.listPage.heading)}{' '}
           </Text>
-          <Text>Dómar frá öllum dómstigum á Íslandi</Text>
+          <Text>{formatMessage(m.listPage.description)}</Text>
           <GridRow rowGap={3}>
             {data.visibleVerdicts.map((item) => (
               <GridColumn key={item.id} span="1/1">
@@ -182,7 +185,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
                           <GridColumn>
                             <Text variant="small">
                               <Text color="blue400" variant="medium" as="span">
-                                Reifun:
+                                {formatMessage(m.listPage.presentings)}:
                               </Text>{' '}
                               {item.presentings}
                             </Text>
@@ -207,8 +210,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
               {error && (
                 <Box paddingBottom={2}>
                   <Text variant="medium" color="red600">
-                    Villa kom upp við að sækja fleiri dóma. Vinsamlegast reynið
-                    aftur síðar.
+                    {formatMessage(m.listPage.loadingMoreFailed)}
                   </Text>
                 </Box>
               )}
@@ -218,8 +220,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
                   setPage((p) => p + 1)
                 }}
               >
-                Sjá fleiri dóma (
-                {initialData.total - data.visibleVerdicts.length})
+                {formatMessage(m.listPage.seeMoreVerdicts, {
+                  remainingVerdictCount:
+                    initialData.total - data.visibleVerdicts.length,
+                })}
               </Button>
             </Box>
           )}

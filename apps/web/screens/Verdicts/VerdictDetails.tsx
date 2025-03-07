@@ -1,3 +1,4 @@
+import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 
 import type { SliceType } from '@island.is/island-ui/contentful'
@@ -22,6 +23,7 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_VERDICT_BY_ID_QUERY } from '../queries/Verdicts'
+import { m } from './translations.strings'
 import * as styles from './VerdictDetails.css'
 
 const calculatePdfScale = (width: number) => {
@@ -36,6 +38,7 @@ interface VerdictDetailsProps {
 
 const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
   const { width } = useWindowSize()
+  const { formatMessage } = useIntl()
 
   return (
     <>
@@ -43,7 +46,7 @@ const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
         <Breadcrumbs
           items={[
             { title: 'Ísland.is', href: '/' },
-            { title: 'Dómar', href: '/domar' },
+            { title: formatMessage(m.listPage.heading), href: '/domar' },
           ]}
         />
       </GridContainer>
