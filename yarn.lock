@@ -11617,6 +11617,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo/config-plugins@npm:^4.0.6":
+  version: 4.1.5
+  resolution: "@expo/config-plugins@npm:4.1.5"
+  dependencies:
+    "@expo/config-types": "npm:^45.0.0"
+    "@expo/json-file": "npm:8.2.36"
+    "@expo/plist": "npm:0.0.18"
+    "@expo/sdk-runtime-versions": "npm:^1.0.0"
+    "@react-native/normalize-color": "npm:^2.0.0"
+    chalk: "npm:^4.1.2"
+    debug: "npm:^4.3.1"
+    find-up: "npm:~5.0.0"
+    getenv: "npm:^1.0.0"
+    glob: "npm:7.1.6"
+    resolve-from: "npm:^5.0.0"
+    semver: "npm:^7.3.5"
+    slash: "npm:^3.0.0"
+    xcode: "npm:^3.0.1"
+    xml2js: "npm:0.4.23"
+  checksum: 10/8c83ed9da3ce21c60ee9d1fb6ed90d9cd3d8bab9b326ff79cb69a2f5703ed2e4915edfcf93694570dc91cc82343d8c8e51749aa5d8ab684f3d533819c5d2ab32
+  languageName: node
+  linkType: hard
+
 "@expo/config-plugins@npm:^5.0.4":
   version: 5.0.4
   resolution: "@expo/config-plugins@npm:5.0.4"
@@ -11660,6 +11683,13 @@ __metadata:
     xcode: "npm:^3.0.1"
     xml2js: "npm:0.6.0"
   checksum: 10/633ec306c5bc5aade41a20723a9d230a24710e16af968684805242e81946ac279ec8c2360fc37690b078bd657c5cc9eeb8c6ffc2e0af613fcd1400286ef60333
+  languageName: node
+  linkType: hard
+
+"@expo/config-types@npm:^45.0.0":
+  version: 45.0.0
+  resolution: "@expo/config-types@npm:45.0.0"
+  checksum: 10/cd5698e0ce74717f399631d7b711e7889bdef0b89ddccffaede31d2b0595323c103bf051a20dfec58f770a178cb0da1480f1a1d6438b43cc5b37f9acff610438
   languageName: node
   linkType: hard
 
@@ -13686,7 +13716,7 @@ __metadata:
     react-native-quick-base64: "npm:2.1.2"
     react-native-reanimated: "npm:3.16.5"
     react-native-share: "npm:10.2.1"
-    react-native-spotlight-search: "npm:2.0.0"
+    react-native-spotlight-search: "npm:2.2.0"
     react-native-svg: "npm:15.2.0"
     react-native-vision-camera: "npm:4.5.1"
     react-native-webview: "npm:13.8.6"
@@ -22578,6 +22608,13 @@ __metadata:
   version: 16.18.34
   resolution: "@types/node@npm:16.18.34"
   checksum: 10/56d24fdf9d7c857632a15885dfc6505b540c291b4155623f79ed517667bc1621a27fe1c9296b9e27b35bb755a0903090fae887ccf2e41ea5d9e5d7c68fdd08f3
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^16.11.5":
+  version: 16.18.126
+  resolution: "@types/node@npm:16.18.126"
+  checksum: 10/33e0fa9209a4a96459a8fdf6b078ca9590eb67a8d51899180cfac8afecb9aa133c755d1c38a8b947b9f384f2faa184cabf4e567f5f6dded285be1b31588ec199
   languageName: node
   linkType: hard
 
@@ -50371,12 +50408,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-spotlight-search@npm:2.0.0":
-  version: 2.0.0
-  resolution: "react-native-spotlight-search@npm:2.0.0"
+"react-native-spotlight-search@npm:2.2.0":
+  version: 2.2.0
+  resolution: "react-native-spotlight-search@npm:2.2.0"
+  dependencies:
+    "@expo/config-plugins": "npm:^4.0.6"
+    "@types/node": "npm:^16.11.5"
+    typescript: "npm:^4.4.4"
   peerDependencies:
     react-native: "*"
-  checksum: 10/114b6f7901fb350096779963307511a2562c070adfed2b0c6ad770e8d5b942b78be4f3dadff0bb0a28589bb87fd4b77dd32f1783525287693f70379a29ec58fc
+  checksum: 10/f35193959b9e9baad43726ebd874a4fcd09748e768fc93dacc4c7f8dc6ce3a6f26ebd4c6b01e155e31a93f2b991e3ab5bd8a54761331b3675f98af8a073270e9
   languageName: node
   linkType: hard
 
@@ -56732,7 +56773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.3":
+"typescript@npm:^4.3, typescript@npm:^4.4.4":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
   bin:
@@ -56782,7 +56823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^4.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^4.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^4.4.4#optional!builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
   bin:
