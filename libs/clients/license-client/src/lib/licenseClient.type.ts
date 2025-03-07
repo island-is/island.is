@@ -28,6 +28,7 @@ export enum LicenseType {
   PCard = 'PCard',
   Ehic = 'Ehic',
   Passport = 'Passport',
+  IdentityDocument = 'IdentityDocument',
   HuntingLicense = 'HuntingLicense',
 }
 
@@ -41,6 +42,7 @@ export interface LicenseResults {
   [LicenseType.MachineLicense]: VinnuvelaDto
   [LicenseType.PCard]: Staediskortamal
   [LicenseType.Passport]: IdentityDocument | IdentityDocumentChild
+  [LicenseType.IdentityDocument]: IdentityDocument | IdentityDocumentChild
 }
 
 export interface VerifyExtraDataResult {
@@ -53,6 +55,7 @@ export interface VerifyExtraDataResult {
   [LicenseType.MachineLicense]: void
   [LicenseType.PCard]: void
   [LicenseType.Passport]: void
+  [LicenseType.IdentityDocument]: void
 }
 
 export type PkPassVerificationData = {
@@ -65,6 +68,7 @@ export type PkPassVerificationData = {
   [LicenseType.MachineLicense]: void
   [LicenseType.PCard]: void
   [LicenseType.Passport]: void
+  [LicenseType.IdentityDocument]: void
 }
 
 export type LicenseResult<T extends LicenseType> = T extends LicenseType
