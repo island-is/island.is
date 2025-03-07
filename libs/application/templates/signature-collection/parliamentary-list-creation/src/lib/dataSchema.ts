@@ -34,26 +34,6 @@ export const dataSchema = z.object({
   constituency: z.array(z.string()).refine((arr) => arr.length >= 1, {
     params: m.constituencyValidationError,
   }),
-
-  /* Ábýrgðaraðilar */
-  managers: z.array(
-    z.object({
-      manager: nationalIdAndName,
-      constituency: z.string().refine((v) => v.length >= 1, {
-        params: m.constituencyValidationError,
-      }),
-    }),
-  ),
-
-  /* Umsjónaraðilar */
-  supervisors: z.array(
-    z.object({
-      supervisor: nationalIdAndName,
-      constituency: z.array(z.string()).refine((v) => v.length >= 1, {
-        params: m.constituencyValidationError,
-      }),
-    }),
-  ),
 })
 
 export type ParliamentaryCreateListSchema = z.TypeOf<typeof dataSchema>
