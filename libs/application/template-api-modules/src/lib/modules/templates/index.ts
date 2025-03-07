@@ -144,6 +144,8 @@ import { ParliamentaryListCreationModule } from './signature-collection/parliame
 import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
+import { SeminarsTemplateService } from './aosh/seminars/seminars.service'
+import { SeminarsTemplateModule } from './aosh/seminars/seminars.module'
 import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
@@ -223,6 +225,7 @@ export const modules = [
   ParliamentaryListSigningModule,
   ParentalLeaveModule,
   SocialInsuranceAdministrationModule,
+  SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
 ]
@@ -300,6 +303,7 @@ export const services = [
   WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
+  SeminarsTemplateService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
 ]
