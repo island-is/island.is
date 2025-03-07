@@ -28,6 +28,7 @@ console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
 
 
+
 function shouldRun() {
     if (eventName === 'merge_group') {
         if (MAIN_BRANCHES.includes(targetBranch)) {
