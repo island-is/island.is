@@ -28,11 +28,7 @@ export const serviceSetup = (services: {
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com',
         prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
       },
-      BACKEND_URL: {
-        dev: "http://air-discount-scheme-backend",
-        staging: ref((h) => `http://${h.svc(services.adsBackend)}`),
-        prod: ref((h) => `http://${h.svc(services.adsBackend)}`),
-      },
+      BACKEND_URL: ref((h) => `http://${h.svc(services.adsBackend)}`),
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
