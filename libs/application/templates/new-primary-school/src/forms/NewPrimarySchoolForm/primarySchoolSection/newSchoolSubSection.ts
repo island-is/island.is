@@ -1,8 +1,8 @@
 import {
   buildAsyncSelectField,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
-  buildTextField,
   coreErrorMessages,
   NO,
 } from '@island.is/application/core'
@@ -100,7 +100,7 @@ export const newSchoolSubSection = buildSubSection({
           },
           setOnChange: (option) => setOnChangeSchool(option),
         }),
-        buildTextField({
+        buildHiddenInput({
           id: 'newSchool.type',
         }),
       ],
