@@ -276,7 +276,9 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
     }),
   ])
 
-  const items = verdictListResponse.data.webVerdicts.items
+  const items = verdictListResponse.data.webVerdicts.items.filter((item) =>
+    Boolean(item?.id),
+  )
 
   if (!customPageData?.configJson?.showVerdictListPage) {
     throw new CustomNextError(
