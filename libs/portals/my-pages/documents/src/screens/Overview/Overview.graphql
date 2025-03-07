@@ -1,38 +1,3 @@
-query DocumentsV2($input: DocumentsV2DocumentsInput!) {
-  documentsV2(input: $input) {
-    data {
-      id
-      name
-      categoryId
-      publicationDate
-      documentDate
-      subject
-      sender {
-        id
-        name
-      }
-      opened
-      bookmarked
-      archived
-      downloadUrl
-      content {
-        type
-        value
-      }
-    }
-    totalCount
-    unreadCount
-    categories {
-      id
-      name
-    }
-    senders {
-      id
-      name
-    }
-  }
-}
-
 query DocumentsV3($input: DocumentsV2DocumentsInput!) {
   documentsV2(input: $input) {
     data {

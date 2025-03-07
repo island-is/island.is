@@ -3,8 +3,8 @@ import { toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import useWindowSize from 'react-use/lib/useWindowSize'
-import DesktopOverview from './DesktopOverviewV2'
-import MobileOverview from './MobileOverviewV2'
+import DesktopOverview from './DesktopOverview'
+import MobileOverview from './MobileOverview'
 import NoPDF from '../NoPDF/NoPDF'
 
 export interface Props {
