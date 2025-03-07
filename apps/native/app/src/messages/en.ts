@@ -718,8 +718,8 @@ export const en: TranslatedMessages = {
     'Further information',
   'health.prescriptionsAndCertificates.status': 'Status',
 
-  'health.drugCertificates.screenTitle': 'Medicine certificate',
-  'health.drugCertificates.title': 'Medicine certificate',
+  'health.drugCertificates.screenTitle': 'Medication certificate',
+  'health.drugCertificates.title': 'Medication certificate',
   'health.drugCertificates.description':
     'A doctor applies for a medication certificate for an individual issued by Iceland Health if certain conditions are met according to work regulations.',
   'health.drugCertificates.drugName': 'Drug name',
