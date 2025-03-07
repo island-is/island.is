@@ -76,6 +76,7 @@ import {
   PregnancyStatusAndRightsResults,
   SelectOption,
   VMSTPeriod,
+  VMSTOtherParent,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 import { ApplicationRights } from '@island.is/clients/vmst'
@@ -633,6 +634,12 @@ export const getApplicationExternalData = (
     'VMSTApplicationRights.data',
   ) as ApplicationRights[]
 
+  const VMSTOtherParent = getValueViaPath(
+    externalData,
+    'VMSTOtherParent.data',
+    {},
+  ) as VMSTOtherParent
+
   return {
     applicantName,
     applicantGenderCode,
@@ -645,6 +652,7 @@ export const getApplicationExternalData = (
     dateOfBirth,
     VMSTPeriods,
     VMSTApplicationRights,
+    VMSTOtherParent,
   }
 }
 
