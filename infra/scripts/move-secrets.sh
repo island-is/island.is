@@ -49,7 +49,7 @@ echo ""
 echo "Debug information:"
 echo "  aws binary: $AWS_BIN"
 echo "  AWS_PROFILE: ${AWS_PROFILE:-<unset>}"
-echo "  aws-cli version: $$AWS_VERSION"
+echo "  aws-cli version: $AWS_VERSION"
 echo "  Current AWS user: $AWS_CALLER_IDENTITY"
 echo ""
 
