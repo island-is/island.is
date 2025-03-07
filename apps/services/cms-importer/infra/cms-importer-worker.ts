@@ -2,7 +2,7 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
   service('cms-importer-worker')
-    .image('services-cms')
+    .image('services-cms-importer')
     .namespace('cms-importer')
     .secrets({
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
