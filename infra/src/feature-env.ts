@@ -65,16 +65,20 @@ const writeToOutput = async (data: string, output?: string) => {
 
 const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
-  const images = argv.images.split(',') // Docker images that have changed
+  const images = argv.images.split(',').sort() // Docker images that have changed
   const envName = 'dev'
   const chart = argv.chart as ChartName
-
   const env = {
     ...Envs[Deployments[chart][envName]],
     feature: feature,
   }
+  logger.debug('parseArguments', { envName, chart, feature, images, env })
 
   const habitat = charts[chart][envName]
+  logger.info(
+    `Services in ${chart} chart (${envName}):`,
+    habitat.map((x) => x.serviceDef.name).sort(),
+  )
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
@@ -83,6 +87,14 @@ const parseArguments = (argv: Arguments) => {
         (images.length === 1 && images[0] === '*') ||
         images?.includes(h.serviceDef.image ?? h.serviceDef.name),
     )
+  const s = new Set(affectedServices.map((x) => x.serviceDef.name))
+  logger.info('Affected services', {
+    services: affectedServices.map((x) => x.name()).sort(),
+    unaffected: habitat
+      .map((x) => x.name())
+      .sort()
+      .filter((x) => !s.has(x)),
+  })
   return { habitat, affectedServices, env }
 }
 
@@ -144,13 +156,15 @@ yargs(process.argv.slice(2))
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const { included: featureYaml, excluded } =
-        await getFeatureAffectedServices(
-          habitat,
-          affectedServices.slice(),
-          ExcludedFeatureDeploymentServices,
-          env,
-        )
+      const {
+        included: featureYaml,
+        excluded,
+      } = await getFeatureAffectedServices(
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
+        env,
+      )
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
