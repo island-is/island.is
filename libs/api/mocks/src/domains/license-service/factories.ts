@@ -20,6 +20,7 @@ import {
 } from './mocks'
 import { mockDisabilityLicense } from './mocks/disabilityMock'
 import { maybeExpired } from './mocks/utils'
+import { mockPassportLicense } from './mocks/passportMock'
 
 const providerArray = [
   'AdministrationOfOccupationalSafetyAndHealth',
@@ -30,7 +31,7 @@ const providerArray = [
 
 const genericLicenseFetch = factory<GenericLicenseFetch>({
   status: 'Fetched' as GenericUserLicenseFetchStatus,
-  updated: faker.date.recent().toISOString(),
+  updated: faker.date.recent().getTime().toString(),
 })
 
 const pkPassStatus = ['Available', 'NotAvailable', 'Unknown']
@@ -88,6 +89,9 @@ export const payload = () => {
       },
       DisabilityLicense: {
         data: mockDisabilityLicense(traitArgs),
+      },
+      Passport: {
+        data: mockPassportLicense(traitArgs),
       },
     },
     data: [],
