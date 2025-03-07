@@ -59,7 +59,8 @@ export const information = buildSection({
           title: m.name,
           width: 'half',
           readOnly: true,
-          defaultValue: ({ externalData }: Application) => getValueViaPath(externalData, 'nationalRegistry.data.fullName')
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName'),
         }),
         buildPhoneField({
           id: 'applicant.phone',
@@ -67,18 +68,16 @@ export const information = buildSection({
           width: 'half',
           required: true,
           allowedCountryCodes: ['IS'],
-          defaultValue: ({ externalData }: Application) => 
-            getValueViaPath(
-              externalData,
-              'userProfile.data.mobilePhoneNumber',
-            )
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'userProfile.data.mobilePhoneNumber'),
         }),
         buildTextField({
           id: 'applicant.email',
           title: m.email,
           width: 'half',
           required: true,
-          defaultValue: ({ externalData }: Application) => getValueViaPath(externalData, 'userProfile.data.email')
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'userProfile.data.email'),
         }),
       ],
     }),
