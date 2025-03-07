@@ -137,7 +137,8 @@ export const m = defineMessages({
   },
   successDescription: {
     id: 'cr.application:successDescription',
-    defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
+    defaultMessage:
+      'Þú getur nú nálgast umsóknina þína í stafrænu pósthólfi á Ísland.is',
     description: '',
   },
   vertificationDescription: {
