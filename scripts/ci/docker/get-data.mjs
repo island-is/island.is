@@ -1,7 +1,6 @@
 // @ts-check
 import fs, { readFileSync } from 'node:fs'
 import jsyaml from 'js-yaml'
-import { execSync } from 'node:child_process'
 import core from '@actions/core'
 import github from '@actions/github'
 import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
@@ -51,6 +50,7 @@ export async function main(testContext = null) {
     // Read all manifest files
     const _MANIFEST_PATHS = [
       'charts/islandis-services',
+      'chart/features',
       'charts/judicial-system-services',
       'charts/identity-server-services',
     ]

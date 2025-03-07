@@ -260,6 +260,11 @@ jobs:
     runs-on: arc-docker
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      json: ${{ steps.martix-output.outputs.json }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -290,6 +295,16 @@ jobs:
 
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Set id for matrix
+        run: |
+          node ./scripts/ci/docker/create-id.mjs
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -379,6 +394,17 @@ jobs:
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
+      - name: Docker build output
+        uses: cloudposse/github-action-matrix-outputs-write@v1
+        with:
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ env.MATRIX_ID }}
+          outputs: |-
+            value: ${{ env.JSON_value }}
+            project: ${{ env.JSON_project }}
+            target: ${{ env.JSON_target }}
+            imageName: ${{ env.JSON_imageName }}
+            imageTag: ${{ env.JSON_imageTag }}
   helm-docker-build:
     needs:
       - prepare
@@ -430,7 +456,108 @@ jobs:
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
+  deploy-feature:
+    runs-on: arc-runners
+    if: always()
+      && needs.pre-checks.result == 'success'
+      && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+      && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
+      && needs.helm-docker-build.result != 'failure'
+      && needs.prepare.outputs.IMAGES != ''
+    permissions:
+      id-token: write
+      contents: write
+    # permissions:
+    #   actions: read
+    #   contents: read
+    needs:
+      - pre-checks
+      - prepare
+      - docker-build
+      # - helm-docker-build
+      # - retag-unaffected
+    env:
+      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          path: monorepo
 
+      - name: Checkout feature-values
+        uses: actions/checkout@v4
+        with:
+          repository: island-is/feature-values
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          path: feature-values
+
+      - name: Get docker-build output
+        uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: docker-build
+
+      - name: Install infra modules
+        if: steps.infra-node-modules.outputs.cache-hit != 'true'
+        working-directory: monorepo/infra
+        run: |
+          CI=true yarn install --immutable
+
+      - name: Generate islandis feature-deployment charts for ArgoCD
+        working-directory: monorepo
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+          IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+        run: |
+          ./infra/scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES"
+
+      - name: Setup yarn
+        uses: ./monorepo/.github/actions/setup-yarn
+        with:
+          working-directory: monorepo
+
+      - name: load-deps
+        uses: ./monorepo/.github/actions/load-deps
+        with:
+          working-directory: monorepo
+
+      - name: Prepare artifact to be uploaded
+        working-directory: monorepo
+        env:
+          JSON_DATA: ${{ steps.read.outputs.result }}
+        run: |
+          node scripts/ci/docker/write-data.mjs
+
+      - name: Get manifest data
+        id: manifest
+        working-directory: monorepo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/ci/docker/bootstrap.mjs
+          node scripts/ci/docker/get-data.mjs
+
+      - name: Commit and push feature-values
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+        working-directory: feature-values
+        run: |
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          echo "Trying to push to feature-values repository"
+          git config user.name andes-it
+          git config user.email andes-it@andes.is
+          git add .
+          git commit -m "Generated feature values for $FEATURE_NAME"
+          echo "Changeset $(git show)"
+          # git push
+  # TODO: Remove spinnaker deployment
   deploy:
     runs-on: arc-runners
     if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
