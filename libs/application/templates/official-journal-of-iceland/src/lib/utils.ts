@@ -61,12 +61,20 @@ export const getEmptyMember = () => ({
   below: '',
 })
 
+export enum TitlePrefix {
+  Appendix = 'Viðauki',
+  Attachment = 'Fylgiskjal',
+}
+
 export const getAddition = (
+  titlePrefix: TitlePrefix,
   index: number,
   roman = true,
 ): z.infer<typeof additionSchema>[number] => ({
   id: uuid(),
-  title: roman ? `Viðauki ${convertNumberToRoman(index)}` : `Viðauki ${index}`,
+  title: roman
+    ? `${titlePrefix} ${convertNumberToRoman(index)}`
+    : `${titlePrefix} ${index}`,
   content: '',
   type: 'html',
 })
