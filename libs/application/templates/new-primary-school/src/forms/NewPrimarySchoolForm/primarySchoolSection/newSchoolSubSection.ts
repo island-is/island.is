@@ -2,6 +2,7 @@ import {
   buildAsyncSelectField,
   buildMultiField,
   buildSubSection,
+  buildTextField,
   coreErrorMessages,
   NO,
 } from '@island.is/application/core'
@@ -9,8 +10,10 @@ import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
+  getAllSchoolsByMunicipality,
   getApplicationAnswers,
   getApplicationExternalData,
+  setOnChangeSchool,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
   FriggSchoolsByMunicipalityQuery,
@@ -63,7 +66,8 @@ export const newSchoolSubSection = buildSubSection({
                 ?.map(({ name }) => ({
                   value: name,
                   label: name,
-                })) ?? []
+                }))
+                .sort((a, b) => a.value.localeCompare(b.value)) ?? []
             )
           },
         }),
@@ -78,27 +82,15 @@ export const newSchoolSubSection = buildSubSection({
             apolloClient,
             selectedValues,
           }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
-
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
-            return (
-              data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValues?.[0])
-                ?.children?.filter(
-                  ({ type, gradeLevels }) =>
-                    type === OrganizationModelTypeEnum.School &&
-                    gradeLevels?.includes(childGradeLevel),
-                )
-                ?.map((school) => ({
-                  value: school.id,
-                  label: school.name,
-                })) ?? []
+            return getAllSchoolsByMunicipality(
+              application,
+              selectedValues?.[0],
+              data,
             )
           },
           condition: (answers) => {
@@ -106,6 +98,10 @@ export const newSchoolSubSection = buildSubSection({
 
             return !!schoolMunicipality
           },
+          setOnChange: (option) => setOnChangeSchool(option),
+        }),
+        buildTextField({
+          id: 'newSchool.type',
         }),
       ],
     }),
