@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { IdentityConfirmationInputDto } from './dto/IdentityConfirmationInput.dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
@@ -13,6 +9,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { IdentityConfirmationDTO } from './dto/identity-confirmation-dto.dto'
 import type { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { NoContentException } from '@island.is/nest/problem'
 
 const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
 const ZENDESK_CUSTOM_FIELDS = {
@@ -35,7 +32,7 @@ export class IdentityConfirmationService {
     number,
   }: IdentityConfirmationInputDto): Promise<string> {
     if (type === IdentityConfirmationType.PHONE && !number) {
-      throw new Error('Phone number is required')
+      throw new BadRequestException('Phone number is required')
     }
 
     const zendeskCase = await this.zendeskService.getTicket(id)
@@ -132,7 +129,7 @@ export class IdentityConfirmationService {
     })
 
     if (!identityConfirmation) {
-      throw new Error('Identity confirmation not found')
+      throw new NoContentException()
     }
 
     // Throw error if identity is older than 2 days
@@ -179,7 +176,7 @@ export class IdentityConfirmationService {
     })
 
     if (!identityConfirmation) {
-      throw new NotFoundException('Identity confirmation not found')
+      throw new NoContentException()
     }
 
     return {
