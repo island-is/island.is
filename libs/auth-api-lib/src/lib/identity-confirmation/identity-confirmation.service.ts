@@ -137,7 +137,7 @@ export class IdentityConfirmationService {
 
     // Throw error if identity is older than 2 days
     if (
-      new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+      new Date(identityConfirmation.created).getTime() + TWO_DAYS <
       Date.now()
     ) {
       throw new Error('Identity confirmation expired')
@@ -188,7 +188,7 @@ export class IdentityConfirmationService {
       type: identityConfirmation.type,
       // Check if time now is 2 days older than created at time
       isExpired:
-        new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+        new Date(identityConfirmation.created).getTime() + TWO_DAYS <
         Date.now(),
     }
   }
