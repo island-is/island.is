@@ -87,13 +87,13 @@ const parseArguments = (argv: Arguments) => {
         (images.length === 1 && images[0] === '*') ||
         images?.includes(h.serviceDef.image ?? h.serviceDef.name),
     )
-  const s = new Set(affectedServices.map((x) => x.serviceDef.name))
+  const affectedSet = new Set(affectedServices.map((x) => x.serviceDef.name))
   logger.info('Affected services', {
     services: affectedServices.map((x) => x.name()).sort(),
     unaffected: habitat
       .map((x) => x.name())
       .sort()
-      .filter((x) => !s.has(x)),
+      .filter((x) => !affectedSet.has(x)),
   })
   return { habitat, affectedServices, env }
 }
@@ -149,7 +149,6 @@ yargs(process.argv.slice(2))
       )
     },
   )
-
   .command(
     'ingress-comment',
     'get helm values file',
