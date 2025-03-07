@@ -1,11 +1,18 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
 
+inputs:
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: '.'
+
 runs:
   using: 'composite'
   steps:
     - name: Compare yarn.lock files
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       id: compare_yarn_lock
       run: |
         current=$(sha256sum yarn.lock | awk '{print $1}')
@@ -17,6 +24,7 @@ runs:
         echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
 
     - name: Setup Yarn
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         corepack enable
@@ -24,12 +32,14 @@ runs:
         yarn --version
 
     - name: Run yarn install if yarn.lock changed
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       if: steps.compare_yarn_lock.outputs.skip_install == 'false'
       run: |
         yarn install --immutable
 
     - name: Link pre-installed dependencies
+      working-directory: ${{ inputs.working-directory }}
       if: steps.compare_yarn_lock.outputs.skip_install == 'true'
       shell: bash
       run: |
