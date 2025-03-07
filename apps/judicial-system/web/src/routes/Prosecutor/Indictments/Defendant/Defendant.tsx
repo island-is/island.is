@@ -300,11 +300,12 @@ const Defendant = () => {
           const indictmentCountSubtypes = indictmentCount.indictmentCountSubtypes || []
 
           // handle changes based on police case subtype changes
-          const [updatedIndictmentCountSubtypes, _] = partition(indictmentCountSubtypes, (subtype) => policeCaseNumberSubtypes.includes(subtype))
-          const selectedIndictmentCountSubtypes = isEmptyArray(updatedIndictmentCountSubtypes) && policeCaseNumberSubtypes.length === 1 ? [policeCaseNumberSubtypes[0]] : updatedIndictmentCountSubtypes
+          // const [updatedIndictmentCountSubtypes, _] = partition(indictmentCountSubtypes, (subtype) => policeCaseNumberSubtypes.includes(subtype))
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter((subtype) => policeCaseNumberSubtypes.includes(subtype))
+          // const selectedIndictmentCountSubtypes = isEmptyArray(updatedIndictmentCountSubtypes) && policeCaseNumberSubtypes.length === 1 ? [policeCaseNumberSubtypes[0]] : updatedIndictmentCountSubtypes
           const updatedIndictmentCount = {
             ...indictmentCount, 
-            indictmentCountSubtypes: selectedIndictmentCountSubtypes,
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
  
           const incidentDescription = getIncidentDescription({
@@ -316,7 +317,8 @@ const Defendant = () => {
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-            indictmentCountSubtypes: selectedIndictmentCountSubtypes,
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
+            policeCaseNumberSubtypes,
           })
         })
     }

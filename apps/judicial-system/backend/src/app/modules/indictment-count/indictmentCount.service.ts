@@ -41,21 +41,25 @@ export class IndictmentCountService {
     update: UpdateIndictmentCountDto,
     transaction?: Transaction,
   ): Promise<IndictmentCount> {
-    const currentIndictmentCount = await this.indictmentCountModel.findOne({
-      where: { id: indictmentCountId },
-    })
-    const currentSubtypes =
-      currentIndictmentCount?.indictmentCountSubtypes || []
-    const updatedSubtypes = update.indictmentCountSubtypes
-    // if traffic violation subtype is removed we need to handle a cascading update
-    // for indictment count and offenses
-    const isTrafficViolationSubtypeRemoved =
-      hasTrafficViolationSubtype(currentSubtypes) &&
-      !!updatedSubtypes &&
-      !hasTrafficViolationSubtype(updatedSubtypes)
-
     const updateWithTransaction = async (transaction: Transaction) => {
-      const updatedIndictmentCount = isTrafficViolationSubtypeRemoved
+      const policeCaseNumberSubtypes = update.policeCaseNumberSubtypes
+      const updatedSubtypes = update.indictmentCountSubtypes
+      if (!policeCaseNumberSubtypes || !updatedSubtypes) {
+        return this.indictmentCountModel.update(update, {
+          where: { id: indictmentCountId, caseId },
+          returning: true,
+          transaction,
+        })
+      }
+
+      const isTrafficViolationSubtypePresent =
+        hasTrafficViolationSubtype(updatedSubtypes) ||
+        (policeCaseNumberSubtypes.length === 1 &&
+          hasTrafficViolationSubtype(policeCaseNumberSubtypes))
+
+      // if traffic violation subtype is not present we need to handle a cascading update
+      // for indictment count and offenses
+      const updatedIndictmentCount = !isTrafficViolationSubtypePresent
         ? {
             ...update,
             vehicleRegistrationNumber: null,
@@ -66,7 +70,10 @@ export class IndictmentCountService {
           }
         : update
 
-      if (isTrafficViolationSubtypeRemoved) {
+      const hasOffense = await this.offenseModel.findOne({
+        where: { indictmentCountId },
+      })
+      if (!isTrafficViolationSubtypePresent && hasOffense) {
         // currently offenses only exist for traffic violation indictment subtype.
         // if we support other offenses per subtype in the future we have to take the subtype into account
         await this.offenseModel.destroy({
