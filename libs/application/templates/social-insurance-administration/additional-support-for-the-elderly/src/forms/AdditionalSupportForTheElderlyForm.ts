@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildFileUploadField,
   buildForm,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
@@ -15,7 +14,6 @@ import {
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
-  fileUploadSharedProps,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -203,26 +201,6 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       id: 'additionalInformation',
       title: socialInsuranceAdministrationMessage.additionalInfo.section,
       children: [
-        buildSubSection({
-          id: 'fileUploadAdditionalFiles',
-          title:
-            socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title:
-                socialInsuranceAdministrationMessage.fileUpload
-                  .additionalFileTitle,
-              description:
-                additionalSupportForTheElderyFormMessage.fileUpload
-                  .additionalFileDescription,
-              introduction:
-                additionalSupportForTheElderyFormMessage.fileUpload
-                  .additionalFileDescription,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'commentSection',
           title:
