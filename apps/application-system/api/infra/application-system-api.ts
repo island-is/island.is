@@ -148,6 +148,7 @@ export const serviceSetup = (services: {
   // The user profile service is named service-portal-api in infra setup
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -287,6 +288,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
     })
     .xroad(
       Base,
