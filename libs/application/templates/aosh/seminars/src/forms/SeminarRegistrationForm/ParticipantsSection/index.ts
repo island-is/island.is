@@ -47,7 +47,7 @@ export const participantsSection = buildSection({
               ) ?? ''
             const nationalIdOfApplicant = getValueViaPath<string>(
               application.externalData,
-              'nationalRegistry.nationalId',
+              'identity.data.nationalId',
               '',
             )
             const individuals: Array<SeminarIndividual> =
@@ -85,11 +85,17 @@ export const participantsSection = buildSection({
                   value: x.disabled ? 'true' : 'false',
                 }
               })
-
+            console.log('dictinaryOfItems', dictinaryOfItems)
+            console.log('updatedParticipants', updatedParticipants)
             if (updatedParticipants.find((x) => !!x.disabled)) {
               dictinaryOfItems.push({
                 path: 'participantValidityError',
                 value: 'true',
+              })
+            } else {
+              dictinaryOfItems.push({
+                path: 'participantValidityError',
+                value: 'false',
               })
             }
 

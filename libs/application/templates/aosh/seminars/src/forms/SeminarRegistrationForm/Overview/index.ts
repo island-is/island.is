@@ -22,26 +22,6 @@ export const overviewSection = buildSection({
           title: '',
           component: 'Overview',
         }),
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          condition: (answers) => {
-            const paymentOptions = getValueViaPath<PaymentOptions>(
-              answers,
-              'paymentArrangement.paymentOptions',
-            )
-            return paymentOptions === PaymentOptions.putIntoAccount
-          },
-          title: overview.general.approveButton,
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: overview.general.approveButton,
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
   ],

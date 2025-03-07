@@ -1,4 +1,6 @@
 import {
+  buildAlertMessageField,
+  buildCustomField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -7,7 +9,7 @@ import {
 } from '@island.is/application/core'
 
 import { personal as personalMessages } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { isCompanyType, isPersonType } from '../../../utils'
 import { RegisterNumber } from '../../../shared/contstants'
 
@@ -109,6 +111,20 @@ export const personalInformationSection = buildSection({
               label: personalMessages.labels.isApplyinForOthersRadioYes,
             },
           ],
+        }),
+        buildCustomField({
+          id: 'applicant.personalValidation',
+          title: '',
+          component: 'PersonalValidation',
+          condition: (answers: FormValue) => {
+            const registerMany = getValueViaPath<RegisterNumber>(
+              answers,
+              'applicant.registerManyQuestion',
+              RegisterNumber.one,
+            )
+
+            return registerMany === RegisterNumber.one
+          },
         }),
       ],
     }),

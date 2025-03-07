@@ -84,7 +84,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       '',
     ) ?? ''
   const getAreIndividualsValid = useLazyAreIndividualsValid()
-  const getIsCompanyValidCallback = useCallback(
+  const getIsIndividualValidCallback = useCallback(
     async (individuals: Array<SeminarIndividual>) => {
       const { data } = await getAreIndividualsValid({
         input: { individuals: individuals },
@@ -144,7 +144,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             email: x.email,
           }
         })
-        const response = await getIsCompanyValidCallback(individuals)
+        const response = await getIsIndividualValidCallback(individuals)
         const hasDisabledParticipant = response?.areIndividualsValid?.find(
           (x) => x.mayTakeCourse === false,
         )
