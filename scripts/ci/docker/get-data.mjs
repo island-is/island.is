@@ -113,7 +113,16 @@ export async function main(testContext = null) {
 export function getBranch(context = github.context) {
   if (context.eventName === 'merge_group') {
     return context.payload.merge_group.base_ref.replace('refs/heads/', '')
+  } else if (
+    context.eventName === 'pull_request' &&
+    // github.event.pull_request.labels.*.name, 'deploy-feature'
+    context.payload.pull_request &&
+    Array.isArray(context.payload.pull_request['labels ']) &&
+    context.payload.pull_request['labels '].includes('deploy-feature')
+  ) {
+    return context.payload.merge_group.base_ref.replace('refs/heads/', '')
   }
+
   throw new Error(`Unsupported event: ${context.eventName}`)
 }
 
