@@ -41,15 +41,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 
-  fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'asfte.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis).',
-      description: 'english description',
-    },
-  }),
-
   conclusionScreen: defineMessages({
     bulletList: {
       id: `asfte.application:conclusionScreen.bulletList#markdown`,

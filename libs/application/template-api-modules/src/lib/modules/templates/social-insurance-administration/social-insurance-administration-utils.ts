@@ -201,13 +201,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     selectedMonth,
     applicantPhonenumber,
     bank,
-    bankAccountType,
     comment,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
@@ -224,21 +218,9 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+      domesticBankInfo: {
+        bank: formatBank(bank),
+      },
     }),
     taxInfo: {
       personalAllowance: YES === personalAllowance,
