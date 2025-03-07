@@ -53,7 +53,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-docker
+    runs-on: arc-runners
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
