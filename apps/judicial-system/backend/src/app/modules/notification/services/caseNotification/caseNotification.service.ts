@@ -62,7 +62,6 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
   formatPrisonAdministrationRulingNotification,
@@ -1362,71 +1361,45 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendRevokedEmailNotificationToDefenderForRequestCase(
+  private sendRevokedEmailNotificationToDefender(
     caseType: CaseType,
-    defendant: Defendant,
-    defenderName?: string,
-    defenderEmail?: string,
-    arraignmentDate?: Date,
-    courtName?: string,
-  ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.subject,
-      { caseType },
-    )
-
-    const html = formatDefenderRevokedEmailNotification(
-      this.formatMessage,
-      caseType,
-      defendant.nationalId,
-      defendant.name,
-      defendant.noNationalId,
-      courtName,
-      arraignmentDate,
-    )
-
-    return this.sendEmail({
-      subject,
-      html,
-      recipientName: defenderName,
-      recipientEmail: defenderEmail,
-      skipTail: true,
-    })
-  }
-
-  private sendRevokedEmailNotificationToDefenderForIndictmentCase(
     caseId: string,
-    defenderNationalId?: string,
+    actorInstitution?: string,
     defenderName?: string,
     defenderEmail?: string,
+    defenderNationalId?: string,
     courtName?: string,
     courtCaseNumber?: string,
   ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentSubject,
-      { courtCaseNumber },
-    )
+    const subject = isIndictmentCase(caseType)
+      ? this.formatMessage(
+          notifications.defenderRevokedEmail.indictmentSubject,
+          { courtCaseNumber },
+        )
+      : this.formatMessage(notifications.defenderRevokedEmail.subject, {
+          caseType,
+        })
 
-    const html = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentBody,
-      {
-        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
-        defenderHasAccessToRvg: Boolean(defenderNationalId),
-        linkStart: `<a href="${formatDefenderRoute(
-          this.config.clientUrl,
-          CaseType.INDICTMENT,
-          caseId,
-        )}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const html = this.formatMessage(notifications.defenderRevokedEmail.bodyV2, {
+      actorInstitution,
+      courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+      courtCaseNumber,
+      caseType,
+      defenderHasAccessToRvg: Boolean(defenderNationalId),
+      linkStart: `<a href="${formatDefenderRoute(
+        this.config.clientUrl,
+        caseType,
+        caseId,
+      )}">`,
+      linkEnd: '</a>',
+    })
 
     return this.sendEmail({
       subject,
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      skipTail: !defenderNationalId,
+      skipTail: isIndictmentCase(caseType) || !defenderNationalId,
     })
   }
 
@@ -1462,16 +1435,16 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     if (defenderWasNotified && theCase.defendants) {
-      const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
-
       promises.push(
-        this.sendRevokedEmailNotificationToDefenderForRequestCase(
+        this.sendRevokedEmailNotificationToDefender(
           theCase.type,
-          theCase.defendants[0],
+          theCase.id,
+          theCase.creatingProsecutor?.institution?.name,
           theCase.defenderName,
           theCase.defenderEmail,
-          arraignmentDate,
+          theCase.defenderNationalId,
           theCase.court?.name,
+          theCase.courtCaseNumber,
         ),
       )
     }
@@ -1566,11 +1539,13 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (defenderWasNotified) {
         promises.push(
-          this.sendRevokedEmailNotificationToDefenderForIndictmentCase(
+          this.sendRevokedEmailNotificationToDefender(
+            theCase.type,
             theCase.id,
-            defendant.defenderNationalId,
+            theCase.creatingProsecutor?.institution?.name,
             defendant.defenderName,
             defendant.defenderEmail,
+            defendant.defenderNationalId,
             theCase.court?.name,
             theCase.courtCaseNumber,
           ),
@@ -2515,7 +2490,6 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2553,7 +2527,6 @@ export class CaseNotificationService extends BaseNotificationService {
         html,
         recipientName: theCase.defenderName,
         recipientEmail: theCase.defenderEmail,
-
         skipTail: !theCase.defenderNationalId,
       }),
     )
