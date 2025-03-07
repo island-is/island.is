@@ -5,6 +5,7 @@ import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
+import { redirects } from './assetRedirects'
 
 const IPOverview = lazy(() =>
   import(
@@ -198,6 +199,7 @@ export const assetsModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPPatentDetail />,
       },
+      ...redirects,
     ]
     return routes
   },
