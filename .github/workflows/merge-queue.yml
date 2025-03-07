@@ -3,6 +3,7 @@ name: Validate code in the merge queue (post merge)
 on:
   merge_group:
   pull_request:
+  push:
 
 defaults:
   run:
