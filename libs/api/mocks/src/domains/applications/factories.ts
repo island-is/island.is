@@ -11,6 +11,7 @@ export const application = factory<Application>({
   created: () => faker.date.past().toISOString(),
   modified: () => faker.date.past().toISOString(),
   applicant: () => faker.random.alphaNumeric(10),
+  name: () => 'Umsókn um fæðingarorlof',
   assignees: [],
   applicantActors: [],
   state: 'draft',
