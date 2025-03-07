@@ -15,7 +15,12 @@ export const resolvers: Resolvers = {
       return license
     },
     genericLicenses: (_) => {
-      return store.getLicenses()
+      return store.getLicenses({})
+    },
+    genericLicenseCollection: (_) => {
+      return {
+        licenses: store.getLicenses({ includePassport: true }),
+      }
     },
   },
 }
