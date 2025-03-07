@@ -307,6 +307,8 @@ codemagic.yaml                                                                  
 /libs/clients/ultraviolet-radiation/                                                                      @island-is/stefna
 /libs/clients/ums-cost-of-living-calculator/                                                              @island-is/stefna
 /libs/api/domains/umbodsmadur-skuldara/                                                                   @island-is/stefna
+/libs/api/domains/verdicts/                                                                               @island-is/stefna
+/libs/clients/verdicts/                                                                                   @island-is/stefna
 
 /libs/island-ui/                                                                                          @island-is/island-ui
 
