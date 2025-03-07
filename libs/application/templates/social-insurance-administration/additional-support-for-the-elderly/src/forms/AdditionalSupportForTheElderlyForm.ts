@@ -13,9 +13,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import {
-  TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getBankIsk,

@@ -500,7 +500,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           )
           unset(answers, 'fileUploadAdditionalFilesRequired')
         }
-        
+
         return context
       }),
     },
