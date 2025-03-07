@@ -390,6 +390,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
     description: 'Error message when upload file fails',
   },
+  fileUploadMalware: {
+    id: 'application.system:core.error.file.uploadMalware',
+    defaultMessage: 'Eftirfarandi skrár hafa verið merktar sýktar: {files}',
+    description: 'Error message when upload file has been flagged for malware',
+  },
   uploadMultipleNotAllowed: {
     id: 'application.system:core.error.file.uploadMultipleNotAllowed',
     defaultMessage: 'Það má bara hlaða upp einni skrá',
