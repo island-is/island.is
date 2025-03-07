@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
-import partition from 'lodash/partition'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -300,9 +299,7 @@ const Defendant = () => {
           const indictmentCountSubtypes = indictmentCount.indictmentCountSubtypes || []
 
           // handle changes based on police case subtype changes
-          // const [updatedIndictmentCountSubtypes, _] = partition(indictmentCountSubtypes, (subtype) => policeCaseNumberSubtypes.includes(subtype))
           const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter((subtype) => policeCaseNumberSubtypes.includes(subtype))
-          // const selectedIndictmentCountSubtypes = isEmptyArray(updatedIndictmentCountSubtypes) && policeCaseNumberSubtypes.length === 1 ? [policeCaseNumberSubtypes[0]] : updatedIndictmentCountSubtypes
           const updatedIndictmentCount = {
             ...indictmentCount, 
             indictmentCountSubtypes: updatedIndictmentCountSubtypes,
