@@ -27,6 +27,9 @@ interface UserProvider {
 
 export const UserContext = createContext<UserProvider>({})
 
+// Used for accessing the current user outside of React components
+export const userRef: { current?: User } = { current: undefined }
+
 // Setting authenticated to true forces current user query in unit tests
 interface Props {
   authenticated?: boolean
@@ -52,8 +55,10 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
 
   useEffect(() => {
     if (currentUser?.user && !user) {
-      setUser(currentUser?.user ?? undefined)
+      setUser(currentUser.user)
+      userRef.current = currentUser.user
     }
+
     if (currentUser?.eligibleUsers && !eligibleUsers) {
       setEligibleUsers(currentUser?.eligibleUsers)
     }
