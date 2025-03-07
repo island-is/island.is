@@ -17,6 +17,9 @@ export class PaymentCallbackController {
   async apiClientPaymentCallback(
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
+    console.log('--------------------------------')
+    console.log('callback', callback)
+    console.log('--------------------------------')
     if (callback.type === 'success') {
       if (callback.details?.eventMetadata?.charge?.receptionId) {
         await this.paymentService.fulfillPayment(
