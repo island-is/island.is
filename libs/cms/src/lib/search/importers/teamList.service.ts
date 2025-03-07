@@ -46,7 +46,7 @@ export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
           const content = contentSection.join(' ')
           teamMembers.push({
             _id: member.id,
-            title: member.name,
+            title: member.name.toLowerCase(),
             content,
             contentWordCount: content?.split(/\s+/).length,
             type: 'webTeamMember',
