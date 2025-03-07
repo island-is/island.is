@@ -1,13 +1,5 @@
 import { z } from 'zod'
 import { m } from './messages'
-import * as nationalId from 'kennitala'
-
-const nationalIdAndName = z.object({
-  name: z.string(),
-  nationalId: z.string().refine((v) => nationalId.isPerson(v), {
-    params: m.nationalIdValidationError,
-  }),
-})
 
 export const dataSchema = z.object({
   /* Gagnaöflun */

@@ -7,12 +7,10 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
   NationalRegistryUserApi,
-  StateLifeCycle,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from './constants'
+import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
