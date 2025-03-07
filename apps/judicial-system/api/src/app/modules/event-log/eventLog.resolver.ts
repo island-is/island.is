@@ -6,14 +6,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateEventLogInput } from './dto/createEventLog.input'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class EventLogResolver {
   constructor(

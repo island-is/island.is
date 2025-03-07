@@ -523,6 +523,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'We want to properly welcome your child to the school. To prepare for their arrival, please select a date for the first school day.',
     },
+    expectedEndDateDescription: {
+      id: 'nps.application:primary.school.expected.end.date.description',
+      defaultMessage: 'Vinsamlegast skráið áætlaðan lokadag',
+      description: 'Please provide an expected end date',
+    },
+    expectedEndDateTitle: {
+      id: 'nps.application:primary.school.expected.end.date.title',
+      defaultMessage: 'Lokadagur',
+      description: 'End date',
+    },
+    temporaryStay: {
+      id: 'nps.application:primary.school.temporary.stay',
+      defaultMessage: 'Er skóladvölin tímabundin?',
+      description: 'Is the school stay temporary?',
+    },
   }),
 
   differentNeeds: defineMessages({
@@ -962,32 +977,6 @@ export const newPrimarySchoolMessages: MessageDir = {
   }),
 }
 
-export const inReviewFormMessages = defineMessages({
-  formTitle: {
-    id: 'nps.application:inReview.form.title',
-    defaultMessage: 'Umsókn í nýjan grunnskóla',
-    description: 'Application for a new primary school',
-  },
-})
-
-export const statesMessages = defineMessages({
-  draftDescription: {
-    id: 'nps.application:draft.description',
-    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
-    description: 'You have created a draft application.',
-  },
-  applicationSent: {
-    id: 'nps.application:application.sent.title',
-    defaultMessage: 'Umsókn hefur verið send.',
-    description: 'The application has been sent',
-  },
-  applicationSentDescription: {
-    id: 'nps.application:application.sent.description',
-    defaultMessage: 'Hægt er að breyta umsókn',
-    description: 'It is possible to edit the application',
-  },
-})
-
 export const errorMessages = defineMessages({
   phoneNumber: {
     id: 'nps.application:error.phone.number',
@@ -1024,6 +1013,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Það þarf að velja a.m.k tvö tungumál',
     description: 'At least two language must be selected',
   },
+  expectedEndDateRequired: {
+    id: 'nps.application:error.expected.end.date.required',
+    defaultMessage: 'Það þarf að velja áætlaðan lokadag',
+    description: 'You must select an expected end date',
+  },
   noChildrenFoundTitle: {
     id: 'nps.application:error.no.children.found.title',
     defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
@@ -1036,6 +1030,11 @@ export const errorMessages = defineMessages({
       'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. \n\nÞjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nUpplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
     description:
       'Only the person who has legal custody has the authority to apply for a child.\n\nThe National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)\n\nInformation about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Ísland.is](https://island.is/minarsidur)',
+  },
+  expectedEndDateMessage: {
+    id: 'nps.application:expected.end.date.less.than.start.date',
+    defaultMessage: 'Lokadagur má ekki vera fyrir byrjunardag',
+    description: 'End date cannot be before start date',
   },
   foodAllergiesOrIntolerancesRequired: {
     id: 'nps.application:error.food.allergies.or.intolerances.required',

@@ -1,4 +1,6 @@
 export * from './auth.graphql.guard'
+export * from './auth.graphql.user.guard'
+export * from './auth.guard'
 export * from './auth.user.guard'
 export * from './auth.inject.bearer.guard'
 export * from './roles.guard'

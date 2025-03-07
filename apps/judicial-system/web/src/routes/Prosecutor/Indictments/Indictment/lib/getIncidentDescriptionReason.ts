@@ -14,8 +14,19 @@ export const getIncidentDescriptionReason = (
   offenses: Offense[],
   formatMessage: IntlShape['formatMessage'],
 ) => {
+  const order = [
+    IndictmentCountOffense.DRUNK_DRIVING,
+    IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+    IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+  ]
+
   let reason = offenses
-    .filter((o) => o.offense !== IndictmentCountOffense.SPEEDING)
+    .filter(
+      (o) =>
+        o.offense !== IndictmentCountOffense.SPEEDING &&
+        o.offense !== IndictmentCountOffense.OTHER,
+    )
+    .sort((a, b) => order.indexOf(a.offense) - order.indexOf(b.offense))
     .reduce((acc, o, index) => {
       if (
         (offenses.length > 1 && index === offenses.length - 1) ||

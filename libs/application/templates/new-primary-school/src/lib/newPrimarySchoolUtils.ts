@@ -172,7 +172,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const expectedStartDate = getValueViaPath(
     answers,
-    'expectedStartDate',
+    'startingSchool.expectedStartDate',
+  ) as string
+
+  const expectedStartDateHiddenInput = getValueViaPath(
+    answers,
+    'startingSchool.expectedStartDateHiddenInput',
+  )
+
+  const temporaryStay = getValueViaPath(
+    answers,
+    'startingSchool.temporaryStay',
+    NO,
+  ) as YesOrNo
+
+  const expectedEndDate = getValueViaPath(
+    answers,
+    'startingSchool.expectedEndDate',
   ) as string
 
   const schoolMunicipality = getValueViaPath(
@@ -230,6 +246,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerEmail,
     requestingMeeting,
     expectedStartDate,
+    expectedStartDateHiddenInput,
+    temporaryStay,
+    expectedEndDate,
     schoolMunicipality,
     selectedSchool,
     currentNurseryMunicipality,
