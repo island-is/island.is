@@ -93,18 +93,19 @@ export const overview = buildSection({
           id: 'createdListsInOverview',
           doesNotRequireAnswer: true,
           items: ({ answers }) => {
-            return (answers.constituency as string[]).map(
-              (constituency: string) => ({
-                heading: constituency.split('|')[1],
-                eyebrow: getValueViaPath(answers, 'list.name'),
-                progressMeter: {
-                  currentProgress: 0,
-                  maxProgress: 350,
-                  withLabel: true,
-                },
-              }),
-            )
-          },
+            const constituency = getValueViaPath<string[]>(answers, 'constituency') || []
+              return constituency?.map(
+                (constituency) => ({
+                  heading: constituency.split('|')[1],
+                  eyebrow: getValueViaPath<string>(answers, 'list.name'),
+                  progressMeter: {
+                    currentProgress: 0,
+                    maxProgress: 350,
+                    withLabel: true,
+                  },
+                }),
+              )
+            },
         }),
         buildSubmitField({
           id: 'submit',
