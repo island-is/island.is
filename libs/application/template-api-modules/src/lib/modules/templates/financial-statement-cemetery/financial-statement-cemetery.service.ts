@@ -51,11 +51,16 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     super(ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY)
   }
 
-  private async getAttachments(application: Application): Promise<string> {
-    const attachments: Array<AttachmentData> | undefined = getValueViaPath(
-      application.answers,
-      'attachments.files',
-    ) as Array<{ key: string; name: string }>
+  private async getAttachmentsAsBase64(
+    application: Application,
+  ): Promise<string> {
+    const attachments: Array<AttachmentData> | undefined = getValueViaPath<
+      Array<{ key: string; name: string }>
+    >(application.answers, 'attachments.file')
+
+    if (!attachments) {
+      throw new Error('No attachments found')
+    }
 
     const attachmentKey = attachments[0].key
 
@@ -66,7 +71,9 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     )[attachmentKey]
 
     if (!fileName) {
-      return Promise.reject({})
+      throw new Error(
+        `Attachment filename not found in application on attachment key: ${attachmentKey}`,
+      )
     }
 
     try {
@@ -74,9 +81,14 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
         fileName,
         'base64',
       )
-      return fileContent || ''
+
+      if (!fileContent) {
+        throw new Error(`File content not found for: ${fileName}`)
+      }
+
+      return fileContent
     } catch (error) {
-      throw new Error('Error occurred while fetching attachment')
+      throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
   }
 
@@ -91,22 +103,28 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
-    const answers = application.answers
+    const { answers } = application
+
     if (!actor) {
       return new Error('Enginn umboðsmaður fannst')
     }
 
-    const values = this.prepareValues(application)
-    const client = { nationalId }
-    const { year, actorsName, contactsAnswer, clientPhone, clientEmail, file } =
+    const { year, actorsName, contactsAnswer, clientPhone, clientEmail } =
       getNeededCemeteryValues(answers)
-    const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
-    const fileName = file ? await this.getAttachments(application) : undefined
+
+    if (!clientEmail || !clientPhone || !actorsName || !year) {
+      throw new Error('Missing required values')
+    }
+
+    const client = { nationalId }
     const contacts = mapContactsAnswersToContacts(
       actor,
       actorsName,
       contactsAnswer,
     )
+    const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
+    const values = this.prepareValues(application)
+    const fileName = await this.getAttachmentsAsBase64(application)
 
     try {
       const result =

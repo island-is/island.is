@@ -7,10 +7,8 @@ import {
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3Uri from 'amazon-s3-uri'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
-import { DataResponse } from '../financial-statements-inao/financial-statements-inao.service'
 import { getInput, getShouldGetFileName } from './mappers/helpers'
 import { S3Service } from '@island.is/nest/aws'
 
@@ -19,14 +17,20 @@ export interface AttachmentData {
   name: string
 }
 
-export const getCurrentUserType = (answers: any, externalData: any) => {
-  const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+export interface DataResponse {
+  success: boolean
+  message?: string
+}
 
-  const currentUserType: any = getValueViaPath(
+export const getCurrentUserType = (
+  _answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
+  const currentUserType = getValueViaPath<number>(
     externalData,
     'getUserType.data.value',
   )
-  return fakeUserType ?? currentUserType
+  return currentUserType
 }
 
 @Injectable()
@@ -39,13 +43,16 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
     super(ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION)
   }
 
-  private async getAttachment(application: Application): Promise<string> {
-    const attachments: AttachmentData[] | undefined = getValueViaPath(
+  private async getAttachmentsAsBase64(
+    application: Application,
+  ): Promise<string> {
+    const attachments: Array<AttachmentData> | undefined = getValueViaPath(
       application.answers,
       'attachments.file',
     ) as Array<{ key: string; name: string }>
 
     const attachmentKey = attachments[0].key
+
     const fileName = (
       application.attachments as {
         [key: string]: string
@@ -53,7 +60,9 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
     )[attachmentKey]
 
     if (!fileName) {
-      return Promise.reject({})
+      throw new Error(
+        `Attachment filename not found in application on attachment key: ${attachmentKey}`,
+      )
     }
 
     try {
@@ -61,9 +70,14 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
         fileName,
         'base64',
       )
-      return fileContent || ''
+
+      if (!fileContent) {
+        throw new Error(`File content not found for: ${fileName}`)
+      }
+
+      return fileContent
     } catch (error) {
-      throw new Error('Villa kom upp við að senda umsókn')
+      throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
   }
 
@@ -78,7 +92,7 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
     const { answers } = application
     const shouldGetFileName = getShouldGetFileName(answers)
     const fileName = shouldGetFileName
-      ? await this.getAttachment(application)
+      ? await this.getAttachmentsAsBase64(application)
       : undefined
 
     const { input, loggerInfo } = getInput(answers, actor, nationalId, fileName)
