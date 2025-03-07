@@ -11,14 +11,16 @@ import { CertificationsService } from './certification.service'
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
+  OrganizationCertificationTypeCreateInput,
 } from '../../dto/certification.input'
 import { FormCertificationTypeDto } from '../../models/certification.model'
+import { OrganizationCertificationTypeDto } from '@island.is/clients/form-system'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class CertificationsResolver {
-  constructor(private readonly certificationsService: CertificationsService) { }
+  constructor(private readonly certificationsService: CertificationsService) {}
 
   @Mutation(() => FormCertificationTypeDto, {
     name: 'formSystemCreateCertification',
@@ -41,5 +43,19 @@ export class CertificationsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.certificationsService.deleteCertification(user, input)
+  }
+
+  @Mutation(() => FormCertificationTypeDto, {
+    name: 'formSystemCreateOrganizationCertification',
+  })
+  async createOrganizationCertification(
+    @Args('input', { type: () => OrganizationCertificationTypeCreateInput })
+    input: OrganizationCertificationTypeCreateInput,
+    @CurrentUser() user: User,
+  ): Promise<OrganizationCertificationTypeDto> {
+    return this.certificationsService.createOrganizationCertification(
+      user,
+      input,
+    )
   }
 }

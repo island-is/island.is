@@ -21,6 +21,9 @@ export class Organization {
 
 @ObjectType('FormSystemOrganizationAdmin')
 export class OrganizationAdmin {
+  @Field(() => String, { nullable: true })
+  organizationId?: string
+
   @Field(() => [String], { nullable: 'itemsAndList' })
   selectedCertificationTypes?: string[]
 

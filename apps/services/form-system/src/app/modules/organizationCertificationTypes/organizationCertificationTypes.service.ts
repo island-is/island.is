@@ -36,7 +36,20 @@ export class OrganizationCertificationTypesService {
     const newOrganizationCertificationType: OrganizationCertificationType =
       new this.organizationCertificationTypeModel(organizationCertificationType)
 
+    console.log(
+      'newOrganizationCertificationType',
+      newOrganizationCertificationType,
+    )
+
     await newOrganizationCertificationType.save()
+
+    // const newOrganizationCertificationType =
+    //   await this.organizationCertificationTypeModel.create({
+    //     organizationId:
+    //     organizationCertificationType.organizationId,
+    //     certificationTypeId:
+    //     organizationCertificationType.certificationTypeId,
+    //   })
 
     const keys = ['id', 'certificationTypeId']
     const organizationCertificationTypeDto: OrganizationCertificationTypeDto =

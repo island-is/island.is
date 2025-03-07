@@ -11,6 +11,7 @@ export interface AdminLoaderQueryResponse {
 }
 
 export interface AdminLoaderResponse {
+  organizationId: string
   selectedCertificationTypes: string[]
   certficationTypes: FormSystemFormCertificationType[]
   organizations: Option<string>[]
@@ -33,6 +34,9 @@ export const adminLoader: WrappedLoaderFn = ({ client }) => {
     if (!data) {
       throw new Error('No organization admin was found')
     }
+
+    const organizationId = data.formSystemGetOrganizationAdmin
+      ?.organizationId as string
 
     const selectedCertificationTypes =
       data.formSystemGetOrganizationAdmin?.selectedCertificationTypes?.map(
@@ -57,6 +61,7 @@ export const adminLoader: WrappedLoaderFn = ({ client }) => {
       })) as Option<string>[]
 
     return {
+      organizationId,
       selectedCertificationTypes,
       certficationTypes,
       organizations,

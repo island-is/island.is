@@ -5,6 +5,7 @@ export const GET_ORGANIZATION_ADMIN = gql`
     $input: FormSystemGetOrganizationAdminInput!
   ) {
     formSystemGetOrganizationAdmin(input: $input) {
+      organizationId
       selectedCertificationTypes
       certificationTypes {
         id

@@ -7,11 +7,15 @@ import {
   FormCertificationTypeDto,
   FormCertificationTypesApi,
   FormCertificationTypesControllerCreateRequest,
+  OrganizationCertificationTypesControllerCreateRequest,
   FormCertificationTypesControllerDeleteRequest,
+  OrganizationCertificationTypeDto,
+  OrganizationCertificationTypesApi,
 } from '@island.is/clients/form-system'
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
+  OrganizationCertificationTypeCreateInput,
 } from '../../dto/certification.input'
 
 @Injectable()
@@ -20,6 +24,7 @@ export class CertificationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private certificationsApi: FormCertificationTypesApi,
+    private organizationCertificationsApi: OrganizationCertificationTypesApi,
   ) {}
 
   // eslint-disable-next-line
@@ -35,6 +40,12 @@ export class CertificationsService {
 
   private certificationsApiWithAuth(auth: User) {
     return this.certificationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private organizationCertificationsApiWithAuth(auth: User) {
+    return this.organizationCertificationsApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   async createCertification(
@@ -69,5 +80,26 @@ export class CertificationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to delete certification'),
       )
+  }
+
+  async createOrganizationCertification(
+    auth: User,
+    input: OrganizationCertificationTypeCreateInput,
+  ): Promise<OrganizationCertificationTypeDto> {
+    const response = await this.organizationCertificationsApiWithAuth(auth)
+      .organizationCertificationTypesControllerCreate(
+        input as OrganizationCertificationTypesControllerCreateRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to create certification'),
+      )
+
+    if (!response || response instanceof ApolloError) {
+      return {
+        id: '',
+        certificationTypeId: '',
+      }
+    }
+    return response
   }
 }

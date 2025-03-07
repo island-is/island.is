@@ -2433,6 +2433,9 @@
       "OrganizationAdminDto": {
         "type": "object",
         "properties": {
+          "organizationId": {
+            "type": "string"
+          },
           "selectedCertificationTypes": {
             "type": "array",
             "items": {

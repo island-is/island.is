@@ -23,15 +23,22 @@ export const Admin = () => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
-  const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN)
-  const { selectedCertificationTypes, certficationTypes, organizations } =
-    useLoaderData() as AdminLoaderResponse
+  const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN, {
+    fetchPolicy: 'no-cache',
+  })
+  const {
+    organizationId,
+    selectedCertificationTypes,
+    certficationTypes,
+    organizations,
+  } = useLoaderData() as AdminLoaderResponse
 
   const [organizationsState, setOrganizationsState] = useState(organizations)
   const [selectedCertificationTypesState, setSelectedCertificationTypesState] =
     useState(selectedCertificationTypes)
-  // const [certificationTypesState, setCertificationTypesState] =
-  //   useState(certficationTypes)
+  const [organizationIdState, setOrganizationIdState] = useState(organizationId)
+  const [certificationTypesState, setCertificationTypesState] =
+    useState(certficationTypes)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
@@ -49,16 +56,16 @@ export const Admin = () => {
         },
       },
     })
+
+    if (data?.formSystemGetOrganizationAdmin.organizationId) {
+      setOrganizationIdState(data.formSystemGetOrganizationAdmin.organizationId)
+    }
+
     if (data?.formSystemGetOrganizationAdmin.selectedCertificationTypes) {
       setSelectedCertificationTypesState(
         data.formSystemGetOrganizationAdmin.selectedCertificationTypes,
       )
     }
-    // if (data?.formSystemGetOrganizationAdmin.certficationTypes) {
-    //   setCertificationTypesState(
-    //     data.formSystemGetOrganizationAdmin.certficationTypes,
-    //   )
-    // }
   }
 
   return (
@@ -70,6 +77,8 @@ export const Admin = () => {
       <CertificationTypesList
         selectedCertificationTypes={selectedCertificationTypesState}
         certficationTypes={certficationTypes}
+        organizationId={organizationIdState}
+        setSelectedCertificationTypesState={setSelectedCertificationTypesState}
       />
     </>
   )

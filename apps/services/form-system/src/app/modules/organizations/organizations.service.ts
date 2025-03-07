@@ -75,6 +75,8 @@ export class OrganizationsService {
     const organizationAdminDto: OrganizationAdminDto =
       new OrganizationAdminDto()
 
+    organizationAdminDto.organizationId = organization.id
+
     if (organization.organizationCertificationTypes) {
       organizationAdminDto.selectedCertificationTypes =
         organization.organizationCertificationTypes.map(

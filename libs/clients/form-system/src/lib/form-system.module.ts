@@ -9,6 +9,7 @@ import {
   OrganizationsApiProvider,
   ScreensApiProvider,
   SectionsApiProvider,
+  OrganizationCertificationsProvider,
 } from './FormSystemApiProvider'
 import {
   ApplicationsApi,
@@ -17,6 +18,7 @@ import {
   FormCertificationTypesApi,
   FormsApi,
   ListItemsApi,
+  OrganizationCertificationTypesApi,
   OrganizationsApi,
   ScreensApi,
   SectionsApi,
@@ -34,6 +36,7 @@ import {
     SectionsApiProvider,
     FormApplicantProvider,
     CertificationsProvider,
+    OrganizationCertificationsProvider,
   ],
   exports: [
     ApplicationsApi,
@@ -45,6 +48,7 @@ import {
     SectionsApi,
     FormApplicantTypesApi,
     FormCertificationTypesApi,
+    OrganizationCertificationTypesApi,
   ],
 })
-export class FormSystemClientModule { }
+export class FormSystemClientModule {}
