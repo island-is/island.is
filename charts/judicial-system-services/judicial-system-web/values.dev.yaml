@@ -20,7 +20,7 @@ name: 'judicial-system-web'
 enabled: true
 env:
   API_URL: 'https://judicial-system.dev01.devland.is'
-  INTERNAL_API_URL: 'http://judicial-system-api'
+  INTERNAL_API_URL: 'http://web-judicial-system-api'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
