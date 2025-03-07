@@ -507,6 +507,9 @@
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
       ],
+      "@island.is/application/templates/signature-collection/assets/*": [
+        "libs/application/templates/signature-collection/assets/*"
+      ],
       "@island.is/application/templates/signature-collection/municipal-list-creation": [
         "libs/application/templates/signature-collection/municipal-list-creation/src/index.ts"
       ],

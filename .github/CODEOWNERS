@@ -90,6 +90,7 @@
 /libs/application/templates/signature-collection/parliamentary-list-signing                               @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-creation                               @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-signing                                @island-is/juni
+/libs/application/templates/signature-collection/municipal-list-creation                                  @island-is/juni
 /libs/api/domains/disability-license                                                                      @island-is/juni
 /libs/portals/admin/petition                                                                              @island-is/juni
 /libs/portals/admin/signature-collection                                                                  @island-is/juni

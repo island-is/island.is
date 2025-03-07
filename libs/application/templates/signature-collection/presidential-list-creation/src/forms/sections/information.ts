@@ -9,9 +9,10 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import format from 'date-fns/format'
 
 export const information = buildSection({
-  id: 'listInformationSection',
+  id: 'listInformation',
   title: m.information,
   children: [
     buildMultiField({
@@ -20,47 +21,26 @@ export const information = buildSection({
       description: m.listInformationDescription,
       children: [
         buildDescriptionField({
-          id: 'listHeader',
-          title: m.listHeader,
-          titleVariant: 'h4',
-        }),
-        buildTextField({
-          id: 'list.municipality',
-          title: m.listMunicipality,
-          width: 'full',
-          readOnly: true,
-          //Todo: use value from externalData once available
-          defaultValue: () => 'Borgarbyggð',
-        }),
-        buildTextField({
-          id: 'list.name',
-          title: m.listName,
-          width: 'full',
-          required: true,
-        }),
-        buildDescriptionField({
           id: 'applicantHeader',
-          title: m.applicantActorHeader,
+          title: m.applicantHeader,
           titleVariant: 'h4',
-          space: 'containerGutter',
-        }),
-        buildTextField({
-          id: 'applicant.nationalId',
-          title: m.nationalId,
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            application?.applicantActors[0]
-              ? formatNationalId(application?.applicantActors[0])
-              : formatNationalId(application.applicant),
         }),
         buildTextField({
           id: 'applicant.name',
           title: m.name,
-          width: 'half',
+          width: 'full',
           readOnly: true,
           defaultValue: ({ externalData }: Application) =>
-            getValueViaPath(externalData, 'nationalRegistry.data.fullName'),
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ||
+            '',
+        }),
+        buildTextField({
+          id: 'applicant.nationalId',
+          title: m.nationalId,
+          width: 'full',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            formatNationalId(application.applicant),
         }),
         buildPhoneField({
           id: 'applicant.phone',
@@ -78,6 +58,36 @@ export const information = buildSection({
           required: true,
           defaultValue: ({ externalData }: Application) =>
             getValueViaPath(externalData, 'userProfile.data.email'),
+        }),
+        buildDescriptionField({
+          id: 'collectionHeader',
+          title: m.collectionHeader,
+          titleVariant: 'h4',
+          space: 'containerGutter',
+        }),
+        buildTextField({
+          id: 'collection.dateFrom',
+          title: m.collectionDateFrom,
+          width: 'half',
+          readOnly: true,
+          defaultValue: ({ externalData }: Application) => {
+            return format(
+              new Date(externalData.currentCollection?.data.startTime),
+              'dd.MM.yy',
+            )
+          },
+        }),
+        buildTextField({
+          id: 'collection.dateTil',
+          title: m.collectionDateTil,
+          width: 'half',
+          readOnly: true,
+          defaultValue: ({ externalData }: Application) => {
+            return format(
+              new Date(externalData.currentCollection?.data.endTime),
+              'dd.MM.yy',
+            )
+          },
         }),
       ],
     }),
