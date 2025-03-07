@@ -11,7 +11,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { NoContentException } from '@island.is/nest/problem'
 
-const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
+const EXPIRATION = 28 * 24 * 60 * 60 * 1000
 const ZENDESK_CUSTOM_FIELDS = {
   Link: 24596286118546,
 }
@@ -134,7 +134,7 @@ export class IdentityConfirmationService {
 
     // Throw error if identity is older than 2 days
     if (
-      new Date(identityConfirmation.created).getTime() + TWO_DAYS <
+      new Date(identityConfirmation.created).getTime() + EXPIRATION <
       Date.now()
     ) {
       throw new Error('Identity confirmation expired')
@@ -185,7 +185,7 @@ export class IdentityConfirmationService {
       type: identityConfirmation.type,
       // Check if time now is 2 days older than created at time
       isExpired:
-        new Date(identityConfirmation.created).getTime() + TWO_DAYS <
+        new Date(identityConfirmation.created).getTime() + EXPIRATION <
         Date.now(),
     }
   }
