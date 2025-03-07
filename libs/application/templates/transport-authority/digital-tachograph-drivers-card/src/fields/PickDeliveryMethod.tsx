@@ -121,7 +121,6 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ) {
       refetchTachoNet()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasValidCardTypeForDeliveryMethodSend])
 
   // Check if user is allowed to select the delivery method "Send to my legal domicile"

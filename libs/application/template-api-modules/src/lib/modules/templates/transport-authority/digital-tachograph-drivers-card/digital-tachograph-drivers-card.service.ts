@@ -140,7 +140,7 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
             cardValidTo:
               fakeData.newestDriversCardIsExpired === NO
                 ? getTodayDateWithMonthDiff(
-                    Math.abs(fakeData.newestDriversCardExpiresInMonths || 0),
+                    Math.abs(fakeData.newestDriversCardExpiresInMonths || 1),
                   )
                 : getTodayDateWithMonthDiff(-1),
             isValid:
