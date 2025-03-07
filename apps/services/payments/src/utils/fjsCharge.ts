@@ -5,13 +5,7 @@ import { FjsErrorCode } from '@island.is/shared/constants'
 
 type PayInfo = Charge['payInfo']
 
-export const generateChargeFJSPayload = ({
-  paymentFlow,
-  charges,
-  systemId,
-  payInfo,
-  returnUrl = '',
-}: {
+export interface GenerateChargeFJSPayloadInput {
   paymentFlow: Pick<
     PaymentFlowAttributes,
     'payerNationalId' | 'organisationId' | 'id' | 'extraData'
@@ -24,7 +18,15 @@ export const generateChargeFJSPayload = ({
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string
-}): Charge => {
+}
+
+export const generateChargeFJSPayload = ({
+  paymentFlow,
+  charges,
+  systemId,
+  payInfo,
+  returnUrl = '',
+}: GenerateChargeFJSPayloadInput): Charge => {
   return {
     // Unique id for the charge, no longer than 22 characters
     chargeItemSubject: paymentFlow.id.substring(0, 22),
