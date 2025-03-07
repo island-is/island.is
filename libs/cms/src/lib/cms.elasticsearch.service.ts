@@ -665,8 +665,6 @@ export class CmsElasticsearchService {
       },
     })
 
-    console.log('must: ', must)
-
     const size = input.size ?? 10
 
     let sort: sortRule[] = []
