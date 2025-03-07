@@ -21,8 +21,7 @@ export const environment = {
   deadLetterQueueName: env.DEAD_LETTER_QUEUE_NAME,
   auth: {
     issuer:
-      env.IDENTITY_SERVER_ISSUER_URL ??
-      'https://identity-server.dev01.devland.is',
+      env.IDENTITY_SERVER_ISSUER_URL ?? 'https://identity-server.dev01.devland.is',
   },
 
   sqsConfig: {

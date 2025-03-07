@@ -772,6 +772,7 @@ export interface ICustomPageFields {
     | 'Vacancies'
     | 'Grants'
     | 'DirectorateOfLabourMyPages'
+    | 'Verdicts'
     | undefined
 
   /** Alert Banner */
