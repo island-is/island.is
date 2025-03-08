@@ -11,7 +11,7 @@ import { CertificationsService } from './certification.service'
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
-  OrganizationCertificationTypeCreateInput,
+  OrganizationCertificationTypeUpdateInput,
 } from '../../dto/certification.input'
 import { FormCertificationTypeDto } from '../../models/certification.model'
 import { OrganizationCertificationTypeDto } from '@island.is/clients/form-system'
@@ -49,11 +49,26 @@ export class CertificationsResolver {
     name: 'formSystemCreateOrganizationCertification',
   })
   async createOrganizationCertification(
-    @Args('input', { type: () => OrganizationCertificationTypeCreateInput })
-    input: OrganizationCertificationTypeCreateInput,
+    @Args('input', { type: () => OrganizationCertificationTypeUpdateInput })
+    input: OrganizationCertificationTypeUpdateInput,
     @CurrentUser() user: User,
   ): Promise<OrganizationCertificationTypeDto> {
     return this.certificationsService.createOrganizationCertification(
+      user,
+      input,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'formSystemDeleteOrganizationCertification',
+    nullable: true,
+  })
+  async deleteOrganizationCertification(
+    @Args('input', { type: () => OrganizationCertificationTypeUpdateInput })
+    input: OrganizationCertificationTypeUpdateInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.certificationsService.deleteOrganizationCertification(
       user,
       input,
     )

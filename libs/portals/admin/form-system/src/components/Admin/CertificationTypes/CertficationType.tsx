@@ -7,6 +7,7 @@ import {
   CREATE_CERTIFICATION,
   DELETE_CERTIFICATION,
   CREATE_ORGANIZATION_CERTIFICATION,
+  DELETE_ORGANIZATION_CERTIFICATION,
 } from '@island.is/form-system/graphql'
 import {
   Box,
@@ -48,21 +49,10 @@ export const CertificationType = ({
     },
   )
 
-  // const [removeCertificationType] = useMutation(DELETE_CERTIFICATION, {
-  //   onCompleted: (newCertificationData) => {
-  //     if (newCertificationData?.formSystemDeleteCertification?.certification) {
-  //       setSelectedCertificationTypesState((prevCertifications) =>
-  //         prevCertifications.filter(
-  //           (certification) =>
-  //             certification.id !==
-  //             newCertificationData.formSystemDeleteCertification.certification
-  //               .id,
-  //         ),
-  //       )
-  //     }
-  //   },
-  // })
-  console.log(certificationType.id, isSelected)
+  const [removeCertificationType] = useMutation(
+    DELETE_ORGANIZATION_CERTIFICATION,
+  )
+
   useEffect(() => {
     setIsSelectedState(isSelected)
   }, [isSelected])
@@ -76,16 +66,34 @@ export const CertificationType = ({
             checked={isSelectedState}
             onChange={async (e) => {
               setIsSelectedState(e)
-              await addCertificationType({
-                variables: {
-                  input: {
-                    createOrganizationCertificationTypeDto: {
-                      certificationTypeId: certificationType.id,
-                      organizationId: organizationId,
+              if (e) {
+                await addCertificationType({
+                  variables: {
+                    input: {
+                      updateOrganizationCertificationTypeDto: {
+                        certificationTypeId: certificationType.id,
+                        organizationId: organizationId,
+                      },
                     },
                   },
-                },
-              })
+                })
+              } else {
+                await removeCertificationType({
+                  variables: {
+                    input: {
+                      updateOrganizationCertificationTypeDto: {
+                        certificationTypeId: certificationType.id,
+                        organizationId: organizationId,
+                      },
+                    },
+                  },
+                })
+                setSelectedCertificationTypesState((prevCertifications) =>
+                  prevCertifications.filter(
+                    (certification) => certification !== certificationType.id,
+                  ),
+                )
+              }
             }}
           />
         </Box>

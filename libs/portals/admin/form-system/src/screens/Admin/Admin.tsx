@@ -17,7 +17,6 @@ import { divide } from 'lodash'
 import { AdminHeader } from '../../components/Admin/AdminHeader'
 import { AdminLoaderResponse } from './Admin.loader'
 import { CertificationTypesList } from '../../components/Admin/CertificationTypes/CertificationTypesList'
-// import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
 export const Admin = () => {
   const navigate = useNavigate()

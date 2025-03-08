@@ -76,8 +76,14 @@ export class FormCertificationTypeCreateInput {
 //   certificationTypeId?: string
 // }
 
-@InputType('FormSystemCreateOrganizationCertificationTypeInput')
-export class OrganizationCertificationTypeCreateInput {
+// @InputType('FormSystemCreateOrganizationCertificationTypeInput')
+// export class OrganizationCertificationTypeCreateInput {
+//   @Field(() => OrganizationCertificationTypeDtoInput, { nullable: true })
+//   createOrganizationCertificationTypeDto?: OrganizationCertificationTypeDtoInput
+// }
+
+@InputType('FormSystemUpdateOrganizationCertificationTypeInput')
+export class OrganizationCertificationTypeUpdateInput {
   @Field(() => OrganizationCertificationTypeDtoInput, { nullable: true })
-  createOrganizationCertificationTypeDto?: OrganizationCertificationTypeDtoInput
+  updateOrganizationCertificationTypeDto?: OrganizationCertificationTypeDtoInput
 }

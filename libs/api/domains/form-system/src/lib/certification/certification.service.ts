@@ -11,11 +11,12 @@ import {
   FormCertificationTypesControllerDeleteRequest,
   OrganizationCertificationTypeDto,
   OrganizationCertificationTypesApi,
+  OrganizationCertificationTypesControllerDeleteRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
-  OrganizationCertificationTypeCreateInput,
+  OrganizationCertificationTypeUpdateInput,
 } from '../../dto/certification.input'
 
 @Injectable()
@@ -84,7 +85,7 @@ export class CertificationsService {
 
   async createOrganizationCertification(
     auth: User,
-    input: OrganizationCertificationTypeCreateInput,
+    input: OrganizationCertificationTypeUpdateInput,
   ): Promise<OrganizationCertificationTypeDto> {
     const response = await this.organizationCertificationsApiWithAuth(auth)
       .organizationCertificationTypesControllerCreate(
@@ -101,5 +102,18 @@ export class CertificationsService {
       }
     }
     return response
+  }
+
+  async deleteOrganizationCertification(
+    auth: User,
+    input: OrganizationCertificationTypeUpdateInput,
+  ): Promise<void> {
+    await this.organizationCertificationsApiWithAuth(auth)
+      .organizationCertificationTypesControllerDelete(
+        input as OrganizationCertificationTypesControllerDeleteRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to delete certification'),
+      )
   }
 }

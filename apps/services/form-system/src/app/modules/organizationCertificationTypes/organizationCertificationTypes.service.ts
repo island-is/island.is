@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { OrganizationCertificationType } from './models/organizationCertificationType.model'
-import { CreateOrganizationCertificationTypeDto } from './models/dto/createOrganizationCertificationType.dto'
+import { UpdateOrganizationCertificationTypeDto } from './models/dto/updateOrganizationCertificationType.dto'
 import { OrganizationCertificationTypeDto } from './models/dto/organizationCertificationType.dto'
 import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
 import defaults from 'lodash/defaults'
@@ -16,7 +16,7 @@ export class OrganizationCertificationTypesService {
   ) {}
 
   async create(
-    createOrganizationCertificationTypeDto: CreateOrganizationCertificationTypeDto,
+    createOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
   ): Promise<OrganizationCertificationTypeDto> {
     const certificationType = CertificationTypes.find(
       (certificationType) =>
@@ -61,16 +61,27 @@ export class OrganizationCertificationTypesService {
     return organizationCertificationTypeDto
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(
+    deleteOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
+  ): Promise<void> {
     const organizationCertificationType =
-      await this.organizationCertificationTypeModel.findByPk(id)
+      await this.organizationCertificationTypeModel.findOne({
+        where: {
+          organizationId: deleteOrganizationCertificationTypeDto.organizationId,
+          certificationTypeId:
+            deleteOrganizationCertificationTypeDto.certificationTypeId,
+        },
+      })
 
     if (!organizationCertificationType) {
-      throw new NotFoundException(
-        `Organization certification type with id '${id}' not found`,
-      )
+      {
+        throw new NotFoundException(
+          `Organization certification type with 
+        organizationId '${deleteOrganizationCertificationTypeDto.organizationId}' and
+        certificationTypeId '${deleteOrganizationCertificationTypeDto.certificationTypeId}' not found`,
+        )
+      }
     }
-
     organizationCertificationType.destroy()
   }
 }

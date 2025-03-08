@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger'
 import { OrganizationCertificationTypesService } from './organizationCertificationTypes.service'
 import { OrganizationCertificationTypeDto } from './models/dto/organizationCertificationType.dto'
-import { CreateOrganizationCertificationTypeDto } from './models/dto/createOrganizationCertificationType.dto'
+import { UpdateOrganizationCertificationTypeDto } from './models/dto/updateOrganizationCertificationType.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
@@ -39,11 +39,11 @@ export class OrganizationCertificationTypesController {
     description: 'Add organization certification type',
     type: OrganizationCertificationTypeDto,
   })
-  @ApiBody({ type: CreateOrganizationCertificationTypeDto })
+  @ApiBody({ type: UpdateOrganizationCertificationTypeDto })
   @Post()
   create(
     @Body()
-    createOrganizationCertificationTypeDto: CreateOrganizationCertificationTypeDto,
+    createOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
   ): Promise<OrganizationCertificationTypeDto> {
     return this.organizationCertificationTypesService.create(
       createOrganizationCertificationTypeDto,
@@ -54,9 +54,14 @@ export class OrganizationCertificationTypesController {
   @ApiNoContentResponse({
     description: 'Remove organization certification type',
   })
-  @ApiParam({ name: 'id', type: String })
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.organizationCertificationTypesService.delete(id)
+  @ApiBody({ type: UpdateOrganizationCertificationTypeDto })
+  @Delete()
+  async delete(
+    @Body()
+    deleteOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
+  ): Promise<void> {
+    return this.organizationCertificationTypesService.delete(
+      deleteOrganizationCertificationTypeDto,
+    )
   }
 }

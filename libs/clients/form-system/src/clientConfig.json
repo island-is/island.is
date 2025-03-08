@@ -1442,7 +1442,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationCertificationTypeDto"
+                "$ref": "#/components/schemas/UpdateOrganizationCertificationTypeDto"
               }
             }
           }
@@ -1462,22 +1462,21 @@
         "tags": [
           "organization certification types"
         ]
-      }
-    },
-    "/organizationCertificationTypes/{id}": {
+      },
       "delete": {
         "operationId": "OrganizationCertificationTypesController_delete",
         "summary": "Remove organization certification type",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrganizationCertificationTypeDto"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "204": {
             "description": "Remove organization certification type"
@@ -3076,7 +3075,7 @@
           "organizationUrlId"
         ]
       },
-      "CreateOrganizationCertificationTypeDto": {
+      "UpdateOrganizationCertificationTypeDto": {
         "type": "object",
         "properties": {
           "organizationId": {
