@@ -32,23 +32,17 @@ export class FormApplicantTypesService {
   async createFormApplicantType(auth: User, input: FormApplicantTypeCreateInput): Promise<FormApplicantType> {
     const response = await this.formApplicantTypesApiWithAuth(auth)
       .formApplicantTypesControllerCreate(input as FormApplicantTypesControllerCreateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create form applicant type'))
 
-    return response
+    return response as FormApplicantType
   }
 
   async deleteFormApplicantType(auth: User, input: FormApplicantTypeDeleteInput): Promise<void> {
-    const response = await this.formApplicantTypesApiWithAuth(auth)
+    await this.formApplicantTypesApiWithAuth(auth)
       .formApplicantTypesControllerDelete(input as FormApplicantTypesControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete form applicant type'))
-
   }
 
   async updateFormApplicantType(auth: User, input: FormApplicantTypeUpdateInput): Promise<void> {
-    const response = await this.formApplicantTypesApiWithAuth(auth)
+    await this.formApplicantTypesApiWithAuth(auth)
       .formApplicantTypesControllerUpdate(input as FormApplicantTypesControllerUpdateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update form applicant type'))
-
-    return response
   }
 }

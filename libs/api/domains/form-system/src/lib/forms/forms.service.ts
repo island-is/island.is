@@ -15,14 +15,13 @@ import {
   GetFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { Form, FormResponse } from '../../models/form.model'
+import { FormResponse } from '../../models/form.model'
 
 @Injectable()
 export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private formsService: FormsApi,
-    // private formsUrlService: FormUrlsApi
   ) { }
 
   // eslint-disable-next-line
@@ -43,17 +42,13 @@ export class FormsService {
   async createForm(auth: User): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerCreate()
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
 
     return response as FormResponse
   }
 
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
-    const response = await this.formsApiWithAuth(auth)
+    await this.formsApiWithAuth(auth)
       .formsControllerDelete(input as FormsControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete form'))
-
-    return
   }
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
@@ -61,7 +56,7 @@ export class FormsService {
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
 
-    return response as Form
+    return response as FormResponse
   }
 
   async getAllForms(
@@ -75,10 +70,7 @@ export class FormsService {
   }
 
   async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
-    const response = await this.formsApiWithAuth(auth)
+    await this.formsApiWithAuth(auth)
       .formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
-
-    return response
   }
 }

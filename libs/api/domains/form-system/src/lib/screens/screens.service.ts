@@ -45,39 +45,30 @@ export class ScreensService {
   async createScreen(auth: User, input: CreateScreenInput): Promise<Screen> {
     const response = await this.screensApiWithAuth(auth)
       .screensControllerCreate(input as ScreensControllerCreateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create screen'))
 
-    return response
+    return response as Screen
   }
 
   async deleteScreen(auth: User, input: DeleteScreenInput): Promise<void> {
-    const response = await this.screensApiWithAuth(auth)
+    await this.screensApiWithAuth(auth)
       .screensControllerDelete(input as ScreensControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete screen'))
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
   }
 
   async updateScreen(auth: User, input: UpdateScreenInput): Promise<Screen> {
     const response = await this.screensApiWithAuth(auth)
       .screensControllerUpdate(input as ScreensControllerUpdateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
 
-    return response
+    return response as unknown as Screen
   }
 
   async updateScreensDisplayOrder(
     auth: User,
     input: UpdateScreensDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.screensApiWithAuth(auth)
+    await this.screensApiWithAuth(auth)
       .screensControllerUpdateDisplayOrder(
         input as ScreensControllerUpdateDisplayOrderRequest,
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
-
-    return
   }
 }

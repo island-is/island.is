@@ -50,9 +50,6 @@ export class ApplicationsService {
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create application'),
-      )
 
     return response as Application
   }
@@ -78,9 +75,6 @@ export class ApplicationsService {
       .applicationsControllerUpdate(
         input as ApplicationsControllerUpdateRequest
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update application dependencies'))
-
-    return response
   }
 
   async submitApplication(
@@ -91,9 +85,6 @@ export class ApplicationsService {
       .applicationsControllerSubmit(
         input as ApplicationsControllerSubmitRequest
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to submit application'))
-
-    return response
   }
 
   async submitScreen(
@@ -104,9 +95,6 @@ export class ApplicationsService {
       .applicationsControllerSubmitScreen(
         input as ApplicationsControllerSubmitScreenRequest
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
-
-    return response
   }
 
 }

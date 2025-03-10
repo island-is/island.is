@@ -45,11 +45,8 @@ export class CertificationsService {
       .formCertificationTypesControllerCreate(
         input as FormCertificationTypesControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create certification'),
-      )
 
-    return response
+    return response as FormCertificationTypeDto
   }
 
   async deleteCertification(
@@ -59,9 +56,6 @@ export class CertificationsService {
     await this.certificationsApiWithAuth(auth)
       .formCertificationTypesControllerDelete(
         input as FormCertificationTypesControllerDeleteRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete certification'),
       )
   }
 }

@@ -44,23 +44,20 @@ export class SectionsService {
   async createSection(auth: User, input: CreateSectionInput): Promise<Section> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerCreate(input as SectionsControllerCreateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create section'))
 
-    return response
+    return response as Section
   }
 
   async deleteSection(auth: User, input: DeleteSectionInput): Promise<void> {
-    const response = await this.sectionsApiWithAuth(auth)
+    await this.sectionsApiWithAuth(auth)
       .sectionsControllerDelete(input as SectionsControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete section'))
   }
 
   async updateSection(auth: User, input: UpdateSectionInput): Promise<Section> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdate(input as SectionsControllerUpdateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update section'))
 
-    return response
+    return response as unknown as Section
   }
 
   async updateSectionsDisplayOrder(
@@ -70,13 +67,6 @@ export class SectionsService {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdateDisplayOrder(
         input as SectionsControllerUpdateDisplayOrderRequest,
-      )
-      .catch((e) =>
-        handle4xx(
-          e,
-          this.handleError,
-          'failed to update section display order',
-        ),
       )
   }
 }

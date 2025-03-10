@@ -47,31 +47,18 @@ export class ListItemsService {
   ): Promise<ListItem> {
     const response = await this.listItemsApiWithAuth(auth)
       .listItemsControllerCreate(input as ListItemsControllerCreateRequest)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create list item'),
-      )
 
-    return response
+    return response as ListItem
   }
 
   async deleteListItem(auth: User, input: DeleteListItemInput): Promise<void> {
-    const response = await this.listItemsApiWithAuth(auth)
+    await this.listItemsApiWithAuth(auth)
       .listItemsControllerDelete(input as ListItemsControllerDeleteRequest)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete list item'),
-      )
-
-    return response
   }
 
   async updateListItem(auth: User, input: UpdateListItemInput): Promise<void> {
-    const response = await this.listItemsApiWithAuth(auth)
+    await this.listItemsApiWithAuth(auth)
       .listItemsControllerUpdate(input as ListItemsControllerUpdateRequest)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update list item'),
-      )
-
-    return response
   }
 
   async updateListItemsDisplayOrder(
@@ -82,10 +69,5 @@ export class ListItemsService {
       .listItemsControllerUpdateDisplayOrder(
         input as ListItemsControllerUpdateDisplayOrderRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update list item'),
-      )
-
-    return response
   }
 }

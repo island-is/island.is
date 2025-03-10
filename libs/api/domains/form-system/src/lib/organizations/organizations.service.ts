@@ -42,9 +42,6 @@ export class OrganizationsService {
       .organizationsControllerCreate(
         input as OrganizationsControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create organization'),
-      )
 
     return response as Organization
   }
