@@ -1,5 +1,10 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
+  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
+  EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_INPUTS = 'ExampleInputs',
+  EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
+  EXAMPLE_PAYMENT = 'ExamplePayment',
   PASSPORT = 'Passport',
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
@@ -24,7 +29,6 @@ export enum ApplicationTypes {
   CRIMINAL_RECORD = 'CriminalRecord',
   FINANCIAL_AID = 'FinancialAid',
   DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
-  EXAMPLE_PAYMENT = 'ExamplePayment',
   DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
   MARRIAGE_CONDITIONS = 'MarriageConditions',
@@ -79,10 +83,6 @@ export enum ApplicationTypes {
   MACHINE_REGISTRATION = 'MachineRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
-  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
-  EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
-  EXAMPLE_INPUTS = 'ExampleInputs',
-  EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
 }
 
 export const ApplicationConfigurations = {
@@ -105,6 +105,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',
     translation: 'eni.application',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    slug: 'example-payment',
+    translation: 'ep.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
@@ -201,10 +205,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
     slug: 'okutimar',
     translation: 'dir.application',
-  },
-  [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    slug: 'greida',
-    translation: 'ep.application',
   },
   [ApplicationTypes.ESTATE]: {
     slug: 'danarbu',

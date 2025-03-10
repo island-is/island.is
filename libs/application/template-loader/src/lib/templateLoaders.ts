@@ -62,7 +62,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: () =>
     import('@island.is/application/templates/driving-instructor-registrations'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
-    import('@island.is/application/templates/example-payment'),
+    import('@island.is/application/templates/examples/example-payment'),
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: () =>
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
