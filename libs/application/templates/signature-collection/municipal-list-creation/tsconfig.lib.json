@@ -19,11 +19,5 @@
     "**/*.test.jsx",
     "jest.config.ts"
   ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx",
-    "../assets/Illustration.tsx"
-  ]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

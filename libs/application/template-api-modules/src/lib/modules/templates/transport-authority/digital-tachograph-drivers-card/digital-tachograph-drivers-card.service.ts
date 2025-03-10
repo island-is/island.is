@@ -183,7 +183,8 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         birthPlace: nationalRegistryBirthplaceData?.location,
         emailAddress: answers.applicant.email,
         phoneNumber: answers.applicant.phone,
-        deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
+        deliveryMethodIsSend:
+          answers.cardDelivery?.deliveryMethodIsSend === YES,
         cardType: answers.cardTypeSelection.cardType,
         paymentReceivedAt: new Date(createChargeDate),
         photo: qualityPhotoAndSignatureData?.photoDataUri,
