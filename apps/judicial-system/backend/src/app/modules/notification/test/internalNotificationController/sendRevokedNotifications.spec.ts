@@ -1,5 +1,7 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@nestjs/config'
+
 import { EmailService } from '@island.is/email-service'
 
 import {
@@ -17,7 +19,6 @@ import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
-import { ConfigType } from '@nestjs/config'
 import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {
