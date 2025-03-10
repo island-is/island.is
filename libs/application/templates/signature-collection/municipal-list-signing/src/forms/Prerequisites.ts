@@ -17,6 +17,7 @@ import {
 import { m } from '../lib/messages'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
@@ -70,7 +71,16 @@ export const Prerequisites: Form = buildForm({
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
-            //Todo: add more providers once available
+            buildDataProviderItem({
+              provider: CanSignApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: GetListApi,
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
       ],

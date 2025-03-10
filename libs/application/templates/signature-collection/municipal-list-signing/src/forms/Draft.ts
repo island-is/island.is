@@ -7,7 +7,12 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
@@ -23,10 +28,11 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'selectCandidateSection',
       condition: (_, externalData) => {
-        const lists = getValueViaPath<SignatureCollectionList[]>(
-          externalData,
-          'getList.data'
-        ) || []
+        const lists =
+          getValueViaPath<SignatureCollectionList[]>(
+            externalData,
+            'getList.data',
+          ) || []
         return lists.length > 1
       },
       children: [
@@ -91,8 +97,18 @@ export const Draft: Form = buildForm({
               title: m.candidateName,
               width: 'full',
               readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: 'Framboð A',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                return lists.length === 1
+                  ? lists[0].candidate.name
+                  : lists.find((list) => list.id === answers.listId)?.candidate
+                      .name
+              },
             }),
             buildTextField({
               id: 'guarantorsNationalId',
