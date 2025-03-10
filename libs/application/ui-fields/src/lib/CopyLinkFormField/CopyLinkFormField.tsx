@@ -34,7 +34,7 @@ export const CopyLinkFormField = ({
       role="region"
       aria-labelledby={id + 'title'}
     >
-      {showFieldName && (
+      {showFieldName && title && (
         <Text
           variant="h4"
           as="h4"
