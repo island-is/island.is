@@ -15,13 +15,13 @@ import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
 import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
-import { OrganizationCertificationTypesModule } from './modules/organizationCertificationTypes/organizationCertificationTypes.module'
 import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
 import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
 import { FormUrlsModule } from './modules/formUrls/formUrls.module'
 import { ServicesModule } from './modules/services/services.module'
 import { ConfigModule } from '@nestjs/config'
 import { CmsConfig } from '@island.is/clients/cms'
+import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
 
 @Module({
   imports: [
@@ -45,7 +45,7 @@ import { CmsConfig } from '@island.is/clients/cms'
     FormApplicantTypesModule,
     FormCertificationTypesModule,
     FormUrlsModule,
-    OrganizationCertificationTypesModule,
+    OrganizationPermissionsModule,
     OrganizationFieldTypesModule,
     OrganizationListTypesModule,
     OrganizationUrlsModule,

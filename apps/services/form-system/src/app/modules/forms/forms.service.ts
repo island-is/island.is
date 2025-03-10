@@ -17,7 +17,6 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { OrganizationPermission } from '../organizationCertificationTypes/models/organizationCertificationType.model'
 import {
   CertificationType,
   CertificationTypes,
@@ -55,6 +54,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
 import { CmsService, GetOrganizationByNationalId } from '@island.is/clients/cms'
 import { locale } from 'yargs'
+import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 
 @Injectable()
 export class FormsService {
