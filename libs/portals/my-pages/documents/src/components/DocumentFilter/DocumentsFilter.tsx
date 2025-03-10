@@ -24,7 +24,7 @@ import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 import { messages } from '../../utils/messages'
 import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 import * as styles from './DocumentsFilter.css'
-import DocumentsFilterTags from './DocumentsFilterTagsV2'
+import DocumentsFilterTags from './DocumentsFilterTags'
 
 interface Props {
   filterValue: FilterValuesType

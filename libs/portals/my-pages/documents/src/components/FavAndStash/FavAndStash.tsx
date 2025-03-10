@@ -13,7 +13,7 @@ type FavAndStashProps = {
   loading?: boolean
 }
 
-export const FavAndStashV3: React.FC<FavAndStashProps> = ({
+export const FavAndStash: React.FC<FavAndStashProps> = ({
   onFav,
   onStash,
   onRead,
@@ -82,4 +82,4 @@ export const FavAndStashV3: React.FC<FavAndStashProps> = ({
   )
 }
 
-export default FavAndStashV3
+export default FavAndStash
