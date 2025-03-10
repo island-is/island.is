@@ -15,7 +15,6 @@ import {
   Stack,
   Text,
   toast,
-  TagVariant,
 } from '@island.is/island-ui/core'
 import {
   useLoaderData,
@@ -32,6 +31,7 @@ import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
 import { SignatureCollectionList } from '@island.is/api/schema'
+import { getTagConfig } from '../../lib/utils'
 
 export const Constituency = ({
   allowedToProcess,
@@ -71,33 +71,6 @@ export const Constituency = ({
   })
 
   const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()
-
-  const getTagConfig = (list: SignatureCollectionList) => {
-    // Lista læst
-    if (!list.active && !list.reviewed) {
-      return {
-        label: formatMessage(m.listLocked),
-        variant: 'blueberry' as TagVariant,
-        outlined: false,
-      }
-    }
-
-    // Úrvinnslu lokið
-    if (!list.active && list.reviewed) {
-      return {
-        label: formatMessage(m.confirmListReviewed),
-        variant: 'mint' as TagVariant,
-        outlined: false,
-      }
-    }
-
-    // Söfnun í gangi
-    return {
-      label: formatMessage(m.listOpen),
-      variant: 'blue' as TagVariant,
-      outlined: false,
-    }
-  }
 
   return (
     <GridContainer>

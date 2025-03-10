@@ -1,6 +1,6 @@
 import { Box, Button, Table as T, toast, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../../lib/messages'
+import { m } from '../../../lib/messages'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
