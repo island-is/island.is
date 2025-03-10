@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType() // Explicitly mark this class as a GraphQL type
+@ObjectType()
 export class AddressModel {
   @Field({ nullable: true })
   street?: string
