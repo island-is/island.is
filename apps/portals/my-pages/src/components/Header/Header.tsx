@@ -9,7 +9,7 @@ import {
   Hidden,
   Logo,
 } from '@island.is/island-ui/core'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM } from '@island.is/portals/my-pages/constants'
@@ -17,7 +17,6 @@ import {
   LinkResolver,
   ServicePortalPaths,
   m,
-  useIsMobile,
   useScrollPosition,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
@@ -26,6 +25,7 @@ import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import cn from 'classnames'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
@@ -40,7 +40,8 @@ export const Header = ({ position, includeSearchInHeader = true }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
-  const isMobile = useIsMobile()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const user = useUserInfo()
 

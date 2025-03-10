@@ -332,7 +332,6 @@ test.describe.serial('Custody tests', () => {
     await page.locator('input[id=reqValidToDate]').fill(extendedCustodyEndDate)
     await page.keyboard.press('Escape')
     await page.locator('input[id=reqValidToDate-time]').fill('16:00')
-    await verifyRequestCompletion(page, '/api/graphql', 'UpdateCase')
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),

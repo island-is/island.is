@@ -899,6 +899,7 @@ export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
   title: FormText
+  titleVariant?: TitleVariants
   description?: FormText
   backId?: string
   bottomLine?: boolean
@@ -916,8 +917,10 @@ export interface OverviewField extends BaseField {
 export interface CopyLinkField extends BaseField {
   readonly type: FieldTypes.COPY_LINK
   component: FieldComponents.COPY_LINK
-  title: FormText
-  link: string
+  title?: FormText
+  link: FormText
+  buttonTitle?: FormText
+  semiBoldLink?: boolean
 }
 
 export type Field =
