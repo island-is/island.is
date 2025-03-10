@@ -76,13 +76,13 @@ export const errorMessages = {
   }),
   singeeNotFound: defineMessages({
     title: {
-      id: 'pls.application:error.singeeNotFound.title',
+      id: 'mls.application:error.singeeNotFound.title',
       defaultMessage:
         'Notandi uppfyllir ekki skilyrði til að framkvæma þessa aðgerð',
       description: '',
     },
     summary: {
-      id: 'pls.application:error.singeeNotFound.summary',
+      id: 'mls.application:error.singeeNotFound.summary',
       defaultMessage:
         'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
       description: '',
