@@ -7,8 +7,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/examples/example-state-transfers'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
     import('@island.is/application/templates/examples/example-common-actions'),
-  [ApplicationTypes.EXAMPLE_FIELDS]: () =>
-    import('@island.is/application/templates/examples/example-fields'),
+  [ApplicationTypes.EXAMPLE_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-inputs'),
   [ApplicationTypes.ESTATE]: () =>
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
@@ -150,6 +150,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: () =>
     import(
       '@island.is/application/templates/signature-collection/parliamentary-list-signing'
+    ),
+  [ApplicationTypes.MUNICIPAL_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/municipal-list-creation'
     ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(
