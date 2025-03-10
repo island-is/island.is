@@ -46,12 +46,13 @@ export const Draft: Form = buildForm({
               backgroundColor: 'white',
               defaultValue: '',
               required: true,
-              options: ({
-                externalData: {
-                  getList: { data },
-                },
-              }) => {
-                return (data as SignatureCollectionList[]).map((list) => ({
+              options: ({ externalData }) => {
+                const data =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+                return data?.map((list) => ({
                   value: list.id,
                   label: list.title,
                   disabled:

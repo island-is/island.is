@@ -60,7 +60,7 @@ export const m = defineMessages({
   /* Signee Information */
   listName: {
     id: 'mls.application:listName',
-    defaultMessage: 'Mæla með frambjóði í sveitarstjórnarkosningum',
+    defaultMessage: 'Mæla með framboði í sveitarstjórnarkosningum',
     description: '',
   },
   selectCandidate: {
@@ -140,7 +140,7 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'mls.application:linkFieldMessage',
     defaultMessage:
-      'Á mínum síðum geturðu séð hvaða framboði þú hefur mælt með.',
+      'Á mínum síðum geturðu séð hvaða framboði þú hefur mælt með',
     description: '',
   },
 

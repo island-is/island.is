@@ -37,7 +37,6 @@ export const Done: Form = buildForm({
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              title: 'Gott að vita',
               url: '/minarsidur/min-gogn/listar/medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,

@@ -1,6 +1,6 @@
 # application-templates-municipal-list-signing
 
-This library was generated with [Nx](https://nx.dev).
+Application for signing list for the Municipal elections
 
 ## Running unit tests
 
