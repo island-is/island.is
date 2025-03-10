@@ -45,6 +45,6 @@ export class FriggOrganizationModel {
   @Field({ nullable: true })
   website?: string
 
-  @Field({ nullable: true })
+  @Field(() => AddressModel, { nullable: true })
   address?: AddressModel
 }

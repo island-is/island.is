@@ -27,10 +27,6 @@ export const friggSchoolsByMunicipalityQuery = gql`
       email
       phone
       website
-      address {
-        municipality
-        postalCode
-      }
       children {
         id
         unitId
@@ -43,7 +39,6 @@ export const friggSchoolsByMunicipalityQuery = gql`
         website
         address {
           municipality
-          postalCode
         }
       }
     }

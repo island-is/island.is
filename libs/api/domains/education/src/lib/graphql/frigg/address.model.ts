@@ -3,17 +3,17 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class AddressModel {
   @Field({ nullable: true })
-  street?: string
+  id?: string
 
   @Field({ nullable: true })
-  city?: string
-
-  @Field({ nullable: true })
-  postalCode?: string
-
-  @Field({ nullable: true })
-  country?: string
+  address?: string
 
   @Field({ nullable: true })
   municipality?: string
+
+  @Field({ nullable: true })
+  postCode?: string
+
+  @Field({ nullable: true })
+  country?: string
 }
