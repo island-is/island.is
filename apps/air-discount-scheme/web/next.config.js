@@ -5,8 +5,7 @@ const {
   API_URL = 'http://localhost:4242',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   NODE_ENV,
-  DD_RUM_APPLICATION_ID,
-  DD_RUM_CLIENT_TOKEN,
+  DD_LOGS_CLIENT_TOKEN,
   APP_VERSION,
   ENVIRONMENT,
 } = process.env
@@ -30,8 +29,7 @@ const nextConfig = {
     // Will be available on both server and client
     apiUrl: `${WEB_PUBLIC_URL}/api`,
     graphqlEndpoint: graphqlPath,
-    ddRumApplicationId: DD_RUM_APPLICATION_ID,
-    ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+    ddLogsClientToken: DD_LOGS_CLIENT_TOKEN,
     appVersion: APP_VERSION,
     environment: ENVIRONMENT,
   },

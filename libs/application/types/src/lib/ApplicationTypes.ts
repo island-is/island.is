@@ -54,6 +54,7 @@ export enum ApplicationTypes {
   PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
   PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
   PARLIAMENTARY_LIST_SIGNING = 'ParliamentaryListSigning',
+  MUNICIPAL_LIST_CREATION = 'MunicipalListCreation',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -79,12 +80,27 @@ export enum ApplicationTypes {
   PRACTICAL_EXAM = 'PracticalExam',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
+  EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_INPUTS = 'ExampleInputs',
 }
 
 export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE]: {
     slug: 'example',
     translation: 'example.application',
+  },
+  [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
+    slug: 'example-common-actions',
+    translation: 'eca.application',
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+    slug: 'example-state-transfers',
+    translation: 'ets.application',
+  },
+  [ApplicationTypes.EXAMPLE_INPUTS]: {
+    slug: 'example-inputs',
+    translation: 'ef.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
@@ -301,6 +317,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
     slug: 'maela-med-althingisframbodi',
     translation: 'pls.application',
+  },
+  [ApplicationTypes.MUNICIPAL_LIST_CREATION]: {
+    slug: 'sveitarstjornar-medmaelasofnun',
+    translation: 'mlc.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',

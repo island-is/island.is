@@ -68,6 +68,10 @@ const staging01: EnvironmentConfig = {
 export let Envs: EnvironmentConfigs = {
   dev01: dev01,
   devIds: merge({}, dev01, {
+    awsAccountId: '324037283794',
+    redisHost: JSON.stringify([
+      'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+    ]),
     global: {
       global: { env: { AUDIT_GROUP_NAME: '/identity-server/audit-log' } },
     },

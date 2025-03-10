@@ -14,6 +14,7 @@ import {
   isUnknownMachineType,
   isUnknownPracticalRight,
   isWrongPracticalRight,
+  isWrongPracticalRightWithInfo,
 } from '../../utils'
 
 export const certificateOfTenureSection = buildSection({
@@ -58,13 +59,21 @@ export const certificateOfTenureSection = buildSection({
         buildAlertMessageField({
           id: 'certificateOfTenure.wrongPracticalRight',
           title: '',
+          message: certificateOfTenure.labels.wrongPracticalRight,
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers) => isWrongPracticalRight(answers),
+        }),
+        buildAlertMessageField({
+          id: 'certificateOfTenure.wrongPracticalRightWithInfo',
+          title: '',
           message: (application) => {
             const listOfPossiblePracticalRights = getValueViaPath<string[]>(
               application.answers,
               'certificateOfTenure.listOfPossiblePracticalRights',
             )
             return {
-              ...certificateOfTenure.labels.wrongPracticalRight,
+              ...certificateOfTenure.labels.wrongPracticalRightWithInfo,
               values: {
                 firstLetter: `${
                   listOfPossiblePracticalRights
@@ -81,7 +90,7 @@ export const certificateOfTenureSection = buildSection({
           },
           alertType: 'warning',
           doesNotRequireAnswer: true,
-          condition: (answers) => isWrongPracticalRight(answers),
+          condition: (answers) => isWrongPracticalRightWithInfo(answers),
         }),
         buildAlertMessageField({
           id: 'certificateOfTenure.unknownMachineType',
@@ -110,7 +119,11 @@ export const certificateOfTenureSection = buildSection({
               application.answers,
               'certificateOfTenure.dateTo',
             )
-            return dateTo ? new Date(dateTo) : new Date()
+            return dateTo
+              ? new Date(
+                  new Date(dateTo).setDate(new Date(dateTo).getDate() - 1),
+                )
+              : new Date()
           },
         }),
         buildDateField({
@@ -124,7 +137,11 @@ export const certificateOfTenureSection = buildSection({
               application.answers,
               'certificateOfTenure.dateFrom',
             )
-            return dateFrom ? new Date(dateFrom) : new Date('1900-01-01')
+            return dateFrom
+              ? new Date(
+                  new Date(dateFrom).setDate(new Date(dateFrom).getDate() + 1),
+                )
+              : new Date('1900-01-01')
           },
           maxDate: new Date(),
         }),

@@ -13,7 +13,11 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .codeOwner(CodeOwners.Stefna)
     .env({
-      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      API_URL: {
+        dev: "http://api",
+        staging: ref((h) => `http://${h.svc(services.api)}`),
+        prod: ref((h) => `http://${h.svc(services.api)}`),
+      },
       TRACKING_DOMAIN: {
         dev: 'beta.dev01.devland.is',
         staging: 'beta.staging01.devland.is',
@@ -29,8 +33,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {

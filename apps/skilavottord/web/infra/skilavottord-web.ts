@@ -24,7 +24,11 @@ export const serviceSetup = (services: {
       },
     })
     .env({
-      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      API_URL: {
+        dev: "http://skilavottord-ws",
+        staging: ref((h) => `http://${h.svc(services.api)}`),
+        prod: ref((h) => `http://${h.svc(services.api)}`),
+      },
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
@@ -34,8 +38,7 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_LOGOUT_REDIRECT_URL:
         '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL',
       NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL',
-      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
