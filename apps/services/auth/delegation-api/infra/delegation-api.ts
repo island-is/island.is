@@ -108,7 +108,7 @@ export const serviceSetup = (services: {
     .ingress({
       internal: {
         host: {
-          dev: 'auth-delegation-api',
+          dev: 'auth-delegation-api.internal.identity-server.dev01.devland.is',
           staging: 'auth-delegation-api',
           prod: 'auth-delegation-api.internal.innskra.island.is',
         },
