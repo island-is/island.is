@@ -195,11 +195,11 @@ export class PaymentService {
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
     console.log('=========================================')
-    console.log('chargeItems')
-    console.dir(chargeItems, { depth: null })
+    console.log('chargeItems', chargeItems)
+    // console.dir(chargeItems, { depth: null })
     console.log('=========================================')
-    console.log('extraData')
-    console.dir(extraData, { depth: null })
+    console.log('extraData', extraData)
+    // console.dir(extraData, { depth: null })
     console.log('=========================================')
 
     //1. Retrieve charge items from FJS
@@ -208,8 +208,8 @@ export class PaymentService {
       chargeItems,
     )
     console.log('=========================================')
-    console.log('catalogChargeItems')
-    console.dir(catalogChargeItems, { depth: null })
+    console.log('catalogChargeItems', catalogChargeItems)
+    // console.dir(catalogChargeItems, { depth: null })
     console.log('=========================================')
 
     //2. Fetch existing payment if any
@@ -220,8 +220,8 @@ export class PaymentService {
       //payment Model already exists something has previously gone wrong.
 
       console.log('=========================================')
-      console.log('paymentModel EXISTS')
-      console.dir(paymentModel, { depth: null })
+      console.log('paymentModel EXISTS', paymentModel)
+      // console.dir(paymentModel, { depth: null })
       console.log('=========================================')
 
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
@@ -256,12 +256,14 @@ export class PaymentService {
               paymentId: paymentModel.id,
             },
             returnUrl: await this.getReturnUrl(applicationId),
+            redirectToReturnUrlOnSuccess: true,
+            extraData,
           },
         })
 
       console.log('=========================================')
-      console.log('paymentResult')
-      console.dir(paymentResult, { depth: null })
+      console.log('paymentResult', paymentResult)
+      // console.dir(paymentResult, { depth: null })
       console.log('=========================================')
 
       paymentUrl =
@@ -279,8 +281,8 @@ export class PaymentService {
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
     console.log('=========================================')
-    console.log('paymentModel')
-    console.dir(paymentModel, { depth: null })
+    console.log('paymentModel', paymentModel)
+    // console.dir(paymentModel, { depth: null })
     console.log('=========================================')
 
     return {
