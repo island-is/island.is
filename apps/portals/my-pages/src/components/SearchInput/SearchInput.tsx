@@ -23,6 +23,7 @@ const options: IFuseOptions<ModuleSet> = {
   keys: [
     { name: 'title', weight: 2 },
     { name: 'content', weight: 0.5 },
+    { name: 'keywords', weight: 1 },
   ],
   shouldSort: true,
 }
@@ -44,6 +45,9 @@ const getNavigationItems = (
       title: formatMessage(data.name),
       content: data.description ? formatMessage(data.description) : undefined,
       uri: data.path,
+      keywords: data.searchTags
+        ? data.searchTags.map((st) => formatMessage(st))
+        : undefined,
     })
   }
 
