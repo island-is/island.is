@@ -5,6 +5,7 @@ import { ApplicationsPaths } from './paths'
 export const applicationsNavigation: PortalNavigationItem = {
   name: m.applications,
   path: ApplicationsPaths.ApplicationRoot,
+  description: m.applicationsDescription,
   icon: {
     icon: 'fileTrayFull',
   },
@@ -26,5 +27,4 @@ export const applicationsNavigation: PortalNavigationItem = {
       path: ApplicationsPaths.ApplicationCompleteApplications,
     },
   ],
-  description: m.applicationsDescription,
 }
