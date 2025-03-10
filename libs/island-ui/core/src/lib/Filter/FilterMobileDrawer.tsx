@@ -4,7 +4,8 @@ import * as styles from './Filter.css'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
-import cn from 'classnames'
+import { useSwipeable } from 'react-swipeable'
+import { useLocale } from '@island.is/localization'
 
 interface FilterMobileDrawerProps {
   /**
@@ -25,9 +26,9 @@ interface FilterMobileDrawerProps {
    */
   initialVisibility?: boolean | undefined
 
-  labelShowResult: string
+  labelShowResult?: string
 
-  labelClearAll: string
+  labelClearAll?: string
 
   title?: string
 
@@ -46,35 +47,24 @@ export const FilterMobileDrawer = ({
   children,
 }: PropsWithChildren<FilterMobileDrawerProps>) => {
   const [isClosed, setIsClosed] = useState(true)
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
-  const minSwipeDistance = 50
+  const { lang } = useLocale()
 
-  const onTouchStart = (e: React.TouchEvent<HTMLElement>) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientY)
-  }
-
-  const onTouchMove = (e: React.TouchEvent<HTMLElement>) =>
-    setTouchEnd(e.targetTouches[0].clientY)
-
-  const onTouchEnd = (closeModal: () => void) => {
-    if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
-    const isDownSwipe = distance < -minSwipeDistance
-    if (isDownSwipe) {
-      closeModal()
-    }
-  }
+  const handlers = useSwipeable({
+    onSwiping: (swipe) => {
+      if (swipe.dir === 'Down') setIsClosed(true)
+    },
+    preventScrollOnSwipe: true,
+  })
 
   return (
     <ModalBase
+      preventBodyScroll
       disclosure={disclosure}
       baseId={baseId}
       modalLabel={ariaLabel}
       initialVisibility={initialVisibility}
-      className={cn(styles.drawer, styles.position)}
+      className={styles.drawer}
       onVisibilityChange={(visibility) => {
         setIsClosed(!visibility)
       }}
@@ -83,64 +73,64 @@ export const FilterMobileDrawer = ({
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
-          <Box
-            background="white"
-            paddingTop={2}
-            paddingX={0}
-            height="full"
-            className={styles.mobileDrawerContainer}
-          >
+          <div {...handlers}>
             <Box
-              background="dark200"
-              className={styles.drawerLine}
-              margin={3}
-              onClick={closeModal}
-              onTouchStart={(e) => onTouchStart(e)}
-              onTouchMove={(e) => onTouchMove(e)}
-              onTouchEnd={() => onTouchEnd(closeModal)}
-            />
-            <Box
-              display="flex"
-              flexDirection="column"
+              background="white"
+              paddingTop={2}
+              paddingX={0}
               height="full"
-              position="relative"
-              className={styles.mobileInnerContainer}
+              className={styles.mobileDrawerContainer}
             >
               <Box
+                background="dark200"
+                className={styles.drawerLine}
+                margin={3}
+                onClick={closeModal}
+              />
+              <Box
                 display="flex"
-                paddingX={3}
-                paddingY={2}
-                justifyContent={title ? 'spaceBetween' : 'flexEnd'}
-                flexShrink={0}
+                flexDirection="column"
+                height="full"
+                position="relative"
+                className={styles.mobileInnerContainer}
               >
-                {title && (
+                <Box
+                  display="flex"
+                  paddingX={3}
+                  paddingY={2}
+                  justifyContent={'spaceBetween'}
+                  flexShrink={0}
+                >
                   <Box>
-                    <Text variant="h4" as="p">
-                      {title}
+                    <Text variant="h4" as="h3">
+                      {lang === 'is' ? 'Sía eftir' : 'Filter by'}
                     </Text>
                   </Box>
-                )}
-                <Button
-                  icon="reload"
-                  size="small"
-                  variant="text"
-                  onClick={onFilterClear}
-                >
-                  {labelClearAll}
-                </Button>
-              </Box>
-              <Box flexGrow={1} overflow="auto">
-                {children}
-              </Box>
-              {labelShowResult && (
-                <Box padding={3} width="full" flexShrink={0}>
-                  <Button fluid onClick={closeModal}>
-                    {labelShowResult}
+
+                  <Button
+                    icon="reload"
+                    size="small"
+                    variant="text"
+                    onClick={onFilterClear}
+                  >
+                    {labelClearAll ?? lang === 'is'
+                      ? 'Hreinsa allt'
+                      : 'Clear all'}
                   </Button>
                 </Box>
-              )}
+                <Box flexGrow={1} overflow="auto">
+                  {children}
+                </Box>
+
+                <Box paddingY={2} paddingX={3} width="full" flexShrink={0}>
+                  <Button fluid onClick={closeModal}>
+                    {labelShowResult ??
+                      (lang === 'is' ? 'Sýna niðurstöður' : 'Show results')}
+                  </Button>
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          </div>
         )
       }}
     </ModalBase>

@@ -77,12 +77,12 @@ export const FilterContext = createContext<FilterContextValue>({
 })
 
 export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
-  labelClearAll = '',
-  labelClear = '',
-  labelOpen = '',
-  labelClose = '',
-  labelTitle = '',
-  labelResult = '',
+  labelClearAll,
+  labelClear,
+  labelOpen,
+  labelClose,
+  labelTitle,
+  labelResult,
   resultCount = 0,
   filterCount = 0,
   align,
@@ -344,7 +344,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             baseId="filter"
             initialVisibility={false}
             ariaLabel={''}
-            labelShowResult={labelResult ?? labelClose}
+            labelShowResult={labelResult}
             labelClearAll={labelClearAll}
             onFilterClear={onFilterClear}
             title={title}

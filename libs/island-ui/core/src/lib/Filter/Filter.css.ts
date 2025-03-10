@@ -46,8 +46,8 @@ export const drawer = style({
   position: 'fixed',
   bottom: 0,
   width: '100%',
-  maxHeight: '90%',
   transition: 'transform 400ms ease-in-out',
+  transform: 'translateY(100%)',
   selectors: {
     '&[data-enter]': {
       transform: 'translate3d(0, 0, 0)',
@@ -58,11 +58,6 @@ export const drawer = style({
 
 export const mobileDrawerContainer = style({
   borderRadius: 16,
-})
-
-export const position = style({
-  bottom: 0,
-  transform: 'translateY(100%)',
 })
 
 export const drawerLine = style({
