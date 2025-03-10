@@ -9,6 +9,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/examples/example-common-actions'),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-inputs'),
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-no-inputs'),
   [ApplicationTypes.ESTATE]: () =>
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
