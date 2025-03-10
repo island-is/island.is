@@ -23,11 +23,10 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'selectCandidateSection',
       condition: (_, externalData) => {
-        const lists = getValueViaPath(
+        const lists = getValueViaPath<SignatureCollectionList[]>(
           externalData,
-          'getList.data',
-          [],
-        ) as SignatureCollectionList[]
+          'getList.data'
+        ) || []
         return lists.length > 1
       },
       children: [

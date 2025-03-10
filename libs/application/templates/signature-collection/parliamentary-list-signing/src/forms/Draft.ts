@@ -25,11 +25,10 @@ export const Draft: Form = buildForm({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
       condition: (_, externalData) => {
-        const lists = getValueViaPath(
+        const lists = getValueViaPath<SignatureCollectionList[]>(
           externalData,
-          'getList.data',
-          [],
-        ) as SignatureCollectionList[]
+          'getList.data'
+        ) || []
         return lists.length > 1
       },
       children: [
@@ -93,11 +92,10 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
+                const lists = getValueViaPath<SignatureCollectionList[]>(
                   externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                  'getList.data'
+                ) || []
 
                 const initialQuery = getValueViaPath(
                   answers,
@@ -118,11 +116,10 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
+                const lists = getValueViaPath<SignatureCollectionList[]>(
                   externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                  'getList.data'
+                ) || []
 
                 const initialQuery = getValueViaPath(
                   answers,
