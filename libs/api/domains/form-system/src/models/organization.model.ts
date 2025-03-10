@@ -18,18 +18,3 @@ export class Organization {
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
 }
-
-@ObjectType('FormSystemOrganizationAdmin')
-export class OrganizationAdmin {
-  @Field(() => String, { nullable: true })
-  organizationId?: string
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  selectedCertificationTypes?: string[]
-
-  @Field(() => [FormCertificationType], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationType[]
-
-  @Field(() => [Option], { nullable: 'itemsAndList' })
-  organizations?: Option[]
-}

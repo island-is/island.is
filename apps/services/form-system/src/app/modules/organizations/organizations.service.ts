@@ -14,6 +14,8 @@ import { CertificationTypes } from '../../dataTypes/certificationTypes/certifica
 import { Option } from '../../dataTypes/option.model'
 import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
+import { ListTypes } from '../../dataTypes/listTypes/listType.model'
+import { FieldTypes } from '../../dataTypes/fieldTypes/fieldType.model'
 
 @Injectable()
 export class OrganizationsService {
@@ -78,9 +80,21 @@ export class OrganizationsService {
         organization.organizationPermissions.map(
           (certificationType) => certificationType.permission,
         )
+
+      organizationAdminDto.selectedListTypes =
+        organization.organizationPermissions.map(
+          (listType) => listType.permission,
+        )
+
+      organizationAdminDto.selectedFieldTypes =
+        organization.organizationPermissions.map(
+          (fieldType) => fieldType.permission,
+        )
     }
 
     organizationAdminDto.certificationTypes = CertificationTypes
+    organizationAdminDto.ListTypes = ListTypes
+    organizationAdminDto.FieldTypes = FieldTypes
 
     organizationAdminDto.organizations = await this.organizationModel
       .findAll({

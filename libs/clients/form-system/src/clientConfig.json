@@ -2275,6 +2275,61 @@
           "organizations"
         ]
       },
+      "ListType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isCommon": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isCommon"
+        ]
+      },
+      "FieldType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "description": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isCommon": {
+            "type": "boolean"
+          },
+          "fieldSettings": {
+            "$ref": "#/components/schemas/FieldSettings"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValueDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "isCommon"
+        ]
+      },
       "CertificationType": {
         "type": "object",
         "properties": {
@@ -2323,10 +2378,34 @@
           "organizationId": {
             "type": "string"
           },
+          "selectedListTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "selectedFieldTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "selectedCertificationTypes": {
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "ListTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListType"
+            }
+          },
+          "FieldTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldType"
             }
           },
           "certificationTypes": {
@@ -2342,38 +2421,6 @@
             }
           }
         }
-      },
-      "FieldType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isCommon": {
-            "type": "boolean"
-          },
-          "fieldSettings": {
-            "$ref": "#/components/schemas/FieldSettings"
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValueDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "isCommon"
-        ]
       },
       "ApplicantType": {
         "type": "object",
@@ -2397,29 +2444,6 @@
         "required": [
           "id",
           "description"
-        ]
-      },
-      "ListType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isCommon": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "isCommon"
         ]
       },
       "OrganizationUrlDto": {

@@ -30,9 +30,3 @@ export class FormCertificationTypeDto {
   @Field(() => String, { nullable: true })
   certificationTypeId?: string
 }
-
-@ObjectType('FormSystemOrganizationPermissionDto')
-export class OrganizationPermissionDto {
-  @Field(() => String, { nullable: true })
-  permission?: string
-}

@@ -7,15 +7,13 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import {
-  Organization,
-  OrganizationAdmin,
-} from '../../models/organization.model'
+import { Organization } from '../../models/organization.model'
 import {
   GetOrganizationAdminInput,
   GetOrganizationInput,
 } from '../../dto/organization.input'
 import { UseGuards } from '@nestjs/common'
+import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)

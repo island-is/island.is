@@ -7,7 +7,33 @@ export const GET_ORGANIZATION_ADMIN = gql`
     formSystemGetOrganizationAdmin(input: $input) {
       organizationId
       selectedCertificationTypes
+      selectedListTypes
+      selectedFieldTypes
       certificationTypes {
+        id
+        name {
+          is
+          en
+        }
+        description {
+          is
+          en
+        }
+        isCommon
+      }
+      listTypes {
+        id
+        name {
+          is
+          en
+        }
+        description {
+          is
+          en
+        }
+        isCommon
+      }
+      fieldTypes {
         id
         name {
           is

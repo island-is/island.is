@@ -13,10 +13,8 @@ import {
   GetOrganizationAdminInput,
   GetOrganizationInput,
 } from '../../dto/organization.input'
-import {
-  Organization,
-  OrganizationAdmin,
-} from '../../models/organization.model'
+import { Organization } from '../../models/organization.model'
+import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 
 @Injectable()
 export class OrganizationsService {

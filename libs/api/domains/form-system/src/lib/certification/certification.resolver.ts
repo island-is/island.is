@@ -12,11 +12,11 @@ import {
   CreateCertificationInput,
   DeleteCertificationInput,
   // OrganizationCertificationTypeUpdateInput,
-  OrganizationPermissionUpdateInput,
+  // OrganizationPermissionUpdateInput,
 } from '../../dto/certification.input'
 import {
   FormCertificationTypeDto,
-  OrganizationPermissionDto,
+  // OrganizationPermissionDto,
 } from '../../models/certification.model'
 
 @Resolver()
@@ -46,28 +46,5 @@ export class CertificationsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.certificationsService.deleteCertification(user, input)
-  }
-
-  @Mutation(() => OrganizationPermissionDto, {
-    name: 'formSystemCreateOrganizationPermission',
-  })
-  async createOrganizationPermission(
-    @Args('input', { type: () => OrganizationPermissionUpdateInput })
-    input: OrganizationPermissionUpdateInput,
-    @CurrentUser() user: User,
-  ): Promise<OrganizationPermissionDto> {
-    return this.certificationsService.createOrganizationPermission(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'formSystemDeleteOrganizationPermission',
-    nullable: true,
-  })
-  async deleteOrganizationPermission(
-    @Args('input', { type: () => OrganizationPermissionUpdateInput })
-    input: OrganizationPermissionUpdateInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.certificationsService.deleteOrganizationPermission(user, input)
   }
 }

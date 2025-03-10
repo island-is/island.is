@@ -23,13 +23,14 @@ import {
   // OrganizationCertificationTypeUpdateInput,
   // OrganizationPermissionUpdateInput,
 } from '../../dto/certification.input'
+import { OrganizationPermissionUpdateInput } from '../../dto/organizationPermission.input'
 
 @Injectable()
-export class CertificationsService {
+export class OrganizationPermissionsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private certificationsApi: FormCertificationTypesApi,
+    // private certificationsApi: FormCertificationTypesApi,
     private organizationPermissionsApi: OrganizationPermissionsApi, // private organizationCertificationsApi: OrganizationCertificationTypesApi,
   ) {}
 
@@ -44,9 +45,9 @@ export class CertificationsService {
     throw new ApolloError(error.message)
   }
 
-  private certificationsApiWithAuth(auth: User) {
-    return this.certificationsApi.withMiddleware(new AuthMiddleware(auth))
-  }
+  // private certificationsApiWithAuth(auth: User) {
+  //   return this.certificationsApi.withMiddleware(new AuthMiddleware(auth))
+  // }
 
   private organizationPermissionsApiWithAuth(auth: User) {
     return this.organizationPermissionsApi.withMiddleware(
@@ -54,37 +55,36 @@ export class CertificationsService {
     )
   }
 
-  async createCertification(
+  async createOrganizationPermission(
     auth: User,
-    input: CreateCertificationInput,
-  ): Promise<FormCertificationTypeDto> {
-    const response = await this.certificationsApiWithAuth(auth)
-      .formCertificationTypesControllerCreate(
-        input as FormCertificationTypesControllerCreateRequest,
+    input: OrganizationPermissionUpdateInput,
+  ): Promise<OrganizationPermissionDto> {
+    const response = await this.organizationPermissionsApiWithAuth(auth)
+      .organizationPermissionsControllerCreate(
+        input as OrganizationPermissionsControllerCreateRequest,
       )
       .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create certification'),
+        handle4xx(e, this.handleError, 'failed to create permission'),
       )
 
     if (!response || response instanceof ApolloError) {
       return {
-        id: '',
-        certificationTypeId: '',
+        permission: '',
       }
     }
     return response
   }
 
-  async deleteCertification(
+  async deleteOrganizationPermission(
     auth: User,
-    input: DeleteCertificationInput,
+    input: OrganizationPermissionUpdateInput,
   ): Promise<void> {
-    await this.certificationsApiWithAuth(auth)
-      .formCertificationTypesControllerDelete(
-        input as FormCertificationTypesControllerDeleteRequest,
+    await this.organizationPermissionsApiWithAuth(auth)
+      .organizationPermissionsControllerDelete(
+        input as OrganizationPermissionsControllerDeleteRequest,
       )
       .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete certification'),
+        handle4xx(e, this.handleError, 'failed to delete permission'),
       )
   }
 }

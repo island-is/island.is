@@ -21,6 +21,8 @@ import { ApplicantsService } from './applicants/applicants.service'
 import { LoggingModule } from '@island.is/logging'
 import { CertificationsResolver } from './certification/certification.resolver'
 import { CertificationsService } from './certification/certification.service'
+import { OrganizationPermissionsResolver } from './organizationPermissions/organizationPermissions.resolver'
+import { OrganizationPermissionsService } from './organizationPermissions/organizationPermissions.service'
 
 @Module({
   providers: [
@@ -44,6 +46,8 @@ import { CertificationsService } from './certification/certification.service'
     ApplicantsService,
     CertificationsResolver,
     CertificationsService,
+    OrganizationPermissionsResolver,
+    OrganizationPermissionsService,
   ],
   exports: [],
   imports: [FormSystemClientModule, LoggingModule],
