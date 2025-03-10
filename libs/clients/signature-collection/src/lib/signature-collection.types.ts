@@ -38,10 +38,6 @@ export interface AddListsInput {
   areas?: AreaInput[]
 }
 
-export interface CreateParliamentaryCandidacyInput extends CreateListInput {
-  agents: AgentInput[]
-}
-
 export enum MandateType {
   Unknown,
   Owner,
