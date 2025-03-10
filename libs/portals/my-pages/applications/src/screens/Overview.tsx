@@ -107,21 +107,13 @@ const Overview = () => {
   ) => {
     switch (status) {
       case ApplicationOverViewStatus.completed:
-        return heading
-          ? coreMessage.finishedApplications
-          : coreMessage.finishedApplicationsDescription
+        return heading ? m.headingFinished : m.introCopyFinished
       case ApplicationOverViewStatus.inProgress:
-        return heading
-          ? coreMessage.inProgressApplications
-          : coreMessage.inProgressApplicationsDescription
+        return heading ? m.headingInProgress : m.introCopyInProgress
       case ApplicationOverViewStatus.incomplete:
-        return heading
-          ? coreMessage.unfinishedApplications
-          : coreMessage.unfinishedApplicationsDescription
+        return heading ? m.headingIncomplete : m.introCopyIncomplete
       default:
-        return heading
-          ? coreMessage.applications
-          : coreMessage.applicationsDescription
+        return heading ? m.heading : m.introCopy
     }
   }
 
