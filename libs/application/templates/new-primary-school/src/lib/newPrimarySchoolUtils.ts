@@ -23,8 +23,6 @@ import {
   ReasonForApplicationOptions,
 } from './constants'
 
-import { OrganizationModelTypeEnum } from '@island.is/api/schema'
-import { FriggSchoolsByMunicipalityQuery } from '../types/schema'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -501,61 +499,6 @@ export const getGenderMessage = (application: Application) => {
   const selectedChild = getSelectedChild(application)
   const gender = formatGender(selectedChild?.genderCode)
   return gender
-}
-
-export const getAllSchoolsByMunicipality = async (
-  application: Application,
-  municipality: string | undefined,
-  data: FriggSchoolsByMunicipalityQuery,
-) => {
-  const { childGradeLevel } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  // Find all private owned schools by municipality
-  const privateOwnedSchools =
-    data?.friggSchoolsByMunicipality
-      ?.filter(({ type }) => type === OrganizationModelTypeEnum.PrivateOwner)
-      ?.flatMap(
-        ({ children }) =>
-          children
-            ?.filter(
-              ({ address, type, gradeLevels }) =>
-                gradeLevels?.includes(childGradeLevel) &&
-                address?.municipality === municipality &&
-                type === OrganizationModelTypeEnum.School,
-            )
-            ?.map((school) => ({
-              ...school,
-              type: OrganizationModelTypeEnum.PrivateOwner,
-            })) || [],
-      ) || []
-
-  // Find all municipality schools
-  const municipalitySchools =
-    data?.friggSchoolsByMunicipality
-      ?.find(({ name }) => name === municipality)
-      ?.children?.filter(
-        ({ type, gradeLevels }) =>
-          type === OrganizationModelTypeEnum.School &&
-          gradeLevels?.includes(childGradeLevel),
-      ) || []
-
-  // Merge the private owned schools and the municipality schools together
-  const allMunicipalitySchools = [
-    ...municipalitySchools,
-    ...privateOwnedSchools,
-  ]
-
-  // Piggyback the type as part of the value
-  return (
-    allMunicipalitySchools
-      .map(({ id, type, name }) => ({
-        value: `${id}::${type}`,
-        label: name,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label)) ?? []
-  )
 }
 
 export const setOnChangeSchool = (optionValue: RepeaterOptionValue) => {

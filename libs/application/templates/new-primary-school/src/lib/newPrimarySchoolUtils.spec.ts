@@ -1,19 +1,10 @@
+import { ExternalData, RepeaterOptionValue } from '@island.is/application/types'
+import { LanguageEnvironmentOptions } from './constants'
 import {
-  Application,
-  ExternalData,
-  RepeaterOptionValue,
-} from '@island.is/application/types'
-import {
-  getAllSchoolsByMunicipality,
   hasOtherGuardian,
   setOnChangeSchool,
   showPreferredLanguageFields,
 } from './newPrimarySchoolUtils'
-import { LanguageEnvironmentOptions } from './constants'
-import {
-  FriggSchoolsByMunicipalityQuery,
-  OrganizationModelTypeEnum,
-} from '../types/schema'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
@@ -134,135 +125,5 @@ describe('setOnChangeSchool', () => {
     expect(setOnChangeSchool(optionValue)).toEqual([
       { key: 'newSchool.type', value: undefined },
     ])
-  })
-})
-
-describe('getAllSchoolsByMunicipality', () => {
-  it('should return all schools by municipality', async () => {
-    const application = {
-      externalData: {
-        childInformation: {
-          data: {
-            gradeLevel: '1',
-          },
-        },
-      },
-    } as unknown as Application
-
-    const municipality = 'Reykjavik'
-    const data: FriggSchoolsByMunicipalityQuery = {
-      friggSchoolsByMunicipality: [
-        {
-          id: 'municipality-1',
-          nationalId: 'municipality-1',
-          name: 'Reykjavik',
-          type: OrganizationModelTypeEnum.Municipality,
-          children: [
-            {
-              id: '1',
-              unitId: 'unit-1',
-              nationalId: '1234567890',
-              name: 'School A',
-              type: OrganizationModelTypeEnum.School,
-              gradeLevels: ['1', '2'],
-              address: {
-                municipality: 'Reykjavik',
-              },
-            },
-          ],
-        },
-        {
-          id: 'private-2',
-          nationalId: 'municipality-2',
-          name: 'Reykjavik',
-          type: OrganizationModelTypeEnum.PrivateOwner,
-          children: [
-            {
-              id: '2',
-              unitId: 'unit-2',
-              nationalId: '0987654321',
-              name: 'School B',
-              type: OrganizationModelTypeEnum.School,
-              gradeLevels: ['1', '2'],
-              address: {
-                municipality: 'Reykjavik',
-              },
-            },
-          ],
-        },
-        {
-          id: 'private-3',
-          nationalId: 'municipality-3',
-          name: 'Akureyrarbær',
-          type: OrganizationModelTypeEnum.PrivateOwner,
-          children: [
-            {
-              id: '3',
-              unitId: 'unit-3',
-              nationalId: '0987654321',
-              name: 'School c',
-              type: OrganizationModelTypeEnum.School,
-              gradeLevels: ['1', '2'],
-              address: {
-                municipality: 'Akureyrarbær',
-              },
-            },
-          ],
-        },
-      ],
-    }
-
-    const result = await getAllSchoolsByMunicipality(
-      application,
-      municipality,
-      data,
-    )
-    expect(result).toEqual([
-      { value: '1::School', label: 'School A' },
-      { value: '2::PrivateOwner', label: 'School B' },
-    ])
-  })
-
-  it('should return an empty array if no schools match the criteria', async () => {
-    const application = {
-      externalData: {
-        childInformation: {
-          data: {
-            gradeLevel: '3',
-          },
-        },
-      },
-    } as unknown as Application
-
-    const municipality = 'Reykjavik'
-    const data: FriggSchoolsByMunicipalityQuery = {
-      friggSchoolsByMunicipality: [
-        {
-          id: 'unit-1',
-          nationalId: 'unit-1',
-          name: 'Reykjavik',
-          type: OrganizationModelTypeEnum.Municipality,
-          children: [
-            {
-              id: '1',
-              nationalId: 'unit-1',
-              name: 'School A',
-              type: OrganizationModelTypeEnum.School,
-              gradeLevels: ['1', '2'],
-              address: {
-                municipality: 'Reykjavik',
-              },
-            },
-          ],
-        },
-      ],
-    }
-
-    const result = await getAllSchoolsByMunicipality(
-      application,
-      municipality,
-      data,
-    )
-    expect(result).toEqual([])
   })
 })

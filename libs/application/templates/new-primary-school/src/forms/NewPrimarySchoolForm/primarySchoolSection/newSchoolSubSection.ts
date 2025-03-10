@@ -10,7 +10,6 @@ import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
 import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  getAllSchoolsByMunicipality,
   getApplicationAnswers,
   getApplicationExternalData,
   setOnChangeSchool,
@@ -87,10 +86,57 @@ export const newSchoolSubSection = buildSubSection({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
-            return getAllSchoolsByMunicipality(
-              application,
-              selectedValues?.[0],
-              data,
+            const municipality = selectedValues?.[0]
+
+            const { childGradeLevel } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            // Find all private owned schools by municipality
+            const privateOwnedSchools =
+              data?.friggSchoolsByMunicipality
+                ?.filter(
+                  ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
+                )
+                ?.flatMap(
+                  ({ children }) =>
+                    children
+                      ?.filter(
+                        ({ address, type, gradeLevels }) =>
+                          gradeLevels?.includes(childGradeLevel) &&
+                          address?.municipality === municipality &&
+                          type === OrganizationModelTypeEnum.School,
+                      )
+                      ?.map((school) => ({
+                        ...school,
+                        type: OrganizationModelTypeEnum.PrivateOwner,
+                      })) || [],
+                ) || []
+
+            // Find all municipality schools
+            const municipalitySchools =
+              data?.friggSchoolsByMunicipality
+                ?.find(({ name }) => name === municipality)
+                ?.children?.filter(
+                  ({ type, gradeLevels }) =>
+                    type === OrganizationModelTypeEnum.School &&
+                    gradeLevels?.includes(childGradeLevel),
+                ) || []
+
+            // Merge the private owned schools and the municipality schools together
+            const allMunicipalitySchools = [
+              ...municipalitySchools,
+              ...privateOwnedSchools,
+            ]
+
+            // Piggyback the type as part of the value
+            return (
+              allMunicipalitySchools
+                .map(({ id, type, name }) => ({
+                  value: `${id}::${type}`,
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
           condition: (answers) => {
