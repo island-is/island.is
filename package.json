@@ -1,6 +1,6 @@
 {
   "name": "island.is",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
@@ -263,6 +263,7 @@
     "react-modal": "3.15.1",
     "react-multi-date-picker": "4.5.2",
     "react-native": "0.74.5",
+    "react-native-fs": "2.20.0",
     "react-number-format": "4.9.1",
     "react-pdf": "9.1.0",
     "react-popper": "2.3.0",

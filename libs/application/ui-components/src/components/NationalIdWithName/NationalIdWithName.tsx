@@ -145,6 +145,12 @@ export const NationalIdWithName: FC<
           if (data.identity?.name) {
             setValue(nameField, data.identity?.name)
           } else if (
+            searchPersons &&
+            !searchCompanies &&
+            data?.identity === null
+          ) {
+            setValue(nameField, '')
+          } else if (
             searchCompanies &&
             companyData?.companyRegistryCompany === null
           ) {
@@ -172,7 +178,16 @@ export const NationalIdWithName: FC<
           onNameChange(companyData.companyRegistryCompany?.name ?? '')
         if (companyData.companyRegistryCompany?.name) {
           setValue(nameField, companyData.companyRegistryCompany?.name)
-        } else if (searchPersons && data?.identity === null) {
+        } else if (
+          !searchPersons &&
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          setValue(nameField, '')
+        } else if (
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
           setValue(nameField, '')
         }
       },

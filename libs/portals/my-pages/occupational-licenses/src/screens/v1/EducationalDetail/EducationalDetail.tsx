@@ -5,7 +5,7 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -84,7 +84,7 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={programme}
-      serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+      serviceProviderSlug={MMS_SLUG}
       buttonGroup={
         downloadUrl ? (
           <Box paddingTop={3}>

@@ -36,5 +36,5 @@ runs:
         rm -rf node_modules
         ln -s /home/runner/dependencies/node_modules .
         ln -s /home/runner/dependencies/.yarn/cache .yarn/
-        ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
+        # ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
         echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV

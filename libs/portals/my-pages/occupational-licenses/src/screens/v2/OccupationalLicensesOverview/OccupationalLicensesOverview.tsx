@@ -21,7 +21,7 @@ const mapLicenseTypeToOrganization = (
 ): OrganizationSlugType | undefined => {
   switch (type) {
     case OccupationalLicenseV2LicenseType.EDUCATION:
-      return 'menntamalastofnun'
+      return 'midstod-menntunar-og-skolathjonustu'
     case OccupationalLicenseV2LicenseType.HEALTH_DIRECTORATE:
       return 'landlaeknir'
     case OccupationalLicenseV2LicenseType.DISTRICT_COMMISSIONERS:

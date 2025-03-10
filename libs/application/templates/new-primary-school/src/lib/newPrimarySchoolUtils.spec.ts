@@ -1,9 +1,10 @@
-import { ExternalData } from '@island.is/application/types'
+import { ExternalData, RepeaterOptionValue } from '@island.is/application/types'
+import { LanguageEnvironmentOptions } from './constants'
 import {
   hasOtherGuardian,
+  setOnChangeSchool,
   showPreferredLanguageFields,
 } from './newPrimarySchoolUtils'
-import { LanguageEnvironmentOptions } from './constants'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
@@ -108,5 +109,21 @@ describe('showPreferredLanguageFields', () => {
       },
     }
     expect(showPreferredLanguageFields(answers)).toBe(true)
+  })
+})
+
+describe('setOnChangeSchool', () => {
+  it('should return the correct key-value pair when optionValue is provided', () => {
+    const optionValue: RepeaterOptionValue = '123::PrivateOwner'
+    expect(setOnChangeSchool(optionValue)).toEqual([
+      { key: 'newSchool.type', value: 'PrivateOwner' },
+    ])
+  })
+
+  it('should return an empty value when optionValue is undefined', () => {
+    const optionValue: RepeaterOptionValue = undefined
+    expect(setOnChangeSchool(optionValue)).toEqual([
+      { key: 'newSchool.type', value: undefined },
+    ])
   })
 })

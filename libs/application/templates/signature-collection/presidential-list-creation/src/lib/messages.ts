@@ -156,11 +156,6 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagur',
     description: '',
   },
-  listCardText: {
-    id: 'slc.application:listCardText',
-    defaultMessage: 'Forsetakosningar 2024',
-    description: '',
-  },
   createList: {
     id: 'slc.application:createList',
     defaultMessage: 'Stofna meðmælasöfnun',
@@ -179,30 +174,10 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
     description: '',
   },
-  nextSteps: {
-    id: 'slc.application:nextSteps',
-    defaultMessage: 'Næstu skref',
-    description: '',
-  },
   nextStepsDescription: {
     id: 'slc.application:nextStepsDescription#markdown',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
-    description: '',
-  },
-  shareList: {
-    id: 'slc.application:shareList',
-    defaultMessage: 'Deila meðmælalista',
-    description: '',
-  },
-  shareListLink: {
-    id: 'slc.application:shareListLink',
-    defaultMessage: 'https://island.is/umsoknir/maela-med-frambodi',
-    description: '',
-  },
-  copyLink: {
-    id: 'slc.application:copyLink',
-    defaultMessage: 'Afrita hlekk',
     description: '',
   },
   linkFieldButtonTitle: {

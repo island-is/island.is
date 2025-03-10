@@ -139,4 +139,23 @@ describe('getIncidentDescriptionReason', () => {
       'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
     )
   })
+
+  test('should return a description with only prescription and illegal drugs, in that order', () => {
+    const offenses = [
+      {
+        offense: IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+        substances: {},
+      },
+      {
+        offense: IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+        substances: {},
+      },
+    ] as Offense[]
+
+    const result = getIncidentDescriptionReason(offenses, formatMessage)
+
+    expect(result).toBe(
+      'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
+    )
+  })
 })

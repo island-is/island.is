@@ -1,14 +1,10 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { font } from '../../utils/font'
 
-const Host = styled.Text`
+import { Typography } from '../typography/typography'
+
+const Host = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontSize: 13,
-    lineHeight: 17,
-  })}
 `
 
 interface FieldLabelProps {
@@ -16,5 +12,5 @@ interface FieldLabelProps {
 }
 
 export function FieldLabel({ children }: FieldLabelProps) {
-  return <Host>{children}</Host>
+  return <Host variant="body3">{children}</Host>
 }

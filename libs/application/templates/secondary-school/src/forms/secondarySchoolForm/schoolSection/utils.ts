@@ -8,6 +8,7 @@ import {
 import {
   checkIsFreshman,
   getTranslatedProgram,
+  LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
 } from '../../../utils'
@@ -336,6 +337,13 @@ export const setOnChangeSecondProgram = (
   ]
 }
 
+export const getThirdLanguageCondition = (
+  application: Application,
+  activeField?: Record<string, string>,
+): boolean => {
+  return !!getThirdLanguageOptions(application, activeField).length
+}
+
 export const getThirdLanguageOptions = (
   application: Application,
   activeField?: Record<string, string>,
@@ -367,17 +375,26 @@ export const setOnChangeThirdLanguage = (
   ]
 }
 
+export const getNordicLanguageCondition = (
+  application: Application,
+  activeField?: Record<string, string>,
+): boolean => {
+  return !!getNordicLanguageOptions(application, activeField).length
+}
+
 export const getNordicLanguageOptions = (
   application: Application,
   activeField?: Record<string, string>,
 ): RepeaterOption[] => {
   const schoolInfo = getSchoolInfo(application.externalData, activeField)
-  return (schoolInfo?.nordicLanguages || []).map((language) => {
-    return {
-      label: language.name,
-      value: language.code,
-    }
-  })
+  return (schoolInfo?.nordicLanguages || [])
+    .filter((x) => x.code !== LANGUAGE_CODE_DANISH)
+    .map((language) => {
+      return {
+        label: language.name,
+        value: language.code,
+      }
+    })
 }
 
 export const setOnChangeNordicLanguage = (

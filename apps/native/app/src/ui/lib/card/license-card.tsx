@@ -18,7 +18,7 @@ import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
-import { LicenseCardPresets, CustomLicenseType } from './license-list-card'
+import { LicenseCardPresets } from './license-list-card'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
@@ -114,15 +114,13 @@ const ImgWrap = styled.View`
   width: 72px;
 `
 
-type LicenseType = GenericLicenseType | CustomLicenseType
-
 interface LicenseCardProps {
   status: 'VALID' | 'NOT_VALID'
   title?: string
   date?: Date | string
   nativeID?: string
   style?: StyleProp<ViewStyle>
-  type?: LicenseType
+  type?: GenericLicenseType
   logo?: ImageSourcePropType | string
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
@@ -236,11 +234,11 @@ export function LicenseCard({
           </ValidationWrap>
           {date && (
             <Typography variant="body3" color={textColor}>
-              {type === CustomLicenseType.Passport
+              {type === GenericLicenseType.Passport
                 ? intl.formatMessage({ id: 'walletPass.expirationDate' })
                 : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
               {': '}
-              {type === CustomLicenseType.Passport ? (
+              {type === GenericLicenseType.Passport ? (
                 <FormattedDate value={date} {...{ dateStyle: 'short' }} />
               ) : (
                 <>

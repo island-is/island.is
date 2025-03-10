@@ -120,8 +120,8 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
               size="sm"
               label={f(publishing.inputs.contentCategories.label)}
               backgroundColor="blue"
+              placeholder={f(publishing.inputs.contentCategories.placeholder)}
               options={mappedCategories}
-              defaultValue={mappedCategories?.[0]}
               onChange={(opt) => onCategoryChange(opt?.value)}
               filterConfig={{
                 matchFrom: 'start',

@@ -131,6 +131,7 @@ export const aboutSection = buildSubSection({
           rows: 7,
           maxLength: 498,
           required: true,
+          showMaxLength: true
         }),
         buildTextField({
           id: 'accident.wentWrong',
@@ -140,6 +141,8 @@ export const aboutSection = buildSubSection({
           rows: 7,
           maxLength: 498,
           required: true,
+          showMaxLength: true
+
         }),
         buildTextField({
           id: 'accident.how',
@@ -149,6 +152,8 @@ export const aboutSection = buildSubSection({
           rows: 7,
           maxLength: 498,
           required: true,
+          showMaxLength: true
+
         }),
         buildDescriptionField({
           id: 'accident.describe.locationOfAccidentHeading',

@@ -35,6 +35,7 @@ export const CertificateOfTenureSchema = z.object({
   unknownPracticalRight: z.boolean().optional(),
   alreadyHaveTrainingLicense: z.boolean().optional(),
   wrongPracticalRight: z.boolean().optional(),
+  wrongPracticalRightWithInfo: z.boolean().optional(),
   listOfPossiblePracticalRights: z.array(z.string()).optional(),
 })
 

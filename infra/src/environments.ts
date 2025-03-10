@@ -12,7 +12,7 @@ const dev01: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 1,
-  releaseName: 'web',
+  releaseName: '',
   awsAccountId: '013313053092',
   awsAccountRegion: 'eu-west-1',
   global: {

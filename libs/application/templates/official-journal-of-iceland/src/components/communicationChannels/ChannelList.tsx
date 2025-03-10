@@ -1,22 +1,26 @@
 import { Icon, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import set from 'lodash/set'
-import { useApplication } from '../../hooks/useUpdateApplication'
 import { general } from '../../lib/messages'
-import { InputFields } from '../../lib/types'
+import { OJOIApplication } from '../../lib/types'
 
 type Props = {
-  applicationId: string
-  onEditChannel?: (email?: string, phone?: string, name?: string) => void
+  application: OJOIApplication
+  onOpenModal?: (
+    index: number,
+    email?: string,
+    phone?: string,
+    name?: string,
+  ) => void
+  onRemoveChannel: (index: number) => void
 }
 
-export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
+export const ChannelList = ({
+  application,
+  onOpenModal,
+  onRemoveChannel,
+}: Props) => {
   const { formatMessage } = useLocale()
-
-  const { application, updateApplication } = useApplication({
-    applicationId,
-  })
 
   const userInfo = useUserInfo()
 
@@ -31,19 +35,6 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
   }
 
   const channels = application.answers.advert?.channels || [initalChannel]
-
-  const onRemoveChannel = (index?: number) => {
-    const currentAnswers = structuredClone(application.answers)
-    const currentChannels = currentAnswers.advert?.channels ?? []
-
-    const updatedAnswers = set(
-      currentAnswers,
-      InputFields.advert.channels,
-      currentChannels.filter((_, i) => i !== index),
-    )
-
-    updateApplication(updatedAnswers)
-  }
 
   if (channels.length === 0) {
     return null
@@ -68,11 +59,16 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
               <T.Data>{channel.email}</T.Data>
               <T.Data>{channel.phone}</T.Data>
               <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
-                {onEditChannel && (
+                {onOpenModal && (
                   <button
                     type="button"
                     onClick={() =>
-                      onEditChannel(channel.name, channel.email, channel.phone)
+                      onOpenModal(
+                        i,
+                        channel.name,
+                        channel.email,
+                        channel.phone,
+                      )
                     }
                   >
                     <Icon color="blue400" icon="pencil" />
@@ -81,7 +77,7 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
               </T.Data>
 
               <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
-                {onEditChannel && (
+                {onOpenModal && (
                   <button type="button" onClick={() => onRemoveChannel(i)}>
                     <Icon color="blue400" icon="trash" />
                   </button>

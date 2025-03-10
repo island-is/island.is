@@ -1,9 +1,12 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@nestjs/config'
+
 import { EmailService } from '@island.is/email-service'
 
 import {
   CaseNotificationType,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -16,6 +19,7 @@ import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {
   result: DeliverResponse
@@ -36,9 +40,11 @@ describe('InternalNotificationController - Send revoked notifications for indict
   const courtName = uuid()
   const courtCaseNumber = uuid()
   const policeCaseNumbers = ['007-2022-01']
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
 
   const theCase = {
     id: caseId,
+    type: CaseType.INDICTMENT,
     judge: { name: judge.name, email: judge.email },
     registrar: { name: registrar.name, email: registrar.email },
     defendants: [
@@ -59,11 +65,16 @@ describe('InternalNotificationController - Send revoked notifications for indict
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, notificationModel, internalNotificationController } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      notificationModel,
+      internalNotificationController,
+      notificationConfig,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockNotificationModel = notificationModel
+    mockConfig = notificationConfig
 
     givenWhenThen = async (notifications?: Notification[]) => {
       const then = {} as Then
@@ -112,7 +123,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
         expect.objectContaining({
           to: [{ address: defender.email, name: defender.name }],
           subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `Dómstóllinn hafði skráð þig sem verjanda í málinu.<br /><br />Sjá nánar á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}.<br /><br />Hægt er að nálgast yfirlitssíðu málsins á <a href="${mockConfig.clientUrl}/verjandi/akaera/${theCase.id}">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({

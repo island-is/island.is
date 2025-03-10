@@ -191,7 +191,7 @@ export const m = defineMessages({
   },
   shareListLink: {
     id: 'pls.application:shareListLink',
-    defaultMessage: 'https://island.is/umsoknir/maela-med-althingis-frambodi',
+    defaultMessage: 'https://island.is/umsoknir/maela-med-althingisframbodi',
     description: '',
   },
   copyLink: {

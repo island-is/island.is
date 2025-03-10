@@ -1213,7 +1213,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-spotlight-search (2.0.0):
+  - react-native-spotlight-search (2.2.0):
     - React
   - react-native-webview (13.8.6):
     - DoubleConversion
@@ -1504,6 +1504,8 @@ PODS:
     - Firebase/Performance (= 10.3.0)
     - React-Core
     - RNFBApp
+  - RNFS (2.20.0):
+    - React-Core
   - RNGestureHandler (2.17.1):
     - DoubleConversion
     - glog
@@ -1731,6 +1733,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../../../../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../../../../node_modules/@react-native-firebase/messaging`)"
   - "RNFBPerf (from `../../../../node_modules/@react-native-firebase/perf`)"
+  - RNFS (from `../../../../node_modules/react-native-fs`)
   - RNGestureHandler (from `../../../../node_modules/react-native-gesture-handler`)
   - RNInAppBrowser (from `../../../../node_modules/react-native-inappbrowser-reborn`)
   - RNKeychain (from `../../../../node_modules/react-native-keychain`)
@@ -1955,6 +1958,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/@react-native-firebase/messaging"
   RNFBPerf:
     :path: "../../../../node_modules/@react-native-firebase/perf"
+  RNFS:
+    :path: "../../../../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../../../../node_modules/react-native-gesture-handler"
   RNInAppBrowser:
@@ -2058,7 +2063,7 @@ SPEC CHECKSUMS:
   react-native-progress-bar-android: 092e6a794f158642692f25c8839d9aa8eb779afb
   react-native-progress-view: 9e6b6a5305a9115c2157ae3b8852081aba0aab7c
   react-native-quick-base64: a74c4b2607b9de016877a8edb776b6ac59785809
-  react-native-spotlight-search: a42542a7818d20f8d815b38436be538e85755330
+  react-native-spotlight-search: 392fe113864a986b21af13595b82fc434e43a6c0
   react-native-webview: 05bae3a03a1e4f59568dfc05286c0ebf8954106c
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 8d11ff8955181540585c944cf48e9e7236952697
@@ -2092,6 +2097,7 @@ SPEC CHECKSUMS:
   RNFBApp: aecfcdc0964d9bc0c5f7ba05efb50be724d8e8b3
   RNFBMessaging: a647b2db61602e9981933b5fc90f1b058e61922c
   RNFBPerf: 6fbd022fd0200d2bc48c443718a8bf6438a9a004
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 8dbcccada4a7e702e7dec9338c251b1cf393c960
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
@@ -2104,6 +2110,6 @@ SPEC CHECKSUMS:
   VisionCamera: 2cffcbac033cb5e2fa344214bd7ccbf7cf065663
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
-PODFILE CHECKSUM: 32baec0ab08102e57ab0047494b9222c59bf4afe
+PODFILE CHECKSUM: 5ed7285b19f5d495a556fab6450c9851c88a7436
 
 COCOAPODS: 1.15.2

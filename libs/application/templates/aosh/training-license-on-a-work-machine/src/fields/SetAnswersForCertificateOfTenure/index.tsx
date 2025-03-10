@@ -59,6 +59,7 @@ export const SetAnswersForCertificateOfTenure: FC<
   useEffect(() => {
     setValue('certificateOfTenure.unknownPracticalRight', false)
     setValue('certificateOfTenure.wrongPracticalRight', false)
+    setValue('certificateOfTenure.wrongPracticalRightWithInfo', false)
     setValue('certificateOfTenure.unknownMachineType', false)
     setValue('certificateOfTenure.alreadyHaveTrainingLicense', false)
     const selectedCategory =
@@ -115,19 +116,19 @@ export const SetAnswersForCertificateOfTenure: FC<
       })
     } else if (
       watchMachineNumber &&
-      watchMachineNumber.length > 5 &&
+      watchMachineNumber.length > 1 &&
       selectedCategory &&
       selectedCategory.hasInstructorLicense
     ) {
       setValue('certificateOfTenure.alreadyHaveTrainingLicense', true)
     } else if (
       watchMachineNumber &&
-      watchMachineNumber.length > 5 &&
+      watchMachineNumber.length > 1 &&
       onlyFirstLetterInSubCategoryCorrect &&
       onlyFirstLetterInSubCategoryCorrect.length > 0 &&
       !bothLettersInSubCategoryCorrect
     ) {
-      setValue('certificateOfTenure.wrongPracticalRight', true)
+      setValue('certificateOfTenure.wrongPracticalRightWithInfo', true)
       setValue(
         'certificateOfTenure.listOfPossiblePracticalRights',
         onlyFirstLetterInSubCategoryCorrect.map(
@@ -136,11 +137,20 @@ export const SetAnswersForCertificateOfTenure: FC<
       )
     } else if (
       watchMachineNumber &&
-      watchMachineNumber.length > 5 &&
+      watchMachineNumber.length > 1 &&
       !selectedCategory &&
       bothLettersInSubCategoryCorrect
     ) {
       setValue('certificateOfTenure.unknownPracticalRight', true)
+    } else if (
+      watchMachineNumber &&
+      watchMachineNumber.length > 1 &&
+      !selectedCategory &&
+      ((onlyFirstLetterInSubCategoryCorrect &&
+        onlyFirstLetterInSubCategoryCorrect.length === 0) ||
+        !bothLettersInSubCategoryCorrect)
+    ) {
+      setValue('certificateOfTenure.wrongPracticalRight', true)
     }
   }, [watchMachineNumber, licenseCategories, subCategories])
 
