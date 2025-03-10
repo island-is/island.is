@@ -33,6 +33,7 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
@@ -42,6 +43,7 @@ import {
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
 import strings from './Completed.strings'
+import * as styles from './Completed.css'
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
@@ -262,6 +264,7 @@ const Completed: FC = () => {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
                             serviceRequirement: ServiceRequirement.REQUIRED,
+                            verdictAppealDate: null, // TODO: FIX
                           },
                           setWorkingCase,
                         )
@@ -285,6 +288,7 @@ const Completed: FC = () => {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
                           serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+                          verdictAppealDate: null, // TODO: FIX
                         },
                         setWorkingCase,
                       )
@@ -296,6 +300,61 @@ const Completed: FC = () => {
                       strings.serviceRequirementNotRequiredTooltip,
                     )}
                   />
+                  {defendant.serviceRequirement ===
+                    ServiceRequirement.NOT_APPLICABLE && (
+                    <div className={styles.gridLayout}>
+                      <RadioButton
+                        id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
+                        name={`defendant-${defendant.id}-verdict-appeal-decision`}
+                        checked={
+                          defendant.verdictAppealDecision ===
+                          VerdictAppealDecision.POSTPONE
+                        }
+                        disabled={sentToPublicProsecutor}
+                        onChange={() => {
+                          setAndSendDefendantToServer(
+                            {
+                              defendantId: defendant.id,
+                              caseId: workingCase.id,
+                              verdictAppealDecision:
+                                VerdictAppealDecision.POSTPONE,
+                            },
+                            setWorkingCase,
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                        label={formatMessage(
+                          strings.verdictAppealDecisionPostpone,
+                        )}
+                      />
+                      <RadioButton
+                        id={`defendant-${defendant.id}-verdict-appeal-decision-appeal`}
+                        name={`defendant-${defendant.id}-verdict-appeal-decision`}
+                        checked={
+                          defendant.verdictAppealDecision ===
+                          VerdictAppealDecision.ACCEPT
+                        }
+                        disabled={sentToPublicProsecutor}
+                        onChange={() => {
+                          setAndSendDefendantToServer(
+                            {
+                              defendantId: defendant.id,
+                              caseId: workingCase.id,
+                              verdictAppealDecision:
+                                VerdictAppealDecision.ACCEPT,
+                            },
+                            setWorkingCase,
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                        label={formatMessage(
+                          strings.verdictAppealDecisionAccept,
+                        )}
+                      />
+                    </div>
+                  )}
                 </BlueBox>
               </Box>
             ))}
