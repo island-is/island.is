@@ -3,6 +3,9 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
 import { useCombobox } from 'downshift'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import { PortalNavigationItem } from '@island.is/portals/core'
+import { FormatMessage, useLocale } from '@island.is/localization'
 
 interface ModuleSet {
   title: string
@@ -10,28 +13,6 @@ interface ModuleSet {
   keywords?: Array<string>
   uri: string
 }
-
-const data: Array<ModuleSet> = [
-  {
-    title: 'Pósthólf', //m.documents,
-    content: 'Erindi til þín frá opinberum aðilum', //m.documentsDescription,
-    uri: '/postholf',
-  },
-  {
-    title: 'Umsóknir', //m.applications,
-    content: 'Staða umsókna sem þú hefur sótt um í gegnum island.is', //m.applicationsDescription,
-    uri: '/umsoknir',
-  },
-  {
-    title: 'Mínar upplýsingar', //m.userInfo,
-    content: 'Gögn um þig og fjölskylduna þína', //m.userInfoDescription,
-    uri: '/min-gogn/yfirlit',
-  },
-  {
-    title: 'Hugverkaréttindi', //m.intellectualProperties
-    uri: '/eignir/hugverkarettindi',
-  },
-]
 
 const options: IFuseOptions<ModuleSet> = {
   isCaseSensitive: false,
@@ -46,8 +27,37 @@ const options: IFuseOptions<ModuleSet> = {
   shouldSort: true,
 }
 
+const getNavigationItems = (
+  data: PortalNavigationItem,
+  formatMessage: FormatMessage,
+): Array<ModuleSet> => {
+  let navigationItems: Array<ModuleSet> = []
+
+  if (data.children) {
+    navigationItems = data.children.flatMap((child) =>
+      getNavigationItems(child, formatMessage),
+    )
+  }
+
+  if (!data.navHide && data.path && !data.active && data.enabled) {
+    navigationItems.push({
+      title: formatMessage(data.name),
+      content: data.description ? formatMessage(data.description) : undefined,
+      uri: data.path,
+    })
+  }
+
+  return navigationItems
+}
+
 export const SearchInput = () => {
-  const fuse = useMemo(() => new Fuse(data, options), [])
+  const { formatMessage } = useLocale()
+
+  const data = useMemo(() => {
+    return getNavigationItems(MAIN_NAVIGATION, formatMessage)
+  }, [formatMessage])
+
+  const fuse = useMemo(() => new Fuse(data, options), [data])
 
   const [items, setItems] = useState<ModuleSet[]>([])
 
@@ -106,7 +116,7 @@ export const SearchInput = () => {
           spellCheck: true,
         }),
         inputSize: 'medium',
-        isOpen: shouldShowItems,
+        isOpen: true,
         placeholder: 'Leita',
         onKeyDown: (event) => {
           if (event.key === 'Enter') {
@@ -129,7 +139,13 @@ export const SearchInput = () => {
         shouldShowItems,
       }}
     >
-      <Box display="flex" as="ul" flexDirection="row">
+      <Box
+        display="flex"
+        width="full"
+        height="full"
+        as="ul"
+        flexDirection="column"
+      >
         {items.map((item) => (
           <LinkResolver href={item.uri}>
             <Button as="span" size="small" variant="text" unfocusable>
