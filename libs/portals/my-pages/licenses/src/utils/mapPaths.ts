@@ -11,7 +11,8 @@ export const isLicenseTypePath = (str: string): str is LicensePathType => {
     str === 'veidikort' ||
     str === 'pkort' ||
     str === 'ehic' ||
-    str === 'vegabref'
+    str === 'vegabref' ||
+    str === 'nafnskirteini'
   )
 }
 
@@ -35,6 +36,8 @@ export const getTypeFromPath = (path: LicensePathType): GenericLicenseType => {
       return GenericLicenseType.Ehic
     case 'vegabref':
       return GenericLicenseType.Passport
+    case 'nafnskirteini':
+      return GenericLicenseType.IdentityDocument
   }
 }
 
@@ -58,5 +61,7 @@ export const getPathFromType = (type: GenericLicenseType): LicensePathType => {
       return 'ehic'
     case GenericLicenseType.Passport:
       return 'vegabref'
+    case GenericLicenseType.IdentityDocument:
+      return 'nafnskirteini'
   }
 }
