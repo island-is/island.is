@@ -69,3 +69,10 @@ export enum ApplicationType {
   NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
   ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
 }
+
+export enum SchoolType {
+  PUBLIC_SCHOOL = 'publicSchool',
+  PRIVATE_SCHOOL = 'privateSchool',
+  INTERNATIONAL_SCHOOL = 'internationalSchool',
+  NURSERY_SCHOOL = 'nurserySchool',
+}
