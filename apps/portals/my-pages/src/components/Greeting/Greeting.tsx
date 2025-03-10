@@ -4,12 +4,14 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Input,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './Greeting.css'
+import { SearchInput } from '../SearchInput/SearchInput'
 
 const Greeting = () => {
   const { formatMessage } = useLocale()
@@ -20,17 +22,12 @@ const Greeting = () => {
 
   return (
     <GridContainer>
-      <GridRow className={styles.greetingContainer}>
+      <GridRow>
         <GridColumn
           span={['12/12', '12/12', '12/12', '5/12']}
           offset={['0', '0', '0', '1/12']}
         >
-          <Box
-            marginTop={[2, 3, 3, 0]}
-            paddingLeft={[0, 0, 0, 0]}
-            data-testid="greeting"
-            className={styles.greetingTextBox}
-          >
+          <Box marginTop={9} data-testid="greeting">
             <Text
               variant="eyebrow"
               marginBottom={2}
@@ -47,6 +44,9 @@ const Greeting = () => {
             <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
               {formatMessage(m.greetingIntro)}
             </Text>
+            <Box marginTop={3} component="form" action="/query">
+              <SearchInput />
+            </Box>
           </Box>
         </GridColumn>
         <GridColumn span={'6/12'}>
@@ -56,7 +56,7 @@ const Greeting = () => {
                 src={
                   'https://images.ctfassets.net/8k0h54kbe6bj/FkLayBlYHDlSq15d4qjbp/1bc08bc72413a20e746917b082ffeaeb/Skraut.svg'
                 }
-                className={styles.greetingSvg}
+                className={styles.image}
                 alt=""
               />
             </Box>
