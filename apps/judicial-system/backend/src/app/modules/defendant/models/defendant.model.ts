@@ -20,6 +20,7 @@ import {
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
@@ -157,6 +158,14 @@ export class Defendant extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(VerdictAppealDecision),
+  })
+  @ApiPropertyOptional({ enum: VerdictAppealDecision })
+  verdictAppealDecision?: VerdictAppealDecision
 
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
