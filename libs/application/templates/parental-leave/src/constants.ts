@@ -38,7 +38,7 @@ export type Events =
 export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
-  ORGINISATION_REVIEWER = 'vmst',
+  ORGANISATION_REVIEWER = 'vmst',
 }
 
 export enum UnEmployedBenefitTypes {
