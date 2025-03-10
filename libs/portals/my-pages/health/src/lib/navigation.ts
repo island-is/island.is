@@ -158,6 +158,28 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: messages.referrals,
+      path: HealthPaths.HealthReferrals,
+      children: [
+        {
+          name: messages.referrals,
+          path: HealthPaths.HealthReferralsDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      children: [
+        {
+          name: messages.waitlists,
+          path: HealthPaths.HealthWaitlistsDetail,
+          navHide: true,
+        },
+      ],
+    },
   ],
   description: m.healthDescription,
 }

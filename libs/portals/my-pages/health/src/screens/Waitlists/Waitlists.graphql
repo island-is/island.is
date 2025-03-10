@@ -1,0 +1,12 @@
+query GetWaitlists($locale: String) {
+  healthDirectorateWaitlists(locale: $locale) {
+    waitlists {
+      id
+      name
+      waitBegan
+      lastUpdated
+      organization
+      status
+    }
+  }
+}
