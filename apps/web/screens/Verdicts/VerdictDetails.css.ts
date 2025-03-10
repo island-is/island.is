@@ -16,3 +16,13 @@ export const hiddenOnScreen = style({
     },
   },
 })
+
+export const textMaxWidth = style({
+  maxWidth: '876px',
+})
+
+export const richText = style({})
+
+globalStyle(`${richText} h1:first-of-type, ${richText} h2:last-of-type`, {
+  textAlign: 'center',
+})

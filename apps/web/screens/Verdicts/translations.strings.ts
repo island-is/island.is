@@ -46,5 +46,26 @@ export const m = {
       defaultMessage: 'Til baka',
       description: 'Texti á "Til baka" hnapp',
     },
+    caseNumberPrefix: {
+      id: 'web.verdicts:verdictPage.caseNumberPrefix',
+      defaultMessage: 'Mál nr.',
+      description: 'Texti á undan málsnúmeri fyrir HTML dóma',
+    },
+    keywords: {
+      id: 'web.verdicts:verdictPage.keywords',
+      defaultMessage: 'Lykilorð',
+      description: 'Lykilorð',
+    },
+    presentings: {
+      id: 'web.verdicts:verdictPage.presentings',
+      defaultMessage: 'Reifun',
+      description: 'Reifun',
+    },
+    htmlVerdictLogoUrl: {
+      id: 'web.verdicts:verdictPage.htmlVerdictLogoUrl',
+      defaultMessage:
+        'https://images.ctfassets.net/8k0h54kbe6bj/40DkdlOOP8LT7a49ytG0vS/71bdcf876b158e860e27b1d249043798/Frame_25613.svg',
+      description: 'Logo efst í HTML dómi',
+    },
   },
 }

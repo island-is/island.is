@@ -1,5 +1,7 @@
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+import capitalize from 'lodash/capitalize'
 
 import type { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -12,6 +14,7 @@ import {
   Inline,
   LinkV2,
   PdfViewer,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -21,6 +24,7 @@ import {
   type GetVerdictByIdQuery,
   type GetVerdictByIdQueryVariables,
 } from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -69,7 +73,7 @@ interface VerdictDetailsProps {
   item: NonNullable<GetVerdictByIdQuery['webVerdictById']>['item']
 }
 
-const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
+const PdfView = ({ item }: VerdictDetailsProps) => {
   const { width } = useWindowSize()
   const { formatMessage } = useIntl()
 
@@ -138,28 +142,6 @@ const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
         </GridContainer>
       </Box>
       {Boolean(item.pdfString) && (
-        <Box>
-          <Box paddingY={5} background="overlayDefault" printHidden={true}>
-            <GridContainer>
-              <Box
-                display="flex"
-                justifyContent="center"
-                className={styles.pdfContainer}
-                height="full"
-                overflow="auto"
-                boxShadow="subtle"
-              >
-                <PdfViewer
-                  file={`data:application/pdf;base64,${item.pdfString}`}
-                  showAllPages={true}
-                  scale={calculatePdfScale(width)}
-                />
-              </Box>
-            </GridContainer>
-          </Box>
-        </Box>
-      )}
-      <Box className={styles.hiddenOnScreen}>
         <Box paddingY={5} background="overlayDefault">
           <GridContainer>
             <Box
@@ -170,28 +152,143 @@ const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
               overflow="auto"
               boxShadow="subtle"
             >
-              <PdfViewer
-                file={`data:application/pdf;base64,${item.pdfString}`}
-                showAllPages={true}
-                scale={1}
-              />
+              <Box printHidden={true} className="rs_read">
+                <PdfViewer
+                  file={`data:application/pdf;base64,${item.pdfString}`}
+                  showAllPages={true}
+                  scale={calculatePdfScale(width)}
+                />
+              </Box>
+              <Box className={styles.hiddenOnScreen}>
+                <PdfViewer
+                  file={`data:application/pdf;base64,${item.pdfString}`}
+                  showAllPages={true}
+                  scale={1}
+                />
+              </Box>
             </Box>
-          </GridContainer>
-        </Box>
-      </Box>
-      {Boolean(item.richText) && (
-        <Box paddingBottom={5}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn offset={['0', '0', '0', '1/9']}>
-                <Box>{webRichText([item.richText] as SliceType[])}</Box>
-              </GridColumn>
-            </GridRow>
           </GridContainer>
         </Box>
       )}
     </>
   )
+}
+
+const HtmlView = ({ item }: VerdictDetailsProps) => {
+  const { formatMessage } = useIntl()
+  const { format } = useDateUtils()
+  const logoUrl = formatMessage(m.verdictPage.htmlVerdictLogoUrl)
+
+  return (
+    <>
+      <HeadWithSocialSharing title="Dómur" />
+      <Box paddingBottom={3}>
+        <GridContainer>
+          <Box paddingBottom={2}>
+            <LinkV2 href="/domar">
+              <Hidden print={true}>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                  as="span"
+                  unfocusable
+                >
+                  {formatMessage(m.verdictPage.goBack)}
+                </Button>
+              </Hidden>
+            </LinkV2>
+          </Box>
+          <GridRow>
+            <GridColumn span="1/1" offset={['0', '0', '0', '1/9']}>
+              <Inline alignY="center" justifyContent="spaceBetween" space={3}>
+                <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
+                <Inline alignY="center" space={2}>
+                  <Hidden print={true}>
+                    <Button
+                      icon="print"
+                      iconType="outline"
+                      size="small"
+                      onClick={() => {
+                        window.print()
+                      }}
+                    >
+                      {formatMessage(m.verdictPage.print)}
+                    </Button>
+                  </Hidden>
+                </Inline>
+              </Inline>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      {Boolean(item.richText) && (
+        <Box paddingBottom={5}>
+          <GridContainer>
+            <Box
+              display="flex"
+              flexDirection="column"
+              flexWrap="nowrap"
+              alignItems="center"
+            >
+              <Box paddingBottom={5}>
+                <Stack space={2}>
+                  {logoUrl && (
+                    <Box textAlign="center">
+                      <img src={logoUrl} alt="" />
+                    </Box>
+                  )}
+                  <Text variant="h2" as="h1" textAlign="center">
+                    {item.court}
+                  </Text>
+                  <Stack space={1}>
+                    <Text variant="h3" as="h2" textAlign="center">
+                      {formatMessage(m.verdictPage.caseNumberPrefix)}{' '}
+                      {item.caseNumber}
+                    </Text>
+                    {item.verdictDate && (
+                      <Text textAlign="center">
+                        {capitalize(
+                          format(
+                            new Date(item.verdictDate),
+                            'eeee d. MMMM yyyy',
+                          ).replace('dagur', 'dagurinn'),
+                        )}
+                      </Text>
+                    )}
+                  </Stack>
+                  <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
+                    <Text variant="h4" as="h3">
+                      {formatMessage(m.verdictPage.keywords)}
+                    </Text>
+                    <Text>{item.keywords.join(', ')}</Text>
+                  </Box>
+                  <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
+                    <Text variant="h4" as="h3">
+                      {formatMessage(m.verdictPage.presentings)}
+                    </Text>
+                    <Text>{item.presentings}</Text>
+                  </Box>
+                </Stack>
+              </Box>
+              <Box
+                className={cn('rs_read', styles.textMaxWidth, styles.richText)}
+              >
+                {webRichText([item.richText] as SliceType[])}
+              </Box>
+            </Box>
+          </GridContainer>
+        </Box>
+      )}
+    </>
+  )
+}
+
+const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
+  if (item.pdfString) return <PdfView item={item} />
+  return <HtmlView item={item} />
 }
 
 VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {

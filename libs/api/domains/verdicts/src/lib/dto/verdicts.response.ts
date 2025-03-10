@@ -61,6 +61,24 @@ class VerdictByIdItem {
 
   @CacheField(() => graphqlTypeJson, { nullable: true })
   richText?: Html | null
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  court!: string
+
+  @Field(() => String)
+  caseNumber!: string
+
+  @Field(() => Date, { nullable: true })
+  verdictDate?: Date | null
+
+  @CacheField(() => [String])
+  keywords!: string[]
+
+  @Field(() => String)
+  presentings!: string
 }
 
 @ObjectType('WebVerdictByIdResponse')
