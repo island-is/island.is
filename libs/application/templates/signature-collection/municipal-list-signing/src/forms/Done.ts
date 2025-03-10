@@ -5,7 +5,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import Jobs from '@island.is/application/templates/signature-collection/assets/Jobs'
@@ -21,10 +21,10 @@ export const Done: Form = buildForm({
         buildMultiField({
           id: 'doneScreen',
           title: m.listSigned,
-          description: (application: Application) => ({
+          description: ({ answers }) => ({
             ...m.listSignedDescription,
             values: {
-              name: application.answers.candidateName,
+              name: answers.candidateName,
             },
           }),
           children: [
