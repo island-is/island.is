@@ -1,6 +1,12 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  type IconMapIcon,
+  InfoCard,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   EventLocation,
@@ -15,12 +21,18 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import {
+  formatEventLocation,
+  formatEventTime,
+} from '@island.is/web/utils/event'
 
 interface EventListProps {
   namespace: Record<string, string>
   eventList: GetEventsQuery['getEvents']['items']
   parentPageSlug: string
   noEventsFoundFallback?: ReactNode
+  variant?: 'NewsCard' | 'InfoCard'
 }
 
 export const EventList = ({
@@ -28,16 +40,14 @@ export const EventList = ({
   namespace,
   parentPageSlug,
   noEventsFoundFallback,
+  variant = 'NewsCard',
 }: EventListProps) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const { activeLocale } = useI18n()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(width < theme.breakpoints.sm)
-  }, [width])
+  const isMobile = width < theme.breakpoints.sm
+  const { format } = useDateUtils()
 
   return (
     <Box className="rs_read">
@@ -57,16 +67,71 @@ export const EventList = ({
           )}
         </Box>
       )}
-      {!isMobile && (
+      {variant === 'InfoCard' && (
         <Stack space={4}>
-          {eventList.map((eventItem, index) => {
+          {eventList.map((event) => {
+            const formattedDate = event.startDate
+              ? format(new Date(event.startDate), 'do MMMM yyyy')
+              : ''
+            const link = linkResolver('organizationevent', [
+              parentPageSlug,
+              event.slug,
+            ])
+
+            const detailLines: Array<{
+              icon: IconMapIcon
+              text: string
+            }> = []
+
+            const eventTime = formatEventTime(
+              event.time,
+              n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string,
+            )
+            if (eventTime) {
+              detailLines.push({
+                icon: 'time',
+                text: eventTime,
+              })
+            }
+
+            const eventLocation = formatEventLocation(event.location)
+            if (eventLocation) {
+              detailLines.push({
+                icon: 'location',
+                text: eventLocation,
+              })
+            }
+
+            return (
+              <InfoCard
+                key={event.id}
+                eyebrow={formattedDate}
+                id={event.id}
+                link={{
+                  href: link.href,
+                  label: activeLocale === 'is' ? 'Sjá nánar' : 'See more',
+                }}
+                size="large"
+                title={event.title}
+                borderColor="borderPrimary"
+                variant="detailed"
+                description=""
+                detailLines={detailLines}
+              />
+            )
+          })}
+        </Stack>
+      )}
+      {!isMobile && variant === 'NewsCard' && (
+        <Stack space={4}>
+          {eventList.map((eventItem) => {
             const eventHref = linkResolver('organizationevent', [
               parentPageSlug,
               eventItem.slug,
             ]).href
             return (
               <NewsCard
-                key={index}
+                key={eventItem.id}
                 href={eventHref}
                 title={eventItem.title}
                 titleVariant="h3"
@@ -101,16 +166,16 @@ export const EventList = ({
           })}
         </Stack>
       )}
-      {isMobile && (
+      {isMobile && variant === 'NewsCard' && (
         <Stack space={[3, 3, 4]}>
-          {eventList.map((eventItem, index) => {
+          {eventList.map((eventItem) => {
             const eventHref = linkResolver('organizationevent', [
               parentPageSlug,
               eventItem.slug,
             ]).href
             return (
               <LatestEventSliceCard
-                key={index}
+                key={eventItem.id}
                 title={eventItem.title}
                 location={eventItem.location}
                 namespace={namespace}

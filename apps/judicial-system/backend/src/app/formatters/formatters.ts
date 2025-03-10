@@ -9,7 +9,6 @@ import {
   enumerate,
   formatCaseType,
   formatDate,
-  formatNationalId,
   getSupportedCaseCustodyRestrictions,
   laws,
   readableIndictmentSubtypes,
@@ -578,54 +577,6 @@ export const formatPrisonRevokedEmailNotification = (
     revokedCaseText,
     defenderText,
     courtCaseNumber,
-  })
-}
-
-export const formatDefenderRevokedEmailNotification = (
-  formatMessage: FormatMessage,
-  type: CaseType,
-  defendantNationalId?: string,
-  defendantName?: string,
-  defendantNoNationalId?: boolean,
-  court?: string,
-  courtDate?: Date,
-): string => {
-  const cf = notifications.defenderRevokedEmail
-  const courtText = formatMessage(cf.court, {
-    court: court ? applyDativeCaseToCourtName(court) : 'NONE',
-  })
-  const courtDateText = formatMessage(cf.courtDate, {
-    courtDate: courtDate
-      ? formatDate(courtDate, 'PPPPp')
-          ?.replace('dagur,', 'daginn')
-          ?.replace(' kl.', ', kl.')
-      : 'NONE',
-  })
-  const revokedText = formatMessage(cf.revoked, {
-    courtText,
-    courtDateText,
-    investigationPrefix:
-      type === CaseType.OTHER
-        ? 'onlyPrefix'
-        : isInvestigationCase(type)
-        ? 'withPrefix'
-        : 'noPrefix',
-    courtTypeName: formatCaseType(type),
-  })
-  const defendantNationalIdText = defendantNoNationalId
-    ? defendantNationalId || 'NONE'
-    : formatNationalId(defendantNationalId || 'NONE')
-  const defendantText = formatMessage(cf.defendant, {
-    defendantName: defendantName || 'NONE',
-    defendantNationalId: defendantNationalIdText,
-    defendantNoNationalId: defendantNoNationalId ? 'NONE' : 'SOME',
-  })
-  const defenderAssignedText = formatMessage(cf.defenderAssigned)
-
-  return formatMessage(cf.body, {
-    revokedText,
-    defendantText,
-    defenderAssignedText,
   })
 }
 
