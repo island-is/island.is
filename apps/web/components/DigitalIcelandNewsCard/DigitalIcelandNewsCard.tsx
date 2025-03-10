@@ -9,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { shortenText } from '@island.is/web/utils/shortenText'
 
 import * as styles from './DigitalIcelandNewsCard.css'
@@ -23,6 +24,8 @@ interface ItemProps {
 }
 
 export const DigitalIcelandNewsCard = (item: ItemProps) => {
+  const { format } = useDateUtils()
+
   return (
     <LinkV2 href={item.href} className={styles.itemContainer}>
       <Box
@@ -49,6 +52,11 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
           />
 
           <Stack space={1}>
+            {item.date && (
+              <Text variant="h5" color="purple400">
+                {format(new Date(item.date), 'do MMMM yyyy')}
+              </Text>
+            )}
             <Text variant="h3">{item.title}</Text>
             <Text variant="medium">
               {shortenText(item.description ?? '', 80)}

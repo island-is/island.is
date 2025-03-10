@@ -246,12 +246,15 @@ export class AuthController {
         }
       | undefined
 
-    let user = await this.authService.findUser(authUser.nationalId)
+    const users = await this.authService.findUsersByNationalId(
+      authUser.nationalId,
+    )
+    let user = users && users.length > 0 ? users[0] : undefined
 
-    if (user) {
+    if (users && user) {
       authorization = {
         userId: user.id,
-        jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
+        jwtToken: this.sharedAuthService.signJwt(0, users, csrfToken),
         redirectRoute:
           requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
             ? requestedRedirectRoute
@@ -271,7 +274,7 @@ export class AuthController {
       if (user) {
         authorization = {
           userId: user.id,
-          jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
+          jwtToken: this.sharedAuthService.signJwt(0, [user], csrfToken),
           redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
         }
       }

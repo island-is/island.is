@@ -14,11 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import {
-  EventType,
-  type User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { DefenderService } from '../defender'
 import { authModuleConfig } from './auth.config'
@@ -33,7 +29,7 @@ export class AuthService {
     private readonly logger: Logger,
   ) {}
 
-  async findUser(nationalId: string): Promise<User | undefined> {
+  async findUsersByNationalId(nationalId: string): Promise<User[] | undefined> {
     const res = await fetch(
       `${this.config.backendUrl}/api/user/?nationalId=${nationalId}`,
       {
@@ -45,10 +41,7 @@ export class AuthService {
       return undefined
     }
 
-    const users = await res.json()
-
-    // TODO: Support login with multiple users
-    return users[0]
+    return res.json()
   }
 
   async findDefender(nationalId: string): Promise<User | undefined> {

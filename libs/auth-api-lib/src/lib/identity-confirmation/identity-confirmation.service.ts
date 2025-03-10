@@ -16,7 +16,7 @@ import { NationalRegistryV3ClientService } from '@island.is/clients/national-reg
 
 const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
 const ZENDESK_CUSTOM_FIELDS = {
-  Link: 24598388531474,
+  Link: 24596286118546,
 }
 
 @Injectable()

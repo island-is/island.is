@@ -187,6 +187,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 title={formatMessage(caseFiles.indictmentTitle)}
                 pdfType="indictment"
                 renderAs="row"
+                elementId="Ákæra"
               />
             </Box>
           </Box>

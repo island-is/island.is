@@ -1,6 +1,47 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/applications/adverts": {
+      "get": {
+        "operationId": "getAdvertCopies",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "example": 1,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "example": 10,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
@@ -166,7 +207,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -205,7 +249,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -233,7 +280,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -706,6 +756,13 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Show date in PDF",
+            "name": "showDate",
+            "in": "query",
+            "schema": { "default": true, "type": "boolean" }
           }
         ],
         "responses": {
@@ -784,13 +841,6 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CasePriceResponse": {
-        "type": "object",
-        "properties": {
-          "price": { "type": "number", "description": "The price of the case" }
-        },
-        "required": ["price"]
-      },
       "BaseEntity": {
         "type": "object",
         "properties": {
@@ -911,28 +961,10 @@
         },
         "required": ["signatureType"]
       },
-      "AdditionalSignature": {
-        "type": "object",
-        "properties": {
-          "regular": {
-            "type": "string",
-            "description": "Message to the regular"
-          },
-          "committee": {
-            "type": "string",
-            "description": "Message to the committee"
-          }
-        },
-        "required": ["regular", "committee"]
-      },
       "ApplicationSignatureMember": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "Name of the member" },
-          "before": {
-            "type": "string",
-            "description": "Text before the name member"
-          },
           "below": {
             "type": "string",
             "description": "Text below the name member"
@@ -946,85 +978,75 @@
             "description": "Text after the name member"
           }
         },
-        "required": ["name", "before", "below", "above", "after"]
+        "required": ["name", "below", "above", "after"]
       },
-      "ApplicationSignature": {
+      "ApplicationSignatureRecord": {
         "type": "object",
         "properties": {
           "institution": {
             "type": "string",
             "description": "Institution of the signature"
           },
-          "date": {
+          "signatureDate": {
             "type": "string",
             "description": "Date when the signature was signed"
           },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
+          "additional": {
             "type": "string",
-            "description": "The html contents of the signature"
-          }
-        },
-        "required": ["institution", "date", "members", "html"]
-      },
-      "ApplicationCommitteeSignature": {
-        "type": "object",
-        "properties": {
-          "institution": {
-            "type": "string",
-            "description": "Institution of the signature"
-          },
-          "date": {
-            "type": "string",
-            "description": "Date when the signature was signed"
-          },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
-            "type": "string",
-            "description": "The html contents of the signature"
+            "description": "Additioanl signature name"
           },
           "chairman": {
-            "description": "The title of the committee",
+            "description": "Chairman of the signature",
             "allOf": [
               { "$ref": "#/components/schemas/ApplicationSignatureMember" }
             ]
+          },
+          "members": {
+            "description": "Members of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
           }
         },
-        "required": ["institution", "date", "members", "html", "chairman"]
+        "required": [
+          "institution",
+          "signatureDate",
+          "additional",
+          "chairman",
+          "members"
+        ]
+      },
+      "ApplicationSignatureRecords": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "description": "Regular signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureRecord"
+            }
+          }
+        },
+        "required": ["records"]
       },
       "ApplicationSignatures": {
         "type": "object",
         "properties": {
-          "additionalSignature": {
-            "example": "Some message to the applicant",
-            "description": "Message to the applicant",
-            "allOf": [{ "$ref": "#/components/schemas/AdditionalSignature" }]
-          },
           "regular": {
             "description": "Regular signature",
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ApplicationSignature" }
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
+            ]
           },
           "committee": {
             "description": "Committee signature",
             "allOf": [
-              { "$ref": "#/components/schemas/ApplicationCommitteeSignature" }
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
             ]
           }
         },
-        "required": ["additionalSignature", "regular", "committee"]
+        "required": ["regular", "committee"]
       },
       "ApplicationAnswers": {
         "type": "object",
@@ -1037,12 +1059,12 @@
             "description": "Misc answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationMisc" }]
           },
-          "signatures": {
+          "signature": {
             "description": "Signature answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationSignatures" }]
           }
         },
-        "required": ["advert", "misc", "signatures"]
+        "required": ["advert", "misc", "signature"]
       },
       "Application": {
         "type": "object",
@@ -1150,6 +1172,13 @@
           "application": { "$ref": "#/components/schemas/Application" }
         },
         "required": ["application"]
+      },
+      "CasePriceResponse": {
+        "type": "object",
+        "properties": {
+          "price": { "type": "number", "description": "The price of the case" }
+        },
+        "required": ["price"]
       },
       "CaseActionEnum": {
         "type": "string",
@@ -1309,7 +1338,11 @@
       },
       "PresignedUrlResponse": {
         "type": "object",
-        "properties": { "url": { "type": "string" } },
+        "properties": {
+          "url": { "type": "string" },
+          "cdn": { "type": "string" },
+          "key": { "type": "string" }
+        },
         "required": ["url"]
       },
       "PostApplicationAttachmentBody": {

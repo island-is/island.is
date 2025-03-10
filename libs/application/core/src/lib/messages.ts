@@ -299,6 +299,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Hlekkur afritaður',
     description: 'Copy link success toast',
   },
+  copyLinkButtonTitle: {
+    id: 'application.system:copyLinkButtonTitle',
+    defaultMessage: 'Afrita tengil',
+    description: 'Copy link button title',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
@@ -392,8 +397,7 @@ export const coreErrorMessages = defineMessages({
   },
   uploadMultipleNotAllowed: {
     id: 'application.system:core.error.file.uploadMultipleNotAllowed',
-    defaultMessage:
-      'Það má bara hlaða upp einni skrá',
+    defaultMessage: 'Það má bara hlaða upp einni skrá',
     description: 'Error message when multi upload is not allowed.',
   },
   fileRemove: {
@@ -750,6 +754,16 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',
     defaultMessage: 'Ekki fundust nein tæki',
     description: 'Did not find any machines',
+  },
+  cantConnectToVer: {
+    id: 'application.system:core.fetch.data.cantConnectToVer',
+    defaultMessage: 'Ekki tókst að senda inn umsókn til Vinnueftirlitsins',
+    description: 'Cant connect to Vinnueftirlit',
+  },
+  licensesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.licensesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein réttindi',
+    description: 'Did not find any licenses',
   },
   nationalRegistryName: {
     id: 'application.system:core.fetch.data.nationalRegistryName',

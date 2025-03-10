@@ -496,7 +496,7 @@ const useSections = (
                 onNavigationTo
                   ? async () =>
                       await onNavigationTo(
-                        constants.INDICTMENTS_PROCESSING_ROUTE,
+                        constants.INDICTMENTS_CASE_FILES_ROUTE,
                       )
                   : undefined,
             },

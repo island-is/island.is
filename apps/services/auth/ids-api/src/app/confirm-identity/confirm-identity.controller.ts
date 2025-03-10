@@ -15,6 +15,7 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import {
   CurrentUser,
+  IdsAuthGuard,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
@@ -23,7 +24,7 @@ import type { User } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/confirm-identity'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(ScopesGuard)
 @Scopes('@identityserver.api/authentication')
 @ApiTags('confirm-identity')
 @Controller({
@@ -37,6 +38,7 @@ export class ConfirmIdentityController {
   ) {}
 
   @Post(':id')
+  @UseGuards(IdsUserGuard)
   @Documentation({
     response: {
       status: 200,
@@ -57,9 +59,11 @@ export class ConfirmIdentityController {
   }
 
   @Get(':id')
+  @UseGuards(IdsAuthGuard)
   @Documentation({
     response: {
       status: 200,
+      type: IdentityConfirmationDTO,
     },
     request: {
       params: {

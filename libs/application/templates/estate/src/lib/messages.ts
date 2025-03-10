@@ -600,6 +600,11 @@ export const m = defineMessages({
     defaultMessage: 'Innistæða með vöxtum á dánardegi',
     description: '',
   },
+  bankAccountInterestRate: {
+    id: 'es.application:bankAccountInterestRate',
+    defaultMessage: 'Áfallnir vextir',
+    description: '',
+  },
   bankAccountPlaceholder: {
     id: 'es.application:bankAccountPlaceholder',
     defaultMessage: 'xxxx - xx - xxxxxx',

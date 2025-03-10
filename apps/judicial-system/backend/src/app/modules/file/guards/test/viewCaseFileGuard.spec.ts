@@ -56,8 +56,10 @@ describe('View Case File Guard', () => {
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
             user: {
-              role,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+              currentUser: {
+                role,
+                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+              },
             },
             case: { state },
           }))
@@ -82,7 +84,12 @@ describe('View Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role, institution: { type: InstitutionType.DISTRICT_COURT } },
+          user: {
+            currentUser: {
+              role,
+              institution: { type: InstitutionType.DISTRICT_COURT },
+            },
+          },
           case: { state },
         }))
 
@@ -108,7 +115,12 @@ describe('View Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role, institution: { type: InstitutionType.DISTRICT_COURT } },
+          user: {
+            currentUser: {
+              role,
+              institution: { type: InstitutionType.DISTRICT_COURT },
+            },
+          },
           case: { state },
         }))
 
@@ -138,8 +150,10 @@ describe('View Case File Guard', () => {
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
               user: {
-                role,
-                institution: { type: InstitutionType.COURT_OF_APPEALS },
+                currentUser: {
+                  role,
+                  institution: { type: InstitutionType.COURT_OF_APPEALS },
+                },
               },
               case: { state, appealState },
             }))
@@ -164,8 +178,10 @@ describe('View Case File Guard', () => {
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
             user: {
-              role,
-              institution: { type: InstitutionType.COURT_OF_APPEALS },
+              currentUser: {
+                role,
+                institution: { type: InstitutionType.COURT_OF_APPEALS },
+              },
             },
             case: { state, appealState },
           }))
@@ -193,8 +209,10 @@ describe('View Case File Guard', () => {
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
               user: {
-                role,
-                institution: { type: InstitutionType.COURT_OF_APPEALS },
+                currentUser: {
+                  role,
+                  institution: { type: InstitutionType.COURT_OF_APPEALS },
+                },
               },
               case: { state, appealState },
             }))
@@ -218,10 +236,12 @@ describe('View Case File Guard', () => {
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
           user: {
-            role,
-            institution: {
-              type: InstitutionType.PROSECUTORS_OFFICE,
-              id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+            currentUser: {
+              role,
+              institution: {
+                type: InstitutionType.PROSECUTORS_OFFICE,
+                id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+              },
             },
           },
           case: { state },
@@ -245,10 +265,12 @@ describe('View Case File Guard', () => {
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
           user: {
-            role,
-            institution: {
-              type: InstitutionType.PROSECUTORS_OFFICE,
-              id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+            currentUser: {
+              role,
+              institution: {
+                type: InstitutionType.PROSECUTORS_OFFICE,
+                id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+              },
             },
           },
           case: { state },
@@ -279,7 +301,7 @@ describe('View Case File Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
-          user: { role },
+          user: { currentUser: { role } },
           case: { state },
         }))
 
@@ -313,7 +335,9 @@ describe('View Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user }))
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: user },
+      }))
 
       then = givenWhenThen()
     })

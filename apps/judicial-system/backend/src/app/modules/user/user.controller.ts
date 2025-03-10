@@ -17,7 +17,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
   TokenGuard,
@@ -39,7 +39,7 @@ export class UserController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule)
   @UseInterceptors(UserValidator)
   @Post('user')
@@ -50,7 +50,7 @@ export class UserController {
     return this.userService.create(userToCreate)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule)
   @UseInterceptors(UserValidator)
   @Put('user/:userId')
@@ -64,7 +64,7 @@ export class UserController {
     return this.userService.update(userId, userToUpdate)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthUserGuard)
   @UseInterceptors(UserInterceptor)
   @Get('users')
   @ApiOkResponse({
@@ -78,7 +78,7 @@ export class UserController {
     return this.userService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthUserGuard)
   @Get('user/:userId')
   @ApiOkResponse({
     type: User,
