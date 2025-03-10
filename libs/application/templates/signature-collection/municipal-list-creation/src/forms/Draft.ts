@@ -1,12 +1,10 @@
-import {
-  buildForm,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../../assets/Logo'
 
 import { information } from './sections/information'
 import { overview } from './sections/overview'
 import { confirmation } from './sections/confirmation'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Draft: Form = buildForm({
   id: 'municipalListCreationDraft',
@@ -14,9 +12,5 @@ export const Draft: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   logo: Logo,
-  children: [
-    information,
-    overview,
-    confirmation
-  ],
+  children: [information, overview, confirmation],
 })
