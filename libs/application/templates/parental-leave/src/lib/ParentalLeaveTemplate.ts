@@ -566,6 +566,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -853,6 +859,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -1032,6 +1044,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
@@ -1095,6 +1113,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setApplicationRights,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
               throwOnError: false,
             }),
           ],
@@ -1194,6 +1218,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setApplicationRights,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
               throwOnError: false,
             }),
           ],
@@ -1320,6 +1350,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -1395,6 +1431,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setApplicationRights,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
               throwOnError: false,
             }),
           ],
