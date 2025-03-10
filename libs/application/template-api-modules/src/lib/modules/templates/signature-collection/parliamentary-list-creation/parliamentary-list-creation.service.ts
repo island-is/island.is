@@ -5,8 +5,6 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
-  CreateParliamentaryCandidacyInput,
-  MandateType,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -98,40 +96,13 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     const parliamentaryCollection = application.externalData
       .parliamentaryCollection.data as Collection
 
-    const input: CreateParliamentaryCandidacyInput = {
+    const input = {
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      agents: (answers.managers ?? [])
-        .map((manager) => ({
-          nationalId: manager.manager.nationalId,
-          phoneNumber: '',
-          mandateType: MandateType.Guarantor,
-          email: '',
-          areas: answers.constituency.map((constituency) => {
-            const [id, _name] = constituency.split('|')
-            return {
-              areaId: id,
-            }
-          }),
-        }))
-        .concat(
-          (answers.supervisors ?? []).map((supervisor) => ({
-            nationalId: supervisor.supervisor.nationalId,
-            phoneNumber: '',
-            mandateType: MandateType.Administrator,
-            email: '',
-            areas: supervisor.constituency.map((constituency) => {
-              const [id, _name] = constituency.split('|')
-              return {
-                areaId: id,
-              }
-            }),
-          })),
-        ),
       collectionId: parliamentaryCollection.id,
       areas: answers.constituency.map((constituency) => {
         const [id, _name] = constituency.split('|')
