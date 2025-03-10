@@ -68,6 +68,7 @@ const MedicinePrescriptionHistory = () => {
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirMedicinePrescriptionsTooltip,
       )}
+      marginBottom={6}
     >
       {!loading && !error && history && history.length > 0 && (
         <SortableTable
@@ -154,6 +155,10 @@ const MedicinePrescriptionHistory = () => {
                           variant="text"
                           size="small"
                           loading={atcLoading}
+                          disabled={
+                            atcCode === item.atcCode &&
+                            dispensations?.id === item.atcCode
+                          }
                           onClick={() => {
                             if (item.atcCode) {
                               setAtcCode(item.atcCode)
