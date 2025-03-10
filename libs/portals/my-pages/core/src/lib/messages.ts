@@ -495,35 +495,19 @@ export const m = defineMessages({
   },
   applicationsDescription: {
     id: 'service.portal:applications-description',
-    defaultMessage:
-      'Hér sérðu yfirlit yfir þær umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
+    defaultMessage: 'Staða umsókna sem þú hefur sótt um í gegnum island.is',
   },
   unfinishedApplications: {
-    id: 'service.portal:unfinished-applications',
+    id: 'service.portal:unfinishedApplications',
     defaultMessage: 'Ókláraðar umsóknir',
   },
-  unfinishedApplicationsDescription: {
-    id: 'service.portal:unfinished-applications-description',
-    defaultMessage:
-      'Hér sérðu yfirlit yfir þær ókláruðu umsóknir sem þú hefur hafið í gegnum Ísland.is.',
-  },
   finishedApplications: {
-    id: 'service.portal:finished-applications',
+    id: 'service.portal:finishedApplications',
     defaultMessage: 'Kláraðar umsóknir',
-  },
-  finishedApplicationsDescription: {
-    id: 'service.portal:finished-applications-description',
-    defaultMessage:
-      'Hér sérðu yfirlit yfir þær umsóknir sem þú hefur sótt um í gegnum Ísland.is',
   },
   inProgressApplications: {
     id: 'service.portal:inProgressApplications',
     defaultMessage: 'Umsóknir í vinnslu',
-  },
-  inProgressApplicationsDescription: {
-    id: 'service.portal:inProgress-applications-description',
-    defaultMessage:
-      'Hér sérðu yfirlit yfir þær umsóknir í vinnslu sem þú hefur hafið í gegnum Ísland.is.',
   },
   myInfo: {
     id: 'service.portal:my-info',
