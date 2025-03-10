@@ -15,7 +15,7 @@ import {
   Reorder,
   useDragControls,
   useMotionValue,
-} from 'framer-motion'
+} from 'motion/react'
 import { uuid } from 'uuidv4'
 
 import {
