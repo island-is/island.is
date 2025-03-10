@@ -1213,7 +1213,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-spotlight-search (2.0.0):
+  - react-native-spotlight-search (2.2.0):
     - React
   - react-native-webview (13.8.6):
     - DoubleConversion
@@ -2063,7 +2063,7 @@ SPEC CHECKSUMS:
   react-native-progress-bar-android: 092e6a794f158642692f25c8839d9aa8eb779afb
   react-native-progress-view: 9e6b6a5305a9115c2157ae3b8852081aba0aab7c
   react-native-quick-base64: a74c4b2607b9de016877a8edb776b6ac59785809
-  react-native-spotlight-search: a42542a7818d20f8d815b38436be538e85755330
+  react-native-spotlight-search: 392fe113864a986b21af13595b82fc434e43a6c0
   react-native-webview: 05bae3a03a1e4f59568dfc05286c0ebf8954106c
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 8d11ff8955181540585c944cf48e9e7236952697
