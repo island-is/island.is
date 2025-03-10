@@ -9,10 +9,14 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-import { CertificationTypesEnum } from '@island.is/form-system/enums'
+import {
+  CertificationTypesEnum,
+  ListTypesEnum,
+  FieldTypesEnum,
+} from '@island.is/form-system/enums'
 
-@Table({ tableName: 'organization_certification_type' })
-export class OrganizationCertificationType extends Model<OrganizationCertificationType> {
+@Table({ tableName: 'organization_permission' })
+export class OrganizationPermission extends Model<OrganizationPermission> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -38,7 +42,11 @@ export class OrganizationCertificationType extends Model<OrganizationCertificati
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(CertificationTypesEnum),
+    values: [
+      ...Object.values(CertificationTypesEnum),
+      ...Object.values(ListTypesEnum),
+      ...Object.values(FieldTypesEnum),
+    ],
   })
-  certificationTypeId!: string
+  permission!: string
 }

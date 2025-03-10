@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
 
-export const DELETE_ORGANIZATION_CERTIFICATION = gql`
-  mutation FormSystemDeleteOrganizationCertification(
-    $input: FormSystemUpdateOrganizationCertificationTypeInput!
+export const DELETE_ORGANIZATION_PERMISSION = gql`
+  mutation FormSystemDeleteOrganizationPermission(
+    $input: FormSystemUpdateOrganizationPermissionInput!
   ) {
-    formSystemDeleteOrganizationCertification(input: $input)
+    formSystemDeleteOrganizationPermission(input: $input)
   }
 `

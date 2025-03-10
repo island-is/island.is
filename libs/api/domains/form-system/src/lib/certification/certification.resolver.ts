@@ -11,10 +11,13 @@ import { CertificationsService } from './certification.service'
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
-  OrganizationCertificationTypeUpdateInput,
+  // OrganizationCertificationTypeUpdateInput,
+  OrganizationPermissionUpdateInput,
 } from '../../dto/certification.input'
-import { FormCertificationTypeDto } from '../../models/certification.model'
-import { OrganizationCertificationTypeDto } from '@island.is/clients/form-system'
+import {
+  FormCertificationTypeDto,
+  OrganizationPermissionDto,
+} from '../../models/certification.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -45,32 +48,26 @@ export class CertificationsResolver {
     return this.certificationsService.deleteCertification(user, input)
   }
 
-  @Mutation(() => FormCertificationTypeDto, {
-    name: 'formSystemCreateOrganizationCertification',
+  @Mutation(() => OrganizationPermissionDto, {
+    name: 'formSystemCreateOrganizationPermission',
   })
-  async createOrganizationCertification(
-    @Args('input', { type: () => OrganizationCertificationTypeUpdateInput })
-    input: OrganizationCertificationTypeUpdateInput,
+  async createOrganizationPermission(
+    @Args('input', { type: () => OrganizationPermissionUpdateInput })
+    input: OrganizationPermissionUpdateInput,
     @CurrentUser() user: User,
-  ): Promise<OrganizationCertificationTypeDto> {
-    return this.certificationsService.createOrganizationCertification(
-      user,
-      input,
-    )
+  ): Promise<OrganizationPermissionDto> {
+    return this.certificationsService.createOrganizationPermission(user, input)
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteOrganizationCertification',
+    name: 'formSystemDeleteOrganizationPermission',
     nullable: true,
   })
-  async deleteOrganizationCertification(
-    @Args('input', { type: () => OrganizationCertificationTypeUpdateInput })
-    input: OrganizationCertificationTypeUpdateInput,
+  async deleteOrganizationPermission(
+    @Args('input', { type: () => OrganizationPermissionUpdateInput })
+    input: OrganizationPermissionUpdateInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    return this.certificationsService.deleteOrganizationCertification(
-      user,
-      input,
-    )
+    return this.certificationsService.deleteOrganizationPermission(user, input)
   }
 }

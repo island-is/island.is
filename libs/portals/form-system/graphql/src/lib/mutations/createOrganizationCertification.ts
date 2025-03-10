@@ -1,12 +1,11 @@
 import { gql } from '@apollo/client'
 
-export const CREATE_ORGANIZATION_CERTIFICATION = gql`
-  mutation FormSystemCreateOrganizationCertification(
-    $input: FormSystemUpdateOrganizationCertificationTypeInput!
+export const CREATE_ORGANIZATION_PERMISSION = gql`
+  mutation FormSystemCreateOrganizationPermission(
+    $input: FormSystemUpdateOrganizationPermissionInput!
   ) {
-    formSystemCreateOrganizationCertification(input: $input) {
-      id
-      certificationTypeId
+    formSystemCreateOrganizationPermission(input: $input) {
+      permission
     }
   }
 `

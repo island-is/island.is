@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
-import { OrganizationCertificationType } from '../../organizationCertificationTypes/models/organizationCertificationType.model'
+import { OrganizationPermission } from '../../organizationCertificationTypes/models/organizationCertificationType.model'
 import { OrganizationFieldType } from '../../organizationFieldTypes/models/organizationFieldType.model'
 import { OrganizationListType } from '../../organizationListTypes/models/organizationListType.model'
 import { OrganizationUrl } from '../../organizationUrls/models/organizationUrl.model'
@@ -48,14 +48,17 @@ export class Organization extends Model<Organization> {
   @HasMany(() => Form)
   forms?: Form[]
 
-  @HasMany(() => OrganizationFieldType)
-  organizationFieldTypes?: OrganizationFieldType[]
+  // @HasMany(() => OrganizationFieldType)
+  // organizationFieldTypes?: OrganizationFieldType[]
 
-  @HasMany(() => OrganizationCertificationType)
-  organizationCertificationTypes?: OrganizationCertificationType[]
+  @HasMany(() => OrganizationPermission)
+  organizationPermissions?: OrganizationPermission[]
 
-  @HasMany(() => OrganizationListType)
-  organizationListTypes?: OrganizationListType[]
+  // @HasMany(() => OrganizationCertificationType)
+  // organizationCertificationTypes?: OrganizationCertificationType[]
+
+  // @HasMany(() => OrganizationListType)
+  // organizationListTypes?: OrganizationListType[]
 
   @HasMany(() => OrganizationUrl)
   organizationUrls?: OrganizationUrl[]

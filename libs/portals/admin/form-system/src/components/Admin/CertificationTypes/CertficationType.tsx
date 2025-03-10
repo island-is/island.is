@@ -6,8 +6,8 @@ import {
 import {
   CREATE_CERTIFICATION,
   DELETE_CERTIFICATION,
-  CREATE_ORGANIZATION_CERTIFICATION,
-  DELETE_ORGANIZATION_CERTIFICATION,
+  CREATE_ORGANIZATION_PERMISSION,
+  DELETE_ORGANIZATION_PERMISSION,
 } from '@island.is/form-system/graphql'
 import {
   Box,
@@ -31,27 +31,21 @@ export const CertificationType = ({
   isSelected,
 }: Props) => {
   const [isSelectedState, setIsSelectedState] = useState(isSelected)
-  const [addCertificationType] = useMutation(
-    CREATE_ORGANIZATION_CERTIFICATION,
-    {
-      onCompleted: (newCertificationData) => {
-        if (
-          newCertificationData?.formSystemCreateOrganizationCertification
-            ?.certificationTypeId
-        ) {
-          setSelectedCertificationTypesState((prevCertifications) => [
-            ...prevCertifications,
-            newCertificationData.formSystemCreateOrganizationCertification
-              ?.certificationTypeId,
-          ])
-        }
-      },
+  const [addCertificationType] = useMutation(CREATE_ORGANIZATION_PERMISSION, {
+    onCompleted: (newCertificationData) => {
+      if (
+        newCertificationData?.formSystemCreateOrganizationPermission?.permission
+      ) {
+        setSelectedCertificationTypesState((prevCertifications) => [
+          ...prevCertifications,
+          newCertificationData.formSystemCreateOrganizationPermission
+            ?.permission,
+        ])
+      }
     },
-  )
+  })
 
-  const [removeCertificationType] = useMutation(
-    DELETE_ORGANIZATION_CERTIFICATION,
-  )
+  const [removeCertificationType] = useMutation(DELETE_ORGANIZATION_PERMISSION)
 
   useEffect(() => {
     setIsSelectedState(isSelected)
@@ -70,8 +64,8 @@ export const CertificationType = ({
                 await addCertificationType({
                   variables: {
                     input: {
-                      updateOrganizationCertificationTypeDto: {
-                        certificationTypeId: certificationType.id,
+                      updateOrganizationPermissionDto: {
+                        permission: certificationType.id,
                         organizationId: organizationId,
                       },
                     },
@@ -81,8 +75,8 @@ export const CertificationType = ({
                 await removeCertificationType({
                   variables: {
                     input: {
-                      updateOrganizationCertificationTypeDto: {
-                        certificationTypeId: certificationType.id,
+                      updateOrganizationPermissionDto: {
+                        permission: certificationType.id,
                         organizationId: organizationId,
                       },
                     },

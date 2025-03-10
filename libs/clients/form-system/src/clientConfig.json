@@ -1432,58 +1432,58 @@
         ]
       }
     },
-    "/organizationCertificationTypes": {
+    "/organizationPermissions": {
       "post": {
-        "operationId": "OrganizationCertificationTypesController_create",
-        "summary": "Add organization certification type",
+        "operationId": "OrganizationPermissionsController_create",
+        "summary": "Add organization permission",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateOrganizationCertificationTypeDto"
+                "$ref": "#/components/schemas/UpdateOrganizationPermissionDto"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Add organization certification type",
+            "description": "Add organization permission",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationCertificationTypeDto"
+                  "$ref": "#/components/schemas/OrganizationPermissionDto"
                 }
               }
             }
           }
         },
         "tags": [
-          "organization certification types"
+          "organization permissions"
         ]
       },
       "delete": {
-        "operationId": "OrganizationCertificationTypesController_delete",
-        "summary": "Remove organization certification type",
+        "operationId": "OrganizationPermissionsController_delete",
+        "summary": "Remove organization permission",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateOrganizationCertificationTypeDto"
+                "$ref": "#/components/schemas/UpdateOrganizationPermissionDto"
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Remove organization certification type"
+            "description": "Remove organization permission"
           }
         },
         "tags": [
-          "organization certification types"
+          "organization permissions"
         ]
       }
     },
@@ -3075,34 +3075,30 @@
           "organizationUrlId"
         ]
       },
-      "UpdateOrganizationCertificationTypeDto": {
+      "UpdateOrganizationPermissionDto": {
         "type": "object",
         "properties": {
           "organizationId": {
             "type": "string"
           },
-          "certificationTypeId": {
+          "permission": {
             "type": "string"
           }
         },
         "required": [
           "organizationId",
-          "certificationTypeId"
+          "permission"
         ]
       },
-      "OrganizationCertificationTypeDto": {
+      "OrganizationPermissionDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "certificationTypeId": {
+          "permission": {
             "type": "string"
           }
         },
         "required": [
-          "id",
-          "certificationTypeId"
+          "permission"
         ]
       },
       "CreateOrganizationFieldTypeDto": {

@@ -17,7 +17,7 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { OrganizationCertificationType } from '../organizationCertificationTypes/models/organizationCertificationType.model'
+import { OrganizationPermission } from '../organizationCertificationTypes/models/organizationCertificationType.model'
 import {
   CertificationType,
   CertificationTypes,
@@ -421,13 +421,13 @@ export class FormsService {
     )
 
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationCertificationType],
+      include: [OrganizationPermission],
     })
 
     const uncommonCertificationTypes = CertificationTypes.filter(
       (certificationType) =>
-        organization?.organizationCertificationTypes?.some(
-          (item) => item.certificationTypeId === certificationType.id,
+        organization?.organizationPermissions?.some(
+          (item) => item.permission === certificationType.id,
         ),
     )
 
@@ -448,8 +448,8 @@ export class FormsService {
     })
 
     const uncommonFieldTypes = FieldTypes.filter((fieldType) =>
-      organization?.organizationFieldTypes?.some(
-        (item) => item.fieldTypeId === fieldType.id,
+      organization?.organizationPermissions?.some(
+        (item) => item.permission === fieldType.id,
       ),
     )
 
@@ -481,8 +481,8 @@ export class FormsService {
     })
 
     const uncommonListTypes = ListTypes.filter((listType) =>
-      organization?.organizationListTypes?.some(
-        (item) => item.listTypeId === listType.id,
+      organization?.organizationPermissions?.some(
+        (item) => item.permission === listType.id,
       ),
     )
 

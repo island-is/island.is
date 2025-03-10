@@ -16,52 +16,52 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { OrganizationCertificationTypesService } from './organizationCertificationTypes.service'
-import { OrganizationCertificationTypeDto } from './models/dto/organizationCertificationType.dto'
-import { UpdateOrganizationCertificationTypeDto } from './models/dto/updateOrganizationCertificationType.dto'
+import { OrganizationPermissionsService } from './organizationCertificationTypes.service'
+import { OrganizationPermissionDto } from './models/dto/organizationCertificationType.dto'
+import { UpdateOrganizationPermissionDto } from './models/dto/updateOrganizationCertificationType.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystemAdmin)
-@ApiTags('organization certification types')
+@ApiTags('organization permissions')
 @Controller({
-  path: 'organizationCertificationTypes',
+  path: 'organizationPermissions',
   version: ['1', VERSION_NEUTRAL],
 })
-export class OrganizationCertificationTypesController {
+export class OrganizationPermissionsController {
   constructor(
-    private organizationCertificationTypesService: OrganizationCertificationTypesService,
+    private organizationPermissionsService: OrganizationPermissionsService,
   ) {}
 
-  @ApiOperation({ summary: 'Add organization certification type' })
+  @ApiOperation({ summary: 'Add organization permission' })
   @ApiCreatedResponse({
-    description: 'Add organization certification type',
-    type: OrganizationCertificationTypeDto,
+    description: 'Add organization permission',
+    type: OrganizationPermissionDto,
   })
-  @ApiBody({ type: UpdateOrganizationCertificationTypeDto })
+  @ApiBody({ type: UpdateOrganizationPermissionDto })
   @Post()
   create(
     @Body()
-    createOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
-  ): Promise<OrganizationCertificationTypeDto> {
-    return this.organizationCertificationTypesService.create(
-      createOrganizationCertificationTypeDto,
+    createOrganizationPermissionDto: UpdateOrganizationPermissionDto,
+  ): Promise<OrganizationPermissionDto> {
+    return this.organizationPermissionsService.create(
+      createOrganizationPermissionDto,
     )
   }
 
-  @ApiOperation({ summary: 'Remove organization certification type' })
+  @ApiOperation({ summary: 'Remove organization permission' })
   @ApiNoContentResponse({
-    description: 'Remove organization certification type',
+    description: 'Remove organization permission',
   })
-  @ApiBody({ type: UpdateOrganizationCertificationTypeDto })
+  @ApiBody({ type: UpdateOrganizationPermissionDto })
   @Delete()
   async delete(
     @Body()
-    deleteOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
+    deleteOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<void> {
-    return this.organizationCertificationTypesService.delete(
-      deleteOrganizationCertificationTypeDto,
+    return this.organizationPermissionsService.delete(
+      deleteOrganizationPermissionDto,
     )
   }
 }

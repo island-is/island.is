@@ -1,87 +1,80 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { OrganizationCertificationType } from './models/organizationCertificationType.model'
-import { UpdateOrganizationCertificationTypeDto } from './models/dto/updateOrganizationCertificationType.dto'
-import { OrganizationCertificationTypeDto } from './models/dto/organizationCertificationType.dto'
+import { OrganizationPermission } from './models/organizationCertificationType.model'
+import { UpdateOrganizationPermissionDto } from './models/dto/updateOrganizationCertificationType.dto'
+import { OrganizationPermissionDto } from './models/dto/organizationCertificationType.dto'
 import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 @Injectable()
-export class OrganizationCertificationTypesService {
+export class OrganizationPermissionsService {
   constructor(
-    @InjectModel(OrganizationCertificationType)
-    private readonly organizationCertificationTypeModel: typeof OrganizationCertificationType,
+    @InjectModel(OrganizationPermission)
+    private readonly organizationPermissionModel: typeof OrganizationPermission,
   ) {}
 
   async create(
-    createOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
-  ): Promise<OrganizationCertificationTypeDto> {
-    const certificationType = CertificationTypes.find(
-      (certificationType) =>
-        certificationType.id ===
-        createOrganizationCertificationTypeDto.certificationTypeId,
-    )
+    createOrganizationPermissionDto: UpdateOrganizationPermissionDto,
+  ): Promise<OrganizationPermissionDto> {
+    // const permission = await this.getCombinedTypes.find(
+    //   (permission) =>
+    //     certificationType.id === createOrganizationPermissionDto.permission,
+    // )
 
-    if (!certificationType) {
-      throw new NotFoundException(
-        `certificationType with id '${createOrganizationCertificationTypeDto.certificationTypeId}' not found`,
-      )
-    }
+    // if (!certificationType) {
+    //   throw new NotFoundException(
+    //     `certificationType with id '${createOrganizationPermissionDto.permission}' not found`,
+    //   )
+    // }
 
-    const organizationCertificationType =
-      createOrganizationCertificationTypeDto as OrganizationCertificationType
+    const organizationPermission =
+      createOrganizationPermissionDto as OrganizationPermission
 
-    const newOrganizationCertificationType: OrganizationCertificationType =
-      new this.organizationCertificationTypeModel(organizationCertificationType)
+    const newOrganizationPermission: OrganizationPermission =
+      new this.organizationPermissionModel(organizationPermission)
 
-    console.log(
-      'newOrganizationCertificationType',
-      newOrganizationCertificationType,
-    )
+    await newOrganizationPermission.save()
 
-    await newOrganizationCertificationType.save()
+    const keys = ['permission']
+    const organizationPermissionDto: OrganizationPermissionDto = defaults(
+      pick(newOrganizationPermission, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as OrganizationPermissionDto
 
-    // const newOrganizationCertificationType =
-    //   await this.organizationCertificationTypeModel.create({
-    //     organizationId:
-    //     organizationCertificationType.organizationId,
-    //     certificationTypeId:
-    //     organizationCertificationType.certificationTypeId,
-    //   })
-
-    const keys = ['id', 'certificationTypeId']
-    const organizationCertificationTypeDto: OrganizationCertificationTypeDto =
-      defaults(
-        pick(newOrganizationCertificationType, keys),
-        zipObject(keys, Array(keys.length).fill(null)),
-      ) as OrganizationCertificationTypeDto
-
-    return organizationCertificationTypeDto
+    return organizationPermissionDto
   }
 
   async delete(
-    deleteOrganizationCertificationTypeDto: UpdateOrganizationCertificationTypeDto,
+    deleteOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<void> {
-    const organizationCertificationType =
-      await this.organizationCertificationTypeModel.findOne({
+    const organizationPermission =
+      await this.organizationPermissionModel.findOne({
         where: {
-          organizationId: deleteOrganizationCertificationTypeDto.organizationId,
-          certificationTypeId:
-            deleteOrganizationCertificationTypeDto.certificationTypeId,
+          organizationId: deleteOrganizationPermissionDto.organizationId,
+          permission: deleteOrganizationPermissionDto.permission,
         },
       })
 
-    if (!organizationCertificationType) {
+    if (!organizationPermission) {
       {
         throw new NotFoundException(
-          `Organization certification type with 
-        organizationId '${deleteOrganizationCertificationTypeDto.organizationId}' and
-        certificationTypeId '${deleteOrganizationCertificationTypeDto.certificationTypeId}' not found`,
+          `Organization permission with 
+        organizationId '${deleteOrganizationPermissionDto.organizationId}' and
+        permission '${deleteOrganizationPermissionDto.permission}' not found`,
         )
       }
     }
-    organizationCertificationType.destroy()
+    organizationPermission.destroy()
   }
+
+  // private async getCombinedTypes(): Promise<string[]> {
+  //   const combinedTypes = [
+  //     ...Object.values(CertificationTypes),
+  //     ...Object.values(ListTypes),
+  //     ...Object.values(FieldTypes),
+  //   ]
+  //   return combinedTypes
+  // }
 }

@@ -59,11 +59,7 @@ export class OrganizationsService {
 
     const organization = await this.organizationModel.findOne({
       where: { nationalId },
-      include: [
-        'organizationCertificationTypes',
-        'organizationFieldTypes',
-        'organizationListTypes',
-      ],
+      include: ['organizationPermissions'],
     })
 
     if (!organization) {
@@ -77,10 +73,10 @@ export class OrganizationsService {
 
     organizationAdminDto.organizationId = organization.id
 
-    if (organization.organizationCertificationTypes) {
+    if (organization.organizationPermissions) {
       organizationAdminDto.selectedCertificationTypes =
-        organization.organizationCertificationTypes.map(
-          (certificationType) => certificationType.certificationTypeId,
+        organization.organizationPermissions.map(
+          (certificationType) => certificationType.permission,
         )
     }
 

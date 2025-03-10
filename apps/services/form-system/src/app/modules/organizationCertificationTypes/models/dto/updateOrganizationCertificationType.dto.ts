@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString } from 'class-validator'
 
-export class UpdateOrganizationCertificationTypeDto {
+export class UpdateOrganizationPermissionDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -10,5 +10,5 @@ export class UpdateOrganizationCertificationTypeDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  certificationTypeId!: string
+  permission!: string
 }
