@@ -7,6 +7,7 @@ import {
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Subpoena } from '../../subpoena'
@@ -17,6 +18,7 @@ registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
 registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 registerEnumType(PunishmentType, { name: 'PunishmentType' })
+registerEnumType(VerdictAppealDecision, { name: 'VerdictAppealDecision' })
 
 @ObjectType()
 export class Defendant {
@@ -73,6 +75,9 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
+
+  @Field(() => VerdictAppealDecision, { nullable: true })
+  readonly verdictAppealDecision?: VerdictAppealDecision
 
   @Field(() => String, { nullable: true })
   readonly verdictAppealDate?: string

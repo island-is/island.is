@@ -9,6 +9,7 @@ import {
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -85,6 +86,11 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly verdictViewDate?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => VerdictAppealDecision, { nullable: true })
+  readonly verdictAppealDecision?: VerdictAppealDecision
 
   @Allow()
   @IsOptional()

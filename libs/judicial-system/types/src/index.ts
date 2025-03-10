@@ -8,6 +8,7 @@ export {
   ServiceRequirement,
   ServiceStatus,
   PunishmentType,
+  VerdictAppealDecision,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
