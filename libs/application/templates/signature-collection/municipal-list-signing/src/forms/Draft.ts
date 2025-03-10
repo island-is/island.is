@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -8,14 +7,19 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Application, SignatureCollectionList } from '@island.is/api/schema'
-import { format as formatNationalId } from 'kennitala'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
+
 import { m } from '../lib/messages'
+import { SignatureCollectionList } from '@island.is/api/schema'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Draft: Form = buildForm({
-  id: 'ParliamentaryListSigningDraft',
+  id: 'SignListDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
@@ -23,7 +27,6 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'selectCandidateSection',
-      title: m.selectCandidate,
       condition: (_, externalData) => {
         const lists =
           getValueViaPath<SignatureCollectionList[]>(
@@ -40,6 +43,7 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
+              backgroundColor: 'white',
               defaultValue: '',
               required: true,
               options: ({ externalData }) => {
@@ -50,7 +54,7 @@ export const Draft: Form = buildForm({
                   ) || []
                 return data?.map((list) => ({
                   value: list.id,
-                  label: list.candidate.name,
+                  label: list.title,
                   disabled:
                     list.maxReached || new Date(list.endTime) < new Date(),
                   tag: list.maxReached
@@ -74,24 +78,25 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'signListInformationSection',
-      title: m.information,
+      id: 'signeeInfo',
       children: [
         buildMultiField({
-          id: 'listInformation',
-          title: m.signListViewTitle,
-          description: m.signListViewDescription,
+          id: 'signeeInfo',
+          title: m.listName,
+          description: m.listDescription,
           children: [
-            buildDescriptionField({
-              id: 'listHeader',
-              title: m.listHeader,
-              titleVariant: 'h3',
-            }),
-
             buildTextField({
-              id: 'list.name',
-              title: m.listName,
-              width: 'half',
+              id: 'municipality',
+              title: m.municipality,
+              width: 'full',
+              readOnly: true,
+              //Todo: update once available from externalData
+              defaultValue: 'Borgarbyggð',
+            }),
+            buildTextField({
+              id: 'candidateName',
+              title: m.candidateName,
+              width: 'full',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
                 const lists =
@@ -100,65 +105,27 @@ export const Draft: Form = buildForm({
                     'getList.data',
                   ) || []
 
-                const initialQuery = getValueViaPath(
-                  answers,
-                  'initialQuery',
-                  '',
-                )
-
-                return lists.find((list) =>
-                  initialQuery
-                    ? list.candidate.id === initialQuery
-                    : list.id === answers.listId,
-                )?.candidate?.name
+                return lists.length === 1
+                  ? lists[0].candidate.name
+                  : lists.find((list) => list.id === answers.listId)?.candidate
+                      .name
               },
             }),
             buildTextField({
-              id: 'list.letter',
-              title: m.listLetter,
+              id: 'guarantorsNationalId',
+              title: m.guarantorsNationalId,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ answers, externalData }: Application) => {
-                const lists =
-                  getValueViaPath<SignatureCollectionList[]>(
-                    externalData,
-                    'getList.data',
-                  ) || []
-
-                const initialQuery = getValueViaPath(
-                  answers,
-                  'initialQuery',
-                  '',
-                )
-
-                return lists.find((list) =>
-                  initialQuery
-                    ? list.candidate.id === initialQuery
-                    : list.id === answers.listId,
-                )?.candidate?.partyBallotLetter
-              },
-            }),
-            buildDescriptionField({
-              id: 'signeeHeader',
-              title: m.signeeHeader,
-              titleVariant: 'h3',
-              marginTop: 'containerGutter',
+              //Todo: update once available from externalData
+              defaultValue: '010130-3019',
             }),
             buildTextField({
-              id: 'signee.name',
-              title: m.name,
+              id: 'guarantorsName',
+              title: m.guarantorsName,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) =>
-                externalData.nationalRegistry?.data.fullName,
-            }),
-            buildTextField({
-              id: 'signee.nationalId',
-              title: m.nationalId,
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                formatNationalId(application.applicant),
+              //Todo: update once available from externalData
+              defaultValue: 'Jón Jónsson',
             }),
             buildSubmitField({
               id: 'submit',

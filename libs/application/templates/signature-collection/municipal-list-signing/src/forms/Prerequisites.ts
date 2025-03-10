@@ -2,22 +2,22 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildSubmitField,
-  buildSection,
-  buildMultiField,
   buildImageField,
+  buildMultiField,
+  buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
   Form,
   FormModes,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
+
 import { m } from '../lib/messages'
-import { CanSignApi, GetListApi } from '../dataProviders'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
@@ -35,7 +35,7 @@ export const Prerequisites: Form = buildForm({
           description: m.introDescription,
           children: [
             buildImageField({
-              id: 'doneImage',
+              id: 'introImage',
               image: DigitalServices,
               imageWidth: 'auto',
               imagePosition: 'center',
@@ -66,11 +66,6 @@ export const Prerequisites: Form = buildForm({
             ],
           }),
           dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
-            }),
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
               title: m.nationalRegistryProviderTitle,
