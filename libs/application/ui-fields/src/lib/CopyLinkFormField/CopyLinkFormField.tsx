@@ -15,7 +15,16 @@ export const CopyLinkFormField = ({
   showFieldName,
   application,
 }: Props) => {
-  const { id, link, marginTop, marginBottom, title, description } = field
+  const {
+    id,
+    link,
+    marginTop,
+    marginBottom,
+    title,
+    description,
+    semiBoldLink,
+    buttonTitle,
+  } = field
   const { formatMessage, lang: locale } = useLocale()
 
   return (
@@ -25,7 +34,7 @@ export const CopyLinkFormField = ({
       role="region"
       aria-labelledby={id + 'title'}
     >
-      {showFieldName && (
+      {showFieldName && title && (
         <Text
           variant="h4"
           as="h4"
@@ -52,7 +61,24 @@ export const CopyLinkFormField = ({
         />
       )}
       <Box>
-        <Copy linkUrl={link} />
+        <Copy
+          linkUrl={formatTextWithLocale(
+            link,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
+          buttonTitle={
+            buttonTitle &&
+            formatTextWithLocale(
+              buttonTitle,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
+          semiBoldLink={semiBoldLink}
+        />
       </Box>
     </Box>
   )

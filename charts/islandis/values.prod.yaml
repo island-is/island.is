@@ -541,6 +541,8 @@ api:
     UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL: '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL'
     UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
+    VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD'
+    VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY: '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
@@ -1156,7 +1158,7 @@ contentful-entry-tagger-service:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'contentful-entry-tagger-service.devland.is'
+        - host: 'contentful-entry-tagger-service.island.is'
           paths:
             - '/'
   namespace: 'contentful-entry-tagger'
@@ -1883,7 +1885,7 @@ search-indexer-service:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'search-indexer-service.devland.is'
+        - host: 'search-indexer-service.island.is'
           paths:
             - '/'
   initContainer:

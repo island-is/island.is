@@ -120,9 +120,14 @@ export class SubpoenaResponse {
       defendantInfo?.requestedDefenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.requestedDefenderNationalId !== null
     const subpoenas = defendantInfo?.subpoenas ?? []
+
+    const latestSubpoena = subpoenas.sort(
+      (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
+    )[0]
+
     const hasBeenServed =
       subpoenas.length > 0 &&
-      isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
+      isSuccessfulServiceStatus(latestSubpoena.serviceStatus)
     const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
