@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 
 import {
   StudentAssessment,
@@ -13,7 +17,6 @@ import {
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
-  TeacherRights,
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
@@ -143,7 +146,17 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     )
     if (fakeData?.useFakeData === YES) {
       return {
-        currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
+        currentLicense: (() => {
+          switch (fakeData.currentLicense) {
+            case 'temp':
+              return 'B'
+            case 'C':
+            case 'D':
+              return fakeData.currentLicense
+            default:
+              return null
+          }
+        })(),
         remarks:
           fakeData.remarks === YES
             ? [
@@ -154,6 +167,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
                 },
               ]
             : undefined,
+        id: Math.floor(Math.random() * 100000000),
       }
     }
 

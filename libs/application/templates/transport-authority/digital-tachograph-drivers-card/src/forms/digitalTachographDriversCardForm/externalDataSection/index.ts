@@ -3,7 +3,7 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
-import { externalData } from '../../lib/messages'
+import { externalData } from '../../../lib/messages'
 import {
   NationalRegistryUserApi,
   UserProfileApi,
@@ -12,9 +12,10 @@ import {
   QualityPhotoAndSignatureApi,
   NewestDriversCardApi,
   NationalRegistryBirthplaceApi,
-} from '../../dataProviders'
+  MockableSamgongustofaPaymentCatalogApi,
+} from '../../../dataProviders'
 
-export const prerequisitesSection = buildSection({
+export const externalDataSection = buildSection({
   id: 'externalData',
   title: externalData.dataProvider.sectionTitle,
   children: [
@@ -60,6 +61,10 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MockableSamgongustofaPaymentCatalogApi,
           title: '',
         }),
       ],
