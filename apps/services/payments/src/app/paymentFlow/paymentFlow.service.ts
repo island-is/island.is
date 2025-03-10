@@ -14,7 +14,11 @@ import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-reg
 
 import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 
-import { PaymentFlowUpdateEvent, PaymentMethod } from '../../types'
+import {
+  PaymentFlowUpdateEvent,
+  PaymentMethod,
+  PaymentStatus,
+} from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 
@@ -60,7 +64,6 @@ export class PaymentFlowService {
 
       await this.chargeFjsV2ClientService.validateCharge(
         generateChargeFJSPayload({
-          id: paymentFlowId,
           paymentFlow: {
             id: paymentFlowId,
             organisationId: paymentInfo.organisationId,
@@ -228,33 +231,41 @@ export class PaymentFlowService {
     )
 
     const isAlreadyPaid = !!paymentFlowSuccessEvent
-    let hasInvoice = !!paymentFlow.existingInvoiceId
+
+    let paymentStatus: PaymentStatus = isAlreadyPaid
+      ? PaymentStatus.PAID
+      : PaymentStatus.UNPAID
+    let updatedAt = paymentFlowSuccessEvent?.modified ?? paymentFlow.modified
 
     if (!isAlreadyPaid) {
       const chargeConfirmation = (
-        await this.paymentFlowChargeModel.findOne({
+        await this.paymentFlowFjsChargeConfirmationModel.findOne({
           where: {
             paymentFlowId: id,
           },
         })
       )?.toJSON()
 
+      if (chargeConfirmation || paymentFlow.existingInvoiceId) {
+        paymentStatus = PaymentStatus.INVOICE_PENDING
+      }
+
       if (chargeConfirmation) {
-        hasInvoice = true
+        updatedAt = chargeConfirmation.created
       }
     }
 
     return {
       paymentFlow,
       paymentDetails,
-      isAlreadyPaid: !!paymentFlowSuccessEvent,
-      hasInvoice,
+      paymentStatus,
+      updatedAt,
     }
   }
 
   async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
-      const { paymentFlow, paymentDetails, isAlreadyPaid } =
+      const { paymentFlow, paymentDetails, paymentStatus, updatedAt } =
         await this.getPaymentFlowWithPaymentDetails(id)
 
       const payerName = await this.getPayerName(paymentFlow.payerNationalId)
@@ -267,7 +278,8 @@ export class PaymentFlowService {
         payerName,
         availablePaymentMethods:
           paymentFlow.availablePaymentMethods as PaymentMethod[],
-        isPaid: isAlreadyPaid,
+        paymentStatus,
+        updatedAt,
       }
     } catch (e) {
       this.logger.error('Failed to get payment flow', e)

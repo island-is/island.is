@@ -14,7 +14,11 @@ export const serviceSetup = (services: {
   return service('air-discount-scheme-web')
     .namespace('air-discount-scheme')
     .env({
-      API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
+      API_URL: {
+        dev: "http://air-discount-scheme-api",
+        staging: ref((h) => `http://${h.svc(services.adsApi)}`),
+        prod: ref((h) => `http://${h.svc(services.adsApi)}`),
+      },
       IDENTITY_SERVER_ISSUER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',
@@ -33,8 +37,7 @@ export const serviceSetup = (services: {
       ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
-      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
-      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
     })

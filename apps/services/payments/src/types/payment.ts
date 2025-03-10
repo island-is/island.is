@@ -6,6 +6,12 @@ export enum PaymentMethod {
   INVOICE = 'invoice',
 }
 
+export enum PaymentStatus {
+  UNPAID = 'unpaid',
+  INVOICE_PENDING = 'invoice_pending',
+  PAID = 'paid',
+}
+
 export type PaymentFlowUpdateEvent = {
   type: PaymentFlowEvent['type']
   paymentFlowId: PaymentFlowEvent['paymentFlowId'] // Unique identifier for the payment flow

@@ -39,7 +39,7 @@ export const PaymentReceipt = (props: PaymentReceiptProps) => {
             {key === 'amount'
               ? todoCallGlobalFormatUtilFunction(props[key])
               : key === 'paidAt'
-              ? format(props[key], 'yyyy-MM-dd HH:MM')
+              ? format(new Date(props[key]), 'yyyy-MM-dd HH:MM')
               : props[key]}
           </Text>
         </Box>

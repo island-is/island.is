@@ -171,4 +171,16 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn um heimilisuppbót hefur verið samþykkt',
     description: 'The application for household supplement has been approved',
   },
+  householdSupplementDismissed: {
+    id: 'hs.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um heimilisuppbót frá',
+    description:
+      'Tryggingastofnun has dismissed your household supplement application',
+  },
+  householdSupplementDismissedDescription: {
+    id: 'hs.application:application.dismissed.description',
+    defaultMessage: 'Umsókn þinni um heimilisuppbót hefur verið vísað frá',
+    description: 'Your household supplement application has been dimissed',
+  },
 })

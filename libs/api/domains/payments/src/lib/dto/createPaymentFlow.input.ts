@@ -18,6 +18,17 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from '@island.is/clients/payments'
 
+@InputType('PaymentsCreateExtraDataItem')
+export class ExtraDataItem {
+  @Field(() => String, { description: 'Key' })
+  @IsString()
+  name!: string
+
+  @Field(() => String, { description: 'Value' })
+  @IsString()
+  value!: string
+}
+
 @InputType('PaymentsCreateChargeInput')
 export class ChargeInput {
   @Field(() => String, { description: 'Charge type' })
@@ -125,4 +136,11 @@ export class CreatePaymentFlowInput {
   @IsBoolean()
   @IsOptional()
   redirectToReturnUrlOnSuccess?: boolean
+
+  @Field(() => [ExtraDataItem], {
+    nullable: true,
+    description:
+      'Define key value pairs of extra data that should be included when creating the FJS charge for the payment, example: car license plate, house address etc.',
+  })
+  extraData?: ExtraDataItem[]
 }

@@ -8,7 +8,7 @@ import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
-import { PaymentMethod } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { AppModule } from '../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { SavedVerificationPendingData } from './cardPayment.types'
@@ -88,7 +88,7 @@ describe('CardPaymentController', () => {
           catalogItems: charges,
           totalPrice: 1000,
           isAlreadyPaid: false,
-          hasInvoice: false,
+          paymentStatus: 'unpaid',
         }),
       )
 
@@ -432,10 +432,10 @@ describe('CardPaymentController', () => {
       const getPaymentFlowWithPaymentDetailsSpy = jest
         .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
         .mockResolvedValue({
-          isAlreadyPaid: true,
           paymentDetails: {} as any,
           paymentFlow: {} as any,
-          hasInvoice: false,
+          paymentStatus: PaymentStatus.PAID,
+          updatedAt: new Date(),
         })
 
       const response = await server

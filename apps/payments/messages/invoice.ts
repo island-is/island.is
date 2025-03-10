@@ -22,3 +22,17 @@ export const invoice = defineMessages({
     description: 'Create invoice',
   },
 })
+
+export const invoiceSuccess = defineMessages({
+  title: {
+    id: 'payments.invoiceSuccess:title',
+    defaultMessage: 'Krafa stofnuð',
+    description: 'Invoice created successfuly',
+  },
+  subTitle: {
+    id: 'payments.invoiceSuccess:subTitle',
+    defaultMessage:
+      '[Einhver texti um að krafa hafi verið stofnuð og verði send í netbanka]',
+    description: 'Description on invoice creation and online bank',
+  },
+})

@@ -22,6 +22,7 @@ interface UserProvider {
   isAuthenticated?: boolean
   limitedAccess?: boolean
   user?: User
+  eligibleUsers?: User[]
 }
 
 export const UserContext = createContext<UserProvider>({})
@@ -36,6 +37,7 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
   authenticated = false,
 }) => {
   const [user, setUser] = useState<User>()
+  const [eligibleUsers, setEligibleUsers] = useState<User[]>()
 
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
@@ -46,26 +48,29 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
     errorPolicy: 'all',
   })
 
-  const loggedInUser = data?.currentUser
+  const currentUser = data?.currentUser
 
   useEffect(() => {
-    if (loggedInUser && !user) {
-      setUser(loggedInUser)
+    if (currentUser?.user && !user) {
+      setUser(currentUser?.user ?? undefined)
     }
-  }, [setUser, loggedInUser, user])
+    if (currentUser?.eligibleUsers && !eligibleUsers) {
+      setEligibleUsers(currentUser?.eligibleUsers)
+    }
+  }, [setUser, currentUser, user, eligibleUsers])
 
   return (
     <UserContext.Provider
       value={{
         isAuthenticated,
+        user: user,
+        eligibleUsers: eligibleUsers,
         limitedAccess:
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&
           !isDistrictCourtUser(user) &&
           !isCourtOfAppealsUser(user) &&
           !isPublicProsecutorUser(user),
-
-        user,
       }}
     >
       {children}

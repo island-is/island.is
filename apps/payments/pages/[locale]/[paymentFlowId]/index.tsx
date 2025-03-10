@@ -22,7 +22,13 @@ import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
-import { card, cardSuccess, generic, invoice } from '../../../messages'
+import {
+  card,
+  cardSuccess,
+  generic,
+  invoice,
+  invoiceSuccess,
+} from '../../../messages'
 import {
   getErrorTitleAndMessage,
   PaymentError,
@@ -44,8 +50,9 @@ import {
   GetOrganizationByNationalIdQueryVariables,
   useGetVerificationStatusLazyQuery,
 } from '../../../graphql/queries.graphql.generated'
-import { PaymentReceipt } from '../../../components/PaymentReceipt/PaymentReceipt'
+import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
+import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 
 interface PaymentPageProps {
   locale: string
@@ -388,16 +395,12 @@ export default function PaymentPage({
           },
         })
 
-        console.log({
-          response,
-        })
-
-        if (response.data?.paymentsCreateInvoice.isSuccess) {
-          console.log('success!')
+        if (!response.data?.paymentsCreateInvoice.isSuccess) {
+          alert('Invoice error TODO')
+        } else {
+          router.reload()
+          return // No need to set isSubmitting to false
         }
-
-        // router.push(`${router.asPath}/krafa-stofnud`)
-        return
       }
     } catch (e) {
       setVerificationStatus(false)
@@ -431,24 +434,35 @@ export default function PaymentPage({
     paymentError,
   )
 
-  if (canRenderMainFlow && paymentFlow.isPaid) {
+  const isPaid = paymentFlow?.paymentStatus === 'paid'
+  const isInvoicePending = paymentFlow?.paymentStatus === 'invoice_pending'
+
+  if (canRenderMainFlow && (isPaid || isInvoicePending)) {
+    const title = isPaid ? cardSuccess.title : invoiceSuccess.title
+    const subTitle = isPaid ? cardSuccess.subTitle : invoiceSuccess.subTitle
+
+    const ReceiptComponent = isPaid ? PaymentReceipt : InvoiceReceipt
+
     return (
       <>
         <PageCard
           headerSlot={
             <PaymentHeader
-              title={formatMessage(cardSuccess.title)}
-              subTitle={formatMessage(cardSuccess.subTitle)}
+              title={formatMessage(title)}
+              subTitle={formatMessage(subTitle)}
               type="success"
             />
           }
           bodySlot={
             <>
-              <PaymentReceipt
+              <ReceiptComponent
                 productTitle={productInformation.title}
                 amount={productInformation.amount}
-                paidAt={new Date()} // TODO: Get paidAt from paymentFlow
+                paidAt={paymentFlow.updatedAt}
+                payerNationalId={paymentFlow.payerNationalId}
+                payerName={paymentFlow.payerName}
               />
+
               <Box marginTop={4} width="full">
                 <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
                   <Button fluid>

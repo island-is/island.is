@@ -1,14 +1,20 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import { GraphQLJSON } from 'graphql-type-json'
+
+import { GetPaymentFlowDTOPaymentStatusEnum } from '@island.is/clients/payments'
+
+registerEnumType(GetPaymentFlowDTOPaymentStatusEnum, {
+  name: 'PaymentsGetFlowPaymentStatus',
+})
 
 @ObjectType('PaymentsGetPaymentFlowResponse')
 export class GetPaymentFlowResponse {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Boolean)
-  isPaid!: boolean
+  @Field(() => GetPaymentFlowDTOPaymentStatusEnum)
+  paymentStatus!: GetPaymentFlowDTOPaymentStatusEnum
 
   @Field(() => String)
   productTitle!: string
@@ -43,4 +49,7 @@ export class GetPaymentFlowResponse {
 
   @Field(() => Boolean, { nullable: true })
   redirectToReturnUrlOnSuccess?: boolean
+
+  @Field(() => Date)
+  updatedAt!: Date
 }
