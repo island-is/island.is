@@ -1,12 +1,14 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
 import {
   IndictmentCountOffense,
   IndictmentSubtype,
 } from '@island.is/judicial-system/types'
+
+import { Offense } from './offense.model'
 
 registerEnumType(IndictmentCountOffense, { name: 'IndictmentCountOffense' })
 registerEnumType(IndictmentSubtype, { name: 'IndictmentSubtype' })
@@ -31,8 +33,11 @@ export class IndictmentCount {
   @Field(() => String, { nullable: true })
   readonly vehicleRegistrationNumber?: string
 
+  @Field(() => [Offense], { nullable: true })
+  readonly offenses?: Offense[]
+
   @Field(() => [IndictmentCountOffense], { nullable: true })
-  readonly offenses?: IndictmentCountOffense[]
+  readonly deprecatedOffenses?: IndictmentCountOffense[]
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly substances?: SubstanceMap
@@ -48,4 +53,10 @@ export class IndictmentCount {
 
   @Field(() => [IndictmentSubtype], { nullable: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @Field(() => Int, { nullable: true })
+  readonly recordedSpeed?: number
+
+  @Field(() => Int, { nullable: true })
+  readonly speedLimit?: number
 }

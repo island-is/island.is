@@ -58,7 +58,11 @@ export const IconTitleCard = ({
     </span>
     <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
       <div className={styles.titleContainer}>
-        <Text variant={withButton ? 'h4' : 'h5'} color="purple600" truncate>
+        <Text
+          variant={withButton ? 'h4' : 'h5'}
+          color="purple600"
+          whiteSpace="normal"
+        >
           {heading}
         </Text>
       </div>

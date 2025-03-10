@@ -27,7 +27,6 @@ export const prerequisitesSection = buildSection({
       submitField: buildSubmitField({
         id: 'submit',
         placement: 'footer',
-        title: '',
         refetchApplicationAfterSubmit: true,
         actions: [
           {

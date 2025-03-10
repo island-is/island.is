@@ -58,6 +58,9 @@ export interface FilterProps {
 
   /** Mobile title  */
   title?: string
+
+  /** Use the popover disclosure button styling */
+  usePopoverDiscloureButtonStyling?: boolean
 }
 
 /**
@@ -90,6 +93,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   children,
   title,
   popoverFlip = true,
+  usePopoverDiscloureButtonStyling,
 }) => {
   const dialog = useDialogState({ modal: true })
   const popover = usePopoverState({
@@ -205,29 +209,48 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   const dialogContent = () => (
     <>
-      <DialogDisclosure {...dialog} className={styles.dialogDisclosure}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          border="standard"
-          borderColor="blue200"
-          background="white"
-          padding={2}
-          borderRadius="large"
-        >
-          <Text variant="h5" as="h5">
-            {labelOpen}
-          </Text>
-          <Button
-            circle
-            size="small"
-            colorScheme="light"
-            icon="menu"
-            iconType="outline"
-            title={labelOpen}
-            unfocusable
-          />
-        </Box>
+      <DialogDisclosure
+        {...dialog}
+        className={
+          usePopoverDiscloureButtonStyling ? undefined : styles.dialogDisclosure
+        }
+      >
+        {usePopoverDiscloureButtonStyling ? (
+          <Box background="white" borderRadius="large">
+            <Button
+              unfocusable
+              as="span"
+              variant="utility"
+              icon="filter"
+              nowrap
+            >
+              {labelOpen}
+            </Button>
+          </Box>
+        ) : (
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            border="standard"
+            borderColor="blue200"
+            background="white"
+            padding={2}
+            borderRadius="large"
+          >
+            <Text variant="h5" as="h5">
+              {labelOpen}
+            </Text>
+            <Button
+              circle
+              size="small"
+              colorScheme="light"
+              icon="menu"
+              iconType="outline"
+              title={labelOpen}
+              unfocusable
+            />
+          </Box>
+        )}
       </DialogDisclosure>
       <Dialog {...dialog} preventBodyScroll={false}>
         <Box

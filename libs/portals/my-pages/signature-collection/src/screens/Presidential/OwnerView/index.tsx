@@ -50,7 +50,7 @@ const OwnerView = ({
               {formatMessage(m.createListButton)}
             </Button>
           )}
-          <Box marginTop={[2, 7]}>
+          <Box marginTop={[0, 5]}>
             <Text variant="h3" marginBottom={2}>
               {formatMessage(m.collectionTitle)}
             </Text>

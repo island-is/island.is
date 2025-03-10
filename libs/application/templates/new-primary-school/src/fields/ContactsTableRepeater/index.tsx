@@ -37,13 +37,13 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         id,
         title,
         formTitle:
-          newPrimarySchoolMessages.childrenNParents.contactsRegistrationTitle,
+          newPrimarySchoolMessages.childrenNGuardians.contactsRegistrationTitle,
         addItemButtonText:
-          newPrimarySchoolMessages.childrenNParents.contactsAddContact,
+          newPrimarySchoolMessages.childrenNGuardians.contactsAddContact,
         saveItemButtonText:
-          newPrimarySchoolMessages.childrenNParents.contactsRegisterContact,
+          newPrimarySchoolMessages.childrenNGuardians.contactsRegisterContact,
         removeButtonTooltipText:
-          newPrimarySchoolMessages.childrenNParents.contactsDeleteContact,
+          newPrimarySchoolMessages.childrenNGuardians.contactsDeleteContact,
         marginTop: 0,
         maxRows: 4,
         fields: {
@@ -52,7 +52,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             label: newPrimarySchoolMessages.shared.fullName,
             width: 'half',
             type: 'text',
-            dataTestId: 'relative-full-name',
+            dataTestId: 'contact-full-name',
           },
           phoneNumber: {
             component: 'input',
@@ -61,7 +61,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type: 'tel',
             format: '###-####',
             placeholder: '000-0000',
-            dataTestId: 'relative-phone-number',
+            dataTestId: 'contact-phone-number',
           },
           nationalId: {
             component: 'input',
@@ -70,7 +70,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type: 'text',
             format: '######-####',
             placeholder: '000000-0000',
-            dataTestId: 'relative-national-id',
+            dataTestId: 'contact-national-id',
           },
           relation: {
             component: 'select',
@@ -78,7 +78,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             width: 'half',
             placeholder: newPrimarySchoolMessages.shared.relationPlaceholder,
             options: relationFriggOptions,
-            dataTestId: 'relative-relation',
+            dataTestId: 'contact-relation',
           },
         },
         table: {

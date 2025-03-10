@@ -190,6 +190,15 @@ const Overview: FC = () => {
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
+          <Box marginBottom={2}>
+            <AlertMessage
+              title={formatMessage(strings.indictmentCancelledTitle)}
+              message={formatMessage(strings.indictmentCancelledMessage)}
+              type="warning"
+            />
+          </Box>
+        )}
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map((subpoena) => (
             <ServiceAnnouncement
@@ -201,6 +210,7 @@ const Overview: FC = () => {
         )}
         {workingCase.court &&
           latestDate?.date &&
+          workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
@@ -306,7 +316,7 @@ const Overview: FC = () => {
           previousUrl={
             isIndictmentReceived || isIndictmentWaitingForCancellation
               ? constants.CASES_ROUTE
-              : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
+              : `${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             userCanSendIndictmentToCourt

@@ -51,16 +51,6 @@ export const school = {
       defaultMessage: 'Ég óska eftir heimavist',
       description: 'Request dormitory checkbox label',
     },
-    schoolDuplicateError: {
-      id: 'ss.application:school.selection.schoolDuplicateError',
-      defaultMessage: 'Það má ekki velja sama skóla tvisvar',
-      description: 'School duplicate error',
-    },
-    programDuplicateError: {
-      id: 'ss.application:school.selection.programDuplicateError',
-      defaultMessage: 'Það má ekki velja sömu braut tvisvar í sama vali',
-      description: 'Program duplicate error',
-    },
     addButtonLabel: {
       id: 'ss.application:school.selection.addButtonLabel',
       defaultMessage: 'Bæta við vali á skóla',
@@ -95,7 +85,7 @@ export const school = {
     addDescription: {
       id: 'ss.application:school.thirdSelection.addDescription',
       defaultMessage:
-        'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inn í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
+        'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inni í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
       description: 'Add third selection description',
     },
   }),

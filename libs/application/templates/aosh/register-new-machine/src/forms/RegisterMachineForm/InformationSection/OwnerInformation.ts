@@ -7,9 +7,11 @@ import {
   buildSelectField,
   buildCustomField,
   buildAlertMessageField,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import {
   isOwnerOtherThanImporter,
   doOwnerAndImporterHaveSameNationalId,

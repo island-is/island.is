@@ -494,6 +494,7 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
     formNamespace,
     serviceWebPage: getServiceWebPage,
     locale: locale as Locale,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

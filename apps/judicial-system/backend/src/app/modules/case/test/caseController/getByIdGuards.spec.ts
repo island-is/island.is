@@ -1,4 +1,4 @@
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseController } from '../../case.controller'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
@@ -13,7 +13,7 @@ describe('CaseController - Get by id guards', () => {
   })
 
   it('should have the right guard configuration', () => {
-    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthUserGuard)
     expect(new guards[1]()).toBeInstanceOf(RolesGuard)
     expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
     expect(new guards[3]()).toBeInstanceOf(CaseReadGuard)

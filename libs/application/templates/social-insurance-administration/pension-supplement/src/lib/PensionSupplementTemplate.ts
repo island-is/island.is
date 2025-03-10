@@ -41,6 +41,7 @@ import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -49,6 +50,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PENSION_SUPPLEMENT,
   name: pensionSupplementFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.PensionSupplement.translation,
@@ -202,6 +204,10 @@ const PensionSupplementTemplate: ApplicationTemplate<
           INREVIEW: {
             target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -241,6 +247,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -289,6 +296,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -329,6 +337,39 @@ const PensionSupplementTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.dismissedTag,
+            },
+            pendingAction: {
+              title: statesMessages.pensionSupplementDismissed,
+              content: statesMessages.pensionSupplementDismissedDescription,
+              displayStatus: 'error',
+            },
+            historyLogs: [
+              {
+                onEvent: States.DISMISSED,
+                logMessage: statesMessages.pensionSupplementDismissed,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,

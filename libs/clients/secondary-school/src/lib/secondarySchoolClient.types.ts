@@ -1,4 +1,5 @@
 export interface Student {
+  hasActiveApplication: boolean
   isFreshman: boolean
 }
 

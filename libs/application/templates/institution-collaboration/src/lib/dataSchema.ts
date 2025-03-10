@@ -1,6 +1,5 @@
+import { NO, YES } from '@island.is/application/core'
 import { z } from 'zod'
-
-import { NO, YES } from '../constants'
 
 export const contactSchema = z.object({
   name: z.string().min(1),

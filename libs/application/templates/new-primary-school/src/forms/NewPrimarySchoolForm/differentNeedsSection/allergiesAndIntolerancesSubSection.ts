@@ -5,8 +5,9 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
 import { ApplicationType, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
@@ -33,7 +34,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
       children: [
         buildCheckboxField({
           id: 'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
-          title: '',
           spacing: 0,
           options: [
             {
@@ -60,7 +60,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.INTOLERANCE, // TODO: Update when Júní has updated key-options
+            optionsType: OptionsType.FOOD_ALLERGY_AND_INTOLERANCE,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
@@ -69,7 +69,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
         ),
         buildCheckboxField({
           id: 'allergiesAndIntolerances.hasOtherAllergies',
-          title: '',
           spacing: 0,
           options: [
             {
@@ -90,7 +89,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.ALLERGY, // TODO: Update when Júní has updated key-options
+            optionsType: OptionsType.ALLERGY,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .typeOfOtherAllergiesPlaceholder,
@@ -164,9 +163,10 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'allergiesAndIntolerances.requestMedicationAssistance',
+          id: 'allergiesAndIntolerances.requestsMedicationAdministration',
           title:
-            newPrimarySchoolMessages.differentNeeds.requestMedicationAssistance,
+            newPrimarySchoolMessages.differentNeeds
+              .requestsMedicationAdministration,
           width: 'half',
           required: true,
           space: 4,
@@ -192,12 +192,12 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           condition: (answers) => {
             const {
               hasConfirmedMedicalDiagnoses,
-              requestMedicationAssistance,
+              requestsMedicationAdministration,
             } = getApplicationAnswers(answers)
 
             return (
               hasConfirmedMedicalDiagnoses === YES ||
-              requestMedicationAssistance === YES
+              requestsMedicationAdministration === YES
             )
           },
         }),

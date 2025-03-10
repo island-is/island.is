@@ -8,7 +8,6 @@ import { Logo } from '../../assets/Logo'
 
 export const TransferOfVehicleOwnershipForm: Form = buildForm({
   id: 'TransferOfVehicleOwnershipFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [

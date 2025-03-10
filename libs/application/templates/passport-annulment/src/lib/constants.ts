@@ -23,9 +23,6 @@ export enum PassportStatus {
   STOLEN = 'stolen',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
 export type SubmitResponse = {
   success: boolean
   orderId?: string[]

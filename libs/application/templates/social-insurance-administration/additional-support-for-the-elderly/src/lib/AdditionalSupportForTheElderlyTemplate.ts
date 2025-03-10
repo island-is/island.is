@@ -49,6 +49,7 @@ import {
   getApplicationAnswers,
   isEligible,
 } from './additionalSupportForTheElderlyUtils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -57,6 +58,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY,
   name: additionalSupportForTheElderyFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
@@ -212,6 +214,10 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           INREVIEW: {
             target: States.TRYGGINGASTOFNUN_IN_REVIEW,
           },
+          ADDITIONALDOCUMENTSREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
+          },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -259,6 +265,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -308,6 +315,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
+          DISMISS: { target: States.DISMISSED },
         },
       },
       [States.APPROVED]: {
@@ -350,6 +358,39 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
                 // TODO: Þurfum mögulega að breyta þessu þegar við vitum hvernig TR gerir stöðubreytingar
                 onEvent: States.REJECTED,
                 logMessage: coreSIAStatesMessages.applicationRejected,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: States.DISMISSED,
+          status: 'rejected',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.dismissedTag,
+            },
+            pendingAction: {
+              title: statesMessages.asfteDismissed,
+              content: statesMessages.asfteDismissedDescription,
+              displayStatus: 'error',
+            },
+            historyLogs: [
+              {
+                onEvent: States.DISMISSED,
+                logMessage: statesMessages.asfteDismissed,
               },
             ],
           },

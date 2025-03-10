@@ -9,6 +9,21 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_FIELDS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
   [ApplicationTypes.PASSPORT]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
@@ -209,17 +224,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
   [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
-    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
-    slug: InstitutionTypes.SAMGONGUSTOFA,
-    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
-  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
@@ -285,6 +290,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.THJODSKRA,
   },
   [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+    contentfulId: InstitutionContentfulIds.THJODSKRA,
+  },
+  [ApplicationTypes.MUNICIPAL_LIST_CREATION]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
     contentfulId: InstitutionContentfulIds.THJODSKRA,
@@ -395,6 +405,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,

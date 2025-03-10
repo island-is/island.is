@@ -51,6 +51,7 @@ export const LatestEventsSlice = ({
                   iconType="filled"
                   variant="text"
                   as="span"
+                  unfocusable={true}
                 >
                   {seeMoreEventsText}
                 </Button>

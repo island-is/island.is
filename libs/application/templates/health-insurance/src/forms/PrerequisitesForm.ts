@@ -90,7 +90,6 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'prerequisiteSuccessSummary',
-              title: '',
               component: 'PrerequisiteSummary',
             }),
             buildSubmitField({

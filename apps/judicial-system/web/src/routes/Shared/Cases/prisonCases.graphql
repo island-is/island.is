@@ -1,7 +1,6 @@
 query PrisonCases {
   cases {
     id
-    created
     type
     decision
     state
@@ -90,5 +89,6 @@ query PrisonCases {
     indictmentRulingDecision
     indictmentAppealDeadline
     indictmentCompletedDate
+    caseSentToCourtDate
   }
 }

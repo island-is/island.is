@@ -261,8 +261,7 @@ air-discount-scheme-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -313,7 +312,7 @@ api:
     LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
@@ -355,9 +354,10 @@ api:
     XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
-    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
+    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
-    XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1'
+    XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
@@ -371,7 +371,7 @@ api:
     XROAD_INNA_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1'
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI'
     XROAD_JUDICIAL_SYSTEM_SP_PATH: 'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api'
-    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service'
+    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/license-api-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -581,6 +581,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
+    APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     CODE_OWNER: 'norda-applications'
@@ -614,7 +615,7 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
@@ -648,9 +649,10 @@ application-system-api:
     XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
-    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1'
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
+    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'
-    XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1'
+    XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
@@ -659,7 +661,7 @@ application-system-api:
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1'
-    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service'
+    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application'
@@ -835,6 +837,7 @@ application-system-api-worker:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
+    APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     CODE_OWNER: 'norda-applications'
     DB_HOST: 'postgres-applications.internal'
@@ -989,8 +992,7 @@ application-system-form:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1056,8 +1058,7 @@ consultation-portal:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1184,7 +1185,7 @@ endorsement-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
@@ -1550,6 +1551,7 @@ namespaces:
     - 'services-sessions'
     - 'services-university-gateway'
     - 'portals-my-pages'
+    - 'unicorn-app'
 portals-admin:
   enabled: true
   env:
@@ -1610,8 +1612,7 @@ portals-admin:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1627,7 +1628,7 @@ regulations-admin-backend:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
@@ -1907,8 +1908,7 @@ service-portal:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1927,7 +1927,7 @@ service-portal-api:
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
@@ -2142,7 +2142,7 @@ services-bff-portals-my-pages:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/health/prescriptions","@island.is/health/referrals","@island.is/health/dispensations","@island.is/health/waiting-lists","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
@@ -2788,8 +2788,7 @@ skilavottord-web:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
     NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
@@ -2916,7 +2915,7 @@ user-notification:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
@@ -2957,6 +2956,14 @@ user-notification:
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'user-notification.internal.staging01.devland.is'
+          paths:
+            - '/'
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
@@ -3120,7 +3127,7 @@ user-notification-worker:
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
-    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
@@ -3284,8 +3291,7 @@ web:
       memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
-    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

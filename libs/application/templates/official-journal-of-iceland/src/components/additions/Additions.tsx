@@ -12,7 +12,6 @@ import {
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
 import {
-  DEBOUNCE_INPUT_TIMER,
   DEFAULT_ADDITIONS_COUNT,
   MAXIMUM_ADDITIONS_COUNT,
 } from '../../lib/constants'
@@ -22,9 +21,9 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { InputFields, OJOIApplication } from '../../lib/types'
 import set from 'lodash/set'
-import debounce from 'lodash/debounce'
 import { useLocale } from '@island.is/localization'
 import { attachments } from '../../lib/messages'
+import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
 
 type Props = {
   application: OJOIApplication
@@ -37,6 +36,10 @@ export const Additions = ({ application }: Props) => {
     application.answers.misc?.asRoman ?? false,
   )
 
+  const { useFileUploader } = useApplicationAssetUploader({
+    applicationId: application.id,
+  })
+
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
   const { updateApplication, application: currentApplication } = useApplication(
@@ -44,6 +47,8 @@ export const Additions = ({ application }: Props) => {
       applicationId: application.id,
     },
   )
+
+  const fileUploader = useFileUploader()
 
   const getAdditions = () => {
     const additions = getValueViaPath(
@@ -152,16 +157,6 @@ export const Additions = ({ application }: Props) => {
     updateApplication(updatedAnswers)
   }
 
-  const debouncedAdditionChange = debounce(
-    onAdditionChange,
-    DEBOUNCE_INPUT_TIMER,
-  )
-
-  const additionChangeHandler = (index: number, value: string) => {
-    debouncedAdditionChange.cancel()
-    debouncedAdditionChange(index, value)
-  }
-
   const additions = getAdditions()
 
   return (
@@ -200,9 +195,8 @@ export const Additions = ({ application }: Props) => {
                   name="addition"
                   key={addition.id}
                   value={defaultValue as HTMLText}
-                  onChange={(value) =>
-                    additionChangeHandler(additionIndex, value)
-                  }
+                  fileUploader={fileUploader()}
+                  onChange={(value) => onAdditionChange(additionIndex, value)}
                 />
                 <Button
                   variant="utility"

@@ -1,12 +1,20 @@
 import { DefaultEvents } from '@island.is/application/types'
 
+export enum ApplicationEvents {
+  RECEIVED = 'RECEIVED',
+}
 export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT | DefaultEvents.EDIT
+  type:
+    | DefaultEvents.SUBMIT
+    | DefaultEvents.ABORT
+    | DefaultEvents.EDIT
+    | ApplicationEvents.RECEIVED
 }
 
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  EDIT = 'edit',
   SUBMITTED = 'submitted',
   IN_REVIEW = 'inReview',
   COMPLETED = 'completed',
@@ -18,7 +26,6 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  validateCanCreate = 'validateCanCreate',
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
 }
@@ -28,11 +35,6 @@ export enum Routes {
   CUSTODIAN = 'custodianMultiField',
   EXTRA_INFORMATION = 'extraInformationMultiField',
   SCHOOL = 'schoolMultiField',
-}
-
-export enum ApplicationType {
-  FRESHMAN = 'FRESHMAN',
-  GENERAL_APPLICATION = 'GENERAL_APPLICATION',
 }
 
 export enum ConclusionView {

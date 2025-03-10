@@ -27,17 +27,19 @@ import { useContextMenu } from '@island.is/judicial-system-web/src/components/Co
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   getPrisonCaseStateTag,
   getPunishmentTypeTag,
 } from '@island.is/judicial-system-web/src/components/Tags/utils'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseType,
@@ -90,14 +92,14 @@ export const PrisonCases: FC = () => {
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-              sortable: { isSortable: true, key: 'defendants' },
+              sortBy: 'defendants',
             },
             {
               title: formatMessage(tables.type),
             },
             {
-              title: capitalize(formatMessage(tables.created)),
-              sortable: { isSortable: true, key: 'created' },
+              title: capitalize(formatMessage(tables.sentToCourtDate)),
+              sortBy: 'caseSentToCourtDate',
             },
             { title: formatMessage(tables.state) },
             {
@@ -128,12 +130,14 @@ export const PrisonCases: FC = () => {
               ),
             },
             {
-              cell: (row) => <CreatedDate created={row.created} />,
+              cell: (row) => (
+                <TableDate displayDate={row.caseSentToCourtDate} />
+              ),
             },
             {
               cell: (row) => (
                 <TagContainer>
-                  <TagCaseState caseState={CaseState.ACCEPTED} />
+                  <TagCaseState theCase={row} />
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
@@ -170,21 +174,18 @@ export const PrisonCases: FC = () => {
           thead={[
             {
               title: formatMessage(tables.caseNumber),
-              sortable: {
-                isSortable: true,
-                key: 'courtCaseNumber',
-              },
+              sortBy: 'courtCaseNumber',
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-              sortable: { isSortable: true, key: 'defendants' },
+              sortBy: 'defendants',
             },
             {
-              title: formatMessage(tables.court),
+              title: formatMessage(tables.type),
             },
             {
               title: formatMessage(tables.punishmentType),
-              sortable: { isSortable: true, key: 'defendantsPunishmentType' },
+              sortBy: 'defendantsPunishmentType',
             },
             {
               title: capitalize(formatMessage(tables.sentencingDate)),
@@ -214,7 +215,14 @@ export const PrisonCases: FC = () => {
               cell: (row) => <DefendantInfo defendants={row.defendants} />,
             },
             {
-              cell: (row) => <ColumnCaseType type={row.type} />,
+              cell: (row) => (
+                <TagIndictmentRulingDecision
+                  isFine={
+                    row.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.FINE
+                  }
+                />
+              ),
             },
             {
               cell: (row) => {
@@ -232,7 +240,7 @@ export const PrisonCases: FC = () => {
             },
             {
               cell: (row) => (
-                <CreatedDate created={row.indictmentCompletedDate} />
+                <TableDate displayDate={row.indictmentCompletedDate} />
               ),
             },
             {

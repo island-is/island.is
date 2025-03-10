@@ -54,6 +54,7 @@
     "url-parse-lax",
     "safer-buffer",
     "ioredis",
+    "path-scurry",
     "@mikro-orm/core"
   ],
   "keepNames": true

@@ -49,4 +49,19 @@ export const error = defineMessages({
       'Ekki tókst að senda inn umsókn, vinsamlegast reyndu síðar..',
     description: 'Error submit application description',
   },
+  errorSameAsApplicant: {
+    id: 'ss.application:error.errorSameAsApplicant',
+    defaultMessage: 'Má ekki vera sá sami og umsækjandi',
+    description: 'Error same as applicant',
+  },
+  errorSchoolDuplicate: {
+    id: 'ss.application:error.errorSchoolDuplicate',
+    defaultMessage: 'Ekki má velja sama skóla',
+    description: 'Error school duplicate',
+  },
+  errorProgramDuplicate: {
+    id: 'ss.application:error.errorProgramDuplicate',
+    defaultMessage: 'Ekki má velja sömu braut',
+    description: 'Error program duplicate',
+  },
 })

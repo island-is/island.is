@@ -19,7 +19,7 @@ export class CaseTransitionGuard implements CanActivate {
 
     const { transition } = request.body
     const theCase = request.case
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     // This shouldn't happen
     if (!theCase || !user) {

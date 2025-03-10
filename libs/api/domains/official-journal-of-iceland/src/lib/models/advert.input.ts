@@ -56,6 +56,12 @@ export class AdvertSingleParams {
   id!: string
 }
 
+@InputType('OfficialJournalOfIcelandAdvertSimilarParams')
+export class AdvertSimilarParams {
+  @Field(() => String)
+  id!: string
+}
+
 @InputType('OfficialJournalOfIcelandQueryInput')
 export class QueryParams {
   @Field(() => String, { nullable: true })

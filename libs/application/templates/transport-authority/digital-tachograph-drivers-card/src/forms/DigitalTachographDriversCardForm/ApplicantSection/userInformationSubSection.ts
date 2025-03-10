@@ -117,7 +117,6 @@ export const userInformationSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'qualityPhoto',
-          title: '',
           component: 'QualityPhoto',
         }),
         buildDescriptionField({
@@ -128,7 +127,6 @@ export const userInformationSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'qualitySignature',
-          title: '',
           component: 'QualitySignature',
         }),
       ],

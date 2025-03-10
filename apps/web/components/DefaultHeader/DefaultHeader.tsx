@@ -102,7 +102,8 @@ export const DefaultHeader: React.FC<
       <div
         className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
-          background: isMobile ? mobileBackground || background : background,
+          background:
+            isMobile || isSubpage ? mobileBackground || background : background,
         }}
       >
         <div

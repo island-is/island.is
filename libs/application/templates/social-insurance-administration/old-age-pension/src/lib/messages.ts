@@ -530,4 +530,14 @@ export const statesMessages = defineMessages({
     description:
       'Your application is awaiting review. It is possible to edit the application until it is under review. Please note that if you have not submitted an income plan, you must do so here.',
   },
+  oldAgePensionDismissed: {
+    id: 'oap.application:application.dismissed',
+    defaultMessage: 'Tryggingastofnun hefur vísað umsókn þinni um ellilífeyri frá',
+    description: 'Tryggingastofnun has dismissed your old age pension application',
+  },
+  oldAgePensionDismissedDescription: {
+    id: 'oap.application:application.dismissed.description',
+    defaultMessage: 'Umsókn þinni um ellilífeyri hefur verið vísað frá',
+    description: 'Your old age pension application has been dimissed',
+  },
 })

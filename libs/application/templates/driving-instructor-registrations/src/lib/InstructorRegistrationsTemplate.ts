@@ -21,6 +21,7 @@ import {
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { FeatureFlagClient } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]
@@ -32,6 +33,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
   stateMachineConfig: {

@@ -1,7 +1,9 @@
 import addDays from 'date-fns/addDays'
 
 import {
+  NO,
   NO_ANSWER,
+  YES,
   buildCustomField,
   buildDateField,
   buildFileUploadField,
@@ -23,12 +25,10 @@ import {
 } from '@island.is/application/types'
 import {
   FILE_SIZE_LIMIT,
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
-  YES,
 } from '../constants'
 import Logo from '../assets/Logo'
 import { minPeriodDays } from '../config'
@@ -381,17 +381,14 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirmation',
-          title: '',
           children: [
             buildCustomField({
               id: 'confirmationScreen',
-              title: '',
               component: 'EditOrAddEmployersAndPeriodsReview',
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.ABORT,

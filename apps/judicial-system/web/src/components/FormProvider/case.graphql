@@ -213,12 +213,22 @@ query Case($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
+      offenses {
+        id
+        indictmentCountId
+        created
+        modified
+        offense
+        substances
+      }
+      deprecatedOffenses
       substances
       lawsBroken
       incidentDescription
       legalArguments
       indictmentCountSubtypes
+      recordedSpeed
+      speedLimit
     }
     requestDriversLicenseSuspension
     appealState
@@ -393,5 +403,7 @@ query Case($input: CaseQueryInput!) {
     mergeCaseNumber
     civilDemands
     hasCivilClaims
+    isCompletedWithoutRuling
+    caseSentToCourtDate
   }
 }

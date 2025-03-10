@@ -20,6 +20,7 @@ import {
   Frigg,
   HealthDirectorateOrganDonation,
   HealthDirectorateVaccination,
+  HealthDirectorateHealthService,
   HealthInsurance,
   HousingBenefitCalculator,
   Hunting,
@@ -163,7 +164,7 @@ export const serviceSetup = (services: {
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       AUTH_DELEGATION_API_URL: {
-        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
         staging:
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
@@ -442,6 +443,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
+      HealthDirectorateHealthService,
       WorkAccidents,
       SecondarySchool,
     )

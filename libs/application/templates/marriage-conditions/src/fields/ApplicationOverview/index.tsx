@@ -10,8 +10,9 @@ import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
-import { CeremonyPlaces, States, YES } from '../../lib/constants'
+import { CeremonyPlaces, States } from '../../lib/constants'
 import is from 'date-fns/locale/is'
+import { YES } from '@island.is/application/core'
 
 type InfoProps = {
   side: Individual

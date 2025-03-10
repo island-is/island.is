@@ -10,9 +10,6 @@ export enum Roles {
   SCHOOL_EMPLOYEE = 'school_employee',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }

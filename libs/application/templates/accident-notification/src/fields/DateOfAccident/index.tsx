@@ -1,5 +1,5 @@
 import { IsHealthInsuredInput } from '@island.is/api/schema'
-import { FieldBaseProps, NO, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DatePickerController } from '@island.is/shared/form-fields'
@@ -8,6 +8,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
 import { AccidentNotification } from '../../lib/dataSchema'
 import { accidentDetails } from '../../lib/messages'
+import { NO, YES } from '@island.is/application/core'
 
 export const DateOfAccident = ({
   application,

@@ -28,13 +28,11 @@ export const WalletItem = React.memo(
     item: GenericUserLicense | IdentityDocumentModel
     style?: ViewStyle
   }) => {
-    let cardHeight = 140
+    let cardHeight = 96
     const type = item.__typename
 
     // Passport card
     if (type === 'IdentityDocumentModel') {
-      const isInvalid = item?.status?.toLowerCase() === 'invalid'
-
       return (
         <Container
           style={style}

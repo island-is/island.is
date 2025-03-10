@@ -33,7 +33,6 @@ import { useLocale } from '@island.is/localization'
 
 export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardForm',
-  title: '',
   logo: Sjukra,
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
@@ -65,7 +64,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             buildCheckboxField({
               id: 'delimitations.applyForPlastic',
               backgroundColor: 'white',
-              title: '',
               condition: (_, externalData) =>
                 someCanApplyForPlastic(externalData),
               options: (application: Application) => {
@@ -85,7 +83,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
 
             buildDescriptionField({
               id: 'break1',
-              title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -129,7 +126,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
 
             buildDescriptionField({
               id: 'break2',
-              title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -170,7 +166,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
 
             buildDescriptionField({
               id: 'break3',
-              title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -231,8 +226,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             buildCheckboxField({
               id: 'applyForPDF',
               backgroundColor: 'white',
-              title: '',
-
               options: (application: Application) => {
                 const applying: {
                   value: string
@@ -299,7 +292,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'reviewScreen',
-              title: '',
               component: 'ReviewScreen',
             }),
             buildSubmitField({
@@ -319,7 +311,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'unused4',
-          title: '',
           description: '',
         }),
       ],

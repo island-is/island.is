@@ -2155,8 +2155,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IAnchorPage
     | undefined
 
@@ -3176,8 +3174,8 @@ export interface IOrganizationFields {
   /** Kennitala */
   kennitala?: string | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
+  /** News Bottom Slices */
+  newsBottomSlices?: IEmailSignup[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3376,6 +3374,12 @@ export interface IOrganizationParentSubpageFields {
 
   /** Image */
   image?: Asset | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage?: Asset | undefined
+
+  /** Tiny Thumbnail Image */
+  tinyThumbnailImage?: Asset | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */
@@ -3391,6 +3395,43 @@ export interface IOrganizationParentSubpage
     contentType: {
       sys: {
         id: 'organizationParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageListFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Variant */
+  variant?: 'Service Card' | 'Profile Card - Title Above' | undefined
+
+  /** Page List */
+  pageList?: IOrganizationParentSubpage[] | undefined
+
+  /** See More Link */
+  seeMoreLink?: ILink | undefined
+}
+
+/** List of organization parent subpages */
+
+export interface IOrganizationParentSubpageList
+  extends Entry<IOrganizationParentSubpageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpageList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3462,6 +3503,9 @@ export interface IOrganizationSubpageFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
 }
 
 export interface IOrganizationSubpage
@@ -4026,6 +4070,9 @@ export interface IServiceWebPageFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -5083,8 +5130,6 @@ export interface IUrlFields {
     | ILifeEventPage
     | INews
     | IProjectPage
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IOrganizationPage
     | undefined
 
@@ -5456,6 +5501,7 @@ export type CONTENT_TYPE =
   | 'organization'
   | 'organizationPage'
   | 'organizationParentSubpage'
+  | 'organizationParentSubpageList'
   | 'organizationSubpage'
   | 'organizationTag'
   | 'overviewLinks'

@@ -15,7 +15,10 @@ import {
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import {
   ParliamentaryCollectionApi,
@@ -24,12 +27,7 @@ import {
   IsDelegatedToCompanyApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-
-const WeekLifeCycle: StateLifeCycle = {
-  shouldBeListed: false,
-  shouldBePruned: true,
-  whenToPrune: 1000 * 3600 * 24 * 7,
-}
+import { CodeOwners } from '@island.is/shared/constants'
 
 const createListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -38,6 +36,7 @@ const createListTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
   name: m.applicationName,
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   featureFlag: Features.ParliamentaryElectionApplication,
   dataSchema,
@@ -97,7 +96,7 @@ const createListTemplate: ApplicationTemplate<
         meta: {
           name: m.applicationName.defaultMessage,
           status: 'draft',
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(7),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -134,7 +133,7 @@ const createListTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

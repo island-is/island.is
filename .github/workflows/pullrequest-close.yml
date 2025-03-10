@@ -4,17 +4,98 @@ on:
   pull_request:
     types:
       - closed
-
 defaults:
   run:
     shell: bash
 
 jobs:
+  check-unicorn:
+    name: Is this a unicorn PR
+    if: github.event.pull_request.merged == true
+    runs-on: arc-runners
+    timeout-minutes: 10
+    outputs:
+      IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
+      LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules'
+
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Check unicorn affected
+        id: unicorn_affected
+        run: |
+          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+
+      - name: Results
+        run: |
+          echo "Unicorn = ${{ steps.unicorn_affected.outputs.IS_UNICORN }}"
+
+      - name: Find Latest Release Branch
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        id: get_latest_release
+        run: |
+          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
+          echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
+
+      - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
+
+      - name: Create a PR
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        id: create_pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCH: ${{ github.head_ref}}/cherry-pick
+          TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }} (automated)"
+          echo ${{ github.event.pull_request.merge_commit_sha }}
+          echo ${{ github.head_ref}}
+          git checkout $TARGET_BRANCH
+          git checkout -b $PR_BRANCH
+          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
+          git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+          git push --set-upstream origin $PR_BRANCH
+          echo "new branch created"
+          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
+          echo "$PR created"
+          echo PR=$PR >> "$GITHUB_OUTPUT"
+
+      - name: Send slack message
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "A new PR has been created: ${{ steps.create_pr.outputs.PR }}"
+
   cleanup:
     name: Clean up feature deployment
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: arc-runners
     steps:
       - name: Get git branch
         run: |

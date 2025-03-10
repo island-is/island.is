@@ -11,6 +11,11 @@ This library serves as a license client factory for the following clients
 - ADR License
 - Drivers License
 - Disability License
+- EHIC card
+- Machine license
+- Hunting license
+- P Card
+- Passport
 
 The factory can return two types of clients, however only the license clients are meant for use inside the monorepo!
 The update clients are for external organizations to query so they can update digital licenses

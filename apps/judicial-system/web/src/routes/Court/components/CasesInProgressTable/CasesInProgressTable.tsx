@@ -23,8 +23,8 @@ import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
@@ -112,19 +112,17 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 {
-                  title: capitalize(
-                    formatMessage(tables.created, { suffix: 'i' }),
-                  ),
-                  sortable: { isSortable: true, key: 'created' },
+                  title: capitalize(formatMessage(tables.sentToCourtDate)),
+                  sortBy: 'caseSentToCourtDate',
                 },
-                { title: formatMessage(tables.state) },
+                { title: formatMessage(tables.state), sortBy: 'state' },
                 {
                   title: formatMessage(tables.hearingArrangementDate),
-                  sortable: { isSortable: true, key: 'courtDate' },
+                  sortBy: 'courtDate',
                 },
               ]}
               data={cases}
@@ -150,18 +148,13 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                     />
                   ),
                 },
-                { cell: (row) => <CreatedDate created={row.created} /> },
                 {
                   cell: (row) => (
-                    <TagCaseState
-                      caseState={row.state}
-                      caseType={row.type}
-                      isCourtRole={true}
-                      courtDate={row.courtDate}
-                      indictmentDecision={row.indictmentDecision}
-                      defendants={row.defendants}
-                    />
+                    <TableDate displayDate={row.caseSentToCourtDate} />
                   ),
+                },
+                {
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
                 {
                   cell: (row) =>
