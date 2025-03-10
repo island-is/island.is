@@ -81,7 +81,8 @@ import {
   mapVehicle,
   mapVehicleResponse,
 } from './syslumennClient.utils'
-import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
+import { IdsClientConfig } from '@island.is/nest/config'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
