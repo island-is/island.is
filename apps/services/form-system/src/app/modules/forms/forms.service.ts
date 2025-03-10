@@ -33,12 +33,10 @@ import {
   FieldType,
   FieldTypes,
 } from '../../dataTypes/fieldTypes/fieldType.model'
-import { OrganizationFieldType } from '../organizationFieldTypes/models/organizationFieldType.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
 import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
-import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
 import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
@@ -444,7 +442,7 @@ export class FormsService {
     )
 
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationFieldType],
+      include: [OrganizationPermission],
     })
 
     const uncommonFieldTypes = FieldTypes.filter((fieldType) =>
@@ -477,7 +475,7 @@ export class FormsService {
     const commonListTypes = ListTypes.filter((listType) => listType.isCommon)
 
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationListType],
+      include: [OrganizationPermission],
     })
 
     const uncommonListTypes = ListTypes.filter((listType) =>
