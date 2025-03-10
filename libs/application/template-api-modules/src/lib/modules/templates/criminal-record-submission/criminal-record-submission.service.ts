@@ -43,13 +43,8 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       )
     }
 
-    const userProfileData = application.externalData.userProfile
-      ?.data as UserProfile
-
     const person = {
       ssn: application.applicant,
-      phoneNumber: userProfileData?.mobilePhoneNumber,
-      email: userProfileData?.email,
       signed: false,
       type: PersonType.CriminalRecordApplicant,
     }
@@ -59,7 +54,14 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     const uploadDataId = 'Sakavottord2.1'
 
     return await this.syslumennService
-      .uploadData(persons, undefined, {}, uploadDataName, uploadDataId)
+      .uploadDataWithAuth(
+        auth,
+        persons,
+        undefined,
+        {},
+        uploadDataName,
+        uploadDataId,
+      )
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
