@@ -8,11 +8,8 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  Divider,
-  FocusableBox,
-  GridColumn,
   GridContainer,
-  GridRow,
+  InfoCardGrid,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -116,6 +113,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
     [page],
   )
 
+  const [isGridLayout, setIsGridLayout] = useState(false)
+
   return (
     <Box paddingBottom={5} className="rs_read">
       <GridContainer>
@@ -126,80 +125,51 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
           </Text>
           <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
           <Text>{formatMessage(m.listPage.description)}</Text>
-          <GridRow rowGap={3}>
-            {data.visibleVerdicts.map((item) => (
-              <GridColumn key={item.id} span="1/1">
-                <FocusableBox
-                  height="full"
-                  href={`/domar/${item.id}`}
-                  background="white"
-                  borderRadius="large"
-                  borderColor="blue200"
-                  borderWidth="standard"
-                  paddingX={3}
-                  paddingY={2}
-                >
-                  <GridContainer>
-                    <Stack space={2}>
-                      <GridRow rowGap={3}>
-                        <GridColumn span={['7/12', '7/12', '9/12']}>
-                          <Text variant="h5" color="blue400">
-                            {item.caseNumber}
-                          </Text>
-                        </GridColumn>
-                        <GridColumn span={['5/12', '5/12', '3/12']}>
-                          {item.verdictDate && (
-                            <Text variant="medium" textAlign="right">
-                              {format(
-                                new Date(item.verdictDate),
-                                'd. MMM yyyy',
-                              )}
-                            </Text>
-                          )}
-                        </GridColumn>
-                      </GridRow>
-                      <Stack space={0}>
-                        <GridRow>
-                          <GridColumn>
-                            <Text color="blue400" variant="medium">
-                              {item.court}
-                            </Text>
-                            <Text color="blue400" variant="medium">
-                              {item.presidentJudge?.name}{' '}
-                              {item.presidentJudge?.title}
-                            </Text>
-                          </GridColumn>
-                          <GridColumn>
-                            <Text variant="small">{item.title}</Text>
-                          </GridColumn>
-                        </GridRow>
-                      </Stack>
-                      <GridRow>
-                        <GridColumn>
-                          <Text variant="small" color="dark300">
-                            {item.keywords.join('. ')}
-                          </Text>
-                        </GridColumn>
-                      </GridRow>
-                      {Boolean(item.presentings) && <Divider />}
-                      {Boolean(item.presentings) && (
-                        <GridRow>
-                          <GridColumn>
-                            <Text variant="small">
-                              <Text color="blue400" variant="medium" as="span">
-                                {formatMessage(m.listPage.presentings)}:
-                              </Text>{' '}
-                              {item.presentings}
-                            </Text>
-                          </GridColumn>
-                        </GridRow>
-                      )}
-                    </Stack>
-                  </GridContainer>
-                </FocusableBox>
-              </GridColumn>
-            ))}
-          </GridRow>
+          <Box display="flex" justifyContent="flexEnd">
+            <Button
+              variant="utility"
+              icon={isGridLayout ? 'menu' : 'gridView'}
+              iconType="filled"
+              colorScheme="white"
+              size="small"
+              onClick={() => {
+                setIsGridLayout((previousState) => !previousState)
+              }}
+            >
+              {formatMessage(
+                isGridLayout ? m.listPage.displayList : m.listPage.displayGrid,
+              )}
+            </Button>
+          </Box>
+
+          <InfoCardGrid
+            variant="detailed"
+            columns={isGridLayout ? 2 : 1}
+            cards={data.visibleVerdicts.map((verdict) => {
+              return {
+                description: verdict.title,
+                eyebrow: '',
+                id: verdict.id,
+                link: { href: `/domar/${verdict.id}`, label: '' },
+                title: verdict.caseNumber,
+                borderColor: 'blue200',
+                detailLines: [
+                  {
+                    icon: 'calendar',
+                    text: verdict.verdictDate
+                      ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
+                      : '',
+                  },
+                  {
+                    icon: 'person',
+                    text: `${verdict.presidentJudge?.name ?? ''} ${
+                      verdict.presidentJudge?.title ?? ''
+                    }`,
+                  },
+                ],
+              }
+            })}
+          />
           {initialData.total > data.visibleVerdicts.length && (
             <Box
               key={page}

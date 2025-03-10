@@ -29,6 +29,16 @@ export const m = {
       description:
         'Texti í hnapp neðst á yfirlitssíðu til að sækja fleiri dóma',
     },
+    displayList: {
+      id: 'web.verdicts:listPage.displayList',
+      defaultMessage: 'Sýna sem lista',
+      description: 'Sýna sem lista',
+    },
+    displayGrid: {
+      id: 'web.verdicts:listPage.displayGrid',
+      defaultMessage: 'Sýna sem spjöld',
+      description: 'Sýna sem spjöld',
+    },
   }),
   verdictPage: {
     heading: {
