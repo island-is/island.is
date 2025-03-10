@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { LoggingModule } from '@island.is/logging'
 import { UserNotificationBirthday18WorkerService } from './worker.service'
 import { environment } from '../../../environments/environment'
 import { QueueModule } from '@island.is/message-queue'
@@ -12,7 +11,6 @@ import { XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
-    LoggingModule,
     QueueModule.register({
       client: environment.sqsConfig,
       queue: {
