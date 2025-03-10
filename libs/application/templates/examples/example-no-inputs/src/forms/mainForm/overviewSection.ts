@@ -20,7 +20,7 @@ export const overviewSection = buildSection({
           id: 'overviewX',
           title: 'Upplýsingar um þig',
           description: m.overviewInfoDescripton2,
-          backId: 'tableRepeater',
+          backId: 'id-of-some-field-to-go-to',
           bottomLine: false,
           items: getOverviewItems,
         }),
