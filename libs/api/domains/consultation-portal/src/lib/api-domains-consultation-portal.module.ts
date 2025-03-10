@@ -17,6 +17,7 @@ import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 import { CaseSubscriptionService } from './caseSubscription/caseSubscription.service'
 import { CaseSubscriptionResolver } from './caseSubscription/caseSubscription.resolver'
 
+// DEPLOYME
 @Module({
   providers: [
     CasesService,
