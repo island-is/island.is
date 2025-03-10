@@ -69,6 +69,13 @@ export class UpdateIndictmentCountInput {
   @IsArray()
   @IsEnum(IndictmentSubtype, { each: true })
   @Field(() => [IndictmentSubtype], { nullable: true })
+  readonly policeCaseNumberSubtypes?: IndictmentSubtype[]
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @Field(() => [IndictmentSubtype], { nullable: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
 
   @Allow()
