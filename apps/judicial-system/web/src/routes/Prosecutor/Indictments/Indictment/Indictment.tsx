@@ -76,7 +76,7 @@ export const getIndictmentIntroductionAutofill = (
                 ? formatNationalId(defendant.nationalId)
                 : 'Ekki skráð',
             },
-          )}\n          ${defendant.address}`
+          )}\n          ${defendant.address},`
         })}
     `,
       ]
