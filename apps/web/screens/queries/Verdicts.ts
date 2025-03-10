@@ -30,6 +30,12 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
       item {
         pdfString
         richText
+        title
+        court
+        caseNumber
+        verdictDate
+        keywords
+        presentings
       }
     }
   }
