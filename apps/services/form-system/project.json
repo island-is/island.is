@@ -3,11 +3,15 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
-  "tags": ["scope:nest"],
+  "tags": [
+    "scope:nest"
+  ],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
@@ -18,11 +22,6 @@
             "glob": "*",
             "input": "apps/services/form-system/migrations",
             "output": "./migrations"
-          },
-          {
-            "glob": "*",
-            "input": "apps/services/form-system/seeders",
-            "output": "./seeders"
           },
           {
             "glob": ".sequelizerc",
@@ -61,14 +60,20 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/services/form-system/**/*.ts"]
+        "lintFilePatterns": [
+          "apps/services/form-system/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/services/form-system/jest.config.ts",
         "passWithNoTests": true
@@ -85,7 +90,9 @@
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/form-system/tsconfig.app.json apps/services/form-system/src/buildOpenApi.ts"
       },
-      "outputs": ["{projectRoot}/src/openapi.yaml"]
+      "outputs": [
+        "{projectRoot}/src/openapi.yaml"
+      ]
     },
     "migrate": {
       "executor": "nx:run-commands",
@@ -101,20 +108,6 @@
         "cwd": "apps/services/form-system"
       }
     },
-    "seed/generate": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "sequelize-cli seed:generate",
-        "cwd": "apps/services/form-system"
-      }
-    },
-    "seed": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "sequelize-cli db:seed:all",
-        "cwd": "apps/services/form-system"
-      }
-    },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
     },
@@ -123,8 +116,7 @@
       "options": {
         "commands": [
           "yarn dev-services services-form-system-api",
-          "yarn nx run services-form-system-api:migrate",
-          "yarn nx run services-form-system-api:seed"
+          "yarn nx run services-form-system-api:migrate"
         ],
         "parallel": false
       }
@@ -132,7 +124,9 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-form-system-api"],
+        "commands": [
+          "yarn start services-form-system-api"
+        ],
         "parallel": true
       }
     }
