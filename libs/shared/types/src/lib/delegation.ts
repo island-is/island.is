@@ -6,6 +6,7 @@ export enum AuthDelegationType {
   LegalGuardianMinor = 'LegalGuardianMinor',
   LegalRepresentative = 'LegalRepresentative',
   GeneralMandate = 'GeneralMandate',
+  ExecutiveDirector = 'ExecutiveDirector',
 }
 
 export enum AuthDelegationProvider {
