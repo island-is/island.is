@@ -375,6 +375,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     reasonForApplicationDescription: {
       id: 'nps.application:primary.school.reason.for.application.description',
       defaultMessage:
+        'Til að aðstoða okkur við að mæta þörfum fjölskyldunnar biðjum við þig að velja þá ástæðu sem best á við í þínu tilfelli.',
+      description:
+        'To help us meet the needs of your family, please select the reason that is most appropriate in your case.',
+    },
+    reasonForApplicationEnrollmentDescription: {
+      id: 'nps.application:primary.school.reason.for.application.enrollment.description',
+      defaultMessage:
         'Barn á alltaf rétt á skólavist í sínum hverfisskóla. Séu ástæður umsóknar aðrar en flutningur lögheimilis getur verið að skólinn sjái sér ekki fært að taka á móti barninu. Það fer eftir aðstæðum í skólanum hverju sinni, svo sem rými.',
       description:
         'A child always has the right to attend school in his district school. If the reasons for the application are other than a change of legal residence, the school may not be able to accept the child. It depends on the situation in the school each time, such as space.',
