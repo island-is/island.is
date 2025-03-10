@@ -82,6 +82,7 @@ export enum ApplicationTypes {
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_INPUTS = 'ExampleInputs',
+  EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
 }
 
 export const ApplicationConfigurations = {
@@ -100,6 +101,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
     translation: 'ef.application',
+  },
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
+    slug: 'example-no-inputs',
+    translation: 'eni.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
