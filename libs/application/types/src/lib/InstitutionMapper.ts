@@ -169,11 +169,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISENDURSKODUN,
     contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
   },
-  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
-    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
-    slug: InstitutionTypes.RIKISENDURSKODUN,
-    contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
-  },
   [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
