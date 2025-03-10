@@ -39,6 +39,11 @@ export const m = {
       defaultMessage: 'Sýna sem spjöld',
       description: 'Sýna sem spjöld',
     },
+    sidebarFilterHeading: {
+      id: 'web.verdicts:listPage.sidebarFilterHeading',
+      defaultMessage: 'Ítarleit',
+      description: 'Ítarleit',
+    },
   }),
   verdictPage: {
     heading: {

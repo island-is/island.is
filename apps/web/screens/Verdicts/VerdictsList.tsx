@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
+import { useDebounce, useWindowSize } from 'react-use'
 import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -9,10 +9,12 @@ import {
   Breadcrumbs,
   Button,
   GridContainer,
+  Hidden,
   InfoCardGrid,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -33,6 +35,7 @@ import {
   type CustomScreen,
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
+import SidebarLayout from '../Layouts/SidebarLayout'
 import {
   GET_VERDICT_CASE_CATEGORIES_QUERY,
   GET_VERDICT_CASE_TYPES_QUERY,
@@ -57,6 +60,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
+  const { width } = useWindowSize()
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
     GetVerdictsQuery,
@@ -114,6 +118,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   )
 
   const [isGridLayout, setIsGridLayout] = useState(false)
+  const overrideGridLayoutSetting = width < theme.breakpoints.lg
 
   return (
     <Box paddingBottom={5} className="rs_read">
@@ -125,51 +130,66 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
           </Text>
           <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
           <Text>{formatMessage(m.listPage.description)}</Text>
-          <Box display="flex" justifyContent="flexEnd">
-            <Button
-              variant="utility"
-              icon={isGridLayout ? 'menu' : 'gridView'}
-              iconType="filled"
-              colorScheme="white"
-              size="small"
-              onClick={() => {
-                setIsGridLayout((previousState) => !previousState)
-              }}
-            >
-              {formatMessage(
-                isGridLayout ? m.listPage.displayList : m.listPage.displayGrid,
-              )}
-            </Button>
-          </Box>
+          <Hidden below="lg">
+            <Box display="flex" justifyContent="flexEnd">
+              <Button
+                variant="utility"
+                icon={isGridLayout ? 'menu' : 'gridView'}
+                iconType="filled"
+                colorScheme="white"
+                size="small"
+                onClick={() => {
+                  setIsGridLayout((previousState) => !previousState)
+                }}
+              >
+                {formatMessage(
+                  isGridLayout
+                    ? m.listPage.displayList
+                    : m.listPage.displayGrid,
+                )}
+              </Button>
+            </Box>
+          </Hidden>
+          <SidebarLayout
+            fullWidthContent={true}
+            sidebarContent={
+              <Stack space={3}>
+                <Text variant="h5">
+                  {formatMessage(m.listPage.sidebarFilterHeading)}
+                </Text>
+              </Stack>
+            }
+          >
+            <InfoCardGrid
+              variant="detailed"
+              columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
+              cards={data.visibleVerdicts.map((verdict) => {
+                return {
+                  description: verdict.title,
+                  eyebrow: '',
+                  id: verdict.id,
+                  link: { href: `/domar/${verdict.id}`, label: '' },
+                  title: verdict.caseNumber,
+                  borderColor: 'blue200',
+                  detailLines: [
+                    {
+                      icon: 'calendar',
+                      text: verdict.verdictDate
+                        ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
+                        : '',
+                    },
+                    {
+                      icon: 'person',
+                      text: `${verdict.presidentJudge?.name ?? ''} ${
+                        verdict.presidentJudge?.title ?? ''
+                      }`,
+                    },
+                  ],
+                }
+              })}
+            />
+          </SidebarLayout>
 
-          <InfoCardGrid
-            variant="detailed"
-            columns={isGridLayout ? 2 : 1}
-            cards={data.visibleVerdicts.map((verdict) => {
-              return {
-                description: verdict.title,
-                eyebrow: '',
-                id: verdict.id,
-                link: { href: `/domar/${verdict.id}`, label: '' },
-                title: verdict.caseNumber,
-                borderColor: 'blue200',
-                detailLines: [
-                  {
-                    icon: 'calendar',
-                    text: verdict.verdictDate
-                      ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
-                      : '',
-                  },
-                  {
-                    icon: 'person',
-                    text: `${verdict.presidentJudge?.name ?? ''} ${
-                      verdict.presidentJudge?.title ?? ''
-                    }`,
-                  },
-                ],
-              }
-            })}
-          />
           {initialData.total > data.visibleVerdicts.length && (
             <Box
               key={page}
