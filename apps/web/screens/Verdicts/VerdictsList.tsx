@@ -121,35 +121,39 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   const overrideGridLayoutSetting = width < theme.breakpoints.lg
 
   return (
-    <Box paddingBottom={5} className="rs_read">
-      <GridContainer>
-        <Stack space={3}>
-          <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-          <Text variant="h1" as="h1">
-            {formatMessage(m.listPage.heading)}{' '}
-          </Text>
-          <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
-          <Text>{formatMessage(m.listPage.description)}</Text>
-          <Hidden below="lg">
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                variant="utility"
-                icon={isGridLayout ? 'menu' : 'gridView'}
-                iconType="filled"
-                colorScheme="white"
-                size="small"
-                onClick={() => {
-                  setIsGridLayout((previousState) => !previousState)
-                }}
-              >
-                {formatMessage(
-                  isGridLayout
-                    ? m.listPage.displayList
-                    : m.listPage.displayGrid,
-                )}
-              </Button>
-            </Box>
-          </Hidden>
+    <Box className="rs_read">
+      <Stack space={3}>
+        <GridContainer>
+          <Stack space={3}>
+            <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
+            <Text variant="h1" as="h1">
+              {formatMessage(m.listPage.heading)}{' '}
+            </Text>
+            <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
+            <Text>{formatMessage(m.listPage.description)}</Text>
+            <Hidden below="lg">
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="utility"
+                  icon={isGridLayout ? 'menu' : 'gridView'}
+                  iconType="filled"
+                  colorScheme="white"
+                  size="small"
+                  onClick={() => {
+                    setIsGridLayout((previousState) => !previousState)
+                  }}
+                >
+                  {formatMessage(
+                    isGridLayout
+                      ? m.listPage.displayList
+                      : m.listPage.displayGrid,
+                  )}
+                </Button>
+              </Box>
+            </Hidden>
+          </Stack>
+        </GridContainer>
+        <Box background="blue100" paddingTop={[3, 3, 0]}>
           <SidebarLayout
             fullWidthContent={true}
             sidebarContent={
@@ -188,39 +192,38 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
                 }
               })}
             />
-          </SidebarLayout>
-
-          {initialData.total > data.visibleVerdicts.length && (
-            <Box
-              key={page}
-              paddingTop={4}
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              {error && (
-                <Box paddingBottom={2}>
-                  <Text variant="medium" color="red600">
-                    {formatMessage(m.listPage.loadingMoreFailed)}
-                  </Text>
-                </Box>
-              )}
-              <Button
-                loading={loading}
-                onClick={() => {
-                  setPage((p) => p + 1)
-                }}
+            {initialData.total > data.visibleVerdicts.length && (
+              <Box
+                key={page}
+                paddingTop={4}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
               >
-                {formatMessage(m.listPage.seeMoreVerdicts, {
-                  remainingVerdictCount:
-                    initialData.total - data.visibleVerdicts.length,
-                })}
-              </Button>
-            </Box>
-          )}
-        </Stack>
-      </GridContainer>
+                {error && (
+                  <Box paddingBottom={2}>
+                    <Text variant="medium" color="red600">
+                      {formatMessage(m.listPage.loadingMoreFailed)}
+                    </Text>
+                  </Box>
+                )}
+                <Button
+                  loading={loading}
+                  onClick={() => {
+                    setPage((p) => p + 1)
+                  }}
+                >
+                  {formatMessage(m.listPage.seeMoreVerdicts, {
+                    remainingVerdictCount:
+                      initialData.total - data.visibleVerdicts.length,
+                  })}
+                </Button>
+              </Box>
+            )}
+          </SidebarLayout>
+        </Box>
+      </Stack>
     </Box>
   )
 }
@@ -298,4 +301,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
 
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
+  {
+    showFooter: false,
+  },
 )

@@ -327,4 +327,7 @@ VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
 
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictDetails),
+  {
+    showFooter: false,
+  },
 )
