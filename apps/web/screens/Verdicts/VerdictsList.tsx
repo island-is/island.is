@@ -16,6 +16,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictCaseCategoriesQuery,
@@ -116,13 +117,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   )
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className="rs_read">
       <GridContainer>
         <Stack space={3}>
           <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
           <Text variant="h1" as="h1">
             {formatMessage(m.listPage.heading)}{' '}
           </Text>
+          <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
           <Text>{formatMessage(m.listPage.description)}</Text>
           <GridRow rowGap={3}>
             {data.visibleVerdicts.map((item) => (

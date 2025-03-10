@@ -30,4 +30,21 @@ export const m = {
         'Texti í hnapp neðst á yfirlitssíðu til að sækja fleiri dóma',
     },
   }),
+  verdictPage: {
+    heading: {
+      id: 'web.verdicts:verdictPage.heading',
+      defaultMessage: 'Dómur',
+      description: 'H1 titill á síðu dóms',
+    },
+    print: {
+      id: 'web.verdicts:verdictPage.print',
+      defaultMessage: 'Prenta',
+      description: 'Texti á prenta hnapp',
+    },
+    goBack: {
+      id: 'web.verdicts:verdictPage.goBack',
+      defaultMessage: 'Til baka',
+      description: 'Texti á "Til baka" hnapp',
+    },
+  },
 }

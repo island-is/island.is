@@ -4,11 +4,18 @@ import { useWindowSize } from 'react-use'
 import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
-  Breadcrumbs,
+  Button,
+  GridColumn,
   GridContainer,
+  GridRow,
+  Hidden,
+  Inline,
+  LinkV2,
   PdfViewer,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictByIdQuery,
@@ -32,6 +39,32 @@ const calculatePdfScale = (width: number) => {
   return 0.63
 }
 
+const downloadPdf = (base64String: string, filename = 'download.pdf') => {
+  // Convert Base64 to binary data
+  const byteCharacters = atob(base64String)
+  const byteNumbers = new Array(byteCharacters.length)
+
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i)
+  }
+
+  const byteArray = new Uint8Array(byteNumbers)
+  const blob = new Blob([byteArray], { type: 'application/pdf' })
+
+  // Create a download link
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+
+  // Append to the DOM and trigger download
+  document.body.appendChild(link)
+  link.click()
+
+  // Cleanup
+  document.body.removeChild(link)
+  URL.revokeObjectURL(link.href)
+}
+
 interface VerdictDetailsProps {
   item: NonNullable<GetVerdictByIdQuery['webVerdictById']>['item']
 }
@@ -42,15 +75,91 @@ const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
 
   return (
     <>
-      <GridContainer>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: '/' },
-            { title: formatMessage(m.listPage.heading), href: '/domar' },
-          ]}
-        />
-      </GridContainer>
+      <HeadWithSocialSharing title="Dómur" />
+      <Box paddingBottom={3}>
+        <GridContainer>
+          <Box paddingBottom={2}>
+            <LinkV2 href="/domar">
+              <Hidden print={true}>
+                <Button
+                  preTextIcon="arrowBack"
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="text"
+                  as="span"
+                  unfocusable
+                >
+                  {formatMessage(m.verdictPage.goBack)}
+                </Button>
+              </Hidden>
+            </LinkV2>
+          </Box>
+          <GridRow>
+            <GridColumn span="1/1" offset={['0', '0', '0', '1/9']}>
+              {Boolean(item.pdfString) && (
+                <Text variant="h1" as="h1">
+                  {formatMessage(m.verdictPage.heading)}
+                </Text>
+              )}
+              <Inline alignY="center" justifyContent="spaceBetween" space={3}>
+                <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
+                <Inline alignY="center" space={2}>
+                  {Boolean(item.pdfString) && (
+                    <Hidden print={true}>
+                      <Button
+                        icon="attach"
+                        iconType="outline"
+                        size="small"
+                        onClick={() => {
+                          downloadPdf(item.pdfString as string)
+                        }}
+                      >
+                        .PDF
+                      </Button>
+                    </Hidden>
+                  )}
+                  <Hidden print={true}>
+                    <Button
+                      icon="print"
+                      iconType="outline"
+                      size="small"
+                      onClick={() => {
+                        window.print()
+                      }}
+                    >
+                      {formatMessage(m.verdictPage.print)}
+                    </Button>
+                  </Hidden>
+                </Inline>
+              </Inline>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
       {Boolean(item.pdfString) && (
+        <Box>
+          <Box paddingY={5} background="overlayDefault" printHidden={true}>
+            <GridContainer>
+              <Box
+                display="flex"
+                justifyContent="center"
+                className={styles.pdfContainer}
+                height="full"
+                overflow="auto"
+                boxShadow="subtle"
+              >
+                <PdfViewer
+                  file={`data:application/pdf;base64,${item.pdfString}`}
+                  showAllPages={true}
+                  scale={calculatePdfScale(width)}
+                />
+              </Box>
+            </GridContainer>
+          </Box>
+        </Box>
+      )}
+      <Box className={styles.hiddenOnScreen}>
         <Box paddingY={5} background="overlayDefault">
           <GridContainer>
             <Box
@@ -64,16 +173,20 @@ const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
               <PdfViewer
                 file={`data:application/pdf;base64,${item.pdfString}`}
                 showAllPages={true}
-                scale={calculatePdfScale(width)}
+                scale={1}
               />
             </Box>
           </GridContainer>
         </Box>
-      )}
+      </Box>
       {Boolean(item.richText) && (
         <Box paddingBottom={5}>
           <GridContainer>
-            <Box>{webRichText([item.richText] as SliceType[])}</Box>
+            <GridRow>
+              <GridColumn offset={['0', '0', '0', '1/9']}>
+                <Box>{webRichText([item.richText] as SliceType[])}</Box>
+              </GridColumn>
+            </GridRow>
           </GridContainer>
         </Box>
       )}
