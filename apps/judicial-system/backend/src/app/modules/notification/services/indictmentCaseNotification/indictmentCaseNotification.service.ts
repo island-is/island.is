@@ -139,12 +139,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
+    const courtName =
+      theCase.court && theCase.court.name ? theCase.court.name : undefined
 
     const formattedBody = this.formatMessage(
       strings.criminalRecordFilesUploadedEmail.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: theCase.court?.name.replace('dómur', 'dómi'),
+        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },

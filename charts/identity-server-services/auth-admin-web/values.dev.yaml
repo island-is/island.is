@@ -19,11 +19,11 @@ global:
 name: 'auth-admin-web'
 enabled: true
 env:
-  BASE_URL: 'https://innskra.dev01.devland.is/admin'
+  BASE_URL: 'https://identity-server.dev01.devland.is/admin'
   CODE_OWNER: 'aranja'
-  IDENTITYSERVER_DOMAIN: 'innskra.dev01.devland.is'
+  IDENTITYSERVER_DOMAIN: 'identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NEXTAUTH_URL: 'https://innskra.dev01.devland.is/admin/api/auth'
+  NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
   NEXT_PUBLIC_BACKEND_URL: '/backend'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
@@ -61,7 +61,7 @@ ingress:
       nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'innskra.dev01.devland.is'
+      - host: 'identity-server.dev01.devland.is'
         paths:
           - '/admin'
 namespace: 'identity-server-admin'

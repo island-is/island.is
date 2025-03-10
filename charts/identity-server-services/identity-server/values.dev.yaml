@@ -47,7 +47,7 @@ env:
   LOG_LEVEL: 'info'
   MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
   NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
-  PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+  PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
   PersistenceSettings__DelegationsCacheEnabled: 'false'
   RedisSettings__Address: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com'
   RedisSettings__Port: '6379'
@@ -90,7 +90,7 @@ ingress:
       nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'innskra.dev01.devland.is'
+      - host: 'identity-server.dev01.devland.is'
         paths:
           - '/'
 namespace: 'identity-server'

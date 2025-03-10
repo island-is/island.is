@@ -4,7 +4,7 @@ const devConfig = {
     defaultNamespace: '@island.is/auth-public-api',
   },
   auth: {
-    issuer: 'https://innskra.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
   port: 3370,

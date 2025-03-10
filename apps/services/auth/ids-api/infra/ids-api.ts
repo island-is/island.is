@@ -36,13 +36,13 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
       PASSKEY_CORE_MAX_AGE_DAYS: '365',
       PUBLIC_URL: {
-        dev: 'https://innskra.dev01.devland.is/api',
+        dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
@@ -168,7 +168,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },

@@ -75,7 +75,7 @@ export const workerSetup = (services: {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -159,7 +159,7 @@ export const serviceSetup = (services: {
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://innskra.dev01.devland.is',
+        dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -264,7 +264,7 @@ export const serviceSetup = (services: {
         prod: 'false',
       },
       AUTH_PUBLIC_API_URL: {
-        dev: 'https://innskra.dev01.devland.is/api',
+        dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
@@ -275,7 +275,7 @@ export const serviceSetup = (services: {
           )}/app/skilavottord/api/graphql`,
       ),
       UNIVERSITY_GATEWAY_API_URL: {
-        dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        dev: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
         staging:
           'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
         prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',

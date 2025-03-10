@@ -5,6 +5,7 @@ import kebabCase from 'lodash/kebabCase'
 import { ConfigType } from '@nestjs/config'
 import { FileStorageConfig } from './file-storage.configuration'
 import { PresignedPost } from '@aws-sdk/s3-presigned-post'
+import { Tag } from '@aws-sdk/client-s3'
 
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60
@@ -75,5 +76,17 @@ export class FileStorageService {
       `${this.config.uploadBucket}/${sourceKey}`,
     )
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
+  }
+
+  async getFileTags(filename: string): Promise<Tag[]> {
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
+    }
+
+    if (!filename) {
+      throw new Error('Missing filename.')
+    }
+
+    return this.s3Service.getFileTags({ bucket: this.config.uploadBucket, key: filename })
   }
 }

@@ -3,7 +3,7 @@ const isProd = process.env.NODE_ENV === 'production'
 const devConfig = {
   production: false,
   NEXTAUTH_URL: 'http://localhost:4200',
-  identityServerDomain: 'innskra.dev01.devland.is',
+  identityServerDomain: 'identity-server.dev01.devland.is',
   identityServerLogoutURL: 'http://localhost:4200',
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   idsTokenCookieName: 'next-auth.session-token',

@@ -26,7 +26,7 @@ export const environments = {
   dev: {
     id: 'dev',
     label: 'Development',
-    idsIssuer: 'https://innskra.dev01.devland.is/',
+    idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'https://beta.dev01.devland.is/api',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
@@ -34,7 +34,7 @@ export const environments = {
   local: {
     id: 'local',
     label: 'Local',
-    idsIssuer: 'https://innskra.dev01.devland.is/',
+    idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'http://localhost:4444/api',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,

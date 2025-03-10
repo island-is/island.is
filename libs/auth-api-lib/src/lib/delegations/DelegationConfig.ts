@@ -106,7 +106,7 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
     userInfoUrl:
       env.required(
         'IDENTITY_SERVER_ISSUER_URL',
-        'https://innskra.dev01.devland.is',
+        'https://identity-server.dev01.devland.is',
       ) + '/connect/userinfo',
     defaultValidityPeriodInDays:
       env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,

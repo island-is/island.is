@@ -20,10 +20,10 @@ name: 'download-service'
 enabled: true
 env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
-  IDENTITY_SERVER_ISSUER_URL: 'https://innskra.dev01.devland.is'
+  IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
-  REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
+  REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SERVERSIDE_FEATURES_ON: ''
   XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'

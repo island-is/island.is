@@ -52,7 +52,7 @@ const devConfig = {
     getTimeToLiveMinutes: 5,
   },
   identityServerAuth: {
-    issuer: 'https://innskra.dev01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@samband.is',
   },
   emailOptions: {
