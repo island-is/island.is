@@ -13,23 +13,15 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: false,
+  logo: Logo,
   children: [
-    buildSection({
-      id: 'screen1',
-      title: m.intro,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen2',
-      title: m.dataCollection,
-      children: [],
-    }),
     buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
@@ -94,7 +86,7 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'candidateInfoHeader',
               title: m.candidateInformationHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
             }),
             buildTextField({
               id: 'candidateName',
@@ -126,7 +118,7 @@ export const Draft: Form = buildForm({
             buildDescriptionField({
               id: 'signeeInfoHeader',
               title: m.signeeInformationHeader,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               space: 'containerGutter',
             }),
             buildTextField({
@@ -135,7 +127,10 @@ export const Draft: Form = buildForm({
               width: 'full',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>
-                externalData.nationalRegistry?.data.fullName,
+                getValueViaPath(
+                  externalData,
+                  'nationalRegistry.data.fullName',
+                ) || '',
             }),
             buildTextField({
               id: 'signee.nationalId',
@@ -151,7 +146,7 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>
-                externalData.canSign?.data.area.name,
+                getValueViaPath(externalData, 'canSign.data.area.name') || '',
             }),
             buildTextField({
               id: 'signee.address',
@@ -159,7 +154,10 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) =>
-                externalData.nationalRegistry?.data.address?.streetAddress,
+                getValueViaPath(
+                  externalData,
+                  'nationalRegistry.data.address.streetAddress',
+                ) || '',
             }),
             buildSubmitField({
               id: 'submit',
@@ -177,11 +175,6 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'done',
-      title: m.listSignedShort,
-      children: [],
     }),
   ],
 })

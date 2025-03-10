@@ -1,3 +1,4 @@
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { TouchableOpacity, View } from 'react-native'
 import { useTheme } from 'styled-components'
@@ -130,17 +131,13 @@ export const ApplicationsPreview = ({
     <>
       {applications.length > 0 ? (
         <TouchableOpacity
-          disabled={
-            (slider && !applications.length) ||
-            (!slider && applications.length <= numberOfItems)
-          }
+          disabled={applications.length <= numberOfItems}
           onPress={() => navigateTo(`${headingTitleNavigationLink}`)}
           style={{ marginHorizontal: theme.spacing[2] }}
         >
           <Heading
             button={
-              (slider && applications.length) ||
-              (!slider && applications.length > numberOfItems) ? (
+              applications.length > numberOfItems ? (
                 <TouchableOpacity
                   onPress={() => navigateTo(`${headingTitleNavigationLink}`)}
                   style={{

@@ -8,7 +8,5 @@ export const ApplicantReview: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   children: [applicationStatusSection],
 })

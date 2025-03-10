@@ -401,6 +401,15 @@ Component.getProps = async (context) => {
         throw error
       }
     }
+
+    return {
+      page: {
+        type: PageType.GENERIC_LIST_ITEM,
+        props: await OrganizationSubPageGenericListItem.getProps(
+          modifiedContext,
+        ),
+      },
+    }
   }
 
   if (slugs.length === 4) {

@@ -8,11 +8,9 @@ import { AuthUser } from '../auth.types'
 
 @Injectable()
 export class JwtGraphQlAuthUserGuard extends AuthGuard('jwt') {
-  canActivate(context: ExecutionContext) {
+  getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
-    const { req } = ctx.getContext()
-
-    return super.canActivate(new GqlExecutionContext([req]))
+    return ctx.getContext().req
   }
 
   handleRequest<TUser extends AuthUser>(err: Error, user?: TUser): TUser {

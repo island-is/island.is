@@ -22,6 +22,7 @@ export const reviewOverviewSection = buildSection({
     buildMultiField({
       id: 'reviewOverviewSection.multiField',
       title: overview.general.pageTitle,
+      description: overview.general.descriptionAssignee,
       children: [
         buildOverviewField({
           id: 'overviewApplicant',
@@ -55,6 +56,7 @@ export const reviewOverviewSection = buildSection({
           id: 'submitReview',
           placement: 'footer',
           title: overview.general.approveButton,
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.REJECT,

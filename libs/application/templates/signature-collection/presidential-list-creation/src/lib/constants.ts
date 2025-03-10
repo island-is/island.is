@@ -5,24 +5,12 @@ export type Events = { type: DefaultEvents.SUBMIT }
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',
-  PREREQUISITES = 'PREREQUISITES',
+  PREREQUISITES = 'prerequisites',
 }
 export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export type SubmitResponse = {
-  success: boolean
-  orderId?: string[]
-}
-
 export enum ApiActions {
   submitApplication = 'createLists',
 }
-
-export const CountryAreas = [
-  'Sunnlendingafjórðungur',
-  'Vestfirðingafjórðungur',
-  'Norðlendingafjórðungur',
-  'Austfirðingafjórðungur',
-]

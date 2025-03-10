@@ -977,32 +977,6 @@ export const newPrimarySchoolMessages: MessageDir = {
   }),
 }
 
-export const inReviewFormMessages = defineMessages({
-  formTitle: {
-    id: 'nps.application:inReview.form.title',
-    defaultMessage: 'Umsókn í nýjan grunnskóla',
-    description: 'Application for a new primary school',
-  },
-})
-
-export const statesMessages = defineMessages({
-  draftDescription: {
-    id: 'nps.application:draft.description',
-    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
-    description: 'You have created a draft application.',
-  },
-  applicationSent: {
-    id: 'nps.application:application.sent.title',
-    defaultMessage: 'Umsókn hefur verið send.',
-    description: 'The application has been sent',
-  },
-  applicationSentDescription: {
-    id: 'nps.application:application.sent.description',
-    defaultMessage: 'Hægt er að breyta umsókn',
-    description: 'It is possible to edit the application',
-  },
-})
-
 export const errorMessages = defineMessages({
   phoneNumber: {
     id: 'nps.application:error.phone.number',

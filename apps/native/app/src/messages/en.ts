@@ -268,6 +268,8 @@ export const en: TranslatedMessages = {
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
   'wallet.lastUpdated': 'Last updated: {date}',
   'wallet.update': 'Update',
+  'wallet.yourLicenses': 'Your licenses',
+  'wallet.childLicenses': 'Your children’s licenses',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -291,8 +293,6 @@ export const en: TranslatedMessages = {
     'Too little time since license was accessed on another device',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
-  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
-  'walletPass.licenseNumber': 'License number: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Could not update license',
 
   // wallet passport
@@ -303,14 +303,8 @@ export const en: TranslatedMessages = {
   'walletPassport.warningTitle': 'Expires within 6 months',
   'walletPassport.warningDescription':
     'Note that your passport will expire within the next 6 months.',
-  'walletPassport.displayName': 'Name',
-  'walletPassport.number': 'Number',
-  'walletPassport.issuingDate': 'Date issued',
-  'walletPassport.expirationDate': 'Expiration date',
-  'walletPassport.mrzName': 'Machine-readable name',
-  'walletPassport.children': 'Childrens passport',
-  'walletPassport.noPassport': 'No passport.',
-  'walletPassport.noPassportLink': 'Read more at island.is/vegabref',
+  'walletPassport.noPassport': 'No valid passport',
+  'walletPassport.noPassportLink': 'Apply',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -535,6 +529,8 @@ export const en: TranslatedMessages = {
     completed {Completed}
     rejected {Rejected}
     draft {Application in progress}
+    approved {Approved}
+    notstarted {Not started}
     other {Unknown status}
   }`,
   'applicationStatusCard.draftProgress':

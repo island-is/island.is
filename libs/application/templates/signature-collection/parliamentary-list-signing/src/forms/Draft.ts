@@ -11,8 +11,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '../../assets/Logo'
-
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
@@ -22,17 +21,6 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: false,
   logo: Logo,
   children: [
-    buildSection({
-      id: 'screen1',
-      title: m.intro,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen2',
-      title: m.dataCollection,
-      children: [],
-    }),
-    /* section used for testing purposes */
     buildSection({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
@@ -84,7 +72,6 @@ export const Draft: Form = buildForm({
         }),
       ],
     }),
-    /* ------------------------------- */
     buildSection({
       id: 'signListInformationSection',
       title: m.information,
@@ -188,12 +175,6 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
-    }),
-    /* Section setup for the stepper */
-    buildSection({
-      id: 'done',
-      title: m.listSigned,
-      children: [],
     }),
   ],
 })
