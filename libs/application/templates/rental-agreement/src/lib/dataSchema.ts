@@ -1,16 +1,17 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import {
+  OtherFeesPayeeOptions,
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalHousingCategoryClass,
+  RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
-  OtherFeesPayeeOptions,
+  RentalHousingConditionInspector,
+  RentalPaymentMethodOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
   TRUE,
-  RentalPaymentMethodOptions,
-  RentalHousingCategoryClassGroup,
 } from './constants'
 import * as m from './messages'
 
@@ -272,6 +273,41 @@ const registerProperty = z
     }
   })
 
+const specialProvisions = z.object({
+  descriptionInput: z.string().optional(),
+  rulesInput: z.string().optional(),
+})
+
+const condition = z
+  .object({
+    inspector: z.string().optional(),
+    inspectorName: z.string().optional(),
+    resultsDescription: z.string().optional(),
+    resultsFiles: z.array(fileSchema),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY &&
+      !data.inspectorName
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingCondition.inspectorNameRequired,
+        path: ['inspectorName'],
+      })
+    }
+
+    if (!data.resultsDescription && !data.resultsFiles.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.housingCondition.inspectionResultsRequired,
+        path: ['resultsFiles'],
+      })
+    }
+  })
+
 const rentalPeriod = z
   .object({
     startDate: z
@@ -306,14 +342,7 @@ const rentalPeriod = z
 
 const rentalAmount = z
   .object({
-    amount: z
-      .string()
-      .refine((x) => Boolean(x), {
-        params: m.dataSchema.requiredErrorMsg,
-      })
-      .refine((x) => checkIfNegative(x), {
-        params: m.dataSchema.negativeNumberError,
-      }),
+    amount: z.string().optional(),
     indexTypes: z
       .enum([
         RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
@@ -344,6 +373,32 @@ const rentalAmount = z
     isPaymentInsuranceRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
+    // Error message if amount is not filled and if it is negative
+    if (!Boolean(data.amount)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.dataSchema.requiredErrorMsg,
+        path: ['amount'],
+      })
+    }
+    if (data.amount && !checkIfNegative(data.amount)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.dataSchema.negativeNumberError,
+        path: ['amount'],
+      })
+    }
+
+    if (data.isIndexConnected?.includes(TRUE) && !data.indexTypes) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.rentalAmount.indexValueRequiredError,
+        path: ['indexTypes'],
+      })
+    }
     if (
       data.paymentDateOptions &&
       data.paymentDateOptions.includes(RentalAmountPaymentDateOptions.OTHER) &&
@@ -414,18 +469,6 @@ const rentalAmount = z
     }
   })
 
-const specialProvisions = z.object({
-  descriptionInput: z.string().optional(),
-  rulesInput: z.string().optional(),
-})
-
-const condition = z.object({
-  inspector: z.string().optional(),
-  inspectorName: z.string().optional(),
-  resultsDescription: z.string().optional(),
-  resultsFiles: z.array(fileSchema),
-})
-
 const fireProtections = z
   .object({
     smokeDetectors: z.string().optional(),
@@ -485,6 +528,7 @@ const securityDeposit = z
     securityAmount: z.string().optional(),
     securityAmountOther: z.string().optional(),
     rentalAmount: z.string().optional(),
+    securityAmountCalculated: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (

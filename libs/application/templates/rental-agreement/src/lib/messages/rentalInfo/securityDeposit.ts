@@ -171,6 +171,11 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Upphæð',
     description: 'security deposit security amount other title',
   },
+  securityAmountCalculatedLabel: {
+    id: 'ra.application:securityDeposit.securityAmountCalculatedLabel',
+    defaultMessage: 'Upphæð tryggingar',
+    description: 'security deposit security amount calculated label',
+  },
   securityAmountOtherPlaceholder: {
     id: 'ra.application:securityDeposit.securityAmountOtherPlaceholder',
     defaultMessage: 'Upphæð í tölustöfum',

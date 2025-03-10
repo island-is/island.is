@@ -32,7 +32,9 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     answers.fireProtections.fireExtinguisher &&
     answers.fireProtections.emergencyExits
 
-  const isConditionPresent = answers.condition.resultsDescription
+  const isConditionPresent =
+    answers.condition.resultsDescription ||
+    answers.condition.resultsFiles.length > 0
 
   const isOtherFeesPresent =
     answers.otherFees.electricityCost &&
