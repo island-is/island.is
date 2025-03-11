@@ -23,6 +23,7 @@ import { maybeExpired } from './mocks/utils'
 import { mockPassportLicense } from './mocks/passportMock'
 import { mockEhicLicense } from './mocks/ehicMock'
 import { mockPCardLicense } from './mocks/pCardMock'
+import { mockHunting } from './mocks/huntingMock'
 
 const providerArray = [
   'AdministrationOfOccupationalSafetyAndHealth',
@@ -101,13 +102,16 @@ export const payload = () => {
       PCard: {
         data: mockPCardLicense(traitArgs),
       },
+      HuntingLicense: {
+        data: mockHunting(traitArgs),
+      },
     },
     data: [],
     metadata: () =>
       metadata({
         licenseNumber: traitArgs.number,
-        title: traitArgs.number,
         expired: new Date() > new Date(traitArgs.expires),
+        subtitle: `Skírteinisnúmer: ${traitArgs.number}`,
       }),
   })
 }

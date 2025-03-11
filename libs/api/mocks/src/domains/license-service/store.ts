@@ -27,6 +27,7 @@ export const store = createStore(() => {
         'DisabilityLicense',
         'Ehic',
         'PCard',
+        'HuntingLicense',
         ...(includePassport ? ['Passport'] : []),
       ])
     }
