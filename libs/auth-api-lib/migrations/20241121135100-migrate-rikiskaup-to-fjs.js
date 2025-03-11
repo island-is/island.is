@@ -2,81 +2,29 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
+    // We prefer doing delegation duplication to the new FJS scope to avoid
+    // any downtime for users while FJS updates the clientId.
     return queryInterface.sequelize.query(`
         BEGIN;
 
-        -- There's 2 cases we need to handle
-        -- A) Party A has granted a delegation to party B for both FJS and Rikiskaup domains. 
-        --      In this case we want to change the delegation_id reference in delegation_scope from the Rikiskaup entry to the FJS entry.
-        --      This avoids having duplicate (domain_name, to_national_id, from_national_id) trios
-        --      We then need to delete the remaining Rikiskaup delegation entry to avoid breaking uniqueness constraint
-        -- B) Party A has granted a delegation to party B for Rikiskaup but not for FJS domain.
-        --      In this case we can simply change the domain name for the delegation entry
-        -- Once that's done we change the scope id from the old scope to the new one.
-        -- TODO: do we also want to do cleanup?
+        -- Duplicating all delegations granted in the @rikisskaup.is domain to the @fjs.is domain
+        -- for delegations granted to the Ríkiskaup gagnaskilagátt
+        INSERT INTO delegation("id","from_national_id","from_display_name","to_national_id","created","modified","to_name","domain_name","created_by_national_id")
+        SELECT d."id",d."from_national_id",d."from_display_name",d."to_national_id",d."created",d."modified",d."to_name",d."domain_name",d."created_by_national_id"
+        FROM delegation d
+        JOIN delegation_scope ds ON d.id = ds.delegation_id
+        WHERE d.domain_name = '@rikiskaup.is'
+          AND ds.scope_name = '@rikiskaup.is/gagnaskilagatt'
+        ;
 
-        -- A)
-        -- Find all entries in case A and change the delegation_id reference to the FJS entry. 
-        UPDATE delegation_scope
-        SET delegation_id = fjs_entry.id
-        FROM delegation rikiskaup_entry
-        JOIN delegation fjs_entry
-            ON rikiskaup_entry.to_national_id = fjs_entry.to_national_id
-            AND rikiskaup_entry.from_national_id = fjs_entry.from_national_id
-            AND fjs_entry.domain_name = '@fjs.is'
-        WHERE delegation_scope.delegation_id = rikiskaup_entry.id
-            AND rikiskaup_entry.domain_name = '@rikiskaup.is'
-            AND EXISTS (
-            SELECT 1
-            FROM delegation d
-            WHERE d.domain_name = '@fjs.is'
-                AND d.to_national_id = rikiskaup_entry.to_national_id
-                AND d.from_national_id = rikiskaup_entry.from_national_id
-        );
-
-        -- Delete all rows in delegation which would break uniqueness contraint. 
-        -- All foreign key references to these rows should have been changed in the previous step
-        DELETE FROM delegation
-        WHERE domain_name = '@rikiskaup.is'
-            AND EXISTS (
-            SELECT 1
-            FROM delegation d
-            WHERE d.domain_name = '@fjs.is'
-                AND d.to_national_id = delegation.to_national_id
-                AND d.from_national_id = delegation.from_national_id
-            );
-
-        -- B)
-        -- Move remaining delegations from domain Rikiskaup to FJS
-        -- TODO: change this to only change rows with foreign key references from delegation_scope
-            UPDATE delegation
-            SET domain_name='@fjs.is'
-            WHERE domain_name='@rikiskaup.is'
-            
-        -- Optional 
-        -- Delete all delegations with no scope grant in domain Rikiskaup
-        -- Not sure if this is needed since it seems delegations can exist without any scope grants?
-        DELETE FROM delegation
-        WHERE id IN (
-            SELECT d.id
-            FROM delegation d
-            LEFT JOIN scope s ON d.id = s.delegation_id
-            WHERE s.delegation_id IS NULL
-            AND d.domain_name = '@rikiskaup.is'
-        );
-
-        -- Next we update scope ID for all delegation scopes
-        UPDATE delegation_scope t
-        SET scope_name='TODO'
-        WHERE t.scope_name='@rikiskaup.is/gagnaskilagatt';
-    
-        -- Optional 
-        -- Remove Rikiskaup from the IDS
-            -- disable Rikiskaup clients
-            -- disable Rikiskaup scopes
-            -- delete? Rikiskaup domain
-            -- deactivate Rikiskaup api scope user
-            -- delete Rikiskaup api scope user delegation grants
+        -- Duplicating all delegation scopes granted in the @rikisskaup.is domain to the @fjs.is domain
+        -- related to the delegations above.
+        INSERT INTO delegation_scope("delegation_id","scope_name","created","modified","valid_from","valid_to")
+        SELECT ds."delegation_id",ds."scope_name",ds."created",ds."modified",ds."valid_from",ds."valid_to"
+        FROM delegation d
+        JOIN delegation_scope ds ON d.id = ds.delegation_id
+        WHERE d.domain_name = '@rikiskaup.is'
+          AND ds.scope_name = '@rikiskaup.is/gagnaskilagatt'
 
         COMMIT;
     `)
