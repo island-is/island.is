@@ -14,7 +14,8 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   const answers = application.answers as CreateListSchema
   const owner: OwnerInput = answers.applicant
 
-  const subject = 'Ný meðmælasöfnun fyrir sveitarstjórnarkosningar hefur verið stofnuð'
+  const subject =
+    'Ný meðmælasöfnun fyrir sveitarstjórnarkosningar hefur verið stofnuð'
 
   return {
     from: {

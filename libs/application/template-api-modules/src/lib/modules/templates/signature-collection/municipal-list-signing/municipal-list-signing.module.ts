@@ -20,4 +20,4 @@ import {
   providers: [MunicipalListSigningService, NationalRegistryClientService],
   exports: [MunicipalListSigningService],
 })
-export class MunicipalListCreationModule {}
+export class MunicipalListSigningModule {}

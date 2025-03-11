@@ -145,7 +145,7 @@ import { ParliamentaryListCreationService } from './signature-collection/parliam
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
 import { MunicipalListCreationModule } from './signature-collection/municipal-list-creation/municipal-list-creation.module'
-import { MunicipalListCreationService } from './signature-collection/municipal-list-creation/municipal-list-creation.service's
+import { MunicipalListCreationService } from './signature-collection/municipal-list-creation/municipal-list-creation.service'
 import { MunicipalListSigningModule } from './signature-collection/municipal-list-signing/municipal-list-signing.module'
 import { MunicipalListSigningService } from './signature-collection/municipal-list-signing/municipal-list-signing.service'
 import { SecondarySchoolModule } from './secondary-school/secondary-school.module'

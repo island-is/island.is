@@ -93,8 +93,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = application.externalData
-      .municipalCollection.data as Collection
+    const municipalCollection = application.externalData.municipalCollection
+      .data as Collection
 
     const input = {
       owner: {
@@ -107,7 +107,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     }
 
     const result = await this.signatureCollectionClientService
-    //Todo: switch to municipal once available
+      //Todo: switch to municipal once available
       .createParliamentaryCandidacy(input, auth)
       .catch((error) => {
         throw new TemplateApiError(
