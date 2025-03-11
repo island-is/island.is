@@ -433,6 +433,7 @@ codemagic.yaml                                                                  
 /apps/unicorn-app/                                                                                        @island-is/devops
 /infra/                                                                                                   @island-is/devops
 **/infra/                                                                                                 @island-is/devops
+**/project.json                                                                                           @island-is/devops @island-is/core
 /libs/logging/                                                                                            @island-is/devops
 /scripts/                                                                                                 @island-is/devops
 /scripts/postinstall.js                                                                                   @island-is/devops @island-is/core
