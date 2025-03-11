@@ -1,6 +1,6 @@
 import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
