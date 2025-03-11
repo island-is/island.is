@@ -152,9 +152,9 @@ const OrganizationSubpageSlugField = () => {
         const subpagesThatDontBelongToParent =
           subpagesWithSameSlugThatBelongToSameOrganizationPage.filter(
             (subpage) =>
-              subpageParents.items.some((parent) =>
+              !subpageParents.items.some((parent) =>
                 parent.fields.pages[sdk.locales.default].some(
-                  (s) => s.sys.id !== subpage.sys.id,
+                  (s) => s.sys.id === subpage.sys.id,
                 ),
               ),
           )
