@@ -19,7 +19,7 @@ global:
 name: 'skilavottord-web'
 enabled: true
 env:
-  API_URL: 'http://skilavottord-ws'
+  API_URL: 'http://-skilavottord-ws'
   ENVIRONMENT: 'staging'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'

@@ -22,7 +22,7 @@ env:
   AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
   AUDIT_TRAIL_REGION: 'eu-west-1'
   AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-  BACKEND_URL: 'http://web-judicial-system-backend'
+  BACKEND_URL: 'http://-judicial-system-backend'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
