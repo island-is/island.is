@@ -3,7 +3,8 @@ import {
   EphemeralStateLifeCycle,
   NO,
   YES,
-  pruneAfterDays,
+  coreHistoryMessages,
+  corePendingActionMessages,
 } from '@island.is/application/core'
 import {
   Application,
@@ -14,11 +15,13 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  FormModes,
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
@@ -30,8 +33,7 @@ import {
   States,
 } from './constants'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { CodeOwners } from '@island.is/shared/constants'
+import { newPrimarySchoolMessages } from './messages'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
@@ -49,7 +51,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
-  allowMultipleApplicationsInDraft: true,
   featureFlag: Features.newPrimarySchool,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -57,13 +58,15 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       [States.PREREQUISITES]: {
         meta: {
           name: States.PREREQUISITES,
-          status: 'draft',
+          status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
           actionCard: {
-            pendingAction: {
-              title: '',
-              displayStatus: 'success',
-            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           onExit: defineTemplateApi({
             action: ApiModuleActions.getChildInformation,
@@ -80,7 +83,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
+                  name: newPrimarySchoolMessages.pre.startApplication,
                   type: 'primary',
                 },
               ],
@@ -91,7 +94,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: States.DRAFT }],
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
         },
       },
       [States.DRAFT]: {
@@ -105,13 +108,15 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.DRAFT,
-          status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          status: FormModes.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            pendingAction: {
-              title: 'corePendingActionMessages.applicationReceivedTitle',
-              displayStatus: 'success',
-            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           onExit: defineTemplateApi({
             action: ApiModuleActions.sendApplication,
@@ -128,7 +133,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
+                  name: newPrimarySchoolMessages.overview.submitButton,
                   type: 'primary',
                 },
               ],
@@ -138,21 +143,21 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: States.SUBMITTED }],
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
         },
       },
       [States.SUBMITTED]: {
         meta: {
           name: States.SUBMITTED,
-          status: 'completed',
+          status: FormModes.COMPLETED,
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationSent,
-              content: statesMessages.applicationSentDescription,
+              title: corePendingActionMessages.applicationReceivedTitle,
+              content: corePendingActionMessages.applicationReceivedDescription,
               displayStatus: 'success',
             },
           },
-          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

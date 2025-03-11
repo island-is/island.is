@@ -220,9 +220,11 @@ export const PoliceCaseInfo: FC<Props> = ({
             }
 
             const subtypes = [...subtypesArray, indictmentSubtype]
-
             updatePoliceCase(index, { subtypes })
 
+            // initialise the indictment count(s) subtype only 
+            // when a single subtype has been selected. If there are more
+            // its up to the user to initialise
             if (subtypes.length === 1) {
               updateIndictmentCount(
                 policeCaseNumbers[index],
@@ -264,7 +266,7 @@ export const PoliceCaseInfo: FC<Props> = ({
                     crimeScene || {},
                     {
                       [policeCaseNumbers[index]]:
-                        remainingSubtypes.length === 1 ? remainingSubtypes : [],
+                      remainingSubtypes,
                     },
                   )
                 }}
