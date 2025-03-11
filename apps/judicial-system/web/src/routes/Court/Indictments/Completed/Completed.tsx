@@ -127,21 +127,11 @@ const Completed: FC = () => {
 
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every((defendant) => {
-          if (
-            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-          ) {
-            return (
-              defendant.verdictAppealDecision !== undefined &&
-              defendant.verdictAppealDecision !== null
-            )
-          }
-
-          return (
-            defendant.serviceRequirement !== undefined &&
-            defendant.serviceRequirement !== null
-          )
-        })
+      ? workingCase.defendants?.every((defendant) =>
+          defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            ? Boolean(defendant.verdictAppealDecision)
+            : Boolean(defendant.serviceRequirement),
+        )
       : true
 
   const hasLawsBroken = lawsBroken.size > 0
