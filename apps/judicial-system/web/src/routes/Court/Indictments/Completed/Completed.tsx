@@ -306,32 +306,25 @@ const Completed: FC = () => {
                       ServiceRequirement.NOT_APPLICABLE && (
                       <motion.div
                         key="verdict-appeal-decision"
+                        className={styles.motionBox}
                         initial={{
                           opacity: 0,
-                          y: -10,
                           height: 0,
-                          marginTop: 0,
                         }}
                         animate={{
                           opacity: 1,
-                          y: 0,
                           height: 'auto',
-                          marginTop: '16px',
                           transition: {
                             opacity: { delay: 0.2 },
-                            y: { delay: 0.2 },
                           },
                         }}
                         exit={{
                           opacity: 0,
-                          y: -10,
                           height: 0,
-                          marginTop: 0,
                           transition: {
-                            opacity: { duration: 0.2 },
+                            height: { delay: 0.2 },
                           },
                         }}
-                        transition={{}}
                       >
                         <SectionHeading
                           heading="h4"

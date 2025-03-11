@@ -14,3 +14,7 @@ export const gridLayout = style({
     },
   },
 })
+
+export const motionBox = style({
+  marginTop: `${theme.spacing[2]}px`,
+})
