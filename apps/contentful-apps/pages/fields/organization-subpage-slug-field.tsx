@@ -70,7 +70,11 @@ const OrganizationSubpageSlugField = () => {
 
       const entryId = sdk.entry.getSys().id
 
-      const [parentSubpageResponse, subpageResponse] = await Promise.all([
+      const [
+        parentSubpageAboveResponse,
+        subpageResponse,
+        parentSubpageResponse,
+      ] = await Promise.all([
         cma.entry.getMany({
           query: {
             locale: sdk.field.locale,
@@ -88,42 +92,77 @@ const OrganizationSubpageSlugField = () => {
             'sys.id[ne]': entryId,
             'sys.archivedVersion[exists]': false,
             limit: 1000,
+            'fields.organizationPage.sys.id': organizationPageId,
+          },
+        }),
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'organizationParentSubpage',
+            'fields.slug': value,
+            'sys.archivedVersion[exists]': false,
+            limit: 1000,
+            'fields.organizationPage.sys.id': organizationPageId,
           },
         }),
       ])
 
-      const subpagesWithSameSlug = subpageResponse?.items ?? []
-
       const subpagesWithSameSlugThatBelongToSameOrganizationPage =
-        subpagesWithSameSlug.filter(
-          (subpage) =>
-            subpage.fields.organizationPage?.[sdk.locales.default]?.sys?.id ===
-            organizationPageId,
-        )
+        subpageResponse.items
 
-      if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length === 0) {
-        setIsValid(true)
+      // Belongs to a parent subpage
+      if (parentSubpageAboveResponse.items.length > 0) {
+        const siblingSubpageExistsWithSameSlug =
+          parentSubpageAboveResponse.items.some((parentSubpage) => {
+            const pages: { sys: { id: string } }[] =
+              parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
+            return pages.some((page) =>
+              subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
+                (s) => s.sys.id === page.sys.id,
+              ),
+            )
+          })
+        setIsValid(!siblingSubpageExistsWithSameSlug)
         return
       }
 
-      if (parentSubpageResponse.items.length === 0) {
+      // Parent subpage with the same org page and slug
+      if (parentSubpageResponse.items.length > 0) {
         setIsValid(false)
         return
       }
 
-      if (
-        parentSubpageResponse.items.some((parentSubpage) => {
-          const pages: { sys: { id: string } }[] =
-            parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
-          return pages.some((page) =>
-            subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
-              (s) => s.sys.id === page.sys.id,
-            ),
-          )
+      // Is there another org subpage that does not belong to a parent subpage that has the same slug?
+      if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length > 0) {
+        // Check to see if those org subpages with the same slug belong to a parent subpage
+        const subpageParents = await cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'organizationParentSubpage',
+            'sys.archivedVersion[exists]': false,
+            limit: 1000,
+            'fields.organizationPage.sys.id': organizationPageId,
+            'fields.pages.sys.id[in]':
+              subpagesWithSameSlugThatBelongToSameOrganizationPage
+                .map((s) => s.sys.id)
+                .join(', '),
+          },
         })
-      ) {
-        setIsValid(false)
-        return
+
+        const subpagesThatDontBelongToParent =
+          subpagesWithSameSlugThatBelongToSameOrganizationPage.filter(
+            (subpage) =>
+              subpageParents.items.some((parent) =>
+                parent.fields.pages[sdk.locales.default].some(
+                  (s) => s.sys.id !== subpage.sys.id,
+                ),
+              ),
+          )
+
+        if (subpagesThatDontBelongToParent.length > 0) {
+          setIsValid(false)
+          return
+        }
       }
 
       setIsValid(true)
