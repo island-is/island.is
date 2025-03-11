@@ -135,8 +135,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
               <Box display="flex" justifyContent="flexEnd">
                 <Button
                   variant="utility"
-                  icon={isGridLayout ? 'menu' : 'gridView'}
-                  iconType="filled"
+                  icon={isGridLayout ? 'list' : 'grid'}
+                  iconType="outline"
                   colorScheme="white"
                   size="small"
                   onClick={() => {
@@ -182,6 +182,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
                         ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
                         : '',
                     },
+                    { icon: 'hammer', text: verdict.court ?? '' },
                     {
                       icon: 'person',
                       text: `${verdict.presidentJudge?.name ?? ''} ${
