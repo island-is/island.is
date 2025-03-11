@@ -10,11 +10,9 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -282,8 +280,13 @@ const Indictment = () => {
   )
 
   const initialize = useCallback(() => {
-    if (workingCase.indictmentCounts?.length === 0) {
+    const indictmentCounts = workingCase.indictmentCounts || []
+    if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
+    }
+    else {
+      // in case indictment subtypes have been modified in earlier step
+      setDriversLicenseSuspensionRequest(indictmentCounts)
     }
 
     setAndSendCaseToServer(
@@ -309,6 +312,7 @@ const Indictment = () => {
     formatMessage,
     setWorkingCase,
     handleCreateIndictmentCount,
+    setDriversLicenseSuspensionRequest
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
