@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('EducationFriggKeyAddressModel')
+@ObjectType('EducationFriggAddressModel')
 export class AddressModel {
   @Field()
   id!: string
