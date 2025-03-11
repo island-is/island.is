@@ -17,7 +17,6 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { api } from '@island.is/judicial-system-web/src/services'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -172,9 +171,7 @@ const FormProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (!isAuthenticated && router.pathname !== '/') {
-      window.location.assign(
-        `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
-      )
+      router.push(`/api/auth/login?redirectRoute=${window.location.pathname}`)
     } else if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&
@@ -200,9 +197,9 @@ const FormProvider = ({ children }: Props) => {
     id,
     isAuthenticated,
     limitedAccess,
-    router.pathname,
     state,
     getCase,
+    router,
   ])
 
   useEffect(() => {

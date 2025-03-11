@@ -27,7 +27,6 @@ console.info(`Docker tag: ${tagName}`)
 console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
 
-
 function shouldRun() {
     if (eventName === 'merge_group') {
         if (MAIN_BRANCHES.includes(targetBranch)) {
@@ -48,7 +47,7 @@ function getTagname() {
     if (eventName === 'merge_group') {
         const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '')
         if (typeOfDeployment.dev) {
-            return `main_${dateString}_${randomTag}`
+            return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
             return `release_${dateString}_${randomTag}`
