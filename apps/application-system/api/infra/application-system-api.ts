@@ -64,6 +64,7 @@ const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api-worker'> =>
   service('application-system-api-worker')
     .namespace(namespace)
@@ -109,6 +110,7 @@ export const workerSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
     })
     .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
     .secrets({
