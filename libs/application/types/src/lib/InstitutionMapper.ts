@@ -299,6 +299,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.THJODSKRA,
     contentfulId: InstitutionContentfulIds.THJODSKRA,
   },
+  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+    contentfulId: InstitutionContentfulIds.THJODSKRA,
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     nationalId: InstitutionNationalIds.UTLENDINGASTOFNUN,
     slug: InstitutionTypes.UTLENDINGASTOFNUN,
