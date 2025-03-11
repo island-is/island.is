@@ -100,6 +100,7 @@ export const FilterMobileDrawer = ({
                   paddingY={2}
                   justifyContent={'spaceBetween'}
                   flexShrink={0}
+                  className={styles.topBar}
                 >
                   <Box>
                     <Text variant="h4" as="h3">
@@ -122,7 +123,13 @@ export const FilterMobileDrawer = ({
                   {children}
                 </Box>
 
-                <Box paddingY={2} paddingX={3} width="full" flexShrink={0}>
+                <Box
+                  paddingY={2}
+                  paddingX={3}
+                  width="full"
+                  flexShrink={0}
+                  className={styles.showResultsButton}
+                >
                   <Button fluid onClick={closeModal}>
                     {labelShowResult ??
                       (lang === 'is' ? 'Sýna niðurstöður' : 'Show results')}

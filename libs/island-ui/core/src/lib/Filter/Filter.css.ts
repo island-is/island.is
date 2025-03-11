@@ -74,6 +74,33 @@ export const closeButton = style({
   zIndex: 2,
 })
 
+export const showResultsButton = style({
+  '::before': {
+    content: '',
+    position: 'absolute',
+    bottom: 77,
+    left: 0,
+    height: 16,
+    width: '100%',
+    background:
+      'linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
+  },
+})
+
+export const topBar = style({
+  '::after': {
+    content: '',
+    position: 'absolute',
+    top: 57,
+    left: 0,
+    height: 16,
+    width: '100%',
+    zIndex: 1,
+    background:
+      'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
+  },
+})
+
 export const mobilePopoverContainer = style({
   zIndex: 100,
   width: '100%',
