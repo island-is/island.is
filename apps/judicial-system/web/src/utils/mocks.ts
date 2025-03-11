@@ -79,7 +79,7 @@ export const mockJudgeQuery = [
     },
     result: {
       data: {
-        currentUser: mockJudge,
+        currentUser: { user: mockJudge },
       },
     },
   },
@@ -92,7 +92,7 @@ export const mockCourtOfAppealsJudgeQuery = [
     },
     result: {
       data: {
-        currentUser: mockCourtOfAppealsUser,
+        currentUser: { user: mockCourtOfAppealsUser },
       },
     },
   },
@@ -105,7 +105,7 @@ export const mockPrisonUserQuery = [
     },
     result: {
       data: {
-        currentUser: mockPrisonUser,
+        currentUser: { user: mockPrisonUser },
       },
     },
   },
@@ -118,7 +118,7 @@ export const mockProsecutorQuery = [
     },
     result: {
       data: {
-        currentUser: mockProsecutor,
+        currentUser: { user: mockProsecutor },
       },
     },
   },

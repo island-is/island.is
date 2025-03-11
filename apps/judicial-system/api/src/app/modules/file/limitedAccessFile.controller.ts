@@ -149,7 +149,12 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
+  @Get([
+    'indictment',
+    'indictment/:fileName',
+    'mergedCase/:mergedCaseId/indictment',
+    'mergedCase/:mergedCaseId/indictment/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   async getIndictmentPdf(
     @Param('id') id: string,
@@ -175,7 +180,10 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('subpoena/:defendantId/:subpoenaId')
+  @Get([
+    'subpoena/:defendantId/:subpoenaId',
+    'subpoena/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,

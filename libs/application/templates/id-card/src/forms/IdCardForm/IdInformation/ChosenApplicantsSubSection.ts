@@ -61,7 +61,9 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       ...idInformation.labels.noIdNumber,
                     },
                 value: applicantInformation.nationalId,
-                disabled: applicantIIDisabled && applicantIDDisabled,
+                disabled:
+                  (applicantIIDisabled && applicantIDDisabled) ||
+                  applicantInformation.citizenship?.code !== 'IS',
               },
             ]
 

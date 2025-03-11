@@ -37,7 +37,7 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
   SYSLUMENN_TIMEOUT: '3000'
-  USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+  USER_NOTIFICATION_API_URL: 'https://user-notification.internal.dev01.devland.is'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -81,7 +81,7 @@ ingress:
       kubernetes.io/ingress.class: 'nginx-internal-alb'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'auth-delegation-api.internal.dev01.devland.is'
+      - host: 'auth-delegation-api.internal.identity-server.dev01.devland.is'
         paths:
           - '/'
 namespace: 'identity-server-delegation'

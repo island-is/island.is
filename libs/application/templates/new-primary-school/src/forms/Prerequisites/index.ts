@@ -16,7 +16,7 @@ export const Prerequisites: Form = buildForm({
       id: 'prerequisites',
       title: newPrimarySchoolMessages.pre.externalDataSection,
       children: [
-        applicationTypeSubSection,
+        // applicationTypeSubSection,
         externalDataSubSection,
         childrenSubSection,
       ],
