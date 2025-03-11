@@ -642,50 +642,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Do the parents need an interpreter?',
     },
 
-    // Free school meal
-    freeSchoolMealSubSectionTitle: {
-      id: 'nps.application:different.needs.free.school.meal.sub.section.title',
-      defaultMessage: 'Gjaldfrjáls skólamáltíð',
-      description: 'Free school meal ',
-    },
-    freeSchoolMealDescription: {
-      id: 'nps.application:different.needs.free.school.meal.description',
-      defaultMessage:
-        'Barninu stendur til boða gjaldfrjáls skólamáltíð. Til þess að skólinn geti mætt fæðuþörfum barnsins á sama tíma og spornað er við matarsóun þurfum við upplýsingar er varða matarumhverfi barnsins.',
-      description:
-        "The child is entitled to a free school meal. In order for the school to be able to meet the child's nutritional needs while at the same time preventing food waste, we need information about the child's food environment.",
-    },
-    acceptFreeSchoolLunch: {
-      id: 'nps.application:different.needs.free.school.meal.accept.free.school.lunch',
-      defaultMessage:
-        'Viltu þiggja gjaldfrjálsa máltíð í hádeginu fyrir barnið þitt?',
-      description:
-        'Would you like to accept a free school lunch for your child?',
-    },
-    hasSpecialNeeds: {
-      id: 'nps.application:different.needs.free.school.meal.has.special.needs',
-      defaultMessage:
-        'Er barnið með sérþarfir sem óskað er eftir að tekið sé tillit til?',
-      description:
-        'Does the child have special needs that you wish to be taken into account?',
-    },
-    specialNeedsType: {
-      id: 'nps.application:different.needs.free.school.meal.special.needs.type',
-      defaultMessage: 'Tegund',
-      description: 'Type',
-    },
-    specialNeedsTypePlaceholder: {
-      id: 'nps.application:different.needs.free.school.meal.special.needs.type.placeholder',
-      defaultMessage: 'Veldu tegund',
-      description: 'Select type',
-    },
-    foodAllergiesAlertMessage: {
-      id: 'nps.application:different.needs.free.school.meal.food.allergies.alert.message',
-      defaultMessage: 'Spurt er um matarofnæmi undir ofnæmi og óþól',
-      description:
-        'Food allergies are addressed in the allergies and intolerances section',
-    },
-
     // Allergies and intolerances
     allergiesAndIntolerancesSubSectionTitle: {
       id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',

@@ -38,7 +38,6 @@ export enum OptionsType {
   REASON_INTERNATIONAL_SCHOOL = 'registrationReasonInternationalSchool',
   REASON_PRIVATE_SCHOOL = 'registrationReasonPrivateSchool',
   RELATION = 'relation',
-  SCHOOL_MEAL = 'schoolMeal',
   ALLERGY = 'allergy',
   LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }

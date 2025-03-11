@@ -85,21 +85,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.guardianRequiresInterpreter',
   ) as YesOrNo
 
-  const acceptFreeSchoolLunch = getValueViaPath(
-    answers,
-    'freeSchoolMeal.acceptFreeSchoolLunch',
-  ) as YesOrNo
-
-  const hasSpecialNeeds = getValueViaPath(
-    answers,
-    'freeSchoolMeal.hasSpecialNeeds',
-  ) as YesOrNo
-
-  const specialNeedsType = getValueViaPath(
-    answers,
-    'freeSchoolMeal.specialNeedsType',
-  ) as string
-
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
     'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
@@ -237,9 +222,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
-    acceptFreeSchoolLunch,
-    hasSpecialNeeds,
-    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
