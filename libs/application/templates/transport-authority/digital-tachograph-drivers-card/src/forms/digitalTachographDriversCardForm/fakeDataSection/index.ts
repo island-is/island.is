@@ -20,7 +20,7 @@ export const fakeDataSection = buildSection({
         buildDescriptionField({
           id: 'gervigognDesc',
           title: 'Viltu nota gervigögn?',
-          titleVariant: 'h5',
+          titleVariant: 'h4',
           description: `
             Ath. gervigögn eru eingöngu notuð í stað þess að sækja
             forsendugögn í staging umhverfi (dev x-road) hjá RLS / SGS.
@@ -46,23 +46,39 @@ export const fakeDataSection = buildSection({
         buildRadioField({
           id: 'fakeData.currentLicense',
           title: 'Núverandi ökuréttindi umsækjanda',
+          description:
+            'Verður með *issued = today - 12M* og *expires = today + 12M*',
           width: 'half',
           condition: (answers) =>
             getValueViaPath(answers, 'fakeData.useFakeData') === YES,
           options: [
             {
+              value: 'B',
+              label: 'B réttindi',
+            },
+            {
               value: 'C',
               label: 'C réttindi',
             },
             {
+              value: 'C1',
+              label: 'C1 réttindi',
+            },
+            {
               value: 'D',
               label: 'D réttindi',
+            },
+            {
+              value: 'D1',
+              label: 'D1 réttindi',
             },
           ],
         }),
         buildRadioField({
           id: 'fakeData.hasNewestDriversCard',
           title: 'Er með íslenskt ökuritakort',
+          description:
+            'Ef já, þá verður *applicationCreatedAt = today - 12M* og *cardValidFrom = today - 12M*',
           width: 'half',
           condition: (answers) =>
             getValueViaPath(answers, 'fakeData.useFakeData') === YES,
@@ -80,6 +96,7 @@ export const fakeDataSection = buildSection({
         buildRadioField({
           id: 'fakeData.newestDriversCardIsExpired',
           title: 'Íslenska ökuritakortið er útrunnið',
+          description: 'Ef já, þá verður *cardValidTo = today - 1M*',
           width: 'half',
           condition: (answers) =>
             getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
@@ -115,9 +132,21 @@ export const fakeDataSection = buildSection({
             },
           ],
         }),
+        buildDescriptionField({
+          id: 'fakeData.newestDriversCardExpiresInMonthsDesc',
+          title: 'Íslenska ökuritakortið rennur út eftir x marga mánuði',
+          titleVariant: 'h4',
+          description: 'Default: *cardValidTo = today + 1M*',
+          condition: (answers) =>
+            getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
+            getValueViaPath(answers, 'fakeData.hasNewestDriversCard') === YES &&
+            getValueViaPath(answers, 'fakeData.newestDriversCardIsExpired') ===
+              NO &&
+            getValueViaPath(answers, 'fakeData.newestDriversCardIsValid') ===
+              YES,
+        }),
         buildTextField({
           id: 'fakeData.newestDriversCardExpiresInMonths',
-          title: 'Íslenska ökuritakortið rennur út eftir x marga mánuði',
           variant: 'number',
           condition: (answers) =>
             getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
