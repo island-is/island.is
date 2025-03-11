@@ -374,7 +374,7 @@ const rentalAmount = z
   })
   .superRefine((data, ctx) => {
     // Error message if amount is not filled and if it is negative
-    if (!Boolean(data.amount)) {
+    if (!data.amount || !data.amount.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
