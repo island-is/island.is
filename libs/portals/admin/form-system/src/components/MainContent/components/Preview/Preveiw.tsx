@@ -49,7 +49,7 @@ export const Preview = ({ data }: Props) => {
         </Box>
       )}
       {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
-      {type === FieldTypesEnum.DOCUMENT && <FileUpload item={data} />}
+      {type === FieldTypesEnum.FILE && <FileUpload item={data} />}
       {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
       {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
       {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}

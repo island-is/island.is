@@ -4,6 +4,6 @@ export const UPDATE_LIST_ITEM_DISPLAY_ORDER = gql`
   mutation UpdateFormSystemListItemsDisplayOrder(
     $input: FormSystemUpdateListItemsDisplayOrderInput!
   ) {
-    formSystemUpdateListItemsDisplayOrder(input: $input)
+    updateFormSystemListItemsDisplayOrder(input: $input)
   }
 `

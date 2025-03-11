@@ -58,7 +58,6 @@ export const updateActiveItemFn = async (
       const { id, name, multiset, callRuleset } = currentActiveItem
         ? (currentActiveItem.data as FormSystemScreen)
         : (activeItem.data as FormSystemScreen)
-      console.log('in update Screen', id)
       updateScreen({
         variables: {
           input: {

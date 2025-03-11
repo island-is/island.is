@@ -16,7 +16,7 @@ export const FieldSettings = () => {
       {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
         <MessageWithLinkSettings />
       )}
-      {currentItem.fieldType === FieldTypesEnum.DOCUMENT && (
+      {currentItem.fieldType === FieldTypesEnum.FILE && (
         <FileUploadSettings />
       )}
       {currentItem.fieldType === FieldTypesEnum.TEXTBOX && (

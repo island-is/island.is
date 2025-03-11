@@ -20,7 +20,7 @@ enum FieldTypes {
   EMAIL = 'Netfang',
   PROPERTY_NUMBER = 'Fasteignanúmer',
   PHONE_NUMBER = 'Símanúmer',
-  DOCUMENT = 'Skjal',
+  FILE = 'Skjal',
   MESSAGE = 'Textalýsing',
   TEXTBOX = 'Textabox',
   NUMBERBOX = 'Tölubox',
