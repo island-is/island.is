@@ -24,7 +24,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegisryClientService: NationalRegistryClientService,
+    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_CREATION)
   }
@@ -44,7 +44,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   async municipalCollection({ auth }: TemplateApiModuleActionProps) {
     const currentCollection =
       await this.signatureCollectionClientService.currentCollection()
-    if (currentCollection.collectionType !== CollectionType.Municipal) {
+    //Todo: adjust this check to municipal once available
+    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
@@ -68,7 +69,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
 
-    const identity = await this.nationalRegisryClientService.getIndividual(
+    const identity = await this.nationalRegistryClientService.getIndividual(
       contactNationalId,
     )
 
@@ -127,7 +128,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       )
     } catch (e) {
       this.logger.warn(
-        'Could not send submit email to admins for parlimentary list creation application: ',
+        'Could not send submit email to admins for municipal list creation application: ',
         application.id,
       )
     }

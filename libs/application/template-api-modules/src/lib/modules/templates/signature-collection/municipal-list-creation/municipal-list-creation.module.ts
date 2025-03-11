@@ -9,7 +9,11 @@ import { SignatureCollectionClientModule } from '@island.is/clients/signature-co
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
-  imports: [SharedTemplateAPIModule, SignatureCollectionClientModule, NationalRegistryClientModule],
+  imports: [
+    SharedTemplateAPIModule,
+    SignatureCollectionClientModule,
+    NationalRegistryClientModule,
+  ],
   providers: [MunicipalListCreationService, NationalRegistryClientModule],
   exports: [MunicipalListCreationService],
 })
