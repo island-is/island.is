@@ -30,7 +30,7 @@ export interface QualityPhotoAndSignature {
 }
 
 export interface DigitalTachographFakeData {
-  useFakeData?: YesOrNo
+  useFakeDataDriversCard?: YesOrNo
   hasNewestDriversCard?: YesOrNo
   newestDriversCardIsExpired?: YesOrNo
   newestDriversCardExpiresInMonths?: number

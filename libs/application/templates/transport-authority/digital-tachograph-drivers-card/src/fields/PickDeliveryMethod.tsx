@@ -58,9 +58,10 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
   )
 
   const refetchTachoNet = () => {
-    const useFakeData =
-      getValueViaPath(application.answers, 'fakeData.useFakeData') === YES
-    if (useFakeData) {
+    const useFakeDataTachoNet =
+      getValueViaPath(application.answers, 'fakeData.useFakeDataTachoNet') ===
+      YES
+    if (useFakeDataTachoNet) {
       const hasActiveCardInTachoNet =
         getValueViaPath(
           application.answers,

@@ -130,7 +130,7 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         application.answers,
         'fakeData',
       )
-      if (fakeData?.useFakeData === YES) {
+      if (fakeData?.useFakeDataDriversCard === YES) {
         if (fakeData.hasNewestDriversCard === YES) {
           return {
             ssn: auth.nationalId,

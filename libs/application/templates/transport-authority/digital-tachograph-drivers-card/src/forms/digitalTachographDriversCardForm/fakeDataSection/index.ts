@@ -16,21 +16,17 @@ export const fakeDataSection = buildSection({
     buildMultiField({
       id: 'shouldFake',
       title: 'Gervigögn',
+      description: `
+        Ath. gervigögn eru eingöngu notuð í stað þess að sækja
+        forsendugögn í staging umhverfi (dev x-road) hjá RLS / SGS.
+        Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
+        til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
+        ökuréttindi í staging grunni RLS / SGS.
+      `.replace(/\s{1,}/g, ' '),
       children: [
-        buildDescriptionField({
-          id: 'gervigognDesc',
-          title: 'Viltu nota gervigögn?',
-          titleVariant: 'h4',
-          description: `
-            Ath. gervigögn eru eingöngu notuð í stað þess að sækja
-            forsendugögn í staging umhverfi (dev x-road) hjá RLS / SGS.
-            Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
-            til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
-            ökuréttindi í staging grunni RLS / SGS.
-          `.replace(/\s{1,}/g, ' '),
-        }),
         buildRadioField({
           id: 'fakeData.useFakeData',
+          title: 'Viltu nota gervigögn fyrir ökuréttindi?',
           width: 'half',
           options: [
             {
@@ -75,13 +71,28 @@ export const fakeDataSection = buildSection({
           ],
         }),
         buildRadioField({
+          id: 'fakeData.useFakeDataDriversCard',
+          title: 'Viltu nota gervigögn fyrir íslenskt ökuritakort?',
+          width: 'half',
+          options: [
+            {
+              value: YES,
+              label: 'Já',
+            },
+            {
+              value: NO,
+              label: 'Nei',
+            },
+          ],
+        }),
+        buildRadioField({
           id: 'fakeData.hasNewestDriversCard',
           title: 'Er með íslenskt ökuritakort',
           description:
             'Ef já, þá verður *applicationCreatedAt = today - 12M* og *cardValidFrom = today - 12M*',
           width: 'half',
           condition: (answers) =>
-            getValueViaPath(answers, 'fakeData.useFakeData') === YES,
+            getValueViaPath(answers, 'fakeData.useFakeDataDriversCard') === YES,
           options: [
             {
               value: YES,
@@ -99,7 +110,8 @@ export const fakeDataSection = buildSection({
           description: 'Ef já, þá verður *cardValidTo = today - 1M*',
           width: 'half',
           condition: (answers) =>
-            getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
+            getValueViaPath(answers, 'fakeData.useFakeDataDriversCard') ===
+              YES &&
             getValueViaPath(answers, 'fakeData.hasNewestDriversCard') === YES,
           options: [
             {
@@ -117,7 +129,8 @@ export const fakeDataSection = buildSection({
           title: 'Íslenska ökuritakortið er gilt',
           width: 'half',
           condition: (answers) =>
-            getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
+            getValueViaPath(answers, 'fakeData.useFakeDataDriversCard') ===
+              YES &&
             getValueViaPath(answers, 'fakeData.hasNewestDriversCard') === YES &&
             getValueViaPath(answers, 'fakeData.newestDriversCardIsExpired') ===
               NO,
@@ -138,7 +151,8 @@ export const fakeDataSection = buildSection({
           titleVariant: 'h4',
           description: 'Default: *cardValidTo = today + 1M*',
           condition: (answers) =>
-            getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
+            getValueViaPath(answers, 'fakeData.useFakeDataDriversCard') ===
+              YES &&
             getValueViaPath(answers, 'fakeData.hasNewestDriversCard') === YES &&
             getValueViaPath(answers, 'fakeData.newestDriversCardIsExpired') ===
               NO &&
@@ -149,7 +163,8 @@ export const fakeDataSection = buildSection({
           id: 'fakeData.newestDriversCardExpiresInMonths',
           variant: 'number',
           condition: (answers) =>
-            getValueViaPath(answers, 'fakeData.useFakeData') === YES &&
+            getValueViaPath(answers, 'fakeData.useFakeDataDriversCard') ===
+              YES &&
             getValueViaPath(answers, 'fakeData.hasNewestDriversCard') === YES &&
             getValueViaPath(answers, 'fakeData.newestDriversCardIsExpired') ===
               NO &&
@@ -157,11 +172,26 @@ export const fakeDataSection = buildSection({
               YES,
         }),
         buildRadioField({
+          id: 'fakeData.useFakeDataTachoNet',
+          title: 'Viltu nota gervigögn fyrir gögn í TachoNet?',
+          width: 'half',
+          options: [
+            {
+              value: YES,
+              label: 'Já',
+            },
+            {
+              value: NO,
+              label: 'Nei',
+            },
+          ],
+        }),
+        buildRadioField({
           id: 'fakeData.hasActiveCardInTachoNet',
           title: 'Er með gilt kort í Tachonet',
           width: 'half',
           condition: (answers) =>
-            getValueViaPath(answers, 'fakeData.useFakeData') === YES,
+            getValueViaPath(answers, 'fakeData.useFakeDataTachoNet') === YES,
           options: [
             {
               value: YES,
