@@ -217,6 +217,7 @@ export class CardPaymentController {
         // Then we should refund the payment
         // if (e.message === FjsErrorCode.AlreadyPaid) {
         //   // Refund the payment
+        //   // What if the refund fails? Need retry logic as well
         // }
 
         throw e
