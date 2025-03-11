@@ -42,12 +42,12 @@ export const errorMessages = {
   citizenship: defineMessages({
     title: {
       id: 'mlc.application:error.citizenship.title',
-      defaultMessage: 'Ekki með íslenkst ríkisfang',
+      defaultMessage: 'Ekki með íslenskt ríkisfang',
       description: '',
     },
     summary: {
       id: 'mlc.application:error.citizenship.summary#markdown',
-      defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
+      defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),
