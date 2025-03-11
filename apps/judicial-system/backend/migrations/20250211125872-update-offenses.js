@@ -93,7 +93,7 @@ const offenseSubstancesMap = {
 }
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize
         .query(
@@ -157,7 +157,7 @@ module.exports = {
     )
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     return queryInterface.sequelize.query(`
         DELETE FROM offense
     `)
