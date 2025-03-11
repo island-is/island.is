@@ -87,7 +87,7 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   } else {
-    return getBankIsk(bankInfo) === bank ?? false
+    return getBankIsk(bankInfo) === bank
   }
 }
 
