@@ -12,6 +12,9 @@ export const resolvers: Resolvers = {
     getFinanceStatus: () => {
       return store.financeStatus
     },
+    getDebtStatus: () => {
+      return store.debtStatus
+    },
     getFinanceStatusDetails: () => {
       return store.financeStatusDetails
     },
