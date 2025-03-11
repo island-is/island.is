@@ -1,6 +1,6 @@
 // NOTE: hack until we move to stable release branch
 const generateReleaseBranches = (majorVersions, minorVersionsPerMajor) => {
-  const branches = ['release'] // Always include the main 'release' branch
+  const branches = ['release']
 
   for (const majorVersion of majorVersions) {
     for (
