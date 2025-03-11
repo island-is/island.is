@@ -683,6 +683,7 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
@@ -1149,7 +1150,8 @@
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
+      "hms": ["libs/clients/hms/src/index.ts"]
     }
   }
 }
