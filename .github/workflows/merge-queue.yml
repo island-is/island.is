@@ -53,7 +53,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-runners
+    runs-on: arc-docker
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
@@ -215,6 +215,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          node scripts/ci/docker/bootstrap.mjs
           node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
@@ -286,6 +287,7 @@ jobs:
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
       - name: Check post-build success
         run: '[[ ${{ needs.post-docker-build.result }} != "failure" ]] || exit 1'
+
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:

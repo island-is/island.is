@@ -165,6 +165,9 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             namespace={namespace}
             eventList={eventList?.items}
             parentPageSlug={organizationPage.slug}
+            variant={
+              organizationPage.slug === 'landspitali' ? 'InfoCard' : 'NewsCard'
+            }
             noEventsFoundFallback={
               <Text variant="h4">
                 {!onlyIncludePastEvents
@@ -280,7 +283,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
   ])
 
   const organizationNamespace = extractNamespaceFromOrganization(
-    organizationPage.organization,
+    organizationPage?.organization,
   )
 
   return {
@@ -288,6 +291,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
     eventList: eventsResponse?.data?.getEvents,
     namespace,
     selectedPage,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
