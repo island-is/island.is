@@ -133,7 +133,11 @@ export const newSchoolSubSection = buildSubSection({
                   ({ type, gradeLevels }) =>
                     type === OrganizationModelTypeEnum.School &&
                     gradeLevels?.includes(childGradeLevel),
-                ) || []
+                )
+                ?.map((school) => ({
+                  ...school,
+                  type: SchoolType.PUBLIC_SCHOOL,
+                })) || []
 
             // Merge the private owned schools and the municipality schools together
             const allMunicipalitySchools = [
