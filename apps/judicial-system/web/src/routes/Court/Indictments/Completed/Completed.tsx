@@ -127,11 +127,21 @@ const Completed: FC = () => {
 
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every(
-          (defendant) =>
+      ? workingCase.defendants?.every((defendant) => {
+          if (
+            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+          ) {
+            return (
+              defendant.verdictAppealDecision !== undefined &&
+              defendant.verdictAppealDecision !== null
+            )
+          }
+
+          return (
             defendant.serviceRequirement !== undefined &&
-            defendant.serviceRequirement !== null,
-        )
+            defendant.serviceRequirement !== null
+          )
+        })
       : true
 
   const hasLawsBroken = lawsBroken.size > 0
@@ -302,58 +312,68 @@ const Completed: FC = () => {
                   />
                   {defendant.serviceRequirement ===
                     ServiceRequirement.NOT_APPLICABLE && (
-                    <div className={styles.gridLayout}>
-                      <RadioButton
-                        id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
-                        name={`defendant-${defendant.id}-verdict-appeal-decision`}
-                        checked={
-                          defendant.verdictAppealDecision ===
-                          VerdictAppealDecision.POSTPONE
-                        }
-                        disabled={sentToPublicProsecutor}
-                        onChange={() => {
-                          setAndSendDefendantToServer(
-                            {
-                              defendantId: defendant.id,
-                              caseId: workingCase.id,
-                              verdictAppealDecision:
-                                VerdictAppealDecision.POSTPONE,
-                            },
-                            setWorkingCase,
-                          )
-                        }}
-                        large
-                        backgroundColor="white"
-                        label={formatMessage(
-                          strings.verdictAppealDecisionPostpone,
+                    <Box marginTop={2}>
+                      <SectionHeading
+                        heading="h4"
+                        title={formatMessage(
+                          strings.verdictAppealDecisionTitle,
                         )}
+                        marginBottom={2}
+                        required
                       />
-                      <RadioButton
-                        id={`defendant-${defendant.id}-verdict-appeal-decision-appeal`}
-                        name={`defendant-${defendant.id}-verdict-appeal-decision`}
-                        checked={
-                          defendant.verdictAppealDecision ===
-                          VerdictAppealDecision.ACCEPT
-                        }
-                        disabled={sentToPublicProsecutor}
-                        onChange={() => {
-                          setAndSendDefendantToServer(
-                            {
-                              defendantId: defendant.id,
-                              caseId: workingCase.id,
-                              verdictAppealDecision:
-                                VerdictAppealDecision.ACCEPT,
-                            },
-                            setWorkingCase,
-                          )
-                        }}
-                        large
-                        backgroundColor="white"
-                        label={formatMessage(
-                          strings.verdictAppealDecisionAccept,
-                        )}
-                      />
-                    </div>
+                      <div className={styles.gridLayout}>
+                        <RadioButton
+                          id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
+                          name={`defendant-${defendant.id}-verdict-appeal-decision`}
+                          checked={
+                            defendant.verdictAppealDecision ===
+                            VerdictAppealDecision.POSTPONE
+                          }
+                          disabled={sentToPublicProsecutor}
+                          onChange={() => {
+                            setAndSendDefendantToServer(
+                              {
+                                defendantId: defendant.id,
+                                caseId: workingCase.id,
+                                verdictAppealDecision:
+                                  VerdictAppealDecision.POSTPONE,
+                              },
+                              setWorkingCase,
+                            )
+                          }}
+                          large
+                          backgroundColor="white"
+                          label={formatMessage(
+                            strings.verdictAppealDecisionPostpone,
+                          )}
+                        />
+                        <RadioButton
+                          id={`defendant-${defendant.id}-verdict-appeal-decision-appeal`}
+                          name={`defendant-${defendant.id}-verdict-appeal-decision`}
+                          checked={
+                            defendant.verdictAppealDecision ===
+                            VerdictAppealDecision.ACCEPT
+                          }
+                          disabled={sentToPublicProsecutor}
+                          onChange={() => {
+                            setAndSendDefendantToServer(
+                              {
+                                defendantId: defendant.id,
+                                caseId: workingCase.id,
+                                verdictAppealDecision:
+                                  VerdictAppealDecision.ACCEPT,
+                              },
+                              setWorkingCase,
+                            )
+                          }}
+                          large
+                          backgroundColor="white"
+                          label={formatMessage(
+                            strings.verdictAppealDecisionAccept,
+                          )}
+                        />
+                      </div>
+                    </Box>
                   )}
                 </BlueBox>
               </Box>

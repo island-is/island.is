@@ -49,11 +49,16 @@ const strings = defineMessages({
     description:
       'Notaður sem texti í valmöguleika fyrir það þegar birting dóms á ekki við.',
   },
+  verdictAppealDecisionTitle: {
+    id: 'judicial.system.core:court.indictments.completed.verdict_appeal_decision_title',
+    defaultMessage: 'Afstaða dómfellda til dóms',
+    description: 'Notaður sem titill fyrir afstöðu dómfellda til dóms.',
+  },
   verdictAppealDecisionPostpone: {
     id: 'judicial.system.core:court.indictments.completed.verdict_appeal_decision_postpone',
     defaultMessage: 'Dómfelldi tekur áfrýjunarfrest',
     description:
-      'Notaður sem texti í valmöguleika fyrir það þegar dómfelldi tekur áfríjunarfrest í þinghaldi.',
+      'Notaður sem texti í valmöguleika fyrir það þegar dómfelldi tekur áfrýjunarfrest í þinghaldi.',
   },
   verdictAppealDecisionAccept: {
     id: 'judicial.system.core:court.indictments.completed.verdict_appeal_decision_accept',
