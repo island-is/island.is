@@ -1,12 +1,24 @@
-export const MAIN_BRANCHES = ['main']
-
 // NOTE: hack until we move to stable release branch
-export const RELEASE_BRANCHES = [
-  'release',
-  'release/35.1.0',
-  'release/35.2.0',
-  'release/35.3.0',
-  'release/36.1.0',
-  'release/36.2.0',
-  'release/36.3.0',
-]
+const generateReleaseBranches = (majorVersions, minorVersionsPerMajor) => {
+  const branches = ['release'] // Always include the main 'release' branch
+
+  for (const majorVersion of majorVersions) {
+    for (
+      let minorVersion = 1;
+      minorVersion <= minorVersionsPerMajor;
+      minorVersion++
+    ) {
+      branches.push(`release/${majorVersion}.${minorVersion}.0`)
+    }
+  }
+
+  return branches
+}
+
+const majorVersions = [35, 36]
+const minorVersionsPerMajor = 3
+
+export const RELEASE_BRANCHES = generateReleaseBranches(
+  majorVersions,
+  minorVersionsPerMajor,
+)
