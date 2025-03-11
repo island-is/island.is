@@ -29,6 +29,7 @@ export const PaymentPending: FC<
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
+  console.log('paymentStatus', paymentStatus)
   const [searchParams, setSearchParams] = useSearchParams()
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
