@@ -101,21 +101,31 @@ const OrganizationSubpageSlugField = () => {
             organizationPageId,
         )
 
-      if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length > 0) {
-        if (
-          parentSubpageResponse.items.some((parentSubpage) => {
-            const pages: { sys: { id: string } }[] =
-              parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
-            return pages.some((page) =>
-              subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
-                (s) => s.sys.id === page.sys.id,
-              ),
-            )
-          })
-        )
-          setIsValid(false)
+      if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length === 0) {
+        setIsValid(true)
         return
       }
+
+      if (parentSubpageResponse.items.length === 0) {
+        setIsValid(false)
+        return
+      }
+
+      if (
+        parentSubpageResponse.items.some((parentSubpage) => {
+          const pages: { sys: { id: string } }[] =
+            parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
+          return pages.some((page) =>
+            subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
+              (s) => s.sys.id === page.sys.id,
+            ),
+          )
+        })
+      ) {
+        setIsValid(false)
+        return
+      }
+
       setIsValid(true)
     },
     DEBOUNCE_TIME,
