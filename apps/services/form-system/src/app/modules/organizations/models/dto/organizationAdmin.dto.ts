@@ -9,13 +9,13 @@ export class OrganizationAdminDto {
   organizationId!: string
 
   @ApiPropertyOptional()
-  selectedListTypes?: string[]
+  selectedListTypes: string[] = []
 
   @ApiPropertyOptional()
-  selectedFieldTypes?: string[]
+  selectedFieldTypes: string[] = []
 
   @ApiPropertyOptional()
-  selectedCertificationTypes?: string[]
+  selectedCertificationTypes: string[] = []
 
   @ApiPropertyOptional({ type: [ListType] })
   ListTypes?: ListType[]

@@ -16,6 +16,11 @@ import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
 import { ListTypes } from '../../dataTypes/listTypes/listType.model'
 import { FieldTypes } from '../../dataTypes/fieldTypes/fieldType.model'
+import {
+  CertificationTypesEnum,
+  ListTypesEnum,
+  FieldTypesEnum,
+} from '@island.is/form-system/enums'
 
 @Injectable()
 export class OrganizationsService {
@@ -76,20 +81,23 @@ export class OrganizationsService {
     organizationAdminDto.organizationId = organization.id
 
     if (organization.organizationPermissions) {
-      organizationAdminDto.selectedCertificationTypes =
-        organization.organizationPermissions.map(
-          (certificationType) => certificationType.permission,
-        )
-
-      organizationAdminDto.selectedListTypes =
-        organization.organizationPermissions.map(
-          (listType) => listType.permission,
-        )
-
-      organizationAdminDto.selectedFieldTypes =
-        organization.organizationPermissions.map(
-          (fieldType) => fieldType.permission,
-        )
+      organization.organizationPermissions.forEach((permission) => {
+        if (
+          Object.values(CertificationTypesEnum).includes(permission.permission)
+        ) {
+          organizationAdminDto.selectedCertificationTypes.push(
+            permission.permission,
+          )
+        } else if (
+          Object.values(ListTypesEnum).includes(permission.permission)
+        ) {
+          organizationAdminDto.selectedListTypes.push(permission.permission)
+        } else if (
+          Object.values(FieldTypesEnum).includes(permission.permission)
+        ) {
+          organizationAdminDto.selectedFieldTypes.push(permission.permission)
+        }
+      })
     }
 
     organizationAdminDto.certificationTypes = CertificationTypes
@@ -109,6 +117,8 @@ export class OrganizationsService {
           } as Option
         })
       })
+
+    // console.log(JSON.stringify(organizationAdminDto, null, 2))
 
     return organizationAdminDto
   }

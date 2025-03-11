@@ -31,6 +31,12 @@ export class OrganizationPermission extends Model<OrganizationPermission> {
   @UpdatedAt
   modified!: CreationOptional<Date>
 
+  // @Column({
+  //   type: DataType.STRING,
+  //   allowNull: false,
+  // })
+  // type!: string
+
   @ForeignKey(() => Organization)
   @Column({
     type: DataType.STRING,

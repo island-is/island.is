@@ -1,6 +1,7 @@
 import {
   FormSystemFormCertificationType,
   FormSystemOrganizationAdmin,
+  FormSystemPermissionType,
 } from '@island.is/api/schema'
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import { GET_ORGANIZATION_ADMIN } from '@island.is/form-system/graphql'
@@ -13,7 +14,11 @@ export interface AdminLoaderQueryResponse {
 export interface AdminLoaderResponse {
   organizationId: string
   selectedCertificationTypes: string[]
-  certficationTypes: FormSystemFormCertificationType[]
+  selectedListTypes: string[]
+  selectedFieldTypes: string[]
+  certficationTypes: FormSystemPermissionType[]
+  listTypes: FormSystemPermissionType[]
+  fieldTypes: FormSystemPermissionType[]
   organizations: Option<string>[]
 }
 
@@ -38,9 +43,26 @@ export const adminLoader: WrappedLoaderFn = ({ client }) => {
     const organizationId = data.formSystemGetOrganizationAdmin
       ?.organizationId as string
 
+    const organizations =
+      data.formSystemGetOrganizationAdmin?.organizations?.map((org) => ({
+        label: org?.label,
+        value: org?.value,
+        isSelected: org?.isSelected,
+      })) as Option<string>[]
+
     const selectedCertificationTypes =
       data.formSystemGetOrganizationAdmin?.selectedCertificationTypes?.map(
         (certType) => certType,
+      ) as string[]
+
+    const selectedListTypes =
+      data.formSystemGetOrganizationAdmin?.selectedListTypes?.map(
+        (listType) => listType,
+      ) as string[]
+
+    const selectedFieldTypes =
+      data.formSystemGetOrganizationAdmin?.selectedFieldTypes?.map(
+        (fieldType) => fieldType,
       ) as string[]
 
     const certficationTypes =
@@ -51,19 +73,34 @@ export const adminLoader: WrappedLoaderFn = ({ client }) => {
           description: certType?.description,
           isCommon: certType?.isCommon,
         }),
-      ) as FormSystemFormCertificationType[]
+      ) as FormSystemPermissionType[]
 
-    const organizations =
-      data.formSystemGetOrganizationAdmin?.organizations?.map((org) => ({
-        label: org?.label,
-        value: org?.value,
-        isSelected: org?.isSelected,
-      })) as Option<string>[]
+    const listTypes = data.formSystemGetOrganizationAdmin.listTypes?.map(
+      (listType) => ({
+        id: listType?.id,
+        name: listType?.name,
+        description: listType?.description,
+        isCommon: listType?.isCommon,
+      }),
+    ) as FormSystemPermissionType[]
+
+    const fieldTypes = data.formSystemGetOrganizationAdmin.fieldTypes?.map(
+      (fieldType) => ({
+        id: fieldType?.id,
+        name: fieldType?.name,
+        description: fieldType?.description,
+        isCommon: fieldType?.isCommon,
+      }),
+    ) as FormSystemPermissionType[]
 
     return {
       organizationId,
       selectedCertificationTypes,
+      selectedListTypes,
+      selectedFieldTypes,
       certficationTypes,
+      listTypes,
+      fieldTypes,
       organizations,
     }
   }

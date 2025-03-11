@@ -1,4 +1,4 @@
-import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
+import { Box, Button, Text, Inline, Tabs } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
@@ -16,7 +16,7 @@ import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { divide } from 'lodash'
 import { AdminHeader } from '../../components/Admin/AdminHeader'
 import { AdminLoaderResponse } from './Admin.loader'
-import { CertificationTypesList } from '../../components/Admin/CertificationTypes/CertificationTypesList'
+import { PermissionsList } from '../../components/Admin/PermissionsList'
 
 export const Admin = () => {
   const navigate = useNavigate()
@@ -28,16 +28,22 @@ export const Admin = () => {
   const {
     organizationId,
     selectedCertificationTypes,
+    selectedListTypes,
+    selectedFieldTypes,
     certficationTypes,
+    listTypes,
+    fieldTypes,
     organizations,
   } = useLoaderData() as AdminLoaderResponse
 
   const [organizationsState, setOrganizationsState] = useState(organizations)
+  const [organizationIdState, setOrganizationIdState] = useState(organizationId)
   const [selectedCertificationTypesState, setSelectedCertificationTypesState] =
     useState(selectedCertificationTypes)
-  const [organizationIdState, setOrganizationIdState] = useState(organizationId)
-  const [certificationTypesState, setCertificationTypesState] =
-    useState(certficationTypes)
+  const [selectedListTypesState, setSelectedListTypesState] =
+    useState(selectedListTypes)
+  const [selectedFieldTypesState, setSelectedFieldTypesState] =
+    useState(selectedFieldTypes)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
@@ -65,7 +71,55 @@ export const Admin = () => {
         data.formSystemGetOrganizationAdmin.selectedCertificationTypes,
       )
     }
+
+    if (data?.formSystemGetOrganizationAdmin.selectedListTypes) {
+      setSelectedListTypesState(
+        data.formSystemGetOrganizationAdmin.selectedListTypes,
+      )
+    }
+
+    if (data?.formSystemGetOrganizationAdmin.selectedFieldTypes) {
+      setSelectedFieldTypesState(
+        data.formSystemGetOrganizationAdmin.selectedFieldTypes,
+      )
+    }
   }
+
+  const tabs = [
+    {
+      label: 'Vottorð',
+      content: (
+        <PermissionsList
+          selectedPermissions={selectedCertificationTypesState}
+          permissionsList={certficationTypes}
+          organizationId={organizationIdState}
+          setSelectedPermissionsState={setSelectedCertificationTypesState}
+        />
+      ),
+    },
+    {
+      label: 'Listar',
+      content: (
+        <PermissionsList
+          selectedPermissions={selectedListTypesState}
+          permissionsList={listTypes}
+          organizationId={organizationIdState}
+          setSelectedPermissionsState={setSelectedListTypesState}
+        />
+      ),
+    },
+    {
+      label: 'Innsláttarreitir',
+      content: (
+        <PermissionsList
+          selectedPermissions={selectedFieldTypesState}
+          permissionsList={fieldTypes}
+          organizationId={organizationIdState}
+          setSelectedPermissionsState={setSelectedFieldTypesState}
+        />
+      ),
+    },
+  ]
 
   return (
     <>
@@ -73,12 +127,7 @@ export const Admin = () => {
         organizations={organizationsState}
         onOrganizationChange={handleOrganizationChange}
       />
-      <CertificationTypesList
-        selectedCertificationTypes={selectedCertificationTypesState}
-        certficationTypes={certficationTypes}
-        organizationId={organizationIdState}
-        setSelectedCertificationTypesState={setSelectedCertificationTypesState}
-      />
+      <Tabs label="Reglugerðir" tabs={tabs} contentBackground="white" />
     </>
   )
 }
