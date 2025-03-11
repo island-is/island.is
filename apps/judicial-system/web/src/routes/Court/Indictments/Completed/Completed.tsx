@@ -264,7 +264,7 @@ const Completed: FC = () => {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
                             serviceRequirement: ServiceRequirement.REQUIRED,
-                            verdictAppealDate: null, // TODO: FIX
+                            verdictAppealDecision: null,
                           },
                           setWorkingCase,
                         )
@@ -288,7 +288,7 @@ const Completed: FC = () => {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
                           serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-                          verdictAppealDate: null, // TODO: FIX
+                          verdictAppealDecision: null,
                         },
                         setWorkingCase,
                       )
