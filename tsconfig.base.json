@@ -516,6 +516,9 @@
       "@island.is/application/templates/signature-collection/municipal-list-creation": [
         "libs/application/templates/signature-collection/municipal-list-creation/src/index.ts"
       ],
+      "@island.is/application/templates/signature-collection/municipal-list-signing": [
+        "libs/application/templates/signature-collection/municipal-list-signing/src/index.ts"
+      ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
       ],
