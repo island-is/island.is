@@ -47,7 +47,7 @@ env:
   LOG_LEVEL: 'info'
   MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
   NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
-  PersistenceSettings__BaseAddress: 'http://-services-auth-ids-api'
+  PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
   PersistenceSettings__DelegationsCacheEnabled: 'false'
   RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
   RedisSettings__Port: '6379'
