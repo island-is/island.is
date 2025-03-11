@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import {
@@ -300,71 +301,101 @@ const Completed: FC = () => {
                       strings.serviceRequirementNotRequiredTooltip,
                     )}
                   />
-                  {defendant.serviceRequirement ===
-                    ServiceRequirement.NOT_APPLICABLE && (
-                    <Box marginTop={2}>
-                      <SectionHeading
-                        heading="h4"
-                        title={formatMessage(
-                          strings.verdictAppealDecisionTitle,
-                        )}
-                        marginBottom={2}
-                        required
-                      />
-                      <div className={styles.gridLayout}>
-                        <RadioButton
-                          id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
-                          name={`defendant-${defendant.id}-verdict-appeal-decision`}
-                          checked={
-                            defendant.verdictAppealDecision ===
-                            VerdictAppealDecision.POSTPONE
-                          }
-                          disabled={sentToPublicProsecutor}
-                          onChange={() => {
-                            setAndSendDefendantToServer(
-                              {
-                                defendantId: defendant.id,
-                                caseId: workingCase.id,
-                                verdictAppealDecision:
-                                  VerdictAppealDecision.POSTPONE,
-                              },
-                              setWorkingCase,
-                            )
-                          }}
-                          large
-                          backgroundColor="white"
-                          label={formatMessage(
-                            strings.verdictAppealDecisionPostpone,
+                  <AnimatePresence>
+                    {defendant.serviceRequirement ===
+                      ServiceRequirement.NOT_APPLICABLE && (
+                      <motion.div
+                        key="verdict-appeal-decision"
+                        initial={{
+                          opacity: 0,
+                          y: -10,
+                          height: 0,
+                          marginTop: 0,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          height: 'auto',
+                          marginTop: '16px',
+                          transition: {
+                            opacity: { delay: 0.2 },
+                            y: { delay: 0.2 },
+                          },
+                        }}
+                        exit={{
+                          opacity: 0,
+                          y: -10,
+                          height: 0,
+                          marginTop: 0,
+                          transition: {
+                            opacity: { duration: 0.2 },
+                          },
+                        }}
+                        transition={{}}
+                      >
+                        <SectionHeading
+                          heading="h4"
+                          title={formatMessage(
+                            strings.verdictAppealDecisionTitle,
                           )}
+                          marginBottom={2}
+                          required
                         />
-                        <RadioButton
-                          id={`defendant-${defendant.id}-verdict-appeal-decision-appeal`}
-                          name={`defendant-${defendant.id}-verdict-appeal-decision`}
-                          checked={
-                            defendant.verdictAppealDecision ===
-                            VerdictAppealDecision.ACCEPT
-                          }
-                          disabled={sentToPublicProsecutor}
-                          onChange={() => {
-                            setAndSendDefendantToServer(
-                              {
-                                defendantId: defendant.id,
-                                caseId: workingCase.id,
-                                verdictAppealDecision:
-                                  VerdictAppealDecision.ACCEPT,
-                              },
-                              setWorkingCase,
-                            )
-                          }}
-                          large
-                          backgroundColor="white"
-                          label={formatMessage(
-                            strings.verdictAppealDecisionAccept,
-                          )}
-                        />
-                      </div>
-                    </Box>
-                  )}
+                        <div className={styles.gridLayout}>
+                          <RadioButton
+                            id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
+                            name={`defendant-${defendant.id}-verdict-appeal-decision`}
+                            checked={
+                              defendant.verdictAppealDecision ===
+                              VerdictAppealDecision.POSTPONE
+                            }
+                            disabled={sentToPublicProsecutor}
+                            onChange={() => {
+                              setAndSendDefendantToServer(
+                                {
+                                  defendantId: defendant.id,
+                                  caseId: workingCase.id,
+                                  verdictAppealDecision:
+                                    VerdictAppealDecision.POSTPONE,
+                                },
+                                setWorkingCase,
+                              )
+                            }}
+                            large
+                            backgroundColor="white"
+                            label={formatMessage(
+                              strings.verdictAppealDecisionPostpone,
+                            )}
+                          />
+                          <RadioButton
+                            id={`defendant-${defendant.id}-verdict-appeal-decision-appeal`}
+                            name={`defendant-${defendant.id}-verdict-appeal-decision`}
+                            checked={
+                              defendant.verdictAppealDecision ===
+                              VerdictAppealDecision.ACCEPT
+                            }
+                            disabled={sentToPublicProsecutor}
+                            onChange={() => {
+                              setAndSendDefendantToServer(
+                                {
+                                  defendantId: defendant.id,
+                                  caseId: workingCase.id,
+                                  verdictAppealDecision:
+                                    VerdictAppealDecision.ACCEPT,
+                                },
+                                setWorkingCase,
+                              )
+                            }}
+                            large
+                            backgroundColor="white"
+                            label={formatMessage(
+                              strings.verdictAppealDecisionAccept,
+                            )}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </BlueBox>
               </Box>
             ))}
