@@ -7,6 +7,7 @@ import {
   getDocumentsListData,
   getFinanceDocumentData,
   getCustomerTapControlData,
+  getDebtStatusData,
 } from './static'
 
 export const store = createStore(() => {
@@ -17,6 +18,7 @@ export const store = createStore(() => {
   const documentsList = getDocumentsListData
   const tapControl = getCustomerTapControlData
   const financeDocuments = getFinanceDocumentData
+  const debtStatus = getDebtStatusData
 
   return {
     financeStatus,
@@ -26,5 +28,6 @@ export const store = createStore(() => {
     documentsList,
     financeDocuments,
     tapControl,
+    debtStatus,
   }
 })
