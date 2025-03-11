@@ -8,7 +8,7 @@ const GridOutline = ({
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="grid_svg__ionicon"
+      className="grid-outline_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
@@ -23,8 +23,8 @@ const GridOutline = ({
         ry="20"
         fill="none"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
       <rect
@@ -36,8 +36,8 @@ const GridOutline = ({
         ry="20"
         fill="none"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
       <rect
@@ -49,8 +49,8 @@ const GridOutline = ({
         ry="20"
         fill="none"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
       <rect
@@ -62,8 +62,8 @@ const GridOutline = ({
         ry="20"
         fill="none"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
     </svg>

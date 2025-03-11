@@ -23,8 +23,8 @@ const Grid = ({
         ry="20"
         fill="currentColor"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
       <rect
@@ -36,8 +36,8 @@ const Grid = ({
         ry="20"
         fill="currentColor"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
       <rect
@@ -49,8 +49,8 @@ const Grid = ({
         ry="20"
         fill="currentColor"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
       <rect
@@ -62,8 +62,8 @@ const Grid = ({
         ry="20"
         fill="currentColor"
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke-width="32"
       />
     </svg>
