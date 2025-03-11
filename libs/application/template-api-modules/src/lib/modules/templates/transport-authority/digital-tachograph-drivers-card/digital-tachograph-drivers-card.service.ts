@@ -44,70 +44,47 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
     }
 
     try {
-      // Check if photo and signature exists in RLS database
-      const hasQualityPhotoRLS =
-        await this.drivingLicenseApi.getHasQualityPhoto({
-          token: auth.authorization,
-        })
-      const hasQualitySignatureRLS =
-        await this.drivingLicenseApi.getHasQualitySignature({
-          token: auth.authorization,
-        })
-
-      // First we'll try to use photo and signature from the RLS database
-      if (hasQualityPhotoRLS && hasQualitySignatureRLS) {
-        const photo = await this.drivingLicenseApi.getQualityPhoto({
-          token: auth.authorization,
-        })
-        const signature = await this.drivingLicenseApi.getQualitySignature({
-          token: auth.authorization,
-        })
-
+      // Get photo and signature from SGS, they will do the lookup in this order:
+      // 1. RLS ökuskírteinakerfi - qualityphoto (can take some time)
+      // 2. RLS ökuskírteinakerfi - scannedphoto (comes in right away)
+      // 3. SGS older application
+      const photoAndSignatureSGS =
+        await this.digitalTachographDriversCardClient.getPhotoAndSignature(auth)
+      if (photoAndSignatureSGS?.photo && photoAndSignatureSGS?.signature) {
         result = {
           hasPhoto: true,
-          photoDataUri: getUriFromImageStr(photo?.data),
+          photoDataUri: getUriFromImageStr(photoAndSignatureSGS.photo),
           hasSignature: true,
-          signatureDataUri: getUriFromImageStr(signature?.data),
-        }
-      } else {
-        // If not exists in RLS, then we need to check the SGS database and use that
-        const qualityPhotoAndSignatureSGS =
-          await this.digitalTachographDriversCardClient.getPhotoAndSignature(
-            auth,
-          )
-        if (
-          qualityPhotoAndSignatureSGS?.photo &&
-          qualityPhotoAndSignatureSGS?.signature
-        ) {
-          result = {
-            hasPhoto: true,
-            photoDataUri: getUriFromImageStr(qualityPhotoAndSignatureSGS.photo),
-            hasSignature: true,
-            signatureDataUri: getUriFromImageStr(
-              qualityPhotoAndSignatureSGS.signature,
-            ),
-          }
+          signatureDataUri: getUriFromImageStr(photoAndSignatureSGS.signature),
         }
       }
     } catch (e) {
-      if (e.response?.status !== 404) {
+      if (e.response?.status === 404) {
+        throw new TemplateApiError(
+          {
+            title: externalData.qualityPhotoAndSignature.missing,
+            summary: externalData.qualityPhotoAndSignature.missing,
+          },
+          400,
+        )
+      } else {
         logger.error(
           'Error fetching quality photo and signature for digital tachograph drivers card',
           e,
         )
-      }
 
-      throw new TemplateApiError(
-        {
-          title: externalData.qualityPhotoAndSignature.error,
-          summary: externalData.qualityPhotoAndSignature.error,
-        },
-        400,
-      )
+        throw new TemplateApiError(
+          {
+            title: externalData.qualityPhotoAndSignature.error,
+            summary: externalData.qualityPhotoAndSignature.error,
+          },
+          400,
+        )
+      }
     }
 
-    // Make sure user has quality photo and signature (from either RLS or SGS),
-    // if not then user cannot continue (will allow upload in phase 2)
+    // If we dont get any photo + signature from SGS, we will will throw an error
+    // so the user cannot continue (will allow upload in phase 2)
     if (!result?.hasPhoto || !result?.hasSignature) {
       throw new TemplateApiError(
         {
