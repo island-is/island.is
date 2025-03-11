@@ -5,13 +5,7 @@ import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import slugify from '@sindresorhus/slugify'
 
-import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
-
 const DEBOUNCE_TIME = 100
-const config = {
-  environmentId: CONTENTFUL_ENVIRONMENT,
-  spaceId: CONTENTFUL_SPACE,
-}
 
 const OrganizationSubpageSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -73,29 +67,53 @@ const OrganizationSubpageSlugField = () => {
         setIsValid(true)
         return
       }
-      const subpagesWithSameSlug =
-        (
-          await cma.entry.getMany({
-            ...config,
-            query: {
-              locale: sdk.field.locale,
-              content_type: 'organizationSubpage',
-              'fields.slug': value,
-              'sys.id[ne]': sdk.entry.getSys().id,
-              'sys.archivedVersion[exists]': false,
-              limit: 1000,
-            },
-          })
-        )?.items ?? []
 
-      if (
-        subpagesWithSameSlug.some(
+      const entryId = sdk.entry.getSys().id
+
+      const [parentSubpageResponse, subpageResponse] = await Promise.all([
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'organizationParentSubpage',
+            links_to_entry: entryId,
+            'sys.archivedVersion[exists]': false,
+            limit: 1000,
+          },
+        }),
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'organizationSubpage',
+            'fields.slug': value,
+            'sys.id[ne]': entryId,
+            'sys.archivedVersion[exists]': false,
+            limit: 1000,
+          },
+        }),
+      ])
+
+      const subpagesWithSameSlug = subpageResponse?.items ?? []
+
+      const subpagesWithSameSlugThatBelongToSameOrganizationPage =
+        subpagesWithSameSlug.filter(
           (subpage) =>
             subpage.fields.organizationPage?.[sdk.locales.default]?.sys?.id ===
             organizationPageId,
         )
-      ) {
-        setIsValid(false)
+
+      if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length > 0) {
+        if (
+          parentSubpageResponse.items.some((parentSubpage) => {
+            const pages: { sys: { id: string } }[] =
+              parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
+            return pages.some((page) =>
+              subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
+                (s) => s.sys.id === page.sys.id,
+              ),
+            )
+          })
+        )
+          setIsValid(false)
         return
       }
       setIsValid(true)
