@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/unicorn-app",
   "projectType": "application",
-  "tags": ["scope:react-next"],
+  "tags": ["scope:react-next", "unicorn:true"],
   "targets": {
     "build": {
       "executor": "@nx/next:build",
