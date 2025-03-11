@@ -23,6 +23,7 @@ import {
   StateLifeCycle,
   UserProfileApi,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 
 import {
@@ -499,7 +500,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
+        entry: ['setNavId', 'removeNullPeriod'],
         exit: [
           'clearAssignees',
           'setNavId',
@@ -579,11 +580,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
             },
           ],
         },
@@ -596,7 +592,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
-          CLOSED: { target: States.CLOSED },
           SUBMIT: [
             {
               cond: hasDateOfBirth,
@@ -606,6 +601,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -636,11 +632,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
             },
           ],
         },
@@ -685,11 +676,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
             },
           ],
         },
@@ -732,7 +718,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGANISATION_REVIEWER
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -797,7 +783,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGANISATION_REVIEWER
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -825,7 +811,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.APPROVED]: {
-        entry: ['assignToVMST', 'removePreviousState'],
+        entry: 'removePreviousState',
         exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
@@ -876,11 +862,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
             },
           ],
         },
@@ -905,9 +886,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.CLOSED,
           status: 'completed',
-          actionCard: {
-            description: statesMessages.closedDescription,
-          },
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -979,7 +957,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGANISATION_REVIEWER
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1062,7 +1040,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGANISATION_REVIEWER
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1164,7 +1142,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGANISATION_REVIEWER
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1234,7 +1212,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGANISATION_REVIEWER
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1271,7 +1249,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: [
-          'assignToVMST',
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
           'setNavId',
@@ -1359,11 +1336,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
             },
           ],
         },
@@ -1437,11 +1409,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
             },
           ],
         },
@@ -2227,7 +2194,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       return Roles.ASSIGNEE
     }
 
-    const VMST_ID = process.env.VMST_ID
+    const VMST_ID = InstitutionNationalIds.VINNUMALASTOFNUN
     if (id === VMST_ID) {
       return Roles.ORGANISATION_REVIEWER
     }
