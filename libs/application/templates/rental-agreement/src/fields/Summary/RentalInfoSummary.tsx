@@ -7,7 +7,6 @@ import {
   AnswerOptions,
   RentalPaymentMethodOptions,
   Routes,
-  SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
   TRUE,
 } from '../../lib/constants'
@@ -19,7 +18,6 @@ import {
   getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
-  getSecurityAmountOptions,
   getSecurityDepositTypeOptions,
 } from '../../lib/utils'
 import { SummaryCard } from './components/SummaryCard'
@@ -49,9 +47,6 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
 
   const isSecurityDepositRequired =
     answers.rentalAmount.isPaymentInsuranceRequired?.includes(AnswerOptions.YES)
-  const isSecurityDepositAmount =
-    answers.securityDeposit?.securityAmount ||
-    answers.securityDeposit?.securityAmountOther
   const isSecurityDepositType = answers.securityDeposit?.securityType
 
   const securityDepositType = (answer: string) => {
@@ -70,31 +65,6 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     const options = getRentalAmountIndexTypes()
     const matchingOption = options.find((option) => option.value === answer)
     return matchingOption ? matchingOption.label : '-'
-  }
-
-  const securityDepositAmount = (answer: string | undefined) => {
-    const options = getSecurityAmountOptions()
-    const rentalAmount = Number(answers.rentalAmount.amount)
-    const matchingOption = options.find((option) => option.value === answer)
-
-    if (!matchingOption) {
-      return '-'
-    }
-
-    switch (matchingOption.value) {
-      case SecurityDepositAmountOptions.ONE_MONTH:
-        return formatCurrency(answers.rentalAmount.amount)
-      case SecurityDepositAmountOptions.TWO_MONTHS:
-        return formatCurrency((rentalAmount * 2).toString())
-      case SecurityDepositAmountOptions.THREE_MONTHS:
-        return formatCurrency((rentalAmount * 3).toString())
-      case SecurityDepositAmountOptions.OTHER:
-        return answers.securityDeposit.securityAmountOther
-          ? formatCurrency(answers.securityDeposit.securityAmountOther)
-          : '-'
-      default:
-        return '-'
-    }
   }
 
   const paymentMethodType = (answer: string) => {
@@ -169,7 +139,11 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalAmountLabel}
-            value={formatCurrency(answers.rentalAmount.amount) || '-'}
+            value={
+              (answers.rentalAmount.amount &&
+                formatCurrency(answers.rentalAmount.amount)) ||
+              '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
@@ -202,13 +176,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue
               label={summary.securityDepositLabel}
-              value={
-                isSecurityDepositAmount
-                  ? securityDepositAmount(
-                      answers.securityDeposit.securityAmount,
-                    )
-                  : '-'
-              }
+              value={answers.securityDeposit.securityAmountCalculated || '-'}
             />
           </GridColumn>
           <GridColumn span={['12/12', '4/12']}>

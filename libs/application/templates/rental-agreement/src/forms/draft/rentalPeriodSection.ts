@@ -5,7 +5,7 @@ import { RentalPeriodAmount } from './rentalPeriod/rentalPeriodAmount'
 import { RentalPeriodSecurityDeposit } from './rentalPeriod/rentalPeriodSecurityDeposit'
 import { RentalPeriodOtherFees } from './rentalPeriod/rentalPeriodOtherFees'
 
-import { application } from '../lib/messages'
+import { application } from '../../lib/messages'
 
 export const RentalPeriodSection = buildSection({
   id: 'rentalPeriodSection',

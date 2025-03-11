@@ -2,9 +2,9 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
-import { RentalHousingSection } from './rentalHousingSection'
-import { RentalPeriodSection } from './rentalPeriodSection'
-import { SummaryDraftSection } from './summaryDraftSection'
+import { RentalHousingSection } from './draft/rentalHousingSection'
+import { RentalPeriodSection } from './draft/rentalPeriodSection'
+import { SummaryDraftSection } from './draft/summaryDraftSection'
 
 import { application } from '../lib/messages'
 

@@ -4,8 +4,8 @@ import {
   buildDescriptionField,
   buildTextField,
 } from '@island.is/application/core'
-import { Routes } from '../../lib/constants'
-import { specialProvisions } from '../../lib/messages'
+import { Routes } from '../../../lib/constants'
+import { specialProvisions } from '../../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
   id: Routes.SPECIALPROVISIONS,

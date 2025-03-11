@@ -8,6 +8,7 @@ import {
   buildHiddenInputWithWatchedValue,
   buildRadioField,
   getValueViaPath,
+  buildDisplayField,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -15,12 +16,12 @@ import {
   SecurityDepositAmountOptions,
   Routes,
   AnswerOptions,
-} from '../../lib/constants'
+} from '../../../lib/constants'
 import {
   getSecurityDepositTypeOptions,
   getSecurityAmountOptions,
-} from '../../lib/utils'
-import { securityDeposit } from '../../lib/messages'
+} from '../../../lib/utils'
+import { securityDeposit } from '../../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   condition: (answers) => {
@@ -164,6 +165,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
           id: 'securityDeposit.securityAmount',
           title: securityDeposit.amountRadioFieldTitle,
           options: getSecurityAmountOptions,
+          clearOnChange: ['securityDeposit.securityAmountOther'],
           width: 'half',
           space: 3,
           condition: (answers) => {
@@ -213,6 +215,44 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
         buildHiddenInputWithWatchedValue({
           id: 'securityDeposit.rentalAmount',
           watchValue: 'rentalAmount.amount',
+        }),
+        buildDisplayField({
+          id: 'securityDeposit.securityAmountCalculated',
+          title: '',
+          variant: 'currency',
+          label: securityDeposit.securityAmountCalculatedLabel,
+          condition: (answers) => {
+            const securityDeposit = answers.securityDeposit as FormValue
+            return (
+              securityDeposit &&
+              securityDeposit.securityAmount !==
+                SecurityDepositAmountOptions.OTHER &&
+              securityDeposit &&
+              securityDeposit.securityType !==
+                SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
+            )
+          },
+          value: (answers: FormValue) => {
+            const rentalAmount = getValueViaPath<string>(
+              answers,
+              'securityDeposit.rentalAmount',
+            )
+            const securityAmount = getValueViaPath<string>(
+              answers,
+              'securityDeposit.securityAmount',
+            )
+
+            const monthMapping = {
+              [SecurityDepositAmountOptions.ONE_MONTH]: 1,
+              [SecurityDepositAmountOptions.TWO_MONTHS]: 2,
+              [SecurityDepositAmountOptions.THREE_MONTHS]: 3,
+            }
+
+            const months = securityAmount
+              ? monthMapping[securityAmount as keyof typeof monthMapping]
+              : 0
+            return (parseInt(rentalAmount ?? '0') * months).toString()
+          },
         }),
       ],
     }),

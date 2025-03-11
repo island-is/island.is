@@ -80,4 +80,16 @@ export const housingCondition = defineMessages({
       'Tekið er við skjölum með endingu: \n.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
     description: 'Housing condition file upload description',
   },
+
+  // Error messages
+  inspectorNameRequired: {
+    id: 'ra.application:housingCondition.inspectorNameRequired',
+    defaultMessage: 'Fullt nafn óháðs aðila þarf að vera til staðar',
+    description: 'Housing condition inspector name required',
+  },
+  inspectionResultsRequired: {
+    id: 'ra.application:housingCondition.inspectionResultsRequired',
+    defaultMessage: 'Lýsing ástandsúttektar eða skjöl þurfa að vera til staðar',
+    description: 'Housing condition inspection results required',
+  },
 })

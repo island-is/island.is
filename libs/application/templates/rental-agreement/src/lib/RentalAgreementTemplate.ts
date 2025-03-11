@@ -105,11 +105,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.SUMMARY,
+            target: States.INREVIEW,
           },
         },
       },
-      [States.SUMMARY]: {
+      [States.INREVIEW]: {
         entry: 'assignUsers',
         exit: 'clearAssignees',
         meta: {
@@ -120,8 +120,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/summaryForm').then((module) =>
-                  Promise.resolve(module.SummaryForm),
+                import('../forms/inReviewApplicantForm').then((module) =>
+                  Promise.resolve(module.inReviewApplicantForm),
                 ),
               actions: [
                 {
@@ -143,8 +143,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/summaryNoEditForm').then((module) =>
-                  Promise.resolve(module.SummaryNoEditForm),
+                import('../forms/inReviewAssigneesForm').then((module) =>
+                  Promise.resolve(module.inReviewAssigneesForm),
                 ),
               read: 'all',
               api: [UserProfileApi],
@@ -163,7 +163,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
       [States.SIGNING]: {
         meta: {
           name: States.SIGNING,
-          status: 'inprogress',
+          status: 'completed',
           lifecycle: pruneAfterDays(30),
           roles: [
             {
@@ -183,7 +183,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
             target: States.SIGNING,
           },
           [DefaultEvents.EDIT]: {
-            target: States.SUMMARY,
+            target: States.INREVIEW,
           },
         },
       },

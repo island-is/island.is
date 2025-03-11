@@ -175,6 +175,11 @@ export const rentalAmount = defineMessages({
   },
 
   // Error messages
+  indexTypesRequiredError: {
+    id: 'ra.application:rentalAmount.indexTypesRequiredError',
+    defaultMessage: 'Veldu tegund vísitölu',
+    description: 'Rental amount index types required error',
+  },
   indexValueRequiredError: {
     id: 'ra.application:rentalAmount.indexValueRequiredError',
     defaultMessage: 'Sláðu inn vísitölu',
