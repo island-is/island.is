@@ -20,6 +20,7 @@ interface Props {
   previousUrl?: string
   previousIsDisabled?: boolean
   previousButtonText?: string
+  onPreviousButtonClick?: () => void
   hidePreviousButton?: boolean
   nextUrl?: string
   nextIsDisabled?: boolean
@@ -41,6 +42,7 @@ const FormFooter: FC<Props> = ({
   previousUrl,
   previousIsDisabled,
   previousButtonText,
+  onPreviousButtonClick,
   hidePreviousButton,
   nextUrl,
   nextIsDisabled,
@@ -78,7 +80,12 @@ const FormFooter: FC<Props> = ({
               variant="ghost"
               disabled={previousIsDisabled}
               onClick={() => {
-                router.push(previousUrl ?? '')
+                if (onPreviousButtonClick) {
+                  onPreviousButtonClick()
+                }
+                else {
+                  router.push(previousUrl ?? '')
+                }
               }}
               icon={isMobile ? 'arrowBack' : undefined}
               circle={isMobile}

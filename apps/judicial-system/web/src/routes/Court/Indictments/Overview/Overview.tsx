@@ -1,8 +1,14 @@
-import { useCallback, useContext, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, Box } from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -26,13 +32,22 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
+import UploadFilesInCourt from './UploadFilesInCourt'
 import { strings } from './Overview.strings'
+// onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
-const IndictmentOverview = () => {
+const OverviewBody = ({
+  handleNavigationTo,
+  setShowUploadFilesView,
+}: {
+  handleNavigationTo: (destination: string) => Promise<void>
+  setShowUploadFilesView: Dispatch<SetStateAction<boolean>>
+}) => {
   const router = useRouter()
-  const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
+
+  const { workingCase, isLoadingWorkingCase, setWorkingCase } =
     useContext(FormContext)
-  const { updateDefendantState, updateDefendant } = useDefendants()
+  const { updateDefendantState } = useDefendants()
 
   const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
@@ -43,37 +58,8 @@ const IndictmentOverview = () => {
 
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
-  const handleNavigationTo = useCallback(
-    async (destination: string) => {
-      if (workingCase.defendants) {
-        const promises = workingCase.defendants.map((defendant) =>
-          updateDefendant({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            subpoenaType: defendant.subpoenaType,
-          }),
-        )
-
-        const allDataSentToServer = await Promise.all(promises)
-
-        if (!allDataSentToServer.every(Boolean)) {
-          return
-        }
-      }
-
-      router.push(`${destination}/${workingCase.id}`)
-    },
-    [router, updateDefendant, workingCase.defendants, workingCase.id],
-  )
-
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      isValid={true}
-      onNavigationTo={handleNavigationTo}
-    >
+    <>
       <PageHeader title={formatMessage(titles.court.indictments.overview)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
@@ -109,14 +95,14 @@ const IndictmentOverview = () => {
           <InfoCardActiveIndictment />
         </Box>
         {/* 
-        NOTE: Temporarily hidden while list of laws broken is not complete in
-        indictment cases
-        
-        {lawsBroken.size > 0 && (
-          <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-          </Box>
-        )} */}
+    NOTE: Temporarily hidden while list of laws broken is not complete in
+    indictment cases
+    
+    {lawsBroken.size > 0 && (
+      <Box marginBottom={5}>
+        <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+      </Box>
+    )} */}
         {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
           <Accordion>
             {workingCase.mergedCases.map((mergedCase) => (
@@ -131,6 +117,18 @@ const IndictmentOverview = () => {
         )}
         <Box component="section" marginBottom={10}>
           <IndictmentCaseFilesList workingCase={workingCase} />
+          <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+            <Button
+              variant="primary"
+              icon="add"
+              onClick={() => {
+                setShowUploadFilesView(true)
+              }}
+              disabled={false}
+            >
+              {formatMessage(strings.addFilesButtonText)}
+            </Button>
+          </Box>
         </Box>
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>
@@ -161,10 +159,10 @@ const IndictmentOverview = () => {
           }
           nextButtonText={formatMessage(core.continue)}
           /* 
-            The return indictment feature has been removed for the time being but
-            we want to hold on to the functionality for now, since we are likely
-            to change this feature in the future.
-          */
+        The return indictment feature has been removed for the time being but
+        we want to hold on to the functionality for now, since we are likely
+        to change this feature in the future.
+      */
           // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
           // actionButtonColorScheme={'destructive'}
           // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
@@ -177,6 +175,56 @@ const IndictmentOverview = () => {
           setWorkingCase={setWorkingCase}
           onClose={() => setModalVisible(undefined)}
           onComplete={() => router.push(constants.CASES_ROUTE)}
+        />
+      )}
+    </>
+  )
+}
+
+const IndictmentOverview = () => {
+  const router = useRouter()
+  const [showUploadFilesView, setShowUploadFilesView] = useState(false)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
+  const { updateDefendant } = useDefendants()
+
+  const handleNavigationTo = useCallback(
+    async (destination: string) => {
+      if (workingCase.defendants) {
+        const promises = workingCase.defendants.map((defendant) =>
+          updateDefendant({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            subpoenaType: defendant.subpoenaType,
+          }),
+        )
+
+        const allDataSentToServer = await Promise.all(promises)
+
+        if (!allDataSentToServer.every(Boolean)) {
+          return
+        }
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [router, updateDefendant, workingCase.defendants, workingCase.id],
+  )
+
+  return (
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
+    >
+      {showUploadFilesView ? (
+        <UploadFilesInCourt setShowUploadFilesView={setShowUploadFilesView} />
+      ) : (
+        <OverviewBody
+          handleNavigationTo={handleNavigationTo}
+          setShowUploadFilesView={setShowUploadFilesView}
         />
       )}
     </PageLayout>
