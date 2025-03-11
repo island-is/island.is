@@ -24,7 +24,7 @@ command:
   - 'node'
 enabled: true
 env:
-  AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+  AUTH_DELEGATION_API_URL: 'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
   CODE_OWNER: 'juni'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
