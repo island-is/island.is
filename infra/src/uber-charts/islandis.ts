@@ -95,6 +95,7 @@ const appSystemApi = appSystemApiSetup({
 })
 const appSystemApiWorker = appSystemApiWorkerSetup({
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
