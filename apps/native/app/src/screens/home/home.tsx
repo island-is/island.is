@@ -50,7 +50,7 @@ import {
 } from './inbox-module'
 import {
   LicensesModule,
-  useGetLicensesData,
+  useListLicensesQuery,
   validateLicensesInitialData,
 } from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
@@ -59,6 +59,7 @@ import {
   validateVehiclesInitialData,
   VehiclesModule,
 } from './vehicles-module'
+import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
 
 interface ListItem {
   id: string
@@ -165,8 +166,14 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     skip: !inboxWidgetEnabled,
   })
 
-  const licensesRes = useGetLicensesData({
-    skipFetching: !licensesWidgetEnabled,
+  const licensesRes = useListLicensesQuery({
+    variables: {
+      input: {
+        includedTypes: INCLUDED_LICENSE_TYPES,
+      },
+    },
+    fetchPolicy: 'cache-first',
+    skip: !licensesWidgetEnabled,
   })
 
   const airDiscountRes = useGetAirDiscountQuery({
@@ -280,7 +287,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         applicationsWidgetEnabled && applicationsRes.refetch(),
         inboxWidgetEnabled && inboxRes.refetch(),
         licensesWidgetEnabled && licensesRes.refetch(),
-        licensesWidgetEnabled && licensesRes.refetchPassport(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
       ].filter(Boolean)

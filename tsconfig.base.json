@@ -242,6 +242,9 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
+      "@island.is/api/domains/verdicts": [
+        "libs/api/domains/verdicts/src/index.ts"
+      ],
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
       ],
@@ -384,8 +387,8 @@
       "@island.is/application/templates/examples/example-common-actions": [
         "libs/application/templates/examples/example-common-actions/src/index.ts"
       ],
-      "@island.is/application/templates/examples/example-fields": [
-        "libs/application/templates/examples/example-fields/src/index.ts"
+      "@island.is/application/templates/examples/example-inputs": [
+        "libs/application/templates/examples/example-inputs/src/index.ts"
       ],
       "@island.is/application/templates/examples/example-state-transfers": [
         "libs/application/templates/examples/example-state-transfers/src/index.ts"
@@ -506,6 +509,15 @@
       ],
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/assets/*": [
+        "libs/application/templates/signature-collection/assets/*"
+      ],
+      "@island.is/application/templates/signature-collection/municipal-list-creation": [
+        "libs/application/templates/signature-collection/municipal-list-creation/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/municipal-list-signing": [
+        "libs/application/templates/signature-collection/municipal-list-signing/src/index.ts"
       ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
@@ -858,6 +870,7 @@
       "@island.is/clients/vehicles-mileage": [
         "libs/clients/vehicles-mileage/src/index.ts"
       ],
+      "@island.is/clients/verdicts": ["libs/clients/verdicts/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
