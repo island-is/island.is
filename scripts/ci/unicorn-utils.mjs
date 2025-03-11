@@ -4,6 +4,7 @@ import { workspaceRoot } from '@nx/devkit'
 
 // NOTE: Using `console.error` in this script to log, without affecting the "output" to standard output
 
+const NX_UNICORN_TAG = 'ci:unicorn'
 /**
  * Executes multiple nx commands with given named command arrays
  * @param {Object.<string, string[]>} commandsMap - Map of command names to command argument arrays
@@ -54,7 +55,7 @@ function createCommandsMap(baseBranch) {
   const affected = [`--base=${baseBranch}`, '--affected']
 
   const affectedApps = [...allApps, ...affected]
-  const allUnicorns = [...allApps, '--projects=tag:unicorn']
+  const allUnicorns = [...allApps, `--projects=tag:${NX_UNICORN_TAG}`]
   const affectedUnicorns = [...allUnicorns, ...affected]
 
   return {

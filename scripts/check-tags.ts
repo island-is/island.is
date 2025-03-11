@@ -26,7 +26,8 @@ const hasValidTags = async (filePath: string) => {
   const isEmpty = tags.length === 0
   // Only allow 'scope:*' or 'lib:*' tags
   const validPrefix = tags.every(
-    ([key]) => key === 'scope' || key === 'lib' || key === 'TODO',
+    ([key]) =>
+      key === 'scope' || key === 'lib' || key === 'TODO' || key === 'ci',
   )
   // Must have at least one scope tag or be empty
   const hasScopePrefix = tags.some(([key]) => key === 'scope') || isEmpty
