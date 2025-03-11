@@ -21,6 +21,8 @@ import {
 import { mockDisabilityLicense } from './mocks/disabilityMock'
 import { maybeExpired } from './mocks/utils'
 import { mockPassportLicense } from './mocks/passportMock'
+import { mockEhicLicense } from './mocks/ehicMock'
+import { mockPCardLicense } from './mocks/pCardMock'
 
 const providerArray = [
   'AdministrationOfOccupationalSafetyAndHealth',
@@ -92,6 +94,12 @@ export const payload = () => {
       },
       Passport: {
         data: mockPassportLicense(traitArgs),
+      },
+      Ehic: {
+        data: mockEhicLicense(traitArgs),
+      },
+      PCard: {
+        data: mockPCardLicense(traitArgs),
       },
     },
     data: [],
