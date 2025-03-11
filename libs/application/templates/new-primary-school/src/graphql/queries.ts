@@ -20,15 +20,26 @@ export const friggSchoolsByMunicipalityQuery = gql`
   query FriggSchoolsByMunicipality {
     friggSchoolsByMunicipality {
       id
+      unitId
       nationalId
       name
       type
+      email
+      phone
+      website
       children {
         id
+        unitId
         nationalId
         name
         type
         gradeLevels
+        email
+        phone
+        website
+        address {
+          municipality
+        }
       }
     }
   }

@@ -43,3 +43,9 @@ export interface AdditionalInformation {
   additionalDocuments?: FileType[]
   additionalDocumentsRequired?: FileType[]
 }
+
+export interface Eligible {
+  isEligible: boolean
+  reason: string
+  reasonCode: string
+}

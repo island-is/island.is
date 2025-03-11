@@ -36,7 +36,10 @@ export const OverviewFormField = ({
     if (goToScreen) goToScreen(screen)
   }
   return (
-    <Box paddingTop={3} paddingBottom={3}>
+    <Box
+      paddingTop={field.marginTop ? field.marginTop : 3}
+      paddingBottom={field.marginBottom ? field.marginBottom : 3}
+    >
       <ReviewGroup
         isLast={!field.bottomLine}
         editAction={() => changeScreens(field.backId ?? '')}
@@ -45,8 +48,8 @@ export const OverviewFormField = ({
         <Box marginRight={12}>
           {field.title && (
             <Text
-              variant="h4"
-              as="h4"
+              variant={field.titleVariant ? field.titleVariant : 'h4'}
+              as={field.titleVariant ? field.titleVariant : 'h4'}
               paddingTop={2}
               paddingBottom={field.description ? 2 : 5}
             >
@@ -82,7 +85,9 @@ export const OverviewFormField = ({
                   key={i}
                   span={
                     item.width === 'full'
-                      ? ['12/12', '12/12', '12/12', '12/12']
+                      ? field.title || field.description
+                        ? ['12/12', '12/12', '12/12', '12/12']
+                        : ['10/12', '10/12', '10/12', '10/12']
                       : item.width === 'half'
                       ? ['9/12', '9/12', '9/12', '5/12']
                       : undefined
