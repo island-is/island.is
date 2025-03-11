@@ -33,8 +33,6 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehicleMileagePostResponse } from '../models/v3/postVehicleMileageResponse.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { VehicleMileagePutResponse } from '../models/v3/putVehicleMileageResponse.model'
-import { PutResponse } from '../models/v3/putResponse.model'
-import da from 'date-fns/esm/locale/da/index.js'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleMileageOverview)
@@ -77,7 +75,7 @@ export class VehiclesMileageResolver {
     return mileageDetailConstructor(res)
   }
 
-  @Mutation(() => PutResponse, {
+  @Mutation(() => VehicleMileagePutModel, {
     name: 'vehicleMileagePut',
     nullable: true,
   })
@@ -86,9 +84,19 @@ export class VehiclesMileageResolver {
     @Args('input') input: PutVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    return this.vehiclesService.putMileageReading(user, {
+    const res = await this.vehiclesService.putMileageReading(user, {
       ...input,
       mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res) {
+      return
+    }
+
+    return mileageDetailConstructor({
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+      internalId: res.internalId,
     })
   }
 

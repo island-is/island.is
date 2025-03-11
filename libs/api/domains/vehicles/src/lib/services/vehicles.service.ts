@@ -17,7 +17,6 @@ import {
   GetMileageReadingRequest,
   MileageReadingApi,
   MileageReadingDto,
-  PostMileageReadingModel,
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
@@ -46,7 +45,6 @@ import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHist
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
 import { MileageRegistration } from '../models/v3/mileageRegistration.model'
-import { PutResponse } from '../models/v3/putResponse.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -447,7 +445,7 @@ export class VehiclesService {
   async putMileageReading(
     auth: User,
     input: RootPutRequest['putMileageReadingModel'],
-  ): Promise<PutResponse | null> {
+  ): Promise<MileageReadingDto | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -469,6 +467,7 @@ export class VehiclesService {
       if (res.raw.status === 204) {
         this.logger.info('Successfully updated mileage reading')
         return {
+          ...input,
           internalId: input.internalId + 1,
         }
       }
@@ -528,7 +527,7 @@ export class VehiclesService {
   async putMileageReadingV2(
     auth: User,
     input: RootPutRequest['putMileageReadingModel'],
-  ): Promise<PutResponse | VehiclesMileageUpdateError | null> {
+  ): Promise<MileageReadingDto | VehiclesMileageUpdateError | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -551,6 +550,7 @@ export class VehiclesService {
       if (res.raw.status === 204) {
         this.logger.info('mileage update successful')
         return {
+          ...input,
           internalId: input.internalId + 1,
         }
       }

@@ -80,7 +80,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     onCompleted: ({ vehicleMileagePutV2: data }) => {
       if (data?.__typename === 'VehicleMileagePutModel' && data.internalId) {
         const internalId = parseInt(data.internalId, 10)
-        setLocalInternalId(internalId + 1)
+        setLocalInternalId(internalId)
         setLocalMileage(data.mileageNumber ?? undefined)
       }
       handleMutationResponse(
@@ -92,12 +92,14 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     },
   })
 
+  console.log(localInternalId)
+
   const [postAction] = usePostSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
     onCompleted: ({ vehicleMileagePostV2: data }) => {
       if (data?.__typename === 'VehicleMileageDetail' && data.internalId) {
         const internalId = parseInt(data.internalId, 10)
-        setLocalInternalId(internalId + 1)
+        setLocalInternalId(internalId)
         setLocalMileage(data.mileageNumber ?? undefined)
         setLocalDate(data.readDate ? new Date(data.readDate) : undefined)
       }
@@ -222,19 +224,27 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const postToServer = useCallback(async () => {
     const formValue = await getValueFromForm(vehicle.vehicleId)
     if (formValue) {
-      if (
+      if (localInternalId) {
+        putAction({
+          variables: {
+            input: {
+              internalId: localInternalId,
+              permno: vehicle.vehicleId,
+              mileageNumber: formValue,
+            },
+          },
+        })
+      } else if (
         mileageData?.vehicleMileageDetails?.editing &&
         mileageData.vehicleMileageDetails?.data?.[0]?.internalId
       ) {
         putAction({
           variables: {
             input: {
-              internalId:
-                localInternalId ??
-                parseInt(
-                  mileageData.vehicleMileageDetails?.data?.[0]?.internalId,
-                  10,
-                ),
+              internalId: parseInt(
+                mileageData.vehicleMileageDetails?.data?.[0]?.internalId,
+                10,
+              ),
               permno: vehicle.vehicleId,
               mileageNumber: formValue,
             },
