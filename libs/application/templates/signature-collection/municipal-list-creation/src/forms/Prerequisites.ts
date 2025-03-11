@@ -79,13 +79,9 @@ export const Prerequisites: Form = buildForm({
             //Todo: update providers once known
             buildDataProviderItem({
               provider: MunicipalCollectionApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: MunicipalIdentityApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),
