@@ -15,7 +15,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Webreader } from '@island.is/web/components'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictCaseCategoriesQuery,
@@ -55,7 +55,10 @@ interface VerdictsListProps {
   }
 }
 
-const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
+const VerdictsList: CustomScreen<VerdictsListProps> = ({
+  initialData,
+  customPageData,
+}) => {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
@@ -122,12 +125,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
 
   return (
     <Box className="rs_read">
+      <HeadWithSocialSharing title={customPageData?.ogTitle ?? ''}>
+        {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <Stack space={3}>
         <GridContainer>
           <Stack space={3}>
             <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
             <Text variant="h1" as="h1">
-              {formatMessage(m.listPage.heading)}{' '}
+              {formatMessage(m.listPage.heading)}
             </Text>
             <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
             <Text>{formatMessage(m.listPage.description)}</Text>

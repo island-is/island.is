@@ -181,7 +181,6 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
 
   return (
     <>
-      <HeadWithSocialSharing title="Dómur" />
       <Box paddingBottom={3}>
         <GridContainer>
           <Box paddingBottom={2}>
@@ -286,9 +285,21 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
   )
 }
 
-const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
-  if (item.pdfString) return <PdfView item={item} />
-  return <HtmlView item={item} />
+const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({
+  item,
+  customPageData,
+}) => {
+  return (
+    <>
+      <HeadWithSocialSharing title="Dómur">
+        {Boolean(customPageData?.configJson?.noIndexOnVerdictPage) && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+        <meta name="robots" content="noindex, nofollow" />
+      </HeadWithSocialSharing>
+      {item.pdfString ? <PdfView item={item} /> : <HtmlView item={item} />}
+    </>
+  )
 }
 
 VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
