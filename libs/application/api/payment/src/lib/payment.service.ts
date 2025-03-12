@@ -163,6 +163,9 @@ export class PaymentService {
     applicationId: string,
     performingOrganizationID: string,
   ): Promise<Payment> {
+    console.log('=========================================')
+    console.log('createPaymentModel', applicationId, performingOrganizationID)
+    console.log('=========================================')
     const paymentModel: Pick<
       BasePayment,
       'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
