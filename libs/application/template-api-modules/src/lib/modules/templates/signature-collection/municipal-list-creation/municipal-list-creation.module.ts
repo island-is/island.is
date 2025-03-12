@@ -4,12 +4,9 @@ import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../../shared'
 
 // Here you import your module service
-import { MunicipalListSigningService } from './municipal-list-signing.service'
+import { MunicipalListCreationService } from './municipal-list-creation.service'
 import { SignatureCollectionClientModule } from '@island.is/clients/signature-collection'
-import {
-  NationalRegistryClientModule,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
@@ -17,7 +14,7 @@ import {
     SignatureCollectionClientModule,
     NationalRegistryClientModule,
   ],
-  providers: [MunicipalListSigningService, NationalRegistryClientService],
-  exports: [MunicipalListSigningService],
+  providers: [MunicipalListCreationService, NationalRegistryClientModule],
+  exports: [MunicipalListCreationService],
 })
-export class MunicipalListSigningModule {}
+export class MunicipalListCreationModule {}
