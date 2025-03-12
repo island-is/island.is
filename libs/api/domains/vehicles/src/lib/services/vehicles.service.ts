@@ -548,7 +548,7 @@ export class VehiclesService {
       })
 
       if (res.raw.status === 204) {
-        this.logger.info('mileage update successful')
+        this.logger.debug('mileage update successful')
         return {
           ...input,
           internalId: input.internalId + 1,

@@ -92,8 +92,6 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     },
   })
 
-  console.log(localInternalId)
-
   const [postAction] = usePostSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
     onCompleted: ({ vehicleMileagePostV2: data }) => {
