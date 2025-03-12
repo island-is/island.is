@@ -89,7 +89,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
               // Remove all duplicate verdicts in case there were new verdicts published since last page load
               .filter(
                 (verdict) =>
-                  Boolean(verdict.id) &&
+                  !verdict.id ||
                   !prevData.visibleVerdicts
                     .map(({ id }) => id)
                     .includes(verdict.id),
@@ -175,31 +175,36 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
             <InfoCardGrid
               variant="detailed"
               columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
-              cards={data.visibleVerdicts.map((verdict) => {
-                return {
-                  description: verdict.title,
-                  eyebrow: '',
-                  id: verdict.id,
-                  link: { href: `/domar/${verdict.id}`, label: '' },
-                  title: verdict.caseNumber,
-                  borderColor: 'blue200',
-                  detailLines: [
-                    {
-                      icon: 'calendar',
-                      text: verdict.verdictDate
-                        ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
-                        : '',
-                    },
-                    { icon: 'hammer', text: verdict.court ?? '' },
-                    {
-                      icon: 'person',
-                      text: `${verdict.presidentJudge?.name ?? ''} ${
-                        verdict.presidentJudge?.title ?? ''
-                      }`,
-                    },
-                  ],
-                }
-              })}
+              cards={data.visibleVerdicts
+                .filter((verdict) => Boolean(verdict.id))
+                .map((verdict) => {
+                  return {
+                    description: verdict.title,
+                    eyebrow: '',
+                    id: verdict.id,
+                    link: { href: `/domar/${verdict.id}`, label: '' },
+                    title: verdict.caseNumber,
+                    borderColor: 'blue200',
+                    detailLines: [
+                      {
+                        icon: 'calendar',
+                        text: verdict.verdictDate
+                          ? format(
+                              new Date(verdict.verdictDate),
+                              'd. MMMM yyyy',
+                            )
+                          : '',
+                      },
+                      { icon: 'hammer', text: verdict.court ?? '' },
+                      {
+                        icon: 'person',
+                        text: `${verdict.presidentJudge?.name ?? ''} ${
+                          verdict.presidentJudge?.title ?? ''
+                        }`,
+                      },
+                    ],
+                  }
+                })}
             />
             {initialData.total > data.visibleVerdicts.length && (
               <Box
@@ -284,9 +289,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
     }),
   ])
 
-  const items = verdictListResponse.data.webVerdicts.items.filter((item) =>
-    Boolean(item?.id),
-  )
+  const items = verdictListResponse.data.webVerdicts.items
 
   if (!customPageData?.configJson?.showVerdictListPage) {
     throw new CustomNextError(
