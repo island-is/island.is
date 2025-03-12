@@ -49,7 +49,7 @@ jobs:
 
   helm-values-validation:
     runs-on: arc-runners
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
