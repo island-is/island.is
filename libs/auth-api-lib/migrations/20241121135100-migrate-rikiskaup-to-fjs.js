@@ -25,6 +25,7 @@ module.exports = {
         JOIN delegation_scope ds ON d.id = ds.delegation_id
         WHERE d.domain_name = '@rikiskaup.is'
           AND ds.scope_name = '@rikiskaup.is/gagnaskilagatt'
+       ;
 
         COMMIT;
     `)
