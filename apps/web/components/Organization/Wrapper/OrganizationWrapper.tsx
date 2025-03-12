@@ -1305,7 +1305,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {!!mainContent && <Box className="rs_read">{children}</Box>}
       {!minimal && (
-        <Box className="rs_read">
+        <Box className="rs_read" marginTop={'auto'}>
           <OrganizationFooter
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict

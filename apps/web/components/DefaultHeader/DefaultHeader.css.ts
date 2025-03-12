@@ -26,6 +26,7 @@ export const gridContainerSubpage = style({
 export const gridContainerWidth = style({
   maxWidth: '1342px',
   margin: '0 auto',
+  width: '100%',
 })
 
 export const textContainer = style({
