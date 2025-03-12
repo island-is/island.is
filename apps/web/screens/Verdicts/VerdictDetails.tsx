@@ -179,6 +179,8 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
   const { format } = useDateUtils()
   const logoUrl = formatMessage(m.verdictPage.htmlVerdictLogoUrl)
 
+  const [a, b] = item.title.split('gegn')
+
   return (
     <>
       <Box paddingBottom={3}>
@@ -256,6 +258,15 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                           ).replace('dagur', 'dagurinn'),
                         )}
                       </Text>
+                    )}
+                    {Boolean(item.title) && (
+                      <Box display="flex" justifyContent="center" paddingY={3}>
+                        <Box className={styles.verdictHtmlTitleContainer}>
+                          <Text>{a.trim()}</Text>
+                          <Text>gegn</Text>
+                          <Text> {b.trim()}</Text>
+                        </Box>
+                      </Box>
                     )}
                   </Stack>
                   <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
