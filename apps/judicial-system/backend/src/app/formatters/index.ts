@@ -12,7 +12,6 @@ export {
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
   formatDefenderCourtDateEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatPrisonAdministrationRulingNotification,
   formatPrisonCourtDateEmailNotification,
   formatPrisonRevokedEmailNotification,

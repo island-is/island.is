@@ -5,6 +5,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
     $input: IcelandicGovernmentInstitutionVacanciesInput!
   ) {
     icelandicGovernmentInstitutionVacancies(input: $input) {
+      fetchErrorOccurred
       vacancies {
         id
         fieldOfWork

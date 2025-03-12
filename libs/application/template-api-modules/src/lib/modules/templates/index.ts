@@ -64,6 +64,12 @@ import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
+import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
+import { ExampleStateTransfersModule } from './examples/example-state-transfers/example-state-transfers.module'
+import { ExampleStateTransfersService } from './examples/example-state-transfers/example-state-transfers.service'
+import { ExampleInputsModule } from './examples/example-inputs/example-inputs.module'
+import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -140,6 +146,10 @@ import { ParliamentaryListSigningModule } from './signature-collection/parliamen
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
 import { SeminarsTemplateService } from './aosh/seminars/seminars.service'
 import { SeminarsTemplateModule } from './aosh/seminars/seminars.module'
+import { MunicipalListCreationModule } from './signature-collection/municipal-list-creation/municipal-list-creation.module'
+import { MunicipalListCreationService } from './signature-collection/municipal-list-creation/municipal-list-creation.service'
+import { MunicipalListSigningModule } from './signature-collection/municipal-list-signing/municipal-list-signing.module'
+import { MunicipalListSigningService } from './signature-collection/municipal-list-signing/municipal-list-signing.service'
 import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
@@ -149,6 +159,10 @@ export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
   ReferenceTemplateModule,
+  ExampleCommonActionsModule,
+  ExampleStateTransfersModule,
+  ExampleInputsModule,
+  ExamplePaymentActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
@@ -163,7 +177,6 @@ export const modules = [
   CriminalRecordSubmissionModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
-  ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
   MarriageConditionsSubmissionModule,
@@ -214,6 +227,8 @@ export const modules = [
   WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
+  MunicipalListCreationModule,
+  MunicipalListSigningModule,
   ParentalLeaveModule,
   SocialInsuranceAdministrationModule,
   SeminarsTemplateModule,
@@ -223,6 +238,10 @@ export const modules = [
 
 export const services = [
   ReferenceTemplateService,
+  ExampleCommonActionsService,
+  ExampleStateTransfersService,
+  ExampleInputsService,
+  ExamplePaymentActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PublicDebtPaymentPlanTemplateService,
@@ -239,7 +258,6 @@ export const services = [
   CriminalRecordSubmissionService,
   PSignSubmissionService,
   AnnouncementOfDeathService,
-  ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
   FinancialAidService,
@@ -292,6 +310,8 @@ export const services = [
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
   SeminarsTemplateService,
+  MunicipalListCreationService,
+  MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
 ]

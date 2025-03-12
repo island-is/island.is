@@ -51,6 +51,7 @@ import {
   TitleField,
   TitleVariants,
   OverviewField,
+  CopyLinkField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -300,6 +301,7 @@ export const buildTextField = (
     rows,
     required,
     maxLength,
+    showMaxLength,
     max,
     min,
     readOnly,
@@ -318,6 +320,7 @@ export const buildTextField = (
     rows,
     required,
     maxLength,
+    showMaxLength,
     readOnly,
     rightAlign,
     max,
@@ -616,13 +619,14 @@ export const buildPaymentPendingField = (data: {
 export const buildMessageWithLinkButtonField = (
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField => {
-  const { id, url, message, buttonTitle } = data
+  const { id, url, message, messageColor, buttonTitle } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     url,
     message,
+    messageColor,
     buttonTitle,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
@@ -1159,11 +1163,21 @@ export const buildBankAccountField = (
 export const buildOverviewField = (
   data: Omit<OverviewField, 'type' | 'component' | 'children'>,
 ): OverviewField => {
-  const { id, title, description, backId, items, attachments, tableData } = data
+  const {
+    id,
+    title,
+    titleVariant,
+    description,
+    backId,
+    items,
+    attachments,
+    tableData,
+  } = data
   return {
     ...extractCommonFields(data),
     id,
     title,
+    titleVariant,
     description,
     backId,
     items,
@@ -1171,6 +1185,23 @@ export const buildOverviewField = (
     tableData,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
+    children: undefined,
+  }
+}
+
+export const buildCopyLinkField = (
+  data: Omit<CopyLinkField, 'type' | 'component' | 'children'>,
+): CopyLinkField => {
+  const { id, title, link, buttonTitle, semiBoldLink } = data
+  return {
+    ...extractCommonFields(data),
+    id,
+    title,
+    link,
+    buttonTitle,
+    semiBoldLink,
+    type: FieldTypes.COPY_LINK,
+    component: FieldComponents.COPY_LINK,
     children: undefined,
   }
 }

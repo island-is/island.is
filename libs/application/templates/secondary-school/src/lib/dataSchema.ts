@@ -187,14 +187,14 @@ export const SecondarySchoolSchema = z.object({
     .array(SelectionSchema)
     .refine(
       (arr) => {
-        const schoolIds = [arr[0].school?.id || '', arr[1].school?.id || '']
+        const schoolIds = [arr[0]?.school?.id || '', arr[1]?.school?.id || '']
         return !hasDuplicates(schoolIds.filter((x) => !!x))
       },
       { path: ['1', 'school', 'id'], params: error.errorSchoolDuplicate },
     )
     .refine(
       (arr) => {
-        const schoolIds = arr.map((x) => x.school?.id || '')
+        const schoolIds = arr.map((x) => x?.school?.id || '')
         return !hasDuplicates(schoolIds.filter((x) => !!x))
       },
       { path: ['2', 'school', 'id'], params: error.errorSchoolDuplicate },
