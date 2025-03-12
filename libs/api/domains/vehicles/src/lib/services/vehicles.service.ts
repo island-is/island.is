@@ -465,7 +465,7 @@ export class VehiclesService {
       })
 
       if (res.raw.status === 204) {
-        this.logger.info('Successfully updated mileage reading')
+        this.logger.debug('Successfully updated mileage reading')
         return {
           ...input,
           internalId: input.internalId + 1,
