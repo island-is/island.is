@@ -6,12 +6,11 @@ import {
   InfoLineStack,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetReferralsDetailQuery } from './Referrals.generated'
-import { Problem } from '@island.is/react-spa/shared'
-import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -22,14 +21,13 @@ const ReferencesDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading } = useGetReferralsDetailQuery({
+  const { data, loading, error } = useGetReferralsDetailQuery({
     variables: { locale: lang },
   })
 
   const referral = data?.healthDirectorateReferrals.referrals.find(
     (item) => item.id === id,
   )
-  const error = true
 
   return (
     <IntroWrapper
@@ -44,13 +42,12 @@ const ReferencesDetail: React.FC = () => {
       {error && !loading && (
         <Problem error={{ name: 'ee', message: 'error' }} noBorder={false} />
       )}
-
-      {!error && !loading && isDefined(referral) && (
+      {!error && (
         <InfoLineStack space={1}>
           <InfoLine
             label={formatMessage(messages.referralFor)}
             content={
-              referral?.reason ?? formatMessage(messages.noDataRegistered)
+              referral?.serviceName ?? formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />
@@ -82,6 +79,13 @@ const ReferencesDetail: React.FC = () => {
             content={
               referral?.toContactInfo?.name ??
               formatMessage(messages.noDataRegistered)
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.reason)}
+            content={
+              referral?.reason ?? formatMessage(messages.noDataRegistered)
             }
             loading={loading}
           />

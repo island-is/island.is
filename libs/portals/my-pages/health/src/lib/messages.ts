@@ -877,7 +877,7 @@ export const messages = defineMessages({
     id: 'sp.health:no-health-insurance-message',
   },
   noReferrals: {
-    defaultMessage: 'Engar tilvísanir',
+    defaultMessage: 'Engar tilvísanir fundust',
     id: 'sp.health:no-referrals',
   },
   notRegistered: {
@@ -1173,6 +1173,10 @@ export const messages = defineMessages({
   referrals: {
     defaultMessage: 'Tilvísanir',
     id: 'sp.health:referrals',
+  },
+  reason: {
+    defaultMessage: 'Ástæða',
+    id: 'sp.health:reason',
   },
   referralsIntro: {
     defaultMessage: 'Hér finnur þú tilvísanir ...',

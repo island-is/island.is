@@ -39,6 +39,7 @@ const References: React.FC = () => {
           type="no_data"
           message={formatMessage(messages.noReferrals)}
           imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
