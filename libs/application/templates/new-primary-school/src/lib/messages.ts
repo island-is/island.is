@@ -974,6 +974,13 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "The municipality and the school will make a decision on the application and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information in order to provide better information about the child's and/or guardian's circumstances. The municipality or the school will then contact you.\n\nIf the application for a new school is approved, the guardian and child will be invited to an admission interview.",
     },
+    privateSchoolExpandableDescription: {
+      id: 'nps.application:conclusion.private.school.expandable.description#markdown',
+      defaultMessage:
+        'Takk fyrir að senda inn umsókn.\n\nUmsóknin fer fyrst til umfjöllunar hjá því sveitarfélagi sem barnið á lögheimili en greiðsluþátttaka sveitarfélagsins, til viðbótar við mótframlag umsækjenda, er forsenda þess að barnið fái skólavist í sjálfstætt starfandi skóla.\n\nÞegar ákvörðun um greiðsluþátttöku liggur fyrir tekur skólinn sjálfur umsóknina til umfjöllunar. Ákvörðun skólastjóra er send til foreldra eins fljótt og auðið er.',
+      description:
+        "Thank you for submitting your application.\n\nFirst the application is reviewed by the municipality in which the child has their place of residence, because the municipality's contribution, in addition to the applicant's contribution, is a prerequisite for the child to be enrolled in an private school.\n\nWhen a decision on payment participation has been made, the school itself will review the application. The decision will be sent to the parents as soon as possible.",
+    },
   }),
 }
 
