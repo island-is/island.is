@@ -71,21 +71,11 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async ({ featureFlagClient }) => {
-                const client = featureFlagClient as FeatureFlagClient
-                const allowFakeData = await client.getValue(
-                  Features.digitalTachographDriversCardAllowFakeData,
-                  false,
-                )
-
-                const getForm = await import(
-                  '../forms/digitalTachographDriversCardForm/index'
-                ).then((module) => module.getDigitalTachographDriversCardForm)
-
-                return getForm({
-                  allowFakeData,
-                })
-              },
+              formLoader: () =>
+                import('../forms/digitalTachographDriversCardForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.DigitalTachographDriversCardForm),
+                ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

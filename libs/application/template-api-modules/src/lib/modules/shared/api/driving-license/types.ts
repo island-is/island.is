@@ -7,7 +7,7 @@ export type HasQualitySignature = {
   hasQualitySignature: boolean
 }
 
-type FakeCurrentLicense = 'none' | 'temp' | 'B' | 'C' | 'C1' | 'D' | 'D1'
+type FakeCurrentLicense = 'none' | 'temp'
 
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo

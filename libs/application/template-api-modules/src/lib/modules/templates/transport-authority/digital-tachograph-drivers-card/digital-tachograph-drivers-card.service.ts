@@ -3,22 +3,18 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { DigitalTachographDriversCardAnswers } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import {
-  DigitalTachographFakeData,
   DrivingLicense,
   NationalRegistry,
   NationalRegistryBirthplace,
   QualityPhotoAndSignature,
 } from './types'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { YES } from '@island.is/application/core'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { externalData } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
-import {
-  getTodayDateWithMonthDiff,
-  getUriFromImageStr,
-} from './digital-tachograph-drivers-card.util'
+import { getUriFromImageStr } from './digital-tachograph-drivers-card.util'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { logger } from '@island.is/logging'
 
@@ -121,37 +117,8 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
     return result
   }
 
-  async getNewestDriversCard({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async getNewestDriversCard({ auth }: TemplateApiModuleActionProps) {
     try {
-      const fakeData = getValueViaPath<DigitalTachographFakeData>(
-        application.answers,
-        'fakeData',
-      )
-      if (fakeData?.useFakeDataDriversCard === YES) {
-        if (fakeData.hasNewestDriversCard === YES) {
-          return {
-            ssn: auth.nationalId,
-            cardNumber: 'fakeCardNumber',
-            applicationCreatedAt: getTodayDateWithMonthDiff(-12),
-            cardValidFrom: getTodayDateWithMonthDiff(-12),
-            cardValidTo:
-              fakeData.newestDriversCardIsExpired === NO
-                ? getTodayDateWithMonthDiff(
-                    Math.abs(fakeData.newestDriversCardExpiresInMonths || 1),
-                  )
-                : getTodayDateWithMonthDiff(-1),
-            isValid:
-              (fakeData.newestDriversCardIsExpired === NO &&
-                fakeData.newestDriversCardIsValid) === YES,
-          }
-        } else {
-          return null
-        }
-      }
-
       return await this.digitalTachographDriversCardClient.getNewestDriversCard(
         auth,
       )
@@ -216,7 +183,8 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         birthPlace: nationalRegistryBirthplaceData?.location,
         emailAddress: answers.applicant.email,
         phoneNumber: answers.applicant.phone,
-        deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
+        deliveryMethodIsSend:
+          answers.cardDelivery?.deliveryMethodIsSend === YES,
         cardType: answers.cardTypeSelection.cardType,
         paymentReceivedAt: new Date(createChargeDate),
         photo: qualityPhotoAndSignatureData?.photoDataUri,
