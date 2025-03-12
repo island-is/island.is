@@ -1,10 +1,10 @@
 import {
   Box,
+  ColorSchemeContext,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  Input,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

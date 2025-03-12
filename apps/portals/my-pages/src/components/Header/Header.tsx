@@ -2,6 +2,7 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
   Button,
+  ColorSchemeContext,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -29,14 +30,12 @@ import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
-import { SearchInput } from '../SearchInput/SearchInput'
 
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
   position: number
-  includeSearchInHeader?: boolean
 }
-export const Header = ({ position, includeSearchInHeader = true }: Props) => {
+export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
@@ -149,8 +148,6 @@ export const Header = ({ position, includeSearchInHeader = true }: Props) => {
                           </LinkResolver>
                         </Box>
                       </Hidden>
-
-                      {includeSearchInHeader && <SearchInput />}
 
                       <NotificationButton
                         setMenuState={(val: MenuTypes) => setMenuOpen(val)}

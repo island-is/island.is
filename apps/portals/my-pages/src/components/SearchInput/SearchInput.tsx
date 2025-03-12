@@ -1,4 +1,9 @@
-import { AsyncSearchInput, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  AsyncSearchInput,
+  Box,
+  BoxProps,
+  Button,
+} from '@island.is/island-ui/core'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
 import { useCombobox } from 'downshift'
@@ -19,6 +24,7 @@ const options: IFuseOptions<ModuleSet> = {
   findAllMatches: true,
   includeMatches: true,
   includeScore: true,
+
   //ignoreLocation: true,
   keys: [
     { name: 'title', weight: 2 },
@@ -54,7 +60,11 @@ const getNavigationItems = (
   return navigationItems
 }
 
-export const SearchInput = () => {
+interface Props {
+  background?: BoxProps['background']
+}
+
+export const SearchInput = ({ background }: Props) => {
   const { formatMessage } = useLocale()
 
   const data = useMemo(() => {
@@ -119,6 +129,8 @@ export const SearchInput = () => {
           ref,
           spellCheck: true,
         }),
+
+        colored: true,
         inputSize: 'medium',
         isOpen: true,
         placeholder: 'Leita',
@@ -150,7 +162,7 @@ export const SearchInput = () => {
         as="ul"
         flexDirection="column"
       >
-        {items.map((item) => (
+        {items.slice(0, 5).map((item) => (
           <LinkResolver href={item.uri}>
             <Button as="span" size="small" variant="text" unfocusable>
               {item.title}
