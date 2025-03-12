@@ -277,7 +277,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: {
         dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
         staging:
-          'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+          'http://services-university-gateway.services-university-gateway.svc.cluster.local',
         prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
       },
       SERVICE_USER_PROFILE_URL: ref(

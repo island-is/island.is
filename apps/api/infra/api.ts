@@ -166,7 +166,7 @@ export const serviceSetup = (services: {
       AUTH_DELEGATION_API_URL: {
         dev: 'https://auth-delegation-api.internal.dev01.devland.is',
         staging:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+          'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL: {
@@ -176,7 +176,7 @@ export const serviceSetup = (services: {
       },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://web-financial-aid-backend',
-        staging: 'http://web-financial-aid-backend',
+        staging: 'http://financial-aid-backend',
         prod: 'http://web-financial-aid-backend',
       },
       FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
