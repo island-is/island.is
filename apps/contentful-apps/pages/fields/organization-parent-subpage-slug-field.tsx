@@ -109,7 +109,7 @@ const OrganizationParentSubpageSlugField = () => {
         return
       }
 
-      // Is there another org subpage that does not belong to a parent subpage that has the same slug?
+      // Is there an org subpage that does not belong to a parent subpage that has the same slug?
       if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length > 0) {
         // Check to see if those org subpages with the same slug belong to a parent subpage
         const subpageParents = await cma.entry.getMany({
