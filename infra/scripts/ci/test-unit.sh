@@ -2,10 +2,7 @@
 set -euxo pipefail
 
 # Run code tests
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-ROOT="$DIR/../.."
+GIT_ROOT=$(git rev-parse --show-toplevel)
+INFRA_DIR="infra"
 
-(
-  cd "$ROOT"
-  "$ROOT"/node_modules/.bin/jest
-)
+"${GIT_ROOT}/${INFRA_DIR}/node_modules/.bin/jest"
