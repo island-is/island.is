@@ -569,6 +569,312 @@ export const loadNewPrimarySchoolXroadMocks = async () => {
   await addXroadMock({
     config: Frigg,
     prefix: 'XROAD_MMS_FRIGG_PATH',
+    apiPath: '/key-options?type=foodAllergyAndIntolerance',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody([
+      {
+        type: 'foodAllergyAndIntolerance',
+        options: [
+          {
+            id: '4b6a6815-ffa2-4c62-824f-5611de1b20b8',
+            key: 'meat',
+            value: [
+              {
+                content: 'Kjöt',
+                language: 'is',
+              },
+              {
+                content: 'Meat',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'd3e54e41-db09-4af6-862a-1b226440a560',
+            key: 'dairy',
+            value: [
+              {
+                content: 'Mjólkurvörur',
+                language: 'is',
+              },
+              {
+                content: 'Dairy products',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'c3f5d18e-9a2c-4d37-b697-814d815f3f75',
+            key: 'vegetables',
+            value: [
+              {
+                content: 'Grænmeti',
+                language: 'is',
+              },
+              {
+                content: 'Vegetable',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'c8530592-a490-471b-8d6d-24ab630ffb4b',
+            key: 'other',
+            value: [
+              {
+                content: 'Annað',
+                language: 'is',
+              },
+              {
+                content: 'Another',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '545ab73d-dcb2-4ed7-83ee-f2a813fa208a',
+            key: 'egg',
+            value: [
+              {
+                content: 'Egg',
+                language: 'is',
+              },
+              {
+                content: 'Eggs',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '9e6ba6af-32a5-492f-8258-73ca55ca9e6a',
+            key: 'fish',
+            value: [
+              {
+                content: 'Fiskur/fiskafurðir',
+                language: 'is',
+              },
+              {
+                content: 'Fish/fish products',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '4c5f5e1b-06e1-403b-b216-e1017ee258e9',
+            key: 'cocunut',
+            value: [
+              {
+                content: 'Kókos',
+                language: 'is',
+              },
+              {
+                content: 'Coconut',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '8736bceb-2a30-4cfb-82e5-dcd916904ffd',
+            key: 'nuts',
+            value: [
+              {
+                content: 'Hnetur/Möndlur',
+                language: 'is',
+              },
+              {
+                content: 'Nuts/almonds',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'd45bdda2-145c-458d-8c6a-cdedac984df5',
+            key: 'sesame',
+            value: [
+              {
+                content: 'Sesamfræ',
+                language: 'is',
+              },
+              {
+                content: 'Sesame seed',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'a9bbb0a9-e17e-4a41-8610-73938838e75b',
+            key: 'fruits',
+            value: [
+              {
+                content: 'Ávextir',
+                language: 'is',
+              },
+              {
+                content: 'Fruit',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '4b0105b6-7c1a-412b-80fa-4360654972d9',
+            key: 'wheat',
+            value: [
+              {
+                content: 'Hveiti/glúten',
+                language: 'is',
+              },
+              {
+                content: 'Wheat/gluten',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'afadc899-035d-4689-8e69-21ac21264fa8',
+            key: 'soy',
+            value: [
+              {
+                content: 'Sojaafurðir',
+                language: 'is',
+              },
+              {
+                content: 'Soy products',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '3ba5b679-172a-4ae9-bcb3-3dedd2bebc7d',
+            key: 'beans',
+            value: [
+              {
+                content: 'Baunir',
+                language: 'is',
+              },
+              {
+                content: 'Beans',
+                language: 'en',
+              },
+            ],
+          },
+        ],
+      },
+    ]),
+  })
+  await addXroadMock({
+    config: Frigg,
+    prefix: 'XROAD_MMS_FRIGG_PATH',
+    apiPath: '/key-options?type=allergy',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody([
+      {
+        type: 'allergy',
+        options: [
+          {
+            id: '8d1e5882-b126-4f74-a915-a61e0d073584',
+            key: 'antiInflammatoryDrugs',
+            value: [
+              {
+                content: 'Bólgueyðandi lyf',
+                language: 'is',
+              },
+              {
+                content: 'Anti inflammatory drugs',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: 'f1f6b800-a3c2-4ad5-8ea7-dff44aefadca',
+            key: 'wasp',
+            value: [
+              {
+                content: 'Geitunga-/skordýrabit',
+                language: 'is',
+              },
+              {
+                content: 'Wasp/insect bites',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '98f92024-90a7-486d-99cc-6b91c5e87e4c',
+            key: 'pollen',
+            value: [
+              {
+                content: 'Frjókorn/gras/birki',
+                language: 'is',
+              },
+              {
+                content: 'Pollen/grass/birch',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '5869aa4d-809e-4d57-9640-a2387f5aad3e',
+            key: 'latex',
+            value: [
+              {
+                content: 'Latex',
+                language: 'is',
+              },
+              {
+                content: 'Latex',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '64d65290-179d-401e-ad5a-4dcd51455989',
+            key: 'nickel',
+            value: [
+              {
+                content: 'Nikkel',
+                language: 'is',
+              },
+              {
+                content: 'Nickel',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '56256b3f-6a83-4511-893e-e760f039ff13',
+            key: 'animals',
+            value: [
+              {
+                content: 'Hundar/kettir/önnur dýr',
+                language: 'is',
+              },
+              {
+                content: 'Dogs/cats/other animals',
+                language: 'en',
+              },
+            ],
+          },
+          {
+            id: '535ba7a7-82ad-4e38-9edf-73e6c9758b63',
+            key: 'other',
+            value: [
+              {
+                content: 'Annað',
+                language: 'is',
+              },
+              {
+                content: 'Other',
+                language: 'en',
+              },
+            ],
+          },
+        ],
+      },
+    ]),
+  })
+  await addXroadMock({
+    config: Frigg,
+    prefix: 'XROAD_MMS_FRIGG_PATH',
     apiPath: '/schools',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody([
