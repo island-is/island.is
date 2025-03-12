@@ -101,7 +101,7 @@ const OrganizationSubpageSlugField = () => {
             content_type: 'organizationParentSubpage',
             'fields.slug': value,
             'sys.archivedVersion[exists]': false,
-            limit: 1000,
+            limit: 1,
             'fields.organizationPage.sys.id': organizationPageId,
           },
         }),
