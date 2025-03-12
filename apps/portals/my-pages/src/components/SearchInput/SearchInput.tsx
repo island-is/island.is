@@ -3,6 +3,8 @@ import {
   Box,
   BoxProps,
   Button,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
@@ -157,18 +159,26 @@ export const SearchInput = ({ background }: Props) => {
     >
       <Box
         display="flex"
+        background="blue100"
         width="full"
+        paddingY={1}
+        paddingX={3}
         height="full"
         as="ul"
         flexDirection="column"
       >
-        {items.slice(0, 5).map((item) => (
-          <LinkResolver href={item.uri}>
-            <Button as="span" size="small" variant="text" unfocusable>
-              {item.title}
-            </Button>
-          </LinkResolver>
-        ))}
+        <Stack space={1}>
+          {items.slice(0, 5).map((item) => (
+            <LinkResolver href={item.uri}>
+              <Button as="span" size="small" variant="text" unfocusable>
+                <Text variant="h5" as="h5" color="blue400">
+                  {item.title}
+                </Text>
+                <Text marginTop={1}>{item.content}</Text>
+              </Button>
+            </LinkResolver>
+          ))}
+        </Stack>
       </Box>
     </AsyncSearchInput>
   )
