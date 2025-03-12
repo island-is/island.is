@@ -139,6 +139,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -343,6 +353,14 @@
             "type": "boolean"
           },
           "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessageEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorCode": {
             "type": "string",
             "nullable": true
           }

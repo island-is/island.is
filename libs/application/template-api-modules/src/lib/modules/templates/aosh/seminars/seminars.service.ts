@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  PaymentCatalogItem,
+} from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { SeminarAnswers } from '@island.is/application/templates/aosh/seminars'
 import type { Logger } from '@island.is/logging'
@@ -91,6 +94,18 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         application.externalData,
         'createCharge.data.id',
       ) ?? ''
+
+    const seminar = getValueViaPath<CourseDTO>(
+      application.externalData,
+      'seminar.data',
+    )
+    const paymentItem = getValueViaPath<Array<PaymentCatalogItem>>(
+      application.externalData,
+      'payment.data',
+    )?.filter(
+      (item: PaymentCatalogItem) =>
+        item.chargeItemCode === seminar?.feeCodeDirectPayment,
+    )[0]
     const res = await this.seminarsClientService
       .registerSeminar(auth, {
         courseRegistrationCreateDTO: {
@@ -122,6 +137,7 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
                 : '',
             paymentId: chargeId,
             paymentExplanation: paymentArrangement?.explanation ?? '',
+            totalPrice: paymentItem?.priceAmount ?? 0,
           },
           students:
             registeringMany === RegisterNumber.many

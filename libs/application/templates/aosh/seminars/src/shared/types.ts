@@ -16,6 +16,6 @@ export enum FileUploadStatus {
 }
 
 export interface CSVError {
-  itemIndex: number
-  errorList: Array<MessageDescriptor>
+  items: Array<number>
+  error: MessageDescriptor
 }

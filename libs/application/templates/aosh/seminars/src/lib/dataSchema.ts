@@ -183,6 +183,6 @@ export const SeminarAnswersSchema = z.object({
         'Vinsamlegast fjarlægðu ógjaldgenga notendur áður en haldið er áfram',
     },
   ),
-  participantCsvError: z.boolean().optional(),
-  participantValidityError: z.boolean().optional(),
+  participantCsvError: z.string().optional(),
+  participantValidityError: z.string().optional(),
 })

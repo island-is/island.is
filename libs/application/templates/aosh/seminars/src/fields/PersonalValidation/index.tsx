@@ -14,9 +14,11 @@ export const PersonalValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
 ) => {
   const { setBeforeSubmitCallback, application } = props
   const [isPersonValid, setIsPersonValid] = useState(true)
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { getValues } = useFormContext()
-
+  const [errorFromValidation, setErrorFromValidation] = useState<string>(
+    formatMessage(personal.labels.personalValidationErrorTitle),
+  )
   const courseID =
     getValueViaPath<string>(application.answers, 'initialQuery', '') ?? ''
 
@@ -57,6 +59,13 @@ export const PersonalValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       if (response?.areIndividualsValid[0].mayTakeCourse) {
         return [true, null]
       }
+      response?.areIndividualsValid[0]?.errorMessage &&
+        response?.areIndividualsValid[0].errorMessageEn &&
+        setErrorFromValidation(
+          locale === 'is'
+            ? response?.areIndividualsValid[0].errorMessage
+            : response?.areIndividualsValid[0].errorMessageEn,
+        )
       setIsPersonValid(false)
     }
     return [false, '']
@@ -65,11 +74,7 @@ export const PersonalValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   return (
     !isPersonValid && (
       <Box marginTop={5}>
-        <AlertMessage
-          type="error"
-          title=""
-          message={formatMessage(personal.labels.personalValidationErrorTitle)}
-        />
+        <AlertMessage type="error" title="" message={errorFromValidation} />
       </Box>
     )
   )

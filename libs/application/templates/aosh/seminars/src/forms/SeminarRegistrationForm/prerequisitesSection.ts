@@ -61,6 +61,10 @@ export const prerequisitesSection = buildSection({
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
         }),
+        buildDataProviderItem({
+          title: externalData.ver.title,
+          subTitle: externalData.ver.subTitle,
+        }),
       ],
     }),
   ],

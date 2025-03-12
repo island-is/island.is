@@ -7,7 +7,11 @@ import {
 } from '@island.is/application/core'
 
 import { seminar as seminarMessages } from '../../../lib/messages'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormValue,
+  PaymentCatalogItem,
+} from '@island.is/application/types'
 import { formatIsk, isPersonType } from '../../../utils'
 import { CourseDTO } from '@island.is/clients/seminars-ver'
 
@@ -28,6 +32,14 @@ export const seminarInformationSection = buildSection({
               application.externalData,
               'seminar.data',
             )
+            const paymentItem = getValueViaPath<Array<PaymentCatalogItem>>(
+              application.externalData,
+              'payment.data',
+            )?.filter(
+              (item: PaymentCatalogItem) =>
+                item.chargeItemCode === seminar?.feeCodeDirectPayment,
+            )[0]
+
             return [
               {
                 label: seminarMessages.labels.seminarType,
@@ -35,7 +47,7 @@ export const seminarInformationSection = buildSection({
               },
               {
                 label: seminarMessages.labels.seminarPrice,
-                value: formatIsk(seminar?.price ?? 0),
+                value: formatIsk(paymentItem?.priceAmount ?? 0),
               },
               {
                 label: seminarMessages.labels.seminarBegins,

@@ -68,5 +68,16 @@ export const externalData = {
         'Engar upplýsingar um þetta námskeið fundust. Vertu viss um að þú hafir valið rétt námskeið inná island.is.',
       description: 'Error message when seminar is not found',
     },
+    title: {
+      id: 'aosh.sem.application:externalData.ver.title',
+      defaultMessage: 'Upplýsingar úr réttindagrunni Vinnueftirlitsins',
+      description: 'Ver data provider title',
+    },
+    subTitle: {
+      id: 'aosh.sem.application:externalData.ver.subTitle',
+      defaultMessage:
+        'Upplýsingar um réttindi og stöðu námskeiða eru sótt úr réttindagrunni Vinnueftirlitsins',
+      description: 'Ver data provider subtitle',
+    },
   }),
 }

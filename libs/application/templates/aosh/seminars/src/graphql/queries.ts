@@ -22,6 +22,9 @@ export const ARE_INDIVIDUALS_VALID = gql`
     ) {
       nationalID
       mayTakeCourse
+      errorMessage
+      errorMessageEn
+      errorCode
     }
   }
 `

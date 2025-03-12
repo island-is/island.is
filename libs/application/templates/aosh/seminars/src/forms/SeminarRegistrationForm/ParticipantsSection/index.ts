@@ -85,8 +85,6 @@ export const participantsSection = buildSection({
                   value: x.disabled ? 'true' : 'false',
                 }
               })
-            console.log('dictinaryOfItems', dictinaryOfItems)
-            console.log('updatedParticipants', updatedParticipants)
             if (updatedParticipants.find((x) => !!x.disabled)) {
               dictinaryOfItems.push({
                 path: 'participantValidityError',
@@ -137,12 +135,12 @@ export const participantsSection = buildSection({
           alertType: 'warning',
           doesNotRequireAnswer: true,
           condition: (answers: FormValue, _) => {
-            const hasError = getValueViaPath<boolean>(
+            const hasError = getValueViaPath<string>(
               answers,
               'participantValidityError',
-              false,
+              'false',
             )
-            return !!hasError
+            return hasError === 'true'
           },
         }),
         buildCustomField({
@@ -158,12 +156,13 @@ export const participantsSection = buildSection({
           alertType: 'error',
           doesNotRequireAnswer: true,
           condition: (answers: FormValue, _) => {
-            const hasError = getValueViaPath<boolean>(
+            const hasError = getValueViaPath<string>(
               answers,
               'participantCsvError',
-              false,
+              'false',
             )
-            return !!hasError
+
+            return hasError === 'true'
           },
         }),
       ],

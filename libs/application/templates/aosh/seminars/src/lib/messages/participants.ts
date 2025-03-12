@@ -4,18 +4,18 @@ export const participants = {
   general: defineMessages({
     pageTitle: {
       id: 'aosh.sem.application:participants.general.pageTitle',
-      defaultMessage: 'Þáttakendur',
+      defaultMessage: 'Þátttakendur',
       description: `Participants page title `,
     },
     sectionTitle: {
       id: 'aosh.sem.application:participants.general.sectionTitle',
-      defaultMessage: 'Þáttakendur',
+      defaultMessage: 'Þátttakendur',
       description: `Participants section title `,
     },
     pageDescription: {
       id: 'aosh.sem.application:participants.general.pageDescription',
       defaultMessage:
-        'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+        'Hægt er að skrá einn eða fleiri einstaklinga á námskeiðið.',
       description: `Participants page description `,
     },
   }),
@@ -34,7 +34,7 @@ export const participants = {
     },
     uploadHeader: {
       id: 'aosh.sem.application:participants.labels.uploadHeader',
-      defaultMessage: 'Skrá marga þáttakendur í einu',
+      defaultMessage: 'Skrá marga þátttakendur í einu',
       description: 'participants csv upload header',
     },
     uploadButton: {
@@ -80,7 +80,7 @@ export const participants = {
     },
     tableRepeaterLoadErrorMessage: {
       id: 'aosh.sem.application:participants.labels.tableRepeaterLoadErrorMessage',
-      defaultMessage: 'Villa við að sannreyna þáttakendur',
+      defaultMessage: 'Villa við að sannreyna þátttakendur',
       description: 'participant validation error from table',
     },
     removeInvalidParticipantsButtonText: {
@@ -90,7 +90,7 @@ export const participants = {
     },
     tableError: {
       id: 'aosh.sem.application:participants.labels.tableError',
-      defaultMessage: 'Vinsamlegast fjarlægðu ógjaldgenga þáttakendur',
+      defaultMessage: 'Vinsamlegast fjarlægðu ógjaldgenga þátttakendur',
       description: 'participants table error message',
     },
     seeLess: {
@@ -105,8 +105,13 @@ export const participants = {
     },
     csvErrorLabel: {
       id: 'aosh.sem.application:participants.labels.csvErrorLabel#markdown',
-      defaultMessage: 'Villa í CSV skjali fyrir línu: ',
+      defaultMessage: 'Villa í CSV skjali fyrir línur:',
       description: 'csv upload label',
+    },
+    csvEmailWarningLabel: {
+      id: 'aosh.sem.application:participants.labels.csvEmailWarningLabel',
+      defaultMessage: 'Tvöfalt netfang',
+      description: 'csv email warning label',
     },
     csvSsnInputError: {
       id: 'aosh.sem.application:participants.labels.csvSsnInputError',
