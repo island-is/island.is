@@ -63,12 +63,12 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Run unit tests
-        run: ./infra/scripts/ci/test-unit.sh
-
       - name: Yarn install infra
         run: |
           yarn --cwd ./infra install
+
+      - name: Run unit tests
+        run: ./infra/scripts/ci/test-unit.sh
 
       - name: Check chart values are up-to-date
         if: ${{ github.ref == 'ref/heads/main' }}
