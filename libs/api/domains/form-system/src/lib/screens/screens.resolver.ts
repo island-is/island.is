@@ -46,6 +46,7 @@ export class ScreensResolver {
 
   @Mutation(() => Screen, {
     name: 'updateFormSystemScreen',
+    nullable: true
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,

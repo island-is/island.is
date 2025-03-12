@@ -45,17 +45,8 @@ export class CertificationsService {
       .formCertificationTypesControllerCreate(
         input as FormCertificationTypesControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create certification'),
-      )
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-    return response
+    return response as FormCertificationTypeDto
   }
 
   async deleteCertification(
@@ -65,9 +56,6 @@ export class CertificationsService {
     await this.certificationsApiWithAuth(auth)
       .formCertificationTypesControllerDelete(
         input as FormCertificationTypesControllerDeleteRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete certification'),
       )
   }
 }

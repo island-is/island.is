@@ -42,16 +42,6 @@ export class OrganizationsService {
       .organizationsControllerCreate(
         input as OrganizationsControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create organization'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
 
     return response as Organization
   }
@@ -67,13 +57,6 @@ export class OrganizationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to get organizations'),
       )
-
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
 
     return response as Organization
   }

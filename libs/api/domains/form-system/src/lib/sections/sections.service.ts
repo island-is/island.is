@@ -44,43 +44,20 @@ export class SectionsService {
   async createSection(auth: User, input: CreateSectionInput): Promise<Section> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerCreate(input as SectionsControllerCreateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create section'))
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
-    return response
+    return response as Section
   }
 
   async deleteSection(auth: User, input: DeleteSectionInput): Promise<void> {
-    const response = await this.sectionsApiWithAuth(auth)
+    await this.sectionsApiWithAuth(auth)
       .sectionsControllerDelete(input as SectionsControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete section'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-
-    return
   }
 
   async updateSection(auth: User, input: UpdateSectionInput): Promise<Section> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdate(input as SectionsControllerUpdateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update section'))
 
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
-
-    return response
+    return response as unknown as Section
   }
 
   async updateSectionsDisplayOrder(
@@ -91,18 +68,5 @@ export class SectionsService {
       .sectionsControllerUpdateDisplayOrder(
         input as SectionsControllerUpdateDisplayOrderRequest,
       )
-      .catch((e) =>
-        handle4xx(
-          e,
-          this.handleError,
-          'failed to update section display order',
-        ),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-
-    return
   }
 }

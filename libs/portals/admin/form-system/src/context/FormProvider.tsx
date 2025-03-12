@@ -31,7 +31,7 @@ export const FormProvider: React.FC<{
 }> = ({ children, formBuilder }) => {
   const [focus, setFocus] = useState<string>('')
   const [inSettings, setInSettings] = useState(
-    formBuilder?.form?.name?.is === '',
+    formBuilder?.form?.name?.is === 'Nýtt',
   )
   const [inListBuilder, setInListBuilder] = useState<boolean>(false)
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
@@ -46,8 +46,8 @@ export const FormProvider: React.FC<{
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-          ) ?? defaultStep,
+          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,

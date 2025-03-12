@@ -47,16 +47,6 @@ export class ApplicantsService {
       .formApplicantTypesControllerCreate(
         input as FormApplicantTypesControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create applicant'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
 
     return response as Applicant
   }
@@ -65,35 +55,20 @@ export class ApplicantsService {
     auth: User,
     input: DeleteApplicantInput,
   ): Promise<void> {
-    const response = await this.applicantsApiWithAuth(auth)
+    await this.applicantsApiWithAuth(auth)
       .formApplicantTypesControllerDelete(
         input as FormApplicantTypesControllerDeleteRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete applicant'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 
   async updateApplicant(
     auth: User,
     input: UpdateApplicantInput,
   ): Promise<void> {
-    const response = await this.applicantsApiWithAuth(auth)
+    await this.applicantsApiWithAuth(auth)
       .formApplicantTypesControllerUpdate(
         input as FormApplicantTypesControllerUpdateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update applicant'),
-      )
 
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 }

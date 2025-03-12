@@ -50,15 +50,7 @@ export class ApplicationsService {
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
       )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create application'),
-      )
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
+
     return response as Application
   }
 
@@ -71,12 +63,7 @@ export class ApplicationsService {
         input as ApplicationsControllerGetApplicationRequest,
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
+
     return response as Application
   }
 
@@ -88,12 +75,6 @@ export class ApplicationsService {
       .applicationsControllerUpdate(
         input as ApplicationsControllerUpdateRequest
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update application dependencies'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 
   async submitApplication(
@@ -104,12 +85,6 @@ export class ApplicationsService {
       .applicationsControllerSubmit(
         input as ApplicationsControllerSubmitRequest
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to submit application'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 
   async submitScreen(
@@ -121,11 +96,6 @@ export class ApplicationsService {
       .applicationsControllerSubmitScreen(
         input as ApplicationsControllerSubmitScreenRequest
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to submit screen'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
   }
 
 }

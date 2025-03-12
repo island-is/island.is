@@ -43,14 +43,6 @@ export class FieldsService {
   async createField(auth: User, input: CreateFieldInput): Promise<Field> {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerCreate(input as FieldsControllerCreateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create field'))
-
-    if (!response || response instanceof ApolloError) {
-      if (!(response instanceof ApolloError)) {
-        throw new ApolloError({ errorMessage: JSON.stringify(response) })
-      }
-      throw response
-    }
 
     return response
   }
@@ -58,42 +50,23 @@ export class FieldsService {
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerDelete(input as FieldsControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete field'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerUpdate(input as unknown as FieldsControllerUpdateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update field'))
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 
   async updateFieldsDisplayOrder(
     auth: User,
     input: UpdateFieldsDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth)
+    await this.fieldsApiWithAuth(auth)
       .fieldsControllerUpdateDisplayOrder({
         updateFieldsDisplayOrderDto: {
           fieldsDisplayOrderDto:
             input.updateFieldsDisplayOrderDto as FieldDisplayOrderDto[],
         },
       })
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update field display order'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
   }
 }

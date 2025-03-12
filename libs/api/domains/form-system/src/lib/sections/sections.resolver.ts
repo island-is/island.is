@@ -47,6 +47,7 @@ export class SectionsResolver {
 
   @Mutation(() => Section, {
     name: 'updateFormSystemSection',
+    nullable: true,
   })
   async updateSection(
     @Args('input', { type: () => UpdateSectionInput })

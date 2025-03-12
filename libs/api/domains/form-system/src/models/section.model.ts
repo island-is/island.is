@@ -22,8 +22,8 @@ export class Section {
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
-  @Field(() => Boolean)
-  isCompleted!: boolean
+  @Field(() => Boolean, { nullable: true })
+  isCompleted?: boolean
 
   @Field(() => [ScreenModel], { nullable: 'itemsAndList' })
   screens?: ScreenModel[]
