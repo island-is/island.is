@@ -82,7 +82,6 @@ const OrganizationParentSubpageSlugField = () => {
             locale: sdk.field.locale,
             content_type: 'organizationSubpage',
             'fields.slug': value,
-            'sys.id[ne]': entryId,
             'sys.archivedVersion[exists]': false,
             limit: 1000,
             'fields.organizationPage.sys.id': organizationPageId,
@@ -92,6 +91,7 @@ const OrganizationParentSubpageSlugField = () => {
           query: {
             locale: sdk.field.locale,
             content_type: 'organizationParentSubpage',
+            'sys.id[ne]': entryId,
             'fields.slug': value,
             'sys.archivedVersion[exists]': false,
             limit: 1000,
