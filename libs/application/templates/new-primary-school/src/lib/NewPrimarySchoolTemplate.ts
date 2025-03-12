@@ -30,6 +30,7 @@ import {
   Events,
   ReasonForApplicationOptions,
   Roles,
+  SchoolType,
   States,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -105,6 +106,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearAllergiesAndIntolerances',
           'clearFreeSchoolMeal',
           'clearSupport',
+          'clearExpectedEndDate',
         ],
         meta: {
           name: States.DRAFT,
@@ -278,6 +280,24 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         if (hasCaseManager !== YES) {
           unset(application.answers, 'support.caseManager')
+        }
+        return context
+      }),
+      clearExpectedEndDate: assign((context) => {
+        const { application } = context
+        const { selectedSchoolType, temporaryStay } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (selectedSchoolType !== SchoolType.INTERNATIONAL_SCHOOL) {
+          unset(application.answers, 'startingSchool.temporaryStay')
+          unset(application.answers, 'startingSchool.expectedEndDate')
+        }
+        if (
+          selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          temporaryStay !== YES
+        ) {
+          unset(application.answers, 'startingSchool.expectedEndDate')
         }
         return context
       }),
