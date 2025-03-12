@@ -5,9 +5,11 @@ import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import slugify from '@sindresorhus/slugify'
 
+import { CUSTOM_SLUGIFY_REPLACEMENTS } from '../../constants'
+
 const DEBOUNCE_TIME = 100
 
-const OrganizationSubpageSlugField = () => {
+const OrganizationParentSubpageSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
   const [value, setValue] = useState(sdk.field?.getValue() ?? '')
@@ -44,7 +46,11 @@ const OrganizationSubpageSlugField = () => {
         }
 
         if (newTitle) {
-          setValue(slugify(String(newTitle)))
+          setValue(
+            slugify(String(newTitle), {
+              customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
+            }),
+          )
         }
       })
   }, [hasEntryBeenPublished, sdk.entry.fields.title, sdk.field.locale])
@@ -70,26 +76,12 @@ const OrganizationSubpageSlugField = () => {
 
       const entryId = sdk.entry.getSys().id
 
-      const [
-        parentSubpageAboveResponse,
-        subpageResponse,
-        parentSubpageResponse,
-      ] = await Promise.all([
-        cma.entry.getMany({
-          query: {
-            locale: sdk.field.locale,
-            content_type: 'organizationParentSubpage',
-            links_to_entry: entryId,
-            'sys.archivedVersion[exists]': false,
-            limit: 1000,
-          },
-        }),
+      const [subpageResponse, parentSubpageResponse] = await Promise.all([
         cma.entry.getMany({
           query: {
             locale: sdk.field.locale,
             content_type: 'organizationSubpage',
             'fields.slug': value,
-            'sys.id[ne]': entryId,
             'sys.archivedVersion[exists]': false,
             limit: 1000,
             'fields.organizationPage.sys.id': organizationPageId,
@@ -99,9 +91,10 @@ const OrganizationSubpageSlugField = () => {
           query: {
             locale: sdk.field.locale,
             content_type: 'organizationParentSubpage',
+            'sys.id[ne]': entryId,
             'fields.slug': value,
             'sys.archivedVersion[exists]': false,
-            limit: 1,
+            limit: 1000,
             'fields.organizationPage.sys.id': organizationPageId,
           },
         }),
@@ -110,29 +103,13 @@ const OrganizationSubpageSlugField = () => {
       const subpagesWithSameSlugThatBelongToSameOrganizationPage =
         subpageResponse.items
 
-      // Belongs to a parent subpage
-      if (parentSubpageAboveResponse.items.length > 0) {
-        const siblingSubpageExistsWithSameSlug =
-          parentSubpageAboveResponse.items.some((parentSubpage) => {
-            const pages: { sys: { id: string } }[] =
-              parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
-            return pages.some((page) =>
-              subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
-                (s) => s.sys.id === page.sys.id,
-              ),
-            )
-          })
-        setIsValid(!siblingSubpageExistsWithSameSlug)
-        return
-      }
-
       // Parent subpage with the same org page and slug
       if (parentSubpageResponse.items.length > 0) {
         setIsValid(false)
         return
       }
 
-      // Is there another org subpage that does not belong to a parent subpage that has the same slug?
+      // Is there an org subpage that does not belong to a parent subpage that has the same slug?
       if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length > 0) {
         // Check to see if those org subpages with the same slug belong to a parent subpage
         const subpageParents = await cma.entry.getMany({
@@ -207,4 +184,4 @@ const OrganizationSubpageSlugField = () => {
   )
 }
 
-export default OrganizationSubpageSlugField
+export default OrganizationParentSubpageSlugField
