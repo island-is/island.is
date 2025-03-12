@@ -42,13 +42,9 @@ export const sectionDataProviders = buildSection({
         }),
         buildDataProviderItem({
           provider: QualitySignatureApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: DuplicateEligibilityApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
@@ -57,21 +53,15 @@ export const sectionDataProviders = buildSection({
         }),
         buildDataProviderItem({
           provider: JurisdictionApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: CurrentLicenseApi,
-          title: '',
-          subTitle: '',
         }),
         buildDataProviderItem({
           provider: SyslumadurPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: MockableSyslumadurPaymentCatalogApi,
-          title: '',
         }),
       ],
     }),

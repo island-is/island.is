@@ -25,11 +25,6 @@ export enum ApiActions {
   createCharge = 'createCharge',
 }
 
-export type SubmitResponse = {
-  success: boolean
-  orderId?: string
-}
-
 export type DrivingLicenseDuplicateFakeData = {
   useFakeData: YesOrNo | 'IgnoreQualityPhotoAndSignature'
   currentLicense: 'none' | 'B-full' | 'B-temp'

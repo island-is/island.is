@@ -373,7 +373,7 @@ export const m = defineMessages({
     id: 'dld.application:congratulationsTitleSuccess',
     defaultMessage:
       'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteini pantað.',
-    description: 'Your application for P-sign was successful.',
+    description: 'Your application for samrit was successful.',
   },
   congratulationsTitle: {
     id: 'dld.application:congratulationsTitle',

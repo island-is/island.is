@@ -56,18 +56,18 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     chargeCode = 'AY137'
   }
 
-  const chargeItems = getValueViaPath(
+  const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
     'payment.data',
-  ) as PaymentCatalogItem[]
+  )
 
-  const chargeItem = chargeItems.find(
+  const chargeItem = chargeItems?.find(
     (item) => item.chargeItemCode === chargeCode,
   )
 
   const withDeliveryFee =
     getValueViaPath(application.answers, 'delivery.deliveryMethod') === '1'
-  const deliveryFee = chargeItems.find(
+  const deliveryFee = chargeItems?.find(
     (item) => item.chargeItemCode === 'AY145',
   )
 

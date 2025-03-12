@@ -28,8 +28,8 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+          value: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName'),
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,
@@ -72,11 +72,11 @@ export const sectionOverview = buildSection({
           titleVariant: 'h4',
           description: ({ answers, externalData }) => {
             const district = getValueViaPath(answers, 'delivery.district')
-            const districts = getValueViaPath(
+            const districts = getValueViaPath<Jurisdiction[]>(
               externalData,
               'jurisdictions.data',
-            ) as Jurisdiction[]
-            const selectedDistrict = districts.find(
+            )
+            const selectedDistrict = districts?.find(
               (d) => d.id.toString() === district,
             )
             const districtPlace = `${
