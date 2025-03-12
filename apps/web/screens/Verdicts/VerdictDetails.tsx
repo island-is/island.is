@@ -306,7 +306,6 @@ const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({
         {Boolean(customPageData?.configJson?.noIndexOnVerdictPage) && (
           <meta name="robots" content="noindex, nofollow" />
         )}
-        <meta name="robots" content="noindex, nofollow" />
       </HeadWithSocialSharing>
       {item.pdfString ? <PdfView item={item} /> : <HtmlView item={item} />}
     </>
