@@ -127,17 +127,17 @@ export class CmsRepository {
           `Invalid field in input fields: ${inputField.key}`,
         )
       }
-      if (!entry.fields[inputField.key]?.[LOCALE]) {
-        logger.info(`Field not found in entry`, {
+      if (!entry.fields[inputField.key]?.[LOCALE] && inputField.value) {
+        logger.info(`Field not found in entry, updating...`, {
           inputField: inputField.key,
           id: entry.sys.id,
           referenceId: grantReferenceId,
         })
-        return Promise.reject(
-          `Invalid field in input fields for entry; inputField: ${inputField.key}, entry: ${entry.sys.id}`,
-        )
-      }
-      if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
+        hasChanges = true
+        entry.fields[inputField.key] = {
+          [LOCALE]: inputField.value,
+        }
+      } else if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
         hasChanges = true
         entry.fields[inputField.key][LOCALE] = inputField.value
       }
