@@ -86,7 +86,7 @@ export const declined: Form = buildForm({
             return (
               getValueViaPath(
                 externalData,
-                'qualityPhoto.data.hasQualityPhoto',
+                'qualityPhoto.data.hasQualitySignature',
               ) === false
             )
           },

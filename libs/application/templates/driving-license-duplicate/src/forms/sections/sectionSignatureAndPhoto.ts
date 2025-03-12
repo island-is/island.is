@@ -54,7 +54,7 @@ export const sectionSignatureAndPhoto = buildSection({
           condition: (_, externalData) =>
             getValueViaPath(
               externalData,
-              'qualitySignature.data.hasQualitySignature',
+              'qualitySignature.data.hasQualityPhoto',
             ) === true,
         }),
       ],
