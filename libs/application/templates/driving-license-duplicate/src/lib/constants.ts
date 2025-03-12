@@ -32,3 +32,8 @@ export type DrivingLicenseDuplicateFakeData = {
   hasQualityPhoto: YesOrNo
   hasQualitySignature: YesOrNo
 }
+
+export enum Delivery {
+  SEND_HOME = 'sendHome',
+  PICKUP = 'pickup',
+}

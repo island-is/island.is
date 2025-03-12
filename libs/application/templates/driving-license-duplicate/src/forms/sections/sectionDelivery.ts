@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Jurisdiction } from '@island.is/clients/driving-license'
+import { Delivery } from '../../lib/constants'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',
@@ -19,21 +20,22 @@ export const sectionDelivery = buildSection({
       children: [
         buildRadioField({
           id: 'delivery.deliveryMethod',
-          title: 'Hvernig vilt þú fá plastökuskírteinið þitt afhent?',
-          defaultValue: '1',
+          title: m.deliveryMethodHeader,
+          defaultValue: Delivery.SEND_HOME,
           width: 'half',
           options: [
-            { value: '1', label: 'Sent heim í pósti' },
-            { value: '2', label: 'Sækja á afhendingarstað' },
+            { value: Delivery.SEND_HOME, label: m.deliverySendHome },
+            { value: Delivery.PICKUP, label: m.deliveryPickup },
           ],
         }),
         buildSelectField({
           id: 'delivery.district',
-          title: 'Veldu afhendingarstað',
-          placeholder: m.deliveryMethodOfficeSelectPlaceholder,
+          title: m.deliveryPickupLocation,
+          placeholder: m.deliveryPickupLocationPlaceholder,
           required: true,
           condition: (answers) =>
-            getValueViaPath(answers, 'delivery.deliveryMethod') === '2',
+            getValueViaPath(answers, 'delivery.deliveryMethod') ===
+            Delivery.PICKUP,
           options: ({
             externalData: {
               jurisdictions: { data },

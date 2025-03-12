@@ -251,15 +251,25 @@ export const m = defineMessages({
       'Fljótlegast er að sækja samrit hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
     description: 'Description for delivery method section',
   },
-  deliveryMethodOfficeLabel: {
-    id: 'dld.application:deliveryMethodOfficeLabel',
-    defaultMessage: 'Afhendingarstaður',
-    description: 'Title for office',
+  deliveryMethodHeader: {
+    id: 'dld.application:deliveryMethodHeader',
+    defaultMessage: 'Hvernig vilt þú fá plastökuskírteinið þitt afhent?',
   },
-  deliveryMethodOfficeSelectPlaceholder: {
-    id: 'dld.application:deliveryMethodOfficeSelectPlaceholder',
+  deliverySendHome: {
+    id: 'dld.application:deliverySendHome',
+    defaultMessage: 'Sent heim í pósti',
+  },
+  deliveryPickup: {
+    id: 'dld.application:deliveryPickup',
+    defaultMessage: 'Sækja á afhendingarstað',
+  },
+  deliveryPickupLocation: {
+    id: 'dld.application:deliveryPickupLocation',
+    defaultMessage: 'Afhendingarstaður',
+  },
+  deliveryPickupLocationPlaceholder: {
+    id: 'dld.application:deliveryPickupLocationPlaceholder',
     defaultMessage: 'Veldu afhendingarstað',
-    description: 'Placeholder for office selection',
   },
 
   /* Digital License Section */
