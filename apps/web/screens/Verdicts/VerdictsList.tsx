@@ -311,6 +311,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
   {
-    showFooter: false,
+    footerVersion: 'organization',
   },
 )
