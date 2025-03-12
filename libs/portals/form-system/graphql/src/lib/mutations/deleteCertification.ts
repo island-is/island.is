@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const DELETE_CERTIFICATION = gql`
   mutation DeleteFormSystemCertification(
-    $input: FormSystemDeleteCertificationInput!
+    $input: DeleteFormSystemCertificationInput!
   ) {
     deleteFormSystemCertification(input: $input)
   }
