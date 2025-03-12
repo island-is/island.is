@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   BlueBoxWithDate,
   CourtCaseInfo,
   FormContentContainer,
@@ -22,6 +23,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -97,9 +99,16 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => (
-          <Box component="section" marginBottom={5} key={defendant.id}>
-            <BlueBoxWithDate defendant={defendant} icon="calendar" />
-          </Box>
+          <>
+            <Box component="section" marginBottom={5} key={defendant.id}>
+              <BlueBoxWithDate defendant={defendant} icon="calendar" />
+            </Box>
+            <Box marginBottom={2}>
+              <BlueBox>
+                <SectionHeading title="sdfsdf" />
+              </BlueBox>
+            </Box>
+          </>
         ))}
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
