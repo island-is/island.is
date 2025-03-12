@@ -63,6 +63,9 @@ export class PaymentService {
     receptionID: string,
     applicationId: string,
   ): Promise<void> {
+    console.log('=========================================')
+    console.log('fulfillPayment', paymentId, receptionID, applicationId)
+    console.log('=========================================')
     try {
       await this.paymentModel.update(
         {
@@ -87,6 +90,9 @@ export class PaymentService {
     paymentId: string,
     paymentUrl: string,
   ): Promise<void> {
+    console.log('=========================================')
+    console.log('addPaymentUrl', applicationId, paymentId, paymentUrl)
+    console.log('=========================================')
     const payment = await this.findPaymentByApplicationId(applicationId)
     const definition = JSON.parse(
       (payment?.definition as unknown as string) ?? '{}', // definition is a JSONB field so it is returned as a string
@@ -110,16 +116,19 @@ export class PaymentService {
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
     if (!foundPayment) {
+      console.log('=========================================')
+      console.log('getStatus', applicationId)
+      console.log('=========================================')
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
       )
     }
 
-    if (!foundPayment.user4) {
-      throw new InternalServerErrorException(
-        `valid payment object was not found for application id ${applicationId} - user4 not set`,
-      )
-    }
+    // if (!foundPayment.user4) {
+    //   throw new InternalServerErrorException(
+    //     `valid payment object was not found for application id ${applicationId} - user4 not set`,
+    //   )
+    // }
 
     const paymentUrl = JSON.parse(foundPayment.dataValues.definition).paymentUrl
     return {
