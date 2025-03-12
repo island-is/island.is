@@ -861,13 +861,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         "When transferring a child between nursery and/or primary school, the head of the school ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
     },
-    enrollmentSupportAlertMessage: {
-      id: 'nps.application:different.needs.enrollment.support.alert.message#markdown',
-      defaultMessage:
-        'Við flutning barns úr leikskóla í grunnskóla mun leikskólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
-      description:
-        "When transferring a child from nursery to primary school, the head of the nursery ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
-    },
     requestingMeeting: {
       id: 'nps.application:different.needs.requesting.meeting',
       defaultMessage:

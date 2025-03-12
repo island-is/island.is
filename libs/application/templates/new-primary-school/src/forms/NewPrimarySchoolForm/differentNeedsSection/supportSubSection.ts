@@ -183,17 +183,7 @@ export const supportSubSection = buildSubSection({
         buildAlertMessageField({
           id: 'support.supportAlertMessage',
           title: newPrimarySchoolMessages.shared.alertTitle,
-          message: (application) => {
-            const { applicationType } = getApplicationAnswers(
-              application.answers,
-            )
-
-            return applicationType ===
-              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds
-                  .enrollmentSupportAlertMessage
-              : newPrimarySchoolMessages.differentNeeds.supportAlertMessage
-          },
+          message: newPrimarySchoolMessages.differentNeeds.supportAlertMessage,
           doesNotRequireAnswer: true,
           alertType: 'warning',
           marginTop: 4,
