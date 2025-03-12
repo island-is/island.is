@@ -2,11 +2,12 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Option } from '@island.is/island-ui/core'
+import { Box, Option, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -25,6 +26,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
@@ -105,7 +107,16 @@ export const Overview = () => {
             </Box>
             <Box marginBottom={2}>
               <BlueBox>
-                <SectionHeading title="sdfsdf" />
+                <SectionHeading
+                  title={fm(strings.verdictAppealDecisionTitle)}
+                  heading="h4"
+                  marginBottom={2}
+                />
+
+                <Box marginBottom={2}>
+                  <Text variant="eyebrow">{defendant.name}</Text>
+                </Box>
+                <VerdictAppealDecisionChoice defendant={defendant} />
               </BlueBox>
             </Box>
           </>
