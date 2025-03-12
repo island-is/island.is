@@ -21,6 +21,14 @@ export const lock = style({
 
 export const btn = style({})
 
+export const mobileNav = style({
+  position: 'sticky',
+  top: 0,
+  zIndex: 99,
+  transition: 'top 250ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+  transitionDelay: '200ms',
+})
+
 globalStyle(`${btn} > span`, {
   boxShadow: 'none',
 })

@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { dataSchema } from './lib/dataSchema'
 import { z } from 'zod'
 
@@ -9,11 +10,6 @@ export type Individual = {
   phone: string
   email: string
 }
-
-export const YES = 'yes'
-export const NO = 'no'
-
-type YesOrNo = 'yes' | 'no'
 
 export interface MarriageConditionsFakeData {
   useFakeData?: YesOrNo

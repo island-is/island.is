@@ -141,6 +141,12 @@ export const indictmentCount = defineMessages({
     defaultMessage: '{article}. gr. umfl.',
     description: 'Notaður sem texti í lagaákvæði taggi.',
   },
+  incidentDescriptionShortAutofill: {
+    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_short_auto_fill',
+    defaultMessage: 'fyrir umferðarlagabrot með því að hafa, {incidentDate}',
+    description:
+      'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum þegar "annað" umferðarlagabrot er valið.',
+  },
   incidentDescriptionAutofill: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_auto_fill_v1',
     defaultMessage:

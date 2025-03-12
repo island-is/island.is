@@ -3,10 +3,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import {
-  YES,
-  YesOrNo,
   DiscountCheck,
   DistrictCommissionerAgencies,
 } from './constants'

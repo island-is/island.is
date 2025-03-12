@@ -17,13 +17,11 @@ export const sectionPayment = buildSection({
       children: [
         buildCustomField({
           id: 'paymentCharge',
-          title: '',
           component: 'PaymentCharge',
         }),
         buildSubmitField({
           id: 'payment',
           placement: 'footer',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

@@ -41,7 +41,7 @@ export class UpdateIndictmentCountInput {
   @IsArray()
   @IsEnum(IndictmentCountOffense, { each: true })
   @Field(() => [IndictmentCountOffense], { nullable: true })
-  readonly offenses?: IndictmentCountOffense[]
+  readonly deprecatedOffenses?: IndictmentCountOffense[]
 
   @Allow()
   @IsOptional()
@@ -63,6 +63,13 @@ export class UpdateIndictmentCountInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly legalArguments?: string
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @Field(() => [IndictmentSubtype], { nullable: true })
+  readonly policeCaseNumberSubtypes?: IndictmentSubtype[]
 
   @Allow()
   @IsOptional()

@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { YES } from './constants'
 import { m } from './messages'
+import { YES } from '@island.is/application/core'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

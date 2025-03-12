@@ -30,6 +30,7 @@ query Case($input: CaseQueryInput!) {
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDecision
       verdictAppealDate
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -213,7 +214,15 @@ query Case($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
+      offenses {
+        id
+        indictmentCountId
+        created
+        modified
+        offense
+        substances
+      }
+      deprecatedOffenses
       substances
       lawsBroken
       incidentDescription
@@ -395,5 +404,7 @@ query Case($input: CaseQueryInput!) {
     mergeCaseNumber
     civilDemands
     hasCivilClaims
+    isCompletedWithoutRuling
+    caseSentToCourtDate
   }
 }

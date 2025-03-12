@@ -7,12 +7,12 @@ import {
   buildDescriptionField,
   getValueViaPath,
   buildCheckboxField,
+  YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
 import { Jurisdiction } from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
@@ -39,7 +39,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'overview.currentLicense',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildDividerField({}),
@@ -52,7 +51,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'qsignatureOverview',
-          title: '',
           component: 'QualitySignature',
         }),
         buildDividerField({}),
@@ -65,7 +63,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'qphotoOverview',
-          title: '',
           component: 'QualityPhoto',
         }),
         buildDividerField({}),
@@ -101,7 +98,6 @@ export const sectionOverview = buildSection({
         }),
         buildCheckboxField({
           id: 'overview.confirmationCheckbox',
-          title: '',
           defaultValue: [],
           options: [
             {

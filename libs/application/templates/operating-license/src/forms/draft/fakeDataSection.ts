@@ -2,8 +2,9 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildRadioField,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { allowFakeCondition } from '../../lib/utils'
 
@@ -28,7 +29,6 @@ export const fakeDataSection = buildMultiField({
     }),
     buildRadioField({
       id: 'fakeData.useFakeData',
-      title: '',
       width: 'half',
       options: [
         {

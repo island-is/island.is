@@ -10,7 +10,9 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
+  EligibleGraphQlUsers,
   JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
@@ -19,6 +21,7 @@ import { CreateUserInput } from './dto/createUser.input'
 import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'
 import { UsersQueryInput } from './dto/users.input'
+import { CurrentUserResponse } from './models/currentUser.response'
 import { User } from './models/user.model'
 
 @Resolver(() => User)
@@ -29,7 +32,7 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
@@ -54,7 +57,7 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => User, { nullable: true })
   async user(
     @Args('input', { type: () => UserQueryInput })
@@ -73,17 +76,18 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(new JwtGraphQlAuthGuard(true))
-  @Query(() => User, { nullable: true })
+  @UseGuards(JwtGraphQlAuthGuard)
+  @Query(() => CurrentUserResponse, { nullable: true })
   async currentUser(
     @CurrentGraphQlUser() user: TUser,
-  ): Promise<User | undefined> {
+    @EligibleGraphQlUsers() eligibleUsers: TUser[],
+  ): Promise<CurrentUserResponse | undefined> {
     this.logger.debug('Getting current user')
 
-    return user as User
+    return { user, eligibleUsers }
   }
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Mutation(() => User, { nullable: true })
   createUser(
     @Args('input', { type: () => CreateUserInput })
@@ -102,7 +106,7 @@ export class UserResolver {
     )
   }
 
-  @UseGuards(JwtGraphQlAuthGuard)
+  @UseGuards(JwtGraphQlAuthUserGuard)
   @Mutation(() => User, { nullable: true })
   updateUser(
     @Args('input', { type: () => UpdateUserInput })

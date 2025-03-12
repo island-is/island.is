@@ -7,13 +7,11 @@ import {
   Period as AnswerPeriod,
   ChildInformation,
   Languages,
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
-  YES,
   applicantIsMale,
   formatBankInfo,
   getActionName,
@@ -39,6 +37,7 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
+import { NO, YES } from '@island.is/application/core'
 
 // Check whether phoneNumber is GSM
 export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {

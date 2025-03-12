@@ -21,7 +21,12 @@ export const DigitalIcelandFooter = ({
   return (
     <Box>
       {Boolean(illustrationSrc) && (
-        <Box display="flex" justifyContent="center">
+        <Box
+          display="flex"
+          justifyContent="center"
+          pointerEvents="none"
+          userSelect="none"
+        >
           <img src={illustrationSrc} alt="" />
         </Box>
       )}

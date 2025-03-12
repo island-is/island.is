@@ -20,12 +20,10 @@ export const announcementSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'externalData.firstHeading',
-          title: '',
           titleVariant: 'h4',
         }),
         buildDescriptionField({
           id: 'externalData.Description',
-          title: '',
           description: externalData.dataProvider.announcementDescription,
           titleVariant: 'h4',
           marginBottom: 3,

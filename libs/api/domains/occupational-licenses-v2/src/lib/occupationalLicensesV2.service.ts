@@ -166,7 +166,7 @@ export class OccupationalLicensesV2Service {
       return null
     }
 
-    const license = licenses.find((l) => l.licenseNumber === id)
+    const license = licenses.find((l) => l.id.toString() === id)
 
     if (!license) {
       return null
@@ -259,7 +259,7 @@ export class OccupationalLicensesV2Service {
     const organization: OrganizationSlugType = 'landlaeknir'
 
     return {
-      licenseId: addLicenseTypePrefix(data.licenseNumber, 'Health'),
+      licenseId: addLicenseTypePrefix(data.id.toString(), 'Health'),
       licenseNumber: data.licenseNumber,
       type: LicenseType.HEALTH_DIRECTORATE,
       legalEntityId: data.legalEntityId,

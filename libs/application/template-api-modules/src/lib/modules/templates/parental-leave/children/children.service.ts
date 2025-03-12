@@ -1,12 +1,10 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   ChildInformation,
   ChildInformationWithoutRights,
-  NO,
   ParentalRelations,
   PregnancyStatus,
   States,
-  YES,
   calculateRemainingNumberOfDays,
   getApplicationExternalData,
   getSelectedChild,
@@ -15,7 +13,6 @@ import {
 import {
   Application,
   CustomTemplateFindQuery,
-  YesOrNo,
 } from '@island.is/application/types'
 import {
   ParentalLeave,

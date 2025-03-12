@@ -221,15 +221,15 @@ export class PdfService {
         (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
       )
 
-      if (confirmationEvent && confirmationEvent.nationalId) {
-        const actor = await this.userService.findByNationalId(
-          confirmationEvent.nationalId,
-        )
-
+      if (
+        confirmationEvent &&
+        confirmationEvent.userName &&
+        confirmationEvent.institutionName
+      ) {
         confirmation = {
-          actor: actor.name,
-          title: actor.title,
-          institution: actor.institution?.name ?? '',
+          actor: confirmationEvent.userName,
+          title: confirmationEvent.userTitle,
+          institution: confirmationEvent.institutionName,
           date: confirmationEvent.created,
         }
       }

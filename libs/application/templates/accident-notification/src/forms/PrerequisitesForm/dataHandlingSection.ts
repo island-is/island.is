@@ -16,12 +16,10 @@ export const dataHandlingSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'agreementDescriptionDescriptionField',
-          title: '',
           description: externalData.agreementDescription.bullets,
         }),
         buildDescriptionField({
           id: 'moreInformation',
-          title: '',
           description: externalData.agreementDescription.moreInformation,
         }),
       ],

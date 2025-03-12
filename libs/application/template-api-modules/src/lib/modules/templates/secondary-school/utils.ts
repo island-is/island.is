@@ -1,8 +1,8 @@
 import { EmailRecipient } from './types'
 import { join } from 'path'
 import { SecondarySchoolAnswers } from '@island.is/application/templates/secondary-school'
-import { Application, FormValue, YES } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   ApplicationContact,
   ApplicationSelectionSchool,
@@ -116,11 +116,7 @@ export const getCleanSchoolSelection = (
       SecondarySchoolAnswers['selection'][0]
     >(application.answers, `selection.${index}`)
 
-    if (
-      (selectionItem?.include || index === 0) &&
-      selectionItem?.school?.id &&
-      selectionItem?.firstProgram?.id
-    ) {
+    if (selectionItem?.school?.id && selectionItem?.firstProgram?.id) {
       result.push({
         priority: schoolPriority++,
         schoolId: selectionItem.school.id,

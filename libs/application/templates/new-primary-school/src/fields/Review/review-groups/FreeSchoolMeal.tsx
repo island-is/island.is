@@ -1,5 +1,4 @@
-import { coreErrorMessages } from '@island.is/application/core'
-import { YES } from '@island.is/application/types'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import {
   DataValue,
   RadioValue,

@@ -5,6 +5,8 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
@@ -12,7 +14,7 @@ import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { YES, NO, SEND_HOME, PICK_UP } from '../../lib/constants'
+import { SEND_HOME, PICK_UP } from '../../lib/constants'
 import { Photo, Delivery } from '../../types'
 import {
   formatPhoneNumber,
@@ -88,7 +90,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'uploadedPhoto',
-          title: '',
           component: 'UploadedPhoto',
           condition: (answers) =>
             (answers.photo as Photo)?.qualityPhoto === NO ||
@@ -96,7 +97,6 @@ export const sectionOverview = buildSection({
         }),
         buildCustomField({
           id: 'qphoto',
-          title: '',
           component: 'QualityPhoto',
           condition: (answers) =>
             (answers.photo as Photo)?.qualityPhoto === YES,
@@ -120,7 +120,6 @@ export const sectionOverview = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: '',
           placement: 'footer',
           refetchApplicationAfterSubmit: true,
           actions: [

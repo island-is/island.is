@@ -1,0 +1,23 @@
+name: 'Determine if testing everything'
+description: 'Sets a TEST_EVERYTHING env for later use'
+outputs:
+  success:
+    description: ''
+    value: ${{ steps.set-test-everything-env.outputs.TEST_EVERYTHING }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Set Test Everything flag
+      id: set-test-everything-env
+      shell: bash
+      run: |
+        if [[ "${{ github.event_name }}" == "pull_request" && "${{ contains(github.event.pull_request.labels.*.name, 'test everything') }}" == "true" ]]; then
+          echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
+        else
+          echo "TEST_EVERYTHING=false" >> "$GITHUB_ENV"
+        fi
+    - name: Test everything on push to release branches
+      if: ${{ github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/pre-release/')) }}
+      shell: bash
+      run: |
+        echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"

@@ -1,9 +1,9 @@
-import { NO, getValueViaPath } from '@island.is/application/core'
+import { NO, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
-  YesOrNo,
+  RepeaterOptionValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
@@ -63,27 +63,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.languageEnvironment',
   ) as string
 
+  const selectedLanguages = getValueViaPath(
+    answers,
+    'languages.selectedLanguages',
+  ) as Array<{
+    code: string
+  }>
+
   const signLanguage = getValueViaPath(
     answers,
     'languages.signLanguage',
   ) as YesOrNo
 
-  const language1 = getValueViaPath(answers, 'languages.language1') as string
-
-  const language2 = getValueViaPath(answers, 'languages.language2') as string
-
-  const language3 = getValueViaPath(answers, 'languages.language3') as string
-
-  const language4 = getValueViaPath(answers, 'languages.language4') as string
-
-  const childLanguage = getValueViaPath(
+  const preferredLanguage = getValueViaPath(
     answers,
-    'languages.childLanguage',
+    'languages.preferredLanguage',
   ) as string
 
-  const interpreter = getValueViaPath(
+  const guardianRequiresInterpreter = getValueViaPath(
     answers,
-    'languages.interpreter',
+    'languages.guardianRequiresInterpreter',
   ) as YesOrNo
 
   const acceptFreeSchoolLunch = getValueViaPath(
@@ -131,19 +130,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
   ) as YesOrNo
 
-  const requestMedicationAssistance = getValueViaPath(
+  const requestsMedicationAdministration = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.requestMedicationAssistance',
+    'allergiesAndIntolerances.requestsMedicationAdministration',
   ) as YesOrNo
 
-  const developmentalAssessment = getValueViaPath(
+  const hasDiagnoses = getValueViaPath(
     answers,
-    'support.developmentalAssessment',
+    'support.hasDiagnoses',
   ) as YesOrNo
 
-  const specialSupport = getValueViaPath(
+  const hasHadSupport = getValueViaPath(
     answers,
-    'support.specialSupport',
+    'support.hasHadSupport',
   ) as YesOrNo
 
   const hasIntegratedServices = getValueViaPath(
@@ -166,20 +165,47 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.caseManager.email',
   ) as string
 
-  const requestMeeting = getValueViaPath(
+  const requestingMeeting = getValueViaPath(
     answers,
-    'support.requestMeeting[0]',
+    'support.requestingMeeting[0]',
     NO,
   ) as YesOrNo
 
-  const startDate = getValueViaPath(answers, 'startDate') as string
+  const expectedStartDate = getValueViaPath(
+    answers,
+    'startingSchool.expectedStartDate',
+  ) as string
+
+  const expectedStartDateHiddenInput = getValueViaPath(
+    answers,
+    'startingSchool.expectedStartDateHiddenInput',
+  )
+
+  const temporaryStay = getValueViaPath(
+    answers,
+    'startingSchool.temporaryStay',
+    NO,
+  ) as YesOrNo
+
+  const expectedEndDate = getValueViaPath(
+    answers,
+    'startingSchool.expectedEndDate',
+  ) as string
 
   const schoolMunicipality = getValueViaPath(
     answers,
     'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
+  const selectedSchoolIdAndType = getValueViaPath(
+    answers,
+    'newSchool.school',
+  ) as string
+
+  // School type is piggybacked on the value like 'id::type'
+  const selectedSchool = selectedSchoolIdAndType
+    ? selectedSchoolIdAndType.split('::')[0]
+    : ''
 
   const currentNurseryMunicipality = getValueViaPath(
     answers,
@@ -207,13 +233,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationPostalCode,
     siblings,
     languageEnvironment,
-    language1,
-    language2,
-    language3,
-    language4,
-    childLanguage,
+    selectedLanguages,
+    preferredLanguage,
     signLanguage,
-    interpreter,
+    guardianRequiresInterpreter,
     acceptFreeSchoolLunch,
     hasSpecialNeeds,
     specialNeedsType,
@@ -223,15 +246,18 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherAllergies,
     usesEpiPen,
     hasConfirmedMedicalDiagnoses,
-    requestMedicationAssistance,
-    developmentalAssessment,
-    specialSupport,
+    requestsMedicationAdministration,
+    hasDiagnoses,
+    hasHadSupport,
     hasIntegratedServices,
     hasCaseManager,
     caseManagerName,
     caseManagerEmail,
-    requestMeeting,
-    startDate,
+    requestingMeeting,
+    expectedStartDate,
+    expectedStartDateHiddenInput,
+    temporaryStay,
+    expectedEndDate,
     schoolMunicipality,
     selectedSchool,
     currentNurseryMunicipality,
@@ -389,23 +415,6 @@ export const getCurrentSchoolName = (application: Application) => {
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
-export const getLanguageEnvironments = () => {
-  return [
-    {
-      value: LanguageEnvironmentOptions.ONLY_ICELANDIC,
-      label: newPrimarySchoolMessages.differentNeeds.onlyIcelandicOption,
-    },
-    {
-      value: LanguageEnvironmentOptions.ICELANDIC_AND_FOREIGN,
-      label: newPrimarySchoolMessages.differentNeeds.icelandicAndForeignOption,
-    },
-    {
-      value: LanguageEnvironmentOptions.ONLY_FOREIGN,
-      label: newPrimarySchoolMessages.differentNeeds.onlyForeignOption,
-    },
-  ]
-}
-
 export const hasForeignLanguages = (answers: FormValue) => {
   const { languageEnvironment } = getApplicationAnswers(answers)
 
@@ -414,6 +423,34 @@ export const hasForeignLanguages = (answers: FormValue) => {
   }
 
   return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+}
+
+export const showPreferredLanguageFields = (answers: FormValue) => {
+  const { languageEnvironment, selectedLanguages } =
+    getApplicationAnswers(answers)
+
+  if (!selectedLanguages) {
+    return false
+  }
+
+  if (
+    languageEnvironment ===
+      LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
+    selectedLanguages.length >= 1 &&
+    selectedLanguages.filter((language) => language.code).length >= 1
+  ) {
+    return true
+  }
+
+  if (
+    languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
+    selectedLanguages.length >= 2 &&
+    selectedLanguages.filter((language) => language.code).length >= 2
+  ) {
+    return true
+  }
+
+  return false
 }
 
 export const getNeighbourhoodSchoolName = (application: Application) => {
@@ -462,4 +499,9 @@ export const getGenderMessage = (application: Application) => {
   const selectedChild = getSelectedChild(application)
   const gender = formatGender(selectedChild?.genderCode)
   return gender
+}
+
+export const setOnChangeSchool = (optionValue: RepeaterOptionValue) => {
+  const option = optionValue?.toString()
+  return [{ key: 'newSchool.type', value: option?.split('::')[1] }]
 }

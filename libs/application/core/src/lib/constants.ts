@@ -33,6 +33,11 @@ export const NO_ANSWER = null
 
 export const YES = 'yes'
 export const NO = 'no'
+export type YesOrNo = typeof YES | typeof NO
+export enum YesOrNoEnum {
+  YES = 'yes',
+  NO = 'no',
+}
 
 export const hasYes = (answer: any) => {
   if (Array.isArray(answer)) {

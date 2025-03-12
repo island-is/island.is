@@ -19,6 +19,9 @@ export class ScreenDto {
   isHidden!: boolean
 
   @ApiProperty()
+  isCompleted!: boolean
+
+  @ApiProperty()
   multiset!: number
 
   @ApiProperty()

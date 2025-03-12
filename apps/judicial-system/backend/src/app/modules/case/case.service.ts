@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Op } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -48,6 +48,7 @@ import {
   isInvestigationCase,
   isRequestCase,
   notificationTypes,
+  ServiceStatus,
   StringType,
   stringTypes,
   UserRole,
@@ -70,6 +71,7 @@ import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
+import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -175,6 +177,7 @@ export interface UpdateCase
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
+    | 'isCompletedWithoutRuling'
   > {
   type?: CaseType
   state?: CaseState
@@ -317,6 +320,15 @@ export const include: Includeable[] = [
     as: 'indictmentCounts',
     required: false,
     order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
     separate: true,
   },
   {
@@ -788,6 +800,19 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForIndictmentArraignmentDate(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
@@ -945,7 +970,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages = [
+    const messages: Message[] = [
       {
         type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
         user,
@@ -982,6 +1007,16 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
         caseId: theCase.id,
+      })
+    }
+
+    // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
+    if (theCase.isCompletedWithoutRuling) {
+      messages.push({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: CaseNotificationType.RULING },
       })
     }
 
@@ -1086,11 +1121,14 @@ export class CaseService {
       })
     }
 
+    // TODO: Use subpoenas already included in theCase.defendants
+    // - no need to call the subpoena service
+    // - then add to transition tests
     const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
       theCase.id,
     )
 
-    if (subpoenasToRevoke?.length > 0) {
+    if (theCase.origin === CaseOrigin.LOKE && subpoenasToRevoke?.length > 0) {
       messages.push(
         ...subpoenasToRevoke.map((subpoena) => ({
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
@@ -1334,9 +1372,22 @@ export class CaseService {
         (updatedDefendant) =>
           theCase.defendants?.find(
             (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
+          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id, // Only deliver new subpoenas
       )
       .map((updatedDefendant) => [
+        ...(updatedCase.origin === CaseOrigin.LOKE
+          ? [
+              {
+                type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+                user,
+                caseId: theCase.id,
+                elementId: [
+                  updatedDefendant.id,
+                  updatedDefendant.subpoenas?.[0].id ?? '',
+                ],
+              },
+            ]
+          : []),
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
           user,
@@ -1360,6 +1411,37 @@ export class CaseService {
     if (messages && messages.length > 0) {
       return this.messageService.sendMessagesToQueue(messages.flat())
     }
+  }
+
+  private addMessagesForIndictmentArraignmentCompletionToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages: Message[] = []
+
+    theCase.defendants?.forEach((defendant) => {
+      const subpoena = defendant.subpoenas?.[0]
+
+      const hasSubpoenaBeenSuccessfullyServedToDefendant =
+        subpoena?.serviceStatus &&
+        [
+          ServiceStatus.DEFENDER,
+          ServiceStatus.ELECTRONICALLY,
+          ServiceStatus.IN_PERSON,
+        ].includes(subpoena.serviceStatus)
+
+      // Only send certificates for subpoenas which have been successfully served
+      if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
+    })
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1555,22 +1637,34 @@ export class CaseService {
       const updatedArraignmentDate = DateLog.arraignmentDate(
         updatedCase.dateLogs,
       )
-      const arraignmentDateChanged =
+      const hasUpdatedArraignmentDate =
         updatedArraignmentDate &&
         updatedArraignmentDate.date.getTime() !==
           arraignmentDate?.date.getTime()
       const courtDate = DateLog.courtDate(theCase.dateLogs)
       const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
-      const courtDateChanged =
+      const hasUpdatedCourtDate =
         updatedCourtDate &&
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
-      if (arraignmentDateChanged || courtDateChanged) {
+      if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
         // New arraignment date or new court date
         await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
       }
 
+      if (hasUpdatedArraignmentDate) {
+        await this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
+      }
+
       await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
+    }
+
+    // This only applies to indictments and only when an arraignment has been completed
+    if (updatedCase.indictmentDecision && !theCase.indictmentDecision) {
+      await this.addMessagesForIndictmentArraignmentCompletionToQueue(
+        updatedCase,
+        user,
+      )
     }
   }
 
@@ -1611,46 +1705,31 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    const whereClause: WhereOptions = [
-      { isArchived: false },
-      { type: CaseType.INDICTMENT },
-      { id: { [Op.ne]: caseId } },
-      { state: CaseState.RECEIVED },
-    ]
-
-    if (defendant.noNationalId) {
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id = '${defendant.nationalId}'
-              AND name = '${defendant.name}'
-          )`),
-        },
-      })
-    } else {
-      const [normalizedNationalId, formattedNationalId] =
-        normalizeAndFormatNationalId(defendant.nationalId)
-
-      whereClause.push({
-        id: {
-          [Op.in]: Sequelize.literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE national_id in ('${normalizedNationalId}', '${formattedNationalId}')
-          )`),
-        },
-      })
-    }
-
     return this.caseModel.findAll({
       include: [
         { model: Institution, as: 'court' },
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: true,
+          where: defendant.noNationalId
+            ? { nationalId: defendant.nationalId, name: defendant.name }
+            : {
+                nationalId: {
+                  [Op.in]: normalizeAndFormatNationalId(defendant.nationalId),
+                },
+              },
+        },
       ],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: { [Op.and]: whereClause },
+      where: {
+        [Op.and]: {
+          isArchived: false,
+          type: CaseType.INDICTMENT,
+          id: { [Op.ne]: caseId },
+          state: CaseState.RECEIVED,
+        },
+      },
     })
   }
 
@@ -1662,8 +1741,11 @@ export class CaseService {
             ...caseToCreate,
             origin: CaseOrigin.RVG,
             creatingProsecutorId: user.id,
-            prosecutorId:
-              user.role === UserRole.PROSECUTOR ? user.id : undefined,
+            prosecutorId: isIndictmentCase(caseToCreate.type)
+              ? caseToCreate.prosecutorId
+              : user.role === UserRole.PROSECUTOR
+              ? user.id
+              : undefined,
             courtId: isRequestCase(caseToCreate.type)
               ? user.institution?.defaultCourtId
               : undefined,
@@ -1767,19 +1849,6 @@ export class CaseService {
     }
   }
 
-  private constructEventLogDTO(
-    eventType: EventType,
-    theCase: Case,
-    user: TUser,
-  ) {
-    return {
-      eventType,
-      caseId: theCase.id,
-      nationalId: user.nationalId,
-      userRole: user.role,
-    }
-  }
-
   private handleEventLogs(
     theCase: Case,
     update: UpdateCase,
@@ -1790,13 +1859,12 @@ export class CaseService {
       update.state === CaseState.RECEIVED &&
       theCase.state === CaseState.SUBMITTED
     ) {
-      const eventLogDTO = this.constructEventLogDTO(
+      return this.eventLogService.createWithUser(
         EventType.CASE_RECEIVED_BY_COURT,
-        theCase,
+        theCase.id,
         user,
+        transaction,
       )
-
-      return this.eventLogService.create(eventLogDTO, transaction)
     }
 
     if (isIndictmentCase(theCase.type)) {
@@ -1804,33 +1872,30 @@ export class CaseService {
         update.state === CaseState.SUBMITTED &&
         theCase.state === CaseState.WAITING_FOR_CONFIRMATION
       ) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.INDICTMENT_CONFIRMED,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
 
       if (update.state === CaseState.COMPLETED) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.INDICTMENT_COMPLETED,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
 
       if (update.indictmentReviewDecision) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.INDICTMENT_REVIEWED,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
     }
 
@@ -1839,13 +1904,12 @@ export class CaseService {
         update.state === CaseState.SUBMITTED &&
         theCase.state === CaseState.DRAFT
       ) {
-        const eventLogDTO = this.constructEventLogDTO(
+        return this.eventLogService.createWithUser(
           EventType.CASE_SENT_TO_COURT,
-          theCase,
+          theCase.id,
           user,
+          transaction,
         )
-
-        return this.eventLogService.create(eventLogDTO, transaction)
       }
     }
   }

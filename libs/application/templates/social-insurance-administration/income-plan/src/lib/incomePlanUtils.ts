@@ -154,3 +154,41 @@ export const eligibleText = (externalData: ExternalData) => {
     ? incomePlanFormMessage.pre.isNotEligibleNoActiveApplicationDescription
     : incomePlanFormMessage.pre.isNotEligibleDescription
 }
+
+export const defaultIncomeTypes = [
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Lífeyrissjóður',
+    incomePerYear: '0',
+    incomeCategory: 'Lífeyrissjóðstekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Laun',
+    incomePerYear: '0',
+    incomeCategory: 'Atvinnutekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Vextir af innistæðum',
+    incomePerYear: '0',
+    incomeCategory: 'Fjármagnstekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'EUR',
+    incomeType: 'Erlendur lífeyrir',
+    incomePerYear: '0',
+    incomeCategory: 'Lífeyrissjóðstekjur',
+  },
+  {
+    income: 'yearly',
+    currency: 'IKR',
+    incomeType: 'Vextir af verðbréfum',
+    incomePerYear: '0',
+    incomeCategory: 'Fjármagnstekjur',
+  },
+]

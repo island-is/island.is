@@ -59,6 +59,8 @@ export const integerPercentageSplit = (
 
 // Returns true if an array sums to a target number,
 // includes a tolerance to account for floating point errors
+// Example:
+//   isEqualWithTolerance(99.999999, 100, 1e-6) === true
 export const isEqualWithTolerance = (
   number: number,
   target: number,
