@@ -1,7 +1,13 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { OrganizationInput } from './organization.input'
+import { LanguageTypeInput } from './languageType.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
+
+@InputType('CreateFormSystemApplicationDtoInput')
+export class CreateApplicationDtoInput {
+  @Field(() => Boolean)
+  isTest!: boolean
+}
 
 @InputType('CreateFormSystemApplicationInput')
 export class CreateApplicationInput {

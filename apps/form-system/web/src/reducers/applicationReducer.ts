@@ -26,7 +26,7 @@ export const initialReducer = (
     sections,
     screens,
     currentSection: {
-      data: section ?? {},
+      data: section ?? {} as FormSystemSection,
       index: 0
     },
   }
@@ -41,7 +41,7 @@ const initializeApplication = (application: FormSystemApplication): FormSystemAp
         ...screen,
         fields: screen?.fields?.filter((field): field is Exclude<typeof field, null> => field !== null).map(field => initializeField(field))
       }))
-    }))
+    })) as FormSystemSection[]
   }
 }
 

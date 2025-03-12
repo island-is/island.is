@@ -11,7 +11,6 @@ import { ApplicationsService } from './applications.service'
 import { Application, ApplicationListDto } from '../../models/applications.model'
 import {
   CreateApplicationInput,
-  GetAllApplicationsInput,
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
@@ -34,7 +33,7 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplication(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Application, {
     name: 'createFormSystemApplication',
   })
   async createApplication(
@@ -78,14 +77,4 @@ export class ApplicationsResolver {
     return this.applicationsService.submitScreen(user, input)
   }
 
-  @Query(() => ApplicationListDto, {
-    name: 'formSystemGetApplications',
-  })
-  async getApplications(
-    @Args('input', { type: () => GetAllApplicationsInput })
-    input: GetAllApplicationsInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationListDto> {
-    return this.applicationsService.getApplications(user, input)
-  }
 }

@@ -1,5 +1,5 @@
 import { createContext, Dispatch, useContext, useReducer, useEffect, useMemo } from "react"
-import { FormSystemApplication } from "@island.is/api/schema"
+import { FormSystemApplication, FormSystemSection } from "@island.is/api/schema"
 import { applicationReducer, initialReducer } from "../reducers/applicationReducer"
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { useQuery } from "@apollo/client"
@@ -17,14 +17,16 @@ interface LoaderProps {
   id: string
 }
 
+const initialState = {
+  application: {} as FormSystemApplication,
+  sections: [],
+  screens: [],
+  currentSection: { data: {} as FormSystemSection, index: 0 },
+  currentScreen: undefined,
+}
+
 export const ApplicationContext = createContext<ApplicationContextProvider>({
-  state: {
-    application: {},
-    sections: [],
-    screens: [],
-    currentSection: { data: {}, index: 0 },
-    currentScreen: undefined,
-  },
+  state: initialState,
   dispatch: () => undefined,
 })
 
@@ -45,7 +47,7 @@ export const ApplicationLoader = ({ id }: LoaderProps) => {
     return <div>Error</div>
   }
   return (
-    <ApplicationProvider application={removeTypename(data?.formSystemGetApplication)} />
+    <ApplicationProvider application={removeTypename(data?.formSystemApplication)} />
   )
 }
 
@@ -56,13 +58,10 @@ const reducers = (state: ApplicationState, action: Action) => {
 
 export const ApplicationProvider: React.FC<{ application: FormSystemApplication }> = ({ application }) => {
   const app = useMemo(() => application, [application])
-
+  console.log('app', app)
   const [state, dispatch] = useReducer(reducers, {
+    ...initialState,
     application: app,
-    sections: [],
-    screens: [],
-    currentSection: { data: {}, index: 0 },
-    currentScreen: undefined
   }, initialReducer)
 
   const contextValue = useMemo(() => ({ state, dispatch }), [state]);

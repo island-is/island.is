@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { Section } from './section.model'
 import { LanguageType } from './languageType.model'
 import { Dependency } from './form.model'

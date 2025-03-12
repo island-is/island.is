@@ -1,8 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { Form } from "../components/Form/Form"
-import { ApplicationLoader, ApplicationProvider } from "../context/ApplicationProvider"
-
+import { ApplicationLoader } from "../context/ApplicationProvider"
 
 type UseParams = {
   slug: string
@@ -11,11 +8,9 @@ type UseParams = {
 
 export const Application = () => {
   const { slug, id } = useParams() as UseParams
-  // const userInfo = useUserInfo()
-  // const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id || !slug) {
-    return <></>//<ErrorShell errorType="notFound" />
+    return <>Error</>
   }
 
   return (

@@ -40,7 +40,7 @@ export const Applications = () => {
       }
     })
     if (app) {
-      navigate(`../${slug}/${app.data.formSystemCreateApplication.id}`)
+      navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
     }
     return app
   }

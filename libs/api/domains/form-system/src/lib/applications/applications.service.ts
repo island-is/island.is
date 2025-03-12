@@ -6,7 +6,6 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
-  ApplicationsControllerFindAllByTypeAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerSubmitScreenRequest,
@@ -14,7 +13,6 @@ import {
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
-  GetAllApplicationsInput,
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
@@ -48,7 +46,6 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<Application> {
-    console.log('creating application', input)
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerCreate(
         input as ApplicationsControllerCreateRequest,
@@ -56,7 +53,6 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to create application'),
       )
-    console.log('response', response)
     if (!response || response instanceof ApolloError) {
       if (!(response instanceof ApolloError)) {
         throw new ApolloError({ errorMessage: JSON.stringify(response) })
@@ -130,22 +126,6 @@ export class ApplicationsService {
     if (!response || response instanceof ApolloError) {
       return
     }
-  }
-
-  async getApplications(
-    auth: User,
-    input: GetAllApplicationsInput
-  ): Promise<ApplicationListDto> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAllByTypeAndUser(
-        input as ApplicationsControllerFindAllByTypeAndUserRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get applications'))
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response
   }
 
 }

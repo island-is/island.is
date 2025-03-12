@@ -34,7 +34,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i apps/services/form-system/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i libs/clients/form-system/src/clientConfig.json"
       },
       "outputs": [
         "{projectRoot}/gen/fetch"
