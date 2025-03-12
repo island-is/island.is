@@ -72,10 +72,13 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     const pickUpLicense =
       getValueViaPath(answers, 'delivery.deliveryMethod') === 'pickup'
 
+    const districtId =
+      getValueViaPath<string>(answers, 'delivery.district') ?? ''
+
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
         pickUpLicense: pickUpLicense,
-        districtId: pickUpLicense ? parseInt(answers.district?.toString()) : 37,
+        districtId: pickUpLicense ? parseInt(districtId) : 37,
         token: auth.authorization,
         // Always true since submission doesn't happen before
         // user checks the required field which states
