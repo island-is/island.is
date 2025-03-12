@@ -40,7 +40,7 @@ const staging01: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 1,
-  releaseName: '',
+  releaseName: 'web',
   redisHost: JSON.stringify([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
   ]),
