@@ -50,7 +50,7 @@ export const getPaymentArrangementForOverview = (
             ? formatMessage(paymentArrangement.labels.cashOnDelivery)
             : formatMessage(paymentArrangement.labels.putIntoAccount)
         }`,
-        `${paymentArrangementAnswers?.companyInfo?.label}, ${formatKennitala(
+        `${paymentArrangementAnswers?.companyInfo?.name}, ${formatKennitala(
           paymentArrangementAnswers?.companyInfo?.nationalId ?? '',
         )}`,
         `${formatMessage(paymentArrangement.labels.contactEmail)}: ${

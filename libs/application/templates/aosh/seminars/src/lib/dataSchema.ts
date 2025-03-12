@@ -32,7 +32,7 @@ export const PaymentArrangementSchema = z
     companyInfo: z
       .object({
         nationalId: z.string().optional(),
-        label: z.string().optional(),
+        name: z.string().optional(),
       })
       .optional(),
     individualInfo: z
@@ -85,7 +85,7 @@ export const PaymentArrangementSchema = z
       return (
         individualOrCompany === IndividualOrCompany.company &&
         companyInfo &&
-        companyInfo.label &&
+        companyInfo.name &&
         companyInfo.nationalId &&
         companyInfo.nationalId.length > 0 &&
         kennitala.isCompany(companyInfo.nationalId)

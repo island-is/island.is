@@ -6,7 +6,7 @@ import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { paymentArrangement } from '../../lib/messages'
 import { isCompanyType } from '../../utils'
-import { IndividualOrCompany } from '../../shared/contstants'
+import { IndividualOrCompany, PaymentOptions } from '../../shared/contstants'
 
 export const WatchCompanyNationalId: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -38,6 +38,10 @@ export const WatchCompanyNationalId: FC<
 
   setBeforeSubmitCallback?.(async () => {
     setIsCompanyValid(true)
+    const paymentOptions = getValues('paymentArrangement.paymentOptions')
+    if (paymentOptions === PaymentOptions.cashOnDelivery) {
+      return [true, null]
+    }
     const companyNationalId = getValues(
       'paymentArrangement.companyInfo.nationalId',
     )

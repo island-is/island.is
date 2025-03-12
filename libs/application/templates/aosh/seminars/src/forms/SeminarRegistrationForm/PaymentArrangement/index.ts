@@ -1,10 +1,10 @@
 import {
   buildCheckboxField,
-  buildCompanySearchField,
   buildCustomField,
   buildDescriptionField,
   buildLinkField,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildPhoneField,
   buildRadioField,
   buildSection,
@@ -159,7 +159,7 @@ export const paymentArrangementSection = buildSection({
             isCompanyType(externalData),
         }),
         buildTextField({
-          id: 'paymentArrangement.companyInfo.label',
+          id: 'paymentArrangement.companyInfo.name',
           title: paymentArrangement.labels.companyName,
           width: 'half',
           readOnly: true,
@@ -176,10 +176,13 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData),
         }),
-        buildCompanySearchField({
+        buildNationalIdWithNameField({
           id: 'paymentArrangement.companyInfo',
-          title: paymentArrangement.labels.companyTitle,
           required: true,
+          customNationalIdLabel: paymentArrangement.labels.companySSN,
+          customNameLabel: paymentArrangement.labels.companyName,
+          searchPersons: false,
+          searchCompanies: true,
           condition: (answers: FormValue, externalData: ExternalData) =>
             !isCompanyType(externalData) && isCompany(answers),
         }),
