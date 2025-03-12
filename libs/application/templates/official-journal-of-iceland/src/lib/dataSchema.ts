@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { error } from './messages'
 import { MessageDescriptor } from 'react-intl'
 import { YesOrNoEnum } from '@island.is/application/core'
+import { TitlePrefix } from './utils'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -96,6 +97,7 @@ const miscSchema = z
     selectedTemplate: z.string().optional(),
     asDocument: z.boolean().optional(),
     asRoman: z.boolean().optional(),
+    titlePrefix: z.nativeEnum(TitlePrefix).optional(),
   })
   .partial()
 
