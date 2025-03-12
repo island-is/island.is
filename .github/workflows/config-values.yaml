@@ -86,6 +86,10 @@ jobs:
       - name: Run unit tests
         run: ./infra/scripts/ci/test-unit.sh
 
+      - name: Yarn install infra
+        run: |
+          yarn --cwd ./infra install
+
       - name: Check chart values are up-to-date
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
@@ -125,6 +129,10 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: infra
         run: yarn install --immutable
+
+      - name: Yarn install infra
+        run: |
+          yarn --cwd ./infra install
 
       - name: Select role
         env:
