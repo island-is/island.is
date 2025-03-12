@@ -15,7 +15,7 @@ export const m = defineMessages({
   },
   newTemplate: {
     id: 'portals-admin.form-system:new-template',
-    defaultMessage: 'Ný forskrift',
+    defaultMessage: 'Nýtt',
   },
   organisation: {
     id: 'portals-admin.form-system:organisation',

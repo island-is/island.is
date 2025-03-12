@@ -27,7 +27,6 @@ export const List = ({ item }: Props) => {
       value: item?.label?.is ?? '',
     })) ?? []
 
-  console.log('item', item)
   return (
     <Select
       name="list"
@@ -36,7 +35,7 @@ export const List = ({ item }: Props) => {
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
     />

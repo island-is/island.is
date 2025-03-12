@@ -16,9 +16,6 @@ export const Forms = () => {
     return (
       <div>
         {/* Title and buttons  */}
-        <div>
-          <Text variant="h2">{formatMessage(m.templates)}</Text>
-        </div>
         <Box marginTop={5}>
           <Inline space={2}>
             <Button
