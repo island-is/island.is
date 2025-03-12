@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
 
 import {
   StudentAssessment,
