@@ -205,22 +205,8 @@ export class DelegationAdminCustomService {
     const {
       fromReferenceId: fromNationalId,
       toReferenceId: toNationalId,
-      createdByNationalId,
     } = this.getZendeskCustomFields(zendeskCase)
 
-    if (!createdByNationalId) {
-      throw new BadRequestException({
-        message: 'Zendesk ticket is missing created by national id',
-        error: ErrorCodes.ZENDESK_CUSTOM_FIELDS_MISSING,
-      })
-    }
-
-    if (!kennitala.isPerson(createdByNationalId)) {
-      throw new BadRequestException({
-        message: 'Created by National Id is not valid person national id',
-        error: ErrorCodes.INPUT_VALIDATION_INVALID_PERSON,
-      })
-    }
 
     this.validatePersonsNationalIds(toNationalId, fromNationalId)
 

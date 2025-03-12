@@ -134,21 +134,15 @@ export class DelegationAdminController {
   async deleteByZendeskId(
     @Body() { id }: ZendeskWebhookInputDto,
   ): Promise<void> {
-    await this.auditService.auditPromise<DelegationDTO>(
+    await this.auditService.auditPromise<boolean>(
       {
         system: true,
         namespace,
         action: 'deleteByZendeskId',
-        resources: (res) => {
-          return `id: ${res.id ?? 'Unknown'}, toNationalId: ${
-            res.toNationalId ?? 'Unknown'
-          }, fromNationalId: ${
-            res.fromNationalId ?? 'Unknown'
-          }, createdByNationalId: ${res.createdByNationalId ?? 'Unknown'}`
-        },
-        meta: {
-          id,
-        },
+        resources: id,
+        meta: (deleted) => ({
+          deleted,
+        }),
       },
       this.delegationAdminService.deleteDelegationByZendeskId(id),
     )

@@ -21,7 +21,7 @@ const devConfig = {
     process.env.ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE ??
     //The static test signing secret from Zendesk as described in their docs
     // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
-    'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
+    '5f015Zn0uOTpTu1MmX_p6TlUMq-3M-T-0R766UsfXmg=',
   zendeskIdentityConfirmationSecret:
     process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION ??
     //The static test signing secret from Zendesk as described in their docs
