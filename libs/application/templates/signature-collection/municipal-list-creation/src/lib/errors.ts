@@ -3,24 +3,24 @@ import { defineMessages } from 'react-intl'
 export const errorMessages = {
   age: defineMessages({
     title: {
-      id: 'plc.application:error.age.title',
+      id: 'mlc.application:error.age.title',
       defaultMessage: 'Aldur uppfyllir ekki skilyrði',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.age.summary#markdown',
+      id: 'mlc.application:error.age.summary#markdown',
       defaultMessage: '35 ára aldursmarki er ekki náð',
       description: '',
     },
   }),
   partyBallotLetter: defineMessages({
     title: {
-      id: 'plc.application:error.partyBallotLetter.title',
+      id: 'mlc.application:error.partyBallotLetter.title',
       defaultMessage: 'Ekki er hægt að stofna meðmælasöfnun',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.partyBallotLetter.summary',
+      id: 'mlc.application:error.partyBallotLetter.summary',
       defaultMessage:
         'Innskráður notandi/fyrirtæki vantar framboð eða listabókstaf',
       description: '',
@@ -28,12 +28,12 @@ export const errorMessages = {
   }),
   alreadyCandidate: defineMessages({
     title: {
-      id: 'plc.application:error.alreadyCandidate.title',
+      id: 'mlc.application:error.alreadyCandidate.title',
       defaultMessage: 'Ekki hægt að tvískrá meðmælasöfnun',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.alreadyCandidate.summary',
+      id: 'mlc.application:error.alreadyCandidate.summary',
       defaultMessage:
         'Þú ert nú þegar með framboð. Þú getur nálgast nánari upplýsingar um þína meðmælasöfnun á Mínum Síðum.',
       description: '',
@@ -41,72 +41,72 @@ export const errorMessages = {
   }),
   citizenship: defineMessages({
     title: {
-      id: 'plc.application:error.citizenship.title',
+      id: 'mlc.application:error.citizenship.title',
       defaultMessage: 'Ekki með íslenskt ríkisfang',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.citizenship.summary#markdown',
+      id: 'mlc.application:error.citizenship.summary#markdown',
       defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),
   residency: defineMessages({
     title: {
-      id: 'plc.application:error.residency.title',
+      id: 'mlc.application:error.residency.title',
       defaultMessage: 'Ekki með búsetu á Íslandi',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.residency.summary#markdown',
+      id: 'mlc.application:error.residency.summary#markdown',
       defaultMessage: 'Skilyrði um búsetu á Íslandi eru ekki uppfyllt',
       description: '',
     },
   }),
   active: defineMessages({
     title: {
-      id: 'plc.application:error.active.title',
+      id: 'mlc.application:error.active.title',
       defaultMessage: 'Engin söfnun meðmæla er virk',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.active.summary',
+      id: 'mlc.application:error.active.summary',
       defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   owner: defineMessages({
     title: {
-      id: 'plc.application:error.owner.title',
+      id: 'mlc.application:error.owner.title',
       defaultMessage: 'Þú átt nú þegar lista í öllum söfnunarsvæðum',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.owner.summary#markdown',
+      id: 'mlc.application:error.owner.summary#markdown',
       defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
   deniedByService: defineMessages({
     title: {
-      id: 'plc.application:error.deniedByService.title',
+      id: 'mlc.application:error.deniedByService.title',
       defaultMessage: 'Eitthvað fór úrskeiðis',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.deniedByService.summary',
+      id: 'mlc.application:error.deniedByService.summary',
       defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla.',
       description: '',
     },
   }),
-  currentCollectionNotParliamentary: defineMessages({
+  currentCollectionNotMunicipal: defineMessages({
     title: {
-      id: 'plc.application:error.currentCollectionNotParliamentary.title',
-      defaultMessage: 'Söfnun fyrir Alþingiskosningar er ekki virk',
+      id: 'mlc.application:error.currentCollectionNotMunicipal.title',
+      defaultMessage: 'Söfnun fyrir Sveitarstjórnarkosningar er ekki virk',
       description: '',
     },
     summary: {
-      id: 'plc.application:error.currentCollectionNotParliamentary.summary',
+      id: 'mlc.application:error.currentCollectionNotMunicipal.summary',
       defaultMessage: 'Ekki er hægt að stofna söfnun meðmæla',
       description: '',
     },

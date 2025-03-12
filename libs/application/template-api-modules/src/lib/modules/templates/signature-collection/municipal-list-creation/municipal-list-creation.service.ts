@@ -7,26 +7,26 @@ import {
   Collection,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
-import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
+import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from '@island.is/clients/signature-collection'
-import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
+import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 @Injectable()
-export class ParliamentaryListCreationService extends BaseTemplateApiService {
+export class MunicipalListCreationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
     private nationalRegistryClientService: NationalRegistryClientService,
   ) {
-    super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
+    super(ApplicationTypes.MUNICIPAL_LIST_CREATION)
   }
 
   async candidate({ auth }: TemplateApiModuleActionProps) {
@@ -41,12 +41,13 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     return candidate
   }
 
-  async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
+  async municipalCollection({ auth }: TemplateApiModuleActionProps) {
     const currentCollection =
       await this.signatureCollectionClientService.currentCollection()
+    //Todo: adjust this check to municipal once available
     if (currentCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
-        errorMessages.currentCollectionNotParliamentary,
+        errorMessages.currentCollectionNotMunicipal,
         405,
       )
     }
@@ -63,7 +64,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     return currentCollection
   }
 
-  async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
+  async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
     const contactNationalId = isCompany(auth.nationalId)
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
@@ -93,8 +94,8 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const parliamentaryCollection = application.externalData
-      .parliamentaryCollection.data as Collection
+    const municipalCollection = application.externalData.municipalCollection
+      .data as Collection
 
     const input = {
       owner: {
@@ -103,16 +104,11 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      collectionId: parliamentaryCollection.id,
-      areas: answers.constituency.map((constituency) => {
-        const [id, _name] = constituency.split('|')
-        return {
-          areaId: id,
-        }
-      }),
+      collectionId: municipalCollection.id,
     }
 
     const result = await this.signatureCollectionClientService
+      //Todo: switch to municipal once available
       .createParliamentaryCandidacy(input, auth)
       .catch((error) => {
         throw new TemplateApiError(
@@ -132,7 +128,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       )
     } catch (e) {
       this.logger.warn(
-        'Could not send submit email to admins for parlimentary list creation application: ',
+        'Could not send submit email to admins for municipal list creation application: ',
         application.id,
       )
     }
