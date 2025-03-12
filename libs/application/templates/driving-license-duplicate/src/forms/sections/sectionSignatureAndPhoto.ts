@@ -7,8 +7,6 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
-import { HasQualitySignatureData } from '../../fields/QualitySignature/hooks/useQualitySignature'
 import { requirementsMet } from '../../lib/utils'
 
 export const sectionSignatureAndPhoto = buildSection({

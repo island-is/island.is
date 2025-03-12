@@ -10,8 +10,6 @@ import {
   NO,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
-import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
 import { allowFakeCondition, requirementsMet } from '../lib/utils'
 import { format as formatNationalId } from 'kennitala'
