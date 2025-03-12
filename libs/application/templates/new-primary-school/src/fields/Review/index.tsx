@@ -27,7 +27,6 @@ import { Child } from './review-groups/Child'
 import { Contacts } from './review-groups/Contacts'
 import { CurrentNursery } from './review-groups/CurrentNursery'
 import { CurrentSchool } from './review-groups/CurrentSchool'
-import { FreeSchoolMeal } from './review-groups/FreeSchoolMeal'
 import { Guardians } from './review-groups/Guardians'
 import { Languages } from './review-groups/Languages'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
@@ -186,7 +185,6 @@ export const Review: FC<ReviewScreenProps> = ({
         <Siblings {...childProps} />
       )}
       <Languages {...childProps} />
-      <FreeSchoolMeal {...childProps} />
       {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
         <AllergiesAndIntolerances {...childProps} />
       )}
