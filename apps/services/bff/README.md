@@ -11,7 +11,7 @@ This service handles user authentication through our IdentityServer, facilitatin
 To set up and run the BFF service, use the following commands:
 
 ### Start Development Server
-jfea
+
 `yarn start services-bff`
 Starts the service on `localhost:3010`.
 
