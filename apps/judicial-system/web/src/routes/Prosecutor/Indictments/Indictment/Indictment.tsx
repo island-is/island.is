@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
