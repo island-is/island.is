@@ -22,3 +22,4 @@ export const RELEASE_BRANCHES = generateReleaseBranches(
   majorVersions,
   minorVersionsPerMajor,
 )
+export const MAIN_BRANCHES = ['main']
