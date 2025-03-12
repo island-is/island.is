@@ -259,7 +259,7 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                         )}
                       </Text>
                     )}
-                    {Boolean(item.title) && (
+                    {Boolean(a) && Boolean(b) && (
                       <Box display="flex" justifyContent="center" paddingY={3}>
                         <Box className={styles.verdictHtmlTitleContainer}>
                           <Text>{a.trim()}</Text>
