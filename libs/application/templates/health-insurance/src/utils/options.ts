@@ -1,8 +1,9 @@
 import { m } from '../lib/messages/messages'
-import { EmploymentStatus, NO, YES } from './constants'
+import { EmploymentStatus } from './constants'
 import { m as cm, messagesCountries } from '../lib/messages/countries'
 import { countries } from './countries'
 import { FormText } from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
 
 export const statusTypeOptions = [
   {

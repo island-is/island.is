@@ -1,9 +1,15 @@
-import { RadioValue, ReviewGroup } from '@island.is/application/ui-components'
+import {
+  DataValue,
+  RadioValue,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { YES } from '@island.is/application/core'
 
 export const Support = ({
   application,
@@ -11,8 +17,16 @@ export const Support = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { developmentalAssessment, specialSupport, requestMeeting } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicationType,
+    hasDiagnoses,
+    hasHadSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
+    requestingMeeting,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
@@ -25,30 +39,87 @@ export const Support = ({
           <GridColumn span="9/12">
             <RadioValue
               label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds.developmentalAssessment,
+                applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+                  ? newPrimarySchoolMessages.differentNeeds
+                      .enrollmentHasDiagnoses
+                  : newPrimarySchoolMessages.differentNeeds.hasDiagnoses,
               )}
-              value={developmentalAssessment}
+              value={hasDiagnoses}
             />
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span="9/12">
+          <GridColumn span="12/12">
             <RadioValue
               label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds.specialSupport,
+                applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+                  ? newPrimarySchoolMessages.differentNeeds
+                      .enrollmentHasHadSupport
+                  : newPrimarySchoolMessages.differentNeeds.hasHadSupport,
               )}
-              value={specialSupport}
+              value={hasHadSupport}
             />
           </GridColumn>
         </GridRow>
+        {(hasDiagnoses === YES || hasHadSupport === YES) && (
+          <>
+            <GridRow>
+              <GridColumn span="12/12">
+                <RadioValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.differentNeeds
+                      .hasIntegratedServices,
+                  )}
+                  value={hasIntegratedServices}
+                />
+              </GridColumn>
+            </GridRow>
+            {hasIntegratedServices === YES && (
+              <>
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <RadioValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.differentNeeds.hasCaseManager,
+                      )}
+                      value={hasCaseManager}
+                    />
+                  </GridColumn>
+                </GridRow>
+                {hasCaseManager === YES && (
+                  <GridRow rowGap={2}>
+                    <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                      <DataValue
+                        label={formatMessage(
+                          newPrimarySchoolMessages.differentNeeds
+                            .caseManagerName,
+                        )}
+                        value={caseManagerName}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                      <DataValue
+                        label={formatMessage(
+                          newPrimarySchoolMessages.differentNeeds
+                            .caseManagerEmail,
+                        )}
+                        value={caseManagerEmail}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                )}
+              </>
+            )}
+          </>
+        )}
         <GridRow>
-          <GridColumn span="9/12">
+          <GridColumn span="12/12">
             <RadioValue
               label={formatMessage(
                 newPrimarySchoolMessages.differentNeeds
-                  .requestMeetingDescription,
+                  .requestingMeetingDescription,
               )}
-              value={requestMeeting}
+              value={requestingMeeting}
             />
           </GridColumn>
         </GridRow>

@@ -18,12 +18,14 @@ import {
 } from '@island.is/application/core'
 import {
   application as applicationMessage,
+  historyMessages as applicationHistoryMessages,
+  pendingActionMessages as applicationPendingActionMessages,
   externalData,
   overview,
 } from './messages'
 import { SecondarySchoolSchema } from './dataSchema'
 import {
-  NationalRegistryParentsApi,
+  NationalRegistryCustodiansApi,
   NationalRegistryUserApi,
   SchoolsApi,
   StudentInfoApi,
@@ -37,11 +39,13 @@ import {
   ApiActions,
   getEndOfDayUTCDate,
   getLastRegistrationEndDate,
+  ApplicationEvents,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const pruneInDaysAfterRegistrationCloses = (
   application: Application,
@@ -68,6 +72,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.SECONDARY_SCHOOL,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.SecondarySchool.translation,
@@ -75,6 +80,9 @@ const template: ApplicationTemplate<
   dataSchema: SecondarySchoolSchema,
   featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
+    {
+      type: AuthDelegationType.LegalGuardian,
+    },
     {
       type: AuthDelegationType.Custom,
     },
@@ -101,9 +109,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateCanCreate,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -122,7 +127,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                NationalRegistryParentsApi,
+                NationalRegistryCustodiansApi,
                 UserProfileApiWithValidation,
                 SchoolsApi,
                 StudentInfoApi,
@@ -151,6 +156,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(7),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -174,6 +182,87 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
         },
       },
+      [States.EDIT]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: applicationMessage.stateMetaNameEdit.defaultMessage,
+          status: FormModes.DRAFT,
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardEdit,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationSent,
+              },
+              {
+                onEvent: DefaultEvents.ABORT,
+                logMessage: applicationHistoryMessages.changesAborted,
+              },
+              {
+                onEvent: ApplicationEvents.RECEIVED,
+                logMessage: coreHistoryMessages.applicationReceived,
+              },
+            ],
+          },
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
+          },
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/editForm').then((module) =>
+                  Promise.resolve(module.Edit),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.buttons.submit,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: overview.buttons.abort,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.RECEIVED,
+                  name: overview.buttons.received,
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.ABORT]: { target: States.SUBMITTED },
+          [ApplicationEvents.RECEIVED]: { target: States.IN_REVIEW },
+        },
+      },
       [States.SUBMITTED]: {
         entry: ['assignToInstitution'],
         exit: ['clearAssignees'],
@@ -184,15 +273,8 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiActions.deleteApplication,
-            triggerEvent: DefaultEvents.EDIT,
-          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -201,21 +283,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardSubmitted,
               variant: 'blueberry',
             },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: applicationMessage.historyAplicationEdited,
-              },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: coreHistoryMessages.applicationReceived,
-              },
-            ],
             pendingAction: {
-              title: corePendingActionMessages.waitingForReviewTitle,
+              title: applicationPendingActionMessages.waitingForReviewTitle,
               content: corePendingActionMessages.waitingForReviewDescription,
               displayStatus: 'info',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: applicationHistoryMessages.edited,
+              },
+              {
+                onEvent: ApplicationEvents.RECEIVED,
+                logMessage: coreHistoryMessages.applicationReceived,
+              },
+            ],
           },
           roles: [
             {
@@ -225,7 +307,17 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Submitted),
                 ),
               read: 'all',
+              write: {
+                answers: ['copy'],
+              },
               delete: true,
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: overview.buttons.edit,
+                  type: 'primary',
+                },
+              ],
             },
             {
               id: Roles.ORGANISATION_REVIEWER,
@@ -233,8 +325,8 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
-                  name: overview.buttons.submit,
+                  event: ApplicationEvents.RECEIVED,
+                  name: overview.buttons.received,
                   type: 'primary',
                 },
               ],
@@ -242,8 +334,64 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.EDIT]: { target: States.EDIT },
+          [ApplicationEvents.RECEIVED]: { target: States.IN_REVIEW },
+        },
+      },
+      [States.IN_REVIEW]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: applicationMessage.stateMetaNameInReview.defaultMessage,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardInReview,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: applicationPendingActionMessages.inReviewTitle,
+              content: applicationPendingActionMessages.inReviewDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: ApplicationEvents.RECEIVED,
+                logMessage: applicationHistoryMessages.reviewFinished,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.RECEIVED,
+                  name: overview.buttons.received,
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [ApplicationEvents.RECEIVED]: { target: States.COMPLETED },
         },
       },
       [States.COMPLETED]: {
@@ -262,7 +410,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
             pendingAction: {
-              title: corePendingActionMessages.applicationReceivedTitle,
+              title: applicationPendingActionMessages.reviewFinishedTitle,
+              content:
+                applicationPendingActionMessages.reviewFinishedDescription,
               displayStatus: 'success',
             },
           },

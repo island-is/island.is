@@ -48,7 +48,6 @@ export const buyerSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'buyer.custom',
-          title: '',
           component: 'StopBuyerIfSameAsSeller',
         }),
       ],

@@ -2,7 +2,7 @@ import {
   AccidentNotificationAttachment,
   AttachmentTypeEnum,
 } from './types/attachments'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
   AccidentDetailsV2,
   AccidentNotificationAnswers,
@@ -21,7 +21,6 @@ import {
   WorkAccidentTypeEnum,
   WorkMachineV2,
 } from '@island.is/application/templates/accident-notification'
-import { YesOrNo } from '@island.is/application/types'
 import {
   MinarsidurAPIModelsAccidentReportsAccidentReportDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTO,

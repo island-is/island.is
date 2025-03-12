@@ -1,14 +1,15 @@
 import React from 'react'
+
 import {
+  CategoryCard,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  CategoryCard,
 } from '@island.is/island-ui/core'
 import { Service } from '@island.is/web/graphql/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import { capitalize } from '@island.is/web/utils/capitalize'
 import { useNamespace } from '@island.is/web/hooks'
+import { capitalize } from '@island.is/web/utils/capitalize'
 
 type Tag = {
   label: string

@@ -12,7 +12,7 @@ export const error = defineMessages({
     description: 'Error validate can create title',
   },
   errorValidateCanCreateDescription: {
-    id: 'ss.application:error.errorValidateCanCreateTitle',
+    id: 'ss.application:error.errorValidateCanCreateDescription',
     defaultMessage:
       'Þú ert með aðra opna umsókn í gangi, vinsamlegast eyðið henni áður en opnað er nýja umsókn',
     description: 'Error validate can create description',
@@ -48,5 +48,20 @@ export const error = defineMessages({
     defaultMessage:
       'Ekki tókst að senda inn umsókn, vinsamlegast reyndu síðar..',
     description: 'Error submit application description',
+  },
+  errorSameAsApplicant: {
+    id: 'ss.application:error.errorSameAsApplicant',
+    defaultMessage: 'Má ekki vera sá sami og umsækjandi',
+    description: 'Error same as applicant',
+  },
+  errorSchoolDuplicate: {
+    id: 'ss.application:error.errorSchoolDuplicate',
+    defaultMessage: 'Ekki má velja sama skóla',
+    description: 'Error school duplicate',
+  },
+  errorProgramDuplicate: {
+    id: 'ss.application:error.errorProgramDuplicate',
+    defaultMessage: 'Ekki má velja sömu braut',
+    description: 'Error program duplicate',
   },
 })

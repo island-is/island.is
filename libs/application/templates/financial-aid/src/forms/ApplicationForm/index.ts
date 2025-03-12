@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildSubSection,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -12,13 +11,14 @@ import {
   FormModes,
   Application,
 } from '@island.is/application/types'
-import { ApproveOptions, ExternalData } from '../../lib/types'
 
 import * as m from '../../lib/messages'
 import { Routes } from '../../lib/constants'
 import { personalInterestSection } from './personalInterestSection'
 import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
+import { financeSection } from './financeSection'
+import { contactInfoSection } from './contactInfoSection'
 
 export const ApplicationForm: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -30,84 +30,8 @@ export const ApplicationForm: Form = buildForm({
   },
   children: [
     personalInterestSection,
-    buildSection({
-      id: 'finances',
-      title: m.section.finances,
-      children: [
-        buildSubSection({
-          id: Routes.INCOME,
-          title: m.incomeForm.general.sectionTitle,
-          children: [
-            buildCustomField({
-              id: Routes.INCOME,
-              title: m.incomeForm.general.pageTitle,
-              component: 'IncomeForm',
-            }),
-          ],
-        }),
-        buildSubSection({
-          condition: (answers) => answers.income === ApproveOptions.Yes,
-          id: Routes.INCOMEFILES,
-          title: m.incomeFilesForm.general.sectionTitle,
-          children: [
-            buildCustomField({
-              id: Routes.INCOMEFILES,
-              title: m.incomeFilesForm.general.pageTitle,
-              component: 'IncomeFilesForm',
-            }),
-          ],
-        }),
-        buildSubSection({
-          condition: (_, externalData) =>
-            (externalData as unknown as ExternalData).taxData?.data
-              .municipalitiesDirectTaxPayments.success === false ||
-            (externalData as unknown as ExternalData).taxData?.data
-              ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
-          id: Routes.TAXRETURNFILES,
-          title: m.taxReturnForm.general.sectionTitle,
-          children: [
-            buildCustomField({
-              id: Routes.TAXRETURNFILES,
-              title: m.taxReturnForm.general.pageTitle,
-              component: 'TaxReturnFilesForm',
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: Routes.PERSONALTAXCREDIT,
-          title: m.personalTaxCreditForm.general.sectionTitle,
-          children: [
-            buildCustomField({
-              id: Routes.PERSONALTAXCREDIT,
-              title: m.personalTaxCreditForm.general.pageTitle,
-              component: 'PersonalTaxCreditForm',
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: Routes.BANKINFO,
-          title: m.bankInfoForm.general.sectionTitle,
-          children: [
-            buildCustomField({
-              id: Routes.BANKINFO,
-              title: m.bankInfoForm.general.pageTitle,
-              component: 'BankInfoForm',
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: Routes.CONTACTINFO,
-      title: m.contactInfo.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: Routes.CONTACTINFO,
-          title: m.contactInfo.general.pageTitle,
-          component: 'ContactInfo',
-        }),
-      ],
-    }),
+    financeSection,
+    contactInfoSection,
     buildSection({
       id: Routes.SUMMARY,
       title: m.summaryForm.general.sectionTitle,
@@ -123,7 +47,6 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submitApplication',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

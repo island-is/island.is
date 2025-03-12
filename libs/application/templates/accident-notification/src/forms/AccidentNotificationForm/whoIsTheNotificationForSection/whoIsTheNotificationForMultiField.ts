@@ -17,14 +17,12 @@ export const whoIsTheNotificationForMultiField = buildMultiField({
   children: [
     buildRadioField({
       id: 'whoIsTheNotificationFor.answer',
-      title: '',
       width: 'half',
       condition: (_answers, externalData) => !externalData.identity,
       options: whoIsTheNotificationForOptions,
     }),
     buildRadioField({
       id: 'whoIsTheNotificationFor.answer',
-      title: '',
       width: 'half',
       condition: (_answers, externalData) => !!externalData.identity,
       options: whoIsTheNotificationForProcureOptions,

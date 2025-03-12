@@ -17,7 +17,6 @@ import {
 
 export const GeneralFishingLicensePaymentForm: Form = buildForm({
   id: 'GeneralFishingLicensePaymentForm',
-  title: '',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   children: [
@@ -53,7 +52,6 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
         buildCustomField({
           component: 'PaymentPendingScreen',
           id: 'paymentPendingField',
-          title: '',
         }),
       ],
     }),

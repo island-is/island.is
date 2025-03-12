@@ -45,7 +45,7 @@ const ItemHeader: React.FC<
     pageTitle?: FormText
     application: Application
   }>
-> = ({ title, subTitle, application, pageTitle }) => {
+> = ({ title = '', subTitle, application, pageTitle }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -95,7 +95,7 @@ const ProviderItem: FC<
   }>
 > = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
-  const { title, subTitle, pageTitle } = provider
+  const { title = '', subTitle, pageTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
     provider.id &&
@@ -163,7 +163,7 @@ const PermissionItem: FC<
     application: Application
   }>
 > = ({ permission, application }) => {
-  const { title, subTitle, pageTitle } = permission
+  const { title = '', subTitle, pageTitle } = permission
 
   return (
     <Box marginBottom={3}>

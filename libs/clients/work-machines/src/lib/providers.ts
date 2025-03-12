@@ -6,7 +6,9 @@ import {
 import { ConfigType } from '@nestjs/config'
 import {
   Configuration,
+  LicenseApi,
   MachineCategoryApi,
+  MachineLicenseTeachingApplicationApi,
   MachineModelsApi,
   MachineOwnerChangeApi,
   MachineParentCategoriesApi,
@@ -126,6 +128,16 @@ export const apiProviders = [
   {
     api: TechnicalInfoApi,
     provide: TechnicalInfoApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: LicenseApi,
+    provide: LicenseApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: MachineLicenseTeachingApplicationApi,
+    provide: MachineLicenseTeachingApplicationApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

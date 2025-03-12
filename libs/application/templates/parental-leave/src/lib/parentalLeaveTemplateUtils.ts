@@ -1,13 +1,11 @@
 import { ApplicationContext } from '@island.is/application/types'
 
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States,
-  YES,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -15,7 +13,7 @@ import {
   requiresOtherParentApproval,
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
-import { EmployerRow, Period, YesOrNo } from '../types'
+import { EmployerRow, Period } from '../types'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -122,23 +120,20 @@ export const restructureVMSTPeriods = (context: ApplicationContext) => {
       useLength = periods[0].useLength ?? NO
     }
 
-    if (!period.rightsCodePeriod.includes('DVAL')) {
-      // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
-      const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
-      const obj = {
-        startDate: period.from,
-        endDate: period.to,
-        ratio: period.ratio.split(',')[0],
-        rawIndex: index,
-        firstPeriodStart: firstPeriodStart,
-        useLength: useLength as YesOrNo,
-        rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days,
-        paid: period.paid,
-        approved: period.approved,
-      }
-      newPeriods.push(obj)
+    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: firstPeriodStart,
+      useLength: useLength as YesOrNo,
+      rightCodePeriod: rightsCodePeriod,
+      daysToUse: period.days,
+      paid: period.paid,
+      approved: period.approved,
     }
+    newPeriods.push(obj)
   })
 
   return newPeriods

@@ -19,13 +19,11 @@ export const overviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'overviewCustomField',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'Overview',
         }),
         buildSubmitField({
           id: 'payment',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

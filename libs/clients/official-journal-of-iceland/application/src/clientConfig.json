@@ -1,6 +1,47 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/applications/adverts": {
+      "get": {
+        "operationId": "getAdvertCopies",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "example": 1,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "example": 10,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
@@ -79,9 +120,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetCaseCommentsResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/GetComments" }
               }
             }
           }
@@ -168,7 +207,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -207,7 +249,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -235,7 +280,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -332,7 +380,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetAdvertTemplatesResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdvertTemplateDetails"
+                  }
                 }
               }
             }
@@ -381,7 +432,7 @@
             "description": "Successful signature get.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Signature" }
+                "schema": { "$ref": "#/components/schemas/GetSignature" }
               }
             }
           },
@@ -390,7 +441,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Signature" }
+                "schema": { "$ref": "#/components/schemas/GetSignature" }
               }
             }
           }
@@ -705,6 +756,13 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Show date in PDF",
+            "name": "showDate",
+            "in": "query",
+            "schema": { "default": true, "type": "boolean" }
           }
         ],
         "responses": {
@@ -783,13 +841,6 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CasePriceResponse": {
-        "type": "object",
-        "properties": {
-          "price": { "type": "number", "description": "The price of the case" }
-        },
-        "required": ["price"]
-      },
       "BaseEntity": {
         "type": "object",
         "properties": {
@@ -910,28 +961,10 @@
         },
         "required": ["signatureType"]
       },
-      "AdditionalSignature": {
-        "type": "object",
-        "properties": {
-          "regular": {
-            "type": "string",
-            "description": "Message to the regular"
-          },
-          "committee": {
-            "type": "string",
-            "description": "Message to the committee"
-          }
-        },
-        "required": ["regular", "committee"]
-      },
       "ApplicationSignatureMember": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "Name of the member" },
-          "before": {
-            "type": "string",
-            "description": "Text before the name member"
-          },
           "below": {
             "type": "string",
             "description": "Text below the name member"
@@ -945,85 +978,75 @@
             "description": "Text after the name member"
           }
         },
-        "required": ["name", "before", "below", "above", "after"]
+        "required": ["name", "below", "above", "after"]
       },
-      "ApplicationSignature": {
+      "ApplicationSignatureRecord": {
         "type": "object",
         "properties": {
           "institution": {
             "type": "string",
             "description": "Institution of the signature"
           },
-          "date": {
+          "signatureDate": {
             "type": "string",
             "description": "Date when the signature was signed"
           },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
+          "additional": {
             "type": "string",
-            "description": "The html contents of the signature"
-          }
-        },
-        "required": ["institution", "date", "members", "html"]
-      },
-      "ApplicationCommitteeSignature": {
-        "type": "object",
-        "properties": {
-          "institution": {
-            "type": "string",
-            "description": "Institution of the signature"
-          },
-          "date": {
-            "type": "string",
-            "description": "Date when the signature was signed"
-          },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
-            "type": "string",
-            "description": "The html contents of the signature"
+            "description": "Additioanl signature name"
           },
           "chairman": {
-            "description": "The title of the committee",
+            "description": "Chairman of the signature",
             "allOf": [
               { "$ref": "#/components/schemas/ApplicationSignatureMember" }
             ]
+          },
+          "members": {
+            "description": "Members of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
           }
         },
-        "required": ["institution", "date", "members", "html", "chairman"]
+        "required": [
+          "institution",
+          "signatureDate",
+          "additional",
+          "chairman",
+          "members"
+        ]
+      },
+      "ApplicationSignatureRecords": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "description": "Regular signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureRecord"
+            }
+          }
+        },
+        "required": ["records"]
       },
       "ApplicationSignatures": {
         "type": "object",
         "properties": {
-          "additionalSignature": {
-            "example": "Some message to the applicant",
-            "description": "Message to the applicant",
-            "allOf": [{ "$ref": "#/components/schemas/AdditionalSignature" }]
-          },
           "regular": {
             "description": "Regular signature",
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ApplicationSignature" }
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
+            ]
           },
           "committee": {
             "description": "Committee signature",
             "allOf": [
-              { "$ref": "#/components/schemas/ApplicationCommitteeSignature" }
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
             ]
           }
         },
-        "required": ["additionalSignature", "regular", "committee"]
+        "required": ["regular", "committee"]
       },
       "ApplicationAnswers": {
         "type": "object",
@@ -1036,12 +1059,12 @@
             "description": "Misc answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationMisc" }]
           },
-          "signatures": {
+          "signature": {
             "description": "Signature answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationSignatures" }]
           }
         },
-        "required": ["advert", "misc", "signatures"]
+        "required": ["advert", "misc", "signature"]
       },
       "Application": {
         "type": "object",
@@ -1150,94 +1173,118 @@
         },
         "required": ["application"]
       },
-      "CaseCommentType": {
+      "CasePriceResponse": {
+        "type": "object",
+        "properties": {
+          "price": { "type": "number", "description": "The price of the case" }
+        },
+        "required": ["price"]
+      },
+      "CaseActionEnum": {
         "type": "string",
-        "description": "Title of the comment",
+        "description": "The action that created the comment",
         "enum": [
-          "Innsent af:",
-          "færir mál á",
-          "merkir sér málið.",
-          "færir mál í stöðuna:",
-          "gerir athugasemd.",
-          "skráir skilaboð"
+          "SUBMIT",
+          "ASSIGN_USER",
+          "ASSIGN_SELF",
+          "UPDATE_STATUS",
+          "INTERNAL_COMMENT",
+          "EXTERNAL_COMMENT",
+          "APPLICATION_COMMENT"
         ]
       },
-      "CaseCommentDirection": {
+      "CaseStatusEnum": {
         "type": "string",
-        "description": "Was the comment sent or received.",
-        "enum": ["sent", "received"]
+        "description": "Status of the case",
+        "enum": [
+          "Innsent",
+          "Grunnvinnsla",
+          "Yfirlestur",
+          "Tilbúið",
+          "Útgefið",
+          "Tekið úr birtingu",
+          "Birtingu hafnað"
+        ]
       },
-      "CaseComment": {
+      "CaseStatus": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
-            "description": "Id of the case comment."
-          },
-          "internal": {
-            "type": "boolean",
-            "description": "Is the comment internal."
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
           },
           "title": {
-            "example": "f. 2 dögum",
-            "$ref": "#/components/schemas/CaseCommentType"
+            "example": "Innsent",
+            "$ref": "#/components/schemas/CaseStatusEnum"
           },
+          "slug": {
+            "type": "string",
+            "example": "innsent",
+            "description": "Slug of the case staus"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "CommentCreatorDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the entity" },
+          "title": { "type": "string", "description": "Title of the entity" }
+        },
+        "required": ["id", "title"]
+      },
+      "CommentReceiverDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the entity" },
+          "title": { "type": "string", "description": "Title of the entity" }
+        },
+        "required": ["id", "title"]
+      },
+      "CommentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "The id of the comment" },
+          "created": {
+            "type": "string",
+            "description": "ISO string representation of the date the comment was created"
+          },
+          "action": { "$ref": "#/components/schemas/CaseActionEnum" },
           "caseStatus": {
-            "type": "string",
-            "enum": [
-              "Innsent",
-              "Grunnvinnsla",
-              "Yfirlestur",
-              "Tilbúið",
-              "Útgefið",
-              "Tekið úr birtingu",
-              "Birtingu hafnað"
-            ],
-            "description": "Case status of when the comment was created."
+            "description": "The status of the case when the comment was created",
+            "allOf": [{ "$ref": "#/components/schemas/CaseStatus" }]
           },
-          "age": {
-            "type": "string",
-            "example": "f. 2 dögum",
-            "description": "String representation of the age of the case comment."
-          },
-          "ageIso": {
-            "type": "string",
-            "description": "ISO date format representation of the age of the case comment."
-          },
-          "direction": { "$ref": "#/components/schemas/CaseCommentDirection" },
           "creator": {
-            "type": "string",
-            "description": "Who created the comment "
+            "description": "The creator of the comment",
+            "allOf": [{ "$ref": "#/components/schemas/CommentCreatorDto" }]
           },
           "receiver": {
-            "type": "string",
-            "description": "Who received the comment"
+            "nullable": true,
+            "description": "The receiver of the comment",
+            "allOf": [{ "$ref": "#/components/schemas/CommentReceiverDto" }]
           },
-          "comment": { "type": "string", "description": "The comment itself" },
-          "state": { "type": "string", "description": "The comment itself" }
+          "comment": {
+            "type": "string",
+            "description": "The comment",
+            "nullable": true
+          }
         },
         "required": [
           "id",
-          "internal",
-          "title",
+          "created",
+          "action",
           "caseStatus",
-          "age",
-          "ageIso",
-          "direction",
           "creator",
           "receiver",
-          "comment",
-          "state"
+          "comment"
         ]
       },
-      "GetCaseCommentsResponse": {
+      "GetComments": {
         "type": "object",
         "properties": {
           "comments": {
-            "description": "List of case comments.",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/CaseComment" }
+            "items": { "$ref": "#/components/schemas/CommentDto" }
           }
         },
         "required": ["comments"]
@@ -1291,7 +1338,11 @@
       },
       "PresignedUrlResponse": {
         "type": "object",
-        "properties": { "url": { "type": "string" } },
+        "properties": {
+          "url": { "type": "string" },
+          "cdn": { "type": "string" },
+          "key": { "type": "string" }
+        },
         "required": ["url"]
       },
       "PostApplicationAttachmentBody": {
@@ -1438,35 +1489,6 @@
         },
         "required": ["id", "title", "slug"]
       },
-      "CaseStatus": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
-          },
-          "title": {
-            "type": "string",
-            "enum": [
-              "Innsent",
-              "Grunnvinnsla",
-              "Yfirlestur",
-              "Tilbúið",
-              "Útgefið",
-              "Tekið úr birtingu",
-              "Birtingu hafnað"
-            ],
-            "example": "Innsent",
-            "description": "Status of the case"
-          },
-          "slug": {
-            "type": "string",
-            "example": "innsent",
-            "description": "Slug of the case staus"
-          }
-        },
-        "required": ["id", "title", "slug"]
-      },
       "CommunicationStatus": {
         "type": "object",
         "properties": {
@@ -1569,16 +1591,21 @@
         },
         "required": ["applicationCase"]
       },
-      "GetAdvertTemplatesResponse": {
+      "AdvertTemplateDetails": {
         "type": "object",
         "properties": {
-          "types": {
-            "example": "[\"auglysing\", \"reglugerd\", \"gjaldskra\"]",
-            "type": "array",
-            "items": { "type": "string" }
+          "slug": {
+            "type": "string",
+            "example": "auglysing",
+            "enum": ["auglysing", "reglugerd", "gjaldskra"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Template title",
+            "example": "Auglýsing"
           }
         },
-        "required": ["types"]
+        "required": ["slug", "title"]
       },
       "GetAdvertTemplateResponse": {
         "type": "object",
@@ -1596,93 +1623,110 @@
         },
         "required": ["html", "type"]
       },
-      "SignatureType": {
+      "SignatureMember": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "The id of the signature type"
+            "description": "The id of the signature member"
           },
-          "title": {
-            "type": "string",
-            "description": "The title of the signature type"
-          },
-          "slug": {
-            "type": "string",
-            "description": "The slug of the signature type"
-          }
-        },
-        "required": ["id", "title", "slug"]
-      },
-      "SignatureMember": {
-        "type": "object",
-        "properties": {
-          "text": {
+          "name": {
             "type": "string",
             "description": "The name/title/w.e. of the signature member"
           },
           "textAbove": {
             "type": "string",
+            "nullable": true,
             "description": "The text comes above the signature name"
           },
           "textBefore": {
             "type": "string",
+            "nullable": true,
             "description": "The text that comes before the signature name"
           },
           "textBelow": {
             "type": "string",
+            "nullable": true,
             "description": "The text that comes below the signature name"
           },
           "textAfter": {
             "type": "string",
+            "nullable": true,
             "description": "The text that comes after the signature name"
           }
         },
-        "required": ["text"]
+        "required": [
+          "id",
+          "name",
+          "textAbove",
+          "textBefore",
+          "textBelow",
+          "textAfter"
+        ]
+      },
+      "SignatureRecord": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "institution": { "type": "string" },
+          "signatureDate": { "type": "string" },
+          "additional": { "type": "string", "nullable": true },
+          "chairman": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/SignatureMember" }]
+          },
+          "members": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SignatureMember" }
+          }
+        },
+        "required": [
+          "id",
+          "institution",
+          "signatureDate",
+          "additional",
+          "chairman",
+          "members"
+        ]
       },
       "Signature": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "description": "The id of the signature" },
-          "institution": {
-            "type": "string",
-            "description": "Institution of the signature"
-          },
-          "date": {
+          "signatureDate": {
             "type": "string",
             "description": "ISO datestring of the signature"
-          },
-          "type": {
-            "description": "The type of the signature",
-            "allOf": [{ "$ref": "#/components/schemas/SignatureType" }]
           },
           "involvedParty": {
             "description": "The involved party of the signature",
             "allOf": [{ "$ref": "#/components/schemas/Institution" }]
           },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/SignatureMember" }
-          },
-          "chairman": {
-            "description": "Chairman of the signature",
-            "allOf": [{ "$ref": "#/components/schemas/SignatureMember" }]
-          },
-          "additionalSignature": {
+          "html": { "type": "string", "description": "HTML of the signature" },
+          "created": {
             "type": "string",
-            "description": "Additional signature name"
+            "description": "ISO datestring of the creation date"
           },
-          "html": { "type": "string", "description": "HTML of the signature" }
+          "records": {
+            "description": "The signature record",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SignatureRecord" }
+          }
         },
         "required": [
           "id",
-          "institution",
-          "date",
-          "type",
+          "signatureDate",
           "involvedParty",
-          "members"
+          "html",
+          "created",
+          "records"
         ]
+      },
+      "GetSignature": {
+        "type": "object",
+        "properties": {
+          "signature": { "$ref": "#/components/schemas/Signature" }
+        },
+        "required": ["signature"]
       },
       "Paging": {
         "type": "object",

@@ -30,7 +30,10 @@ export class SecondarySchoolClient {
 
   async getStudentInfo(auth: User): Promise<Student> {
     const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
-    return { isFreshman: studentInfo?.isFreshman || false }
+    return {
+      hasActiveApplication: studentInfo?.hasActiveApplication || false,
+      isFreshman: studentInfo?.isFreshman || false,
+    }
   }
 
   async getSchools(auth: User): Promise<SecondarySchool[]> {
@@ -77,26 +80,61 @@ export class SecondarySchoolClient {
       nameIs: `${program.title || ''} - ${program.code}`,
       nameEn: `${program.titleEnglish || ''} - ${program.code}`,
       registrationEndDate: program.registryEndDate || new Date(),
+      isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
     }))
   }
 
-  async validateCanCreate(auth: User): Promise<boolean> {
-    const studentInfo = await this.studentsApiWithAuth(auth).v1StudentsInfoGet()
-    return !studentInfo?.hasActiveApplication
+  async delete(auth: User, applicationId: string): Promise<void> {
+    return this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsIslandIsApplicationIdDelete({
+      islandIsApplicationId: applicationId,
+    })
   }
 
-  async delete(auth: User, externalId: string): Promise<void> {
-    return this.applicationsApiWithAuth(auth).v1ApplicationsApplicationIdDelete(
-      {
-        applicationId: externalId,
-      },
-    )
+  async getExternalId(
+    auth: User,
+    applicationId: string,
+  ): Promise<string | undefined> {
+    let externalId: string | undefined
+
+    try {
+      externalId = await this.applicationsApiWithAuth(
+        auth,
+      ).v1ApplicationsIslandIsApplicationIdIdGet({
+        islandIsApplicationId: applicationId,
+      })
+    } catch (e) {
+      if (e.response?.status !== 404) {
+        // Rethrow if the error isn't due to the application not existing
+        throw e
+      }
+    }
+
+    return externalId
   }
 
   async create(auth: User, application: Application): Promise<string> {
+    // Check if an application already exists
+    let externalId: string | undefined
+    try {
+      externalId = await this.applicationsApiWithAuth(
+        auth,
+      ).v1ApplicationsIslandIsApplicationIdIdGet({
+        islandIsApplicationId: application.id,
+      })
+    } catch (e) {
+      if (e.response?.status !== 404) {
+        // Rethrow if the error isn't due to the application not existing
+        throw e
+      }
+    }
+
     const applicationBaseDto = {
+      islandIsApplicationId: application.id,
       applicantNationalId: application.nationalId,
       applicantName: application.name,
+      applicantGender: application.genderCode,
       isFreshman: application.isFreshman,
       phoneNumber: application.phone,
       email: application.email,
@@ -127,18 +165,36 @@ export class SecondarySchoolClient {
       attachments: application.attachments,
     }
 
-    try {
-      const result = await this.applicationsApiWithAuth(
-        auth,
-      ).v1ApplicationsPost({
-        applicationBaseDto,
-      })
-      if (!result.id) {
-        throw new Error('Application creation failed: No ID returned')
+    if (externalId) {
+      try {
+        await this.applicationsApiWithAuth(
+          auth,
+        ).v1ApplicationsIslandIsApplicationIdPut({
+          islandIsApplicationId: application.id,
+          applicationBaseDto,
+        })
+
+        return externalId
+      } catch (error) {
+        throw new Error(`Failed to update application: ${error.message}`)
       }
-      return result.id
-    } catch (error) {
-      throw new Error(`Failed to create application: ${error.message}`)
+    } else {
+      try {
+        const result = await this.applicationsApiWithAuth(
+          auth,
+        ).v1ApplicationsPost({
+          applicationBaseDto,
+        })
+
+        if (!result.id) {
+          throw new Error('Application creation failed: No ID returned')
+        }
+
+        // Return external ID
+        return result.id
+      } catch (error) {
+        throw new Error(`Failed to create application: ${error.message}`)
+      }
     }
   }
 }

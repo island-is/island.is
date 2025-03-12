@@ -1,24 +1,9 @@
-import { useEffect, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  useGetWorkMachineDocumentLazyQuery,
-  useGetWorkMachinesQuery,
-} from './WorkMachinesOverview.generated'
-import {
-  m,
-  CardLoader,
-  ActionCard,
-  formSubmit,
-  IntroHeader,
-  Filter,
-  FootNote,
-  VINNUEFTIRLITID_SLUG,
-  formatDate,
-} from '@island.is/portals/my-pages/core'
+import { WorkMachinesFileType } from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
   DropdownMenu,
+  Filter,
   GridColumn,
   GridRow,
   Hidden,
@@ -27,11 +12,26 @@ import {
   Pagination,
   Text,
 } from '@island.is/island-ui/core'
-import { messages, vehicleMessage } from '../../lib/messages'
-import { useDebounce } from 'react-use'
-import { WorkMachine, WorkMachinesFileType } from '@island.is/api/schema'
-import { AssetsPaths } from '../../lib/paths'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  ActionCard,
+  CardLoader,
+  FootNote,
+  formatDate,
+  formSubmit,
+  IntroHeader,
+  m,
+  VINNUEFTIRLITID_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useState } from 'react'
+import { useDebounce } from 'react-use'
+import { messages, vehicleMessage } from '../../lib/messages'
+import { AssetsPaths } from '../../lib/paths'
+import {
+  useGetWorkMachineDocumentLazyQuery,
+  useGetWorkMachinesQuery,
+} from './WorkMachinesOverview.generated'
 
 type FilterValue = {
   label: string
@@ -167,28 +167,6 @@ const WorkMachinesOverview = () => {
                         )}
                       />
                     }
-                    additionalFilters={
-                      !loading &&
-                      !error &&
-                      !!data?.workMachinesPaginatedCollection?.data.length && (
-                        <DropdownMenu
-                          title={formatMessage(m.get)}
-                          icon="download"
-                          items={[
-                            {
-                              onClick: () =>
-                                getFileExport(WorkMachinesFileType.CSV),
-                              title: formatMessage(m.getAsCsv),
-                            },
-                            {
-                              onClick: () =>
-                                getFileExport(WorkMachinesFileType.EXCEL),
-                              title: formatMessage(m.getAsExcel),
-                            },
-                          ]}
-                        />
-                      )
-                    }
                   >
                     {
                       <Box paddingX={3} marginTop={2}>
@@ -225,10 +203,25 @@ const WorkMachinesOverview = () => {
                     }
                   </Filter>
                 </Hidden>
+                <DropdownMenu
+                  title={formatMessage(m.get)}
+                  icon="download"
+                  items={[
+                    {
+                      onClick: () => getFileExport(WorkMachinesFileType.CSV),
+                      title: formatMessage(m.getAsCsv),
+                    },
+                    {
+                      onClick: () => getFileExport(WorkMachinesFileType.EXCEL),
+                      title: formatMessage(m.getAsExcel),
+                    },
+                  ]}
+                />
               </Inline>
             </Box>
           </Box>
         </GridColumn>
+        <GridColumn span={'4/12'}>{}</GridColumn>
       </GridRow>
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && loading && <CardLoader />}

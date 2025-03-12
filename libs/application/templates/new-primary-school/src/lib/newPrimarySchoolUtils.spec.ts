@@ -1,7 +1,12 @@
-import { ExternalData } from '@island.is/application/types'
-import { hasOtherParent } from './newPrimarySchoolUtils'
+import { ExternalData, RepeaterOptionValue } from '@island.is/application/types'
+import { LanguageEnvironmentOptions } from './constants'
+import {
+  hasOtherGuardian,
+  setOnChangeSchool,
+  showPreferredLanguageFields,
+} from './newPrimarySchoolUtils'
 
-describe('hasOtherParent', () => {
+describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
     const answers = {}
     const externalData = {
@@ -18,7 +23,7 @@ describe('hasOtherParent', () => {
       },
     } as unknown as ExternalData
 
-    expect(hasOtherParent(answers, externalData)).toBe(true)
+    expect(hasOtherGuardian(answers, externalData)).toBe(true)
   })
 
   it('should return false if otherParent does not exist in externalData', () => {
@@ -32,6 +37,93 @@ describe('hasOtherParent', () => {
         ],
       },
     } as unknown as ExternalData
-    expect(hasOtherParent(answers, externalData)).toBe(false)
+    expect(hasOtherGuardian(answers, externalData)).toBe(false)
+  })
+})
+describe('showPreferredLanguageFields', () => {
+  it('should return false when selectedLanguages is empty', () => {
+    const answers = {
+      languages: {
+        selectedLanguages: [],
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(false)
+  })
+
+  it('should return false when languageEnvironment only icelandic', () => {
+    const answers = {
+      languages: {
+        languageEnvironment: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(false)
+  })
+
+  it('should return false when languageEnvironment is ONLY_OTHER_THAN_ICELANDIC and non language is selected', () => {
+    const answers = {
+      languages: {
+        languageEnvironment:
+          LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC,
+        selectedLanguages: [],
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(false)
+  })
+
+  it('should return true when languageEnvironment is ONLY_OTHER_THAN_ICELANDIC and one language is selected', () => {
+    const answers = {
+      languages: {
+        languageEnvironment:
+          LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC,
+        selectedLanguages: [{ code: 'en' }],
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(true)
+  })
+
+  it('should return false when languageEnvironment is ICELANDIC_AND_OTHER and non language is selected', () => {
+    const answers = {
+      languages: {
+        languageEnvironment: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+        selectedLanguages: [],
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(false)
+  })
+
+  it('should return false when languageEnvironment is ICELANDIC_AND_OTHER and one language is selected', () => {
+    const answers = {
+      languages: {
+        languageEnvironment: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+        selectedLanguages: [{ code: 'en' }],
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(false)
+  })
+
+  it('should return true when languageEnvironment is ICELANDIC_AND_OTHER and two language is selected', () => {
+    const answers = {
+      languages: {
+        languageEnvironment: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+        selectedLanguages: [{ code: 'en' }, { code: 'is' }],
+      },
+    }
+    expect(showPreferredLanguageFields(answers)).toBe(true)
+  })
+})
+
+describe('setOnChangeSchool', () => {
+  it('should return the correct key-value pair when optionValue is provided', () => {
+    const optionValue: RepeaterOptionValue = '123::PrivateOwner'
+    expect(setOnChangeSchool(optionValue)).toEqual([
+      { key: 'newSchool.type', value: 'PrivateOwner' },
+    ])
+  })
+
+  it('should return an empty value when optionValue is undefined', () => {
+    const optionValue: RepeaterOptionValue = undefined
+    expect(setOnChangeSchool(optionValue)).toEqual([
+      { key: 'newSchool.type', value: undefined },
+    ])
   })
 })

@@ -7,7 +7,6 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getCountryByCode } from '@island.is/shared/utils'
 import { useFriggOptions } from '../../../hooks/useFriggOptions'
 import {
   OptionsType,
@@ -25,10 +24,9 @@ export const ReasonForApplication = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const {
     reasonForApplication,
-    reasonForApplicationCountry,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
   } = getApplicationAnswers(application.answers)
@@ -50,7 +48,7 @@ export const ReasonForApplication = ({
       ) : (
         <Stack space={2}>
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span="12/12">
               <DataValue
                 label={formatMessage(
                   newPrimarySchoolMessages.primarySchool
@@ -70,23 +68,6 @@ export const ReasonForApplication = ({
               />
             </GridColumn>
           </GridRow>
-          {reasonForApplication ===
-            ReasonForApplicationOptions.MOVING_ABROAD && (
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.primarySchool.country,
-                  )}
-                  value={
-                    lang === 'is'
-                      ? getCountryByCode(reasonForApplicationCountry)?.name_is
-                      : getCountryByCode(reasonForApplicationCountry)?.name
-                  }
-                />
-              </GridColumn>
-            </GridRow>
-          )}
           {reasonForApplication ===
             ReasonForApplicationOptions.MOVING_MUNICIPALITY && (
             <GridRow rowGap={2}>

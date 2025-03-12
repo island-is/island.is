@@ -1,6 +1,7 @@
 import React, { ReactNode, useContext } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
-import { FooterItem } from '@island.is/web/graphql/schema'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -9,10 +10,11 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { webRichText } from '@island.is/web/utils/richText'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
+import { FooterItem } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import * as styles from './SjukratryggingarFooter.css'
 
 interface FooterProps {

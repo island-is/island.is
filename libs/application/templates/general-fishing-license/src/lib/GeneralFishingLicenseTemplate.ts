@@ -31,7 +31,7 @@ import { gflPendingActionMessages } from './messages/actionCards'
 import { Features } from '@island.is/feature-flags'
 import { buildPaymentState } from '@island.is/application/utils'
 import { GeneralFishingLicenseAnswers } from '..'
-import { ChargeItemCode } from '@island.is/shared/constants'
+import { ChargeItemCode, CodeOwners } from '@island.is/shared/constants'
 
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
@@ -88,6 +88,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
+  codeOwner: CodeOwners.NordaApplications,
   institution: application.general.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,

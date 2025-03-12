@@ -32,7 +32,7 @@ type EstateMember = {
   ssn?: string
   nationalId?: string
   relation?: string
-  relationWithApplicant?: string
+  relationWithApplicant?: string | null
   dateOfBirth?: string
   foreignCitizenship?: string | string[]
   noContactInfo?: ('Yes' | 'No')[]
@@ -58,6 +58,8 @@ type AssetFrame = {
 type BankAccount = {
   accountNumber?: string
   balance?: string | number
+  exchangeRateOrInterest?: string | number
+  accountTotal?: string | number
 }
 
 type Stock = {

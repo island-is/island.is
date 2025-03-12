@@ -8,13 +8,11 @@ import {
 import {
   ADOPTION,
   getSelectedChild,
-  NO,
   ParentalRelations,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
-  YES,
 } from '@island.is/application/templates/parental-leave'
 
 import {
@@ -26,6 +24,7 @@ import {
   getEmployer,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
+import { NO, YES } from '@island.is/application/core'
 
 let id = 0
 const createApplicationBase = (): Application => ({

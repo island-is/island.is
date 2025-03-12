@@ -36,7 +36,6 @@ export const plateDeliverySubSection = buildSubSection({
           space: 3,
         }),
         buildRadioField({
-          title: '',
           id: 'plateDelivery.deliveryMethodIsDeliveryStation',
           options: [
             {
@@ -88,7 +87,6 @@ export const plateDeliverySubSection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'plateDelivery.includeRushFee',
-          title: '',
           large: true,
           backgroundColor: 'white',
           defaultValue: [],

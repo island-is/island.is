@@ -1,8 +1,9 @@
-import addDays from 'date-fns/addDays'
-import parseISO from 'date-fns/parseISO'
-
 import { TagVariant } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { isProsecutionUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
@@ -10,6 +11,7 @@ import {
   Gender,
   Notification,
   NotificationType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -58,11 +60,6 @@ export const fileSize = (bytes?: number) => {
 
   const kb = Math.ceil(bytes / 1024)
   return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
-}
-
-export const getAppealEndDate = (rulingDate: string) => {
-  const appealEndDate = addDays(parseISO(rulingDate), 3)
-  return formatDate(appealEndDate, 'PPPp')
 }
 
 export const isBusiness = (nationalId?: string | null) => {
@@ -147,3 +144,27 @@ export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
       !theCase.appealJudge3)
   )
 }
+
+export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
+  Boolean(
+    isProsecutionUser(user) ||
+      theCase.defendants?.some(
+        (defendant) =>
+          defendant.isDefenderChoiceConfirmed &&
+          defendant.caseFilesSharedWithDefender &&
+          defendant.defenderNationalId &&
+          normalizeAndFormatNationalId(user?.nationalId).includes(
+            defendant.defenderNationalId,
+          ),
+      ) ||
+      theCase.civilClaimants?.some(
+        (civilClaimant) =>
+          civilClaimant.hasSpokesperson &&
+          civilClaimant.isSpokespersonConfirmed &&
+          civilClaimant.caseFilesSharedWithSpokesperson &&
+          civilClaimant.spokespersonNationalId &&
+          normalizeAndFormatNationalId(user?.nationalId).includes(
+            civilClaimant.spokespersonNationalId,
+          ),
+      ),
+  )

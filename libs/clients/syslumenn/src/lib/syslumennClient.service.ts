@@ -51,6 +51,7 @@ import {
   mapAlcoholLicence,
   mapAssetName,
   mapBroker,
+  mapBurningPermits,
   mapCertificateInfo,
   mapDataUploadResponse,
   mapDepartedToRegistryPerson,
@@ -69,6 +70,7 @@ import {
   mapPropertyCertificate,
   mapRealEstateAgent,
   mapRealEstateResponse,
+  mapReligiousOrganization,
   mapShipResponse,
   mapSyslumennAuction,
   mapTemporaryEventLicence,
@@ -714,5 +716,22 @@ export class SyslumennService {
     })
 
     return res.stada ?? false
+  }
+
+  async getBurningPermits() {
+    const { id, api } = await this.createApi()
+    const res = await api.brennuleyfiGet({
+      audkenni: id,
+    })
+    return res.map(mapBurningPermits)
+  }
+
+  async getReligiousOrganizations() {
+    const { id, api } = await this.createApi()
+    const res = await api.trufelogOgLifsskodunarfelogGet({
+      audkenni: id,
+    })
+    const items = res.map(mapReligiousOrganization)
+    return items.filter((item) => Boolean(item?.name))
   }
 }

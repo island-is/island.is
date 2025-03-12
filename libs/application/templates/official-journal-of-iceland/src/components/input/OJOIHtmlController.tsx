@@ -6,6 +6,7 @@ import { baseConfig } from '../htmlEditor/config/baseConfig'
 import { Box } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
+import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
 
 type Props = {
   applicationId: string
@@ -26,13 +27,13 @@ export const OJOIHtmlController = ({
     applicationId,
   })
 
+  const { useFileUploader } = useApplicationAssetUploader({ applicationId })
+
   const valueRef = useRef(() =>
     defaultValue ? (defaultValue as HTMLText) : ('' as HTMLText),
   )
 
-  const fileUploader = (): EditorFileUploader => async (blob) => {
-    throw new Error('Not implemented')
-  }
+  const fileUploader = useFileUploader()
 
   const handleChange = (value: HTMLText) => {
     const currentAnswers = structuredClone(application.answers)
@@ -55,7 +56,7 @@ export const OJOIHtmlController = ({
       <Editor
         key={editorKey}
         classes={classes}
-        fileUploader={fileUploader}
+        fileUploader={fileUploader()}
         valueRef={valueRef}
         onChange={() => {
           // add little bit of delay for valueRef to update

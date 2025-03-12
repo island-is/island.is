@@ -11,7 +11,6 @@ import {
   CreateListInput,
   ReasonKey,
   CanSignInput,
-  CreateParliamentaryCandidacyInput,
   AddListsInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
@@ -138,7 +137,7 @@ export class SignatureCollectionClientService {
   }
 
   async createParliamentaryCandidacy(
-    { collectionId, owner, areas, agents }: CreateParliamentaryCandidacyInput,
+    { collectionId, owner, areas }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
     const {

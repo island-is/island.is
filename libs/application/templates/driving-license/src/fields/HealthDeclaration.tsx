@@ -1,11 +1,11 @@
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import { getValueViaPath, formatText, NO, YES } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { BE, NO, YES } from '../lib/constants'
+import { BE } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField

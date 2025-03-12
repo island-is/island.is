@@ -6,95 +6,50 @@
     "version": "1.0"
   },
   "paths": {
-    "/v1/applications": {
+    "/v1/applications/{islandIsApplicationId}": {
       "get": {
         "tags": ["Applications"],
         "summary": "[GET] Fetch an application.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ApplicationReturnDto"
-                  }
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
                 }
               }
             }
           }
         }
       },
-      "post": {
-        "tags": ["Applications"],
-        "summary": "[POST] Creates a new application.",
-        "requestBody": {
-          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
-          "content": {
-            "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            },
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            },
-            "text/json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            },
-            "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/applications/{applicationId}": {
       "put": {
         "tags": ["Applications"],
-        "summary": "[GET] Overwrites an existing application",
+        "summary": "[PUT] Overwrites an existing application",
         "parameters": [
           {
-            "name": "applicationId",
+            "name": "islandIsApplicationId",
             "in": "path",
-            "description": "(required) ApplicationId.",
+            "description": "(required) The ApplicationId from Island.is.",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
           }
@@ -136,9 +91,9 @@
         "summary": "[DELETE] Deletes an application.",
         "parameters": [
           {
-            "name": "applicationId",
+            "name": "islandIsApplicationId",
             "in": "path",
-            "description": "(required) ApplicationId.",
+            "description": "(required) The ApplicationId from Island.is.",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
           }
@@ -146,36 +101,78 @@
         "responses": { "200": { "description": "OK" } }
       }
     },
-    "/v1/applications/{applicationId}/attachments": {
-      "patch": {
+    "/v1/applications/{islandIsApplicationId}/id": {
+      "get": {
         "tags": ["Applications"],
-        "summary": "[PATCH] Adds attachments to an existing application.",
+        "summary": "[GET] Fetch an applicationId.",
         "parameters": [
           {
-            "name": "applicationId",
+            "name": "islandIsApplicationId",
             "in": "path",
-            "description": "The ID of the application to add attachments to.",
+            "description": "(required) The ApplicationId from Island.is.",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
           }
         ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "files": {
-                    "type": "array",
-                    "items": { "type": "string", "format": "binary" }
-                  }
-                }
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "uuid" }
               },
-              "encoding": { "files": { "style": "form" } }
+              "application/json": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/applications": {
+      "post": {
+        "tags": ["Applications"],
+        "summary": "[POST] Creates a new application.",
+        "requestBody": {
+          "description": "(required) Application MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
             }
           }
         },
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/schools/{schoolId}": {
@@ -456,6 +453,12 @@
       "ApplicationBaseDto": {
         "type": "object",
         "properties": {
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
           "applicantNationalId": {
             "type": "string",
             "description": "The national ID  of the applicant",
@@ -464,6 +467,11 @@
           "applicantName": {
             "type": "string",
             "description": "Applicant name",
+            "nullable": true
+          },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
             "nullable": true
           },
           "attachments": {
@@ -529,6 +537,18 @@
         "additionalProperties": false,
         "description": "Base properties for creating an application"
       },
+      "ApplicationChoiceStatus": {
+        "enum": [
+          "NewApplication",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "AcceptedInOtherSchool",
+          "Rejected"
+        ],
+        "type": "string",
+        "description": "Enum for describing Application Status"
+      },
       "ApplicationChoicesBaseDto": {
         "type": "object",
         "properties": {
@@ -560,8 +580,7 @@
           },
           "requestDormitory": {
             "type": "boolean",
-            "description": "Is the student requesting dormitory.",
-            "nullable": true
+            "description": "Is the student requesting dormitory."
           }
         },
         "additionalProperties": false
@@ -574,10 +593,12 @@
             "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
             "format": "int32"
           },
-          "school": { "$ref": "#/components/schemas/SchoolDto" },
-          "programmeChoice": {
+          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
+          "programmeChoices": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
+            "items": {
+              "$ref": "#/components/schemas/ProgrammeChoiceReturnDto"
+            },
             "description": "Programme choice",
             "nullable": true
           },
@@ -586,7 +607,13 @@
           "requestDormitory": {
             "type": "boolean",
             "description": "Is the student requesting dormitory."
-          }
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the application choice",
+            "format": "int32"
+          },
+          "status": { "$ref": "#/components/schemas/ApplicationChoiceStatus" }
         },
         "additionalProperties": false
       },
@@ -643,6 +670,12 @@
             "description": "List of attachments",
             "nullable": true
           },
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
           "applicantNationalId": {
             "type": "string",
             "description": "The national ID  of the applicant",
@@ -651,6 +684,11 @@
           "applicantName": {
             "type": "string",
             "description": "Applicant name",
+            "nullable": true
+          },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
             "nullable": true
           },
           "isFreshman": {
@@ -697,7 +735,7 @@
         "additionalProperties": false
       },
       "ApplicationStatus": {
-        "enum": ["NewApplication", "Rejected", "Accepted", "PaymentPending"],
+        "enum": ["NewApplication", "Accepted", "AcceptedWaiting", "Rejected"],
         "type": "string",
         "description": "Enum for describing Application Status"
       },
@@ -735,7 +773,8 @@
             "type": "string",
             "description": "Content type (e.g., \"pdf\").\r\nNot contstrained to a specific set of values.",
             "nullable": true
-          }
+          },
+          "id": { "type": "string", "format": "uuid" }
         },
         "additionalProperties": false
       },
@@ -844,6 +883,11 @@
       "ProgrammeChoiceDto": {
         "type": "object",
         "properties": {
+          "applicationChoiceId": {
+            "type": "string",
+            "description": "Reference to the application choice",
+            "format": "uuid"
+          },
           "programmeId": {
             "type": "string",
             "description": "Reference to the programme being selected",
@@ -856,6 +900,48 @@
           }
         },
         "additionalProperties": false
+      },
+      "ProgrammeChoiceReturnDto": {
+        "type": "object",
+        "properties": {
+          "programmeId": {
+            "type": "string",
+            "description": "Reference to the programme being selected",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the programme",
+            "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the programme\r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "isSpecialNeedsProgramme": {
+            "type": "boolean",
+            "description": "Boolean value indicating if the programme is a special needs programme"
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the programme choice",
+            "format": "int32"
+          },
+          "status": { "$ref": "#/components/schemas/ProgrammeChoiceStatus" }
+        },
+        "additionalProperties": false
+      },
+      "ProgrammeChoiceStatus": {
+        "enum": [
+          "New",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "OtherProgrammeAccepted",
+          "Rejected"
+        ],
+        "type": "string"
       },
       "ProgrammeSimpleDto": {
         "type": "object",
@@ -870,6 +956,7 @@
             "format": "date-time",
             "nullable": true
           },
+          "isSpecialNeedsProgramme": { "type": "boolean" },
           "schoolId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
@@ -949,6 +1036,27 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/LanguageDto" },
             "description": "Nordic languageges tought in school",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SchoolSimpleDto": {
+        "type": "object",
+        "properties": {
+          "schoolId": {
+            "type": "string",
+            "description": "What school is being applied to",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of school",
+            "nullable": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "description": "Abbr for school",
             "nullable": true
           }
         },

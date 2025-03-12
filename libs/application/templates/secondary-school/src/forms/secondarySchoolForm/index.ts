@@ -5,14 +5,10 @@ import { schoolSection } from './schoolSection'
 import { extraInformationSection } from './extraInformationSection'
 import { overviewSection } from './overviewSection'
 import { Logo } from '../../assets/Logo'
-import {
-  conclusionSectionFreshman,
-  conclusionSectionGeneral,
-} from './conclusionSection'
+import { conclusionSection } from './conclusionSection'
 
 export const SecondarySchoolForm: Form = buildForm({
-  id: 'SecondarySchoolFormDraft',
-  title: '',
+  id: 'SecondarySchoolForm',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: false,
@@ -24,7 +20,6 @@ export const SecondarySchoolForm: Form = buildForm({
     overviewSection,
     // Note: The conclusion section will appear after submit, but then on refresh the
     // conclusionForm is visible (overview)
-    conclusionSectionFreshman,
-    conclusionSectionGeneral,
+    conclusionSection,
   ],
 })

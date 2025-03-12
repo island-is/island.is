@@ -13,7 +13,6 @@ import { subSectionPhone } from './subSectionPhone'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
-  title: '',
   logo: LogreglanLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

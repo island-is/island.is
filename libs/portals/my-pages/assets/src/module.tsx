@@ -5,6 +5,7 @@ import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
+import { redirects } from './assetRedirects'
 
 const IPOverview = lazy(() =>
   import(
@@ -103,14 +104,12 @@ export const assetsModule: PortalModule = {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachines,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
-        key: 'WorkMachines',
         element: <WorkMachinesOverview />,
       },
       {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachinesDetail,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
-        key: 'WorkMachines',
         element: <WorkMachinesDetail />,
       },
       {
@@ -142,35 +141,30 @@ export const assetsModule: PortalModule = {
         name: m.vehicleMileage,
         path: AssetsPaths.AssetsVehiclesDetailMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        key: 'VehicleMileage',
         element: <VehicleMileage />,
       },
       {
         name: m.vehiclesBulkMileage,
         path: AssetsPaths.AssetsVehiclesBulkMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileage />,
       },
       {
         name: m.vehiclesBulkMileageUpload,
         path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileageUpload />,
       },
       {
         name: m.vehiclesBulkMileageJobOverview,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileageJobOverview />,
       },
       {
         name: m.vehiclesBulkMileageJobDetail,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        key: 'VehicleBulkMileage',
         element: <VehicleBulkMileageJobDetail />,
       },
       {
@@ -184,33 +178,29 @@ export const assetsModule: PortalModule = {
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualProperties,
-        key: 'IntellectualProperties',
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPOverview />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesDesign,
-        key: 'IntellectualProperties',
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPDesignDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
-        key: 'IntellectualProperties',
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPTrademarkDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesPatent,
-        key: 'IntellectualProperties',
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
         element: <IPPatentDetail />,
       },
+      ...redirects,
     ]
-
     return routes
   },
 }

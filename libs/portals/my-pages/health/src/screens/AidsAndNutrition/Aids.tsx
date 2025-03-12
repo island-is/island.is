@@ -95,6 +95,7 @@ const Aids = ({ data }: Props) => {
               <NestedInfoLines
                 data={generateFoldedValues(rowItem)}
                 width="full"
+                backgroundColor="blue"
               />
             ),
           }))}

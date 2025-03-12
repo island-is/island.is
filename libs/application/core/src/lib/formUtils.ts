@@ -248,6 +248,7 @@ export const formatText = <T extends FormTextArray | FormText>(
   application: Application,
   formatMessage: MessageFormatter,
 ): T extends FormTextArray ? string[] : string => {
+  text = text ?? ''
   if (typeof text === 'function') {
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,

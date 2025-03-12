@@ -6,13 +6,25 @@ import {
   buildTextField,
   coreMessages,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getCurrentSchoolName } from '../../../lib/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
+import { ApplicationType } from '../../../lib/constants'
+import { newPrimarySchoolMessages } from '../../../lib/messages'
+import {
+  formatGrade,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getCurrentSchoolName,
+} from '../../../lib/newPrimarySchoolUtils'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
   title: newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
+  condition: (answers) => {
+    // Only display section if application type is "Application for a new primary school"
+    const { applicationType } = getApplicationAnswers(answers)
+    return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+  },
   children: [
     buildMultiField({
       id: 'currentSchool',
@@ -21,7 +33,7 @@ export const currentSchoolSubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'currentSchool.description',
-          title: newPrimarySchoolMessages.primarySchool.currentSchoolInfo,
+          title: newPrimarySchoolMessages.primarySchool.currentSchool,
           titleVariant: 'h4',
         }),
         buildTextField({
@@ -32,13 +44,27 @@ export const currentSchoolSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getCurrentSchoolName(application),
         }),
-        buildCustomField({
-          id: 'currentSchool.grade',
-          title: newPrimarySchoolMessages.primarySchool.grade,
-          width: 'half',
-          disabled: true,
-          component: 'Grade',
-        }),
+        buildCustomField(
+          {
+            id: 'currentSchool.grade',
+            title: newPrimarySchoolMessages.primarySchool.grade,
+            width: 'half',
+            component: 'DynamicDisabledText',
+          },
+          {
+            value: (application: Application, lang: Locale) => {
+              const { childGradeLevel } = getApplicationExternalData(
+                application.externalData,
+              )
+              return {
+                ...newPrimarySchoolMessages.primarySchool.currentGrade,
+                values: {
+                  grade: formatGrade(childGradeLevel, lang),
+                },
+              }
+            },
+          },
+        ),
       ],
     }),
   ],

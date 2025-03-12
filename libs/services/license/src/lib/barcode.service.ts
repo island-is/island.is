@@ -4,13 +4,14 @@ import {
 } from '@island.is/clients/license-client'
 import { ConfigType } from '@nestjs/config'
 import { Inject, Injectable } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager'
+import { Cache as CacheManager, Milliseconds } from 'cache-manager'
 import { sign, VerifyOptions, verify } from 'jsonwebtoken'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
 
-export const BARCODE_EXPIRE_TIME_IN_SEC = 60
 export const TOKEN_EXPIRED_ERROR = 'TokenExpiredError'
+export const BARCODE_ACTIVE_SESSION_KEY = 'activeSession'
+
 /**
  * License token data used to generate a license token
  * The reason for the one letter fields is to keep the token as small as possible, since it will be used to generate barcodes
@@ -65,7 +66,8 @@ export class BarcodeService {
     expiresIn: number
   }> {
     // jsonwebtoken uses seconds for expiration time
-    const exp = Math.floor(Date.now() / 1000) + BARCODE_EXPIRE_TIME_IN_SEC
+    const exp =
+      Math.floor(Date.now() / 1000) + this.config.barcodeExpireTimeInSec
 
     return new Promise((resolve, reject) =>
       sign(
@@ -82,7 +84,7 @@ export class BarcodeService {
 
           return resolve({
             token: encoded,
-            expiresIn: BARCODE_EXPIRE_TIME_IN_SEC,
+            expiresIn: this.config.barcodeExpireTimeInSec,
           })
         },
       ),
@@ -93,7 +95,23 @@ export class BarcodeService {
     key: string,
     value: BarcodeData<Type>,
   ) {
-    return this.cacheManager.set(key, value, BARCODE_EXPIRE_TIME_IN_SEC * 1000)
+    return this.cacheManager.set(
+      key,
+      value,
+      this.config.barcodeExpireTimeInSec * 1000,
+    )
+  }
+
+  async setSessionCache(key: string, value: string) {
+    return this.cacheManager.set(
+      `${BARCODE_ACTIVE_SESSION_KEY}:${key}`,
+      value,
+      this.config.barcodeSessionExpireTimeInSec * 1000,
+    )
+  }
+
+  async getSessionCache(key: string): Promise<string | undefined> {
+    return this.cacheManager.get(`${BARCODE_ACTIVE_SESSION_KEY}:${key}`)
   }
 
   async getCache<Type extends LicenseType>(

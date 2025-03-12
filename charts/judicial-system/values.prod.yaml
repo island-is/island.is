@@ -71,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -106,6 +107,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
     CONTENTFUL_ENVIRONMENT: 'master'
@@ -209,6 +213,7 @@ judicial-system-backend:
     COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
     COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+    COURT_OF_APPEALS_ASSISTANT_EMAILS: '/k8s/judicial-system/COURT_OF_APPEALS_ASSISTANT_EMAILS'
     COURT_ROBOT_CLIENT_ID: '/k8s/judicial-system/COURT_ROBOT_CLIENT_ID'
     COURT_ROBOT_CLIENT_SECRET: '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET'
     COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'

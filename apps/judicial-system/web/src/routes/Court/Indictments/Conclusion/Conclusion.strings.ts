@@ -99,6 +99,18 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í Sameinað valmöguleika á Niðurstaða skrefi.',
   },
+  mergeCaseNumberLabel: {
+    id: 'judicial.system.core:court.indictments.conclusion.merge_case_number_label',
+    defaultMessage: 'Sameina við mál utan Réttarvörslugáttar',
+    description:
+      'Notaður sem label texti í innsláttarsvæði til að sameina mál utan RVG',
+  },
+  mergeCaseNumberPlaceholder: {
+    id: 'judicial.system.core:court.indictments.conclusion.merge_case_number_placeholder',
+    defaultMessage: 'Sláðu inn málsnúmer',
+    description:
+      'Notaður sem skýritexti í innsláttarsvæði til að sameina mál utan RVG',
+  },
   courtRecordTitle: {
     id: 'judicial.system.core:court.indictments.conclusion.court_record_title',
     defaultMessage: 'Þingbók',

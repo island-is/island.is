@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react'
 import { useMeasure } from 'react-use'
+
 import {
   Box,
-  Stack,
-  Text,
   FocusableBox,
   Hyphen,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import type { LinkCard } from '@island.is/web/graphql/schema'
 

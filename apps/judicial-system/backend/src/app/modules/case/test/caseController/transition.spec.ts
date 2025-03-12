@@ -310,9 +310,10 @@ describe('CaseController - Transition', () => {
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
-      each([...indictmentCases]).describe('%s case', (type) => {
+      each(indictmentCases).describe('%s case', (type) => {
         const caseId = uuid()
         const policeCaseNumber = uuid()
+        const courtCaseNumber = uuid()
         const caseFileId1 = uuid()
         const caseFileId2 = uuid()
         const caseFiles = [
@@ -333,6 +334,7 @@ describe('CaseController - Transition', () => {
           origin: CaseOrigin.LOKE,
           type,
           policeCaseNumbers: [policeCaseNumber],
+          courtCaseNumber,
           state: oldState,
           caseFiles,
           courtEndTime,
@@ -342,6 +344,7 @@ describe('CaseController - Transition', () => {
           origin: CaseOrigin.LOKE,
           type,
           policeCaseNumbers: [policeCaseNumber],
+          courtCaseNumber,
           state: newState,
           caseFiles,
           courtEndTime,
@@ -372,7 +375,9 @@ describe('CaseController - Transition', () => {
                   ? null
                   : undefined,
               rulingDate:
-                transition === CaseTransition.COMPLETE ? date : undefined,
+                transition === CaseTransition.COMPLETE
+                  ? courtEndTime
+                  : undefined,
               indictmentDeniedExplanation:
                 transition === CaseTransition.SUBMIT ? null : undefined,
               indictmentReturnedExplanation:
@@ -526,6 +531,15 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                   body: { type: CaseNotificationType.REVOKED },
+                },
+                {
+                  type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                  body: { withCourtCaseNumber: true },
                 },
               ],
             )

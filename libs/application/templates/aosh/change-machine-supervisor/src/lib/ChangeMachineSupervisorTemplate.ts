@@ -25,6 +25,7 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -45,6 +46,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHANGE_MACHINE_SUPERVISOR,
   name: determineMessageFromApplicationAnswers,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.ChangeMachineSupervisor.translation,

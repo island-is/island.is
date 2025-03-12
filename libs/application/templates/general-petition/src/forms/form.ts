@@ -32,7 +32,6 @@ import addMonths from 'date-fns/addMonths'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -99,7 +98,6 @@ export const form: Form = buildForm({
             //fake field to trigger rerender on date switch
             buildDescriptionField({
               id: 'fake_helper_field',
-              title: '',
               condition: (answers) =>
                 !!getValueViaPath(answers, 'dates.dateFrom'),
             }),
@@ -235,7 +233,6 @@ export const form: Form = buildForm({
             }),
             buildSubmitField({
               id: 'createPetition.submit',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

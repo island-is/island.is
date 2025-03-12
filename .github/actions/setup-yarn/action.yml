@@ -1,0 +1,40 @@
+name: 'Setup yarn'
+description: 'Yarn setup and install dependencies'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Compare yarn.lock files
+      shell: bash
+      id: compare_yarn_lock
+      run: |
+        current=$(sha256sum yarn.lock | awk '{print $1}')
+        bundled=$(sha256sum /home/runner/dependencies/yarn.lock | awk '{print $1}')
+        skip_install=$([ "$current" = "$bundled" ] && echo true || echo false)
+        echo "Current hash: $current"
+        echo "Bundled hash: $bundled"
+        echo "Will skip running 'yarn install' step: $skip_install"
+        echo "skip_install=$skip_install" >> $GITHUB_OUTPUT
+
+    - name: Setup Yarn
+      shell: bash
+      run: |
+        corepack enable
+        corepack prepare --activate
+        yarn --version
+
+    - name: Run yarn install if yarn.lock changed
+      shell: bash
+      if: steps.compare_yarn_lock.outputs.skip_install == 'false'
+      run: |
+        yarn install --immutable
+
+    - name: Link pre-installed dependencies
+      if: steps.compare_yarn_lock.outputs.skip_install == 'true'
+      shell: bash
+      run: |
+        rm -rf node_modules
+        ln -s /home/runner/dependencies/node_modules .
+        ln -s /home/runner/dependencies/.yarn/cache .yarn/
+        # ln -s /home/runner/dependencies/.yarn/install-state.gz .yarn/
+        echo "NODE_PATH=/home/runner/dependencies/node_modules:$NODE_PATH" >> $GITHUB_ENV

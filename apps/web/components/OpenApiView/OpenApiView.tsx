@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react'
+import YamlParser from 'js-yaml'
 import { useQuery } from '@apollo/client'
+
+import { OpenApi } from '@island.is/api-catalogue/types'
 import {
   AlertBanner,
   Box,
-  Text,
-  Stack,
   LoadingDots,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import {
-  GetOpenApiInput,
   GetNamespaceQuery,
+  GetOpenApiInput,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
-import YamlParser from 'js-yaml'
+
 import { OpenApiDocumentation } from '../OpenApiDocumentation'
 
 export interface OpenApiViewProps {

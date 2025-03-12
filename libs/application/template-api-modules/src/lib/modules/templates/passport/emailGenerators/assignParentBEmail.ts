@@ -63,13 +63,6 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
       title: subject,
       body: [
         { component: 'Heading', context: { copy: subject } },
-        {
-          component: 'Image',
-          context: {
-            src: pathToAsset('notification.jpg'),
-            alt: 'myndskreyting',
-          },
-        },
         { component: 'Copy', context: { copy: 'Góðan dag.' } },
         {
           component: 'Copy',

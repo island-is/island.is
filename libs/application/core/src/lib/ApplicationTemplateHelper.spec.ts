@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
 import { DefaultStateLifeCycle } from './constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const createMockApplication = (
   data: {
@@ -51,6 +52,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
   },
   type: ApplicationTypes.EXAMPLE,
   name: 'Test application',
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema: z.object({
     person: z.object({
       age: z.number().min(18),

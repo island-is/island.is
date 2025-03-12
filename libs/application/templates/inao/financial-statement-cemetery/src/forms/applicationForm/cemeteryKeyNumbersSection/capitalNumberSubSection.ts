@@ -33,7 +33,6 @@ export const capitalNumberSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: CAPITALNUMBERS.total,
-          title: '',
           label: m.totalCapital,
           value: sumCapitalNumbers,
           variant: 'currency',

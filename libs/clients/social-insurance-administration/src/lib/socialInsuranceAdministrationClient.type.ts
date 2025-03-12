@@ -92,6 +92,7 @@ export interface Months {
 
 export interface IncomePlanInfo {
   incomeYear: number
+  distributeIncomeByMonth: boolean
   incomeTypes: Array<IncomeTypes>
 }
 

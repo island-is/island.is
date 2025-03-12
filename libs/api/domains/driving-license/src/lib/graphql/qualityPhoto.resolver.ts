@@ -22,7 +22,7 @@ export class QualityPhotoResolver {
   resolveDataUri(
     @Parent() { hasQualityPhoto }: QualityPhoto,
     @CurrentUser() user: User,
-  ): Promise<String | null> {
+  ): Promise<string | null> {
     return hasQualityPhoto
       ? this.drivingLicenseService.getQualityPhotoUri(user.authorization)
       : Promise.resolve(null)

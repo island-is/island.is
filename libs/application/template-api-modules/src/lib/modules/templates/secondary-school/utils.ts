@@ -1,13 +1,8 @@
 import { EmailRecipient } from './types'
 import { join } from 'path'
 import { SecondarySchoolAnswers } from '@island.is/application/templates/secondary-school'
-import {
-  Application,
-  FormValue,
-  NationalRegistryParent,
-  YES,
-} from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   ApplicationContact,
   ApplicationSelectionSchool,
@@ -39,12 +34,12 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
       answers,
       'custodians',
     ) || []
-  ).filter((x) => !!x.nationalId)
+  ).filter((x) => !!x.person?.nationalId)
   custodians.forEach((custodian) => {
     recipientList.push({
-      nationalId: custodian.nationalId,
-      name: custodian.name || '',
-      email: custodian.email || '',
+      nationalId: custodian.person?.nationalId,
+      name: custodian.person?.name || '',
+      email: custodian.person?.email || '',
     })
   })
 
@@ -56,27 +51,24 @@ export const getCleanContacts = (
 ): ApplicationContact[] => {
   const result: ApplicationContact[] = []
 
-  // Parents
-  const parents = (
-    getValueViaPath<NationalRegistryParent[]>(
-      application.externalData,
-      'nationalRegistryParents.data',
-    ) || []
-  ).filter((x) => !!x.nationalId)
-  const parentsAnswers =
+  // Custodians
+  const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
       'custodians',
     ) || []
-  parents.forEach((parent, index) => {
+  const custodiansExternalData = custodiansAnswers.filter(
+    (x) => !!x.person?.nationalId,
+  )
+  custodiansExternalData.forEach((custodian, index) => {
     result.push({
-      nationalId: parent.nationalId,
-      name: `${parent.givenName} ${parent.familyName}`,
-      phone: parentsAnswers[index]?.phone || '',
-      email: parentsAnswers[index]?.email || '',
-      address: parent.legalDomicile?.streetAddress,
-      postalCode: parent.legalDomicile?.postalCode || undefined,
-      city: parent.legalDomicile?.locality || undefined,
+      nationalId: custodian.person?.nationalId,
+      name: custodian.person?.name,
+      phone: custodiansAnswers[index]?.person?.phone || '',
+      email: custodiansAnswers[index]?.person?.email || '',
+      address: custodian.legalDomicile?.streetAddress,
+      postalCode: custodian.legalDomicile?.postalCode || undefined,
+      city: custodian.legalDomicile?.city || undefined,
     })
   })
 
@@ -84,12 +76,12 @@ export const getCleanContacts = (
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
   >(application.answers, 'mainOtherContact')
-  if (mainOtherContact?.nationalId)
+  if (mainOtherContact?.person?.nationalId)
     result.push({
-      nationalId: mainOtherContact.nationalId,
-      name: mainOtherContact.name || '',
-      phone: mainOtherContact.phone || '',
-      email: mainOtherContact.email || '',
+      nationalId: mainOtherContact.person?.nationalId,
+      name: mainOtherContact.person?.name || '',
+      phone: mainOtherContact.person?.phone || '',
+      email: mainOtherContact.person?.email || '',
     })
 
   // Other contacts
@@ -101,10 +93,10 @@ export const getCleanContacts = (
   ).filter((x) => !!x.person.nationalId)
   otherContacts.forEach((otherContact) => {
     result.push({
-      nationalId: otherContact.person.nationalId,
-      name: otherContact.person.name || '',
-      phone: otherContact.phone || '',
-      email: otherContact.email || '',
+      nationalId: otherContact.person?.nationalId,
+      name: otherContact.person?.name || '',
+      phone: otherContact.person?.phone || '',
+      email: otherContact.person?.email || '',
     })
   })
 
@@ -118,17 +110,13 @@ export const getCleanSchoolSelection = (
 
   let schoolPriority = 1
 
-  const selectionKeys = ['first', 'second', 'third']
-  selectionKeys.forEach((selectionKey) => {
+  const indexKeys = [0, 1, 2]
+  indexKeys.forEach((index) => {
     const selectionItem = getValueViaPath<
-      SecondarySchoolAnswers['selection']['first']
-    >(application.answers, `selection.${selectionKey}`)
+      SecondarySchoolAnswers['selection'][0]
+    >(application.answers, `selection.${index}`)
 
-    if (
-      (selectionItem?.include || selectionKey === 'first') &&
-      selectionItem?.school?.id &&
-      selectionItem?.firstProgram?.id
-    ) {
+    if (selectionItem?.school?.id && selectionItem?.firstProgram?.id) {
       result.push({
         priority: schoolPriority++,
         schoolId: selectionItem.school.id,
@@ -139,9 +127,7 @@ export const getCleanSchoolSelection = (
           },
           {
             priority: 2,
-            programId: selectionItem.secondProgram?.include
-              ? selectionItem.secondProgram.id || ''
-              : '',
+            programId: selectionItem.secondProgram?.id || '',
           },
         ].filter((x) => !!x.programId),
         thirdLanguageCode: selectionItem.thirdLanguage?.code || undefined,

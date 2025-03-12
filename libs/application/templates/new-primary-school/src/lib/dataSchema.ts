@@ -1,8 +1,13 @@
-import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { ReasonForApplicationOptions } from './constants'
+import {
+  ApplicationType,
+  LanguageEnvironmentOptions,
+  ReasonForApplicationOptions,
+} from './constants'
+
+import { NO, YES } from '@island.is/application/core'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -17,6 +22,10 @@ const phoneNumberSchema = z
   })
 
 export const dataSchema = z.object({
+  applicationType: z.enum([
+    ApplicationType.NEW_PRIMARY_SCHOOL,
+    ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+  ]),
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
   childInfo: z
@@ -45,18 +54,12 @@ export const dataSchema = z.object({
           : true,
       { path: ['placeOfResidence', 'postalCode'] },
     ),
-  parents: z.object({
-    parent1: z.object({
+  guardians: z.array(
+    z.object({
       email: z.string().email(),
       phoneNumber: phoneNumberSchema,
     }),
-    parent2: z
-      .object({
-        email: z.string().email(),
-        phoneNumber: phoneNumberSchema,
-      })
-      .optional(),
-  }),
+  ),
   contacts: z
     .array(
       z.object({
@@ -71,14 +74,13 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.contactsRequired,
     }),
+  currentNursery: z.object({
+    municipality: z.string(),
+    nursery: z.string(),
+  }),
   reasonForApplication: z
     .object({
       reason: z.string(),
-      movingAbroad: z
-        .object({
-          country: z.string().optional(),
-        })
-        .optional(),
       transferOfLegalDomicile: z
         .object({
           streetAddress: z.string(),
@@ -86,15 +88,6 @@ export const dataSchema = z.object({
         })
         .optional(),
     })
-    .refine(
-      ({ reason, movingAbroad }) =>
-        reason === ReasonForApplicationOptions.MOVING_ABROAD
-          ? movingAbroad && !!movingAbroad.country
-          : true,
-      {
-        path: ['movingAbroad', 'country'],
-      },
-    )
     .refine(
       ({ reason, transferOfLegalDomicile }) =>
         reason === ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -115,11 +108,12 @@ export const dataSchema = z.object({
         path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
-  schools: z.object({
-    newSchool: z.object({
-      municipality: z.string(),
-      school: z.string(),
-    }),
+  newSchool: z.object({
+    municipality: z.string(),
+    school: z.string(),
+  }),
+  school: z.object({
+    applyForNeighbourhoodSchool: z.enum([YES, NO]),
   }),
   siblings: z
     .array(
@@ -133,28 +127,110 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
-  startDate: z.string(),
-  languages: z
+  startingSchool: z
     .object({
-      nativeLanguage: z.string(),
-      otherLanguagesSpokenDaily: z.enum([YES, NO]),
-      otherLanguages: z.array(z.string()).optional(),
+      expectedStartDate: z.string(),
+      temporaryStay: z.string().min(1).optional(),
+      expectedEndDate: z.string().optional(),
     })
     .refine(
-      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
-        otherLanguagesSpokenDaily === YES
-          ? !!otherLanguages && otherLanguages.length > 0
-          : true,
+      ({ expectedStartDate, expectedEndDate, temporaryStay }) =>
+        !(
+          temporaryStay === YES &&
+          expectedEndDate &&
+          new Date(expectedStartDate) > new Date(expectedEndDate)
+        ),
       {
-        path: ['otherLanguages'],
-        params: errorMessages.languagesRequired,
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateMessage,
+      },
+    )
+    .refine(
+      ({ expectedEndDate, temporaryStay }) =>
+        !(temporaryStay === YES && !expectedEndDate),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateRequired,
+      },
+    ),
+  languages: z
+    .object({
+      languageEnvironment: z.string(),
+      signLanguage: z.enum([YES, NO]),
+      guardianRequiresInterpreter: z.string().optional(),
+      selectedLanguages: z
+        .array(z.object({ code: z.string().optional().nullable() }))
+        .optional(),
+      preferredLanguage: z.string().optional().nullable(),
+    })
+    .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {
+      const checkAndAddIssue = (index: number) => {
+        // If required 2 languages but the second language field is still hidden
+        // else check if applicant has selected a languages
+        if (index === 1 && selectedLanguages?.length === 1) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.twoLanguagesRequired,
+            path: ['selectedLanguages'],
+          })
+        } else if (!selectedLanguages?.[index]?.code) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.languageRequired,
+            path: ['selectedLanguages', index, 'code'],
+          })
+        }
+      }
+
+      if (
+        languageEnvironment ===
+        LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+      ) {
+        checkAndAddIssue(0)
+      } else if (
+        languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+      ) {
+        checkAndAddIssue(0)
+        checkAndAddIssue(1)
+      }
+    })
+    .refine(
+      ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
+        if (
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 1) ||
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 2)
+        ) {
+          return !!preferredLanguage
+        }
+
+        return true
+      },
+      {
+        path: ['preferredLanguage'],
+        params: errorMessages.languageRequired,
+      },
+    )
+    .refine(
+      ({ languageEnvironment, guardianRequiresInterpreter }) => {
+        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+          ? !!guardianRequiresInterpreter
+          : true
+      },
+      {
+        path: ['guardianRequiresInterpreter'],
       },
     ),
   freeSchoolMeal: z
     .object({
       acceptFreeSchoolLunch: z.enum([YES, NO]),
       hasSpecialNeeds: z.string().optional(),
-      specialNeedsType: z.string().optional(),
+      specialNeedsType: z.string().optional().nullable(),
     })
     .refine(
       ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
@@ -177,12 +253,12 @@ export const dataSchema = z.object({
   allergiesAndIntolerances: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),
-      foodAllergiesOrIntolerances: z.array(z.string()).optional(),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional().nullable(),
       hasOtherAllergies: z.array(z.string()),
-      otherAllergies: z.array(z.string()).optional(),
+      otherAllergies: z.array(z.string()).optional().nullable(),
       usesEpiPen: z.string().optional(),
       hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
-      requestMedicationAssistance: z.enum([YES, NO]),
+      requestsMedicationAdministration: z.enum([YES, NO]),
     })
     .refine(
       ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
@@ -213,11 +289,72 @@ export const dataSchema = z.object({
           : true,
       { path: ['usesEpiPen'] },
     ),
-  support: z.object({
-    developmentalAssessment: z.enum([YES, NO]),
-    specialSupport: z.enum([YES, NO]),
-    requestMeeting: z.array(z.enum([YES, NO])).optional(),
-  }),
+  support: z
+    .object({
+      hasDiagnoses: z.enum([YES, NO]),
+      hasHadSupport: z.enum([YES, NO]),
+      hasIntegratedServices: z.string().optional(),
+      hasCaseManager: z.string().optional(),
+      caseManager: z
+        .object({
+          name: z.string(),
+          email: z.string().email().optional().or(z.literal('')),
+        })
+        .optional(),
+      requestingMeeting: z.array(z.enum([YES, NO])).optional(),
+    })
+    .refine(
+      ({ hasDiagnoses, hasHadSupport, hasIntegratedServices }) =>
+        hasDiagnoses === YES || hasHadSupport === YES
+          ? !!hasIntegratedServices
+          : true,
+      { path: ['hasIntegratedServices'] },
+    )
+    .refine(
+      ({
+        hasDiagnoses,
+        hasHadSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+      }) =>
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
+        hasIntegratedServices === YES
+          ? !!hasCaseManager
+          : true,
+      { path: ['hasCaseManager'] },
+    )
+    .refine(
+      ({
+        hasDiagnoses,
+        hasHadSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+        caseManager,
+      }) =>
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
+        hasIntegratedServices === YES &&
+        hasCaseManager === YES
+          ? caseManager && caseManager.name.length > 0
+          : true,
+      { path: ['caseManager', 'name'] },
+    )
+    .refine(
+      ({
+        hasDiagnoses,
+        hasHadSupport,
+        hasIntegratedServices,
+        hasCaseManager,
+        caseManager,
+      }) =>
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
+        hasIntegratedServices === YES &&
+        hasCaseManager === YES
+          ? caseManager && caseManager.email && caseManager.email.length > 0
+          : true,
+      {
+        path: ['caseManager', 'email'],
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

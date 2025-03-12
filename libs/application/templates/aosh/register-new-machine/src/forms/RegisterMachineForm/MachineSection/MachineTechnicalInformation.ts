@@ -16,7 +16,6 @@ export const MachineTechnicalInformation = buildSubSection({
       children: [
         buildCustomField({
           id: 'machine.technicalInfo',
-          title: '',
           component: 'TechnicalInfo',
         }),
       ],

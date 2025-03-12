@@ -201,7 +201,7 @@ const GrantAccess = () => {
                           const valueAsString = value.toString()
                           if (
                             valueAsString.length === 10 &&
-                            !kennitala.isValid(value)
+                            !kennitala.isValid(valueAsString)
                           ) {
                             return formatMessage(m.grantInvalidSsn)
                           }

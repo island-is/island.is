@@ -5,8 +5,8 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LinkV2,
   Stack,
-  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
@@ -21,7 +21,12 @@ import {
   getProps,
   StandaloneParentSubpageProps,
 } from './Standalone/ParentSubpage'
-import { getSubpageNavList, SubPageContent } from './SubPage'
+import {
+  getSubpageNavList,
+  SubPageBottomSlices,
+  SubPageContent,
+} from './SubPage'
+import * as styles from './ParentSubpage.css'
 
 type OrganizationParentSubpageScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
@@ -68,52 +73,92 @@ const OrganizationParentSubpage: Screen<
       ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router, 3),
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
+      mainContent={
+        <Box paddingTop={4}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <Stack space={3}>
+                  {parentSubpage.childLinks.length > 1 && (
+                    <Stack space={4}>
+                      <Text variant="h1" as="h1">
+                        {parentSubpage.title}
+                      </Text>
+                      <Box
+                        paddingX={4}
+                        paddingY={2}
+                        borderLeftWidth="standard"
+                        borderColor="blue200"
+                      >
+                        <Stack space={1}>
+                          <Text variant="h5" as="h2">
+                            {namespace?.['OrganizationTableOfContentsTitle'] ??
+                            activeLocale === 'is'
+                              ? 'Efnisyfirlit'
+                              : 'Table of contents'}
+                          </Text>
+                          <Stack space={1}>
+                            {tableOfContentHeadings.map(
+                              ({ headingTitle, headingId, href }) => (
+                                <Box
+                                  key={headingId}
+                                  className={styles.fitContentWidth}
+                                >
+                                  <LinkV2 href={href}>
+                                    <Text
+                                      fontWeight={
+                                        headingId === selectedHeadingId
+                                          ? 'semiBold'
+                                          : 'regular'
+                                      }
+                                      variant="small"
+                                      color={
+                                        selectedHeadingId &&
+                                        headingId === selectedHeadingId
+                                          ? 'blue400'
+                                          : 'blue600'
+                                      }
+                                    >
+                                      {headingTitle}
+                                    </Text>
+                                  </LinkV2>
+                                </Box>
+                              ),
+                            )}
+                          </Stack>
+                        </Stack>
+                      </Box>
+                    </Stack>
+                  )}
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+          <SubPageContent
+            namespace={namespace}
+            organizationPage={organizationPage}
+            subpage={subpage}
+            subpageTitleVariant={
+              parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
+            }
+          />
+        </Box>
+      }
     >
-      <Box paddingTop={4}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-              <Stack space={3}>
-                {parentSubpage.childLinks.length > 1 && (
-                  <Stack space={4}>
-                    <Text variant="h1" as="h1">
-                      {parentSubpage.title}
-                    </Text>
-                    <TableOfContents
-                      headings={tableOfContentHeadings}
-                      onClick={(headingId) => {
-                        const href = tableOfContentHeadings.find(
-                          (heading) => heading.headingId === headingId,
-                        )?.href
-                        if (href) {
-                          router.push(href)
-                        }
-                      }}
-                      tableOfContentsTitle={
-                        namespace?.['OrganizationTableOfContentsTitle'] ??
-                        activeLocale === 'is'
-                          ? 'Efnisyfirlit'
-                          : 'Table of contents'
-                      }
-                      selectedHeadingId={selectedHeadingId}
-                    />
-                  </Stack>
-                )}
-              </Stack>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-        <SubPageContent
-          namespace={namespace}
-          organizationPage={organizationPage}
-          subpage={subpage}
-          subpageTitleVariant={
-            parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
-          }
-        />
-      </Box>
+      <SubPageBottomSlices
+        namespace={namespace}
+        organizationPage={organizationPage}
+        subpage={subpage}
+      />
     </OrganizationWrapper>
   )
 }

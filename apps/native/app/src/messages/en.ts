@@ -19,6 +19,7 @@ export const en: TranslatedMessages = {
     'Updated permissions required, please login again.',
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
+  'login.expiredMessage': 'Please log in again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -236,6 +237,22 @@ export const en: TranslatedMessages = {
   'inbox.filterDateConfirm': 'Confirm',
   'inbox.filterDateCancel': 'Cancel',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Select documents',
+  'inbox.bulkSelectAllButton': 'Select all',
+  'inbox.bulkDeselectAllButton': 'Deselect all',
+  'inbox.bulkSelectCancelButton': 'Cancel',
+  'inbox.bulkSelectActionStar': 'Star',
+  'inbox.bulkSelectActionArchive': 'Archive',
+  'inbox.bulkSelectActionRead': 'Mark as read',
+  'inbox.bulkSelect.starSuccess': 'Selected documents starred',
+  'inbox.bulkSelect.archiveSuccess': 'Selected documents archived',
+  'inbox.bulkSelect.markAsReadSuccess': 'Selected documents marked as read',
+  'inbox.bulkSelect.starError': 'Could not star documents',
+  'inbox.bulkSelect.archiveError': 'Could not archive documents',
+  'inbox.bulkSelect.markAsReadError': 'Could not mark documents as read',
+  'inbox.bulkSelect.pleaseTryAgain': 'Please try again later',
+
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
@@ -251,6 +268,8 @@ export const en: TranslatedMessages = {
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
   'wallet.lastUpdated': 'Last updated: {date}',
   'wallet.update': 'Update',
+  'wallet.yourLicenses': 'Your licenses',
+  'wallet.childLicenses': 'Your children’s licenses',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -270,10 +289,10 @@ export const en: TranslatedMessages = {
   'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
   'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorBadSession':
+    'Too little time since license was accessed on another device',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
-  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
-  'walletPass.licenseNumber': 'License number: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Could not update license',
 
   // wallet passport
@@ -284,14 +303,8 @@ export const en: TranslatedMessages = {
   'walletPassport.warningTitle': 'Expires within 6 months',
   'walletPassport.warningDescription':
     'Note that your passport will expire within the next 6 months.',
-  'walletPassport.displayName': 'Name',
-  'walletPassport.number': 'Number',
-  'walletPassport.issuingDate': 'Date issued',
-  'walletPassport.expirationDate': 'Expiration date',
-  'walletPassport.mrzName': 'Machine-readable name',
-  'walletPassport.children': 'Childrens passport',
-  'walletPassport.noPassport': 'No passport.',
-  'walletPassport.noPassportLink': 'Read more at island.is/vegabref',
+  'walletPassport.noPassport': 'No valid passport',
+  'walletPassport.noPassportLink': 'Apply',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -516,6 +529,8 @@ export const en: TranslatedMessages = {
     completed {Completed}
     rejected {Rejected}
     draft {Application in progress}
+    approved {Approved}
+    notstarted {Not started}
     other {Unknown status}
   }`,
   'applicationStatusCard.draftProgress':

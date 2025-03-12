@@ -63,7 +63,7 @@ export const childrenResidenceInfo = (
     selectedChildren,
   )
   const parentB = selectedExternalDataChildren[0].otherParent
-  const childrenLiveWithApplicant = children.some(
+  const childrenLiveWithApplicant = selectedExternalDataChildren.some(
     (child) => child.livesWithApplicant,
   )
 

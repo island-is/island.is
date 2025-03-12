@@ -1,5 +1,6 @@
 import { Locale } from '@island.is/shared/types'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -112,6 +113,12 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
                 arg: t.number ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                t.validity === 'active'
+                  ? ExpiryStatus.ACTIVE
+                  : t.validity === 'expired'
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.UNKNOWN,
               expired: !t.isValid,
               expireDate: t.validTo ? t.validTo.toISOString() : undefined,
               displayTag: expiryTag(

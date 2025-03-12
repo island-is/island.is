@@ -86,10 +86,12 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         }
       }
     } catch (e) {
-      logger.error(
-        'Error fetching quality photo and signature for digital tachograph drivers card',
-        e,
-      )
+      if (e.response?.status !== 404) {
+        logger.error(
+          'Error fetching quality photo and signature for digital tachograph drivers card',
+          e,
+        )
+      }
 
       throw new TemplateApiError(
         {
@@ -181,7 +183,8 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         birthPlace: nationalRegistryBirthplaceData?.location,
         emailAddress: answers.applicant.email,
         phoneNumber: answers.applicant.phone,
-        deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
+        deliveryMethodIsSend:
+          answers.cardDelivery?.deliveryMethodIsSend === YES,
         cardType: answers.cardTypeSelection.cardType,
         paymentReceivedAt: new Date(createChargeDate),
         photo: qualityPhotoAndSignatureData?.photoDataUri,

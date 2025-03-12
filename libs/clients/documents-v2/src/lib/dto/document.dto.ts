@@ -62,6 +62,9 @@ export const mapToDocument = (
     fileType = 'html'
 
     const html = sanitizeHtml(document.htmlContent, {
+      parser: {
+        lowerCaseAttributeNames: false,
+      },
       allowedTags: sanitizeHtml.defaults.allowedTags.concat([
         'img',
         ...svgTags,

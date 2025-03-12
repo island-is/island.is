@@ -141,6 +141,10 @@ export const m = defineMessages({
     id: 'api.license-service:number',
     defaultMessage: 'Númer',
   },
+  copy: {
+    id: 'api.license-service:copy',
+    defaultMessage: 'Afrita',
+  },
   countryNumber: {
     id: 'api.license-service:country-number',
     defaultMessage: 'Landsnúmer',

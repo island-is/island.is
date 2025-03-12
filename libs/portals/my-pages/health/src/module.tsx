@@ -99,7 +99,6 @@ export const healthModule: PortalModule = {
       name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
-      key: 'HealthOverview',
       element: <HealthOverview />,
     },
     {
@@ -141,28 +140,24 @@ export const healthModule: PortalModule = {
     {
       name: hm.paymentParticipation,
       path: HealthPaths.HealthPaymentParticipation,
-      key: 'HealthPayment',
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentParticipation />,
     },
     {
       name: hm.paymentOverview,
       path: HealthPaths.HealthPaymentOverview,
-      key: 'HealthPayment',
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverview />,
     },
     {
       name: hm.dentistsTitle,
       path: HealthPaths.HealthDentists,
-      key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <Dentists />,
     },
     {
       name: hm.healthCenterTitle,
       path: HealthPaths.HealthCenter,
-      key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <HealthCenter />,
     },

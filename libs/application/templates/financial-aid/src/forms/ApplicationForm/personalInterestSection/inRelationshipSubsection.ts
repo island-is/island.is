@@ -21,12 +21,10 @@ export const inRelationshipSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'inRelationshipDescriptionIntro',
-          title: '',
           description: m.inRelationship.general.intro,
         }),
         buildDescriptionField({
           id: 'inRelationshipDescription',
-          title: '',
           description: m.inRelationship.general.description,
         }),
         buildTextField({
@@ -38,7 +36,6 @@ export const inRelationshipSubsection = buildSubSection({
         }),
         buildCheckboxField({
           id: 'spouse.approveTerms',
-          title: '',
           required: true,
           options: inRelationshipOptions,
         }),

@@ -18,6 +18,7 @@ export const is = {
     'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -236,6 +237,22 @@ export const is = {
   'inbox.filterDateConfirm': 'Staðfesta',
   'inbox.filterDateCancel': 'Hætta við',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Velja skjöl',
+  'inbox.bulkSelectAllButton': 'Velja allt',
+  'inbox.bulkDeselectAllButton': 'Afvelja allt',
+  'inbox.bulkSelectCancelButton': 'Hætta við',
+  'inbox.bulkSelectActionStar': 'Stjörnumerkja',
+  'inbox.bulkSelectActionArchive': 'Geymsla',
+  'inbox.bulkSelectActionRead': 'Merkja lesið',
+  'inbox.bulkSelect.starSuccess': 'Valin skjöl stjörnumerkt',
+  'inbox.bulkSelect.archiveSuccess': 'Valin skjöl færð í geymslu',
+  'inbox.bulkSelect.markAsReadSuccess': 'Valin skjöl merkt sem lesin',
+  'inbox.bulkSelect.starError': 'Ekki tókst að stjörnumerkja skjöl',
+  'inbox.bulkSelect.archiveError': 'Ekki tókst að færa skjöl í geymslu',
+  'inbox.bulkSelect.markAsReadError': 'Ekki tókst að merkja skjöl sem lesin',
+  'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
+
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
@@ -387,6 +404,8 @@ export const is = {
     'Þegar þú færð t.d. ökuskírteini, skotvopnaleyfi eða veiðikort frá hinu opinbera birtast þau hér.',
   'wallet.lastUpdated': 'Síðast uppfært: {date}',
   'wallet.update': 'Uppfæra',
+  'wallet.yourLicenses': 'Þín skírteini',
+  'wallet.childLicenses': 'Skírteini barna þinna',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',
@@ -406,10 +425,10 @@ export const is = {
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
   'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorBadSession':
+    'Of stutt síðan skírteini var sótt á öðru tæki',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
-  'walletPass.passportNumber': 'Númer vegabréfs: {licenseNumber}',
-  'walletPass.licenseNumber': 'Skírteinisnúmer: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
   // wallet passport
@@ -420,14 +439,8 @@ export const is = {
   'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
   'walletPassport.warningDescription':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
-  'walletPassport.displayName': 'Nafn einstaklings',
-  'walletPassport.number': 'Númer vegabréfs',
-  'walletPassport.issuingDate': 'Útgáfudagur',
-  'walletPassport.expirationDate': 'Lokadagur',
-  'walletPassport.mrzName': 'Nafn á tölvulesanlegu formi',
-  'walletPassport.children': 'Vegabréf barna',
-  'walletPassport.noPassport': 'Ekki til útgefið vegabréf.',
-  'walletPassport.noPassportLink': 'Nánar á island.is/vegabref',
+  'walletPassport.noPassport': 'Engin gild vegabréf',
+  'walletPassport.noPassportLink': 'Sækja um',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',
@@ -516,6 +529,8 @@ export const is = {
     completed {Afgreidd}
     rejected {Hafnað}
     draft {Í vinnslu hjá þér}
+    approved {Samþykkt}
+    notstarted {Ekki hafin}
     other {Staða óþekkt}
   }`,
   'applicationStatusCard.draftProgress':

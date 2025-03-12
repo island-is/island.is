@@ -7,23 +7,22 @@ import {
   buildSection,
   buildSubmitField,
   coreMessages,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { conclusion } from '../lib/messages'
+import { conclusion, overview } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { ApplicationType } from '../utils'
+import { checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
-  id: 'ConclusionForm',
-  title: '',
+  id: 'SubmittedForm',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'conclusionSection',
-      title: conclusion.general.sectionTitle,
+      title: '',
+      tabTitle: conclusion.overview.sectionTitle,
       children: [
         buildMultiField({
           id: 'conclusionMultiField',
@@ -35,12 +34,7 @@ export const Submitted: Form = buildForm({
               title: conclusion.overview.alertTitle,
               message: conclusion.overview.alertMessageFreshman,
               condition: (answers) => {
-                return (
-                  getValueViaPath<ApplicationType>(
-                    answers,
-                    'applicationType.value',
-                  ) === ApplicationType.FRESHMAN
-                )
+                return checkIsFreshman(answers)
               },
             }),
             buildAlertMessageField({
@@ -49,23 +43,16 @@ export const Submitted: Form = buildForm({
               title: conclusion.overview.alertTitle,
               message: conclusion.overview.alertMessageGeneral,
               condition: (answers) => {
-                return (
-                  getValueViaPath<ApplicationType>(
-                    answers,
-                    'applicationType.value',
-                  ) !== ApplicationType.FRESHMAN
-                )
+                return !checkIsFreshman(answers)
               },
             }),
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
@@ -73,15 +60,19 @@ export const Submitted: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: conclusion.overview.editButton,
-                  type: 'signSubtle',
+                  name: overview.buttons.edit,
+                  type: 'signGhost',
                 },
               ],
+            }),
+            buildCustomField({
+              component: 'HandleBeforeSubmitInSubmitted',
+              id: 'handleBeforeSubmitInSubmitted',
+              description: '',
             }),
           ],
         }),

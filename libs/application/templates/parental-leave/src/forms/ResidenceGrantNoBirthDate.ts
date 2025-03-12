@@ -18,7 +18,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
   children: [
     buildSection({
       id: 'residenceGrantApplicationNoBirthDate.section',
-      title: '',
       children: [
         buildMultiField({
           title: (application) => {
@@ -46,7 +45,6 @@ export const ResidenceGrantNoBirthDate: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrantApplicationNoBirthDate.reject',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

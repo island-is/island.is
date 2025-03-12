@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
-import { Box, Icon, ColorSchemeContext } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
-import * as styles from './ComboButton.css'
 import cn from 'classnames'
-
 import { Button as ReaButton } from 'reakit/Button'
+
+import { Box, ColorSchemeContext, Icon } from '@island.is/island-ui/core'
+import { useI18n } from '@island.is/web/i18n'
+
+import * as styles from './ComboButton.css'
 
 interface ComboButtonProps {
   sideBarMenuOpen: () => void

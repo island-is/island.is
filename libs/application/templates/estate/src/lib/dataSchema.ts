@@ -97,11 +97,11 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        relationWithApplicant: z.string().optional(),
+        relationWithApplicant: z.string().nullish(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         noContactInfo: z
-          .array(z.union([z.literal('Yes'), z.literal('No')]))
+          .array(z.union([z.literal(YES), z.literal(NO)]))
           .optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().optional(),
@@ -244,23 +244,38 @@ export const estateSchema = z.object({
   bankAccounts: z
     .object({
       accountNumber: z.string(),
+      exchangeRateOrInterest: z.string(),
       balance: z.string(),
       total: z.number().optional(),
     })
     .refine(
-      ({ accountNumber, balance }) => {
-        return accountNumber !== '' ? isValidString(balance) : true
+      ({ accountNumber, balance, exchangeRateOrInterest }) => {
+        return accountNumber !== '' || exchangeRateOrInterest !== ''
+          ? isValidString(balance)
+          : true
       },
       {
         path: ['balance'],
       },
     )
     .refine(
-      ({ accountNumber, balance }) => {
-        return balance !== '' ? accountNumber !== '' : true
+      ({ accountNumber, balance, exchangeRateOrInterest }) => {
+        return balance !== '' || exchangeRateOrInterest !== ''
+          ? accountNumber !== ''
+          : true
       },
       {
         path: ['accountNumber'],
+      },
+    )
+    .refine(
+      ({ accountNumber, balance, exchangeRateOrInterest }) => {
+        return accountNumber !== '' || balance !== ''
+          ? isValidString(exchangeRateOrInterest)
+          : true
+      },
+      {
+        path: ['exchangeRateOrInterest'],
       },
     )
     .array()

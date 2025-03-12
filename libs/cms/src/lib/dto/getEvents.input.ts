@@ -27,4 +27,8 @@ export class GetEventsInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   organization?: string
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  onlyIncludePastEvents?: boolean
 }

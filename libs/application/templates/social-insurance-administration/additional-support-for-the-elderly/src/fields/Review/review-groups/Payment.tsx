@@ -9,31 +9,16 @@ import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/additionalSupportForTheElderlyUtils'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { YES } from '@island.is/application/types'
-import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
-  getTaxLevelOption,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { YES } from '@island.is/application/core'
 
 export const Payment = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const {
-    bank,
-    bankAccountType,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
-    personalAllowance,
-    personalAllowanceUsage,
-    taxLevel,
-  } = getApplicationAnswers(application.answers)
+  const { bank, personalAllowance, personalAllowanceUsage, taxLevel } =
+    getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 
@@ -43,80 +28,16 @@ export const Payment = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      {bankAccountType === BankAccountType.ICELANDIC ? (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                socialInsuranceAdministrationMessage.payment.bank,
-              )}
-              value={formatBankInfo(bank)}
-            />
-          </GridColumn>
-        </GridRow>
-      ) : (
-        <>
-          <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.iban,
-                )}
-                value={friendlyFormatIBAN(iban)}
-              />
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.swift,
-                )}
-                value={friendlyFormatSWIFT(swift)}
-              />
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.currency,
-                )}
-                value={currency}
-              />
-            </GridColumn>
-          </GridRow>
-
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.bankName,
-                )}
-                value={bankName}
-              />
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.bankAddress,
-                )}
-                value={bankAddress}
-              />
-            </GridColumn>
-          </GridRow>
-        </>
-      )}
+      <GridRow marginBottom={3}>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <DataValue
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.payment.bank,
+            )}
+            value={formatBankInfo(bank)}
+          />
+        </GridColumn>
+      </GridRow>
 
       <GridRow>
         <GridColumn

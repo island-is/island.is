@@ -2,7 +2,9 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   NO,
-  pruneAfterDays,
+  YES,
+  coreHistoryMessages,
+  corePendingActionMessages,
 } from '@island.is/application/core'
 import {
   Application,
@@ -13,12 +15,13 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  FormModes,
   NationalRegistryUserApi,
   UserProfileApi,
-  YES,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
@@ -30,8 +33,12 @@ import {
   States,
 } from './constants'
 import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { getApplicationAnswers } from './newPrimarySchoolUtils'
+import { newPrimarySchoolMessages } from './messages'
+import {
+  determineNameFromApplicationAnswers,
+  getApplicationAnswers,
+  hasForeignLanguages,
+} from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,11 +46,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-  name: newPrimarySchoolMessages.shared.applicationName,
+  name: determineNameFromApplicationAnswers,
+  codeOwner: CodeOwners.Deloitte,
   institution: newPrimarySchoolMessages.shared.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
-  allowMultipleApplicationsInDraft: true,
   featureFlag: Features.newPrimarySchool,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -51,13 +58,15 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       [States.PREREQUISITES]: {
         meta: {
           name: States.PREREQUISITES,
-          status: 'draft',
+          status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
           actionCard: {
-            pendingAction: {
-              title: '',
-              displayStatus: 'success',
-            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           onExit: defineTemplateApi({
             action: ApiModuleActions.getChildInformation,
@@ -74,7 +83,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
+                  name: newPrimarySchoolMessages.pre.startApplication,
                   type: 'primary',
                 },
               ],
@@ -85,7 +94,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: States.DRAFT }],
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
         },
       },
       [States.DRAFT]: {
@@ -95,16 +104,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearFreeSchoolMeal',
+          'clearSupport',
         ],
         meta: {
           name: States.DRAFT,
-          status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          status: FormModes.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
-            pendingAction: {
-              title: 'corePendingActionMessages.applicationReceivedTitle',
-              displayStatus: 'success',
-            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           onExit: defineTemplateApi({
             action: ApiModuleActions.sendApplication,
@@ -121,7 +133,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
+                  name: newPrimarySchoolMessages.overview.submitButton,
                   type: 'primary',
                 },
               ],
@@ -131,21 +143,21 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: States.SUBMITTED }],
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
         },
       },
       [States.SUBMITTED]: {
         meta: {
           name: States.SUBMITTED,
-          status: 'completed',
+          status: FormModes.COMPLETED,
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             pendingAction: {
-              title: statesMessages.applicationSent,
-              content: statesMessages.applicationSentDescription,
+              title: corePendingActionMessages.applicationReceivedTitle,
+              content: corePendingActionMessages.applicationReceivedDescription,
               displayStatus: 'success',
             },
           },
-          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -172,19 +184,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        // Clear answers if "Moving abroad" is selected as reason for application
-        if (
-          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-        ) {
-          unset(application.answers, 'support')
-          unset(application.answers, 'siblings')
-          unset(application.answers, 'languages')
-          unset(application.answers, 'startDate')
-        } else {
-          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
-          unset(application.answers, 'reasonForApplication.movingAbroad')
-        }
-
         // Clear transferOfLegalDomicile if "Moving legal domicile" is not selected as reason for application
         if (
           reasonForApplication !==
@@ -207,22 +206,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       }),
       clearPlaceOfResidence: assign((context) => {
         const { application } = context
-        const { differentPlaceOfResidence } = getApplicationAnswers(
-          application.answers,
-        )
-        if (differentPlaceOfResidence === NO) {
+        const { childInfo } = getApplicationAnswers(application.answers)
+        if (childInfo?.differentPlaceOfResidence === NO) {
           unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),
       clearLanguages: assign((context) => {
         const { application } = context
-        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
-          application.answers,
-        )
-        if (otherLanguagesSpokenDaily === NO) {
-          unset(application.answers, 'languages.otherLanguages')
-          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+
+        if (!hasForeignLanguages(application.answers)) {
+          unset(application.answers, 'languages.selectedLanguages')
+          unset(application.answers, 'languages.preferredLanguage')
+          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),
@@ -259,6 +255,29 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         if (hasSpecialNeeds !== YES) {
           unset(application.answers, 'freeSchoolMeal.specialNeedsType')
+        }
+        return context
+      }),
+      clearSupport: assign((context) => {
+        const { application } = context
+        const {
+          hasDiagnoses,
+          hasHadSupport,
+          hasIntegratedServices,
+          hasCaseManager,
+        } = getApplicationAnswers(application.answers)
+
+        if (hasDiagnoses !== YES && hasHadSupport !== YES) {
+          unset(application.answers, 'support.hasIntegratedServices')
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasIntegratedServices !== YES) {
+          unset(application.answers, 'support.hasCaseManager')
+          unset(application.answers, 'support.caseManager')
+        }
+        if (hasCaseManager !== YES) {
+          unset(application.answers, 'support.caseManager')
         }
         return context
       }),

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Tag, Text } from '@island.is/island-ui/core'
 import {
@@ -63,11 +63,13 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
         row.defendants.some((defendant) => defendant.isSentToPrisonAdmin),
     )
 
-    if (row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE) {
-      return null
-    } else if (someDefendantIsSentToPrisonAdmin) {
+    if (someDefendantIsSentToPrisonAdmin) {
       variant = 'red'
       message = strings.tagVerdictViewSentToPrisonAdmin
+    } else if (
+      row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return null
     } else if (!row.indictmentVerdictViewedByAll) {
       variant = 'red'
       message = strings.tagVerdictUnviewed
@@ -102,16 +104,13 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
-                  sortable: {
-                    isSortable: true,
-                    key: 'courtCaseNumber',
-                  },
+                  sortBy: 'courtCaseNumber',
                 },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.reviewDecision) },

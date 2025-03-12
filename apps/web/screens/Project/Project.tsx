@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 
@@ -11,6 +10,7 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
   Form,
   HeadWithSocialSharing,
@@ -279,7 +279,7 @@ const ProjectPage: Screen<PageProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={`${projectPage?.title} | Ísland.is`}
+        title={`${subpage?.title ?? projectPage?.title} | Ísland.is`}
         description={projectPage?.featuredDescription || projectPage?.intro}
         imageUrl={projectPage?.featuredImage?.url}
         imageContentType={projectPage?.featuredImage?.contentType}
