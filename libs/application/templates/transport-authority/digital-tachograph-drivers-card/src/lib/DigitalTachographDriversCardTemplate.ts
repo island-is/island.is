@@ -33,7 +33,6 @@ import {
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
