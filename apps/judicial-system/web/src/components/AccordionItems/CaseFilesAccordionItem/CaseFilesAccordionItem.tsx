@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { AccordionItem, Box, Button, Text } from '@island.is/island-ui/core'
 import {
