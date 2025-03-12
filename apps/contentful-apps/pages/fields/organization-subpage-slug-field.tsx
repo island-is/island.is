@@ -200,7 +200,7 @@ const OrganizationSubpageSlugField = () => {
       )}
       {value.length > 0 && isInvalid && (
         <Text fontColor="red400">
-          Organization subpage already exists with this slug
+          Another page already exists with this slug
         </Text>
       )}
     </Stack>
