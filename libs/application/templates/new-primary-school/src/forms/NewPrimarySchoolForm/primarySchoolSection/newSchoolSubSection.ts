@@ -1,16 +1,18 @@
 import {
   buildAsyncSelectField,
+  buildHiddenInput,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
   NO,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  setOnChangeSchool,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
   FriggSchoolsByMunicipalityQuery,
@@ -63,7 +65,8 @@ export const newSchoolSubSection = buildSubSection({
                 ?.map(({ name }) => ({
                   value: name,
                   label: name,
-                })) ?? []
+                }))
+                .sort((a, b) => a.value.localeCompare(b.value)) ?? []
             )
           },
         }),
@@ -78,27 +81,78 @@ export const newSchoolSubSection = buildSubSection({
             apolloClient,
             selectedValues,
           }) => {
-            const { childGradeLevel } = getApplicationExternalData(
-              application.externalData,
-            )
-
             const { data } =
               await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
                 query: friggSchoolsByMunicipalityQuery,
               })
 
-            return (
+            const municipality = selectedValues?.[0]
+
+            // Since the data from Frigg is not structured for international schools, we need to manually identify them
+            const internationalSchoolsIds = [
+              'G-2250-A',
+              'G-2250-B',
+              'G-1157-A',
+              'G-1157-B',
+            ] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
+
+            const { childGradeLevel } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            // Find all private owned schools by municipality
+            const privateOwnedSchools =
               data?.friggSchoolsByMunicipality
-                ?.find(({ name }) => name === selectedValues?.[0])
+                ?.filter(
+                  ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
+                )
+                ?.flatMap(
+                  ({ children }) =>
+                    children
+                      ?.filter(
+                        ({ address, type, gradeLevels }) =>
+                          gradeLevels?.includes(childGradeLevel) &&
+                          address?.municipality === municipality &&
+                          type === OrganizationModelTypeEnum.School,
+                      )
+                      ?.map((school) => ({
+                        ...school,
+                        type: internationalSchoolsIds.some(
+                          (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
+                        )
+                          ? SchoolType.INTERNATIONAL_SCHOOL
+                          : SchoolType.PRIVATE_SCHOOL,
+                      })) || [],
+                ) || []
+
+            // Find all municipality schools
+            const municipalitySchools =
+              data?.friggSchoolsByMunicipality
+                ?.find(({ name }) => name === municipality)
                 ?.children?.filter(
                   ({ type, gradeLevels }) =>
                     type === OrganizationModelTypeEnum.School &&
                     gradeLevels?.includes(childGradeLevel),
                 )
                 ?.map((school) => ({
-                  value: school.id,
-                  label: school.name,
-                })) ?? []
+                  ...school,
+                  type: SchoolType.PUBLIC_SCHOOL,
+                })) || []
+
+            // Merge the private owned schools and the municipality schools together
+            const allMunicipalitySchools = [
+              ...municipalitySchools,
+              ...privateOwnedSchools,
+            ]
+
+            // Piggyback the type as part of the value
+            return (
+              allMunicipalitySchools
+                .map(({ id, type, name }) => ({
+                  value: `${id}::${type}`,
+                  label: name,
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
           condition: (answers) => {
@@ -106,6 +160,10 @@ export const newSchoolSubSection = buildSubSection({
 
             return !!schoolMunicipality
           },
+          setOnChange: (option) => setOnChangeSchool(option),
+        }),
+        buildHiddenInput({
+          id: 'newSchool.type',
         }),
       ],
     }),

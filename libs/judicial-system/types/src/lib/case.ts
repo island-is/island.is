@@ -396,6 +396,9 @@ export const isTrafficViolationCase = (theCase: {
   )
 }
 
+export const hasTrafficViolationSubtype = (subtypes: IndictmentSubtype[]) =>
+  subtypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
+
 export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
