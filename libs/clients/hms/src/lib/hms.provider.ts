@@ -4,7 +4,6 @@ import {
   ConfigType,
   IdsClientConfig,
   LazyDuringDevScope,
-  XRoadConfig,
 } from '@island.is/nest/config'
 import {
   StadfangApi,
@@ -20,7 +19,6 @@ const createApiProvider = <T>(
   provide: ApiClass,
   scope: LazyDuringDevScope,
   useFactory: (
-    xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof HmsConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
@@ -40,14 +38,14 @@ const createApiProvider = <T>(
             : undefined,
           timeout: config.fetchTimeout,
         }),
-        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        basePath: config.xRoadPath,
         headers: {
-          'X-Road-Client': xroadConfig.xRoadClient,
+          'X-Road-Client': config.xRoadClientHeader,
           Accept: 'application/json',
         },
       }),
     ),
-  inject: [XRoadConfig.KEY, HmsConfig.KEY, IdsClientConfig.KEY],
+  inject: [HmsConfig.KEY, IdsClientConfig.KEY],
 })
 
 export const HmsStadfangApiProvider = createApiProvider(StadfangApi)

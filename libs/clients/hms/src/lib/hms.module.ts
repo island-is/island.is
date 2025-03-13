@@ -11,6 +11,7 @@ import { HmsService } from './hms.service'
     HmsStadfangApiProvider,
     HmsFasteignApiProvider,
     HmsAdalmatseiningApiProvider,
+    HmsService,
   ],
   exports: [HmsService],
 })

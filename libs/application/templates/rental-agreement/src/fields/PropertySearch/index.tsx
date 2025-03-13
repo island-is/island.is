@@ -13,10 +13,10 @@ import {
 import IconCircleClose from '../../assets/IconCircleClose'
 import IconCircleOpen from '../../assets/IconCircleOpen'
 import {
-  stadfangData,
   fasteignByStadfangNrData,
   adalmatseiningByFasteignNrData,
 } from './propertyData'
+import { ADDRESS_SEARCH_QUERY } from '../../graphql/queries'
 import { registerProperty } from '../../lib/messages'
 import {
   StadfangProps,
@@ -36,6 +36,8 @@ import {
   tableCellMerking,
   tableCellFastNum,
 } from './propertySearch.css'
+import { useLazyQuery } from '@apollo/client'
+import { HmsSearchInput, Query } from '@island.is/api/schema'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -77,22 +79,23 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const storedValue = getValues(id)
 
   useEffect(() => {
-    if (storedValue) {
-      try {
-        setSelectedStadfang(storedValue)
-        setSearchTerm(storedValue.value)
-        setCheckedMatseiningar(storedValue.checkedMatseiningar || {})
-        setMatseiningSizeChangeValue(
-          storedValue.changedValueOfMatseiningSize || {},
-        )
-        setMatseiningRoomsChangeValue(
-          storedValue.changedValueOfMatseiningRooms || {},
-        )
-        setPropertiesByStadfangNr(storedValue.propertiesByS || [])
-        setMatseiningByFasteignNr(storedValue.matseiningByFasteignNr || {})
-      } catch (error) {
-        console.error('Error parsing stored value:', error)
-      }
+    if (!storedValue) {
+      return
+    }
+    try {
+      setSelectedStadfang(storedValue)
+      setSearchTerm(storedValue.value)
+      setCheckedMatseiningar(storedValue.checkedMatseiningar || {})
+      setMatseiningSizeChangeValue(
+        storedValue.changedValueOfMatseiningSize || {},
+      )
+      setMatseiningRoomsChangeValue(
+        storedValue.changedValueOfMatseiningRooms || {},
+      )
+      setPropertiesByStadfangNr(storedValue.propertiesByS || [])
+      setMatseiningByFasteignNr(storedValue.matseiningByFasteignNr || {})
+    } catch (error) {
+      console.error('Error parsing stored value:', error)
     }
   }, [getValues, id])
 
@@ -131,6 +134,32 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [checkedMatseiningar, matseiningByFasteignNr])
 
+  const [hmsSearch] = useLazyQuery<Query, { input: HmsSearchInput }>(
+    ADDRESS_SEARCH_QUERY,
+    {
+      onError: (error) => {
+        console.error('Error fetching address', error)
+      },
+      onCompleted: (data) => {
+        if (data.hmsSearch?.addresses) {
+          setSearchOptions(
+            data.hmsSearch.addresses.map((address) => ({
+              label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
+              value: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
+              address: address.address,
+              postalCode: address.postalCode,
+              municipalityName: address.municipalityName,
+              municipalityCode: address.municipalityCode,
+              landCode: address.landCode,
+              streetName: address.streetName,
+              streetNumber: address.streetNumber,
+            })),
+          )
+        }
+      },
+    },
+  )
+
   const fetchPropertiesByStadfang = (query = '') => {
     if (query.length < 2) {
       console.log('No data - query too short')
@@ -153,35 +182,41 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
     // TODO: Update when actual fetch is implemented
     setTimeout(() => {
-      const filteredData = stadfangData
-        .filter((item: StadfangProps) =>
-          item.stadfang.toLowerCase().includes(query.toLowerCase()),
-        )
-        .sort((a: StadfangProps, b: StadfangProps) =>
-          a.stadfang.localeCompare(b.stadfang),
-        )
-        .slice(0, 10)
+      hmsSearch({
+        variables: {
+          input: {
+            partialStadfang: query,
+          },
+        },
+      })
 
-      setPending(false)
-
-      if (filteredData.length) {
-        setSearchOptions(
-          filteredData.map((property: StadfangProps) => ({
-            label: `${property.stadfang}, ${property.postnumer} ${property.sveitarfelag_nafn}`,
-            value: `${property.stadfang}, ${property.postnumer} ${property.sveitarfelag_nafn}`,
-            stadfang_nr: property.stadfang_nr,
-            stadfang: property.stadfang,
-            sveitarfelag_nafn: property.sveitarfelag_nafn,
-            sveitarfelag_nr: property.sveitarfelag_nr,
-            birting_sveitarfelag_nr: property.birting_sveitarfelag_nr,
-            postnumer: property.postnumer,
-            landeign_nr: property.landeign_nr,
-            stadvisir: property.stadvisir,
-            stadgreinir: property.stadgreinir,
-            vidskeyti: property.vidskeyti,
-          })),
-        )
-      }
+      // const filteredData = stadfangData
+      //   .filter((item: StadfangProps) =>
+      //     item.stadfang.toLowerCase().includes(query.toLowerCase()),
+      //   )
+      //   .sort((a: StadfangProps, b: StadfangProps) =>
+      //     a.stadfang.localeCompare(b.stadfang),
+      //   )
+      //   .slice(0, 10)
+      // setPending(false)
+      // if (filteredData.length) {
+      //   setSearchOptions(
+      //     filteredData.map((property: StadfangProps) => ({
+      //       label: `${property.stadfang}, ${property.postnumer} ${property.sveitarfelag_nafn}`,
+      //       value: `${property.stadfang}, ${property.postnumer} ${property.sveitarfelag_nafn}`,
+      //       stadfang_nr: property.stadfang_nr,
+      //       stadfang: property.stadfang,
+      //       sveitarfelag_nafn: property.sveitarfelag_nafn,
+      //       sveitarfelag_nr: property.sveitarfelag_nr,
+      //       birting_sveitarfelag_nr: property.birting_sveitarfelag_nr,
+      //       postnumer: property.postnumer,
+      //       landeign_nr: property.landeign_nr,
+      //       stadvisir: property.stadvisir,
+      //       stadgreinir: property.stadgreinir,
+      //       vidskeyti: property.vidskeyti,
+      //     })),
+      //   )
+      // }
     }, 500)
   }
 

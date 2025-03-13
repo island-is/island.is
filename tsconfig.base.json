@@ -122,6 +122,7 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/hms": ["libs/api/domains/hms/src/index.ts"],
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
@@ -1172,8 +1173,7 @@
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
-      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
-      "hms": ["libs/clients/hms/src/index.ts"]
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
   }
 }
