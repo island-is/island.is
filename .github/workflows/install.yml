@@ -101,7 +101,7 @@ jobs:
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-      DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
+      DEPLOY_FEATURE: ${{ steps.set-output.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     permissions:
       contents: 'read'
@@ -331,7 +331,9 @@ jobs:
           is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
         # NOTE: intentionally proxied from input so jobs depending on prepare don't have to depend on pre-check
+
       - name: Set outputs
-        id: set-outputs
+        id: set-output
         run: |
-          echo DEPLOY_FEATURE="${{ inputs.deploy_feature }}" | tee -a "$GITHUB_OUTPUT"
+          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE"
+          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
