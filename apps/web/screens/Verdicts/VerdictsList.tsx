@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
+import { useDebounce, useWindowSize } from 'react-use'
 import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -8,14 +8,14 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  Divider,
-  FocusableBox,
-  GridColumn,
   GridContainer,
-  GridRow,
+  Hidden,
+  InfoCardGrid,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictCaseCategoriesQuery,
@@ -35,6 +35,7 @@ import {
   type CustomScreen,
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
+import SidebarLayout from '../Layouts/SidebarLayout'
 import {
   GET_VERDICT_CASE_CATEGORIES_QUERY,
   GET_VERDICT_CASE_TYPES_QUERY,
@@ -59,6 +60,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
+  const { width } = useWindowSize()
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
     GetVerdictsQuery,
@@ -115,120 +117,114 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
     [page],
   )
 
+  const [isGridLayout, setIsGridLayout] = useState(false)
+  const overrideGridLayoutSetting = width < theme.breakpoints.lg
+
   return (
-    <Box paddingBottom={5}>
-      <GridContainer>
-        <Stack space={3}>
-          <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-          <Text variant="h1" as="h1">
-            {formatMessage(m.listPage.heading)}{' '}
-          </Text>
-          <Text>{formatMessage(m.listPage.description)}</Text>
-          <GridRow rowGap={3}>
-            {data.visibleVerdicts.map((item) => (
-              <GridColumn key={item.id} span="1/1">
-                <FocusableBox
-                  height="full"
-                  href={`/domar/${item.id}`}
-                  background="white"
-                  borderRadius="large"
-                  borderColor="blue200"
-                  borderWidth="standard"
-                  paddingX={3}
-                  paddingY={2}
+    <Box className="rs_read">
+      <Stack space={3}>
+        <GridContainer>
+          <Stack space={3}>
+            <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
+            <Text variant="h1" as="h1">
+              {formatMessage(m.listPage.heading)}{' '}
+            </Text>
+            <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
+            <Text>{formatMessage(m.listPage.description)}</Text>
+            <Hidden below="lg">
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  variant="utility"
+                  icon={isGridLayout ? 'list' : 'grid'}
+                  iconType="outline"
+                  colorScheme="white"
+                  size="small"
+                  onClick={() => {
+                    setIsGridLayout((previousState) => !previousState)
+                  }}
                 >
-                  <GridContainer>
-                    <Stack space={2}>
-                      <GridRow rowGap={3}>
-                        <GridColumn span={['7/12', '7/12', '9/12']}>
-                          <Text variant="h5" color="blue400">
-                            {item.caseNumber}
-                          </Text>
-                        </GridColumn>
-                        <GridColumn span={['5/12', '5/12', '3/12']}>
-                          {item.verdictDate && (
-                            <Text variant="medium" textAlign="right">
-                              {format(
-                                new Date(item.verdictDate),
-                                'd. MMM yyyy',
-                              )}
-                            </Text>
-                          )}
-                        </GridColumn>
-                      </GridRow>
-                      <Stack space={0}>
-                        <GridRow>
-                          <GridColumn>
-                            <Text color="blue400" variant="medium">
-                              {item.court}
-                            </Text>
-                            <Text color="blue400" variant="medium">
-                              {item.presidentJudge?.name}{' '}
-                              {item.presidentJudge?.title}
-                            </Text>
-                          </GridColumn>
-                          <GridColumn>
-                            <Text variant="small">{item.title}</Text>
-                          </GridColumn>
-                        </GridRow>
-                      </Stack>
-                      <GridRow>
-                        <GridColumn>
-                          <Text variant="small" color="dark300">
-                            {item.keywords.join('. ')}
-                          </Text>
-                        </GridColumn>
-                      </GridRow>
-                      {Boolean(item.presentings) && <Divider />}
-                      {Boolean(item.presentings) && (
-                        <GridRow>
-                          <GridColumn>
-                            <Text variant="small">
-                              <Text color="blue400" variant="medium" as="span">
-                                {formatMessage(m.listPage.presentings)}:
-                              </Text>{' '}
-                              {item.presentings}
-                            </Text>
-                          </GridColumn>
-                        </GridRow>
-                      )}
-                    </Stack>
-                  </GridContainer>
-                </FocusableBox>
-              </GridColumn>
-            ))}
-          </GridRow>
-          {initialData.total > data.visibleVerdicts.length && (
-            <Box
-              key={page}
-              paddingTop={4}
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              {error && (
-                <Box paddingBottom={2}>
-                  <Text variant="medium" color="red600">
-                    {formatMessage(m.listPage.loadingMoreFailed)}
-                  </Text>
-                </Box>
-              )}
-              <Button
-                loading={loading}
-                onClick={() => {
-                  setPage((p) => p + 1)
-                }}
+                  {formatMessage(
+                    isGridLayout
+                      ? m.listPage.displayList
+                      : m.listPage.displayGrid,
+                  )}
+                </Button>
+              </Box>
+            </Hidden>
+          </Stack>
+        </GridContainer>
+        <Box background="blue100" paddingTop={[3, 3, 0]}>
+          <SidebarLayout
+            fullWidthContent={true}
+            sidebarContent={
+              <Stack space={3}>
+                <Text variant="h5">
+                  {formatMessage(m.listPage.sidebarFilterHeading)}
+                </Text>
+              </Stack>
+            }
+          >
+            <InfoCardGrid
+              variant="detailed"
+              columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
+              cards={data.visibleVerdicts.map((verdict) => {
+                return {
+                  description: verdict.title,
+                  eyebrow: '',
+                  id: verdict.id,
+                  link: { href: `/domar/${verdict.id}`, label: '' },
+                  title: verdict.caseNumber,
+                  borderColor: 'blue200',
+                  detailLines: [
+                    {
+                      icon: 'calendar',
+                      text: verdict.verdictDate
+                        ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
+                        : '',
+                    },
+                    { icon: 'hammer', text: verdict.court ?? '' },
+                    {
+                      icon: 'person',
+                      text: `${verdict.presidentJudge?.name ?? ''} ${
+                        verdict.presidentJudge?.title ?? ''
+                      }`,
+                    },
+                  ],
+                }
+              })}
+            />
+            {initialData.total > data.visibleVerdicts.length && (
+              <Box
+                key={page}
+                paddingTop={4}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
               >
-                {formatMessage(m.listPage.seeMoreVerdicts, {
-                  remainingVerdictCount:
-                    initialData.total - data.visibleVerdicts.length,
-                })}
-              </Button>
-            </Box>
-          )}
-        </Stack>
-      </GridContainer>
+                {error && (
+                  <Box paddingBottom={2}>
+                    <Text variant="medium" color="red600">
+                      {formatMessage(m.listPage.loadingMoreFailed)}
+                    </Text>
+                  </Box>
+                )}
+                <Button
+                  loading={loading}
+                  onClick={() => {
+                    setPage((p) => p + 1)
+                  }}
+                >
+                  {formatMessage(m.listPage.seeMoreVerdicts, {
+                    remainingVerdictCount:
+                      initialData.total - data.visibleVerdicts.length,
+                  })}
+                </Button>
+              </Box>
+            )}
+          </SidebarLayout>
+        </Box>
+      </Stack>
     </Box>
   )
 }
@@ -306,4 +302,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
 
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
+  {
+    showFooter: false,
+  },
 )

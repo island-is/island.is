@@ -74,13 +74,9 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: OwnerRequirementsApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: CurrentCollectionApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),
