@@ -23,7 +23,6 @@ import {
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
-
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
