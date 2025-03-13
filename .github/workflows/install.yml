@@ -14,8 +14,8 @@ on:
       run_merge_queue:
         description: 'Should the merge que step run'
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
     outputs:
       MQ_SHA:
         value: ${{ jobs.install.outputs.MQ_SHA}}
@@ -122,7 +122,7 @@ jobs:
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
-        if: ${{ inputs.run_merge_queue == false }}
+        if: ${{ inputs.run_merge_queue == 'false' }}
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
@@ -177,7 +177,7 @@ jobs:
 
       - name: Prepare merge queue
         id: prepare-merge-queue
-        if: ${{ inputs.run_merge_queue == true }}
+        if: ${{ inputs.run_merge_queue == 'true' }}
         run: |
           node scripts/ci/docker/generate-tag.mjs
 
@@ -206,7 +206,7 @@ jobs:
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
 
         # Don't run this step locally
-        if: ${{ !github.event.localrun && inputs.run_merge_queue == false }}
+        if: ${{ !github.event.localrun && inputs.run_merge_queue == 'false' }}
         with:
           name: pr-event
           path: event.json
