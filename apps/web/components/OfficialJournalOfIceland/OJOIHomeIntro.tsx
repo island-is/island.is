@@ -57,6 +57,7 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
               backgroundColor={['blue']}
               size="md"
               icon={{ name: 'search', type: 'outline' }}
+              className={s.searchBox}
             />
           </Box>
 

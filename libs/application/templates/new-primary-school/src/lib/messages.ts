@@ -810,19 +810,19 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Netfang málastjóra',
       description: 'Case manager email address',
     },
+    internationalSchoolSupportAlertMessage: {
+      id: 'nps.application:different.needs.international.school.alert.message#markdown',
+      defaultMessage:
+        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
+      description:
+        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
+    },
     supportAlertMessage: {
       id: 'nps.application:different.needs.support.alert.message#markdown',
       defaultMessage:
-        'Við flutning barns milli leik- og /eða grunnskóla mun skólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
+        'Við flutning barns milli leik- og/eða grunnskóla sjá stjórnendur skólanna til þess að persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í nýjum skóla, sé miðlað með tryggum og öruggum hætti. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
       description:
-        "When transferring a child between nursery and/or primary school, the head of the school ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
-    },
-    enrollmentSupportAlertMessage: {
-      id: 'nps.application:different.needs.enrollment.support.alert.message#markdown',
-      defaultMessage:
-        'Við flutning barns úr leikskóla í grunnskóla mun leikskólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
-      description:
-        "When transferring a child from nursery to primary school, the head of the nursery ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
+        "When a child transfers between nursery and/or primary schools, school administrators ensure that personal information about the child that is necessary for their well-being and adjustment to the new school is communicated in a secure and safe manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
     },
     requestingMeeting: {
       id: 'nps.application:different.needs.requesting.meeting',
@@ -914,6 +914,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.current.nursery',
       defaultMessage: 'Núverandi leikskóli',
       description: 'Current nursery',
+    },
+    expectedEndDate: {
+      id: 'nps.application:overview.expected.end.date',
+      defaultMessage: 'Áætlaður lokadagur',
+      description: 'Expected end date',
     },
   }),
 
