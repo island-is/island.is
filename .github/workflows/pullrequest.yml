@@ -287,6 +287,9 @@ jobs:
   docker-build:
     uses: ./.github/workflows/docker-build.yml
     secrets: inherit
+    needs:
+      - prepare
+      - pre-checks
     if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
     with:
       mq-should-run-build: ${{ needs.prepare.outputs.DEPLOY_FEATURE }}
