@@ -41,18 +41,6 @@ applicationTest.describe('New primary school', () => {
       const page = applicationPage
       const { proceed } = helpers(page)
 
-      await applicationTest.step('Select type of application', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              newPrimarySchoolMessages.pre.applicationTypeSubSectionTitle,
-            ),
-          }),
-        ).toBeVisible()
-        await page.getByTestId('new-primary-school').click()
-        await proceed()
-      })
-
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
@@ -379,24 +367,6 @@ applicationTest.describe('New primary school', () => {
 
         await page.getByTestId('sign-language').click()
         await page.getByTestId('guardian-requires-interpreter').click()
-        await proceed()
-      })
-
-      await applicationTest.step('Free school meal', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              newPrimarySchoolMessages.differentNeeds
-                .freeSchoolMealSubSectionTitle,
-            ),
-          }),
-        ).toBeVisible()
-
-        await page.getByTestId('accept-free-school-lunch').click()
-        await page.getByTestId('has-special-needs').click()
-        await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
-        await page.getByTestId('select-freeSchoolMeal.specialNeedsType').click()
-        await page.keyboard.press('Enter')
         await proceed()
       })
 
