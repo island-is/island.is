@@ -304,6 +304,7 @@ jobs:
 
   deploy:
     uses: ./.github/workflows/deploy.yml
+    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
     needs:
       - pre-checks
       - prepare
