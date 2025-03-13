@@ -10,7 +10,10 @@ const graphqlPath = '/api/graphql'
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  webpack: (config, options) => {
+  webpack: (config, { isServer, dev }) => {
+    if (!dev && isServer) {
+      config.devtool = 'source-map'
+    }
     return config
   },
   serverRuntimeConfig: {
