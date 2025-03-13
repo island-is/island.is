@@ -11,6 +11,7 @@ import { resolvers as financeResolvers } from './domains/finance'
 import { resolvers as licenseServiceResolvers } from './domains/license-service'
 import { resolvers as airDiscountResolvers } from './domains/air-discount-scheme'
 import { resolvers as rightsPortalPaymentResolver } from './domains/rights-portal'
+import { resolvers as vehicleResolvers } from './domains/vehicles'
 
 export const resolvers = createResolvers<Resolvers>(
   merge(
@@ -25,5 +26,6 @@ export const resolvers = createResolvers<Resolvers>(
     financeResolvers,
     airDiscountResolvers,
     rightsPortalPaymentResolver,
+    vehicleResolvers,
   ),
 )
