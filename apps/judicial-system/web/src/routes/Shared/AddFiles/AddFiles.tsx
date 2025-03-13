@@ -2,6 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   InstitutionUser,
@@ -10,7 +11,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   CourtCaseInfo,
+  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -36,6 +39,48 @@ import {
 
 import { strings } from './AddFiles.strings'
 
+const SelectCaseFileRepresentative = () => {
+  const { formatMessage } = useIntl()
+
+  // TODO: defender(s), prosectuor, defendant, civilrights
+  const caseRepresentatives = []
+  const defaultCaseRepresentative = null
+  return (
+    <>
+      <SectionHeading
+        title={formatMessage(strings.uploadFilesRepresentativeSelectionTitle)}
+      />
+      <BlueBox>
+        <Box>
+          <Select
+            name="caseRepresentative"
+            label={formatMessage(strings.caseRepresentativeLabel)}
+            placeholder={formatMessage(strings.caseRepresentativePlaceholder)}
+            value={defaultCaseRepresentative}
+            options={caseRepresentatives}
+            // onChange={(selectedOption) =>
+            //   setJudge((selectedOption as JudgeSelectOption).judge.id)
+            // }
+            required
+            // isDisabled={usersLoading}
+          />
+          <DateTime
+            name="fileSubmittedDate"
+            selectedDate={new Date()}
+            onChange={() => {
+              return new Date()
+            }}
+            blueBox={true}
+            datepickerLabel="Dagsetning móttöku"
+            dateOnly
+            required
+          />
+        </Box>
+      </BlueBox>
+    </>
+  )
+}
+
 const getUserProps = (user: InstitutionUser | undefined) => {
   const getCaseInfoNode = (workingCase: TempCase) => (
     <ProsecutorCaseInfo workingCase={workingCase} />
@@ -45,6 +90,7 @@ const getUserProps = (user: InstitutionUser | undefined) => {
       caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
       previousRoute: constants.DEFENDER_INDICTMENT_ROUTE,
       getCaseInfoNode,
+      hasFileRepresentativeSelection: false,
     }
   } else if (isDistrictCourtUser(user)) {
     return {
@@ -53,12 +99,14 @@ const getUserProps = (user: InstitutionUser | undefined) => {
       getCaseInfoNode: (workingCase: TempCase) => (
         <CourtCaseInfo workingCase={workingCase} />
       ),
+      hasFileRepresentativeSelection: true,
     }
   }
   return {
     caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
     previousRoute: constants.INDICTMENTS_OVERVIEW_ROUTE,
     getCaseInfoNode,
+    hasFileRepresentativeSelection: false,
   }
 }
 
@@ -74,6 +122,7 @@ const AddFiles: FC = () => {
     previousRoute: previousRouteType,
     caseFileCategory,
     getCaseInfoNode,
+    hasFileRepresentativeSelection,
   } = getUserProps(user)
 
   const previousRoute = `${previousRouteType}/${workingCase.id}`
@@ -164,6 +213,7 @@ const AddFiles: FC = () => {
           onRename={handleRename}
           setEditCount={setEditCount}
         />
+        {hasFileRepresentativeSelection && <SelectCaseFileRepresentative />}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

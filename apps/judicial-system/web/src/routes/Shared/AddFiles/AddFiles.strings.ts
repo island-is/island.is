@@ -8,7 +8,7 @@ export const strings = {
   }),
   uploadFilesHeading: {
     id: 'judicial.system.core:add_files.upload_files_heading',
-    defaultMessage: 'Innsending gagna til dómsins',
+    defaultMessage: 'Hlaða upp gögnum',
     description:
       'Notaður sem titill í Innsending gagna til dómsins hluta á Gögn síðu í ákærum.',
   },
@@ -17,6 +17,24 @@ export const strings = {
     defaultMessage: 'Gögnin verða að hafa lýsandi skráarheiti.',
     description:
       'Notaður sem texti í Innsending gagna til dómsins hluta á Gögn síðu í ákærum.',
+  },
+  uploadFilesRepresentativeSelectionTitle: {
+    id: 'judicial.system.core:add_files.upload_files_representative_selection_title',
+    defaultMessage: 'Hver lagði skjölin fram?',
+    description:
+      'Notaður sem titill þar sem aðili sem lagði fram gögn er valinn á Gögn síðu í ákærum.',
+  },
+  caseRepresentativeLabel: {
+    id: 'judicial.system.core:add_files.case_representative_label',
+    defaultMessage: 'Hvaða aðili máls lagði skjölin fram?',
+    description:
+      'Notaður sem titill á innsláttarsvæði til að velja aðila sem lagði gögnin fram á Gögn síðu í ákærum.',
+  },
+  caseRepresentativePlaceholder: {
+    id: 'judicial.system.core:add_files.case_representative_placeholder',
+    defaultMessage: 'Veldu aðila',
+    description:
+      'Notaður sem upplýsingatexti á innsláttarsvæði til að velja aðila sem lagði gögnin fram á Gögn síðu í ákærum.',
   },
   nextButtonText: {
     id: 'judicial.system.core:add_files.next_button_text',
