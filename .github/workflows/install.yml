@@ -49,6 +49,8 @@ on:
         value: ${{ jobs.install.outputs.IMAGES }}
       DOCKER_TAG:
         value: ${{ jobs.install.outputs.DOCKER_TAG }}
+      DEPLOY_FEATURE:
+        value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
@@ -99,6 +101,7 @@ jobs:
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
+      DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     permissions:
       contents: 'read'
@@ -321,3 +324,8 @@ jobs:
         run: |
           is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+        # NOTE: intentionally proxied from input so jobs depending on prepare don't have to depend on pre-check
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo DEPLOY_FEATURE="${{ inputs.deploy_feature }}" | tee -a "$GITHUB_OUTPUT"

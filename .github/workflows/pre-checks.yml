@@ -19,6 +19,8 @@ on:
         value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
       CACHE_KEY:
         value: ${{ jobs.should-run.outputs.CACHE_KEY }}
+      DEPLOY_FEATURE:
+        value: ${{ jobs.should-run.outputs.DEPLOY_FEATURE }}
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -62,6 +64,7 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      DEPLOY_FEATURE: ${{ steps.should-run.outputs.PRE_CHECK == 'deploy-feature' }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -114,10 +117,10 @@ jobs:
             for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                echo "Check if this is a pre-release and if it should generate a deploy-feature"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_CHECK=deploy-feature" >> "$GITHUB_OUTPUT"
                   echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
@@ -145,7 +148,7 @@ jobs:
             fi
             if [[ "$deployFeature" == "true" ]]; then
               echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+              echo "PRE_CHECK=deploy-feature" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
@@ -154,10 +157,10 @@ jobs:
           for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                echo "Check if this is a pre-release and if it should generate a deploy-feature"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_CHECK=deploy-feature" >> "$GITHUB_OUTPUT"
                   echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi

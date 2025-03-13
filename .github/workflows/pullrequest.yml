@@ -57,12 +57,12 @@ jobs:
       main_branch: ${{ github.base_ref }}
       pre_release: false
       run_merge_queue: false
-      deploy_feature: ${{ env.DEPLOY_FEATURE }}
+      deploy_feature: ${{ needs.pre-checks.outputs.DEPLOY_FEATURE }}
 
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE == 'false' }}
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     runs-on: arc-runners
     timeout-minutes: 45
     env:
@@ -93,7 +93,7 @@ jobs:
     name: All projects have some tests
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && env.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
     runs-on: arc-runners
     env:
       CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
@@ -144,7 +144,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && env.DEPLOY_FEATURE == 'false' }}
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     runs-on: arc-runners
     timeout-minutes: 45
     env:
@@ -271,7 +271,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && env.DEPLOY_FEATURE == 'false' }}
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -318,7 +318,7 @@ jobs:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Notify about deploy-feature label
-        if: ${{ github.event.pull_request.auto_merge && env.DEPLOY_FEATURE == 'true' }}
+        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
