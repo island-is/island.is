@@ -55,8 +55,8 @@ jobs:
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
-      pre_release: false
-      run_merge_queue: false
+      pre_release: 'false'
+      run_merge_queue: 'false'
       deploy_feature: ${{ needs.pre-checks.outputs.DEPLOY_FEATURE }}
 
   tests:
