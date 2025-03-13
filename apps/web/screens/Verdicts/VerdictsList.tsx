@@ -15,7 +15,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Webreader } from '@island.is/web/components'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictCaseCategoriesQuery,
@@ -55,7 +55,10 @@ interface VerdictsListProps {
   }
 }
 
-const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
+const VerdictsList: CustomScreen<VerdictsListProps> = ({
+  initialData,
+  customPageData,
+}) => {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
@@ -86,7 +89,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
               // Remove all duplicate verdicts in case there were new verdicts published since last page load
               .filter(
                 (verdict) =>
-                  Boolean(verdict.id) &&
+                  !verdict.id ||
                   !prevData.visibleVerdicts
                     .map(({ id }) => id)
                     .includes(verdict.id),
@@ -122,12 +125,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
 
   return (
     <Box className="rs_read">
+      <HeadWithSocialSharing title={customPageData?.ogTitle ?? formatMessage(m.listPage.heading)}>
+        {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <Stack space={3}>
         <GridContainer>
           <Stack space={3}>
             <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
             <Text variant="h1" as="h1">
-              {formatMessage(m.listPage.heading)}{' '}
+              {formatMessage(m.listPage.heading)}
             </Text>
             <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
             <Text>{formatMessage(m.listPage.description)}</Text>
@@ -167,31 +175,36 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
             <InfoCardGrid
               variant="detailed"
               columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
-              cards={data.visibleVerdicts.map((verdict) => {
-                return {
-                  description: verdict.title,
-                  eyebrow: '',
-                  id: verdict.id,
-                  link: { href: `/domar/${verdict.id}`, label: '' },
-                  title: verdict.caseNumber,
-                  borderColor: 'blue200',
-                  detailLines: [
-                    {
-                      icon: 'calendar',
-                      text: verdict.verdictDate
-                        ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
-                        : '',
-                    },
-                    { icon: 'hammer', text: verdict.court ?? '' },
-                    {
-                      icon: 'person',
-                      text: `${verdict.presidentJudge?.name ?? ''} ${
-                        verdict.presidentJudge?.title ?? ''
-                      }`,
-                    },
-                  ],
-                }
-              })}
+              cards={data.visibleVerdicts
+                .filter((verdict) => Boolean(verdict.id))
+                .map((verdict) => {
+                  return {
+                    description: verdict.title,
+                    eyebrow: '',
+                    id: verdict.id,
+                    link: { href: `/domar/${verdict.id}`, label: '' },
+                    title: verdict.caseNumber,
+                    borderColor: 'blue200',
+                    detailLines: [
+                      {
+                        icon: 'calendar',
+                        text: verdict.verdictDate
+                          ? format(
+                              new Date(verdict.verdictDate),
+                              'd. MMMM yyyy',
+                            )
+                          : '',
+                      },
+                      { icon: 'hammer', text: verdict.court ?? '' },
+                      {
+                        icon: 'person',
+                        text: `${verdict.presidentJudge?.name ?? ''} ${
+                          verdict.presidentJudge?.title ?? ''
+                        }`,
+                      },
+                    ],
+                  }
+                })}
             />
             {initialData.total > data.visibleVerdicts.length && (
               <Box
@@ -276,9 +289,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
     }),
   ])
 
-  const items = verdictListResponse.data.webVerdicts.items.filter((item) =>
-    Boolean(item?.id),
-  )
+  const items = verdictListResponse.data.webVerdicts.items
 
   if (!customPageData?.configJson?.showVerdictListPage) {
     throw new CustomNextError(
@@ -303,6 +314,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
   {
-    showFooter: false,
+    footerVersion: 'organization',
   },
 )
