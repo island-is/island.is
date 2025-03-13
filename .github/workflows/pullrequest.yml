@@ -329,9 +329,12 @@ jobs:
       - e2e
       - build
       - docker-build
+      - deploy
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check deploy success
+        run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
@@ -351,5 +354,9 @@ jobs:
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
       - name: Check docker build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
+      - name: Announce skipped
+        if: '!needs.pre-checks.outputs.PRE_CHECK'
+        run: echo "Build was skipped"
       - name: Announce success
+        if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"
