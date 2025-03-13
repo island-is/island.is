@@ -11,7 +11,7 @@ import { SelfOrOthers } from '../../../utils/types'
 import { getExaminees } from '../../../utils'
 
 export const examCategoriesSectionOthers = buildSection({
-  id: 'examCategoriesSection',
+  id: 'examCategoriesSectionOthers',
   title: examCategories.general.sectionTitle,
   condition: (answers: FormValue) => {
     const selfOrOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')

@@ -14,7 +14,10 @@ export const examineeSection = buildSection({
   id: 'examineeSection',
   title: examinee.general.sectionTitle,
   condition: (answers: FormValue) => {
-    const selfOrOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+    const selfOrOthers = getValueViaPath<SelfOrOthers>(
+      answers,
+      'information.selfOrOthers',
+    )
     return selfOrOthers === SelfOrOthers.others ? true : false
   },
   children: [

@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildSection,
   buildSelectField,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { examCategories } from '../../../lib/messages'
@@ -10,7 +11,7 @@ import { FormValue } from '@island.is/application/types'
 import { SelfOrOthers } from '../../../utils/types'
 
 export const examCategoriesSectionSelf = buildSection({
-  id: 'examCategoriesSection',
+  id: 'examCategoriesSectionSelf',
   title: examCategories.general.sectionTitle,
   condition: (answers: FormValue) => {
     const selfOrOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
@@ -22,14 +23,8 @@ export const examCategoriesSectionSelf = buildSection({
       description: examCategories.general.pageDescription,
       id: 'examCategoriesMultiField',
       children: [
-        buildSelectField({
+        buildTextField({
           id: '',
-          options: [
-            {
-              value: '1',
-              label: 'test'
-            }
-          ]
         })
       ],
     }),
