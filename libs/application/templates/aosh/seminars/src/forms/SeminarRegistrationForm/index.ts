@@ -28,6 +28,7 @@ export const SeminarRegistrationForm: Form = buildForm({
       getSelectedChargeItems: (application: Application) =>
         getChargeItems(application).map((x) => ({
           chargeItemCode: x.code,
+          chargeItemQuantity: x.quantity,
         })),
     }),
   ],
