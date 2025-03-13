@@ -813,9 +813,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     internationalSchoolSupportAlertMessage: {
       id: 'nps.application:different.needs.international.school.alert.message#markdown',
       defaultMessage:
-        'If your application will be accepted, the school will ask you to send reportcards of the last two years, external standardized tests resaults and special needs documentation.',
+        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
       description:
-        'If your application will be accepted, the school will ask you to send reportcards of the last two years, external standardized tests resaults and special needs documentation.',
+        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
     },
     supportAlertMessage: {
       id: 'nps.application:different.needs.support.alert.message#markdown',
