@@ -11,6 +11,7 @@ import {
   GridContainer,
   Hidden,
   InfoCardGrid,
+  Inline,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -130,31 +131,15 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
         <GridContainer>
           <Stack space={3}>
             <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-            <Text variant="h1" as="h1">
-              {heading}
-            </Text>
-            <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
-            <Text>{formatMessage(m.listPage.description)}</Text>
-            <Hidden below="lg">
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="utility"
-                  icon={isGridLayout ? 'list' : 'grid'}
-                  iconType="outline"
-                  colorScheme="white"
-                  size="small"
-                  onClick={() => {
-                    setIsGridLayout((previousState) => !previousState)
-                  }}
-                >
-                  {formatMessage(
-                    isGridLayout
-                      ? m.listPage.displayList
-                      : m.listPage.displayGrid,
-                  )}
-                </Button>
-              </Box>
-            </Hidden>
+            <Stack space={2}>
+              <Text variant="h1" as="h1">
+                {heading}
+              </Text>
+              <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
+              <Text variant="intro">
+                {formatMessage(m.listPage.description)}
+              </Text>
+            </Stack>
           </Stack>
         </GridContainer>
         <Box background="blue100" paddingTop={[3, 3, 0]}>
@@ -168,69 +153,97 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
               </Stack>
             }
           >
-            <InfoCardGrid
-              variant="detailed"
-              columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
-              cards={data.visibleVerdicts
-                .filter((verdict) => Boolean(verdict.id))
-                .map((verdict) => {
-                  return {
-                    description: verdict.title,
-                    eyebrow: '',
-                    id: verdict.id,
-                    link: { href: `/domar/${verdict.id}`, label: '' },
-                    title: verdict.caseNumber,
-                    borderColor: 'blue200',
-                    detailLines: [
-                      {
-                        icon: 'calendar',
-                        text: verdict.verdictDate
-                          ? format(
-                              new Date(verdict.verdictDate),
-                              'd. MMMM yyyy',
-                            )
-                          : '',
-                      },
-                      { icon: 'hammer', text: verdict.court ?? '' },
-                      {
-                        icon: 'person',
-                        text: `${verdict.presidentJudge?.name ?? ''} ${
-                          verdict.presidentJudge?.title ?? ''
-                        }`,
-                      },
-                    ],
-                  }
-                })}
-            />
-            {initialData.total > data.visibleVerdicts.length && (
-              <Box
-                key={page}
-                paddingTop={4}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-              >
-                {error && (
-                  <Box paddingBottom={2}>
-                    <Text variant="medium" color="red600">
-                      {formatMessage(m.listPage.loadingMoreFailed)}
-                    </Text>
+            <Stack space={3}>
+              <Inline justifyContent="spaceBetween" alignY="center" space={2}>
+                <Text>
+                  <strong>{data.total}</strong>{' '}
+                  {formatMessage(m.listPage.verdictsFound)}
+                </Text>
+                <Hidden below="lg">
+                  <Box>
+                    <Button
+                      variant="utility"
+                      icon={isGridLayout ? 'list' : 'grid'}
+                      iconType="outline"
+                      colorScheme="white"
+                      size="small"
+                      onClick={() => {
+                        setIsGridLayout((previousState) => !previousState)
+                      }}
+                    >
+                      {formatMessage(
+                        isGridLayout
+                          ? m.listPage.displayList
+                          : m.listPage.displayGrid,
+                      )}
+                    </Button>
                   </Box>
-                )}
-                <Button
-                  loading={loading}
-                  onClick={() => {
-                    setPage((p) => p + 1)
-                  }}
-                >
-                  {formatMessage(m.listPage.seeMoreVerdicts, {
-                    remainingVerdictCount:
-                      initialData.total - data.visibleVerdicts.length,
+                </Hidden>
+              </Inline>
+              <InfoCardGrid
+                variant="detailed"
+                columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
+                cards={data.visibleVerdicts
+                  .filter((verdict) => Boolean(verdict.id))
+                  .map((verdict) => {
+                    return {
+                      description: verdict.title,
+                      eyebrow: '',
+                      id: verdict.id,
+                      link: { href: `/domar/${verdict.id}`, label: '' },
+                      title: verdict.caseNumber,
+                      borderColor: 'blue200',
+                      detailLines: [
+                        {
+                          icon: 'calendar',
+                          text: verdict.verdictDate
+                            ? format(
+                                new Date(verdict.verdictDate),
+                                'd. MMMM yyyy',
+                              )
+                            : '',
+                        },
+                        { icon: 'hammer', text: verdict.court ?? '' },
+                        {
+                          icon: 'person',
+                          text: `${verdict.presidentJudge?.name ?? ''} ${
+                            verdict.presidentJudge?.title ?? ''
+                          }`,
+                        },
+                      ],
+                    }
                   })}
-                </Button>
-              </Box>
-            )}
+              />
+              {initialData.total > data.visibleVerdicts.length && (
+                <Box
+                  key={page}
+                  paddingTop={4}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {error && (
+                    <Box paddingBottom={2}>
+                      <Text variant="medium" color="red600">
+                        {formatMessage(m.listPage.loadingMoreFailed)}
+                      </Text>
+                    </Box>
+                  )}
+                  <Button
+                    loading={loading}
+                    onClick={() => {
+                      setPage((p) => p + 1)
+                    }}
+                  >
+                    {formatMessage(m.listPage.seeMoreVerdicts, {
+                      remainingVerdictCount:
+                        initialData.total - data.visibleVerdicts.length,
+                    })}
+                  </Button>
+                </Box>
+              )}
+            </Stack>
           </SidebarLayout>
         </Box>
       </Stack>
