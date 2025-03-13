@@ -1,7 +1,7 @@
 import { FC, isValidElement, PropsWithChildren, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 
