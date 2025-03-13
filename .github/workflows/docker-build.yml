@@ -72,7 +72,6 @@ jobs:
           echo "envs:"
           echo "BUILD_CHUNKS: ${{ env.BUILD_CHUNKS }}"
           echo "FEATURE_NAME: ${{ env.FEATURE_NAME }}"
-          echo ${{ fromJson(inputs.BUILD_CHUNKS) }}
 
   docker-build:
     runs-on: arc-docker
