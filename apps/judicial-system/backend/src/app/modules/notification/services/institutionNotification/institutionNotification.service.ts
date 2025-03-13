@@ -75,12 +75,12 @@ export class InstitutionNotificationService extends BaseNotificationService {
 
     return Promise.all(
       recipients.map((recipient: User) =>
-        this.sendEmail(
+        this.sendEmail({
           subject,
-          `${body}<br /><br />${tail}`,
-          recipient.name,
-          recipient.email,
-        ),
+          html: `${body}<br /><br />${tail}`,
+          recipientName: recipient.name,
+          recipientEmail: recipient.email,
+        }),
       ),
     )
   }

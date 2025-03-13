@@ -4,7 +4,6 @@ import { m } from '../lib/messages'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  title: '',
   mode: FormModes.APPROVED,
   children: [
     buildCustomField({

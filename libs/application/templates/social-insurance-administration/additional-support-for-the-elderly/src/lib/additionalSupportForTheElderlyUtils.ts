@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
   BankAccountType,
   MONTHS,
@@ -8,14 +8,11 @@ import {
   AdditionalInformation,
   Attachments,
   BankInfo,
+  Eligible,
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
-  Application,
-  ExternalData,
-  YesOrNo,
-} from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import { AttachmentLabel, AttachmentTypes } from './constants'
@@ -59,19 +56,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
-  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
-
-  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
-
-  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
-
-  const bankAddress = getValueViaPath(
-    answers,
-    'paymentInfo.bankAddress',
-  ) as string
-
-  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
-
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
   const personalAllowance = getValueViaPath(
@@ -100,11 +84,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     tempAnswers,
     bankAccountType,
     bank,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
@@ -164,8 +143,8 @@ export const getApplicationExternalData = (
 
   const isEligible = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-  ) as boolean
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  ) as Eligible
 
   return {
     applicantName,
@@ -259,5 +238,5 @@ export const getAvailableMonths = (selectedYear: string) => {
 export const isEligible = (externalData: ExternalData): boolean => {
   const { isEligible } = getApplicationExternalData(externalData)
 
-  return isEligible
+  return isEligible?.isEligible
 }

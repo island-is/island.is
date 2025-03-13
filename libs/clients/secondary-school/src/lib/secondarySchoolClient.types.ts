@@ -1,4 +1,5 @@
 export interface Student {
+  hasActiveApplication: boolean
   isFreshman: boolean
 }
 
@@ -59,6 +60,7 @@ export interface Application {
   id: string
   nationalId: string
   name: string
+  genderCode?: string
   phone: string
   email: string
   address: string

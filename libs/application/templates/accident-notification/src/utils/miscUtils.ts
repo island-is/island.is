@@ -1,5 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue, YES } from '@island.is/application/types'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { isReportingOnBehalfOfEmployee as isReportingOnBehalfOfEmployeeOrginal } from './reportingUtils'
 import {
   GeneralWorkplaceAccidentLocationEnum,
@@ -7,7 +7,6 @@ import {
   StudiesAccidentLocationEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
-  YesOrNo,
 } from '../types'
 import {
   getInjuredPersonInformation as getInjuredPersonInformationOrginal,

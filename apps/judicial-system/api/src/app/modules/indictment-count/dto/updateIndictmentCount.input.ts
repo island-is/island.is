@@ -1,7 +1,14 @@
-import { Allow, IsArray, IsEnum, IsOptional } from 'class-validator'
+import {
+  Allow,
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  Min,
+} from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, ID, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
 import {
@@ -34,7 +41,7 @@ export class UpdateIndictmentCountInput {
   @IsArray()
   @IsEnum(IndictmentCountOffense, { each: true })
   @Field(() => [IndictmentCountOffense], { nullable: true })
-  readonly offenses?: IndictmentCountOffense[]
+  readonly deprecatedOffenses?: IndictmentCountOffense[]
 
   @Allow()
   @IsOptional()
@@ -62,5 +69,26 @@ export class UpdateIndictmentCountInput {
   @IsArray()
   @IsEnum(IndictmentSubtype, { each: true })
   @Field(() => [IndictmentSubtype], { nullable: true })
+  readonly policeCaseNumberSubtypes?: IndictmentSubtype[]
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @Field(() => [IndictmentSubtype], { nullable: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
+
+  @Allow()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Field(() => Int, { nullable: true })
+  readonly recordedSpeed?: number
+
+  @Allow()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Field(() => Int, { nullable: true })
+  readonly speedLimit?: number
 }

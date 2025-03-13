@@ -112,6 +112,10 @@ export const m = {
       id: 'web.grants:search.type',
       defaultMessage: 'Tegund',
     },
+    viewResults: {
+      id: 'web.grants:search.viewResults',
+      defaultMessage: 'Skoða niðurstöður',
+    },
     resultFound: {
       id: 'web.grants:search.resultFound',
       defaultMessage: '{arg} styrkur fannst',
@@ -219,6 +223,15 @@ export const m = {
     },
     featuredImageAlt: {
       id: 'web.grants:home.featuredImageAlt',
+      defaultMessage: 'Mynd af konu við tölvu',
+    },
+    searchResultsImage: {
+      id: 'web.grants:home.searchResultsImage',
+      defaultMessage:
+        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+    },
+    searchResultsImageAlt: {
+      id: 'web.grants:home.searchResultsImageAlt',
       defaultMessage: 'Mynd af klemmuspjaldi ásamt blýanti',
     },
     inputPlaceholder: {
@@ -276,6 +289,10 @@ export const m = {
     grantCategoryEnergyTransitionDescription: {
       id: 'web.grants:home.grantCategoryEnergyTransitionDescription',
       defaultMessage: 'Lýsing á orkuskiptum',
+    },
+    grantCategoryEnvironmentDescription: {
+      id: 'web.grants:home.grantCategoryEnvironmentDescription',
+      defaultMessage: 'Lýsing á umhverfi',
     },
   }),
   bullets: defineMessages({

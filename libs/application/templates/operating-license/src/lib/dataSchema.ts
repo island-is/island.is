@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { error } from './error'
-import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
+import { APPLICATION_TYPES, OPERATION_CATEGORY } from './constants'
 import {
   isValid24HFormatTime,
   isValidEmail,
@@ -9,6 +9,7 @@ import {
   validateApplicationInfoCategory,
 } from './utils'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),

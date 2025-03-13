@@ -28,6 +28,7 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -36,6 +37,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE,
   name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.HealthcareLicenseCertificate.translation,

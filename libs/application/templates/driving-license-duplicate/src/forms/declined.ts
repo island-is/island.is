@@ -6,13 +6,14 @@ import {
   getValueViaPath,
   buildAlertMessageField,
   buildKeyValueField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
 import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
 import { allowFakeCondition, requirementsMet } from '../lib/utils'
-import { NO, YES } from '../lib/constants'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 
@@ -43,7 +44,6 @@ export const declined: Form = buildForm({
         }),
         buildCustomField({
           id: 'currentLicense',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildDescriptionField({
@@ -91,12 +91,10 @@ export const declined: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'rejected.space',
-          title: '',
           space: 'containerGutter',
         }),
         buildDescriptionField({
           id: 'rejected.space1',
-          title: '',
           space: 'containerGutter',
         }),
       ],

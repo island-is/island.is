@@ -6,6 +6,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -157,6 +158,61 @@ describe('FileController - Create case file', () => {
       expect(then.result).toBe(caseFile)
     })
   })
+
+  describe.each(indictmentCases)(
+    'additional case file created for %s case',
+    (type) => {
+      const caseId = uuid()
+      const theCase = {
+        id: caseId,
+        type,
+        origin: CaseOrigin.LOKE,
+        courtCaseNumber: uuid(),
+      } as Case
+      const uuId = uuid()
+      const createCaseFile: CreateFileDto = {
+        type: 'text/plain',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+        key: `${caseId}/${uuId}/test.txt`,
+        size: 99,
+      }
+      const fileId = uuid()
+      const timeStamp = randomDate()
+      const caseFile = {
+        type: 'text/plain',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+        key: `${caseId}/${uuId}/test.txt`,
+        size: 99,
+        id: fileId,
+        created: timeStamp,
+        modified: timeStamp,
+      }
+
+      beforeEach(async () => {
+        const mockCreate = mockFileModel.create as jest.Mock
+        mockCreate.mockResolvedValueOnce(caseFile)
+
+        await givenWhenThen(caseId, createCaseFile, theCase)
+      })
+
+      it('should deliver the file to court and police', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+            user,
+            caseId,
+            elementId: fileId,
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+            user,
+            caseId,
+            elementId: fileId,
+          },
+        ])
+      })
+    },
+  )
 
   describe('malformed key', () => {
     const caseId = uuid()

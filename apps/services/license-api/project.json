@@ -13,13 +13,7 @@
         "outputPath": "dist/apps/services/license-api",
         "main": "apps/services/license-api/src/main.ts",
         "tsConfig": "apps/services/license-api/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "*",
-            "input": "apps/services/license-api",
-            "output": "./"
-          }
-        ],
+        "assets": [],
         "maxWorkers": 2
       },
       "configurations": {

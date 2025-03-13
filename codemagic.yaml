@@ -40,6 +40,11 @@ definitions:
         else
           echo "No previous commit detected. Continuing."
         fi
+    - &pip_install
+      name: Install distutils with pip
+      script: |
+        pip3 install --upgrade setuptools
+        python3 -c "import distutils; print(distutils.__file__)"
     - &set_android_location
       name: Prepare Android configuration
       script: |
@@ -97,7 +102,6 @@ definitions:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
-        changes_not_sent_for_review: true
     slack_errors: &slack_errors
       slack:
         channel: '#team-app-builds'
@@ -130,6 +134,7 @@ workflows:
         APP_STORE_APPLE_ID: 1569828682
     scripts:
       - *check_changes
+      - *pip_install
       - *npm_install
       - *codegen
       - *cocoapods
@@ -164,6 +169,7 @@ workflows:
         APP_STORE_APPLE_ID: 1570427360
     scripts:
       - *check_changes
+      - *pip_install
       - *npm_install
       - *codegen
       - *cocoapods
@@ -204,6 +210,7 @@ workflows:
     scripts:
       - *check_changes
       - *set_android_location
+      - *pip_install
       - *npm_install
       - *codegen
       - *build_android
@@ -234,6 +241,7 @@ workflows:
     scripts:
       - *check_changes
       - *set_android_location
+      - *pip_install
       - *npm_install
       - *codegen
       - *build_android

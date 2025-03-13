@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Text } from '@island.is/island-ui/core'
 import {
@@ -49,29 +49,20 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
-                  sortable: {
-                    isSortable: true,
-                    key: 'courtCaseNumber',
-                  },
+                  sortBy: 'courtCaseNumber',
                 },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: {
-                    isSortable: true,
-                    key: 'defendants',
-                  },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: {
-                    isSortable: true,
-                    key: 'indictmentAppealDeadline',
-                  },
+                  sortBy: 'indictmentAppealDeadline',
                 },
               ]}
               data={cases}
@@ -112,12 +103,10 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 {
                   cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
                     />
                   ),
                 },

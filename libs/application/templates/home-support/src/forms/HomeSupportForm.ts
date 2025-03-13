@@ -54,7 +54,6 @@ export const HomeSupportForm: Form = buildForm({
             buildActionCardListField({
               id: 'cohabitants',
               doesNotRequireAnswer: true,
-              title: '',
               condition: (_, externalData) => {
                 const cohabitants = externalData.nationalRegistryCohabitants
                   .data as NationalRegistryIndividual[]
@@ -95,7 +94,6 @@ export const HomeSupportForm: Form = buildForm({
           children: [
             buildTableRepeaterField({
               id: 'contacts',
-              title: '',
               marginTop: 0,
               formTitle: m.application.contacts.formTitle,
               addItemButtonText: m.application.contacts.addContactButton,
@@ -209,7 +207,6 @@ export const HomeSupportForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'receivesDoctorService',
-              title: '',
               required: true,
               options: [
                 {

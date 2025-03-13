@@ -5,8 +5,10 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
-import { Application, NO, YES } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
@@ -82,7 +84,6 @@ export const childInfoSubSection = buildSubSection({
         ),
         buildCheckboxField({
           id: 'childInfo.usePronounAndPreferredName',
-          title: '',
           spacing: 0,
           options: [
             {

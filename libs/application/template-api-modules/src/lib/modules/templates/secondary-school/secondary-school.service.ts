@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
@@ -43,7 +44,19 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   async getStudentInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<Student> {
-    return this.secondarySchoolClient.getStudentInfo(auth)
+    const result = await this.secondarySchoolClient.getStudentInfo(auth)
+
+    if (result.hasActiveApplication) {
+      throw new TemplateApiError(
+        {
+          title: error.errorValidateCanCreateTitle,
+          summary: error.errorValidateCanCreateDescription,
+        },
+        400,
+      )
+    }
+
+    return result
   }
 
   async getSchools({
@@ -70,43 +83,34 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     return schools
   }
 
-  async validateCanCreate({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
-    const canCreate = await this.secondarySchoolClient.validateCanCreate(auth)
-
-    if (!canCreate) {
-      throw new TemplateApiError(
-        {
-          title: error.errorValidateCanCreateTitle,
-          summary: error.errorValidateCanCreateDescription,
-        },
-        400,
-      )
-    }
-  }
-
   async deleteApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    try {
-      // Delete the application in MMS
-      await this.secondarySchoolClient.delete(auth, application.id)
+    const externalId = await this.secondarySchoolClient.getExternalId(
+      auth,
+      application.id,
+    )
 
+    if (externalId) {
       try {
-        // If that succeeded, send email to applicant and custodians
-        await this.sendEmailAboutDeleteApplication(application)
-      } catch (emailError) {
-        logger.error(
-          `Application deleted but failed to send notification emails: ${emailError.message}`,
-          { applicationId: application.id },
+        // Delete the application in MMS
+        await this.secondarySchoolClient.delete(auth, application.id)
+
+        try {
+          // If that succeeded, send email to applicant and custodians
+          await this.sendEmailAboutDeleteApplication(application)
+        } catch (emailError) {
+          logger.error(
+            `Application deleted but failed to send notification emails: ${emailError.message}`,
+            { applicationId: application.id },
+          )
+        }
+      } catch (error) {
+        throw new Error(
+          `Failed to delete application ${application.id}: ${error.message}`,
         )
       }
-    } catch (error) {
-      throw new Error(
-        `Failed to delete application ${application.id}: ${error.message}`,
-      )
     }
   }
 
@@ -137,7 +141,10 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
-    const nationalId = auth.actor?.nationalId || auth.nationalId
+    const nationalRegistryData = getValueViaPath<NationalRegistryIndividual>(
+      application.externalData,
+      'nationalRegistry.data',
+    )
 
     // Get values from answers
     const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
@@ -159,8 +166,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     try {
       applicationId = await this.secondarySchoolClient.create(auth, {
         id: application.id,
-        nationalId: nationalId,
+        nationalId: auth.nationalId,
         name: applicant?.name || '',
+        genderCode: nationalRegistryData?.genderCode,
         phone: applicant?.phoneNumber || '',
         email: applicant?.email || '',
         address: applicant?.address || '',
@@ -178,10 +186,13 @@ export class SecondarySchoolService extends BaseTemplateApiService {
                 application,
                 attachment,
               )
+              const contentType = this.getMimeType(
+                attachment.name.split('.').pop(),
+              )
               return {
                 fileName: attachment.name,
                 fileContent,
-                contentType: `application/${attachment.name.split('.').pop()}`,
+                contentType,
               }
             },
           ),
@@ -260,5 +271,27 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     } catch (error) {
       throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
+  }
+
+  private getMimeType(extension?: string): string {
+    const fileExtensionWhitelist = {
+      '.pdf': 'application/pdf',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+    }
+
+    const contentType =
+      extension &&
+      getValueViaPath<string>(
+        fileExtensionWhitelist,
+        `.${extension.toLowerCase()}`,
+      )
+
+    if (!contentType) {
+      throw new Error(`Invalid extension in attachment: ${extension}`)
+    }
+
+    return contentType
   }
 }

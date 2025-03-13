@@ -20,6 +20,7 @@ export const usePdf = ({ applicationId, onComplete }: Props) => {
           id: applicationId,
         },
       },
+      fetchPolicy: 'no-cache',
       onCompleted: onComplete,
     },
   )

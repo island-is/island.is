@@ -22,7 +22,7 @@ import { keyStorage } from './_key_storage.mjs'
 import { getGeneratedFilesHash } from './_generated_files.mjs'
 
 // When testing this is good to manipulate
-const HASH_VERSION = `newcache-${6}`
+const HASH_VERSION = `newcache-${7}`
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
@@ -114,7 +114,6 @@ export const caches = [
       const files = [
         'scripts/ci/10_prepare-docker-deps.sh',
         'scripts/ci/Dockerfile',
-        'scripts/ci/get-node-version.mjs',
         'scripts/ci/_common.mjs',
       ].map((file) => resolve(ROOT, file))
       const filesHash = getFilesHash(files)

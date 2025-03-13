@@ -4,8 +4,9 @@ import {
   buildDescriptionField,
   buildRadioField,
   buildSelectField,
+  YES,
+  NO,
 } from '@island.is/application/core'
-import { NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { NationalRegistryMaritalStatus as MaritalStatus } from '../types/schema'
 
@@ -38,7 +39,6 @@ export const fakeDataSection = buildSection({
         }),
         buildRadioField({
           id: 'fakeData.useFakeData',
-          title: '',
           width: 'half',
           options: [
             {

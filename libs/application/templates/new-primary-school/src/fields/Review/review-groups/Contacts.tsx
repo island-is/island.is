@@ -73,7 +73,6 @@ export const Contacts = ({
                     component: FieldComponents.STATIC_TABLE,
                     children: undefined,
                     id: 'contactsTable',
-                    title: '',
                     header: [
                       newPrimarySchoolMessages.shared.fullName,
                       newPrimarySchoolMessages.shared.phoneNumber,

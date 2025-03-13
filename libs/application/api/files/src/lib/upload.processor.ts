@@ -6,7 +6,13 @@ import { Inject } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationFilesConfig } from './files.config'
 import { ConfigType } from '@nestjs/config'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import {
+  LOGGER_PROVIDER,
+  withLoggingContext,
+  type Logger,
+} from '@island.is/logging'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 interface JobData {
   applicationId: string
@@ -20,6 +26,7 @@ interface JobResult {
 }
 
 @Processor('upload')
+@CodeOwner(CodeOwners.NordaApplications)
 export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -31,10 +38,9 @@ export class UploadProcessor {
 
   @Process('upload')
   async handleUpload(job: Job<JobData>): Promise<JobResult> {
+    const { attachmentUrl, applicationId } = job.data
+    const destinationBucket = this.config.attachmentBucket
     try {
-      const { attachmentUrl, applicationId } = job.data
-      const destinationBucket = this.config.attachmentBucket
-
       if (!destinationBucket) {
         throw new Error('Application attachment bucket not configured.')
       }
@@ -53,15 +59,25 @@ export class UploadProcessor {
         resultUrl,
       }
     } catch (error) {
-      this.logger.error('An error occurred while processing upload job', error)
+      withLoggingContext(
+        {
+          applicationId: applicationId,
+        },
+        () => {
+          this.logger.error(
+            'An error occurred while processing upload job',
+            error,
+          )
+        },
+      )
       throw error
     }
   }
 
   @OnQueueCompleted()
   async onCompleted(job: Job, result: JobResult) {
+    const { applicationId, nationalId }: JobData = job.data
     try {
-      const { applicationId, nationalId }: JobData = job.data
       const existingApplication = await this.applicationService.findOneById(
         applicationId,
         nationalId,
@@ -87,7 +103,17 @@ export class UploadProcessor {
         result.resultUrl,
       )
     } catch (error) {
-      this.logger.error('An error occurred while completing upload job', error)
+      withLoggingContext(
+        {
+          applicationId: applicationId,
+        },
+        () => {
+          this.logger.error(
+            'An error occurred while completing upload job',
+            error,
+          )
+        },
+      )
       throw error
     }
   }

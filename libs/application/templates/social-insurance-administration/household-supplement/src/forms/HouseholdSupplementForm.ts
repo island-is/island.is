@@ -1,4 +1,5 @@
 import {
+  YES,
   buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
@@ -35,7 +36,6 @@ import {
   FormModes,
   FormValue,
   NationalRegistrySpouse,
-  YES,
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
@@ -280,7 +280,6 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -667,7 +666,6 @@ export const HouseholdSupplementForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(

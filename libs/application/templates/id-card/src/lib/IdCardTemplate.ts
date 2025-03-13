@@ -37,6 +37,7 @@ import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems, hasReviewer, hasReviewerApproved } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
@@ -82,8 +83,8 @@ const IdCardTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ID_CARD,
-  name: applicationMessage.name, // TODO make dynamic if possible
-  featureFlag: Features.idCardApplication,
+  name: applicationMessage.name,
+  codeOwner: CodeOwners.Origo,
   dataSchema: IdCardSchema,
   translationNamespaces: [ApplicationConfigurations.IdCard.translation],
   stateMachineConfig: {

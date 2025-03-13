@@ -75,7 +75,7 @@ export const getEmployeeInformationForOverview = (
   )
   return [
     employee.nationalField.name ?? '',
-    formatKennitala(employee.nationalField.nationalId, '-'),
+    formatKennitala(employee.nationalField.nationalId),
     `${employee.address ?? ''}, ${chosenPostCode?.code} ${
       chosenPostCode?.name
     }`,

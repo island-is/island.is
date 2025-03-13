@@ -9,7 +9,7 @@ export {
   default as DurationDate,
   getDurationDate,
 } from './DurationDate/DurationDate'
-export { default as CreatedDate } from './CreatedDate/CreatedDate'
+export { default as TableDate } from './TableDate/TableDate'
 export { default as AppealCasesTable } from './AppealCasesTable/AppealCasesTable'
 export { default as PastCasesTable } from './PastCasesTable/PastCasesTable'
 export { default as CourtDate } from './CourtDate/CourtDate'

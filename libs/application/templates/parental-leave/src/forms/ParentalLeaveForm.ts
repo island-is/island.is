@@ -20,6 +20,8 @@ import {
   buildSliderField,
   formatText,
   NO_ANSWER,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Application,
@@ -34,13 +36,12 @@ import {
 } from '@island.is/application/ui-components'
 
 import Logo from '../assets/Logo'
-import { maxDaysToGiveOrReceive, minPeriodDays } from '../config'
+import { maxDaysToGiveOrReceive } from '../config'
 import {
   ADOPTION,
   FILE_SIZE_LIMIT,
   Languages,
   MANUAL,
-  NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   PARENTAL_GRANT,
@@ -52,7 +53,6 @@ import {
   SPOUSE,
   StartDateOptions,
   UnEmployedBenefitTypes,
-  YES,
 } from '../constants'
 import {
   GetPensionFunds,
@@ -72,6 +72,7 @@ import {
   getFirstPeriodTitle,
   getLeavePlanTitle,
   getMaxMultipleBirthsDays,
+  getMinimumEndDate,
   getMinimumStartDate,
   getMultipleBirthRequestDays,
   getOtherParentOptions,
@@ -236,7 +237,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
-                  title: '',
                   options: getOtherParentOptions,
                 }),
                 buildTextField({
@@ -687,7 +687,6 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'employment',
-              title: '',
               children: [
                 buildDescriptionField({
                   id: 'employment.isSelfEmployed.description',
@@ -698,7 +697,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'employment.isSelfEmployed',
-                  title: '',
                   width: 'half',
                   required: true,
                   options: [
@@ -740,7 +738,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'employment.isReceivingUnemploymentBenefits',
-                  title: '',
                   width: 'half',
                   options: [
                     {
@@ -1197,7 +1194,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   id: 'rightsIntro',
                   doesNotRequireAnswer: true,
-                  title: '',
                   component: 'Rights',
                 }),
               ],
@@ -1223,7 +1219,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSliderField({
                   id: 'multipleBirthsRequestDays',
-                  title: '',
                   label: {
                     singular: parentalLeaveFormMessages.shared.day,
                     plural: parentalLeaveFormMessages.shared.days,
@@ -1252,7 +1247,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     'giveRights.isGivingRights',
                     'giveRights.giveDays',
                   ],
-                  title: '',
                   component: 'RequestMultipleBirthsDaysBoxChart',
                 }),
               ],
@@ -1318,7 +1312,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSliderField({
                   id: 'requestRights.requestDays',
-                  title: '',
                   label: {
                     singular: parentalLeaveFormMessages.shared.day,
                     plural: parentalLeaveFormMessages.shared.days,
@@ -1340,7 +1333,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   id: 'requestRights.isRequestingRights',
                   childInputIds: ['requestRights.isRequestingRights'],
-                  title: '',
                   component: 'RequestDaysBoxChart',
                 }),
               ],
@@ -1367,7 +1359,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildSliderField({
                   id: 'giveRights.giveDays',
-                  title: '',
                   label: {
                     singular: parentalLeaveFormMessages.shared.day,
                     plural: parentalLeaveFormMessages.shared.days,
@@ -1389,7 +1380,6 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
                   childInputIds: ['giveRights.isGivingRights'],
-                  title: '',
                   component: 'GiveDaysBoxChart',
                 }),
               ],
@@ -1440,7 +1430,6 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildCustomField({
                   id: 'reviewRights',
-                  title: '',
                   component: 'ReviewRights',
                 }),
               ],
@@ -1543,18 +1532,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   },
                   {
-                    minDate: (application: Application) => {
-                      const { rawPeriods } = getApplicationAnswers(
-                        application.answers,
-                      )
-                      const latestStartDate =
-                        rawPeriods[rawPeriods.length - 1]?.startDate
-
-                      return addDays(
-                        new Date(latestStartDate),
-                        minPeriodDays - 1,
-                      )
-                    },
+                    minDate: getMinimumEndDate,
                     excludeDates: (application: Application) => {
                       const { periods } = getApplicationAnswers(
                         application.answers,
@@ -1658,7 +1636,6 @@ export const ParentalLeaveForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirmation',
-          title: '',
           children: [
             buildCustomField(
               {
@@ -1673,7 +1650,6 @@ export const ParentalLeaveForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
