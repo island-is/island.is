@@ -125,7 +125,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
 
   return (
     <Box className="rs_read">
-      <HeadWithSocialSharing title={customPageData?.ogTitle ?? ''}>
+      <HeadWithSocialSharing title={customPageData?.ogTitle ?? formatMessage(m.listPage.heading)}>
         {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
           <meta name="robots" content="noindex, nofollow" />
         )}
