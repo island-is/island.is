@@ -3,7 +3,6 @@ import {
   Application,
   ExternalData,
   FormValue,
-  RepeaterOptionValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
@@ -23,7 +22,6 @@ import {
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
-
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -488,9 +486,4 @@ export const getGenderMessage = (application: Application) => {
   const selectedChild = getSelectedChild(application)
   const gender = formatGender(selectedChild?.genderCode)
   return gender
-}
-
-export const setOnChangeSchool = (optionValue: RepeaterOptionValue) => {
-  const option = optionValue?.toString()
-  return [{ key: 'newSchool.type', value: option?.split('::')[1] }]
 }
