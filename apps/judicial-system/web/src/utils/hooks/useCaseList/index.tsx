@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
