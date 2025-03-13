@@ -11,12 +11,12 @@ on:
     tags:
       - docker-build-*
   workflow_dispatch:
-  create:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
+  # create:
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - synchronize
+  #     - labeled
 
 defaults:
   run:

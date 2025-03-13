@@ -1,7 +1,11 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request: {}
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
   workflow_dispatch: {}
 
 defaults:
