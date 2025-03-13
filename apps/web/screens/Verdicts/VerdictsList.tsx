@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce, useWindowSize } from 'react-use'
+import { useWindowSize } from 'react-use'
 import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -45,7 +45,6 @@ import {
 import { m } from './translations.strings'
 
 const ITEMS_PER_PAGE = 10
-const DEBOUNCE_TIME = 300
 
 interface VerdictsListProps {
   initialData: {
@@ -70,62 +69,59 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
     GetVerdictsQueryVariables
   >(GET_VERDICTS_QUERY)
 
-  useDebounce(
-    () => {
-      if (page <= 1) {
-        return
-      }
+  useEffect(() => {
+    if (page <= 1) {
+      return
+    }
 
-      fetchVerdicts({
-        variables: {
-          input: {
-            page,
-          },
+    fetchVerdicts({
+      variables: {
+        input: {
+          page,
         },
-        onCompleted(response) {
-          setData((prevData) => {
-            const verdicts = response.webVerdicts.items
-              .concat(prevData.invisibleVerdicts)
-              // Remove all duplicate verdicts in case there were new verdicts published since last page load
-              .filter(
-                (verdict) =>
-                  !verdict.id ||
-                  !prevData.visibleVerdicts
-                    .map(({ id }) => id)
-                    .includes(verdict.id),
-              )
+      },
+      onCompleted(response) {
+        setData((prevData) => {
+          const verdicts = response.webVerdicts.items
+            .concat(prevData.invisibleVerdicts)
+            // Remove all duplicate verdicts in case there were new verdicts published since last page load
+            .filter(
+              (verdict) =>
+                !verdict.id ||
+                !prevData.visibleVerdicts
+                  .map(({ id }) => id)
+                  .includes(verdict.id),
+            )
 
-            verdicts.sort((a, b) => {
-              if (!a.verdictDate && !b.verdictDate) return 0
-              if (!b.verdictDate) return -1
-              if (!a.verdictDate) return 1
-              return (
-                new Date(b.verdictDate).getTime() -
-                new Date(a.verdictDate).getTime()
-              )
-            })
-
-            return {
-              visibleVerdicts: prevData.visibleVerdicts.concat(
-                verdicts.slice(0, ITEMS_PER_PAGE),
-              ),
-              invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
-              total: initialData.total,
-            }
+          verdicts.sort((a, b) => {
+            if (!a.verdictDate && !b.verdictDate) return 0
+            if (!b.verdictDate) return -1
+            if (!a.verdictDate) return 1
+            return (
+              new Date(b.verdictDate).getTime() -
+              new Date(a.verdictDate).getTime()
+            )
           })
-        },
-      })
-    },
-    DEBOUNCE_TIME,
-    [page],
-  )
+
+          return {
+            visibleVerdicts: prevData.visibleVerdicts.concat(
+              verdicts.slice(0, ITEMS_PER_PAGE),
+            ),
+            invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
+            total: initialData.total,
+          }
+        })
+      },
+    })
+  }, [fetchVerdicts, initialData.total, page])
 
   const [isGridLayout, setIsGridLayout] = useState(false)
   const overrideGridLayoutSetting = width < theme.breakpoints.lg
+  const heading = formatMessage(m.listPage.heading)
 
   return (
     <Box className="rs_read">
-      <HeadWithSocialSharing title={customPageData?.ogTitle ?? formatMessage(m.listPage.heading)}>
+      <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
         {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
           <meta name="robots" content="noindex, nofollow" />
         )}
@@ -135,7 +131,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
           <Stack space={3}>
             <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
             <Text variant="h1" as="h1">
-              {formatMessage(m.listPage.heading)}
+              {heading}
             </Text>
             <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
             <Text>{formatMessage(m.listPage.description)}</Text>
