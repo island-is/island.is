@@ -29,9 +29,9 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
-import { ApiActions, PaymentOptions } from '../shared/contstants'
+import { ApiActions, PaymentOptions } from '../shared/constants'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItems, isCompany } from '../utils'
+import { getChargeItems } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
 

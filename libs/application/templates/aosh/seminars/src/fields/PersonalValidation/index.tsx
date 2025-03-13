@@ -7,7 +7,7 @@ import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { personal } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { RegisterNumber } from '../../shared/contstants'
+import { RegisterNumber } from '../../shared/constants'
 
 export const PersonalValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -56,7 +56,10 @@ export const PersonalValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       const response = await getIsIndividualValidCallback([
         { nationalId: applicantNationalId, email: '' },
       ])
-      if (response?.areIndividualsValid[0].mayTakeCourse) {
+      if (
+        response?.areIndividualsValid?.length > 0 &&
+        response?.areIndividualsValid[0].mayTakeCourse
+      ) {
         return [true, null]
       }
       response?.areIndividualsValid[0]?.errorMessage &&

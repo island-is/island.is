@@ -13,7 +13,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
-import { IndividualOrCompany, PaymentOptions } from '../../../shared/contstants'
+import { IndividualOrCompany, PaymentOptions } from '../../../shared/constants'
 import {
   Application,
   ExternalData,

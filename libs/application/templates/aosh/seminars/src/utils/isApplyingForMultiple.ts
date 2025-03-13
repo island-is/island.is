@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { RegisterNumber } from '../shared/contstants'
+import { RegisterNumber } from '../shared/constants'
 
 export const isApplyingForMultiple = (answers: FormValue): boolean => {
   const isApplyingForMultiple = getValueViaPath<RegisterNumber>(

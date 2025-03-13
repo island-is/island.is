@@ -94,7 +94,7 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         application.externalData,
         'createCharge.data.id',
       ) ?? ''
-    const res = await this.seminarsClientService
+    return await this.seminarsClientService
       .registerSeminar(auth, {
         courseRegistrationCreateDTO: {
           courseId: seminarQueryId,
@@ -147,6 +147,5 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
           400,
         )
       })
-    return res
   }
 }

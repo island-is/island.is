@@ -7,5 +7,5 @@ export { SeminarAnswersSchema as SeminarAnswers } from './shared/types'
 export default template
 export * from './lib/messages/externalData'
 export * from './lib/messages/application'
-export { IndividualOrCompany } from './shared/contstants'
-export { RegisterNumber } from './shared/contstants'
+export { IndividualOrCompany } from './shared/constants'
+export { RegisterNumber } from './shared/constants'

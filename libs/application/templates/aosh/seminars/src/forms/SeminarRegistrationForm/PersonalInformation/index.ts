@@ -10,7 +10,7 @@ import {
 import { personal as personalMessages } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import { isCompanyType, isPersonType } from '../../../utils'
-import { RegisterNumber } from '../../../shared/contstants'
+import { RegisterNumber } from '../../../shared/constants'
 
 export const personalInformationSection = buildSection({
   id: 'personalInformation',
