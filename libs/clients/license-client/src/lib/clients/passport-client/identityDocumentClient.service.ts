@@ -4,11 +4,9 @@ import { LicenseClient, LicenseType, Result } from '../../licenseClient.type'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   IdentityDocument,
-  IdentityDocumentChild,
   PassportsService,
 } from '@island.is/clients/passports'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class IdentityDocumentClient
@@ -20,25 +18,15 @@ export class IdentityDocumentClient
   ) {}
 
   clientSupportsPkPass = false
-  type = LicenseType.Passport
+  type = LicenseType.IdentityDocument
 
-  async getLicenses(
-    user: User,
-  ): Promise<Result<Array<IdentityDocument | IdentityDocumentChild>>> {
+  async getLicenses(user: User): Promise<Result<Array<IdentityDocument>>> {
     try {
-      const { userPassport: userIdDoc, childPassports: childIdDocs } =
-        await this.passportService.getCurrentPassport(user, 'I')
+      const data = await this.passportService.getIdentityDocument(user, 'I')
 
-      let idDocs: Array<IdentityDocument | IdentityDocumentChild> = [
-        userIdDoc,
-      ].filter(isDefined)
-
-      if (childIdDocs) {
-        idDocs = [...idDocs, ...childIdDocs]
-      }
       return {
         ok: true,
-        data: idDocs.filter(isDefined),
+        data: data ?? [],
       }
     } catch (e) {
       let error

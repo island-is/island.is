@@ -33,6 +33,10 @@ export const m = defineMessages({
     id: 'api.license-service:passport',
     defaultMessage: 'Vegabréf',
   },
+  identityDocument: {
+    id: 'api.license-service:identityDocument',
+    defaultMessage: 'Nafnskírteini',
+  },
   pCard: {
     id: 'api.license-service:p-card',
     defaultMessage: 'P-kort',

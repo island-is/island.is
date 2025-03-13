@@ -39,95 +39,32 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload.length) {
+      return Promise.resolve([])
+    }
+
     const { formatMessage } = await this.intlService.useIntl(
       [LICENSE_NAMESPACE],
       locale,
     )
 
-    const emptyPassport = {
-      licenseName: formatMessage(m.passport),
-      type: 'user' as const,
-      payload: {
-        data: [],
-        rawData: '',
-        metadata: {
-          title: formatMessage(m.passport),
-          name: formatMessage(m.passport),
-          subtitle: formatMessage(m.noValidPassport),
-          ctaLink: {
-            label: formatMessage(m.apply),
-            value: formatMessage(m.applyPassportUrl),
-          },
-        },
-      },
-    }
-
-    if (!payload.length) {
-      return [emptyPassport]
-    }
-
-    const typedPayload = payload as Array<
-      IdentityDocument | IdentityDocumentChild
-    >
+    const typedPayload = payload as Array<IdentityDocument>
 
     const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> =
-      typedPayload
-        .map((t) => {
-          if (isChildDoc(t)) {
-            return this.mapChildDocument(t, formatMessage).map((document) => ({
-              licenseName: formatMessage(m.passport),
-              type: 'child' as const,
-              payload: document,
-            }))
-          } else {
-            return {
-              licenseName: formatMessage(m.passport),
-              type: 'user' as const,
-              payload: this.mapDocument(t, formatMessage),
-            }
-          }
-        })
-        .flat()
-
-    if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
-      mappedLicenses.push(emptyPassport)
-    }
+      typedPayload.map((t) => {
+        return {
+          licenseName: formatMessage(m.identityDocument),
+          type: 'user' as const,
+          payload: this.mapDocument(t, formatMessage),
+        }
+      })
 
     return mappedLicenses
-  }
-
-  private mapChildDocument(
-    document: IdentityDocumentChild,
-    formatMessage: FormatMessage,
-  ): Array<Payload> {
-    if (document.passports?.length) {
-      return (
-        document.passports?.map((p) =>
-          this.mapDocument(p, formatMessage, document.childName ?? undefined),
-        ) ?? []
-      )
-    }
-
-    return [
-      {
-        data: [],
-        metadata: {
-          name: document.childName ?? '',
-          title: document.childName ?? '',
-          subtitle: formatMessage(m.noValidPassport),
-          ctaLink: {
-            label: formatMessage(m.apply),
-            value: formatMessage(m.applyPassportUrl),
-          },
-        },
-      },
-    ]
   }
 
   private mapDocument(
     document: IdentityDocument,
     formatMessage: FormatMessage,
-    licenseName?: string,
   ): Payload {
     const isExpired = document.expiryStatus?.toLowerCase() === 'expired'
 
