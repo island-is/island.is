@@ -287,6 +287,7 @@ jobs:
 
   docker-build:
     uses: ./.github/workflows/docker-build.yml
+    if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
     needs:
       - prepare
       - pre-checks
@@ -300,6 +301,19 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ needs.pre-checks.outputs.PRE_CHECK }}
       PRE_RELASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
+
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    needs:
+      - pre-checks
+      - prepare
+      - docker-build
+    secrets: inherit
+    with:
+      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
 
   success:
     runs-on: arc-runners

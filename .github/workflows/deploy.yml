@@ -18,10 +18,10 @@ jobs:
   deploy:
     runs-on: arc-runners
     env:
-      GIT_BRANCH_DEPLOY: ${{ inputs.outputs.GIT_BRANCH_DEPLOY }}
-      FEATURE_NAME: ${{ inputs.outputs.FEATURE_NAME }}
-      DOCKER_TAG: ${{ inputs.outputs.DOCKER_TAG }}
-      IMAGES: ${{ inputs.outputs.IMAGES }}
+      GIT_BRANCH_DEPLOY: ${{ inputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ inputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
+      IMAGES: ${{ inputs.IMAGES }}
     steps:
       - uses: actions/checkout@v4
       - name: Trigger Deployment for service
@@ -43,8 +43,8 @@ jobs:
           BODY
       - name: Trigger Deployment for IDS-Services
         env:
-          DOCKER_TAG: ${{ inputs.outputs.DOCKER_TAG }}
-          GIT_BRANCH_DEPLOY: ${{ inputs.outputs.GIT_BRANCH_DEPLOY }}
+          DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
+          GIT_BRANCH_DEPLOY: ${{ inputs.GIT_BRANCH_DEPLOY }}
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
