@@ -44,8 +44,14 @@ env:
   COREPACK_ENABLE_STRICT: '0'
 
 jobs:
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
+
   prepare:
     uses: ./.github/workflows/install.yml
+    needs:
+      - pre-checks
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
@@ -275,6 +281,16 @@ jobs:
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
+
+  docker-build:
+    uses: ./.github/workflows/docker-build.yml
+    needs:
+      - pre-checks
+    secrets: inherit
+    with:
+      main_branch: ${{ github.base_ref }}
+      pre_release: false
+      run_merge_queue: false
 
   success:
     runs-on: arc-runners

@@ -2,6 +2,9 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      pre_release:
+        type: string
+        default: 'false'
       main_branch:
         default: 'main'
         type: string
@@ -41,6 +44,11 @@ on:
         value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
       is-unicorn:
         value: ${{ jobs.install.outputs.is-unicorn }}
+      images:
+        value: ${{ jobs.install.outputs.IMAGES }}
+      DOCKER_TAG:
+        value: ${{ jobs.install.outputs.DOCKER_TAG }}
+
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
@@ -89,6 +97,8 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
+      IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
     runs-on: arc-runners
     permissions:
       contents: 'read'
@@ -103,7 +113,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
       - name: load-deps
@@ -120,12 +130,24 @@ jobs:
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
+      - name: Prepare feature deployment
+        if: steps.set-outputs.outputs.DEPLOY_FEATURE == 'true'
+        uses: ./.github/actions/feature-checkout
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+
+      - name: Prepare pre-release
+        if: inputs.pre_release == 'true'
+        id: git_nx_base
+        uses: ./.github/actions/prerelease-checkout
+
       - name: Set base/head sha output
         id: export-sha
         shell: bash
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last 
+            # In merge que we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
@@ -155,11 +177,30 @@ jobs:
         run: |
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+
       - name: Prepare merge queue
         id: prepare-merge-queue
         if: ${{ inputs.run_merge_queue == true }}
         run: |
           node scripts/ci/docker/generate-tag.mjs
+
+      - name: Generate docker image tag
+        if: steps.set-outputs.outputs.DEPLOY_FEATURE == 'true'
+        id: docker_tags
+        run: |
+          set -euo pipefail
+          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          SHA="${{ github.event.pull_request.head.sha }}"
+          echo "SHA='$SHA' retrieved from event"
+          if [[ "$SHA" == "" ]]; then
+          echo "Error: SHA='$SHA' is not allowed to be empty"
+            exit 1
+          fi
+          echo "Using SHA='$SHA' as docker tag SHA"
+          export DOCKER_TAG="${DOCKER_BRANCH_TAG}_${SHA:0:10}_${GITHUB_RUN_NUMBER}"
+          echo "Docker tag will be '${DOCKER_TAG}'"
+          echo DOCKER_TAG="${DOCKER_TAG}" >> "$GITHUB_OUTPUT"
+          echo "**Monorepo tag:** '${DOCKER_TAG}'" >> "$GITHUB_STEP_SUMMARY"
 
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
@@ -225,17 +266,38 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
+
       - name: Prepare docker build targets
         id: docker_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
-            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
+          echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare deployment targets
+        id: deploy_map
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE == 'true' ||  inputs.pre_release == 'true' }}
+        run: |
+          set -euo pipefail
+          CHUNKS=${{ steps.docker_projects.outputs.CHUNKS }}
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            # NOTE: validate the jq command to trigger failure
+            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
+            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare docker deps
+        id: docker-deps
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE == 'true' }}
+        run: |
+          ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh

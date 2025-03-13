@@ -11,12 +11,12 @@ on:
     tags:
       - docker-build-*
   workflow_dispatch:
-  create:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - labeled
+  # create:
+  # pull_request:
+  #   types:
+  #     - opened
+  #     - synchronize
+  #     - labeled
 
 defaults:
   run:
@@ -61,7 +61,7 @@ jobs:
     runs-on: arc-runners
     timeout-minutes: 90
 
-    if: needs.pre-checks.outputs.PRE_CHECK
+    if: false
     needs:
       - pre-checks
 
@@ -259,7 +259,8 @@ jobs:
       - prepare
     runs-on: arc-docker
     timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    # if: needs.prepare.outputs.BUILD_CHUNKS
+    if: false
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -383,7 +384,8 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    # if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    if: false
     runs-on: arc-runners
     timeout-minutes: 30
     env:
