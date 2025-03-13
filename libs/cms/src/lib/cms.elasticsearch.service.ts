@@ -605,7 +605,7 @@ export class CmsElasticsearchService {
     }
   }
 
-  private async getTeamListItems<ListItemType extends 'webTeamMember'>(input: {
+  private async getTeamListItems(input: {
     listId: string
     lang: ElasticsearchIndexLocale
     page?: number
@@ -613,14 +613,13 @@ export class CmsElasticsearchService {
     queryString?: string
     tags?: string[]
     tagGroups?: Record<string, string[]>
-    type: ListItemType
     orderBy?: GetTeamMembersInputOrderBy
   }): Promise<Omit<TeamMemberResponse, 'input'>> {
     let must: Record<string, unknown>[] = [
       {
         term: {
           type: {
-            value: input.type,
+            value: 'webTeamMember',
           },
         },
       },
@@ -647,14 +646,9 @@ export class CmsElasticsearchService {
       },
     ]
 
-    let queryString = input.queryString
-      ? input.queryString.trim().toLowerCase()
+    const queryString = input.queryString
+      ? input.queryString.replace('´', '').trim().toLowerCase()
       : ''
-
-    if (input.lang === 'is') {
-      queryString = queryString.replace('`', '')
-      queryString = queryString.replace('´', '')
-    }
 
     must.push({
       simple_query_string: {
@@ -721,14 +715,6 @@ export class CmsElasticsearchService {
             must,
             should: [
               {
-                wildcard: {
-                  'title.keyword': {
-                    value: queryString + '*',
-                    boost: 50,
-                  },
-                },
-              },
-              {
                 prefix: {
                   'title.keyword': {
                     value: queryString,
@@ -767,7 +753,6 @@ export class CmsElasticsearchService {
   ): Promise<TeamMemberResponse> {
     const response = await this.getTeamListItems({
       ...input,
-      type: 'webTeamMember',
       listId: input.teamListId,
       orderBy:
         input.orderBy === GetTeamMembersInputOrderBy.Manual
