@@ -55,6 +55,8 @@ jobs:
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
+      pre_release: false
+      run_merge_queue: false
 
   tests:
     needs:
@@ -288,9 +290,14 @@ jobs:
       - pre-checks
     secrets: inherit
     with:
-      main_branch: ${{ github.base_ref }}
-      pre_release: false
-      run_merge_queue: false
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      PRE_CHECK: ${{ needs.pre-checks.outputs.PRE_CHECK }}
+      PRE_RELASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
 
   success:
     runs-on: arc-runners
