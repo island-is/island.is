@@ -1,7 +1,7 @@
 import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {

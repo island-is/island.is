@@ -38,7 +38,6 @@ export enum OptionsType {
   REASON_INTERNATIONAL_SCHOOL = 'registrationReasonInternationalSchool',
   REASON_PRIVATE_SCHOOL = 'registrationReasonPrivateSchool',
   RELATION = 'relation',
-  SCHOOL_MEAL = 'schoolMeal',
   ALLERGY = 'allergy',
   LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }
@@ -68,4 +67,11 @@ export enum LanguageEnvironmentOptions {
 export enum ApplicationType {
   NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
   ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
+}
+
+export enum SchoolType {
+  PUBLIC_SCHOOL = 'publicSchool',
+  PRIVATE_SCHOOL = 'privateSchool',
+  INTERNATIONAL_SCHOOL = 'internationalSchool',
+  NURSERY_SCHOOL = 'nurserySchool',
 }
