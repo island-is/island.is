@@ -10,7 +10,6 @@ export const headerBorder = style({
 export const headerBorderWidth = style({
   maxWidth: '1342px',
   margin: '0 auto',
-  width: '100%',
 })
 
 export const gridContainer = style({
