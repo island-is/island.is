@@ -288,6 +288,7 @@ jobs:
   docker-build:
     uses: ./.github/workflows/docker-build.yml
     needs:
+      - prepare
       - pre-checks
     secrets: inherit
     with:
