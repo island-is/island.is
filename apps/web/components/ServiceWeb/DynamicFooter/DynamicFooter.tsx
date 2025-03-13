@@ -28,7 +28,7 @@ export const DynamicFooter = ({
     : namespace?.serviceWebContactLink
 
   return (
-    <Box marginTop={'auto'}>
+    <Box marginTop="auto">
       {organization?.footerItems?.length > 0 ? (
         <OrganizationFooter organizations={[organization]} />
       ) : (

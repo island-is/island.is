@@ -415,7 +415,7 @@ const Layout: Screen<LayoutProps> = ({
           )}
           <Main>
             {wrapContent ? (
-              <Box width="full" display={'flex'} flexDirection={'column'}>
+              <Box width="full" display="flex" flexDirection="column">
                 {children}
               </Box>
             ) : (
