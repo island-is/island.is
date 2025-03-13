@@ -44,4 +44,42 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti fyrir staðfestingartakka þegar ákvörðun ríkissaksóknara er breytt.',
   },
+  verdictAppealDecisionTitle: {
+    id: 'judicial.system.core:public_prosecutor.indictments.overview.verdict_appeal_decision_title',
+    defaultMessage: 'Afstaða dómfellda til dóms',
+    description: 'Notaður sem titill fyrir afstöðu dómfellda til dóms.',
+  },
+  revokeAppeal: {
+    id: 'judicial.system.core:public_prosecutor.indictments.revoke_appeal',
+    defaultMessage: 'Afturkalla áfrýjun',
+    description: 'Notaður sem texti fyrir aðgerðina að afturkalla áfrýjun',
+  },
+  revokeSendToPrisonAdmin: {
+    id: 'judicial.system.core:public_prosecutor.indictments.revoke_send_to_fmst',
+    defaultMessage: 'Afturkalla úr fullnustu',
+    description:
+      'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
+  },
+  sendToPrisonAdmin: {
+    id: 'judicial.system.core:public_prosecutor.indictment.send_to_fmst',
+    defaultMessage: 'Senda til fullnustu',
+    description:
+      'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
+  },
+  revokeSendToPrisonAdminModalTitle: {
+    id: 'judicial.system.core:public_prosecutor.indictments.revoke_send_to_prison_admin_modal_title',
+    defaultMessage: 'Afturkalla úr fullnustu',
+    description: 'Notaður sem titill í "Afturkalla úr fullnustu" modal glugga.',
+  },
+  revokeSendToPrisonAdminModalText: {
+    id: 'judicial.system.core:public_prosecutor.indictments.revoke_send_to_prison_admin_modal_text',
+    defaultMessage:
+      'Mál {courtCaseNumber} verður afturkallað.\nÁkærði: {defendant}.',
+    description: 'Notaður sem texti í "Afturkalla úr fullnustu" modal glugga.',
+  },
+  revoke: {
+    id: 'judicial.system.core:public_prosecutor.indictments.revoke',
+    defaultMessage: 'Afturkalla',
+    description: 'Notaður sem texti fyrir aðgerðina að afturkalla mál',
+  },
 })

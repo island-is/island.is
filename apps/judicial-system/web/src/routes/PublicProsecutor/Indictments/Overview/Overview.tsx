@@ -1,15 +1,17 @@
-import { useCallback, useContext, useState } from 'react'
+import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Option } from '@island.is/island-ui/core'
+import { Box, Button, Option, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   BlueBoxWithDate,
   CourtCaseInfo,
   FormContentContainer,
@@ -22,8 +24,17 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import {
+  Defendant,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
 import {
@@ -35,11 +46,17 @@ import {
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 
+type VisibleModal = {
+  type: 'REVOKE_SEND_TO_PRISON_ADMIN'
+  defendant: Defendant
+}
+
 export const Overview = () => {
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
@@ -49,6 +66,7 @@ export const Overview = () => {
   const [confirmationModal, setConfirmationModal] = useState<
     ConfirmationModal | undefined
   >()
+  const [modalVisible, setModalVisible] = useState<VisibleModal>()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
@@ -64,6 +82,36 @@ export const Overview = () => {
     }
 
     setConfirmationModal(REVIEWER_ASSIGNED)
+  }
+
+  const handleSendToPrisonAdmin = (defendant: Defendant) => {
+    router.push(
+      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
+    )
+  }
+
+  const handleRevokeAppeal = (defendant: Defendant) => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        verdictAppealDate: null,
+      },
+      setWorkingCase,
+    )
+  }
+
+  const handleRevokeSendToPrisonAdmin = (defendant: Defendant) => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        isSentToPrisonAdmin: false,
+      },
+      setWorkingCase,
+    )
+
+    setModalVisible(undefined)
   }
 
   const handleNavigationTo = useCallback(
@@ -96,11 +144,81 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.defendants?.map((defendant) => (
-          <Box component="section" marginBottom={5} key={defendant.id}>
-            <BlueBoxWithDate defendant={defendant} icon="calendar" />
-          </Box>
-        ))}
+        {workingCase.defendants?.map((defendant) => {
+          const isFine =
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE
+
+          const serviceRequired =
+            defendant.serviceRequirement === ServiceRequirement.REQUIRED
+
+          const serviceNotApplicable =
+            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+
+          return (
+            <Fragment key={defendant.id}>
+              <Box component="section" marginBottom={2}>
+                <BlueBoxWithDate defendant={defendant} icon="calendar" />
+              </Box>
+              {(serviceNotApplicable ||
+                (serviceRequired && defendant.verdictViewDate)) && (
+                <Box component="section" marginBottom={2}>
+                  <BlueBox>
+                    <SectionHeading
+                      title={fm(strings.verdictAppealDecisionTitle)}
+                      heading="h4"
+                      marginBottom={2}
+                      required
+                    />
+                    <Box marginBottom={2}>
+                      <Text variant="eyebrow">{defendant.name}</Text>
+                    </Box>
+                    <VerdictAppealDecisionChoice defendant={defendant} />
+                  </BlueBox>
+                </Box>
+              )}
+              <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
+                {defendant.verdictAppealDate ? (
+                  <Button
+                    variant="text"
+                    onClick={() => handleRevokeAppeal(defendant)}
+                    size="small"
+                    colorScheme="destructive"
+                  >
+                    {fm(strings.revokeAppeal)}
+                  </Button>
+                ) : defendant.isSentToPrisonAdmin ? (
+                  <Button
+                    variant="text"
+                    onClick={() =>
+                      setModalVisible({
+                        type: 'REVOKE_SEND_TO_PRISON_ADMIN',
+                        defendant,
+                      })
+                    }
+                    size="small"
+                    colorScheme="destructive"
+                  >
+                    {fm(strings.revokeSendToPrisonAdmin)}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="text"
+                    onClick={() => handleSendToPrisonAdmin(defendant)}
+                    size="small"
+                    disabled={
+                      !workingCase.indictmentReviewDecision ||
+                      !defendant.verdictAppealDecision ||
+                      (!isFine && !defendant.verdictViewDate && serviceRequired)
+                    }
+                  >
+                    {fm(strings.sendToPrisonAdmin)}
+                  </Button>
+                )}
+              </Box>
+            </Fragment>
+          )
+        })}
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
@@ -178,6 +296,22 @@ export const Overview = () => {
           })}
           secondaryButtonText={fm(core.back)}
           onSecondaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+        />
+      )}
+      {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
+        <Modal
+          title={fm(strings.revokeSendToPrisonAdminModalTitle)}
+          text={fm(strings.revokeSendToPrisonAdminModalText, {
+            courtCaseNumber: workingCase.courtCaseNumber,
+            defendant: modalVisible.defendant.name,
+          })}
+          onPrimaryButtonClick={() =>
+            handleRevokeSendToPrisonAdmin(modalVisible.defendant)
+          }
+          primaryButtonText={fm(strings.revoke)}
+          isPrimaryButtonLoading={isUpdatingDefendant}
+          secondaryButtonText={fm(core.cancel)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
     </PageLayout>
