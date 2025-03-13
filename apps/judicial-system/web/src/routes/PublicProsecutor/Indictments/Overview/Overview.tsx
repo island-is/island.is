@@ -152,64 +152,69 @@ export const Overview = () => {
           const serviceRequired =
             defendant.serviceRequirement === ServiceRequirement.REQUIRED
 
+          const serviceNotApplicable =
+            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+
           return (
             <>
-              <Box component="section" marginBottom={3} key={defendant.id}>
+              <Box component="section" marginBottom={2} key={defendant.id}>
                 <BlueBoxWithDate defendant={defendant} icon="calendar" />
               </Box>
-              <Box component="section" marginBottom={5}>
-                <BlueBox>
-                  <SectionHeading
-                    title={fm(strings.verdictAppealDecisionTitle)}
-                    heading="h4"
-                    marginBottom={2}
-                  />
-
-                  <Box marginBottom={2}>
-                    <Text variant="eyebrow">{defendant.name}</Text>
-                  </Box>
-                  <VerdictAppealDecisionChoice defendant={defendant} />
-                </BlueBox>
-                <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-                  {defendant.verdictAppealDate ? (
-                    <Button
-                      variant="text"
-                      onClick={() => handleRevokeAppeal(defendant)}
-                      size="small"
-                      colorScheme="destructive"
-                    >
-                      {fm(strings.revokeAppeal)}
-                    </Button>
-                  ) : defendant.isSentToPrisonAdmin ? (
-                    <Button
-                      variant="text"
-                      onClick={() =>
-                        setModalVisible({
-                          type: 'REVOKE_SEND_TO_PRISON_ADMIN',
-                          defendant,
-                        })
-                      }
-                      size="small"
-                      colorScheme="destructive"
-                    >
-                      {fm(strings.revokeSendToPrisonAdmin)}
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="text"
-                      onClick={() => handleSendToPrisonAdmin(defendant)}
-                      size="small"
-                      disabled={
-                        !workingCase.indictmentReviewDecision ||
-                        (!isFine &&
-                          !defendant.verdictViewDate &&
-                          serviceRequired)
-                      }
-                    >
-                      {fm(strings.sendToPrisonAdmin)}
-                    </Button>
-                  )}
+              {(serviceNotApplicable ||
+                (serviceRequired && defendant.verdictViewDate)) && (
+                <Box component="section" marginBottom={2}>
+                  <BlueBox>
+                    <SectionHeading
+                      title={fm(strings.verdictAppealDecisionTitle)}
+                      heading="h4"
+                      marginBottom={2}
+                      required
+                    />
+                    <Box marginBottom={2}>
+                      <Text variant="eyebrow">{defendant.name}</Text>
+                    </Box>
+                    <VerdictAppealDecisionChoice defendant={defendant} />
+                  </BlueBox>
                 </Box>
+              )}
+              <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
+                {defendant.verdictAppealDate ? (
+                  <Button
+                    variant="text"
+                    onClick={() => handleRevokeAppeal(defendant)}
+                    size="small"
+                    colorScheme="destructive"
+                  >
+                    {fm(strings.revokeAppeal)}
+                  </Button>
+                ) : defendant.isSentToPrisonAdmin ? (
+                  <Button
+                    variant="text"
+                    onClick={() =>
+                      setModalVisible({
+                        type: 'REVOKE_SEND_TO_PRISON_ADMIN',
+                        defendant,
+                      })
+                    }
+                    size="small"
+                    colorScheme="destructive"
+                  >
+                    {fm(strings.revokeSendToPrisonAdmin)}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="text"
+                    onClick={() => handleSendToPrisonAdmin(defendant)}
+                    size="small"
+                    disabled={
+                      !workingCase.indictmentReviewDecision ||
+                      !defendant.verdictAppealDecision ||
+                      (!isFine && !defendant.verdictViewDate && serviceRequired)
+                    }
+                  >
+                    {fm(strings.sendToPrisonAdmin)}
+                  </Button>
+                )}
               </Box>
             </>
           )
