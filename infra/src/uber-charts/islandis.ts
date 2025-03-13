@@ -289,7 +289,6 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   //userNotificationService,
   //userNotificationWorkerService,
   //userNotificationCleanupWorkerService,
-  endorsement,
   //userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
