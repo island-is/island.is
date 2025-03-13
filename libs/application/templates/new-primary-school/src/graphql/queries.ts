@@ -37,6 +37,9 @@ export const friggSchoolsByMunicipalityQuery = gql`
         email
         phone
         website
+        address {
+          municipality
+        }
       }
     }
   }

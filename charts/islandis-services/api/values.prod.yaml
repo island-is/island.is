@@ -65,7 +65,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
   PAYMENTS_API_URL: 'http://web-services-payments.services-payments.svc.cluster.local'
   REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
   SEND_FROM_EMAIL: 'island@island.is'

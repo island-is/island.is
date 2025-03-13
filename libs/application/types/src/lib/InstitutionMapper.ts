@@ -19,7 +19,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
-  [ApplicationTypes.EXAMPLE_FIELDS]: {
+  [ApplicationTypes.EXAMPLE_INPUTS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -295,6 +295,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.THJODSKRA,
   },
   [ApplicationTypes.MUNICIPAL_LIST_CREATION]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+    contentfulId: InstitutionContentfulIds.THJODSKRA,
+  },
+  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
     contentfulId: InstitutionContentfulIds.THJODSKRA,

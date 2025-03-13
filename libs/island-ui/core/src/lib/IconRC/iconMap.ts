@@ -95,6 +95,9 @@ export type Icon =
   | 'leaf'
   | 'card'
   | 'bank'
+  | 'grid'
+  | 'list'
+  | 'hammer'
 
 export default {
   filled: {
@@ -193,6 +196,9 @@ export default {
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
     leaf: 'Leaf',
+    grid: 'Grid',
+    list: 'List',
+    hammer: 'HammerOutline',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -290,5 +296,8 @@ export default {
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',
     leaf: 'LeafOutline',
+    grid: 'GridOutline',
+    list: 'ListOutline',
+    hammer: 'HammerOutline',
   },
 }
