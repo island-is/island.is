@@ -347,7 +347,7 @@ codemagic.yaml                                                                  
 /apps/services/sessions/                                                                                  @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                                     @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                       @island-is/fuglar @island-is/aranja
-/libs/auth-api-lib/seeders/                                                                               @island-is/fuglar @island-is/aranja @island-is/origo-auth
+/libs/auth-api-lib/seeders/                                                                               @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                    @island-is/fuglar @island-is/aranja
 /libs/application/templates/european-health-insurance-card/                                               @island-is/fuglar
 /libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/          @island-is/fuglar
