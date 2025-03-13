@@ -57,11 +57,22 @@ env:
   NX_PARALLEL: 1
   GIT_COMMIT_SHA: ${{ github.sha }}
   FEATURE_NAME: ${{ inputs.FEATURE_NAME }}
+  BUILD_CHUNKS: ${{ inputs.BUILD_CHUNKS }}
+
 jobs:
+  debug:
+    runs-on: arc-runners
+    timeout-minutes: 45
+    steps:
+      - name: debug
+        run: |
+          echo "BUILD_CHUNKS: ${{ inputs.BUILD_CHUNKS }}"
+          echo ${{ fromJson(inputs.BUILD_CHUNKS) }}
+
   docker-build:
     runs-on: arc-docker
     timeout-minutes: 45
-    if: inputs.BUILD_CHUNKS
+    if: ${{ input.BUILD_CHUNKS }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
     strategy:
