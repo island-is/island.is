@@ -73,7 +73,7 @@ env:
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
-  DEPLOY_FEATURE: ${{ inputs.DEPLOY_FEATURE }}
+  deploy_feature: ${{ inputs.DEPLOY_FEATURE }}
   YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
   CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
   COREPACK_HOME: /home/runner/dependencies/corepack
@@ -125,7 +125,7 @@ jobs:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
       - name: Prepare feature deployment
-        if: inputs.DEPLOY_FEATURE == 'true'
+        if: inputs.deploy_feature == 'true'
         uses: ./.github/actions/feature-checkout
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -179,7 +179,7 @@ jobs:
           node scripts/ci/docker/generate-tag.mjs
 
       - name: Generate docker image tag
-        if: inputs.DEPLOY_FEATURE == 'true'
+        if: inputs.deploy_feature == 'true'
         id: docker_tags
         run: |
           set -euo pipefail
@@ -230,7 +230,7 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
-        if: ${{ inputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ inputs.deploy_feature != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -240,7 +240,7 @@ jobs:
 
       - name: Prepare e2e targets
         id: e2e_projects
-        if: ${{ inputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ inputs.deploy_feature != 'true' }}
         env:
           CHUNK_SIZE: 1
         run: |
@@ -253,7 +253,7 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        if: ${{ inputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ inputs.deploy_feature != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
@@ -263,7 +263,7 @@ jobs:
 
       - name: Prepare docker build targets
         id: docker_projects
-        if: ${{ inputs.DEPLOY_FEATURE == 'true' }}
+        if: ${{ inputs.deploy_feature == 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
@@ -275,7 +275,7 @@ jobs:
 
       - name: Prepare deployment targets
         id: deploy_map
-        if: ${{ inputs.DEPLOY_FEATURE == 'true' ||  inputs.pre_release == 'true' }}
+        if: ${{ inputs.deploy_feature == 'true' ||  inputs.pre_release == 'true' }}
         run: |
           set -euo pipefail
           CHUNKS=${{ steps.docker_projects.outputs.CHUNKS }}
@@ -289,7 +289,7 @@ jobs:
 
       - name: Prepare docker deps
         id: docker-deps
-        if: ${{ inputs.DEPLOY_FEATURE == 'true' }}
+        if: ${{ inputs.deploy_feature == 'true' }}
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 
