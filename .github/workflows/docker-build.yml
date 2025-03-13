@@ -24,7 +24,7 @@ on:
       PRE_CHECK:
         type: string
         required: true
-      PRE_RELASE:
+      PRE_RELEASE:
         type: string
         required: true
 env:
