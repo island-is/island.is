@@ -4,11 +4,11 @@ import { CacheField } from '@island.is/nest/graphql'
 
 @InputType()
 export class SeminarIndividual {
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   nationalId?: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   email?: string
 }

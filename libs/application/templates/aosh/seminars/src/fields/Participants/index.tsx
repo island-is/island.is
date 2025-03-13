@@ -152,26 +152,36 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           const allEmails: Array<string> = []
           const allEmailWarnings: Array<number> = []
 
-          const answerValue: Array<Participant> = data
-            .map((value: Array<string>, index: number) => {
+          const answerValue: Array<Participant> = data.reduce(
+            (
+              validParticipants: Array<Participant>,
+              value: Array<string>,
+              index: number,
+            ) => {
               const parsedParticipant = parseDataToParticipantList(value[0])
-              const isEmailDuplicate =
-                parsedParticipant?.email &&
-                allEmails.includes(parsedParticipant?.email)
-              if (isEmailDuplicate) {
-                allEmailWarnings.push(index + 1)
-                return null
-              }
-              parsedParticipant?.email &&
-                allEmails.push(parsedParticipant?.email)
+
               if (parsedParticipant === null) {
                 setValue('participantCsvError', 'true')
-                return []
-              } else {
-                return parsedParticipant
+                return validParticipants
               }
-            })
-            ?.filter((y: Array<string> | null) => !!y)
+
+              // Check for duplicate email
+              const isEmailDuplicate =
+                parsedParticipant.email &&
+                allEmails.includes(parsedParticipant.email)
+              if (isEmailDuplicate) {
+                allEmailWarnings.push(index + 1)
+                return validParticipants
+              }
+
+              // Add email to tracking array
+              parsedParticipant.email && allEmails.push(parsedParticipant.email)
+
+              // Add valid participant to results
+              return [...validParticipants, parsedParticipant]
+            },
+            [],
+          )
 
           const allPhoneNumbers = answerValue.map((x) => x.phoneNumber)
           const allSSN = answerValue.map((x) => x.nationalIdWithName.nationalId)
