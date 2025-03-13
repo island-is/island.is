@@ -17,8 +17,6 @@ The frontend can be accessed through the following urls, the backend is hosted e
 
 ## Getting started
 
-// DUMMY
-
 ### Development
 
 1. Fetch the environment variables for both the frontend and the api. [This guide](https://docs.devland.is/repository/aws-secrets#usage-to-fetch-secrets) shows how you can fetch secrets for the first time.
