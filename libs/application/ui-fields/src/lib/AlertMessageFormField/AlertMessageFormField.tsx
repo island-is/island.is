@@ -1,11 +1,18 @@
-import { formatTextWithLocale } from '@island.is/application/core'
+import {
+  formatTextWithLocale,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { AlertMessage, Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { Markdown } from '@island.is/shared/components'
-import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
+import {
+  AlertMessageField,
+  FieldBaseProps,
+  FormValue,
+} from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
-import { useFormContext } from 'react-hook-form'
+import { useWatch } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AlertMessageField
@@ -16,7 +23,20 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
-  const { getValues } = useFormContext()
+
+  const watchValue = field.watchValue || ''
+  const someValue = useWatch({
+    name: watchValue,
+    defaultValue: getValueViaPath(application.answers, watchValue),
+  }) as FormValue
+  const updatedApplication = useMemo(
+    () => ({
+      ...application,
+      answers: { ...application.answers, [watchValue]: someValue },
+    }),
+    [application, watchValue, someValue],
+  )
+
   return (
     <Box
       marginTop={field.marginTop ?? 2}
@@ -26,7 +46,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
         type={field.alertType ?? 'default'}
         title={formatTextWithLocale(
           field.title ?? '',
-          application,
+          updatedApplication,
           locale as Locale,
           formatMessage,
         )}
@@ -38,7 +58,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
                   <Markdown>
                     {formatTextWithLocale(
                       field.message,
-                      { ...application, answers: getValues() },
+                      updatedApplication,
                       locale as Locale,
                       formatMessage,
                     )}
