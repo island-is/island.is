@@ -42,6 +42,7 @@ import {
   Properties,
   RskCompanyInfo,
   RskProcuring,
+  SeminarsVer,
   ShipRegistry,
   SignatureCollection,
   SocialInsuranceAdministration,
@@ -429,6 +430,7 @@ export const serviceSetup = (services: {
       HealthDirectorateVaccination,
       HealthDirectorateHealthService,
       WorkAccidents,
+      SeminarsVer,
       SecondarySchool,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

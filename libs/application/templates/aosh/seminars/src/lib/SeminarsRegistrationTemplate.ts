@@ -1,0 +1,216 @@
+import {
+  coreHistoryMessages,
+  corePendingActionMessages,
+  EphemeralStateLifeCycle,
+  getValueViaPath,
+  pruneAfterDays,
+} from '@island.is/application/core'
+import {
+  ApplicationTemplate,
+  ApplicationTypes,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
+  DefaultEvents,
+  UserProfileApi,
+  ApplicationConfigurations,
+  Application,
+  defineTemplateApi,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
+import { Roles, States, Events } from './constants'
+import { SeminarAnswersSchema } from './dataSchema'
+import {
+  getSeminarsApi,
+  IdentityApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
+  VinnueftirlitidPaymentCatalogApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { application as applicationMessage } from './messages'
+import { ApiActions, PaymentOptions } from '../shared/contstants'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItems, isCompany } from '../utils'
+import { ApiScope } from '@island.is/auth/scopes'
+import { CodeOwners } from '@island.is/shared/constants'
+
+const template: ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<Events>,
+  Events
+> = {
+  type: ApplicationTypes.SEMINAR_REGISTRATION,
+  name: applicationMessage.name,
+  institution: applicationMessage.institutionName,
+  translationNamespaces:
+    ApplicationConfigurations.SeminarRegistration.translation,
+  codeOwner: CodeOwners.Origo,
+  initialQueryParameter: 'seminarId',
+  dataSchema: SeminarAnswersSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.vinnueftirlitid],
+  featureFlag: Features.SeminarRegistrationEnabled,
+  allowMultipleApplicationsInDraft: true,
+  stateMachineConfig: {
+    initial: States.PREREQUISITES,
+    states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Skilyrði',
+          progress: 0,
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                VinnueftirlitidPaymentCatalogApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
+                getSeminarsApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: 'Skráning á námskeið hjá Vinnueftirlitinu',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/SeminarRegistrationForm/index').then(
+                  (module) => Promise.resolve(module.SeminarRegistrationForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.COMPLETED,
+              cond: ({ application }: ApplicationContext) => {
+                const paymentOptions = getValueViaPath<PaymentOptions>(
+                  application.answers,
+                  'paymentArrangement.paymentOptions',
+                )
+                return paymentOptions === PaymentOptions.putIntoAccount
+              },
+            },
+            {
+              target: States.PAYMENT,
+            },
+          ],
+        },
+      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+        chargeItems: getChargeItems,
+        submitTarget: States.COMPLETED,
+      }),
+      [States.COMPLETED]: {
+        meta: {
+          name: 'Completed',
+          status: 'completed',
+          lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDone,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Conclusion').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+    },
+  },
+  stateMachineOptions: {},
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
+  },
+}
+
+export default template
