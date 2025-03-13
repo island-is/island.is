@@ -10,6 +10,7 @@ import {
   clearOnChangeSchool,
   filterSchoolOptions,
   getAlertMessageAddThirdSelectionCondition,
+  getAlertSpecialNeedsProgramCondition,
   getConditionSecondProgram,
   getFormTitle,
   getIsClearableSecondProgram,
@@ -20,6 +21,7 @@ import {
   getRequiredSecondProgram,
   getRowsLimitCount,
   getSchoolOptions,
+  getSpecialNeedsProgramNames,
   getThirdLanguageCondition,
   getThirdLanguageOptions,
   getUpdateOnSelectFirstProgram,
@@ -161,9 +163,31 @@ export const schoolSection = buildSection({
         }),
 
         buildAlertMessageField({
+          id: 'alertSpecialNeedsProgram',
+          alertType: 'warning',
+          title: school.selection.specialNeedsProgramAlertTitle,
+          message: (application, locale) => {
+            const programNames = getSpecialNeedsProgramNames(
+              application.answers,
+              locale,
+            )
+            return {
+              ...(programNames.length === 1
+                ? school.selection.specialNeedsProgramSingleAlertDescription
+                : school.selection.specialNeedsProgramMultipleAlertDescription),
+              values: {
+                programName: programNames.join(', '),
+              },
+            }
+          },
+          condition: (answers) => getAlertSpecialNeedsProgramCondition(answers),
+        }),
+
+        buildAlertMessageField({
           id: 'alertAddThirdSelection',
           alertType: 'info',
-          message: school.thirdSelection.addDescription,
+          title: school.thirdSelection.addAlertTitle,
+          message: school.thirdSelection.addAlertDescription,
           condition: (answers) =>
             getAlertMessageAddThirdSelectionCondition(answers),
         }),
