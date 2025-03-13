@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -156,8 +156,8 @@ export const Overview = () => {
             defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
-            <>
-              <Box component="section" marginBottom={2} key={defendant.id}>
+            <Fragment key={defendant.id}>
+              <Box component="section" marginBottom={2}>
                 <BlueBoxWithDate defendant={defendant} icon="calendar" />
               </Box>
               {(serviceNotApplicable ||
@@ -216,7 +216,7 @@ export const Overview = () => {
                   </Button>
                 )}
               </Box>
-            </>
+            </Fragment>
           )
         })}
         <Box component="section" marginBottom={5}>
