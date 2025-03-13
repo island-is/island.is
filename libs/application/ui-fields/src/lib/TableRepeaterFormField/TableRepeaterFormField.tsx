@@ -80,7 +80,7 @@ export const TableRepeaterFormField: FC<Props> = ({
           tableItems: values,
         })
 
-        submitResponse.dictinaryOfItems.forEach((x) => {
+        submitResponse.dictionaryOfItems.forEach((x) => {
           methods.setValue(x.path, x.value)
         })
       } catch {

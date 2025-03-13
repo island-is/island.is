@@ -703,7 +703,7 @@ export type TableRepeaterField = BaseField & {
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
-    dictinaryOfItems: Array<{ path: string; value: string }>
+    dictionaryOfItems: Array<{ path: string; value: string }>
   }>
   loadErrorMessage?: StaticText
   /**

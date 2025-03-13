@@ -228,7 +228,7 @@ export const paymentArrangementSection = buildSection({
           options: [
             {
               value: YES,
-              label: paymentArrangement.labels.aggreementCheckbox,
+              label: paymentArrangement.labels.agreementCheckbox,
             },
           ],
         }),

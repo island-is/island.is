@@ -30,11 +30,11 @@ export const paymentArrangement = {
       defaultMessage: 'Fyrirtæki',
       description: 'Company label on conclusion screen',
     },
-    aggreementCheckbox: {
-      id: 'aosh.sem.application:paymentArrangement.labels.aggreementCheckbox#markdown',
+    agreementCheckbox: {
+      id: 'aosh.sem.application:paymentArrangement.labels.agreementCheckbox#markdown',
       defaultMessage:
         'Ég hef kynnt mér [greiðslu- og viðskiptaskilmála](https://island.is/s/vinnueftirlitid/gjaldskra#greidslu-og-vidskiptaskilmalar) Vinnueftirlitsins',
-      description: 'Aggreement checkbox label on conclusion screen',
+      description: 'Agreement checkbox label on conclusion screen',
     },
     email: {
       id: 'aosh.sem.application:paymentArrangement.labels.email',

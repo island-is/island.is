@@ -88,7 +88,7 @@ export const participantsSection = buildSection({
                 }
               })
 
-            const dictinaryOfItems: Array<{ path: string; value: string }> =
+            const dictionaryOfItems: Array<{ path: string; value: string }> =
               updatedParticipants.map((x, i) => {
                 return {
                   path: `participantList[${i}].disabled`,
@@ -98,19 +98,19 @@ export const participantsSection = buildSection({
 
             const disabledItem = updatedParticipants.find((x) => !!x.disabled)
             if (disabledItem) {
-              dictinaryOfItems.push({
+              dictionaryOfItems.push({
                 path: 'participantValidityError',
                 value: disabledItem.errorMessage,
               })
             } else {
-              dictinaryOfItems.push({
+              dictionaryOfItems.push({
                 path: 'participantValidityError',
                 value: '',
               })
             }
 
             return {
-              dictinaryOfItems,
+              dictionaryOfItems,
             }
           },
 
