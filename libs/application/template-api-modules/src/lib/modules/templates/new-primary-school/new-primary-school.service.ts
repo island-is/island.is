@@ -47,33 +47,40 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
     // Mock test children
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+      // If Gervimaður Afríka
+      // else others
       if (auth.audkenniSimNumber == '0103019') {
         children = [
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '2007104360',
             livesWithApplicant: true,
             fullName: 'Elsa Inga Bergdísardóttir Wilson',
             genderCode: '2',
           },
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '2203122590',
             livesWithApplicant: true,
             fullName: 'Ylur Poncet Maximesson',
             genderCode: '1',
           },
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '1810183720',
             livesWithApplicant: true,
             fullName: 'Bríet Alva Þorsteinsdóttir',
             genderCode: '2',
           },
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '1007112730',
             livesWithApplicant: true,
             fullName: 'Ægir Daðason',
             genderCode: '1',
           },
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '1311132690',
             livesWithApplicant: true,
             fullName: 'Hafdís Arna Gunnarsdóttir',
@@ -83,18 +90,21 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       } else {
         children = [
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '0801093420',
             livesWithApplicant: true,
             fullName: 'Júlía Huld Birkisdóttir',
             genderCode: '2',
           },
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '0801093690',
             livesWithApplicant: true,
             fullName: 'Hilmar Atli Birkisson',
             genderCode: '1',
           },
           {
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             nationalId: '1311143460',
             livesWithApplicant: true,
             fullName: 'Hrannar Árni Birkisson',

@@ -8,7 +8,7 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -182,8 +182,25 @@ export const supportSubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'support.supportAlertMessage',
-          title: newPrimarySchoolMessages.shared.alertTitle,
-          message: newPrimarySchoolMessages.differentNeeds.supportAlertMessage,
+          title: (application) => {
+            const { applicationType, selectedSchoolType } =
+              getApplicationAnswers(application.answers)
+
+            return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+              ? newPrimarySchoolMessages.shared.alertTitle.description
+              : newPrimarySchoolMessages.shared.alertTitle
+          },
+          message: (application) => {
+            const { applicationType, selectedSchoolType } =
+              getApplicationAnswers(application.answers)
+
+            return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+              ? newPrimarySchoolMessages.differentNeeds
+                  .internationalSchoolSupportAlertMessage
+              : newPrimarySchoolMessages.differentNeeds.supportAlertMessage
+          },
           doesNotRequireAnswer: true,
           alertType: 'warning',
           marginTop: 4,
