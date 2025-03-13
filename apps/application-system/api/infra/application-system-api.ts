@@ -173,9 +173,15 @@ export const serviceSetup = (services: {
         prod: 'cdn.contentful.com',
       },
       CLIENT_LOCATION_ORIGIN: {
-        dev: 'https://beta.dev01.devland.is/umsoknir',
-        staging: 'https://beta.staging01.devland.is/umsoknir',
-        prod: 'https://island.is/umsoknir',
+        // dev: `https://beta.dev01.devland.is/umsoknir`,
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is/umsoknir`,
+        ),
+        staging: `https://beta.staging01.devland.is/umsoknir`,
+        prod: `https://island.is/umsoknir`,
         local: 'http://localhost:4200/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {

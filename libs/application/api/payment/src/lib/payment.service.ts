@@ -262,7 +262,7 @@ export class PaymentService {
             // onUpdateUrl:
             //   'http://localhost:3333/application-payment/api-client-payment-callback/',
             onUpdateUrl:
-              'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
+              'http://application-system-api.application-system.svc.cluster.local/application-payment/api-client-payment-callback',
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
@@ -409,7 +409,7 @@ export class PaymentService {
       )
     }
 
-    // return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
-    return `https://as-test-new-payment-beta.dev01.devland.is/umsoknir/greida/${applicationId}?done`
+    return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
+    // return `https://as-test-new-payment-beta.dev01.devland.is/umsoknir/greida/${applicationId}?done`
   }
 }
