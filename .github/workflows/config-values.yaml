@@ -63,12 +63,13 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Yarn install infra
-        run: |
-          yarn --cwd ./infra install
+      - name: Install yarn in infra
+        working-directory: infra
+        run: yarn install --immutable
 
       - name: Run unit tests
-        run: ./infra/scripts/ci/test-unit.sh
+        working-directory: infra
+        run: yarn test
 
       - name: Check chart values are up-to-date
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -94,9 +95,9 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Yarn install infra
-        run: |
-          yarn --cwd ./infra install
+      - name: Install yarn in infra
+        working-directory: infra
+        run: yarn install --immutable
 
       - name: Select role
         env:
