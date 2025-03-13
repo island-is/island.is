@@ -159,6 +159,8 @@ export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
 export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/nidurstada'
 export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
 export const INDICTMENTS_COMPLETED_ROUTE = '/domur/akaera/lokid'
+export const INDICTMENTS_ADD_FILES_IN_COURT_ROUTE = '/domur/akaera/gogn'
+
 //#endregion District court user routes
 
 //#region Prosecutor user routes

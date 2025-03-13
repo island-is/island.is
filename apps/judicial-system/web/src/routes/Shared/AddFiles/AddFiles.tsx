@@ -3,9 +3,14 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import * as constants from '@island.is/judicial-system/consts'
-import { isDefenceUser } from '@island.is/judicial-system/types'
+import {
+  InstitutionUser,
+  isDefenceUser,
+  isDistrictCourtUser,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -22,6 +27,7 @@ import {
   CaseFileCategory,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useS3Upload,
@@ -29,6 +35,32 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AddFiles.strings'
+
+const getUserProps = (user: InstitutionUser | undefined) => {
+  const getCaseInfoNode = (workingCase: TempCase) => (
+    <ProsecutorCaseInfo workingCase={workingCase} />
+  )
+  if (isDefenceUser(user)) {
+    return {
+      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+      previousRoute: constants.DEFENDER_INDICTMENT_ROUTE,
+      getCaseInfoNode,
+    }
+  } else if (isDistrictCourtUser(user)) {
+    return {
+      caseFileCategory: CaseFileCategory.COURT_RECORD,
+      previousRoute: constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+      getCaseInfoNode: (workingCase: TempCase) => (
+        <CourtCaseInfo workingCase={workingCase} />
+      ),
+    }
+  }
+  return {
+    caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
+    previousRoute: constants.INDICTMENTS_OVERVIEW_ROUTE,
+    getCaseInfoNode,
+  }
+}
 
 const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
@@ -38,9 +70,13 @@ const AddFiles: FC = () => {
   const [visibleModal, setVisibleModal] = useState<'sendFiles'>()
   const router = useRouter()
   const { user } = useContext(UserContext)
-  const previousRoute = isDefenceUser(user)
-    ? `${constants.DEFENDER_INDICTMENT_ROUTE}/${workingCase.id}`
-    : `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`
+  const {
+    previousRoute: previousRouteType,
+    caseFileCategory,
+    getCaseInfoNode,
+  } = getUserProps(user)
+
+  const previousRoute = `${previousRouteType}/${workingCase.id}`
 
   const {
     uploadFiles,
@@ -52,10 +88,6 @@ const AddFiles: FC = () => {
   } = useUploadFiles()
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
-
-  const caseFileCategory = isDefenceUser(user)
-    ? CaseFileCategory.DEFENDANT_CASE_FILE
-    : CaseFileCategory.PROSECUTOR_CASE_FILE
 
   const handleChange = (files: File[]) => {
     addUploadFiles(
@@ -108,6 +140,7 @@ const AddFiles: FC = () => {
     workingCase.id,
   ])
 
+  const CaseInfo = getCaseInfoNode(workingCase)
   return (
     <PageLayout
       workingCase={workingCase}
@@ -119,7 +152,7 @@ const AddFiles: FC = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        {CaseInfo}
         <SectionHeading
           title={formatMessage(strings.uploadFilesHeading)}
           description={formatMessage(strings.uploadFilesDescription)}

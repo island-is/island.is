@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useState,
-} from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -32,16 +26,13 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
-import UploadFilesInCourt from './UploadFilesInCourt'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
 const OverviewBody = ({
   handleNavigationTo,
-  setShowUploadFilesView,
 }: {
   handleNavigationTo: (destination: string) => Promise<void>
-  setShowUploadFilesView: Dispatch<SetStateAction<boolean>>
 }) => {
   const router = useRouter()
 
@@ -122,7 +113,9 @@ const OverviewBody = ({
               variant="primary"
               icon="add"
               onClick={() => {
-                setShowUploadFilesView(true)
+                router.push(
+                  `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
+                )
               }}
               disabled={false}
             >
@@ -183,7 +176,6 @@ const OverviewBody = ({
 
 const IndictmentOverview = () => {
   const router = useRouter()
-  const [showUploadFilesView, setShowUploadFilesView] = useState(false)
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
@@ -219,14 +211,7 @@ const IndictmentOverview = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      {showUploadFilesView ? (
-        <UploadFilesInCourt setShowUploadFilesView={setShowUploadFilesView} />
-      ) : (
-        <OverviewBody
-          handleNavigationTo={handleNavigationTo}
-          setShowUploadFilesView={setShowUploadFilesView}
-        />
-      )}
+      <OverviewBody handleNavigationTo={handleNavigationTo} />
     </PageLayout>
   )
 }
