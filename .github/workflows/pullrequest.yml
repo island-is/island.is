@@ -297,6 +297,7 @@ jobs:
       mq-docker-tag: ${{ needs.prepare.outputs.DOCKER_TAG}}
       mq-git-branch: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
       mq-sha: ${{ github.sha }}
+      mq-artifact-name: ${{ needs.prepare.outputs.MQ_ARTIFACT_NAME}}
 
   helm-docker-build:
     needs:

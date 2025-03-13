@@ -31,6 +31,10 @@ on:
         type: string
         required: false
         default: 'false'
+      mq-artifact-name:
+        type: string
+        required: false
+        default: ''
 
 permissions:
   id-token: write
@@ -193,8 +197,6 @@ jobs:
   post-docker-build:
     needs:
       - docker-build
-      - prepare
-      - tests
     if: ${{ inputs.MQ_SHOULD_RUN_BUILD == 'true' && inputs.DOCKER_CHUNKS && inputs.DOCKER_CHUNKS != '[]' }}
     permissions:
       id-token: write
@@ -203,11 +205,13 @@ jobs:
     steps:
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
         with:
           matrix-step-name: docker-build
+
       - name: checkout
         uses: actions/checkout@v4
 
@@ -216,11 +220,13 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+
       - name: Prepare artifact to be uploaded
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
         run: |
           node scripts/ci/docker/write-data.mjs
+
       - name: Get manifest data
         id: manifest
         env:
@@ -228,6 +234,7 @@ jobs:
         run: |
           node scripts/ci/docker/bootstrap.mjs
           node scripts/ci/docker/get-data.mjs
+
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
         if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
@@ -239,7 +246,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.MQ_ARTIFACT_NAME}}
+          name: ${{ inputs.mq-artifact-name }}
           path: /tmp/data.json
           if-no-files-found: error
           retention-days: 90
