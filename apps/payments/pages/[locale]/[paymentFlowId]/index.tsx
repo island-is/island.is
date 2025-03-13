@@ -373,7 +373,7 @@ export default function PaymentPage({
     }
 
     if (paymentFlow.redirectToReturnUrlOnSuccess && paymentFlow.returnUrl) {
-      router.push(paymentFlow.returnUrl)
+      window.location.assign(paymentFlow.returnUrl)
     } else {
       router.reload()
     }
