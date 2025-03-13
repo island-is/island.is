@@ -2,6 +2,9 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      deploy_feature:
+        type: string
+        default: 'false'
       pre_release:
         type: string
         default: 'false'
@@ -40,8 +43,6 @@ on:
         value: ${{ jobs.install.outputs.NX_HEAD }}
       NX_BASE:
         value: ${{ jobs.install.outputs.NX_BASE }}
-      DEPLOY_FEATURE:
-        value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
       is-unicorn:
         value: ${{ jobs.install.outputs.is-unicorn }}
       images:
@@ -72,7 +73,7 @@ env:
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
-  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  DEPLOY_FEATURE: ${{ inputs.DEPLOY_FEATURE }}
   YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
   CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
   COREPACK_HOME: /home/runner/dependencies/corepack
@@ -95,7 +96,6 @@ jobs:
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-      DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
@@ -104,12 +104,6 @@ jobs:
       contents: 'read'
       actions: 'read'
     steps:
-      - name: Set outputs
-        id: set-outputs
-        run: |
-          echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
-          echo DEPLOY_FEATURE="$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
-
       - name: checkout
         uses: actions/checkout@v4
         with:
@@ -131,7 +125,7 @@ jobs:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
       - name: Prepare feature deployment
-        if: steps.set-outputs.outputs.DEPLOY_FEATURE == 'true'
+        if: inputs.DEPLOY_FEATURE == 'true'
         uses: ./.github/actions/feature-checkout
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -185,7 +179,7 @@ jobs:
           node scripts/ci/docker/generate-tag.mjs
 
       - name: Generate docker image tag
-        if: steps.set-outputs.outputs.DEPLOY_FEATURE == 'true'
+        if: inputs.DEPLOY_FEATURE == 'true'
         id: docker_tags
         run: |
           set -euo pipefail
@@ -236,7 +230,7 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ inputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -246,7 +240,7 @@ jobs:
 
       - name: Prepare e2e targets
         id: e2e_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ inputs.DEPLOY_FEATURE != 'true' }}
         env:
           CHUNK_SIZE: 1
         run: |
@@ -259,7 +253,7 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ inputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
@@ -269,7 +263,7 @@ jobs:
 
       - name: Prepare docker build targets
         id: docker_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE == 'true' }}
+        if: ${{ inputs.DEPLOY_FEATURE == 'true' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
@@ -281,7 +275,7 @@ jobs:
 
       - name: Prepare deployment targets
         id: deploy_map
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE == 'true' ||  inputs.pre_release == 'true' }}
+        if: ${{ inputs.DEPLOY_FEATURE == 'true' ||  inputs.pre_release == 'true' }}
         run: |
           set -euo pipefail
           CHUNKS=${{ steps.docker_projects.outputs.CHUNKS }}
@@ -295,7 +289,7 @@ jobs:
 
       - name: Prepare docker deps
         id: docker-deps
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE == 'true' }}
+        if: ${{ inputs.DEPLOY_FEATURE == 'true' }}
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 

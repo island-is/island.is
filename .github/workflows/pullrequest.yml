@@ -298,6 +298,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ needs.pre-checks.outputs.PRE_CHECK }}
       PRE_RELASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
+      DEPLOY_FEATURE: ${{ needs.prepare.outputs.DEPLOY_FEATURE }}
 
   success:
     runs-on: arc-runners
