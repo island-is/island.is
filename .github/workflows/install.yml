@@ -73,7 +73,7 @@ env:
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
-  deploy_feature: ${{ inputs.DEPLOY_FEATURE }}
+  DEPLOY_FEATURE: ${{ inputs.deploy_feature }}
   YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
   CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
   COREPACK_HOME: /home/runner/dependencies/corepack

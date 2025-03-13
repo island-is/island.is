@@ -435,7 +435,8 @@ jobs:
 
   deploy:
     runs-on: arc-runners
-    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
+    # if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
+    if: false
 
     needs:
       - pre-checks

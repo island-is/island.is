@@ -1,0 +1,65 @@
+name: 'Deploy'
+on:
+  workflow_call:
+    inputs:
+      GIT_BRANCH_DEPLOY:
+        type: string
+        required: true
+      DOCKER_TAG:
+        type: string
+        required: true
+      IMAGES:
+        type: string
+        required: true
+      FEATURE_NAME:
+        type: string
+        required: true
+jobs:
+  deploy:
+    runs-on: arc-runners
+    env:
+      GIT_BRANCH_DEPLOY: ${{ inputs.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ inputs.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ inputs.outputs.DOCKER_TAG }}
+      IMAGES: ${{ inputs.outputs.IMAGES }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger Deployment for service
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+        run: |
+          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+          curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH_DEPLOY",
+            "parameters": {
+              "docker_tag": "$DOCKER_TAG",
+              "feature_name": "$FEATURE_NAME",
+              "images": "$IMAGES",
+              "pull_request_number": "$(echo "$GITHUB_REF" | cut -d'/' -f3)"
+            }
+          }
+          BODY
+      - name: Trigger Deployment for IDS-Services
+        env:
+          DOCKER_TAG: ${{ inputs.outputs.DOCKER_TAG }}
+          GIT_BRANCH_DEPLOY: ${{ inputs.outputs.GIT_BRANCH_DEPLOY }}
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+          GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
+        run: |
+          set -euo pipefail
+          if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
+          export IDENTITY_SERVER_DOCKER_TAG="main_${IDENTITY_SERVER_HEAD_SHA:0:10}_${IDENTITY_SERVER_RUN_NUMBER}"
+          echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
+          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+          curl "$SPINNAKER_URL/webhooks/webhook/ids-dev" -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH_DEPLOY",
+            "parameters": {
+              "dependency_docker_tag": "$DOCKER_TAG",
+              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG"
+            }
+          }
+          BODY
