@@ -290,6 +290,12 @@ jobs:
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Prepare docker deps
         id: docker-deps
         if: ${{ inputs.deploy_feature == 'true' }}

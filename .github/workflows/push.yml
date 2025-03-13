@@ -508,7 +508,8 @@ jobs:
 
   failure-notification:
     runs-on: arc-runners
-    if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
+    # if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
+    if: false
     needs:
       - pre-checks
       - prepare
