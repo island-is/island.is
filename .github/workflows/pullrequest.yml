@@ -44,6 +44,10 @@ env:
   COREPACK_ENABLE_STRICT: '0'
 
 jobs:
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
+
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
@@ -276,6 +280,124 @@ jobs:
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
+  docker-build:
+    uses: ./.github/workflows/docker-build.yml
+    secrets: inherit
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+    with:
+      mq-should-run-build: ${{ needs.prepare.outputs.DEPLOY_FEATURE }}
+      docker-chunks: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
+      mq-docker-tag: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      mq-git-branch: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      mq-sha: ${{ github.sha }}
+
+  helm-docker-build:
+    needs:
+      - prepare
+      - pre-checks
+    if: needs.prepare.outputs.IMAGES
+    runs-on: arc-docker
+    timeout-minutes: 30
+    env:
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker login
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Docker build image
+        working-directory: infra
+        run: |
+          echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
+          echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_VERSION=${{env.NODE_IMAGE_VERSION}}"
+          ./scripts/build-docker-container.sh "$DOCKER_TAG"
+          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
+          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
+          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
+          echo 'EOF' >> "$GITHUB_ENV"
+        env:
+          PUBLISH: 'true'
+
+      - name: Comment on PR
+        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const updateComment = require('./.github/actions/update-comment.js')
+            const { COMMENT } = process.env
+            await updateComment({github, context, comment: COMMENT})
+
+  deploy:
+    runs-on: arc-runners
+    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
+
+    needs:
+      - pre-checks
+      - prepare
+      - docker-build
+      - helm-docker-build
+    env:
+      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trigger Deployment for service
+        env:
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+        run: |
+          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+          curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH_DEPLOY",
+            "parameters": {
+              "docker_tag": "$DOCKER_TAG",
+              "feature_name": "$FEATURE_NAME",
+              "images": "$IMAGES",
+              "pull_request_number": "$(echo "$GITHUB_REF" | cut -d'/' -f3)"
+            }
+          }
+          BODY
+      - name: Trigger Deployment for IDS-Services
+        env:
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+          GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+          GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
+        run: |
+          set -euo pipefail
+          if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
+          export IDENTITY_SERVER_DOCKER_TAG="main_${IDENTITY_SERVER_HEAD_SHA:0:10}_${IDENTITY_SERVER_RUN_NUMBER}"
+          echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
+          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+          curl "$SPINNAKER_URL/webhooks/webhook/ids-dev" -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH_DEPLOY",
+            "parameters": {
+              "dependency_docker_tag": "$DOCKER_TAG",
+              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG"
+            }
+          }
+          BODY
   success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}

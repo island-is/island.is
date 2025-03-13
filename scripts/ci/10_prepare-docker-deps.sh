@@ -17,8 +17,8 @@ echo "Building and pushing deps layer to S3..."
 docker buildx build \
   --platform=linux/amd64 \
   -f "${DIR}/Dockerfile" \
-  --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache" \
-  --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
+  --cache-from="type=s3,region=eu-west-1,bucket=${RUNS_ON_S3_BUCKET_CACHE},name=deps-cache" \
+  --cache-to="type=s3,region=eu-west-1,bucket=${RUNS_ON_S3_BUCKET_CACHE},name=deps-cache,mode=max" \
   --target=deps \
   "$PROJECT_ROOT"
 
