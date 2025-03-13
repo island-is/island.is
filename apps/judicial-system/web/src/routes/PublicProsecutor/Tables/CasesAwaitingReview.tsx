@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
-import { Tag, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
@@ -17,7 +17,8 @@ import Table, {
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
-} from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+} from '@island.is/judicial-system-web/src/components/Tags/TagCaseState/TagCaseState'
+import TagIndictmentRulingDecision from '@island.is/judicial-system-web/src/components/Tags/TagIndictmentRulingDecision/TagIndictmentRulingDecison'
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
@@ -49,16 +50,13 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 { title: formatMessage(tables.type) },
                 { title: formatMessage(tables.state) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: {
-                    isSortable: true,
-                    key: 'indictmentAppealDeadline',
-                  },
+                  sortBy: 'indictmentAppealDeadline',
                 },
               ]}
               data={cases}
@@ -80,24 +78,21 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Tag variant="darkerBlue" outlined disabled>
-                      {formatMessage(
+                    <TagIndictmentRulingDecision
+                      isFine={
                         row.indictmentRulingDecision ===
-                          CaseIndictmentRulingDecision.FINE
-                          ? tables.fineTag
-                          : tables.rulingTag,
-                      )}
-                    </Tag>
+                        CaseIndictmentRulingDecision.FINE
+                      }
+                    />
                   ),
                 },
                 {
                   cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
                     />
                   ),
                 },

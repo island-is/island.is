@@ -6,10 +6,36 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
-import { mustInspectBeforeStreetRegistration } from '../../../utils/getSelectedMachine'
+import {
+  MachineDto,
+  MachinesWithTotalCount,
+} from '@island.is/clients/work-machines'
+import {
+  isInvalidRegistrationType,
+  isMachineDisabled,
+  mustInspectBeforeStreetRegistration,
+} from '../../../utils/getSelectedMachine'
 import { useLocale } from '@island.is/localization'
-import { Application } from '@island.is/application/types'
+import { ExternalData } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+
+const getTagLabel = (
+  externalData: ExternalData,
+  machine: MachineDto,
+  formatMessage: (message: MessageDescriptor) => string,
+): string => {
+  if (
+    mustInspectBeforeStreetRegistration(externalData, machine?.regNumber || '')
+  ) {
+    return formatMessage(
+      information.labels.pickMachine.inspectBeforeRegistration,
+    )
+  }
+  if (isInvalidRegistrationType(externalData, machine?.regNumber || '')) {
+    return formatMessage(information.labels.pickMachine.invalidRegistrationType)
+  }
+  return machine?.status || ''
+}
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',
@@ -22,7 +48,6 @@ export const pickMachineSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'machine.id',
-          title: '',
           condition: (_, externalData) => {
             const machines = getValueViaPath(
               externalData,
@@ -31,14 +56,11 @@ export const pickMachineSubSection = buildSubSection({
             ) as MachinesWithTotalCount
             return machines.totalCount <= 5
           },
-          defaultValue: (application: Application) => {
-            const machineList = application?.externalData.machinesList
-              .data as MachinesWithTotalCount
-            return machineList?.machines[0].id ?? ''
-          },
+
           options: (application) => {
             const machineList = application?.externalData.machinesList
               .data as MachinesWithTotalCount
+            const externalData = application.externalData
 
             return machineList.machines.map((machine) => {
               return {
@@ -47,25 +69,21 @@ export const pickMachineSubSection = buildSubSection({
                 subLabel: `${machine.category}: ${machine.type} - ${machine.subType}`,
                 disabled: machine?.disabled
                   ? true
-                  : mustInspectBeforeStreetRegistration(
-                      application?.externalData,
-                      machine?.regNumber || '',
-                    ) || false,
-                tag: machine?.disabled
-                  ? {
-                      label: mustInspectBeforeStreetRegistration(
-                        application?.externalData,
-                        machine?.regNumber || '',
-                      )
-                        ? useLocale().formatMessage(
-                            information.labels.pickMachine
-                              .inspectBeforeRegistration,
-                          )
-                        : machine?.status || '',
-                      variant: 'red',
-                      outlined: true,
-                    }
-                  : undefined,
+                  : isMachineDisabled(externalData, machine?.regNumber || '') ||
+                    false,
+                tag:
+                  machine?.disabled ||
+                  isMachineDisabled(externalData, machine?.regNumber || '')
+                    ? {
+                        label: getTagLabel(
+                          externalData,
+                          machine,
+                          useLocale().formatMessage,
+                        ),
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : undefined,
               }
             })
           },

@@ -16,6 +16,11 @@ export const MustInspectBeforeRegistrationApi = defineTemplateApi({
   externalDataId: 'typesMustInspectBeforeRegistration',
 })
 
+export const GetAvailableRegistrationTypes = defineTemplateApi({
+  action: 'getAvailableRegistrationTypes',
+  externalDataId: 'availableRegistrationTypes',
+})
+
 export const VinnueftirlitidPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
     organizationId: InstitutionNationalIds.SAMGONGUSTOFA,

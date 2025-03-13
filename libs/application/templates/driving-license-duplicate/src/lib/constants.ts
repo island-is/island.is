@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
 export type Events =
@@ -17,11 +18,7 @@ export enum Roles {
   ACTOR = 'actor',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
 export const IGNORE = 'IgnoreQualityPhotoAndSignature'
-
-type YesOrNo = 'yes' | 'no'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',

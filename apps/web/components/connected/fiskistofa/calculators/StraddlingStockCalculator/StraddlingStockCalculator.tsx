@@ -4,7 +4,6 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { useMachine } from '@xstate/react'
 
-import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -14,6 +13,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/web/graphql/schema'
 
 import {
   getYearOptions,

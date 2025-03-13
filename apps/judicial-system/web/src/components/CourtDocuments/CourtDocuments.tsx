@@ -1,15 +1,8 @@
 import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
-import Select, {
-  ClearIndicatorProps,
-  components,
-  DropdownIndicatorProps,
-  OptionProps,
-  PlaceholderProps,
-  SingleValueProps,
-} from 'react-select'
+import Select from 'react-select'
 
-import { Box, IconDeprecated, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { CourtDocument } from '@island.is/judicial-system/types'
@@ -23,6 +16,13 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import IconButton from '../IconButton/IconButton'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
+import {
+  ClearIndicator,
+  DropdownIndicator,
+  Option,
+  Placeholder,
+  SingleValue,
+} from '../SelectComponents/SelectComponents'
 import * as styles from './CourtDocuments.css'
 
 interface Props {
@@ -50,55 +50,6 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]
-
-  const DropdownIndicator = (
-    props: DropdownIndicatorProps<ReactSelectOption>,
-  ) => {
-    return (
-      <components.DropdownIndicator {...props}>
-        <IconDeprecated
-          type="cheveron"
-          width={12}
-          height={12}
-          color="blue400"
-        />
-      </components.DropdownIndicator>
-    )
-  }
-
-  const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
-    return (
-      <components.Placeholder {...props}>
-        <Text color="dark300" variant="small">
-          {props.children}
-        </Text>
-      </components.Placeholder>
-    )
-  }
-
-  const SingleValue = (props: SingleValueProps<ReactSelectOption>) => {
-    return (
-      <components.SingleValue {...props}>
-        <Text variant="small">{props.children}</Text>
-      </components.SingleValue>
-    )
-  }
-
-  const Option = (props: OptionProps<ReactSelectOption>) => {
-    return (
-      <components.Option {...props}>
-        <Text variant="small">{props.children}</Text>
-      </components.Option>
-    )
-  }
-
-  const ClearIndicator = (props: ClearIndicatorProps<ReactSelectOption>) => {
-    return (
-      <components.ClearIndicator {...props}>
-        <IconDeprecated type="close" width={12} height={12} color="blue400" />
-      </components.ClearIndicator>
-    )
-  }
 
   const handleRemoveDocument = (index: number) => {
     const updatedCourtDocuments = workingCase.courtDocuments?.filter(
@@ -178,127 +129,123 @@ const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
               </Tag>
             </Box>
           </div>
-          {workingCase.courtDocuments?.map((courtDocument, index) => {
-            return (
-              <div
-                key={`${courtDocument.name}-${index}`}
-                className={styles.valueWrapper}
-              >
-                <div className={styles.courtDocumentInfo}>
-                  <div className={styles.nameContainer}>
-                    <Text variant="h4">{courtDocument.name}</Text>
-                  </div>
-                  <div className={styles.dropdownContainer}>
-                    <Select
-                      classNamePrefix="court-documents-select"
-                      options={whoFiledOptions}
-                      placeholder={formatMessage(
-                        courtDocuments.whoFiled.placeholder,
-                      )}
-                      isLoading={isUpdatingCase && updateIndex === index}
-                      components={{
-                        DropdownIndicator,
-                        IndicatorSeparator: null,
-                        Placeholder,
-                        Option,
-                        ClearIndicator,
-                        SingleValue,
-                      }}
-                      styles={{
-                        control: (baseStyles) => ({
-                          ...baseStyles,
-                          border: 'none',
-                          cursor: 'pointer',
-                          boxShadow:
-                            submittedByMenuIsOpen === index
-                              ? `inset 0 0 0 3px ${theme.color.mint400}`
-                              : 'none',
-                          borderTopLeftRadius: 8,
-                          borderTopRightRadius: 8,
-                          borderBottomLeftRadius:
-                            submittedByMenuIsOpen === index ? 0 : 8,
-                          borderBottomRightRadius:
-                            submittedByMenuIsOpen === index ? 0 : 8,
-                          transition: 'none',
-                        }),
-                        menu: (baseStyles) => ({
-                          ...baseStyles,
-                          marginTop: -3,
-                          borderTopLeftRadius: 0,
-                          borderTopRightRadius: 0,
-                          boxShadow: 'none',
-                          borderTop: `none`,
-                          borderRight: `3px solid ${theme.color.mint400}`,
-                          borderLeft: `3px solid ${theme.color.mint400}`,
-                          borderBottom: `3px solid ${theme.color.mint400}`,
-                          borderBottomLeftRadius: 8,
-                          borderBottomRightRadius: 8,
-                          boxSizing: 'border-box',
-                        }),
-                        option: (baseStyles, { isSelected }) => ({
-                          ...baseStyles,
-                          cursor: 'pointer',
-                          position: 'relative',
-                          padding: `${theme.spacing[1]}px`,
+          {workingCase.courtDocuments?.map((courtDocument, index) => (
+            <div
+              key={`${courtDocument.name}-${index}`}
+              className={styles.valueWrapper}
+            >
+              <div className={styles.courtDocumentInfo}>
+                <div className={styles.nameContainer}>
+                  <Text variant="h4">{courtDocument.name}</Text>
+                </div>
+                <div className={styles.dropdownContainer}>
+                  <Select
+                    classNamePrefix="court-documents-select"
+                    options={whoFiledOptions}
+                    placeholder={formatMessage(
+                      courtDocuments.whoFiled.placeholder,
+                    )}
+                    isLoading={isUpdatingCase && updateIndex === index}
+                    components={{
+                      DropdownIndicator,
+                      IndicatorSeparator: null,
+                      Placeholder,
+                      Option,
+                      ClearIndicator,
+                      SingleValue,
+                    }}
+                    styles={{
+                      control: (baseStyles) => ({
+                        ...baseStyles,
+                        border: 'none',
+                        cursor: 'pointer',
+                        boxShadow:
+                          submittedByMenuIsOpen === index
+                            ? `inset 0 0 0 3px ${theme.color.mint400}`
+                            : 'none',
+                        borderTopLeftRadius: 8,
+                        borderTopRightRadius: 8,
+                        borderBottomLeftRadius:
+                          submittedByMenuIsOpen === index ? 0 : 8,
+                        borderBottomRightRadius:
+                          submittedByMenuIsOpen === index ? 0 : 8,
+                        transition: 'none',
+                      }),
+                      menu: (baseStyles) => ({
+                        ...baseStyles,
+                        marginTop: -3,
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        boxShadow: 'none',
+                        borderTop: `none`,
+                        borderRight: `3px solid ${theme.color.mint400}`,
+                        borderLeft: `3px solid ${theme.color.mint400}`,
+                        borderBottom: `3px solid ${theme.color.mint400}`,
+                        borderBottomLeftRadius: 8,
+                        borderBottomRightRadius: 8,
+                        boxSizing: 'border-box',
+                      }),
+                      option: (baseStyles, { isSelected }) => ({
+                        ...baseStyles,
+                        cursor: 'pointer',
+                        position: 'relative',
+                        padding: `${theme.spacing[1]}px`,
+                        background: isSelected ? theme.color.blue200 : 'white',
+                        '&:hover': {
                           background: isSelected
                             ? theme.color.blue200
-                            : 'white',
-                          '&:hover': {
-                            background: isSelected
-                              ? theme.color.blue200
-                              : theme.color.blue100,
-                          },
-                        }),
-                        container: (baseStyles) => ({
-                          ...baseStyles,
-                          width: '100%',
-                        }),
-                      }}
-                      value={
-                        courtDocument.submittedBy
-                          ? whoFiledOptions.find(
-                              (option) =>
-                                option.value === courtDocument.submittedBy,
-                            )
-                          : null
-                      }
-                      onChange={(option) => {
-                        handleSubmittedBy(
-                          index,
-                          (option as ReactSelectOption)?.value as UserRole,
-                        )
-                      }}
-                      onMenuOpen={() => {
-                        setSubmittedByMenuIsOpen(index)
-                      }}
-                      onMenuClose={() => {
-                        setSubmittedByMenuIsOpen(-1)
-                      }}
-                      isSearchable={false}
-                      isClearable
-                    />
-                  </div>
-                  <Box display="flex" alignItems="center">
-                    <Box marginRight={2}>
-                      <Tag variant="darkerBlue" outlined disabled>
-                        {
-                          // +2 because index is zero based and "Krafa um ..." is number 1
-                          formatMessage(courtDocuments.tag, {
-                            index: index + 2,
-                          })
-                        }
-                      </Tag>
-                    </Box>
-                  </Box>
+                            : theme.color.blue100,
+                        },
+                      }),
+                      container: (baseStyles) => ({
+                        ...baseStyles,
+                        width: '100%',
+                      }),
+                    }}
+                    value={
+                      courtDocument.submittedBy
+                        ? whoFiledOptions.find(
+                            (option) =>
+                              option.value === courtDocument.submittedBy,
+                          )
+                        : null
+                    }
+                    onChange={(option) => {
+                      handleSubmittedBy(
+                        index,
+                        (option as ReactSelectOption)?.value as UserRole,
+                      )
+                    }}
+                    onMenuOpen={() => {
+                      setSubmittedByMenuIsOpen(index)
+                    }}
+                    onMenuClose={() => {
+                      setSubmittedByMenuIsOpen(-1)
+                    }}
+                    isSearchable={false}
+                    isClearable
+                  />
                 </div>
-                <IconButton
-                  onClick={() => handleRemoveDocument(index)}
-                  icon="trash"
-                  colorScheme="blue"
-                />
+                <Box display="flex" alignItems="center">
+                  <Box marginRight={2}>
+                    <Tag variant="darkerBlue" outlined disabled>
+                      {
+                        // +2 because index is zero based and "Krafa um ..." is number 1
+                        formatMessage(courtDocuments.tag, {
+                          index: index + 2,
+                        })
+                      }
+                    </Tag>
+                  </Box>
+                </Box>
               </div>
-            )
-          })}
+              <IconButton
+                onClick={() => handleRemoveDocument(index)}
+                icon="trash"
+                colorScheme="blue"
+              />
+            </div>
+          ))}
         </>
       </MultipleValueList>
     </>

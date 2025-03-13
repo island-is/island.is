@@ -95,10 +95,7 @@
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn get-secrets service-portal",
-          "yarn nx run services-user-profile:dev-init"
-        ],
+        "commands": ["yarn get-secrets service-portal"],
         "parallel": false
       }
     },
@@ -114,7 +111,8 @@
       "options": {
         "commands": [
           "yarn nx run service-portal:start-bff",
-          "yarn start service-portal"
+          "yarn start service-portal",
+          "yarn dev api"
         ],
         "parallel": true
       }

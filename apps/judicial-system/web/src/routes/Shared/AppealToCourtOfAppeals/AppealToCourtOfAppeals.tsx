@@ -22,11 +22,11 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestAppealRulingNotToBePublishedCheckbox,
   RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import {
   CaseFileCategory,
   CaseTransition,
@@ -187,7 +187,10 @@ const AppealToCourtOfAppeals = () => {
               ? strings.uploadFailedNextButtonText
               : strings.nextButtonText,
           )}
-          nextIsDisabled={updateUploadFile.length === 0 || isTransitioningCase}
+          nextIsDisabled={
+            !uploadFiles.find((file) => file.category === appealBriefType) ||
+            isTransitioningCase
+          }
           nextIsLoading={!allFilesDoneOrError || isTransitioningCase}
           nextButtonIcon={undefined}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}

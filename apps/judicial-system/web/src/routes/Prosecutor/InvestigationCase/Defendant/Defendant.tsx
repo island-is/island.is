@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -45,7 +45,7 @@ import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {

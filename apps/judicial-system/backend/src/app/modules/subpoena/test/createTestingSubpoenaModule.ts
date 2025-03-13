@@ -7,12 +7,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
 import {
+  auditTrailModuleConfig,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { CaseService, PdfService } from '../../case'
+import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
 import { Defendant, DefendantService } from '../../defendant'
 import { EventService } from '../../event'
@@ -30,14 +34,20 @@ jest.mock('../../user/user.service')
 jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
-jest.mock('../../file/file.service')
 jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
 jest.mock('../../court/court.service')
+jest.mock('../../file/file.service')
+jest.mock('../../case/internalCase.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
-    imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
+    imports: [
+      ConfigModule.forRoot({
+        isGlobal: true,
+        load: [sharedAuthModuleConfig, auditTrailModuleConfig],
+      }),
+    ],
     controllers: [
       SubpoenaController,
       InternalSubpoenaController,
@@ -49,11 +59,12 @@ export const createTestingSubpoenaModule = async () => {
       UserService,
       CaseService,
       PdfService,
-      PoliceService,
       FileService,
+      PoliceService,
       EventService,
       DefendantService,
       CourtService,
+      InternalCaseService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -85,6 +96,7 @@ export const createTestingSubpoenaModule = async () => {
         },
       },
       SubpoenaService,
+      AuditTrailService,
       MessageService,
     ],
   }).compile()
@@ -93,11 +105,14 @@ export const createTestingSubpoenaModule = async () => {
 
   const pdfService = subpoenaModule.get<PdfService>(PdfService)
 
-  const policeService = subpoenaModule.get<PoliceService>(PoliceService)
-
   const fileService = subpoenaModule.get<FileService>(FileService)
 
+  const policeService = subpoenaModule.get<PoliceService>(PoliceService)
+
   const courtService = subpoenaModule.get<CourtService>(CourtService)
+
+  const internalCaseService =
+    subpoenaModule.get<InternalCaseService>(InternalCaseService)
 
   const subpoenaModel = await subpoenaModule.resolve<typeof Subpoena>(
     getModelToken(Subpoena),
@@ -121,9 +136,10 @@ export const createTestingSubpoenaModule = async () => {
   return {
     userService,
     pdfService,
-    policeService,
     fileService,
+    policeService,
     courtService,
+    internalCaseService,
     subpoenaModel,
     subpoenaService,
     subpoenaController,

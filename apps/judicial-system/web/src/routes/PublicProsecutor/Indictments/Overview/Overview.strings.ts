@@ -38,4 +38,10 @@ export const strings = defineMessages({
       'Máli {caseNumber} hefur verið úthlutað til yfirlestrar á {reviewer}.',
     description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
   },
+  changeReviewedDecisionButtonText: {
+    id: 'judicial.system.core:public_prosecutor.indictments.overview.change_reviewed_decision_button_text',
+    defaultMessage: 'Breyta ákvörðun',
+    description:
+      'Notaður sem texti fyrir staðfestingartakka þegar ákvörðun ríkissaksóknara er breytt.',
+  },
 })

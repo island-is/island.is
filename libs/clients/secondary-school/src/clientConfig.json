@@ -1,0 +1,1097 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MMS Island.is application API",
+    "description": "API for Island.is",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/applications/{islandIsApplicationId}": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "[GET] Fetch an application.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationReturnDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Applications"],
+        "summary": "[PUT] Overwrites an existing application",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationUpdateDto.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Applications"],
+        "summary": "[DELETE] Deletes an application.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/v1/applications/{islandIsApplicationId}/id": {
+      "get": {
+        "tags": ["Applications"],
+        "summary": "[GET] Fetch an applicationId.",
+        "parameters": [
+          {
+            "name": "islandIsApplicationId",
+            "in": "path",
+            "description": "(required) The ApplicationId from Island.is.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "uuid" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "uuid" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/applications": {
+      "post": {
+        "tags": ["Applications"],
+        "summary": "[POST] Creates a new application.",
+        "requestBody": {
+          "description": "(required) Application MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIdReturnDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/schools/{schoolId}": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Fetch information on school.",
+        "parameters": [
+          {
+            "name": "schoolId",
+            "in": "path",
+            "description": "(required) SchoolId.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/SchoolDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/schools": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Fetch list of schools.",
+        "parameters": [
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(optional) Offset for pagination. Row where to start fetching from.",
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(optional) Fetch size for pagination. How many rows to fetch.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SchoolDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/schools/{schoolId}/programmes": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Get a list of programmes for a school.",
+        "parameters": [
+          {
+            "name": "schoolId",
+            "in": "path",
+            "description": "(required) SchoolId.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "onlyFreshmenEnabled",
+            "in": "query",
+            "description": "(optional) Boolean to filter only freshmen enabled programmes.",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(optional) Offset for pagination. Row where to start fetching from. Default 0",
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(optional) Fetch size for pagination. How many rows to fetch. Default 1000000",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProgrammeSimpleDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/schools/admissions/open": {
+      "get": {
+        "tags": ["Schools"],
+        "summary": "[GET] Check if any programme is open for admission for any school.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnyOpenForAdmissionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/students/{nationalId}/elementarygrades": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "[GET] Fetch list of grades by national Id.",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "(required) National Id of the students being fetched for.",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "rowOffset",
+            "in": "query",
+            "description": "(optional) Offset for pagination. Row where to start fetching from.",
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "fetchSize",
+            "in": "query",
+            "description": "(optional) Fetch size for pagination. How many rows to fetch.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GradeDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/students/info": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "[GET] Fetch student information",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/StudentInfoDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/students/isfreshman": {
+      "get": {
+        "tags": ["Students"],
+        "summary": "[GET] Check if student is a freshman",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnyOpenForAdmissionDto": {
+        "type": "object",
+        "properties": {
+          "anyOpenForAdmissionGeneral": { "type": "boolean" },
+          "anyOpenForAdmissionFreshman": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationBaseDto": {
+        "type": "object",
+        "properties": {
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
+          "applicantNationalId": {
+            "type": "string",
+            "description": "The national ID  of the applicant",
+            "nullable": true
+          },
+          "applicantName": {
+            "type": "string",
+            "description": "Applicant name",
+            "nullable": true
+          },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttachmentDto" },
+            "description": "Attachments that the applicant has uploaded",
+            "nullable": true
+          },
+          "isFreshman": {
+            "type": "boolean",
+            "description": "Is the applicant a freshman"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Applicant phone number",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "placeOfResidence": {
+            "type": "string",
+            "description": "Place of residence if other than legal home",
+            "nullable": true
+          },
+          "postCode": {
+            "type": "string",
+            "description": "Postcode of residence if other than legal home",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "Municipality of residence if other than legal home",
+            "nullable": true
+          },
+          "nextOfKin": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
+            "description": "The national ID of the next of kin",
+            "nullable": true
+          },
+          "speakingLanguage": {
+            "type": "string",
+            "description": "code of language spoken by the applicant\r\ne.g. en = English \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
+            "nullable": true
+          },
+          "otherInformation": {
+            "type": "string",
+            "description": "Other information",
+            "nullable": true
+          },
+          "applicationChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationChoicesBaseDto"
+            },
+            "description": "List of schools being applied to",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Base properties for creating an application"
+      },
+      "ApplicationChoiceStatus": {
+        "enum": [
+          "NewApplication",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "AcceptedInOtherSchool",
+          "Rejected"
+        ],
+        "type": "string",
+        "description": "Enum for describing Application Status"
+      },
+      "ApplicationChoicesBaseDto": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "schoolId": {
+            "type": "string",
+            "description": "Id of school being applied to",
+            "format": "uuid"
+          },
+          "programmeChoice": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
+            "description": "Programme choice",
+            "nullable": true
+          },
+          "thirdLanguage": {
+            "type": "string",
+            "description": "Third language chosen by the applicant\r\ne.g. en = English \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
+            "nullable": true
+          },
+          "northernLanguage": {
+            "type": "string",
+            "description": "Northern langauge chosen by the applicant\r\ne.g. da = Danish \r\nFollows the ISO 639-1 standard\r\nhttps://en.wikipedia.org/wiki/List_of_ISO_639_language_codes",
+            "nullable": true
+          },
+          "requestDormitory": {
+            "type": "boolean",
+            "description": "Is the student requesting dormitory."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationChoicesReturnDto": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
+          "programmeChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgrammeChoiceReturnDto"
+            },
+            "description": "Programme choice",
+            "nullable": true
+          },
+          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "requestDormitory": {
+            "type": "boolean",
+            "description": "Is the student requesting dormitory."
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the application choice",
+            "format": "int32"
+          },
+          "status": { "$ref": "#/components/schemas/ApplicationChoiceStatus" }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationIdReturnDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Application Id",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationReturnDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Application Id",
+            "format": "uuid"
+          },
+          "applicationDate": {
+            "type": "string",
+            "description": "Application date",
+            "format": "date-time"
+          },
+          "createdDate": {
+            "type": "string",
+            "description": "Date created",
+            "format": "date-time"
+          },
+          "updatedDate": {
+            "type": "string",
+            "description": "Date updated",
+            "format": "date-time"
+          },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
+          "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "applicationChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationChoicesReturnDto"
+            },
+            "description": "List of schools being applied to",
+            "nullable": true
+          },
+          "currentApplicantStatus": {
+            "$ref": "#/components/schemas/CurrentApplicantStatus"
+          },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
+            "description": "List of attachments",
+            "nullable": true
+          },
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
+          "applicantNationalId": {
+            "type": "string",
+            "description": "The national ID  of the applicant",
+            "nullable": true
+          },
+          "applicantName": {
+            "type": "string",
+            "description": "Applicant name",
+            "nullable": true
+          },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
+            "nullable": true
+          },
+          "isFreshman": {
+            "type": "boolean",
+            "description": "Is the applicant a freshman"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Applicant phone number",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "placeOfResidence": {
+            "type": "string",
+            "description": "Place of residence if other than legal home",
+            "nullable": true
+          },
+          "postCode": {
+            "type": "string",
+            "description": "Postcode of residence if other than legal home",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "Municipality of residence if other than legal home",
+            "nullable": true
+          },
+          "nextOfKin": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
+            "description": "The national ID of the next of kin",
+            "nullable": true
+          },
+          "otherInformation": {
+            "type": "string",
+            "description": "Other information",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationStatus": {
+        "enum": ["NewApplication", "Accepted", "AcceptedWaiting", "Rejected"],
+        "type": "string",
+        "description": "Enum for describing Application Status"
+      },
+      "AttachmentDto": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "File name.",
+            "nullable": true
+          },
+          "fileContent": {
+            "type": "string",
+            "description": "Base64-encoded file content.",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "description": "Content type (e.g., \"application/pdf\", \"application/msword\").\r\nNot contstrained to a specific set of values.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Create attachment Dto"
+      },
+      "AttachmentReturnDto": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "File name.",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "description": "Content type (e.g., \"pdf\").\r\nNot contstrained to a specific set of values.",
+            "nullable": true
+          },
+          "id": { "type": "string", "format": "uuid" }
+        },
+        "additionalProperties": false
+      },
+      "CurrentApplicantStatus": {
+        "enum": [
+          "Neither",
+          "InSchoolOnHighSchoolLevel",
+          "RegisteredWithLabourInstitute"
+        ],
+        "type": "string"
+      },
+      "GradeDto": {
+        "type": "object",
+        "properties": {
+          "schoolNationalId": {
+            "type": "string",
+            "description": "National Id of the school",
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "description": "Grade, e.g. A, B, C, D",
+            "nullable": true
+          },
+          "courseName": {
+            "type": "string",
+            "description": "Name of the course",
+            "nullable": true
+          },
+          "review": {
+            "type": "string",
+            "description": "Review",
+            "nullable": true
+          },
+          "evaluationCriteria": {
+            "type": "string",
+            "description": "Evaluation criteria for the course",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LanguageDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": {
+            "type": "string",
+            "description": "Name of language",
+            "nullable": true
+          },
+          "nameEnglish": {
+            "type": "string",
+            "description": "Name of language in English",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "description": "Code for language",
+            "nullable": true
+          },
+          "available": {
+            "type": "boolean",
+            "description": "If school offers language"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NextOfKinDto": {
+        "required": ["name", "nationalId", "phoneNumber"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "Next of kin national Id",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Next of kin phone number",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the next of kin",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email of the next of kin",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Place of residence of the next of kin",
+            "nullable": true
+          },
+          "postCode": {
+            "type": "string",
+            "description": "Postcode of the next of kin",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgrammeChoiceDto": {
+        "type": "object",
+        "properties": {
+          "applicationChoiceId": {
+            "type": "string",
+            "description": "Reference to the application choice",
+            "format": "uuid"
+          },
+          "programmeId": {
+            "type": "string",
+            "description": "Reference to the programme being selected",
+            "format": "uuid"
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the programme\r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProgrammeChoiceReturnDto": {
+        "type": "object",
+        "properties": {
+          "programmeId": {
+            "type": "string",
+            "description": "Reference to the programme being selected",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the programme",
+            "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the programme\r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "isSpecialNeedsProgramme": {
+            "type": "boolean",
+            "description": "Boolean value indicating if the programme is a special needs programme"
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the programme choice",
+            "format": "int32"
+          },
+          "status": { "$ref": "#/components/schemas/ProgrammeChoiceStatus" }
+        },
+        "additionalProperties": false
+      },
+      "ProgrammeChoiceStatus": {
+        "enum": [
+          "New",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "OtherProgrammeAccepted",
+          "Rejected"
+        ],
+        "type": "string"
+      },
+      "ProgrammeSimpleDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true },
+          "titleEnglish": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "registryEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isSpecialNeedsProgramme": { "type": "boolean" },
+          "schoolId": { "type": "string", "format": "uuid", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SchoolDto": {
+        "type": "object",
+        "properties": {
+          "schoolId": {
+            "type": "string",
+            "description": "What school is being applied to",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of school",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National Id of school",
+            "nullable": true
+          },
+          "postCode": {
+            "type": "string",
+            "description": "Zip code of the schhool",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "School address",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "School municipality",
+            "nullable": true
+          },
+          "availableDormitory": {
+            "type": "boolean",
+            "description": "Does the school offer a dormitory"
+          },
+          "abbreviation": {
+            "type": "string",
+            "description": "Abbr for school",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of school",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number for school",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "description": "Website address for school",
+            "nullable": true
+          },
+          "anyOpenForAdmissionGeneral": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission"
+          },
+          "anyOpenForAdmissionFreshman": {
+            "type": "boolean",
+            "description": "If any programmes are open for admission for freshman"
+          },
+          "thirdLanguages": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LanguageDto" },
+            "description": "Third languageges tought in school",
+            "nullable": true
+          },
+          "nordicLanguages": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LanguageDto" },
+            "description": "Nordic languageges tought in school",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SchoolSimpleDto": {
+        "type": "object",
+        "properties": {
+          "schoolId": {
+            "type": "string",
+            "description": "What school is being applied to",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of school",
+            "nullable": true
+          },
+          "abbreviation": {
+            "type": "string",
+            "description": "Abbr for school",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentInfoDto": {
+        "type": "object",
+        "properties": {
+          "isFreshman": {
+            "type": "boolean",
+            "description": "Is the student a freshman"
+          },
+          "hasActiveApplication": {
+            "type": "boolean",
+            "description": "Does the student have an active application"
+          },
+          "applications": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" },
+            "description": "List of applications the student has applied",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Student information"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter: Bearer {JWT token}.",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

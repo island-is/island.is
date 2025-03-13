@@ -25,7 +25,6 @@ import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license
 import { EducationModule } from '@island.is/api/domains/education'
 import { EducationV2Module } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
-import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
   ZenterSignupConfig,
@@ -90,7 +89,6 @@ import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
-import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
@@ -104,6 +102,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
@@ -141,7 +140,7 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
-import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -204,6 +203,10 @@ import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-sk
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { VerdictsClientConfig } from '@island.is/clients/verdicts'
+import { VerdictsModule } from '@island.is/api/domains/verdicts'
+import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 
 const environment = getConfig
 
@@ -292,7 +295,6 @@ const environment = getConfig
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
     DisabilityLicenseModule,
-    ElectronicRegistrationsModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
@@ -342,6 +344,8 @@ const environment = getConfig
     LawAndOrderModule,
     UmbodsmadurSkuldaraModule,
     HealthDirectorateModule,
+    VerdictsModule,
+    SecondarySchoolApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -382,7 +386,6 @@ const environment = getConfig
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
-        ElectronicRegistrationsClientConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
         SocialInsuranceAdministrationClientConfig,
@@ -406,6 +409,7 @@ const environment = getConfig
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
+        HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
@@ -442,6 +446,8 @@ const environment = getConfig
         WorkAccidentClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
+        VerdictsClientConfig,
+        SecondarySchoolClientConfig,
       ],
     }),
   ],

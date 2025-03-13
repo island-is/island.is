@@ -8,7 +8,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   workingCase: Case

@@ -2,7 +2,39 @@ import {
   AddApplicationAttachmentTypeEnum,
   GetApplicationAttachmentsTypeEnum,
   GetPresignedUrlTypeEnum,
+  TemplateType as TemplateTypeDto,
 } from '@island.is/clients/official-journal-of-iceland/application'
+import { TemplateType } from '../models/applicationAdvertTemplate.response'
+
+export const mapTemplateTypeLiteralToEnum = (
+  typeLiteral: TemplateTypeDto,
+): TemplateType => {
+  switch (typeLiteral) {
+    case 'auglysing':
+      return TemplateType.AUGLYSING
+    case 'gjaldskra':
+      return TemplateType.GJALDSKRA
+    case 'reglugerd':
+      return TemplateType.REGLUGERD
+    default:
+      return TemplateType.UNKNOWN
+  }
+}
+
+export const mapTemplateTypeEnumToLiteral = (
+  typeEnum: TemplateType,
+): TemplateTypeDto | undefined => {
+  switch (typeEnum) {
+    case TemplateType.AUGLYSING:
+      return 'auglysing'
+    case TemplateType.GJALDSKRA:
+      return 'gjaldskra'
+    case TemplateType.REGLUGERD:
+      return 'reglugerd'
+    default:
+      return
+  }
+}
 
 export const mapAttachmentType = (
   val: any,
@@ -25,6 +57,8 @@ export const mapPresignedUrlType = (val: any): GetPresignedUrlTypeEnum => {
       return GetPresignedUrlTypeEnum.Frumrit
     case GetPresignedUrlTypeEnum.Fylgiskjol:
       return GetPresignedUrlTypeEnum.Fylgiskjol
+    case GetPresignedUrlTypeEnum.Assets:
+      return GetPresignedUrlTypeEnum.Assets
     default:
       return GetPresignedUrlTypeEnum.Fylgiskjol
   }

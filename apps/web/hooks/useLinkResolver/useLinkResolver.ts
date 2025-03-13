@@ -107,6 +107,10 @@ export const routesTemplate = {
     is: '/s/tryggingastofnun/reiknivel',
     en: '/en/o/social-insurance-administration/calculator',
   },
+  directorateoflabourmypages: {
+    is: '/s/vinnumalastofnun/minar-sidur',
+    en: '/en/o/directorate-of-labour/my-pages',
+  },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
     en: '/en/o/digital-iceland/island-services',
@@ -159,6 +163,18 @@ export const routesTemplate = {
     is: '/s/[slug]',
     en: '/en/o/[slug]',
   },
+  grantsplaza: {
+    is: '/styrkjatorg',
+    en: '/en/grants-plaza',
+  },
+  grantsplazasearch: {
+    is: '/styrkjatorg/styrkir',
+    en: '/en/grants-plaza/grants',
+  },
+  grantsplazagrant: {
+    is: '/styrkjatorg/styrkur/[id]',
+    en: '/en/grants-plaza/grant/[id]',
+  },
   organizations: {
     is: '/s',
     en: '/en/o',
@@ -203,14 +219,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  adgerdirpage: {
-    is: '/covid-adgerdir/[slug]',
-    en: '/en/covid-operations/[slug]',
-  },
-  adgerdirfrontpage: {
-    is: '/covid-adgerdir',
-    en: '/en/covid-operations',
-  },
   regulation: {
     is: '/reglugerdir/nr/[number]',
     en: '',
@@ -229,6 +237,10 @@ export const routesTemplate = {
   },
   ojoicategories: {
     is: '/stjornartidindi/malaflokkar',
+    en: '',
+  },
+  ojoirss: {
+    is: '/stjornartidindi/rss',
     en: '',
   },
   ojoihome: {
@@ -306,18 +318,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  styrkjatorg: {
-    is: '/styrkjatorg',
-    en: '',
-  },
-  styrkjatorgsearch: {
-    is: '/styrkjatorg/styrkir',
-    en: '',
-  },
-  styrkjatorggrant: {
-    is: '/styrkjatorg/styrkur/[id]',
-    en: '',
   },
 }
 

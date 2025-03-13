@@ -28,9 +28,11 @@ import {
   QualityPhotoAndSignatureApi,
   NewestDriversCardApi,
   NationalRegistryBirthplaceApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -39,6 +41,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD,
   name: application.name,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.DigitalTachographDriversCard.translation,
@@ -68,7 +71,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DigitalTachographDriversCardForm/index').then(
+                import('../forms/digitalTachographDriversCardForm/index').then(
                   (module) =>
                     Promise.resolve(module.DigitalTachographDriversCardForm),
                 ),
@@ -85,6 +88,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 DrivingLicenseApi,
                 QualityPhotoAndSignatureApi,
                 NewestDriversCardApi,
@@ -127,7 +131,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Confirmation').then((val) =>
+                import('../forms/confirmation').then((val) =>
                   Promise.resolve(val.Confirmation),
                 ),
               read: 'all',

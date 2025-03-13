@@ -35,6 +35,9 @@ export class Grant {
   @Field()
   name!: string
 
+  @Field()
+  lastUpdateTimestamp!: string
+
   @Field({ nullable: true })
   description?: string
 
@@ -55,6 +58,9 @@ export class Grant {
 
   @CacheField(() => [SliceUnion])
   howToApply?: Array<typeof SliceUnion>
+
+  @CacheField(() => [SliceUnion])
+  answeringQuestions?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
   applicationHints?: Array<typeof SliceUnion>
@@ -90,8 +96,15 @@ export class Grant {
 const parseStatus = (fields: IGrantFields): GrantStatus => {
   switch (fields.grantStatus) {
     case 'Automatic': {
-      const parsedDateTo = new Date(fields.grantDateTo ?? '')
-      const parsedDateFrom = new Date(fields.grantDateFrom ?? '')
+      const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
+      const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
+
+      if (!dateTo || !dateFrom) {
+        return GrantStatus.INVALID
+      }
+
+      const parsedDateTo = new Date(dateTo)
+      const parsedDateFrom = new Date(dateFrom)
 
       if (!isValidDate(parsedDateTo) || !isValidDate(parsedDateFrom)) {
         return GrantStatus.INVALID
@@ -100,12 +113,13 @@ const parseStatus = (fields: IGrantFields): GrantStatus => {
       const today = new Date()
 
       //opens soon!
-      if (today <= parsedDateFrom) {
-        return fields.grantFromDateIsEstimated
+      if (today < parsedDateFrom) {
+        const status = fields.grantFromDateIsEstimated
           ? GrantStatus.CLOSED_OPENING_SOON_WITH_ESTIMATION
           : GrantStatus.CLOSED_OPENING_SOON
+        return status
       }
-      if (today <= parsedDateTo) {
+      if (today < parsedDateTo) {
         return GrantStatus.OPEN
       }
       return GrantStatus.CLOSED
@@ -129,13 +143,15 @@ const parseDate = (date?: string, time?: number): string | undefined => {
   if (!time) {
     return format(parsedDate, 'yyyy-MM-dd')
   }
-  return addHours(new Date(date), time).toISOString()
+  return addHours(parsedDate, time).toISOString()
 }
 
 export const mapGrant = ({ fields, sys }: IGrant): Grant => {
+  const status = parseStatus(fields)
   return {
     id: sys.id,
     name: fields.grantName,
+    lastUpdateTimestamp: sys.updatedAt ?? sys.createdAt,
     description: fields.grantDescription,
     applicationId: fields.grantApplicationId,
     applicationUrl: fields.granApplicationUrl?.fields
@@ -154,9 +170,15 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     applicationHints: fields.grantApplicationHints
       ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
       : [],
+    answeringQuestions: fields.grantAnsweringQuestions
+      ? mapDocument(
+          fields.grantAnsweringQuestions,
+          sys.id + ':answering-questions',
+        )
+      : [],
     dateFrom: parseDate(fields.grantDateFrom, fields.grantOpenFromHour),
     dateTo: parseDate(fields.grantDateTo, fields.grantOpenToHour),
-    status: parseStatus(fields),
+    status: status,
     statusText: fields.grantStatusNote,
     fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
     files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],

@@ -12,6 +12,7 @@ import { Schema, StaticText } from './Form'
 import { AnswerValidator } from './AnswerValidator'
 import { Features } from '@island.is/feature-flags'
 import { AllowedDelegation } from './ApplicationAllowedDelegations'
+import { CodeOwners } from '@island.is/shared/constants'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
@@ -24,6 +25,7 @@ export interface ApplicationTemplate<
   readonly readyForProduction?: boolean
   readonly featureFlag?: Features
   readonly type: ApplicationTypes
+  readonly codeOwner: CodeOwners
   readonly name:
     | StaticText
     | ((

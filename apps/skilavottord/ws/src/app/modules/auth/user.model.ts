@@ -6,6 +6,7 @@ export enum Role {
   recyclingCompanyAdmin = 'recyclingCompanyAdmin',
   recyclingFund = 'recyclingFund',
   citizen = 'citizen',
+  municipality = 'municipality',
 }
 
 registerEnumType(Role, { name: 'Role' })

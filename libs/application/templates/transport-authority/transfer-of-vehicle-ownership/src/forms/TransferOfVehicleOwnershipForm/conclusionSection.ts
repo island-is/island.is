@@ -16,7 +16,6 @@ export const conclusionSection = buildSection({
         buildCustomField({
           component: 'Conclusion',
           id: 'Conclusion',
-          title: '',
           description: '',
         }),
       ],

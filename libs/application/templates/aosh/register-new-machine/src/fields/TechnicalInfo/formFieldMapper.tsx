@@ -7,11 +7,9 @@ import { FormFieldMapperType } from '../../shared/types'
 import {
   FieldComponents,
   FieldTypes,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { information } from '../../lib/messages'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, NO, YES } from '@island.is/application/core'
 import { ListItemField } from './ListItemField'
 
 export const formFieldMapper = ({

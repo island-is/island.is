@@ -1,7 +1,6 @@
 query Cases {
   cases {
     id
-    created
     type
     decision
     state
@@ -24,12 +23,19 @@ query Cases {
       caseId
       nationalId
       name
+      gender
       noNationalId
       defenderChoice
       verdictViewDate
       isSentToPrisonAdmin
       punishmentType
       openedByPrisonAdminDate
+      subpoenas {
+        id
+        serviceStatus
+        subpoenaId
+      }
+      verdictAppealDate
     }
     defendantsPunishmentType
     courtDate
@@ -104,5 +110,11 @@ query Cases {
     indictmentDecision
     indictmentCompletedDate
     courtSessionType
+    caseSentToCourtDate
+    isCompletedWithoutRuling
+    eventLogs {
+      id
+      eventType
+    }
   }
 }

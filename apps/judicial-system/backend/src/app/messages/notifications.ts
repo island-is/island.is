@@ -305,6 +305,28 @@ export const notifications = {
         'Notaður sem texti í pósti til Fangelsismálastofnun vegna undirritunar úrskurðar',
     },
   }),
+  acceptedWithoutRuling: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.subject',
+      defaultMessage: 'Niðurstaða í máli {courtCaseNumber}',
+      description:
+        'Notaður sem titill í pósti til hagaðila þegar máli er lokið án úrskurðar',
+    },
+    prosecutorBody: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.prosecutor_body',
+      defaultMessage:
+        'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til sækjanda þegar máli er lokið án úrskurðar',
+    },
+    defenderBody: {
+      id: 'judicial.system.backend:notifications.accepted_without_ruling.defender_body',
+      defaultMessage:
+        'Dómari hefur staðfest niðurstöðu í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description:
+        'Notaður sem texti í pósti til verjanda/talsmanns þegar máli er lokið án úrskurðar',
+    },
+  }),
   caseCompleted: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.case_completed.subject_v1',
@@ -518,48 +540,6 @@ export const notifications = {
     },
   }),
   defenderRevokedEmail: defineMessages({
-    court: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.court',
-      defaultMessage:
-        '{court, select, NONE {ótilgreindum dómstóli} other {{court}}}',
-      description:
-        'Texti í pósti til verjanda/talsmanns sem tilgreinir hvaða dómstóll dæmir í máli',
-    },
-    courtDate: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.court_date',
-      defaultMessage:
-        '{courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}',
-      description:
-        'Texti í pósti til verjanda/talsmanns sem tilgreinir hvernær fyrirtaka var skráð',
-    },
-    revoked: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.revoked',
-      defaultMessage:
-        'Krafa um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}} sem taka átti fyrir hjá {courtText} {courtDateText}, hefur verið afturkölluð.',
-      description:
-        'Texti í pósti til verjanda/talsmanns sem tilgreinir að krafa sé afturkölluð',
-    },
-    defendant: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.defendant',
-      defaultMessage:
-        'Sakborningur: {defendantName, select, NONE {Nafn ekki skráð} other {{defendantName}}}{defendantNoNationalId, select, NONE {{defendantNationalId, select, NONE {} other {, fd. {defendantNationalId}}}} other {, kt. {defendantNationalId, select, NONE {ekki skráð} other {{defendantNationalId}}}}}.',
-      description:
-        'Texti í pósti til verjanda/talsmanns sem tilgreinir sakborning',
-    },
-    defenderAssigned: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.defender_assigned_v3',
-      defaultMessage:
-        'Dómstóllinn hafði skráð þig sem verjanda/talsmann í málinu.',
-      description:
-        'Texti í pósti til verjanda/talsmanns sem tilgreinir að viðkomandi sé skráður verjandi',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.body',
-      defaultMessage:
-        '{revokedText}<br /><br />{defendantText}<br /><br />{defenderAssignedText}',
-      description:
-        'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar krafa er afturkölluð',
-    },
     subject: {
       id: 'judicial.system.backend:notifications.defender_revoked_email.subject',
       defaultMessage:
@@ -567,12 +547,12 @@ export const notifications = {
       description:
         'Fyrirsögn í pósti til verjanda/talsmanns þegar krafa er afturkölluð',
     },
-    indictmentBody: {
-      id: 'judicial.system.backend:notifications.defender_revoked_email.body_indictment',
+    bodyV2: {
+      id: 'judicial.system.backend:notifications.defender_revoked_email.body_v2',
       defaultMessage:
-        'Dómstóllinn hafði skráð þig sem verjanda í málinu.<br /><br />{defenderHasAccessToRvg, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
+        '{actorInstitution} hefur afturkallað {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {ákæru}} í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRvg, select, true {Hægt er að nálgast yfirlitssíðu málsins á {linkStart}rettarvorslugatt.island.is{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
       description:
-        'Notaður sem beinagrind á pósti til verjanda þegar ákæra er afturkölluð',
+        'Notaður sem beinagrind á pósti til verjanda þegar mál er afturkallað',
     },
     indictmentSubject: {
       id: 'judicial.system.backend:notifications.defender_revoked_email.indictment_subject_v2',
@@ -781,6 +761,11 @@ export const notifications = {
       defaultMessage: 'Landsréttur',
       description: 'Nafn á Landsrétti í tölvupóstum',
     },
+    publicProsecutorCriminalRecords: {
+      id: 'judicial.system.backend:notifications.email_names.public_prosecutor_criminal_records',
+      defaultMessage: 'Ritari sakaskrár',
+      description: 'Nafn á ritara sakaskrá í tölvupóstum',
+    },
   }),
   COAJudgeAssigned: defineMessages({
     subject: {
@@ -837,9 +822,9 @@ export const notifications = {
       description: 'Fyrirsögn í pósti til dómstóls þegar ákæra er afturkölluð',
     },
     body: {
-      id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body',
+      id: 'judicial.system.backend:notifications.court_revoked_indictment_email.body_v1',
       defaultMessage:
-        '{prosecutorsOffice} hefur afturkallað ákæru {courtCaseNumber, select, NONE {í máli sem ekki hefur enn fengið málsnúmer} other {í máli {courtCaseNumber}}}.',
+        '{prosecutorsOffice} hefur afturkallað ákæru í máli {caseNumber}.',
       description: 'Texti í pósti til dómstóls þegar ákæra er afturkölluð',
     },
   }),

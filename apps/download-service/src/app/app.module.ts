@@ -15,6 +15,10 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
+import {
+  FeatureFlagConfig,
+  FeatureFlagModule,
+} from '@island.is/nest/feature-flags'
 
 import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
@@ -24,6 +28,7 @@ import { VehicleController } from './modules/vehicles-documents/vehicle-document
 import { EducationController } from './modules/education-documents/education-document.controller'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
+import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
 import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
 import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
 import {
@@ -66,6 +71,7 @@ import {
     FinanceDocumentController,
     VehicleController,
     EducationController,
+    HealthPaymentsOverviewController,
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesController,
@@ -83,6 +89,7 @@ import {
     UniversityCareersClientModule,
     MMSClientModule,
     RightsPortalClientModule,
+    FeatureFlagModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -103,6 +110,7 @@ import {
         DistrictCommissionersLicensesClientConfig,
         RightsPortalClientConfig,
         DocumentClientConfig,
+        FeatureFlagConfig,
       ],
     }),
   ],

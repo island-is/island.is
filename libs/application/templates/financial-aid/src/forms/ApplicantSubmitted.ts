@@ -4,14 +4,20 @@ import {
   buildMultiField,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form } from '@island.is/application/types'
+import { Application, DefaultEvents, Form } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 
 import * as m from '../lib/messages'
+import { createElement } from 'react'
+import { Logo } from '../components/Logo/Logo'
 
 export const ApplicantSubmitted: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.status.sectionTitle,
+  logo: (application: Application) => {
+    const logo = createElement(Logo, { application })
+    return () => logo
+  },
   children: [
     buildMultiField({
       id: Routes.APPLICANTSTATUS,
@@ -25,7 +31,6 @@ export const ApplicantSubmitted: Form = buildForm({
         // Empty submit field to hide all buttons in the footer
         buildSubmitField({
           id: '',
-          title: '',
           actions: [],
         }),
       ],
@@ -44,7 +49,6 @@ export const ApplicantSubmitted: Form = buildForm({
         ),
         buildSubmitField({
           id: 'missingFilesSubmit',
-          title: '',
           actions: [
             {
               event: DefaultEvents.EDIT,

@@ -3,9 +3,9 @@ import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
+import * as kennitala from 'kennitala'
 import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
-import * as kennitala from 'kennitala'
 
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
@@ -21,17 +21,18 @@ import { ApiScope } from '../resources/models/api-scope.model'
 import { IdentityResource } from '../resources/models/identity-resource.model'
 import { DelegationProviderService } from './delegation-provider.service'
 import { DelegationConfig } from './DelegationConfig'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationsIndexService } from './delegations-index.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
-import { ApiScopeInfo } from './delegations-incoming.service'
+import { DelegationValidity } from './types/delegationValidity'
+import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
+import { getScopeValidityWhereClause } from './utils/scopes'
 
 import type { User } from '@island.is/auth-nest-tools'
-import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
-
 @Injectable()
 export class DelegationScopeService {
   constructor(
@@ -135,17 +136,8 @@ export class DelegationScopeService {
     toNationalId: string,
     fromNationalId: string,
   ): Promise<DelegationScope[]> {
-    const today = new Date()
-
     return this.delegationScopeModel.findAll({
-      where: {
-        [Op.and]: [
-          { validFrom: { [Op.lte]: today } },
-          {
-            validTo: { [Op.or]: [{ [Op.is]: undefined }, { [Op.gte]: today }] },
-          },
-        ],
-      },
+      where: getScopeValidityWhereClause(DelegationValidity.NOW),
       include: [
         {
           model: Delegation,
@@ -238,7 +230,9 @@ export class DelegationScopeService {
       )
   }
 
-  private async findAllNationalRegistryScopes(): Promise<string[]> {
+  private async findAllNationalRegistryScopes(
+    delegationTypes: string[],
+  ): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
       include: [
         {
@@ -249,6 +243,7 @@ export class DelegationScopeService {
               model: DelegationTypeModel,
               where: {
                 provider: AuthDelegationProvider.NationalRegistry,
+                id: delegationTypes,
               },
             },
           ],
@@ -416,7 +411,7 @@ export class DelegationScopeService {
       await this.delegationProviderService.findProviders(delegationTypes)
 
     if (providers.includes(AuthDelegationProvider.NationalRegistry)) {
-      scopePromises.push(this.findAllNationalRegistryScopes())
+      scopePromises.push(this.findAllNationalRegistryScopes(delegationTypes))
     }
 
     if (providers.includes(AuthDelegationProvider.CompanyRegistry)) {

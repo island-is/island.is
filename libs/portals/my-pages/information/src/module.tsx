@@ -46,7 +46,6 @@ const sharedRoutes = (scopes: string[]) => [
     name: 'Notifications',
     path: InformationPaths.Notifications,
     enabled: scopes.includes(DocumentsScope.main),
-    key: 'Notifications',
     element: <Notifications />,
   },
 ]
@@ -55,13 +54,13 @@ export const informationModule: PortalModule = {
   name: 'Upplýsingar',
   routes: ({ userInfo }) => [
     {
-      name: 'Mínar upplýsingar',
+      name: m.userInfo,
       path: InformationPaths.MyInfoRoot,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
     },
     {
-      name: 'Mín gögn',
+      name: m.myInfo,
       path: InformationPaths.MyInfoRootOverview,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <UserInfoOverview />,
@@ -73,13 +72,13 @@ export const informationModule: PortalModule = {
       element: <UserInfo />,
     },
     {
-      name: 'BioChild',
+      name: m.familyChild,
       path: InformationPaths.BioChild,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <FamilyMemberBioChild />,
     },
     {
-      name: 'Child',
+      name: m.familyChild,
       path: InformationPaths.ChildCustody,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <FamilyMemberChildCustody />,
@@ -92,7 +91,7 @@ export const informationModule: PortalModule = {
       element: <UserNotificationsSettings />,
     },
     {
-      name: 'Spouse',
+      name: m.familySpouse,
       path: InformationPaths.Spouse,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
@@ -101,7 +100,7 @@ export const informationModule: PortalModule = {
   ],
   companyRoutes: ({ userInfo }) => [
     {
-      name: 'Um fyrirtæki',
+      name: m.companyTitle,
       path: InformationPaths.Company,
       enabled: userInfo.scopes.includes(ApiScope.company),
       element: <CompanyInfo />,

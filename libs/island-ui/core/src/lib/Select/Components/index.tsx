@@ -21,6 +21,7 @@ import {
   GroupBase,
   MultiValueProps,
   MultiValueGenericProps,
+  ClearIndicatorProps,
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
@@ -219,7 +220,13 @@ export const ValueContainer = <
   // @ts-ignore make web strict
   props: ValueContainerProps<OptionType<Value>, IsMulti, Group>,
 ) => (
-  <components.ValueContainer className={styles.valueContainer} {...props}>
+  <components.ValueContainer
+    className={cn(
+      styles.valueContainer,
+      props.isMulti && styles.multiValueContainer,
+    )}
+    {...props}
+  >
     {props.children}
   </components.ValueContainer>
 )
@@ -324,6 +331,20 @@ export const Control = <
   } else {
     return component(label)
   }
+}
+
+export const ClearIndicator = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<OptionType<Value>>,
+>(
+  props: ClearIndicatorProps<OptionType<Value>, IsMulti, Group>,
+) => {
+  return (
+    <components.ClearIndicator {...props}>
+      <Icon icon="close" color="blue400" />
+    </components.ClearIndicator>
+  )
 }
 
 export const customStyles = <

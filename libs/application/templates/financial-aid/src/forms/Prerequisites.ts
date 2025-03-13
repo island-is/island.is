@@ -7,7 +7,12 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
@@ -19,11 +24,17 @@ import {
   MunicipalityApi,
   TaxDataApi,
 } from '../dataProviders'
+import { createElement } from 'react'
+import { Logo } from '../components/Logo/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   mode: FormModes.DRAFT,
+  logo: (application: Application) => {
+    const logo = createElement(Logo, { application })
+    return () => logo
+  },
   children: [
     buildSection({
       id: 'externalData',
@@ -43,22 +54,18 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: MunicipalityApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
               provider: CurrentApplicationApi,
-              title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
@@ -69,7 +76,6 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               id: 'moreTaxInfo',
               type: undefined,
-              title: '',
               subTitle: m.externalData.taxData.process,
             }),
           ],
@@ -91,7 +97,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildSubmitField({
               id: 'toDraft',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
@@ -106,7 +111,6 @@ export const Prerequisites: Form = buildForm({
         // This is here to be able to show submit button on former screen :( :( :(
         buildMultiField({
           id: '',
-          title: '',
           children: [],
         }),
       ],

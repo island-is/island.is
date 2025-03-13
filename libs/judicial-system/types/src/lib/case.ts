@@ -23,13 +23,15 @@ export enum CaseType {
   EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
   INTERNET_USAGE = 'INTERNET_USAGE',
   OTHER = 'OTHER',
-  PHONE_TAPPING = 'PHONE_TAPPING',
   PAROLE_REVOCATION = 'PAROLE_REVOCATION',
+  PHONE_TAPPING = 'PHONE_TAPPING',
   PSYCHIATRIC_EXAMINATION = 'PSYCHIATRIC_EXAMINATION',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME = 'RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME',
   SEARCH_WARRANT = 'SEARCH_WARRANT',
   SOUND_RECORDING_EQUIPMENT = 'SOUND_RECORDING_EQUIPMENT',
+  STATEMENT_FROM_MINOR = 'STATEMENT_FROM_MINOR',
+  STATEMENT_IN_COURT = 'STATEMENT_IN_COURT',
   TELECOMMUNICATIONS = 'TELECOMMUNICATIONS',
   TRACKING_EQUIPMENT = 'TRACKING_EQUIPMENT',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
@@ -318,6 +320,8 @@ export const investigationCases = [
   CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
   CaseType.SEARCH_WARRANT,
   CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.STATEMENT_FROM_MINOR,
+  CaseType.STATEMENT_IN_COURT,
   CaseType.TELECOMMUNICATIONS,
   CaseType.TRACKING_EQUIPMENT,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
@@ -376,13 +380,7 @@ export const isTrafficViolationCase = (theCase: {
   indictmentSubtypes?: IndictmentSubtypeMap
   caseFiles?: { category?: CaseFileCategory | null }[] | null
 }): boolean => {
-  if (
-    theCase.type !== CaseType.INDICTMENT ||
-    !theCase.indictmentSubtypes ||
-    theCase.caseFiles?.some(
-      (file) => file.category === CaseFileCategory.INDICTMENT,
-    )
-  ) {
+  if (theCase.type !== CaseType.INDICTMENT || !theCase.indictmentSubtypes) {
     return false
   }
 
@@ -397,6 +395,9 @@ export const isTrafficViolationCase = (theCase: {
     )
   )
 }
+
+export const hasTrafficViolationSubtype = (subtypes: IndictmentSubtype[]) =>
+  subtypes.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
 
 export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(

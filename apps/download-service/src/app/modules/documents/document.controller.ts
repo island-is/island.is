@@ -1,4 +1,5 @@
 import type { User } from '@island.is/auth-nest-tools'
+import slugify from '@sindresorhus/slugify'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -60,12 +61,17 @@ export class DocumentController {
 
     const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
 
-    res.header('Content-length', buffer.length.toString())
+    const slugFileName = slugify(rawDocumentDTO.fileName ?? 'postholf-skjal', {
+      customReplacements: [
+        ['Þ', 'th'],
+        ['ö', 'o'],
+      ],
+    })
     res.header(
       'Content-Disposition',
-      `${action === 'download' ? 'attachment' : 'inline'}; filename=${
-        rawDocumentDTO.fileName
-      }.pdf`,
+      `${
+        action === 'download' ? 'attachment' : 'inline'
+      }; filename=${slugFileName}.pdf`,
     )
     res.header('Pragma', 'no-cache')
     res.header('Cache-Control', 'no-cache')

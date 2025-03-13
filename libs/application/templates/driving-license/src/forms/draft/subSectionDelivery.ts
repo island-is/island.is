@@ -26,7 +26,6 @@ export const subSectionDelivery = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'jurisdictionHeader',
-          title: '',
           description: chooseDistrictCommissionerDescription,
         }),
         buildSelectField({
@@ -48,7 +47,6 @@ export const subSectionDelivery = buildSubSection({
         }),
         buildDescriptionField({
           id: 'pickupHeader',
-          title: '',
           description: m.pickupLocationHeader,
           titleVariant: 'h4',
           space: 'containerGutter',
@@ -56,7 +54,6 @@ export const subSectionDelivery = buildSubSection({
         }),
         buildRadioField({
           id: 'pickup',
-          title: '',
           defaultValue: Pickup.POST,
           condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
           options: [

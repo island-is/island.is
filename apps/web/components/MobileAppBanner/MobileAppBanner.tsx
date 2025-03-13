@@ -56,14 +56,13 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
     setIsMounted(true)
   }, [])
 
-  return hidden ? null : (
-    <Hidden print={true}>
+  return (
+    <Hidden screen={hidden || !isMounted} print={true}>
       <Box
         background="blue400"
         display="flex"
         className={style.container}
         alignItems={'center'}
-        style={{ visibility: isMounted ? 'visible' : 'hidden' }}
       >
         <button
           className={style.closeBtn}

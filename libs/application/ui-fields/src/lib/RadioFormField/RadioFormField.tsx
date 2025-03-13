@@ -17,6 +17,7 @@ import {
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -31,7 +32,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     disabled,
     id,
-    title,
+    title = '',
     description,
     options,
     width,
@@ -42,6 +43,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     widthWithIllustration,
     marginTop,
     marginBottom,
+    clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -104,7 +106,11 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
-            label: HtmlParser(formatText(label, application, formatMessage)),
+            label: (
+              <Markdown>
+                {formatText(label, application, formatMessage)}
+              </Markdown>
+            ),
             subLabel:
               subLabel &&
               HtmlParser(formatText(subLabel, application, formatMessage)),
@@ -118,6 +124,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           hasIllustration={hasIllustration}
           paddingBottom={0}
           paddingTop={2}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

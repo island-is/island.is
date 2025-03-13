@@ -1,6 +1,5 @@
 import {
   buildCheckboxField,
-  buildDividerField,
   buildForm,
   buildDescriptionField,
   buildMultiField,
@@ -8,6 +7,7 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
+  buildTitleField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
@@ -25,7 +25,7 @@ export const ReviewApplication: Form = buildForm({
           id: 'about',
           title: m.about,
           children: [
-            buildDividerField({ title: 'Umsækjandi' }),
+            buildTitleField({ title: 'Umsækjandi', color: 'blue400' }),
             buildTextField({
               id: 'person.name',
               title: m.personName,
@@ -55,7 +55,7 @@ export const ReviewApplication: Form = buildForm({
               disabled: true,
               width: 'half',
             }),
-            buildDividerField({ title: 'Atvinna' }),
+            buildTitleField({ title: 'Atvinna', color: 'blue400' }),
             buildRadioField({
               id: 'careerHistory',
               title: 'def',

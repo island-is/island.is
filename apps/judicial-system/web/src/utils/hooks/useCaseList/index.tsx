@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
@@ -10,7 +10,6 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -20,11 +19,9 @@ import {
   isPublicProsecutorUser,
   isRequestCase,
   isRestrictionCase,
-  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -42,7 +39,6 @@ const useCaseList = () => {
   >([null, false])
   const { user, limitedAccess } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
-  const { features } = useContext(FeatureContext)
   const { formatMessage } = useIntl()
   const { isTransitioningCase, isSendingNotification } = useCase()
   const router = useRouter()
@@ -50,9 +46,6 @@ const useCaseList = () => {
   const openCase = useCallback(
     (caseToOpen: Case, openCaseInNewTab?: boolean) => {
       let routeTo = null
-      const isTrafficViolation =
-        features.includes(Feature.MULTIPLE_INDICTMENT_SUBTYPES) ||
-        isTrafficViolationCase(caseToOpen)
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
@@ -129,7 +122,7 @@ const useCaseList = () => {
               : constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
           } else {
             routeTo = findFirstInvalidStep(
-              constants.prosecutorIndictmentRoutes(isTrafficViolation),
+              constants.prosecutorIndictmentRoutes,
               caseToOpen,
             )
           }
@@ -142,7 +135,7 @@ const useCaseList = () => {
         router.push(`${routeTo}/${caseToOpen.id}`)
       }
     },
-    [router, user, features],
+    [router, user],
   )
 
   const handleOpenCase = useCallback(

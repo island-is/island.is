@@ -1,125 +1,86 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
+import { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
-import { AdvocateType, type Lawyer } from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
-import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+import { type Lawyer } from '@island.is/judicial-system/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  useCase,
-  useCivilClaimants,
-  useDefendants,
-  useGetLawyers,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { useGetLawyers } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './Input.strings'
+import {
+  emailLabelStrings,
+  nameLabelStrings,
+  phoneNumberLabelStrings,
+  placeholderStrings,
+} from './InputAdvocate.strings'
 
 interface Props {
+  advocateType: 'defender' | 'spokesperson' | 'lawyer' | 'legalRightsProtector'
+  name: string | undefined | null
+  email: string | undefined | null
+  phoneNumber: string | undefined | null
   onAdvocateNotFound?: (advocateNotFound: boolean) => void
+  onAdvocateChange: (
+    name: string | null,
+    nationalId: string | null,
+    email: string | null,
+    phoneNumber: string | null,
+  ) => void
+  onEmailChange: (email: string | null) => void
+  onEmailSave: (email: string | null) => void
+  onPhoneNumberChange: (phoneNumber: string | null) => void
+  onPhoneNumberSave: (phoneNumber: string | null) => void
   disabled?: boolean | null
-  clientId?: string | null
-  advocateType?: AdvocateType
-  isCivilClaim?: boolean
 }
-
-interface PropertyValidation {
-  validations: Validation[]
-  errorMessageHandler: {
-    errorMessage: string
-    setErrorMessage: Dispatch<SetStateAction<string>>
-  }
-}
-
-interface LawyerUpdate {
-  defenderName: string | null
-  defenderNationalId: string | null
-  defenderEmail: string | null
-  defenderPhoneNumber: string | null
-}
-
-interface SpokespersonUpdate {
-  spokespersonName: string | null
-  spokespersonNationalId: string | null
-  spokespersonEmail: string | null
-  spokespersonPhoneNumber: string | null
-}
-
-type InputType =
-  | 'defenderEmail'
-  | 'defenderPhoneNumber'
-  | 'spokespersonEmail'
-  | 'spokespersonPhoneNumber'
 
 /**
- * A component that handles setting any kind of legal advocate. In doing so
- * there are three things to consider.
- *
- * 1. In R-cases, a single *defender* is set on the case itself.
- * 2. In S-cases, a *defender* or *spokesperson* is set on each defendant,
- *    depending on what SESSION_ARRANGEMENT is set.
- * 3. In S-cases, a *legal rights protector* is set on each civil claimant.
+ * A reusable input component for advocates. It handles lawyer lookup, input validation
+ * and setting/removing validation error message.
  */
 const InputAdvocate: FC<Props> = ({
-  // A function that runs if an advocate is not found.
-  onAdvocateNotFound,
-
-  /**
-   * The id of the client of the advocate. Used to update the advocate info
-   * of the client.
-   */
-  clientId,
-
-  // The type of advocate being set. See description above.
+  // The type of advocate being set.
   advocateType,
 
-  // If set to true, the defender info is set on a civil claimant in a case.
-  isCivilClaim = false,
+  // The name of the advocate.
+  name: lawyerName,
+
+  // The email of the advocate.
+  email: lawyerEmail,
+
+  // The phone number of the advocate.
+  phoneNumber: lawyerPhoneNumber,
+
+  // A function that is called when a new advocate is selected.
+  onAdvocateChange,
+
+  // A function that is called if an advocate is not found.
+  onAdvocateNotFound,
+
+  // A function that is called when an advocate email is changed.
+  onEmailChange,
+
+  // A function that is called when an advocate email is blurred.
+  onEmailSave,
+
+  // A function that is called when an advocate phone number is changed.
+  onPhoneNumberChange,
+
+  // A function that is called when an advocate phone number is blurred.
+  onPhoneNumberSave,
 
   disabled,
 }) => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawyers = useGetLawyers()
-  const { updateCase, setAndSendCaseToServer } = useCase()
-  const { updateDefendant, updateDefendantState, setAndSendDefendantToServer } =
-    useDefendants()
-  const {
-    setAndSendCivilClaimantToServer,
-    updateCivilClaimantState,
-    updateCivilClaimant,
-  } = useCivilClaimants()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
-
-  const defendantInDefendants = workingCase.defendants?.find(
-    (defendant) => defendant.id === clientId,
-  )
-
-  const civilClaimantInCivilClaimants = workingCase.civilClaimants?.find(
-    (civilClaimant) => civilClaimant.id === clientId,
-  )
 
   const options = useMemo(
     () =>
@@ -131,25 +92,12 @@ const InputAdvocate: FC<Props> = ({
     [lawyers],
   )
 
-  const handleLawyerChange = useCallback(
-    (
-      selectedOption: SingleValue<ReactSelectOption>,
-      isCivilClaim: boolean,
-      clientId?: string | null,
-    ) => {
-      let updatedLawyer: LawyerUpdate = {
-        defenderName: null,
-        defenderNationalId: null,
-        defenderEmail: null,
-        defenderPhoneNumber: null,
-      }
-
-      let updatedSpokesperson: SpokespersonUpdate = {
-        spokespersonName: null,
-        spokespersonNationalId: null,
-        spokespersonEmail: null,
-        spokespersonPhoneNumber: null,
-      }
+  const handleAdvocateChange = useCallback(
+    (selectedOption: SingleValue<ReactSelectOption>) => {
+      let name: string | null = null
+      let nationalId: string | null = null
+      let email: string | null = null
+      let phoneNumber: string | null = null
 
       if (selectedOption) {
         const { label, value, __isNew__: defenderNotFound } = selectedOption
@@ -159,217 +107,91 @@ const InputAdvocate: FC<Props> = ({
         const lawyer = lawyers.find(
           (l: Lawyer) => l.email === (value as string),
         )
-        updatedLawyer = {
-          defenderName: lawyer ? lawyer.name : label,
-          defenderNationalId: lawyer ? lawyer.nationalId : null,
-          defenderEmail: lawyer ? lawyer.email : null,
-          defenderPhoneNumber: lawyer ? lawyer.phoneNr : null,
-        }
 
-        updatedSpokesperson = {
-          spokespersonName: lawyer ? lawyer.name : label,
-          spokespersonNationalId: lawyer ? lawyer.nationalId : null,
-          spokespersonEmail: lawyer ? lawyer.email : null,
-          spokespersonPhoneNumber: lawyer ? lawyer.phoneNr : null,
-        }
+        name = lawyer ? lawyer.name : label
+        nationalId = lawyer ? lawyer.nationalId : null
+        email = lawyer ? lawyer.email : null
+        phoneNumber = lawyer ? lawyer.phoneNr : null
       }
 
-      if (isCivilClaim && clientId) {
-        setAndSendCivilClaimantToServer(
-          {
-            ...updatedSpokesperson,
-            caseId: workingCase.id,
-            civilClaimantId: clientId,
-            caseFilesSharedWithSpokesperson:
-              updatedSpokesperson.spokespersonNationalId
-                ? civilClaimantInCivilClaimants?.caseFilesSharedWithSpokesperson
-                : null,
-          },
-          setWorkingCase,
-        )
-      } else if (clientId) {
-        setAndSendDefendantToServer(
-          { ...updatedLawyer, caseId: workingCase.id, defendantId: clientId },
-          setWorkingCase,
-        )
-      } else {
-        setAndSendCaseToServer(
-          [{ ...updatedLawyer, force: true }],
-          workingCase,
-          setWorkingCase,
-        )
-      }
+      setEmailErrorMessage('')
+      setPhoneNumberErrorMessage('')
+      onAdvocateChange(name, nationalId, email, phoneNumber)
     },
-    [
-      onAdvocateNotFound,
-      lawyers,
-      setAndSendCivilClaimantToServer,
-      workingCase,
-      civilClaimantInCivilClaimants?.caseFilesSharedWithSpokesperson,
-      setWorkingCase,
-      setAndSendDefendantToServer,
-      setAndSendCaseToServer,
-    ],
+    [onAdvocateChange, onAdvocateNotFound, lawyers],
   )
 
-  const propertyValidations = useCallback(
-    (property: InputType) => {
-      const propertyValidation: PropertyValidation =
-        property === 'defenderEmail' || property === 'spokespersonEmail'
-          ? {
-              validations: ['email-format'],
-              errorMessageHandler: {
-                errorMessage: emailErrorMessage,
-                setErrorMessage: setEmailErrorMessage,
-              },
-            }
-          : {
-              validations: ['phonenumber'],
-              errorMessageHandler: {
-                errorMessage: phoneNumberErrorMessage,
-                setErrorMessage: setPhoneNumberErrorMessage,
-              },
-            }
-
-      return propertyValidation
-    },
-    [emailErrorMessage, phoneNumberErrorMessage],
-  )
-
-  const formatUpdate = useCallback((property: InputType, value: string) => {
-    switch (property) {
-      case 'defenderEmail': {
-        return {
-          defenderEmail: value || null,
-        }
-      }
-      case 'defenderPhoneNumber': {
-        return { defenderPhoneNumber: value || null }
-      }
-      case 'spokespersonEmail': {
-        return { spokespersonEmail: value || null }
-      }
-      case 'spokespersonPhoneNumber': {
-        return { spokespersonPhoneNumber: value || null }
-      }
-    }
-  }, [])
-
-  const handleLawyerPropertyChange = useCallback(
-    (
-      clientId: string,
-      property: InputType,
-      value: string,
-      isCivilClaim: boolean,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
-    ) => {
-      let newValue = value
-      const propertyValidation = propertyValidations(property)
-      const update = formatUpdate(property, value)
-
-      if (newValue.includes('\t')) {
-        newValue = replaceTabs(value)
-      }
+  const handleEmailChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const email = replaceTabs(event.target.value)
 
       removeErrorMessageIfValid(
-        propertyValidation.validations,
-        newValue,
-        propertyValidation.errorMessageHandler.errorMessage,
-        propertyValidation.errorMessageHandler.setErrorMessage,
+        ['email-format'],
+        email,
+        emailErrorMessage,
+        setEmailErrorMessage,
       )
 
-      if (isCivilClaim) {
-        updateCivilClaimantState(
-          { ...update, caseId: workingCase.id, civilClaimantId: clientId },
-          setWorkingCase,
-        )
-      } else {
-        updateDefendantState(
-          { ...update, caseId: workingCase.id, defendantId: clientId },
-          setWorkingCase,
-        )
-      }
+      onEmailChange(email || null)
     },
-    [
-      formatUpdate,
-      propertyValidations,
-      updateCivilClaimantState,
-      updateDefendantState,
-      workingCase.id,
-    ],
+    [emailErrorMessage, onEmailChange],
   )
 
-  const handleLawyerPropertyBlur = useCallback(
-    (caseId: string, clientId: string, property: InputType, value: string) => {
-      const propertyValidation = propertyValidations(property)
-      const update = formatUpdate(property, value)
+  const handleLEmailBlur = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const email = replaceTabs(event.target.value)
 
-      validateAndSetErrorMessage(
-        propertyValidation.validations,
-        value,
-        propertyValidation.errorMessageHandler.setErrorMessage,
+      validateAndSetErrorMessage(['email-format'], email, setEmailErrorMessage)
+
+      onEmailSave(email || null)
+    },
+    [onEmailSave],
+  )
+
+  const handlePhoneNumberChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const phoneNumber = replaceTabs(event.target.value)
+
+      removeErrorMessageIfValid(
+        ['phonenumber'],
+        phoneNumber,
+        phoneNumberErrorMessage,
+        setPhoneNumberErrorMessage,
       )
 
-      if (isCivilClaim) {
-        updateCivilClaimant({ ...update, caseId, civilClaimantId: clientId })
-      } else {
-        updateDefendant({ ...update, caseId, defendantId: clientId })
-      }
+      onPhoneNumberChange(phoneNumber || null)
     },
-    [
-      formatUpdate,
-      isCivilClaim,
-      propertyValidations,
-      updateCivilClaimant,
-      updateDefendant,
-    ],
+    [phoneNumberErrorMessage, onPhoneNumberChange],
+  )
+
+  const handlePhoneNumberBlur = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const phoneNumber = replaceTabs(event.target.value)
+
+      validateAndSetErrorMessage(
+        ['phonenumber'],
+        phoneNumber,
+        setPhoneNumberErrorMessage,
+      )
+
+      onPhoneNumberSave(phoneNumber || null)
+    },
+    [onPhoneNumberSave],
   )
 
   return (
     <>
       <Box marginBottom={2}>
         <Select
-          name={`advocateName${clientId ? `-${clientId}` : ''}`}
+          name="advocateName"
           icon="search"
           options={options}
-          label={
-            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
-              ? formatMessage(strings.spokespersonNameLabel)
-              : formatMessage(strings.nameLabel, {
-                  sessionArrangements: workingCase.sessionArrangements,
-                })
-          }
-          placeholder={formatMessage(strings.namePlaceholder)}
+          label={formatMessage(nameLabelStrings[advocateType])}
+          placeholder={formatMessage(placeholderStrings.namePlaceholder)}
           value={
-            isCivilClaim
-              ? civilClaimantInCivilClaimants?.spokespersonName === '' ||
-                !civilClaimantInCivilClaimants?.spokespersonName
-                ? null
-                : {
-                    label:
-                      civilClaimantInCivilClaimants?.spokespersonName ?? '',
-                    value:
-                      civilClaimantInCivilClaimants?.spokespersonEmail ?? '',
-                  }
-              : clientId
-              ? defendantInDefendants?.defenderName === '' ||
-                !defendantInDefendants?.defenderName
-                ? null
-                : {
-                    label: defendantInDefendants?.defenderName ?? '',
-                    value: defendantInDefendants?.defenderEmail ?? '',
-                  }
-              : workingCase.defenderName
-              ? {
-                  label: workingCase.defenderName ?? '',
-                  value: workingCase.defenderEmail ?? '',
-                }
-              : null
+            lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
-          onChange={(selectedOption) =>
-            handleLawyerChange(selectedOption, isCivilClaim, clientId)
-          }
-          filterConfig={{ matchFrom: 'start' }}
+          onChange={handleAdvocateChange}
           isDisabled={Boolean(disabled)}
           isCreatable
           isClearable
@@ -377,131 +199,33 @@ const InputAdvocate: FC<Props> = ({
       </Box>
       <Box marginBottom={2}>
         <Input
-          data-testid={`defenderEmail${clientId ? `-${clientId}` : ''}`}
+          data-testid="defenderEmail"
           name="defenderEmail"
           autoComplete="off"
-          label={
-            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
-              ? formatMessage(strings.spokespersonEmailLabel)
-              : formatMessage(strings.emailLabel, {
-                  sessionArrangements: workingCase.sessionArrangements,
-                })
-          }
-          placeholder={formatMessage(strings.emailPlaceholder)}
-          value={
-            isCivilClaim
-              ? civilClaimantInCivilClaimants?.spokespersonEmail || ''
-              : clientId
-              ? defendantInDefendants?.defenderEmail || ''
-              : workingCase.defenderEmail || ''
-          }
+          label={formatMessage(emailLabelStrings[advocateType])}
+          placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
+          value={lawyerEmail ?? ''}
           errorMessage={emailErrorMessage}
           hasError={emailErrorMessage !== ''}
           disabled={Boolean(disabled)}
-          onChange={(event) => {
-            if (clientId) {
-              handleLawyerPropertyChange(
-                clientId,
-                isCivilClaim ? 'spokespersonEmail' : 'defenderEmail',
-                event.target.value,
-                isCivilClaim,
-                setWorkingCase,
-              )
-            } else {
-              removeTabsValidateAndSet(
-                'defenderEmail',
-                event.target.value,
-                ['email-format'],
-                setWorkingCase,
-                emailErrorMessage,
-                setEmailErrorMessage,
-              )
-            }
-          }}
-          onBlur={(event) => {
-            if (clientId) {
-              handleLawyerPropertyBlur(
-                workingCase.id,
-                clientId,
-                isCivilClaim ? 'spokespersonEmail' : 'defenderEmail',
-                event.target.value,
-              )
-            } else {
-              validateAndSendToServer(
-                'defenderEmail',
-                event.target.value,
-                ['email-format'],
-                workingCase,
-                updateCase,
-                setEmailErrorMessage,
-              )
-            }
-          }}
+          onChange={handleEmailChange}
+          onBlur={handleLEmailBlur}
         />
       </Box>
       <InputMask
         mask="999-9999"
         maskPlaceholder={null}
-        value={
-          isCivilClaim
-            ? civilClaimantInCivilClaimants?.spokespersonPhoneNumber || ''
-            : clientId
-            ? defendantInDefendants?.defenderPhoneNumber || ''
-            : workingCase.defenderPhoneNumber || ''
-        }
+        value={lawyerPhoneNumber || ''}
         disabled={Boolean(disabled)}
-        onChange={(event) => {
-          if (clientId) {
-            handleLawyerPropertyChange(
-              clientId,
-              isCivilClaim ? 'spokespersonPhoneNumber' : 'defenderPhoneNumber',
-              event.target.value,
-              isCivilClaim,
-              setWorkingCase,
-            )
-          } else {
-            removeTabsValidateAndSet(
-              'defenderPhoneNumber',
-              event.target.value,
-              ['phonenumber'],
-              setWorkingCase,
-              phoneNumberErrorMessage,
-              setPhoneNumberErrorMessage,
-            )
-          }
-        }}
-        onBlur={(event) => {
-          if (clientId) {
-            handleLawyerPropertyBlur(
-              workingCase.id,
-              clientId,
-              isCivilClaim ? 'spokespersonPhoneNumber' : 'defenderPhoneNumber',
-              event.target.value,
-            )
-          } else {
-            validateAndSendToServer(
-              'defenderPhoneNumber',
-              event.target.value,
-              ['phonenumber'],
-              workingCase,
-              updateCase,
-              setPhoneNumberErrorMessage,
-            )
-          }
-        }}
+        onChange={handlePhoneNumberChange}
+        onBlur={handlePhoneNumberBlur}
       >
         <Input
-          data-testid={`defenderPhoneNumber${clientId ? `-${clientId}` : ''}`}
+          data-testid="defenderPhoneNumber"
           name="defenderPhoneNumber"
           autoComplete="off"
-          label={
-            advocateType === AdvocateType.LEGAL_RIGHTS_PROTECTOR
-              ? formatMessage(strings.spokespersonPhoneNumberLabel)
-              : formatMessage(strings.phoneNumberLabel, {
-                  sessionArrangements: workingCase.sessionArrangements,
-                })
-          }
-          placeholder={formatMessage(strings.phoneNumberPlaceholder)}
+          label={formatMessage(phoneNumberLabelStrings[advocateType])}
+          placeholder={formatMessage(placeholderStrings.phoneNumberPlaceholder)}
           errorMessage={phoneNumberErrorMessage}
           hasError={phoneNumberErrorMessage !== ''}
         />

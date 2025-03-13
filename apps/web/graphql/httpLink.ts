@@ -1,9 +1,10 @@
+import sha256 from 'crypto-js/sha256'
+import getConfig from 'next/config'
 import { ApolloLink } from '@apollo/client'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { HttpLink } from '@apollo/client/link/http'
 import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries'
-import sha256 from 'crypto-js/sha256'
-import getConfig from 'next/config'
+
 import { ClientOptions } from './options'
 
 const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}

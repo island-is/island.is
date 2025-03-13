@@ -1,12 +1,9 @@
 import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  isDistrictCourtUser,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -18,9 +15,9 @@ import {
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
   getDurationDate,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -28,6 +25,7 @@ import { useContextMenu } from '../../ContextMenu/ContextMenu'
 import WithdrawAppealContextMenuModal, {
   useWithdrawAppealMenuOption,
 } from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+import TagContainer from '../../Tags/TagContainer/TagContainer'
 import Table from '../Table'
 
 interface Props {
@@ -63,14 +61,14 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendants' },
+            sortBy: 'defendants',
           },
           {
             title: formatMessage(tables.type),
           },
           {
-            title: capitalize(formatMessage(tables.created, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'created' },
+            title: capitalize(formatMessage(tables.sentToCourtDate)),
+            sortBy: 'caseSentToCourtDate',
           },
           { title: formatMessage(tables.state) },
           { title: formatMessage(tables.duration) },
@@ -105,7 +103,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
             ),
           },
           {
-            cell: (row) => <CreatedDate created={row.created} />,
+            cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
           },
           {
             cell: (row) => {
@@ -115,34 +113,22 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
               )
 
               return (
-                <>
-                  <Box
-                    marginRight={row.appealState ? 1 : 0}
-                    marginBottom={row.appealState ? 1 : 0}
-                  >
-                    {isIndictmentCase(row.type) ? (
-                      <CaseTag
-                        color={indictmentCaseStateTag.color}
-                        text={formatMessage(indictmentCaseStateTag.text)}
-                      />
-                    ) : (
-                      <TagCaseState
-                        caseState={row.state}
-                        caseType={row.type}
-                        isCourtRole={isDistrictCourtUser(user)}
-                        isValidToDateInThePast={row.isValidToDateInThePast}
-                        indictmentRulingDecision={row.indictmentRulingDecision}
-                        indictmentDecision={row.indictmentDecision}
-                      />
-                    )}
-                  </Box>
+                <TagContainer>
+                  {isIndictmentCase(row.type) ? (
+                    <CaseTag
+                      color={indictmentCaseStateTag.color}
+                      text={formatMessage(indictmentCaseStateTag.text)}
+                    />
+                  ) : (
+                    <TagCaseState theCase={row} />
+                  )}
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
                       appealRulingDecision={row.appealRulingDecision}
                     />
                   )}
-                </>
+                </TagContainer>
               )
             },
           },

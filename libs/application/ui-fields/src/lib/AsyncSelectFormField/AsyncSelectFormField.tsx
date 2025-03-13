@@ -17,6 +17,7 @@ import { Option } from '@island.is/application/types'
 
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
@@ -29,7 +30,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   const {
     id,
-    title,
+    title = '',
     description,
     loadOptions,
     loadingError,
@@ -39,26 +40,66 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     isSearchable,
     isMulti,
+    isClearable,
     required = false,
+    clearOnChange,
+    setOnChange,
+    updateOnSelect,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const apolloClient = useApolloClient()
   const [options, setOptions] = useState<Option[]>([])
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { watch } = useFormContext()
+  const [lastUpdateOnSelectValue, setLastUpdateOnSelectValue] =
+    useState<string>('')
+
+  const watchUpdateOnSelect = updateOnSelect
+    ? JSON.stringify(watch(updateOnSelect))
+    : ''
+
+  const load = async (watchedValue?: string) => {
+    try {
+      setHasLoadingError(false)
+      setIsLoading(true)
+      const selectedValues: string[] | undefined =
+        watchedValue && JSON.parse(watchedValue)
+      const loaded = await loadOptions({
+        application,
+        apolloClient,
+        selectedValues,
+      })
+      setOptions(loaded)
+      setIsLoading(false)
+    } catch {
+      setHasLoadingError(true)
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setHasLoadingError(false)
-        const loaded = await loadOptions({ application, apolloClient })
-        setOptions(loaded)
-      } catch {
-        setHasLoadingError(true)
+    if (watchUpdateOnSelect) {
+      setLastUpdateOnSelectValue(watchUpdateOnSelect)
+    }
+  }, [watchUpdateOnSelect])
+
+  useEffect(() => {
+    if (updateOnSelect) {
+      if (watchUpdateOnSelect !== undefined) {
+        load(watchUpdateOnSelect)
+        setLastUpdateOnSelectValue(watchUpdateOnSelect)
+      } else {
+        load()
       }
     }
+  }, [lastUpdateOnSelectValue])
 
-    load()
-  }, [loadOptions])
+  useEffect(() => {
+    if (!updateOnSelect) {
+      load()
+    }
+  }, [])
 
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
@@ -85,7 +126,8 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
             formatMessage,
           )}
           name={id}
-          disabled={disabled}
+          disabled={disabled || isLoading}
+          isLoading={isLoading}
           error={
             error ||
             (hasLoadingError && loadingError
@@ -111,6 +153,9 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           backgroundColor={backgroundColor}
           isSearchable={isSearchable}
           isMulti={isMulti}
+          clearOnChange={clearOnChange}
+          setOnChange={setOnChange}
+          isClearable={isClearable}
         />
       </Box>
     </Box>

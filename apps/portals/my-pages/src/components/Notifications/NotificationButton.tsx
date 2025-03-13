@@ -28,7 +28,7 @@ const NotificationButton = ({
   const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
   const [markAllAsSeen] = useMarkAllNotificationsAsSeenMutation()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg
   const ref = useRef<HTMLButtonElement>(null)
 
   const { data, refetch } = useGetUserNotificationsOverviewQuery({
@@ -64,10 +64,10 @@ const NotificationButton = ({
         variant="utility"
         colorScheme="white"
         disabled={disabled}
-        icon={showMenu && isMobile ? 'close' : 'notifications'}
+        icon={showMenu && isTablet ? 'close' : 'notifications'}
         iconType="outline"
         onClick={() => {
-          showMenu && isMobile
+          showMenu && isTablet
             ? setMenuState(undefined)
             : setMenuState('notifications')
         }}

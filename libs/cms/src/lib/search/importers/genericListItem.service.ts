@@ -92,7 +92,9 @@ export class GenericListItemSyncService
               ...mapped,
               typename: 'GenericListItem',
             }),
-            dateCreated: entry.sys.createdAt,
+            dateCreated:
+              (entry.sys as { firstPublishedAt?: string }).firstPublishedAt ||
+              entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
             tags,
             releaseDate: mapped.date,

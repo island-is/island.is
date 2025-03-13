@@ -12,6 +12,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Box, Button, Pagination, Table as T } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/shared/components'
 import { InstitutionPanel } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
@@ -141,7 +142,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 {list.title}
               </Text>
               <Text variant="default" marginBottom={3}>
-                {list.description}
+                <Markdown>{list.description ?? ''}</Markdown>
               </Text>
             </Stack>
             <GridRow>

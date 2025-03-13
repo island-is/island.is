@@ -25,6 +25,7 @@ export const getCurrentActor = (context: ExecutionContext): User => {
     : {
         ...user.actor,
         sub: user.sub,
+        sid: user.sid,
         client: user.client,
         authorization: user.authorization,
         ip: user.ip,

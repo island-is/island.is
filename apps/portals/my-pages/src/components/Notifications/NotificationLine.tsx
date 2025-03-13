@@ -15,6 +15,8 @@ import {
   COAT_OF_ARMS,
   resolveLink,
 } from '@island.is/portals/my-pages/information'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   data: {
@@ -26,6 +28,10 @@ interface Props {
 }
 
 export const NotificationLine = ({ data, onClickCallback }: Props) => {
+  const { width } = useWindowSize()
+
+  const isMobile = width < theme.breakpoints.md
+
   const date = data.metadata?.created
     ? format(new Date(data.metadata.created), dateFormat.is)
     : ''
@@ -44,7 +50,7 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
           position="relative"
           borderColor="blue200"
           borderBottomWidth="standard"
-          paddingX={2}
+          padding={2}
           width="full"
           className={cn(styles.line, {
             [styles.unread]: !isRead,
@@ -60,7 +66,7 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
             width="full"
             display="flex"
             flexDirection="column"
-            paddingLeft={2}
+            paddingLeft={isMobile ? 'p2' : 2}
             minWidth={0}
           >
             <Box
@@ -70,13 +76,13 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
             >
               <Text
                 fontWeight={isRead ? 'regular' : 'medium'}
-                variant="medium"
+                variant={isMobile ? 'default' : 'medium'}
                 color="blue400"
                 truncate
               >
                 {data.message.title}
               </Text>
-              <Text variant="small">{date}</Text>
+              <Text variant={isMobile ? 'medium' : 'small'}>{date}</Text>
             </Box>
             <Box
               marginTop={1}
@@ -84,7 +90,9 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Text variant="small">{data.message.displayBody}</Text>
+              <Text variant={isMobile ? 'medium' : 'small'}>
+                {data.message.displayBody}
+              </Text>
             </Box>
           </Box>
         </Box>

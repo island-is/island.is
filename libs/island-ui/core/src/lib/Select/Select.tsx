@@ -18,6 +18,7 @@ import {
   MultiValue,
   MultiValueLabel,
   customStyles,
+  ClearIndicator,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
 
@@ -40,7 +41,6 @@ export const Select = <
   errorMessage = '',
   placeholder = '',
   defaultValue,
-  hideSelectedOptions,
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,
@@ -54,6 +54,7 @@ export const Select = <
   dataTestId,
   filterConfig,
   isLoading = false,
+  hideSelectedOptions,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -63,8 +64,6 @@ export const Select = <
       }
     : undefined
   const [currentValue, setCurrentValue] = React.useState('')
-
-  const ClearIndicator = hideSelectedOptions ? () => null : undefined
 
   return isCreatable ? (
     <div
@@ -119,6 +118,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
+          ClearIndicator,
         }}
         isClearable
         backspaceRemovesValue
@@ -165,10 +165,10 @@ export const Select = <
         hasError={hasError}
         isSearchable={isSearchable}
         size={size}
-        hideSelectedOptions={hideSelectedOptions}
         required={required}
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
+        hideSelectedOptions={hideSelectedOptions}
         components={{
           Control,
           Input,
@@ -181,7 +181,7 @@ export const Select = <
           Option,
           MultiValue,
           MultiValueLabel,
-          ClearIndicator: ClearIndicator,
+          ClearIndicator,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

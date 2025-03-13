@@ -1,14 +1,15 @@
 import React from 'react'
+import { MutationResult, useMutation } from '@apollo/client/react'
+
 import {
   ContactUs as ContactUsForm,
   ContactUsProps as ContactUsFormProps,
 } from '@island.is/island-ui/contentful'
-import { CONTACT_US_ZENDESK_TICKET_MUTATION } from '@island.is/web/screens/queries'
-import { MutationResult, useMutation } from '@apollo/client/react'
 import {
   ContactUsZendeskTicketMutation,
   ContactUsZendeskTicketMutationVariables,
 } from '@island.is/web/graphql/schema'
+import { CONTACT_US_ZENDESK_TICKET_MUTATION } from '@island.is/web/screens/queries'
 
 const getState = (
   data: MutationResult<ContactUsZendeskTicketMutation>['data'],

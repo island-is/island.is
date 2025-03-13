@@ -16,7 +16,6 @@ import { getChargeItems } from '../utils'
 
 export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [

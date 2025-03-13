@@ -138,7 +138,7 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
       <Box
         background="blue100"
-        paddingTop={6}
+        paddingTop={1}
         paddingBottom={4}
         paddingX={3}
         marginTop={3}

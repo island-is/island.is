@@ -1,5 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
+import isBefore from 'date-fns/isBefore'
+import subYears from 'date-fns/subYears'
 
 import {
   EmbeddedVideo,
@@ -8,8 +10,8 @@ import {
   ImageProps,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
-import { Box, Text } from '@island.is/island-ui/core'
-import { Webreader } from '@island.is/web/components'
+import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
+import { EmailSignup, Webreader } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -34,7 +36,7 @@ const NewsItemImage = ({ newsItem }: NewsArticleProps) =>
         {...newsItem?.image}
         url={
           newsItem?.image?.url
-            ? newsItem.image?.url + '?w=774&fm=webp&q=80'
+            ? newsItem.image?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
         thumbnail={
@@ -60,13 +62,28 @@ export const NewsArticle: React.FC<
     !newsItem?.fullWidthImageInContent ||
     (!displaySignLanguageVideo && newsItem?.fullWidthImageInContent)
 
+  const bottomSlices = newsItem?.organization?.newsBottomSlices ?? []
+
   return (
     <Box paddingBottom={[0, 0, 4]}>
-      <Box className="rs_read">
-        <Text variant="h1" as="h1" paddingBottom={2}>
-          {newsItem?.title}
-        </Text>
-      </Box>
+      <Stack space={3}>
+        {newsItem?.date &&
+          isBefore(new Date(newsItem.date), subYears(new Date(), 1)) && (
+            <AlertMessage
+              type="info"
+              title={
+                activeLocale === 'is'
+                  ? 'Þessi frétt er meira en árs gömul'
+                  : 'This news article is more than a year old'
+              }
+            />
+          )}
+        <Box className="rs_read">
+          <Text variant="h1" as="h1" paddingBottom={2}>
+            {newsItem?.title}
+          </Text>
+        </Box>
+      </Stack>
 
       <Webreader
         marginTop={0}
@@ -112,7 +129,11 @@ export const NewsArticle: React.FC<
               Image: (slice: ImageProps) => {
                 return (
                   <Box className={styles.clearBoth}>
-                    <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                    <Image
+                      {...slice}
+                      thumbnail={slice.url + '?w=50'}
+                      url={slice.url + '?w=1000&fm=webp&q=80'}
+                    />
                   </Box>
                 )
               },
@@ -131,6 +152,16 @@ export const NewsArticle: React.FC<
         newsItem?.fullWidthImageInContent && (
           <NewsItemImage newsItem={newsItem} />
         )}
+
+      {bottomSlices.length > 0 && (
+        <Box paddingTop={3}>
+          <Stack space={3}>
+            {bottomSlices.map((slice) => (
+              <EmailSignup key={slice.id} slice={slice} />
+            ))}
+          </Stack>
+        </Box>
+      )}
     </Box>
   )
 }

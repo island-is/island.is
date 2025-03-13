@@ -153,7 +153,7 @@ export const inheritanceReportSchema = z.object({
           email: z.string().optional(),
           phone: z.string().optional(),
           name: z.string(),
-          nationalId: z.string().refine((v) => kennitala.isValid(v)),
+          nationalId: z.string().optional(),
         })
         .optional(),
     })
@@ -179,6 +179,17 @@ export const inheritanceReportSchema = z.object({
       },
       {
         path: ['spouse', 'phone'],
+      },
+    )
+    .refine(
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
+          return kennitala.isValid(spouse?.nationalId ?? '')
+        }
+        return true
+      },
+      {
+        path: ['spouse', 'nationalId'],
       },
     ),
 
@@ -221,7 +232,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             foreignBankAccount: z.array(z.enum([YES])).optional(),
             assetNumber: z.string().refine((v) => v),
-            amount: z.string().refine((v) => v),
+            propertyValuation: z.string().refine((v) => v),
             exchangeRateOrInterest: z.string().refine((v) => v),
             enabled: z.boolean(),
             ...deceasedShare,
@@ -253,8 +264,8 @@ export const inheritanceReportSchema = z.object({
             ...deceasedShare,
           })
           .refine(
-            ({ assetNumber }) => {
-              return assetNumber && assetNumber !== ''
+            ({ assetNumber, enabled }) => {
+              return assetNumber && assetNumber !== '' && enabled
                 ? kennitala.isValid(assetNumber)
                 : true
             },
@@ -301,8 +312,8 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ assetNumber }) => {
-              return assetNumber === ''
+            ({ assetNumber, enabled }) => {
+              return assetNumber === '' || !enabled
                 ? true
                 : assetNumber && kennitala.isValid(assetNumber)
             },

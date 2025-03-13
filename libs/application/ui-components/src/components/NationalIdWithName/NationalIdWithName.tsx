@@ -43,6 +43,7 @@ interface NationalIdWithNameProps {
   showPhoneField?: boolean
   showEmailField?: boolean
   error?: string
+  clearOnChange?: string[]
 }
 
 export const NationalIdWithName: FC<
@@ -72,6 +73,7 @@ export const NationalIdWithName: FC<
   showPhoneField = false,
   showEmailField = false,
   error,
+  clearOnChange,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -80,13 +82,8 @@ export const NationalIdWithName: FC<
   const phoneField = `${fieldId}.phone`
 
   const { formatMessage } = useLocale()
-  const {
-    setValue,
-    formState: { errors },
-  } = useFormContext()
+  const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const [personName, setPersonName] = useState('')
-  const [companyName, setCompanyName] = useState('')
 
   const getFieldErrorString = (
     error: unknown,
@@ -95,10 +92,13 @@ export const NationalIdWithName: FC<
     if (!error || typeof error !== 'object') return undefined
 
     const errorList = error as Record<string, unknown>[]
-    if (!Array.isArray(errorList)) return undefined
-
-    const fieldError = errorList[id as any]
-    return typeof fieldError === 'string' ? fieldError : undefined
+    if (!Array.isArray(errorList)) {
+      const fieldError = getValueViaPath<any>(errorList, id)
+      return typeof fieldError === 'string' ? fieldError : undefined
+    } else {
+      const fieldError = errorList[id as any]
+      return typeof fieldError === 'string' ? fieldError : undefined
+    }
   }
 
   // get national id validation errors
@@ -142,7 +142,20 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
-          setPersonName(data.identity?.name ?? '')
+          if (data.identity?.name) {
+            setValue(nameField, data.identity?.name)
+          } else if (
+            searchPersons &&
+            !searchCompanies &&
+            data?.identity === null
+          ) {
+            setValue(nameField, '')
+          } else if (
+            searchCompanies &&
+            companyData?.companyRegistryCompany === null
+          ) {
+            setValue(nameField, '')
+          }
         },
       },
     )
@@ -163,7 +176,20 @@ export const NationalIdWithName: FC<
       onCompleted: (companyData) => {
         onNameChange &&
           onNameChange(companyData.companyRegistryCompany?.name ?? '')
-        setCompanyName(companyData.companyRegistryCompany?.name ?? '')
+        if (companyData.companyRegistryCompany?.name) {
+          setValue(nameField, companyData.companyRegistryCompany?.name)
+        } else if (
+          !searchPersons &&
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          setValue(nameField, '')
+        } else if (
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          setValue(nameField, '')
+        }
       },
     },
   )
@@ -201,15 +227,6 @@ export const NationalIdWithName: FC<
     searchCompanies,
   ])
 
-  useEffect(() => {
-    const nameInAnswers = getValueViaPath(application.answers, nameField)
-    if (personName && nameInAnswers !== personName) {
-      setValue(nameField, personName)
-    } else if (companyName && nameInAnswers !== companyName) {
-      setValue(nameField, companyName)
-    }
-  }, [personName, companyName, setValue, nameField, application.answers])
-
   return (
     <>
       <GridRow>
@@ -233,6 +250,7 @@ export const NationalIdWithName: FC<
             loading={searchPersons ? queryLoading : companyQueryLoading}
             error={nationalIdFieldErrors}
             disabled={disabled}
+            clearOnChange={clearOnChange}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
@@ -244,7 +262,7 @@ export const NationalIdWithName: FC<
                 ? formatMessage(customNameLabel)
                 : formatMessage(coreErrorMessages.nationalRegistryName)
             }
-            required={required}
+            required={disabled ? required : false}
             error={
               searchPersons
                 ? queryError || data?.identity === null
@@ -265,7 +283,8 @@ export const NationalIdWithName: FC<
                   : undefined
                 : undefined
             }
-            disabled
+            disabled={disabled}
+            readOnly={!disabled}
           />
         </GridColumn>
       </GridRow>

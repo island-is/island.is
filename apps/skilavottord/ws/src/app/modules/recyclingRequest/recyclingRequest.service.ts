@@ -38,7 +38,7 @@ export class RecyclingRequestService {
     private httpService: HttpService,
     private fjarsyslaService: FjarsyslaService,
     @Inject(forwardRef(() => RecyclingPartnerService))
-    private recycllingPartnerService: RecyclingPartnerService,
+    private recyclingPartnerService: RecyclingPartnerService,
     private vehicleService: VehicleService,
     private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
   ) {}
@@ -48,6 +48,9 @@ export class RecyclingRequestService {
     disposalStation: string,
     vehicle: VehicleModel,
   ) {
+    const disposalStationId =
+      await this.recyclingPartnerService.getPayingPartnerId(disposalStation)
+
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -78,12 +81,24 @@ export class RecyclingRequestService {
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-        disposalStation: disposalStation,
+        disposalStation: disposalStationId,
         explanation: 'Rafrænt afskráning',
         mileage: vehicle.mileage ?? 0,
         plateCount: vehicle.plateCount,
         lost: vehicle.plateLost ? 1 : 0,
       })
+
+      this.logger.info(
+        `car-recycling: Degregistering vehicle ${getShortPermno(
+          vehiclePermno,
+        )} from Samgongustofa`,
+        {
+          disposalStationId,
+          mileage: vehicle.mileage ?? 0,
+          plateCount: vehicle.plateCount,
+          lost: vehicle.plateLost ? 1 : 0,
+        },
+      )
 
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
@@ -264,7 +279,7 @@ export class RecyclingRequestService {
       // is partnerId null?
       if (partnerId) {
         newRecyclingRequest.recyclingPartnerId = partnerId
-        const partner = await this.recycllingPartnerService.findOne(partnerId)
+        const partner = await this.recyclingPartnerService.findOne(partnerId)
         if (!partner) {
           this.logger.error(
             `car-recycling: The recycling station is not in the recycling station list`,
@@ -360,15 +375,6 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
-          this.logger.info(
-            `car-recycling: Degregistering vehicle ${loggedPermno} from Samgongustofa`,
-            {
-              partnerId,
-              mileage: vehicle.mileage ?? 0,
-              plateCount: vehicle.plateCount,
-              lost: vehicle.plateLost ? 1 : 0,
-            },
-          )
 
           await this.deRegisterVehicle(permno, partnerId, vehicle)
         } catch (err) {

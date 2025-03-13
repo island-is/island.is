@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -28,7 +28,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   hasSentNotification,
   isReopenedCOACase,
-} from '@island.is/judicial-system-web/src/utils/stepHelper'
+} from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'

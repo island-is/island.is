@@ -8,7 +8,7 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
-  getValueViaPath,
+  buildTitleField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FormValue } from '@island.is/application/types'
@@ -33,7 +33,6 @@ export const formerInsuranceSection = buildSection({
       children: [
         buildRadioField({
           id: 'formerInsurance.registration',
-          title: '',
           description: m.formerInsuranceRegistration,
           largeButtons: true,
           required: true,
@@ -78,7 +77,6 @@ export const formerInsuranceSection = buildSection({
         }),
         buildFileUploadField({
           id: 'formerInsurance.confirmationOfResidencyDocument',
-          title: '',
           maxSize: FILE_SIZE_LIMIT,
           introduction: m.confirmationOfResidencyFileUpload,
           uploadHeader: m.fileUploadHeader,
@@ -90,19 +88,17 @@ export const formerInsuranceSection = buildSection({
           },
         }),
         buildDividerField({
-          title: ' ',
-          color: 'transparent',
+          marginTop: 5,
+          useDividerLine: false,
         }),
         buildDescriptionField({
           id: 'formerInsurance.entitlementDescription',
-          title: '',
           description: m.formerInsuranceEntitlement,
           tooltip: m.formerInsuranceEntitlementTooltip,
           condition: (answers: FormValue) => formerInsuranceCondition(answers),
         }),
         buildRadioField({
           id: 'formerInsurance.entitlement',
-          title: '',
           width: 'half',
           largeButtons: true,
           options: getYesNoOptions({}),

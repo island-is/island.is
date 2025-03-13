@@ -38,6 +38,7 @@ export const MultiSelectDropdown: FC<
         placeholder={formatMessage(
           causeAndConsequences.shared.selectPlaceholder,
         )}
+        isClearable={false}
         options={options.map((option) => ({
           value: option.code,
           label: option.name,

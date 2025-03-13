@@ -9,9 +9,9 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
-  CreatedDate,
   SortButton,
   TableContainer,
+  TableDate,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -35,8 +35,8 @@ const CaseFileTable: FC<Props> = ({
   const { formatMessage } = useIntl()
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
-    'name',
-    'ascending',
+    'created',
+    'descending',
     caseFiles,
     (entry, column) => entry[column] as string | null | undefined,
   )
@@ -82,7 +82,7 @@ const CaseFileTable: FC<Props> = ({
               </Box>
             </td>
             <td>
-              <CreatedDate created={file.displayDate ?? file.created} />
+              <TableDate displayDate={file.displayDate ?? file.created} />
             </td>
             <td>
               <Box className={styles.noWrapColumn}>

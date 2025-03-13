@@ -20,6 +20,7 @@ import {
   DateTime,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -53,8 +54,10 @@ interface Props {
   updateIndictmentCount: (
     policeCaseNumber: string,
     crimeScene: CrimeScene,
+    subtypes?: Record<string, IndictmentSubtype[]>,
   ) => void
   policeCaseNumberImmutable: boolean
+  indictmentCount?: TempIndictmentCount
 }
 
 export const PoliceCaseInfo: FC<Props> = ({
@@ -81,6 +84,8 @@ export const PoliceCaseInfo: FC<Props> = ({
   )
   const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
     useState<string>('')
+
+  const subtypesArray = subtypes || []
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
@@ -208,10 +213,27 @@ export const PoliceCaseInfo: FC<Props> = ({
           label={formatMessage(policeCaseInfo.indictmentTypeLabel)}
           placeholder={formatMessage(policeCaseInfo.indictmentTypePlaceholder)}
           onChange={(selectedOption) => {
-            const indictmentSubtype = selectedOption?.value as IndictmentSubtype
-            updatePoliceCase(index, {
-              subtypes: [...(subtypes || []), indictmentSubtype],
-            })
+            const indictmentSubtype = selectedOption?.value
+
+            if (!indictmentSubtype) {
+              return
+            }
+
+            const subtypes = [...subtypesArray, indictmentSubtype]
+            updatePoliceCase(index, { subtypes })
+
+            // initialise the indictment count(s) subtype only 
+            // when a single subtype has been selected. If there are more
+            // its up to the user to initialise
+            if (subtypes.length === 1) {
+              updateIndictmentCount(
+                policeCaseNumbers[index],
+                crimeScene || {},
+                {
+                  [policeCaseNumbers[index]]: subtypes,
+                },
+              )
+            }
           }}
           value={null}
           required
@@ -230,9 +252,23 @@ export const PoliceCaseInfo: FC<Props> = ({
               <Tag
                 variant="darkerBlue"
                 onClick={() => {
+                  const remainingSubtypes = subtypes.filter(
+                    (s) => s !== subtype,
+                  )
+
                   updatePoliceCase(index, {
+                    policeCaseNumber: policeCaseNumbers[index],
                     subtypes: subtypes.filter((s) => s !== subtype),
                   })
+
+                  updateIndictmentCount(
+                    policeCaseNumbers[index],
+                    crimeScene || {},
+                    {
+                      [policeCaseNumbers[index]]:
+                      remainingSubtypes,
+                    },
+                  )
                 }}
                 aria-label={formatMessage(policeCaseInfo.removeSubtype, {
                   subtype: indictmentSubtypes[subtypes[0]],
@@ -261,10 +297,11 @@ export const PoliceCaseInfo: FC<Props> = ({
           }}
           onBlur={(event) => {
             updatePoliceCase()
-            updateIndictmentCount(policeCaseNumbers[index], {
-              ...crimeScene,
-              place: event.target.value,
-            })
+            updateIndictmentCount(
+              policeCaseNumbers[index],
+              { ...crimeScene, place: event.target.value },
+              { [policeCaseNumbers[index]]: subtypesArray },
+            )
           }}
         />
       </Box>
@@ -280,10 +317,11 @@ export const PoliceCaseInfo: FC<Props> = ({
               crimeScene: { ...crimeScene, date: date },
             })
 
-            updateIndictmentCount(policeCaseNumbers[index], {
-              ...crimeScene,
-              date: date,
-            })
+            updateIndictmentCount(
+              policeCaseNumbers[index],
+              { ...crimeScene, date: date },
+              { [policeCaseNumbers[index]]: subtypesArray },
+            )
           }
         }}
       />

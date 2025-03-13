@@ -1,5 +1,5 @@
 import { Application } from '@island.is/application/types'
-import { ParentalRelations, YES } from '../../constants'
+import { ParentalRelations } from '../../constants'
 import { RequestRightsObj } from '../../types'
 import { errorMessages } from '../messages'
 import {
@@ -8,6 +8,7 @@ import {
   getSelectedChild,
 } from '../parentalLeaveUtils'
 import { buildError } from './utils'
+import { YES } from '@island.is/application/core'
 
 export const requestRightsValidationSection = (
   newAnswer: unknown,

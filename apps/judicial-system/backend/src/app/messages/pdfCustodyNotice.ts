@@ -13,7 +13,7 @@ export const custodyNotice = {
     defaultMessage:
       'Úrskuður um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}',
     description:
-      'Titill á vistunarselði sem tilgreinir í hverning máli úrskurðurinn er',
+      'Titill á vistunarseðli sem tilgreinir í hvernig máli úrskurðurinn er',
   }),
   arrangement: defineMessage({
     id: 'judicial.system.backend:pdf.custody_notice.arrangement',

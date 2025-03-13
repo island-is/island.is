@@ -13,6 +13,8 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -41,8 +43,6 @@ import { confirmation } from '../lib/messages/confirmation'
 import { externalData } from '../lib/messages/externalData'
 import {
   FILE_SIZE_LIMIT,
-  NO,
-  YES,
   SubjectOfComplaint,
   SubmittedApplicationData,
 } from '../shared'
@@ -94,7 +94,6 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'inCourtProceedings',
-                  title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
                   required: true,
@@ -130,7 +129,6 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'concernsMediaCoverage',
-                  title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
                   required: true,
@@ -172,7 +170,6 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'concernsBanMarking',
-                  title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
                   required: true,
@@ -213,7 +210,6 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'concernsLibel',
-                  title: '',
                   options: [noOption, yesOption],
                   largeButtons: true,
                   required: true,
@@ -267,7 +263,6 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'info.onBehalf',
-                  title: '',
                   options: [
                     { value: OnBehalf.MYSELF, label: info.labels.myself },
                     {
@@ -286,7 +281,6 @@ export const ComplaintForm: Form = buildForm({
                 }),
                 buildCustomField({
                   id: 'onBehalfDescription',
-                  title: '',
                   doesNotRequireAnswer: true,
                   component: 'CompanyDisclaimer',
                 }),
@@ -414,7 +408,6 @@ export const ComplaintForm: Form = buildForm({
                 }),
                 buildFileUploadField({
                   id: 'commissions.documents',
-                  title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
                   uploadHeader: info.labels.commissionsDocumentsHeader,
@@ -454,7 +447,6 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildCheckboxField({
                   id: 'subjectOfComplaint.values',
-                  title: '',
                   options: [
                     {
                       label:
@@ -560,7 +552,6 @@ export const ComplaintForm: Form = buildForm({
                 }),
                 buildFileUploadField({
                   id: 'complaint.documents',
-                  title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
                   uploadHeader: complaint.labels.complaintDocumentsHeader,
@@ -599,7 +590,6 @@ export const ComplaintForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'overview.sendApplication',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

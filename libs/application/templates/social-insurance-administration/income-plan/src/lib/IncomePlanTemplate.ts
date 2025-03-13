@@ -3,6 +3,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
+  YES,
 } from '@island.is/application/core'
 import {
   Actions,
@@ -38,18 +39,21 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, ISK, RatioType, YES } from './constants'
+import { INCOME, ISK, RatioType } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
+  defaultIncomeTypes,
 } from './incomePlanUtils'
 import {
   historyMessages,
   incomePlanFormMessage,
   statesMessages,
 } from './messages'
+import { CodeOwners } from '@island.is/shared/constants'
+import isEmpty from 'lodash/isEmpty'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -58,6 +62,7 @@ const IncomePlanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.INCOME_PLAN,
   name: incomePlanFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
@@ -293,9 +298,13 @@ const IncomePlanTemplate: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
+        const { latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
+
+        if (isEmpty(latestIncomePlan)) {
+          set(answers, 'incomePlanTable', defaultIncomeTypes)
+        }
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
@@ -317,69 +326,71 @@ const IncomePlanTemplate: ApplicationTemplate<
               income.incomeCategoryName,
             )
           })
-        } else {
-          withholdingTax &&
-            withholdingTax.incomeTypes?.forEach((income, i) => {
-              set(
-                answers,
-                `incomePlanTable[${i}].incomeType`,
-                income.incomeTypeName,
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].incomePerYear`,
-                String(income.total),
-              )
-              set(answers, `incomePlanTable[${i}].currency`, ISK)
-              set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
-              set(
-                answers,
-                `incomePlanTable[${i}].incomeCategory`,
-                income.categoryName,
-              )
-
-              set(
-                answers,
-                `incomePlanTable[${i}].january`,
-                String(income.january),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].february`,
-                String(income.february),
-              )
-              set(answers, `incomePlanTable[${i}].march`, String(income.march))
-              set(answers, `incomePlanTable[${i}].april`, String(income.april))
-              set(answers, `incomePlanTable[${i}].may`, String(income.may))
-              set(answers, `incomePlanTable[${i}].june`, String(income.june))
-              set(answers, `incomePlanTable[${i}].july`, String(income.july))
-              set(
-                answers,
-                `incomePlanTable[${i}].august`,
-                String(income.august),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].september`,
-                String(income.september),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].october`,
-                String(income.october),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].november`,
-                String(income.november),
-              )
-              set(
-                answers,
-                `incomePlanTable[${i}].december`,
-                String(income.december),
-              )
-            })
         }
+        //Temporarily removing this until withholdingTax endpoint provides more accurate info
+        // } else {
+        //   withholdingTax &&
+        //     withholdingTax.incomeTypes?.forEach((income, i) => {
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].incomeType`,
+        //         income.incomeTypeName,
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].incomePerYear`,
+        //         String(income.total),
+        //       )
+        //       set(answers, `incomePlanTable[${i}].currency`, ISK)
+        //       set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].incomeCategory`,
+        //         income.categoryName,
+        //       )
+
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].january`,
+        //         String(income.january),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].february`,
+        //         String(income.february),
+        //       )
+        //       set(answers, `incomePlanTable[${i}].march`, String(income.march))
+        //       set(answers, `incomePlanTable[${i}].april`, String(income.april))
+        //       set(answers, `incomePlanTable[${i}].may`, String(income.may))
+        //       set(answers, `incomePlanTable[${i}].june`, String(income.june))
+        //       set(answers, `incomePlanTable[${i}].july`, String(income.july))
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].august`,
+        //         String(income.august),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].september`,
+        //         String(income.september),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].october`,
+        //         String(income.october),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].november`,
+        //         String(income.november),
+        //       )
+        //       set(
+        //         answers,
+        //         `incomePlanTable[${i}].december`,
+        //         String(income.december),
+        //       )
+        //     })
+        // }
 
         return context
       }),

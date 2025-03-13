@@ -1,10 +1,6 @@
 import Head from 'next/head'
 
 import {
-  ContentLanguage,
-  QueryGetLifeEventsForOverviewArgs,
-} from '@island.is/api/schema'
-import {
   Breadcrumbs,
   GridColumn,
   GridContainer,
@@ -13,8 +9,10 @@ import {
 } from '@island.is/island-ui/core'
 import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
 import {
+  ContentLanguage,
   type GetLifeEventsForOverviewQuery,
   type GetNamespaceQuery,
+  QueryGetLifeEventsForOverviewArgs,
   type QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import {

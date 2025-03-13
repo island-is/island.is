@@ -148,6 +148,34 @@ export const MAIN_TYPES_QUERY = gql`
     }
   }
 `
+export const INVOLVED_PARTY_SIGNATURES_QUERY = gql`
+  query InvolvedPartySignatures(
+    $input: OfficialJournalOfIcelandApplicationInvolvedPartySignaturesInput!
+  ) {
+    officialJournalOfIcelandApplicationInvolvedPartySignature(input: $input) {
+      type
+      records {
+        institution
+        signatureDate
+        additionalSignature
+        chairman {
+          name
+          above
+          before
+          after
+          below
+        }
+        members {
+          name
+          above
+          before
+          after
+          below
+        }
+      }
+    }
+  }
+`
 
 export const TYPES_QUERY = gql`
   query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
@@ -166,6 +194,28 @@ export const TYPES_QUERY = gql`
         hasPreviousPage
         nextPage
         previousPage
+      }
+    }
+  }
+`
+
+export const ADVERT_TEMPLATE_QUERY = gql`
+  query GetAdvertTemplate(
+    $params: OfficialJournalOfIcelandAdvertTemplateInput!
+  ) {
+    officialJournalOfIcelandApplicationAdvertTemplate(input: $params) {
+      html
+      type
+    }
+  }
+`
+
+export const ADVERT_TEMPLATE_TYPES_QUERY = gql`
+  query GetAdvertTemplateTypes {
+    officialJournalOfIcelandApplicationAdvertTemplateTypes {
+      types {
+        title
+        type
       }
     }
   }
@@ -270,6 +320,8 @@ export const GET_PRESIGNED_URL_MUTATION = gql`
   ) {
     officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
       url
+      key
+      cdn
     }
   }
 `
@@ -318,7 +370,7 @@ export const GET_COMMENTS_QUERY = gql`
       comments {
         id
         age
-        title
+        action
         direction
         comment
         creator
@@ -354,5 +406,11 @@ export const GET_PDF_QUERY = gql`
     OJOIAGetPdf(input: $input) {
       pdf
     }
+  }
+`
+
+export const POST_APPLICATION_MUTATION = gql`
+  mutation OJOIAPostApplication($input: OJOIAIdInput!) {
+    OJOIAPostApplication(input: $input)
   }
 `

@@ -19,7 +19,7 @@ interface Props extends FieldBaseProps {
 
 export const NationalIdWithNameFormField: FC<
   React.PropsWithChildren<Props>
-> = ({ application, field }) => {
+> = ({ application, field, error }) => {
   const { formatMessage, lang: locale } = useLocale()
 
   return (
@@ -59,6 +59,14 @@ export const NationalIdWithNameFormField: FC<
         minAgePerson={field.minAgePerson}
         searchPersons={field.searchPersons}
         searchCompanies={field.searchCompanies}
+        showPhoneField={field.showPhoneField}
+        showEmailField={field.showEmailField}
+        phoneRequired={field.phoneRequired}
+        emailRequired={field.emailRequired}
+        phoneLabel={field.phoneLabel}
+        emailLabel={field.emailLabel}
+        error={error}
+        clearOnChange={field.clearOnChange}
       />
     </Box>
   )

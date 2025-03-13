@@ -29,7 +29,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
   const {
     id,
     disabled,
-    title,
+    title = '',
     description,
     placeholder,
     backgroundColor,
@@ -41,6 +41,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     onChange = () => undefined,
+    clearOnChange,
   } = field
   const { control, clearErrors } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -94,6 +95,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           required={buildFieldRequired(application, required)}
+          clearOnChange={clearOnChange}
         />
       </Box>
     </Box>

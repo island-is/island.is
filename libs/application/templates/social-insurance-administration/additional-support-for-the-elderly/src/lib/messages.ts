@@ -41,15 +41,6 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 
-  fileUpload: defineMessages({
-    additionalFileDescription: {
-      id: 'asfte.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis).',
-      description: 'english description',
-    },
-  }),
-
   conclusionScreen: defineMessages({
     bulletList: {
       id: `asfte.application:conclusionScreen.bulletList#markdown`,
@@ -80,5 +71,19 @@ export const statesMessages = defineMessages({
       'Umsókn vegna félagsleg viðbótarstuðnings við aldraða hefur verið samþykkt',
     description:
       'The application for additional support for the elderly has been approved',
+  },
+  asfteDismissed: {
+    id: 'asfte.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um félagslegan viðbótarstuðning frá',
+    description:
+      'Tryggingastofnun has dismissed your additional support for the elderly application',
+  },
+  asfteDismissedDescription: {
+    id: 'asfte.application:application.dismissed.description',
+    defaultMessage:
+      'Umsókn þinni um félagslegan viðbótarstuðning hefur verið vísað frá',
+    description:
+      'Your additional support for the elderly application has been dimissed',
   },
 })

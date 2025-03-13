@@ -1,8 +1,14 @@
 import { FC, PropsWithChildren, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Button, Checkbox, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Icon,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 
 import { IconAndText } from '../../routes/Prosecutor/components'
 import { selectableList as strings } from './SelectableList.strings'
@@ -15,6 +21,8 @@ interface CTAButtonAttributes {
 export interface Item {
   id: string
   name: string
+  invalid?: boolean
+  tooltipText?: string
 }
 
 interface SelectableItem extends Item {
@@ -80,10 +88,11 @@ const SelectableList: FC<Props> = (props) => {
 
     setSelectableItems((selectableItems) =>
       items.map((item) => ({
-        id: item.id,
-        name: item.name,
+        ...item,
         checked:
-          selectableItems.find((i) => i.id === item.id)?.checked ?? false,
+          (selectableItems.find((i) => i.id === item.id)?.checked &&
+            !item.invalid) ??
+          false,
       })),
     )
   }, [items, isLoading])
@@ -94,6 +103,7 @@ const SelectableList: FC<Props> = (props) => {
     setIsHandlingCTA(false)
   }
 
+  const validSelectableItems = selectableItems.filter((item) => !item.invalid)
   return (
     <>
       <Box
@@ -109,18 +119,18 @@ const SelectableList: FC<Props> = (props) => {
             name="select-all"
             label={formatMessage(strings.selectAllLabel)}
             checked={
-              selectableItems.length > 0 &&
-              selectableItems.every((item) => item.checked === true)
+              validSelectableItems.length > 0 &&
+              validSelectableItems.every((item) => item.checked)
             }
             onChange={(evt) =>
-              setSelectableItems((items) =>
-                items?.map((item) => ({
+              setSelectableItems((selectableItems) =>
+                selectableItems?.map((item) => ({
                   ...item,
-                  checked: evt.target.checked,
+                  checked: evt.target.checked && !item.invalid,
                 })),
               )
             }
-            disabled={isHandlingCTA || selectableItems.length === 0}
+            disabled={isHandlingCTA || validSelectableItems.length === 0}
             strong
           />
         </Box>
@@ -174,8 +184,10 @@ const SelectableList: FC<Props> = (props) => {
                     marginBottom={index === selectableItems.length - 1 ? 0 : 2}
                     paddingX={3}
                     paddingY={2}
-                    background="blue100"
+                    background={item.invalid ? 'red100' : 'blue100'}
                     borderRadius="standard"
+                    display="flex"
+                    justifyContent="spaceBetween"
                   >
                     <Checkbox
                       label={
@@ -191,17 +203,28 @@ const SelectableList: FC<Props> = (props) => {
                       name={item.id}
                       value={item.name}
                       checked={item.checked}
+                      tooltip={item.tooltipText}
                       onChange={(evt) =>
-                        setSelectableItems((items) =>
-                          items.map((i) =>
+                        setSelectableItems((selectableItems) =>
+                          selectableItems.map((i) =>
                             i.id === item.id
                               ? { ...i, checked: evt.target.checked }
                               : i,
                           ),
                         )
                       }
-                      disabled={isHandlingCTA}
+                      disabled={item.invalid || isHandlingCTA}
                     />
+                    {item.invalid && (
+                      <Box display="flex" alignItems="center">
+                        <Icon
+                          size="small"
+                          type="outline"
+                          color={'red300'}
+                          icon={'warning'}
+                        />
+                      </Box>
+                    )}
                   </Box>
                 </motion.li>
               ))}

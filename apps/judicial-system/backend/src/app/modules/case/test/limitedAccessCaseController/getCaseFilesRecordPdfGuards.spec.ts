@@ -1,4 +1,4 @@
-import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
@@ -20,7 +20,7 @@ describe('LimitedAccessCaseController - Get case files record pdf guards', () =>
 
   it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(6)
-    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthUserGuard)
     expect(new guards[1]()).toBeInstanceOf(CaseExistsGuard)
     expect(new guards[2]()).toBeInstanceOf(RolesGuard)
     expect(guards[3]).toBeInstanceOf(CaseTypeGuard)

@@ -1,6 +1,47 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/applications/adverts": {
+      "get": {
+        "operationId": "getAdvertCopies",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "example": 1,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "example": 10,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
@@ -79,9 +120,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetCaseCommentsResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/GetComments" }
               }
             }
           }
@@ -168,7 +207,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -207,7 +249,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -235,7 +280,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -322,11 +370,358 @@
         }
       }
     },
-    "/api/v1/health": {
+    "/api/v1/applications/advert/templates": {
       "get": {
-        "operationId": "HealthController_",
+        "operationId": "getApplicationAdvertTemplates",
         "parameters": [],
-        "responses": { "200": { "description": "Health check endpoint." } }
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdvertTemplateDetails"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/advert/templates/{advertType}": {
+      "get": {
+        "operationId": "getApplicationAdvertTemplate",
+        "parameters": [
+          {
+            "name": "advertType",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAdvertTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/involved-party/{involvedPartyId}": {
+      "get": {
+        "operationId": "getSignaturesForInvolvedParty",
+        "parameters": [
+          {
+            "name": "involvedPartyId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful signature get.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetSignature" }
+              }
+            }
+          },
+          "404": { "description": "Signature not found" },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetSignature" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/types": {
+      "get": {
+        "operationId": "getTypes",
+        "summary": "",
+        "parameters": [
+          {
+            "required": false,
+            "description": "Search by id",
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Filter by unassigned",
+            "name": "unassigned",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "required": false,
+            "description": "Search by main type id",
+            "name": "mainType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by title",
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by slug",
+            "name": "slug",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by department slug, title or id",
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "The page number",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "required": false,
+            "description": "The page size",
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertTypes" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/main-types": {
+      "get": {
+        "operationId": "getMainTypes",
+        "summary": "",
+        "parameters": [
+          {
+            "required": false,
+            "description": "Search by id",
+            "name": "id",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Filter by unassigned",
+            "name": "unassigned",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "required": false,
+            "description": "Search by main type id",
+            "name": "mainType",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by title",
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by slug",
+            "name": "slug",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Search by department slug, title or id",
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "The page number",
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "number" }
+          },
+          {
+            "required": false,
+            "description": "The page size",
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertMainTypes" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/types/{id}": {
+      "get": {
+        "operationId": "getTypeById",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertType" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/advert-types/main-types/{id}": {
+      "get": {
+        "operationId": "getMainTypeById",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetAdvertMainType" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AdvertTypeError" }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/pdf/case/{id}": {
@@ -361,6 +756,13 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "required": false,
+            "description": "Show date in PDF",
+            "name": "showDate",
+            "in": "query",
+            "schema": { "default": true, "type": "boolean" }
           }
         ],
         "responses": {
@@ -420,6 +822,13 @@
           }
         }
       }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_",
+        "parameters": [],
+        "responses": { "200": { "description": "Health check endpoint." } }
+      }
     }
   },
   "info": {
@@ -432,12 +841,14 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CasePriceResponse": {
+      "BaseEntity": {
         "type": "object",
         "properties": {
-          "price": { "type": "number", "description": "The price of the case" }
+          "id": { "type": "string", "description": "Id of the entity" },
+          "title": { "type": "string", "description": "Title of the entity" },
+          "slug": { "type": "string", "description": "Slug of the entity" }
         },
-        "required": ["price"]
+        "required": ["id", "title", "slug"]
       },
       "ApplicationCommunicationChannel": {
         "type": "object",
@@ -455,6 +866,23 @@
         },
         "required": ["email", "phone"]
       },
+      "ApplicationAddition": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the addition" },
+          "title": { "type": "string", "description": "Title of the addition" },
+          "content": {
+            "type": "string",
+            "description": "Content of the addition (html)"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["html", "file"],
+            "description": "Type of the addition"
+          }
+        },
+        "required": ["id", "title", "content", "type"]
+      },
       "ApplicationAdvert": {
         "type": "object",
         "properties": {
@@ -463,20 +891,15 @@
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
             "description": "Id of the involved party"
           },
-          "departmentId": {
-            "type": "string",
+          "department": {
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Id of the selected department"
+            "description": "Id of the selected department",
+            "allOf": [{ "$ref": "#/components/schemas/BaseEntity" }]
           },
-          "typeId": {
-            "type": "string",
+          "type": {
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Id of the selected type"
-          },
-          "typeName": {
-            "type": "string",
-            "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Title of the selected type"
+            "description": "Id of the selected type",
+            "allOf": [{ "$ref": "#/components/schemas/BaseEntity" }]
           },
           "title": {
             "type": "string",
@@ -493,13 +916,21 @@
             "example": "2021-04-01T00:00:00.000Z",
             "description": "Request advert publcation date"
           },
-          "categories": { "type": "array", "items": { "type": "string" } },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BaseEntity" }
+          },
           "channels": {
             "description": "Communication channels",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ApplicationCommunicationChannel"
             }
+          },
+          "additions": {
+            "description": "Additions to the advert",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationAddition" }
           },
           "message": {
             "type": "string",
@@ -509,14 +940,14 @@
         },
         "required": [
           "involvedPartyId",
-          "departmentId",
-          "typeId",
-          "typeName",
+          "department",
+          "type",
           "title",
           "html",
           "requestedDate",
           "categories",
           "channels",
+          "additions",
           "message"
         ]
       },
@@ -530,28 +961,10 @@
         },
         "required": ["signatureType"]
       },
-      "AdditionalSignature": {
-        "type": "object",
-        "properties": {
-          "regular": {
-            "type": "string",
-            "description": "Message to the regular"
-          },
-          "committee": {
-            "type": "string",
-            "description": "Message to the committee"
-          }
-        },
-        "required": ["regular", "committee"]
-      },
       "ApplicationSignatureMember": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "Name of the member" },
-          "before": {
-            "type": "string",
-            "description": "Text before the name member"
-          },
           "below": {
             "type": "string",
             "description": "Text below the name member"
@@ -565,85 +978,75 @@
             "description": "Text after the name member"
           }
         },
-        "required": ["name", "before", "below", "above", "after"]
+        "required": ["name", "below", "above", "after"]
       },
-      "ApplicationSignature": {
+      "ApplicationSignatureRecord": {
         "type": "object",
         "properties": {
           "institution": {
             "type": "string",
             "description": "Institution of the signature"
           },
-          "date": {
+          "signatureDate": {
             "type": "string",
             "description": "Date when the signature was signed"
           },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
+          "additional": {
             "type": "string",
-            "description": "The html contents of the signature"
-          }
-        },
-        "required": ["institution", "date", "members", "html"]
-      },
-      "ApplicationCommitteeSignature": {
-        "type": "object",
-        "properties": {
-          "institution": {
-            "type": "string",
-            "description": "Institution of the signature"
-          },
-          "date": {
-            "type": "string",
-            "description": "Date when the signature was signed"
-          },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
-            "type": "string",
-            "description": "The html contents of the signature"
+            "description": "Additioanl signature name"
           },
           "chairman": {
-            "description": "The title of the committee",
+            "description": "Chairman of the signature",
             "allOf": [
               { "$ref": "#/components/schemas/ApplicationSignatureMember" }
             ]
+          },
+          "members": {
+            "description": "Members of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
           }
         },
-        "required": ["institution", "date", "members", "html", "chairman"]
+        "required": [
+          "institution",
+          "signatureDate",
+          "additional",
+          "chairman",
+          "members"
+        ]
+      },
+      "ApplicationSignatureRecords": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "description": "Regular signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureRecord"
+            }
+          }
+        },
+        "required": ["records"]
       },
       "ApplicationSignatures": {
         "type": "object",
         "properties": {
-          "additionalSignature": {
-            "example": "Some message to the applicant",
-            "description": "Message to the applicant",
-            "allOf": [{ "$ref": "#/components/schemas/AdditionalSignature" }]
-          },
           "regular": {
             "description": "Regular signature",
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ApplicationSignature" }
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
+            ]
           },
           "committee": {
             "description": "Committee signature",
             "allOf": [
-              { "$ref": "#/components/schemas/ApplicationCommitteeSignature" }
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
             ]
           }
         },
-        "required": ["additionalSignature", "regular", "committee"]
+        "required": ["regular", "committee"]
       },
       "ApplicationAnswers": {
         "type": "object",
@@ -656,12 +1059,12 @@
             "description": "Misc answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationMisc" }]
           },
-          "signatures": {
+          "signature": {
             "description": "Signature answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationSignatures" }]
           }
         },
-        "required": ["advert", "misc", "signatures"]
+        "required": ["advert", "misc", "signature"]
       },
       "Application": {
         "type": "object",
@@ -770,92 +1173,118 @@
         },
         "required": ["application"]
       },
-      "CaseCommentType": {
+      "CasePriceResponse": {
+        "type": "object",
+        "properties": {
+          "price": { "type": "number", "description": "The price of the case" }
+        },
+        "required": ["price"]
+      },
+      "CaseActionEnum": {
         "type": "string",
-        "description": "Title of the comment",
+        "description": "The action that created the comment",
         "enum": [
-          "Innsent af:",
-          "færir mál á",
-          "merkir sér málið.",
-          "færir mál í stöðuna:",
-          "gerir athugasemd.",
-          "skráir skilaboð"
+          "SUBMIT",
+          "ASSIGN_USER",
+          "ASSIGN_SELF",
+          "UPDATE_STATUS",
+          "INTERNAL_COMMENT",
+          "EXTERNAL_COMMENT",
+          "APPLICATION_COMMENT"
         ]
       },
-      "CaseCommentDirection": {
+      "CaseStatusEnum": {
         "type": "string",
-        "description": "Was the comment sent or received.",
-        "enum": ["sent", "received"]
+        "description": "Status of the case",
+        "enum": [
+          "Innsent",
+          "Grunnvinnsla",
+          "Yfirlestur",
+          "Tilbúið",
+          "Útgefið",
+          "Tekið úr birtingu",
+          "Birtingu hafnað"
+        ]
       },
-      "CaseComment": {
+      "CaseStatus": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
-            "description": "Id of the case comment."
-          },
-          "internal": {
-            "type": "boolean",
-            "description": "Is the comment internal."
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
           },
           "title": {
-            "example": "f. 2 dögum",
-            "$ref": "#/components/schemas/CaseCommentType"
+            "example": "Innsent",
+            "$ref": "#/components/schemas/CaseStatusEnum"
           },
+          "slug": {
+            "type": "string",
+            "example": "innsent",
+            "description": "Slug of the case staus"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "CommentCreatorDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the entity" },
+          "title": { "type": "string", "description": "Title of the entity" }
+        },
+        "required": ["id", "title"]
+      },
+      "CommentReceiverDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the entity" },
+          "title": { "type": "string", "description": "Title of the entity" }
+        },
+        "required": ["id", "title"]
+      },
+      "CommentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "The id of the comment" },
+          "created": {
+            "type": "string",
+            "description": "ISO string representation of the date the comment was created"
+          },
+          "action": { "$ref": "#/components/schemas/CaseActionEnum" },
           "caseStatus": {
-            "type": "string",
-            "enum": [
-              "Innsent",
-              "Grunnvinnsla",
-              "Yfirlestur",
-              "Tilbúið",
-              "Útgefið",
-              "Tekið úr birtingu",
-              "Birtingu hafnað"
-            ],
-            "description": "Case status of when the comment was created."
+            "description": "The status of the case when the comment was created",
+            "allOf": [{ "$ref": "#/components/schemas/CaseStatus" }]
           },
-          "age": {
-            "type": "string",
-            "example": "f. 2 dögum",
-            "description": "String representation of the age of the case comment."
-          },
-          "ageIso": {
-            "type": "string",
-            "description": "ISO date format representation of the age of the case comment."
-          },
-          "direction": { "$ref": "#/components/schemas/CaseCommentDirection" },
           "creator": {
-            "type": "string",
-            "description": "Who created the comment "
+            "description": "The creator of the comment",
+            "allOf": [{ "$ref": "#/components/schemas/CommentCreatorDto" }]
           },
           "receiver": {
-            "type": "string",
-            "description": "Who received the comment"
+            "nullable": true,
+            "description": "The receiver of the comment",
+            "allOf": [{ "$ref": "#/components/schemas/CommentReceiverDto" }]
           },
-          "comment": { "type": "string", "description": "The comment itself" }
+          "comment": {
+            "type": "string",
+            "description": "The comment",
+            "nullable": true
+          }
         },
         "required": [
           "id",
-          "internal",
-          "title",
+          "created",
+          "action",
           "caseStatus",
-          "age",
-          "ageIso",
-          "direction",
           "creator",
           "receiver",
           "comment"
         ]
       },
-      "GetCaseCommentsResponse": {
+      "GetComments": {
         "type": "object",
         "properties": {
           "comments": {
-            "description": "List of case comments.",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/CaseComment" }
+            "items": { "$ref": "#/components/schemas/CommentDto" }
           }
         },
         "required": ["comments"]
@@ -909,7 +1338,11 @@
       },
       "PresignedUrlResponse": {
         "type": "object",
-        "properties": { "url": { "type": "string" } },
+        "properties": {
+          "url": { "type": "string" },
+          "cdn": { "type": "string" },
+          "key": { "type": "string" }
+        },
         "required": ["url"]
       },
       "PostApplicationAttachmentBody": {
@@ -1034,33 +1467,6 @@
         },
         "required": ["involvedParties"]
       },
-      "MainCategory": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID for the main category, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the main category.",
-            "example": "Dómstólar og réttarfar"
-          },
-          "slug": {
-            "type": "string",
-            "description": "Slug of the main category, used in URLs and API requests.",
-            "example": "domstolar-og-rettarfar"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the main category, used on front page.",
-            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
-          }
-        },
-        "required": ["id", "title", "slug", "description"]
-      },
       "Category": {
         "type": "object",
         "properties": {
@@ -1079,41 +1485,6 @@
             "type": "string",
             "description": "Slug of the advert category, used in URLs and API requests.",
             "example": "evropska-efnahagssvaedid"
-          },
-          "mainCategory": {
-            "description": "The main category this category belongs to.",
-            "nullable": true,
-            "example": "Dómstólar og réttarfar",
-            "allOf": [{ "$ref": "#/components/schemas/MainCategory" }]
-          }
-        },
-        "required": ["id", "title", "slug"]
-      },
-      "CaseStatus": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
-          },
-          "title": {
-            "type": "string",
-            "enum": [
-              "Innsent",
-              "Grunnvinnsla",
-              "Yfirlestur",
-              "Tilbúið",
-              "Útgefið",
-              "Tekið úr birtingu",
-              "Birtingu hafnað"
-            ],
-            "example": "Innsent",
-            "description": "Status of the case"
-          },
-          "slug": {
-            "type": "string",
-            "example": "innsent",
-            "description": "Slug of the case staus"
           }
         },
         "required": ["id", "title", "slug"]
@@ -1169,23 +1540,18 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique ID for the advert type, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
+            "description": "The id of the main advert type"
           },
           "title": {
             "type": "string",
-            "description": "Title of the advert type, always uppercased.",
-            "example": "AUGLÝSING"
+            "description": "The title of the main advert type"
           },
           "slug": {
             "type": "string",
-            "description": "Slug of the advert type, used in URLs and API requests.",
-            "example": "auglysing"
+            "description": "The slug of the main advert type"
           },
           "department": {
-            "description": "Department the advert type belongs to.",
-            "nullable": true,
+            "description": "The department of the main advert type",
             "allOf": [{ "$ref": "#/components/schemas/Department" }]
           }
         },
@@ -1224,6 +1590,261 @@
           "applicationCase": { "$ref": "#/components/schemas/ApplicationCase" }
         },
         "required": ["applicationCase"]
+      },
+      "AdvertTemplateDetails": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "example": "auglysing",
+            "enum": ["auglysing", "reglugerd", "gjaldskra"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Template title",
+            "example": "Auglýsing"
+          }
+        },
+        "required": ["slug", "title"]
+      },
+      "GetAdvertTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "Advert template as HTML"
+          },
+          "type": {
+            "type": "string",
+            "description": "Template type",
+            "example": "auglysing",
+            "enum": ["auglysing", "reglugerd", "gjaldskra"]
+          }
+        },
+        "required": ["html", "type"]
+      },
+      "SignatureMember": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the signature member"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name/title/w.e. of the signature member"
+          },
+          "textAbove": {
+            "type": "string",
+            "nullable": true,
+            "description": "The text comes above the signature name"
+          },
+          "textBefore": {
+            "type": "string",
+            "nullable": true,
+            "description": "The text that comes before the signature name"
+          },
+          "textBelow": {
+            "type": "string",
+            "nullable": true,
+            "description": "The text that comes below the signature name"
+          },
+          "textAfter": {
+            "type": "string",
+            "nullable": true,
+            "description": "The text that comes after the signature name"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "textAbove",
+          "textBefore",
+          "textBelow",
+          "textAfter"
+        ]
+      },
+      "SignatureRecord": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "institution": { "type": "string" },
+          "signatureDate": { "type": "string" },
+          "additional": { "type": "string", "nullable": true },
+          "chairman": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/SignatureMember" }]
+          },
+          "members": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SignatureMember" }
+          }
+        },
+        "required": [
+          "id",
+          "institution",
+          "signatureDate",
+          "additional",
+          "chairman",
+          "members"
+        ]
+      },
+      "Signature": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "The id of the signature" },
+          "signatureDate": {
+            "type": "string",
+            "description": "ISO datestring of the signature"
+          },
+          "involvedParty": {
+            "description": "The involved party of the signature",
+            "allOf": [{ "$ref": "#/components/schemas/Institution" }]
+          },
+          "html": { "type": "string", "description": "HTML of the signature" },
+          "created": {
+            "type": "string",
+            "description": "ISO datestring of the creation date"
+          },
+          "records": {
+            "description": "The signature record",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SignatureRecord" }
+          }
+        },
+        "required": [
+          "id",
+          "signatureDate",
+          "involvedParty",
+          "html",
+          "created",
+          "records"
+        ]
+      },
+      "GetSignature": {
+        "type": "object",
+        "properties": {
+          "signature": { "$ref": "#/components/schemas/Signature" }
+        },
+        "required": ["signature"]
+      },
+      "Paging": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "number", "example": 1 },
+          "totalPages": { "type": "number", "example": 10 },
+          "totalItems": { "type": "number", "example": 1000 },
+          "nextPage": { "type": "number", "example": 2, "nullable": true },
+          "previousPage": { "type": "number", "example": 1, "nullable": true },
+          "pageSize": {
+            "type": "number",
+            "example": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "hasNextPage": { "type": "boolean", "example": true },
+          "hasPreviousPage": { "type": "boolean", "example": false }
+        },
+        "required": [
+          "page",
+          "totalPages",
+          "totalItems",
+          "nextPage",
+          "previousPage",
+          "pageSize",
+          "hasNextPage",
+          "hasPreviousPage"
+        ]
+      },
+      "GetAdvertTypes": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "description": "List of advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertType" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["types", "paging"]
+      },
+      "AdvertTypeError": {
+        "type": "object",
+        "properties": {
+          "errorType": {
+            "type": "string",
+            "enum": ["DuplicateError", "ValidationError", "NotFoundError"]
+          },
+          "name": { "type": "string" },
+          "message": { "type": "string" },
+          "severity": { "type": "string", "enum": ["info", "warning", "error"] }
+        },
+        "required": ["errorType", "name", "message", "severity"]
+      },
+      "AdvertMainType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the main advert type"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the main advert type"
+          },
+          "slug": {
+            "type": "string",
+            "description": "The slug of the main advert type"
+          },
+          "department": {
+            "description": "The department this main type belongs to",
+            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+          },
+          "types": {
+            "description": "All types under this main type",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertType" }
+          }
+        },
+        "required": ["id", "title", "slug", "department", "types"]
+      },
+      "GetAdvertMainTypes": {
+        "type": "object",
+        "properties": {
+          "mainTypes": {
+            "description": "List of all main advert types",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertMainType" }
+          },
+          "paging": {
+            "description": "Paging information",
+            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+          }
+        },
+        "required": ["mainTypes", "paging"]
+      },
+      "GetAdvertType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "The advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+          }
+        },
+        "required": ["type"]
+      },
+      "GetAdvertMainType": {
+        "type": "object",
+        "properties": {
+          "mainType": {
+            "description": "The main advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertMainType" }]
+          }
+        },
+        "required": ["mainType"]
       },
       "GetPdfRespone": {
         "type": "object",

@@ -18,6 +18,7 @@ import {
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
@@ -104,7 +105,12 @@ export class UpdateDefendantDto {
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
-  readonly verdictViewDate?: Date
+  readonly verdictViewDate?: Date | null
+
+  @IsOptional()
+  @IsEnum(VerdictAppealDecision)
+  @ApiPropertyOptional({ enum: VerdictAppealDecision })
+  readonly verdictAppealDecision?: VerdictAppealDecision
 
   @IsOptional()
   @Type(() => Date)

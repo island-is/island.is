@@ -1,34 +1,36 @@
 import React, { useContext } from 'react'
-import { Box, GridContainer } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
-import { Screen } from '@island.is/web/types'
-import { useNamespace } from '@island.is/web/hooks'
+
+import { Box } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
+import {
+  CategoryItems,
+  LifeEventsSection,
+  NewsItems,
+  SearchSection,
+  WatsonChatPanel,
+} from '@island.is/web/components'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
+import { GlobalContext } from '@island.is/web/context'
 import {
   ContentLanguage,
-  QueryGetArticleCategoriesArgs,
   GetArticleCategoriesQuery,
   GetFrontpageQuery,
-  QueryGetFrontpageArgs,
   GetNewsQuery,
+  LifeEventPage,
+  QueryGetArticleCategoriesArgs,
+  QueryGetFrontpageArgs,
+  QueryGetNewsArgs,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_QUERY,
   GET_NEWS_QUERY,
 } from '@island.is/web/screens/queries'
-import {
-  SearchSection,
-  CategoryItems,
-  NewLinks,
-  NewsItems,
-  LifeEventsSection,
-  WatsonChatPanel,
-} from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { GlobalContext } from '@island.is/web/context'
-import { LifeEventPage, QueryGetNewsArgs } from '@island.is/api/schema'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
-import { Locale } from '@island.is/shared/types'
+import { Screen } from '@island.is/web/types'
+
 import { watsonConfig } from './config'
 
 interface HomeProps {
@@ -154,7 +156,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
-          tags: [FRONTPAGE_NEWS_TAG_ID],
+          tags: [FRONTPAGE_NEWS_TAG_SLUG],
         },
       },
     }),
@@ -175,7 +177,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
         ...item,
         genericTags:
           item?.genericTags?.filter(
-            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID,
+            (tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG,
           ) ?? [],
       })) ?? [],
     categories: getArticleCategories,

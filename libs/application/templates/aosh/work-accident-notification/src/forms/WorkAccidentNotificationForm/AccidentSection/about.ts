@@ -8,9 +8,10 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { accident, sections, shared } from '../../../lib/messages'
-import { NO, YES } from '@island.is/application/types'
 import { MunicipalityDto } from '@island.is/clients/work-accident-ver'
 
 export const aboutSection = buildSubSection({
@@ -111,7 +112,6 @@ export const aboutSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'accident.describe.description',
-          title: '',
           description: accident.about.describeDescription,
           marginTop: 3,
           marginBottom: 2,
@@ -129,8 +129,9 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.wasDoingPlaceholder,
           rows: 7,
-          maxLength: 500,
+          maxLength: 498,
           required: true,
+          showMaxLength: true
         }),
         buildTextField({
           id: 'accident.wentWrong',
@@ -138,8 +139,10 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.wenWrongPlaceholder,
           rows: 7,
-          maxLength: 500,
+          maxLength: 498,
           required: true,
+          showMaxLength: true
+
         }),
         buildTextField({
           id: 'accident.how',
@@ -147,8 +150,10 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.howPlaceholder,
           rows: 7,
-          maxLength: 500,
+          maxLength: 498,
           required: true,
+          showMaxLength: true
+
         }),
         buildDescriptionField({
           id: 'accident.describe.locationOfAccidentHeading',
@@ -158,7 +163,6 @@ export const aboutSection = buildSubSection({
         }),
         buildCustomField({
           id: 'accident',
-          title: '',
           component: 'AccidentLocation',
         }),
       ],

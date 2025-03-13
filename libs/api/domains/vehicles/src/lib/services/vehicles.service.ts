@@ -17,12 +17,10 @@ import {
   GetMileageReadingRequest,
   MileageReadingApi,
   MileageReadingDto,
-  PostMileageReadingModel,
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
 } from '@island.is/clients/vehicles-mileage'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -70,7 +68,6 @@ export class VehiclesService {
   constructor(
     private vehiclesApi: VehicleSearchApi,
     private mileageReadingApi: MileageReadingApi,
-    private readonly featureFlagService: FeatureFlagService,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
     @Inject(LOGGER_PROVIDER)
@@ -139,7 +136,7 @@ export class VehiclesService {
       data:
         res.data
           ?.map((d) => {
-            if (!d.permno || !d.regno) {
+            if (!d.permno) {
               return null
             }
 
@@ -159,7 +156,7 @@ export class VehiclesService {
             }
             return {
               vehicleId: d.permno,
-              registrationNumber: d.regno,
+              registrationNumber: d.regno ?? undefined,
               userRole: d.role ?? undefined,
               type: d.make ?? undefined,
               color: d.colorName ?? undefined,
@@ -355,16 +352,6 @@ export class VehiclesService {
     auth: User,
     input: GetMileageReadingRequest,
   ): Promise<VehicleMileageOverview | null> {
-    const featureFlagOn = await this.featureFlagService.getValue(
-      Features.servicePortalVehicleMileagePageEnabled,
-      false,
-      auth,
-    )
-
-    if (!featureFlagOn) {
-      return null
-    }
-
     await this.hasVehicleServiceAuth(auth, input.permno)
 
     const res = await this.getMileageWithAuth(auth).getMileageReading({
@@ -426,7 +413,7 @@ export class VehiclesService {
   async postMileageReading(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | null> {
+  ): Promise<MileageReadingDto | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -472,18 +459,32 @@ export class VehiclesService {
       })
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
+    try {
+      const res = await this.getMileageWithAuth(auth).rootPutRaw({
+        putMileageReadingModel: input,
+      })
 
-    const dtos = await this.getMileageWithAuth(auth).rootPut({
-      putMileageReadingModel: input,
-    })
-
-    return dtos.length > 0 ? dtos[0] : null
+      if (res.raw.status === 204) {
+        this.logger.debug('Successfully updated mileage reading')
+        return {
+          ...input,
+          internalId: input.internalId + 1,
+        }
+      }
+      return null
+    } catch (error) {
+      this.logger.warn('milege update failed', {
+        category: LOG_CATEGORY,
+        error,
+      })
+      throw error
+    }
   }
 
   async postMileageReadingV2(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | VehiclesMileageUpdateError | null> {
+  ): Promise<MileageReadingDto | VehiclesMileageUpdateError | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -542,10 +543,23 @@ export class VehiclesService {
     }
 
     try {
-      const dtos = await this.getMileageWithAuth(auth).rootPut({
+      const res = await this.getMileageWithAuth(auth).rootPutRaw({
         putMileageReadingModel: input,
       })
-      return dtos.length > 0 ? dtos[0] : null
+
+      if (res.raw.status === 204) {
+        this.logger.debug('mileage update successful')
+        return {
+          ...input,
+          internalId: input.internalId + 1,
+        }
+      }
+
+      this.logger.warn('Something went wrong while updating mileage')
+      return {
+        code: 500,
+        message: 'Something went wrong while updating mileage',
+      }
     } catch (e) {
       if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
         const errorBody = e.body as UpdateResponseError
@@ -561,16 +575,6 @@ export class VehiclesService {
     auth: User,
     input: CanregistermileagePermnoGetRequest,
   ): Promise<boolean> {
-    const featureFlagOn = await this.featureFlagService.getValue(
-      Features.servicePortalVehicleMileagePageEnabled,
-      false,
-      auth,
-    )
-
-    if (!featureFlagOn) {
-      return false
-    }
-
     const res = await this.getMileageWithAuth(auth).canregistermileagePermnoGet(
       {
         permno: input.permno,
@@ -589,16 +593,6 @@ export class VehiclesService {
   ): Promise<boolean> {
     if (!input) return false
 
-    const featureFlagOn = await this.featureFlagService.getValue(
-      Features.servicePortalVehicleMileagePageEnabled,
-      false,
-      auth,
-    )
-
-    if (!featureFlagOn) {
-      return false
-    }
-
     const res = await this.isAllowedMileageRegistration(auth, input.permno)
 
     return res
@@ -608,16 +602,6 @@ export class VehiclesService {
     auth: User,
     input: RequiresmileageregistrationPermnoGetRequest,
   ): Promise<boolean> {
-    const featureFlagOn = await this.featureFlagService.getValue(
-      Features.servicePortalVehicleMileagePageEnabled,
-      false,
-      auth,
-    )
-
-    if (!featureFlagOn) {
-      return false
-    }
-
     const res = await this.getMileageWithAuth(
       auth,
     ).requiresmileageregistrationPermnoGet({

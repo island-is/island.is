@@ -14,6 +14,7 @@ import { m } from '../messages'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { formatDate, expiryTag } from '../utils'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -115,6 +116,12 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
                 arg: t.skirteinisNumer?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                isExpired === undefined
+                  ? ExpiryStatus.UNKNOWN
+                  : isExpired
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.ACTIVE,
               expired: isExpired,
               displayTag: expiryTag(formatMessage, isExpired),
               name: formatMessage(m.heavyMachineryLicense),

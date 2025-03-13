@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useMemo } from 'react'
-import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
@@ -19,6 +18,7 @@ import {
   toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
   ServiceWebStandardForm,
   ServiceWebWrapper,
@@ -42,6 +42,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { Screen } from '../../../types'
@@ -53,6 +54,7 @@ import {
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
+import { shouldShowInstitutionContactBanner } from '../utils'
 import { filterSupportCategories } from './utils'
 
 type FormNamespace = Record<
@@ -461,6 +463,13 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
+  if (!shouldShowInstitutionContactBanner(slug)) {
+    throw new CustomNextError(
+      404,
+      `Service web contact form has been disabled for slug: ${slug}`,
+    )
+  }
+
   const filteredSupportCategories = filterSupportCategories(
     supportCategories?.data?.getSupportCategoriesInOrganization,
     slug,
@@ -485,6 +494,7 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
     formNamespace,
     serviceWebPage: getServiceWebPage,
     locale: locale as Locale,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

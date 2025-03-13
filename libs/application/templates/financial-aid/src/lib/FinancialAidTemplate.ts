@@ -31,6 +31,7 @@ import {
   TaxDataSpouseApi,
   SendSpouseEmailApi,
 } from '../dataProviders'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -47,6 +48,7 @@ const FinancialAidTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
+  codeOwner: CodeOwners.NordaApplications,
   dataSchema,
   translationNamespaces: [ApplicationConfigurations.FinancialAid.translation],
   stateMachineConfig: {
@@ -109,8 +111,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Application').then((module) =>
-                  Promise.resolve(module.Application),
+                import('../forms/ApplicationForm').then((module) =>
+                  Promise.resolve(module.ApplicationForm),
                 ),
               read: 'all',
               write: 'all',
@@ -142,7 +144,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/PrerequisitesSpouse').then((module) =>
+                import('../forms/prerequisitesSpouseForm').then((module) =>
                   Promise.resolve(module.PrerequisitesSpouse),
                 ),
               read: 'all',
@@ -182,7 +184,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Spouse').then((module) =>
+                import('../forms/spouseForm').then((module) =>
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',

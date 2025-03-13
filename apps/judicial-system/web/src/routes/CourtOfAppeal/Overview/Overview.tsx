@@ -20,8 +20,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'

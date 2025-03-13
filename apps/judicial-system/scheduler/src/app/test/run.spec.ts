@@ -28,6 +28,7 @@ describe('AppService - Run', () => {
   beforeEach(() => {
     mockNow.mockClear()
     mockFetch.mockClear()
+
     mockNow.mockReturnValue(new Date('2020-01-01T00:01:00.000Z'))
 
     givenWhenThen = async (): Promise<Then> => {
@@ -75,7 +76,7 @@ describe('AppService - Run', () => {
           body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
         },
       ])
-      expect(fetch).toHaveBeenCalledTimes(3)
+      expect(fetch).toHaveBeenCalledTimes(4)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
@@ -84,6 +85,19 @@ describe('AppService - Run', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
           },
+        },
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `${
+          appModuleConfig().backendUrl
+        }/api/internal/cases/postHearingArrangements`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
+          },
+          body: JSON.stringify({ date: new Date('2020-01-01T00:01:00.000Z') }),
         },
       )
     })
@@ -102,8 +116,17 @@ describe('AppService - Run', () => {
       await givenWhenThen()
     })
 
-    it('should call the backend twice', () => {
-      expect(fetch).toHaveBeenCalledTimes(2)
+    it('should attempt archiving twice', () => {
+      expect(fetch).toHaveBeenNthCalledWith(
+        1,
+        `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
+        expect.any(Object),
+      )
+      expect(fetch).toHaveBeenNthCalledWith(
+        2,
+        `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
+        expect.any(Object),
+      )
     })
   })
 

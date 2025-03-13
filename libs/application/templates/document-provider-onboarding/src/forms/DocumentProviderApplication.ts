@@ -4,14 +4,14 @@ import {
   buildSection,
   buildTextField,
   buildSubmitField,
-  buildDividerField,
   buildDescriptionField,
   buildCheckboxField,
   buildLinkField,
+  buildTitleField,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { AnswerOptions } from '../lib/types'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
@@ -29,7 +29,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'description',
-              title: '',
               description: m.termsSubTitle,
               marginBottom: 3,
             }),
@@ -41,9 +40,8 @@ export const DocumentProviderOnboarding: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'termsOfAgreement.userTerms',
-              title: '',
               options: [
-                { value: AnswerOptions.YES, label: m.userAgreementOptionLabel },
+                { value: YesOrNoEnum.YES, label: m.userAgreementOptionLabel },
               ],
             }),
           ],
@@ -184,8 +182,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
           title: m.confirmationTitle,
           description: m.confirmationSubTitle,
           children: [
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.applicantSection,
               color: 'currentColor',
             }),
@@ -213,8 +210,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: m.applicantPhoneNumberPlaceholder,
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.administrativeContactSection,
               color: 'currentColor',
             }),
@@ -236,8 +232,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: m.administrativeContactPhoneNumberPlaceholder,
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.technicalContactSection,
               color: 'currentColor',
             }),
@@ -259,8 +254,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               format: '###-####',
               placeholder: m.technicalContactPhoneNumberPlaceHolder,
             }),
-            //Error in dev tools, missing keys on divider fields...
-            buildDividerField({
+            buildTitleField({
               title: m.helpDeskSection,
               color: 'currentColor',
             }),

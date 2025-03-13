@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { NO } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import {
   Application,
@@ -9,21 +10,31 @@ import {
 import { handleServerError } from '@island.is/application/ui-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
-import { ReasonForApplicationOptions, States } from '../../lib/constants'
+import {
+  ApplicationType,
+  ReasonForApplicationOptions,
+  States,
+} from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
+import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
+import { Contacts } from './review-groups/Contacts'
+import { CurrentNursery } from './review-groups/CurrentNursery'
+import { CurrentSchool } from './review-groups/CurrentSchool'
+import { Guardians } from './review-groups/Guardians'
 import { Languages } from './review-groups/Languages'
-import { Parents } from './review-groups/Parents'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
-import { Relatives } from './review-groups/Relatives'
+import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
-import { School } from './review-groups/School'
+
+const canEditApplication = !isRunningOnEnvironment('production')
 
 interface ReviewScreenProps {
   application: Application
@@ -45,7 +56,8 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const hasError = (id: string) => get(errors, id) as string
 
-  const { reasonForApplication } = getApplicationAnswers(application.answers)
+  const { applicationType, reasonForApplication, applyForNeighbourhoodSchool } =
+    getApplicationAnswers(application.answers)
 
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
@@ -86,7 +98,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
   return (
     <>
-      {state === `${States.DRAFT}` && (
+      {state === States.DRAFT && (
         <Box display="flex" justifyContent="spaceBetween">
           <Box>
             <Box marginBottom={2}>
@@ -114,7 +126,7 @@ export const Review: FC<ReviewScreenProps> = ({
           </Box>
         </Box>
       )}
-      {state !== `${States.DRAFT}` && (
+      {state !== States.DRAFT && (
         <Box
           display="flex"
           justifyContent="spaceBetween"
@@ -127,7 +139,7 @@ export const Review: FC<ReviewScreenProps> = ({
             </Text>
           </Box>
           <Box display="flex" columnGap={2} alignItems="center">
-            {state !== `${States.DRAFT}` && (
+            {canEditApplication && (
               <Button
                 colorScheme="default"
                 iconType="filled"
@@ -154,20 +166,29 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <Child {...childProps} />
-      <Parents {...childProps} />
-      <Relatives {...childProps} />
-      <ReasonForApplication {...childProps} />
-      {reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD && (
-        <>
-          {reasonForApplication ===
-            ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL && (
-            <Siblings {...childProps} />
-          )}
-          <School {...childProps} />
-          <Languages {...childProps} />
-          <Support {...childProps} />
-        </>
+      <Guardians {...childProps} />
+      <Contacts {...childProps} />
+      {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+        <CurrentSchool {...childProps} />
       )}
+      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
+        <CurrentNursery {...childProps} />
+      )}
+      <School {...childProps} />
+      {(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+        (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          applyForNeighbourhoodSchool === NO)) && (
+        <ReasonForApplication {...childProps} />
+      )}
+      {reasonForApplication ===
+        ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
+        <Siblings {...childProps} />
+      )}
+      <Languages {...childProps} />
+      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
+        <AllergiesAndIntolerances {...childProps} />
+      )}
+      <Support {...childProps} />
     </>
   )
 }

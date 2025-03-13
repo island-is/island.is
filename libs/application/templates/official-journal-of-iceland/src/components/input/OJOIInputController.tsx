@@ -4,6 +4,7 @@ import { MessageDescriptor } from 'react-intl'
 import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   name: string
@@ -34,6 +35,7 @@ export const OJOIInputController = ({
   const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
   })
+  const { setValue } = useFormContext()
 
   const placeholderText = placeholder
     ? typeof placeholder === 'string'
@@ -47,6 +49,7 @@ export const OJOIInputController = ({
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, value)
 
+    setValue(name, value)
     return newAnswers
   }
 

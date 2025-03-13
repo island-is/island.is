@@ -433,7 +433,7 @@ export const NationalRegistryB2C = new XroadConf({
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
-        'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
@@ -453,23 +453,23 @@ export const NationalRegistryAuthB2C = new XroadConf({
   env: {
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
       dev: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1',
-      staging: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1',
+      staging: '19e7d60e-920e-4a6f-a125-25ea283ee1a4',
       prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
-        'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
-      staging: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
-      staging: 'IS-TEST/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
     },
   },
@@ -906,9 +906,9 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
-      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-service',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-api',
     },
   },
 })
@@ -918,7 +918,7 @@ export const HealthDirectorateOrganDonation = new XroadConf({
     XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       staging:
-        'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
     },
   },
@@ -928,8 +928,30 @@ export const HealthDirectorateVaccination = new XroadConf({
   env: {
     XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
-      staging: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      staging:
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
+    },
+  },
+})
+
+export const HealthDirectorateHealthService = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
+      staging:
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
+    },
+  },
+})
+
+export const SecondarySchool = new XroadConf({
+  env: {
+    XROAD_SECONDARY_SCHOOL_PATH: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt',
+      prod: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt',
     },
   },
 })

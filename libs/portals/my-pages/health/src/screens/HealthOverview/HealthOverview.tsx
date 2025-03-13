@@ -37,7 +37,7 @@ import {
   CONTENT_GAP_LG,
   CONTENT_GAP_SM,
   SECTION_GAP,
-} from '../Medicine/constants'
+} from '../../utils/constants'
 import {
   useGetInsuranceConfirmationLazyQuery,
   useGetInsuranceOverviewQuery,

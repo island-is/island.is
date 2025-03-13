@@ -43,10 +43,9 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     checkboxProvider: {
       id: 'sia.application:prerequisites.checkbox.provider',
-      defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
+      defaultMessage: 'Ég samþykki gagnaöflun í umsóknarferlinu',
       description:
-        'I understand that the above information will be collected during the application process',
+        'I agree to the collection of data as a part of the application process',
     },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',
@@ -126,9 +125,9 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     infoSubSectionDescription: {
       id: 'sia.application:applicant.info.sub.section.description#markdown',
       defaultMessage:
-        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt með því að fara inn á Mínar síður á Ísland.is. Athugið að ef að aðrar upplýsingar eru ekki réttar þarf að breyta þeim í þjóðskrá.',
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt hér. Athugið að ef að aðrar upplýsingar eru ekki réttar þarft þú að breyta þeim í Þjóðskrá.',
       description:
-        'Please review the email address and phone number to ensure that the information is correct. Email address can be changed by logging into My pages at Ísland.is. Note that if the following information is not correct, it must be changed at Registers Iceland.',
+        'Please review the email address and phone number to ensure that the information is correct. Email address can be changed here. Note that if any other information is not correct, you must have it changed at Registers Iceland.',
     },
     applicantEmail: {
       id: 'sia.application:info.applicant.email',
@@ -683,5 +682,10 @@ export const statesMessages = defineMessages({
     id: 'sia.application:in.progress.tag',
     defaultMessage: 'Í vinnslu hjá þér',
     description: 'In progress with you',
+  },
+  dismissedTag: {
+    id: 'sia.application:dismissed.tag',
+    defaultMessage: 'Vísað frá',
+    description: 'Dismissed',
   },
 })

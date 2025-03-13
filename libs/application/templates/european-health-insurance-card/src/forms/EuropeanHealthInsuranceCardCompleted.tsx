@@ -10,7 +10,6 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 
 export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
   id: 'EuropeanHealthInsuranceCardApplicationForm',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
@@ -55,7 +54,6 @@ export const EuropeanHealthInsuranceCardCompleted: Form = buildForm({
           children: [
             buildCustomField({
               id: 'completedScreen',
-              title: '',
               component: 'CompletedScreen',
             }),
           ],

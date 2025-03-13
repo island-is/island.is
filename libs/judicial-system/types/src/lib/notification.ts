@@ -24,6 +24,7 @@ export enum CaseNotificationType {
 
 export enum IndictmentCaseNotificationType {
   INDICTMENT_VERDICT_INFO = 'INDICTMENT_VERDICT_INFO',
+  CRIMINAL_RECORD_FILES_UPLOADED = 'CRIMINAL_RECORD_FILES_UPLOADED',
 }
 
 export enum DefendantNotificationType {

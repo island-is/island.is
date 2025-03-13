@@ -7,6 +7,8 @@ export enum CustomPageUniqueIdentifier {
   OfficialJournalOfIceland = 'OfficialJournalOfIceland',
   Vacancies = 'Vacancies',
   Grants = 'Grants',
+  DirectorateOfLabourMyPages = 'DirectorateOfLabourMyPages',
+  Verdicts = 'Verdicts',
 }
 
 export interface StatisticSourceValue {

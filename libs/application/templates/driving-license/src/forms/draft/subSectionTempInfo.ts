@@ -7,6 +7,7 @@ import {
   buildTextField,
   buildSubSection,
   buildPhoneField,
+  buildTitleField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -46,8 +47,8 @@ export const subSectionTempInfo = buildSubSection({
           condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
         }),
         buildDividerField({
-          title: '',
-          color: 'dark400',
+          marginTop: 5,
+          useDividerLine: false,
         }),
         buildKeyValueField({
           label: m.informationFullName,

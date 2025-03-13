@@ -1,5 +1,6 @@
-import { BLOCKS } from '@contentful/rich-text-types'
 import { ReactNode } from 'react'
+import { BLOCKS } from '@contentful/rich-text-types'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -12,8 +13,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
-import { webRichText } from '@island.is/web/utils/richText'
 import { useNamespace } from '@island.is/web/hooks'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import * as styles from './OpinberNyskopunFooter.css'
 
 interface OpinberNyskopunFooterProps {

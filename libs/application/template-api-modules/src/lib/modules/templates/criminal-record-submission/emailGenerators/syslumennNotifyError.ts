@@ -1,5 +1,4 @@
 import { EmailTemplateGenerator } from '../../../../types'
-import { NationalRegistry } from '../types'
 
 export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
@@ -11,12 +10,9 @@ export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
 
   const syslumennEmail = 'vefur@syslumenn.is'
 
-  const nationalRegistryData = application.externalData.nationalRegistry
-    ?.data as NationalRegistry
-
   const subject = 'Umsókn um sakavottorð'
   const body = `
-      Villa hefur komið upp í samskiptum milli island.is og sýslumanna, vegna kaupa á sakavottorði fyrir ${nationalRegistryData.nationalId}.
+      Villa hefur komið upp í samskiptum milli island.is og sýslumanna, vegna kaupa á sakavottorði fyrir ${application.applicant}.
       `
 
   return {

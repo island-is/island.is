@@ -7,6 +7,7 @@ import {
   GridColumn,
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
+import { clearInputsOnChange } from '@island.is/shared/utils'
 
 type CheckboxProps = React.ComponentProps<typeof Checkbox>
 
@@ -33,6 +34,7 @@ interface CheckboxControllerProps {
   split?: '1/1' | '1/2' | '1/3' | '1/4'
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
+  clearOnChange?: string[]
 }
 export const CheckboxController: FC<
   React.PropsWithChildren<CheckboxControllerProps>
@@ -50,6 +52,7 @@ export const CheckboxController: FC<
   split = '1/1',
   backgroundColor,
   onSelect = () => undefined,
+  clearOnChange,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -97,6 +100,9 @@ export const CheckboxController: FC<
                   onChange(newChoices)
                   setValue(id, newChoices)
                   onSelect(newChoices)
+                  if (clearOnChange) {
+                    clearInputsOnChange(clearOnChange, setValue)
+                  }
                 }}
                 rightContent={option.rightContent}
                 checked={value && value.includes(option.value)}

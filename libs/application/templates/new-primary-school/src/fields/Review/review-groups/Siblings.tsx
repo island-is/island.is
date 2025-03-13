@@ -5,10 +5,7 @@ import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  getSiblingRelationOptionLabel,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Siblings = ({
@@ -20,11 +17,7 @@ export const Siblings = ({
   const { siblings } = getApplicationAnswers(application.answers)
 
   const rows = siblings.map((s) => {
-    return [
-      s.fullName,
-      formatKennitala(s.nationalId),
-      getSiblingRelationOptionLabel(s.relation),
-    ]
+    return [s.fullName, formatKennitala(s.nationalId)]
   })
 
   return (
@@ -33,7 +26,7 @@ export const Siblings = ({
       editAction={() => goToScreen?.('siblings')}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <GridColumn span="12/12">
           <Label>
             {formatMessage(
               newPrimarySchoolMessages.primarySchool.siblingsTitle,
@@ -48,11 +41,9 @@ export const Siblings = ({
                   component: FieldComponents.STATIC_TABLE,
                   children: undefined,
                   id: 'siblingsTable',
-                  title: '',
                   header: [
                     newPrimarySchoolMessages.shared.fullName,
                     newPrimarySchoolMessages.shared.nationalId,
-                    newPrimarySchoolMessages.shared.relation,
                   ],
                   rows,
                 }}

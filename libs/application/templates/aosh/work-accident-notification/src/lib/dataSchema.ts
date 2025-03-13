@@ -1,32 +1,53 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/types'
 import { EMPLOYMENT_STATUS } from '../shared/constants'
 import { isValid24HFormatTime, isValidPhoneNumber } from '../utils'
-
-const TimeWithRefine = z
-  .string()
-  .refine((x) => (x ? isValid24HFormatTime(x) : false), {})
+import { YES } from '@island.is/application/core'
+import { information } from './messages/information'
 
 const option = z.object({
   value: z.string(),
   label: z.string(),
 })
 
-const accidentSchema = z.object({
-  accidentLocation: option,
-  accidentLocationParentGroup: option.optional(),
-  didAoshCome: z.string(),
-  didPoliceCome: z.string(),
-  exactLocation: z.string(),
-  municipality: z.string(),
-  date: z.string(),
-  time: TimeWithRefine,
-  how: z.string().min(1).max(499),
-  wasDoing: z.string().min(1).max(499),
-  wentWrong: z.string().min(1).max(499),
-})
+const TimeWithRefine = z
+  .string()
+  .refine((x) => (x ? isValid24HFormatTime(x) : false), {})
 
+const accidentSchema = z
+  .object({
+    accidentLocation: option,
+    accidentLocationParentGroup: option.optional(),
+    didAoshCome: z.string(),
+    didPoliceCome: z.string(),
+    exactLocation: z.string(),
+    municipality: z.string(),
+    date: z.string(),
+    time: TimeWithRefine,
+    how: z.string().min(1).max(499),
+    wasDoing: z.string().min(1).max(499),
+    wentWrong: z.string().min(1).max(499),
+  })
+  .refine(
+    (data) => {
+      const date = new Date(data.date)
+      const now = new Date()
+
+      if (date.toDateString() === now.toDateString()) {
+        const hours = parseInt(data.time.slice(0, 2))
+        const minutes = parseInt(data.time.slice(2, 4))
+        const inputTime = new Date()
+        inputTime.setHours(hours, minutes, 0, 0)
+        if (inputTime > now) {
+          return false
+        }
+      }
+      return true
+    },
+    {
+      path: ['time'],
+    },
+  )
 const basicCompanySchema = z.object({
   nationalId: z
     .string()
@@ -40,14 +61,38 @@ const basicCompanySchema = z.object({
   postnumber: z.string(),
 })
 
-const companySchema = z.object({
-  addressOfBranch: z.string().optional(),
-  nameOfBranch: z.string().optional(), // VER needs to confirm requirement here for individuals vs company
-  postnumberOfBranch: z.string().optional(),
-  industryClassification: z.string().optional(),
-  email: z.string().email(),
-  phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
-})
+const companySchema = z
+  .object({
+    addressOfBranch: z.string().optional(),
+    nameOfBranch: z.string().min(1),
+    postnumberOfBranch: z.string().optional().nullable(),
+    industryClassification: z.string().optional(),
+    email: z.string().email(),
+    phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
+  })
+  .superRefine((data, ctx) => {
+    // Validating that both address/postnumber are input or neither
+    const hasAddress =
+      data.addressOfBranch && data.addressOfBranch.trim() !== ''
+    const hasPostnumber = data.postnumberOfBranch
+
+    if (hasAddress || hasPostnumber) {
+      if (!hasAddress) {
+        ctx.addIssue({
+          path: ['addressOfBranch'],
+          params: information.labels.company.branchAddressError,
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (!hasPostnumber) {
+        ctx.addIssue({
+          path: ['postnumberOfBranch'],
+          params: information.labels.company.branchPostnumberError,
+          code: z.ZodIssueCode.custom,
+        })
+      }
+    }
+  })
 
 const employeeSchema = z
   .object({
@@ -59,7 +104,15 @@ const employeeSchema = z
     address: z.string().min(1).max(256),
     employmentStatus: z.string().optional(),
     employmentTime: z.string(),
-    employmentRate: z.string(),
+    employmentRate: z.string().refine(
+      (v) => {
+        const rateNum = parseInt(v, 10)
+        return rateNum > 0 && rateNum <= 100
+      },
+      {
+        message: '1-100%',
+      },
+    ),
     workhourArrangement: z.string(),
     nationality: z.string(),
     postnumberAndMunicipality: z.string(),
@@ -86,16 +139,6 @@ const employeeSchema = z
     },
     {
       path: ['tempEmploymentSSN'],
-    },
-  )
-  .refine(
-    (data) => {
-      const rateNum = parseInt(data.employmentRate, 10)
-      return rateNum > 0 && rateNum <= 100
-    },
-    {
-      message: '1%-100%',
-      path: ['employmentRate'],
     },
   )
 
@@ -177,18 +220,24 @@ const companyLaborProtectionSchema = z.object({
 const projectPurchaseSchema = z
   .object({
     radio: z.string(),
-    nationalId: z.string().optional(),
-    name: z.string().optional(),
-  })
-  .refine((data) => data.radio !== YES || (data.name && data.name.length > 0), {
-    path: ['name'],
+    contractor: z
+      .object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+      })
+      .optional(),
   })
   .refine(
-    (data) =>
-      data.radio !== YES ||
-      (data.nationalId && kennitala.isValid(data.nationalId)),
+    (data) => {
+      return (
+        data.radio !== YES ||
+        (data.contractor?.nationalId &&
+          data.contractor.name &&
+          kennitala.isCompany(data.contractor.nationalId))
+      )
+    },
     {
-      path: ['nationalId'],
+      path: [''],
     },
   )
 

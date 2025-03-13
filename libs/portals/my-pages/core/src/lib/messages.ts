@@ -1701,4 +1701,8 @@ export const m = defineMessages({
     id: 'service.portal:submit',
     defaultMessage: 'Staðfesta',
   },
+  sortBy: {
+    id: 'service.portal:sort-by',
+    defaultMessage: 'Raða eftir',
+  },
 })

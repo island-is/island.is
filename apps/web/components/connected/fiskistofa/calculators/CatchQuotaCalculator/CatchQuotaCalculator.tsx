@@ -4,7 +4,6 @@ import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { useMachine } from '@xstate/react'
 
-import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -14,6 +13,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
 
 import {
   formattedNumberStringToNumber,

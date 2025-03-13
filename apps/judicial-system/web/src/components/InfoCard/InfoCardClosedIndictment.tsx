@@ -1,7 +1,13 @@
 import { FC, useContext } from 'react'
 
+import {
+  isPrisonAdminUser,
+  isPublicProsecutorUser,
+} from '@island.is/judicial-system/types'
+
 import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -13,8 +19,10 @@ export interface Props {
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const {
+    showItem,
     defendants,
     policeCaseNumbers,
     courtCaseNumber,
@@ -23,10 +31,11 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     court,
     prosecutor,
     judge,
-    offence,
+    offense,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    indictmentCreated,
     civilClaimants,
   } = useInfoCardItems()
 
@@ -60,18 +69,20 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
+            indictmentCreated,
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
-            ...(workingCase.mergeCase ? [mergeCase] : []),
+            ...(showItem(mergeCase) ? [mergeCase] : []),
             court,
             prosecutor(workingCase.type),
             judge,
-            offence,
+            offense,
           ],
           columns: 2,
         },
-        ...(workingCase.indictmentReviewer?.name
+        ...(workingCase.indictmentReviewer?.name &&
+        (isPublicProsecutorUser(user) || isPrisonAdminUser(user))
           ? [
               {
                 id: 'additional-data-section',
@@ -80,7 +91,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(indictmentReviewedDate
+                  ...(reviewedDate
                     ? [indictmentReviewedDate(reviewedDate)]
                     : []),
                 ],

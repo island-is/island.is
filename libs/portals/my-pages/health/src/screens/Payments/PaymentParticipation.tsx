@@ -1,36 +1,39 @@
 import {
   Box,
   DatePicker,
-  SkeletonLoader,
-  Stack,
-  Text,
-  Table as T,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
+  Hidden,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   DownloadFileButtons,
   ExpandHeader,
+  MobileTable,
+  StackWithBottomDivider,
   UserInfoLine,
   amountFormat,
   m,
   numberFormat,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import { useState } from 'react'
-import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
-import {
-  useGetCopaymentStatusQuery,
-  useGetCopaymentPeriodsQuery,
-} from './Payments.generated'
-import sub from 'date-fns/sub'
-import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
-import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import sub from 'date-fns/sub'
+import { useState } from 'react'
+import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
 import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
+import {
+  useGetCopaymentPeriodsQuery,
+  useGetCopaymentStatusQuery,
+} from './Payments.generated'
 import { PaymentTableRow } from './PaymentTableRow'
+import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentPartication = () => {
   const { formatMessage, lang } = useLocale()
@@ -66,24 +69,22 @@ export const PaymentPartication = () => {
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : data?.rightsPortalCopaymentStatus ? (
         <Box>
-          <Box borderBottomWidth="standard" borderColor="blueberry200">
-            <Stack dividers="blueberry200" space={1}>
-              <UserInfoLine
-                title={formatMessage(messages.statusOfRights)}
-                titlePadding={2}
-                label={formatMessage(messages.maximumMonthlyPayment)}
-                content={amountFormat(
-                  data.rightsPortalCopaymentStatus?.maximumMonthlyPayment ?? 0,
-                )}
-              />
-              <UserInfoLine
-                label={formatMessage(messages.paymentTarget)}
-                content={amountFormat(
-                  data.rightsPortalCopaymentStatus?.maximumPayment ?? 0,
-                )}
-              />
-            </Stack>
-          </Box>
+          <StackWithBottomDivider space={2}>
+            <UserInfoLine
+              title={formatMessage(messages.statusOfRights)}
+              titlePadding={2}
+              label={formatMessage(messages.maximumMonthlyPayment)}
+              content={amountFormat(
+                data.rightsPortalCopaymentStatus?.maximumMonthlyPayment ?? 0,
+              )}
+            />
+            <UserInfoLine
+              label={formatMessage(messages.paymentTarget)}
+              content={amountFormat(
+                data.rightsPortalCopaymentStatus?.maximumPayment ?? 0,
+              )}
+            />
+          </StackWithBottomDivider>
           <Box marginBottom={SECTION_GAP}>
             <Text variant="small" marginTop={5} marginBottom={2}>
               {formatMessage(messages.paymentParticationExplanation, {
@@ -142,43 +143,85 @@ export const PaymentPartication = () => {
             </GridRow>
           </GridContainer>
           {(periods?.rightsPortalCopaymentPeriods?.items.length ?? 0) > 0 ? (
-            <T.Table>
-              <ExpandHeader
-                data={[
-                  { value: '' },
-                  { value: formatMessage(messages.statusOfRights) },
-                  { value: formatMessage(m.month) },
-                  { value: formatMessage(messages.paymentTarget) },
-                  { value: formatMessage(messages.monthlyPaymentShort) },
-                  { value: formatMessage(messages.right) },
-                  { value: formatMessage(messages.repaid) },
-                ]}
-              />
-              <T.Body>
-                {periods?.rightsPortalCopaymentPeriods.items &&
-                  periods?.rightsPortalCopaymentPeriods.items.map(
-                    (period, idx) => {
-                      if (!period.id) {
-                        return null
-                      }
-                      return (
-                        <PaymentTableRow
-                          key={`payment-table-row-${idx}`}
-                          periodId={period.id}
-                          headerData={[
-                            period.status?.display ?? '',
-                            period.month ?? '',
-                            amountFormat(period.maximumPayment ?? 0),
-                            amountFormat(period.monthPayment ?? 0),
-                            amountFormat(period.overpaid ?? 0),
-                            amountFormat(period.repaid ?? 0),
-                          ]}
-                        />
-                      )
-                    },
-                  )}
-              </T.Body>
-            </T.Table>
+            <>
+              <Hidden below="md">
+                <T.Table>
+                  <ExpandHeader
+                    data={[
+                      { value: '' },
+                      { value: formatMessage(messages.statusOfRights) },
+                      { value: formatMessage(m.month) },
+                      { value: formatMessage(messages.paymentTarget) },
+                      { value: formatMessage(messages.monthlyPaymentShort) },
+                      { value: formatMessage(messages.right) },
+                      { value: formatMessage(messages.repaid) },
+                    ]}
+                  />
+                  <T.Body>
+                    {periods?.rightsPortalCopaymentPeriods.items &&
+                      periods?.rightsPortalCopaymentPeriods.items.map(
+                        (period, idx) => {
+                          if (!period.id) {
+                            return null
+                          }
+                          return (
+                            <PaymentTableRow
+                              key={`payment-table-row-${idx}`}
+                              periodId={period.id}
+                              headerData={[
+                                period.status?.display ?? '',
+                                period.month ?? '',
+                                amountFormat(period.maximumPayment ?? 0),
+                                amountFormat(period.monthPayment ?? 0),
+                                amountFormat(period.overpaid ?? 0),
+                                amountFormat(period.repaid ?? 0),
+                              ]}
+                            />
+                          )
+                        },
+                      )}
+                  </T.Body>
+                </T.Table>
+              </Hidden>
+              <Hidden above="sm">
+                {
+                  <MobileTable
+                    rows={
+                      periods?.rightsPortalCopaymentPeriods.items.map(
+                        (period, index) => ({
+                          key: index,
+                          title: period.month ?? formatMessage(m.month),
+                          data: [
+                            {
+                              title: formatMessage(messages.statusOfRights),
+                              content: period.status?.display ?? '',
+                            },
+                            {
+                              title: formatMessage(messages.paymentTarget),
+                              content: amountFormat(period.maximumPayment ?? 0),
+                            },
+                            {
+                              title: formatMessage(
+                                messages.monthlyPaymentShort,
+                              ),
+                              content: amountFormat(period.monthPayment ?? 0),
+                            },
+                            {
+                              title: formatMessage(messages.right),
+                              content: amountFormat(period.overpaid ?? 0),
+                            },
+                            {
+                              title: formatMessage(messages.repaid),
+                              content: amountFormat(period.repaid ?? 0),
+                            },
+                          ],
+                        }),
+                      ) ?? []
+                    }
+                  />
+                }
+              </Hidden>
+            </>
           ) : (
             <Box marginTop={2}>
               <Problem

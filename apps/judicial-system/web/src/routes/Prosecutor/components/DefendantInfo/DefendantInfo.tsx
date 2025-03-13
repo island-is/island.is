@@ -31,7 +31,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 
 import * as strings from './DefendantInfo.strings'
 

@@ -1,9 +1,10 @@
-import { Box, GridContainer, Text, Inline } from '@island.is/island-ui/core'
+import { useMemo } from 'react'
+
+import { Box, GridContainer, Inline, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
-import { useMemo } from 'react'
 
 import * as styles from './FjarsyslaRikisinsFooter.css'
 

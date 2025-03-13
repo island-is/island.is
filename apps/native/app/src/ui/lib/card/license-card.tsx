@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormattedDate, useIntl } from 'react-intl'
+import { FormattedDate, FormattedTime, useIntl } from 'react-intl'
 import {
   Animated,
   Image,
@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
 
 import { Barcode } from '../barcode/barcode'
 import { Skeleton } from '../skeleton/skeleton'
@@ -15,49 +16,38 @@ import { ExpirationProgressBar } from '../../../components/progress-bar/expirati
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
 import { prefixBase64 } from '../../../utils/prefix-base-64'
-import BackgroundADR from '../../assets/card/adr-bg.png'
-import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
-import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
-import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
-import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
-import BackgroundPCardLicense from '../../assets/card/p-card.png'
-import BackgroundPassport from '../../assets/card/passport-bg.png'
-import LogoEhic from '../../assets/card/sjukratryggingar.png'
-import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
-import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
-import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
-import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
-import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
-import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
-import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
-import { dynamicColor, theme } from '../../utils'
-import { font } from '../../utils/font'
+import { LicenseCardPresets } from './license-list-card'
+import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
-
-export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
+import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass.constants'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 const Host = styled(Animated.View)`
   position: relative;
   min-height: 104px;
   padding: ${({ theme }) => theme.spacing[2]}px;
-  row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   overflow: hidden;
   justify-content: center;
 `
 
-const ContentContainer = styled.View`
+const ContentContainer = styled.View<{ marginBottom: number }>`
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: ${({ marginBottom }) => marginBottom}px;
 `
 
 const BarcodeWrapper = styled.View<{ minHeight?: number }>`
   flex: 1;
   border-radius: ${({ theme }) => theme.border.radius.large};
   min-height: ${({ minHeight }) => minHeight}px;
+  max-width: ${BARCODE_MAX_WIDTH}px;
   overflow: hidden;
 `
 
@@ -94,46 +84,26 @@ const Content = styled.View`
 `
 
 const Base64Image = styled.Image`
-  width: 64px;
   height: 72px;
+  width: 64px;
+  align-self: flex-end;
   border-radius: ${({ theme: { border } }) => border.radius.large};
 `
 
-const Title = styled.Text<{ color: string }>`
-  margin-bottom: 8px;
-
-  ${font({
-    fontWeight: '600',
-    color: (props) => props.color,
-  })}
+const Title = styled(Typography)<{ color: string }>`
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const ValidationWrap = styled.View`
   display: flex;
   flex-flow: row;
-  margin-bottom: 4px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 const OfflineMessage = styled(Typography)`
   padding: ${({ theme }) => theme.spacing[3]}px;
   text-align: center;
   max-width: 95%;
-`
-
-const Validation = styled.Text<{ color: string }>`
-  ${font({
-    fontWeight: '600',
-    fontSize: 13,
-    lineHeight: 15,
-    color: (props) => props.color,
-  })}
-`
-
-const TimeStamp = styled.Text<{ color: string }>`
-  ${font({
-    fontSize: 13,
-    color: (props) => props.color,
-  })}
 `
 
 const ImgWrap = styled.View`
@@ -144,136 +114,19 @@ const ImgWrap = styled.View`
   width: 72px;
 `
 
-// Todo when we know the status type add to intl
-const statusIcon: StatusStyles = {
-  NOT_VALID: {
-    text: 'Ekki í gildi',
-    icon: IconStatusNonVerified,
-  },
-  VALID: {
-    text: 'Í gildi',
-    icon: IconStatusVerified,
-  },
-}
-
-const LicenseCardPresets: Record<LicenseType, CardPreset> = {
-  DriversLicense: {
-    title: 'Ökuskírteini (IS)',
-    logo: LogoCoatOfArms,
-    backgroundImage: BackgroundDriversLicense,
-    backgroundColor: '#F5E4EC',
-    barcode: {
-      background: '#F5EAEF',
-      overlay: '#F0DDE5',
-    },
-  },
-  AdrLicense: {
-    title: 'ADR skírteini',
-    logo: LogoAOSH,
-    backgroundImage: BackgroundADR,
-    backgroundColor: '#F2FAEC',
-    barcode: {
-      background: '#FAFDF7',
-      overlay: '#F4FCEE',
-    },
-  },
-  MachineLicense: {
-    title: 'Vinnuvélaskírteini',
-    logo: LogoAOSH,
-    backgroundImage: BackgroundVinnuvelar,
-    backgroundColor: '#C5E6AF',
-    barcode: {
-      background: '#DEF1D1',
-      overlay: '#C8E6B3',
-    },
-  },
-  FirearmLicense: {
-    title: 'Skotvopnaleyfi',
-    logo: CoatOfArms,
-    backgroundImage: BackgroundWeaponLicense,
-    backgroundColor: '#EBEBF2',
-    barcode: {
-      background: '#FDFDF7',
-      overlay: '#FAFAEB',
-    },
-  },
-  HuntingLicense: {
-    title: 'Veiðikort',
-    logo: LogoEnvironmentAgency,
-    backgroundImage: BackgroundHuntingCard,
-    backgroundColor: '#E2EDFF',
-    barcode: {
-      background: '#DBECF4',
-      overlay: '#B3D3E3',
-    },
-  },
-  Ehic: {
-    title: 'Evrópska sjúkratryggingakortið',
-    logo: LogoEhic,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#E2EDFF',
-  },
-  DisabilityLicense: {
-    title: 'Örorkuskírteini',
-    logo: DisabilityLicenseLogo,
-    backgroundImage: DisabilityLicenseBg,
-    backgroundColor: '#C5D5C8',
-    barcode: {
-      background: '#D7E3D7',
-      overlay: '#A0BAA2',
-    },
-  },
-  PCard: {
-    title: 'Stæðiskort',
-    logo: LogoCoatOfArms,
-    backgroundImage: BackgroundPCardLicense,
-    backgroundColor: '#F2F7FF',
-  },
-  Passport: {
-    title: 'Almennt vegabréf',
-    logo: LogoRegistersIceland,
-    backgroundImage: BackgroundPassport,
-    backgroundColor: '#fff',
-  },
-}
-
-export enum CustomLicenseType {
-  Passport = 'Passport',
-}
-
-type LicenseType = GenericLicenseType | CustomLicenseType
-
-type CardPreset = {
-  title: string
-  logo: ImageSourcePropType
-  backgroundImage: ImageSourcePropType
-  backgroundColor: string
-  barcode?: {
-    background: string
-    overlay: string
-  }
-}
-
-type StatusStyle = {
-  text: string
-  icon: ImageSourcePropType
-}
-
-type StatusStyles = {
-  [key: string]: StatusStyle
-}
-
 interface LicenseCardProps {
   status: 'VALID' | 'NOT_VALID'
   title?: string
   date?: Date | string
   nativeID?: string
   style?: StyleProp<ViewStyle>
-  type?: LicenseType
+  type?: GenericLicenseType
   logo?: ImageSourcePropType | string
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
   showBarcodeOfflineMessage?: boolean
+  loading?: boolean
+  error?: ApolloError
   barcode?: {
     value?: string | null
     loading?: boolean
@@ -292,16 +145,17 @@ export function LicenseCard({
   type,
   barcode,
   showBarcodeOfflineMessage,
+  loading,
+  error,
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
-
   const intl = useIntl()
-  const variant = statusIcon[status]
   const preset = type
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
   const title = props.title ?? preset?.title
+  const isTablet = screenWidth > 760
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
@@ -310,9 +164,14 @@ export function LicenseCard({
     status === 'VALID' &&
     !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
 
-  const barcodeWidth =
-    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeWidth = isTablet
+    ? BARCODE_MAX_WIDTH
+    : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
+
+  const badSessionError = error
+    ? findProblemInApolloError(error as any, [ProblemType.BAD_SESSION])
+    : undefined
 
   return (
     <Host>
@@ -321,36 +180,74 @@ export function LicenseCard({
         color={backgroundColor}
         resizeMode="cover"
       />
-      <ContentContainer>
+      <ContentContainer marginBottom={barcode ? theme.spacing[1] : 0}>
         <Content>
-          <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
+          <Title
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            color={textColor}
+            variant="heading5"
+          >
             {title}
           </Title>
-          {variant && (
-            <ValidationWrap>
-              <Image
-                source={variant.icon as ImageSourcePropType}
-                resizeMode="contain"
-                style={{ width: 15, height: 15, marginRight: 8 }}
+
+          <ValidationWrap>
+            {loading ? (
+              <Skeleton
+                active
+                height={16}
+                style={{
+                  width: 62,
+                  borderRadius: 4,
+                  opacity: 0.5,
+                }}
               />
-              <Validation color={textColor}>{variant.text}</Validation>
-            </ValidationWrap>
-          )}
+            ) : (
+              <>
+                <Image
+                  source={
+                    error
+                      ? IconStatusNonVerified
+                      : status === 'VALID'
+                      ? IconStatusVerified
+                      : IconStatusNonVerified
+                  }
+                  resizeMode="contain"
+                  style={{
+                    width: 15,
+                    height: 15,
+                    marginRight: 8,
+                    tintColor: error && theme.color.yellow600,
+                  }}
+                />
+                <Typography color={textColor} variant="eyebrow">
+                  {intl.formatMessage({
+                    id: error
+                      ? 'walletPass.errorFetchingLicense'
+                      : status === 'VALID'
+                      ? 'walletPass.validLicense'
+                      : 'walletPass.expiredLicense',
+                  })}
+                </Typography>
+              </>
+            )}
+          </ValidationWrap>
           {date && (
-            <TimeStamp color={textColor}>
-              {type === CustomLicenseType.Passport
+            <Typography variant="body3" color={textColor}>
+              {type === GenericLicenseType.Passport
                 ? intl.formatMessage({ id: 'walletPass.expirationDate' })
                 : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
               {': '}
-              {type === CustomLicenseType.Passport ? (
+              {type === GenericLicenseType.Passport ? (
                 <FormattedDate value={date} {...{ dateStyle: 'short' }} />
               ) : (
-                <FormattedDate
-                  value={date}
-                  {...{ dateStyle: 'short', timeStyle: 'short' }}
-                />
+                <>
+                  <FormattedTime value={date} />
+                  {' - '}
+                  <FormattedDate value={date} {...{ dateStyle: 'short' }} />
+                </>
               )}
-            </TimeStamp>
+            </Typography>
           )}
         </Content>
         {logo && (
@@ -363,7 +260,7 @@ export function LicenseCard({
           </ImgWrap>
         )}
       </ContentContainer>
-      {showBarcodeView && (
+      {showBarcodeView && !showBarcodeOfflineMessage && !error && (
         <BarcodeWrapper minHeight={barcode?.height}>
           {!barcode.loading && barcode?.value ? (
             <BarcodeContainer>
@@ -398,14 +295,18 @@ export function LicenseCard({
           )}
         </BarcodeWrapper>
       )}
-      {showBarcodeOfflineMessage && !showBarcodeView && (
+      {(error || showBarcodeOfflineMessage) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
           <BarcodeContainer
             style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
           >
             <OfflineMessage variant="body3" style={{ opacity: 1 }}>
               {intl.formatMessage({
-                id: 'walletPass.errorNotConnectedNoBarcode',
+                id: error
+                  ? badSessionError
+                    ? 'walletPass.barcodeErrorBadSession'
+                    : 'walletPass.barcodeErrorFailedToFetch'
+                  : 'walletPass.barcodeErrorNotConnected',
               })}
             </OfflineMessage>
           </BarcodeContainer>

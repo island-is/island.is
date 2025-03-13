@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { slices } from './fragments'
 
 export const GET_NEWS_QUERY = gql`
@@ -98,6 +99,9 @@ export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
       }
       organization {
         slug
+        newsBottomSlices {
+          ...EmailSignupFields
+        }
       }
       signLanguageVideo {
         url

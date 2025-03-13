@@ -18,15 +18,14 @@ import { IdTokenClaims } from '@island.is/shared/types'
 import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import { BffConfig } from '../../bff.config'
-import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { FIVE_SECONDS_IN_MS } from '../../constants/time'
 import { CryptoService } from '../../services/crypto.service'
 import { PKCEService } from '../../services/pkce.service'
+import { SessionCookieService } from '../../services/sessionCookie.service'
 import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
-import { getCookieOptions } from '../../utils/get-cookie-options'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -52,6 +51,7 @@ export class AuthService {
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
     private readonly cryptoService: CryptoService,
+    private readonly sessionCookieService: SessionCookieService,
   ) {
     this.baseUrl = this.config.ids.issuer
   }
@@ -125,7 +125,10 @@ export class AuthService {
 
     // Save the tokenResponse to the cache
     await this.cacheService.save({
-      key: this.cacheService.createSessionKeyType('current', userProfile.sid),
+      key: this.cacheService.createSessionKeyType(
+        'current',
+        this.sessionCookieService.hash(userProfile.sid),
+      ),
       value,
       ttl: this.config.cacheUserProfileTTLms,
     })
@@ -263,7 +266,7 @@ export class AuthService {
     res: Response
     loginAttemptCacheKey: string
   }) {
-    const sid = req.cookies[SESSION_COOKIE_NAME]
+    const sid = this.sessionCookieService.get(req)
 
     // Check if older session exists
     if (sid) {
@@ -356,25 +359,28 @@ export class AuthService {
 
       // Clear any existing session cookie first
       // This prevents multiple session cookies being set.
-      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+      this.sessionCookieService.clear(res)
 
       // Create session cookie with successful login session id
-      res.cookie(
-        SESSION_COOKIE_NAME,
-        updatedTokenResponse.userProfile.sid,
-        getCookieOptions(),
-      )
+      this.sessionCookieService.set({
+        res,
+        value: updatedTokenResponse.userProfile.sid,
+      })
 
-      // Check if there is an old session cookie and clean up the cache
-      const oldSessionCookie = req.cookies[SESSION_COOKIE_NAME]
+      // Check if there is an old session cookie
+      const oldHashedSessionCookie = this.sessionCookieService.get(req)
 
       if (
-        oldSessionCookie &&
-        oldSessionCookie !== updatedTokenResponse.userProfile.sid
+        oldHashedSessionCookie &&
+        // Check if the old session cookie is different from the new one
+        !this.sessionCookieService.verify(
+          req,
+          updatedTokenResponse.userProfile.sid,
+        )
       ) {
         const oldSessionCacheKey = this.cacheService.createSessionKeyType(
           'current',
-          oldSessionCookie,
+          oldHashedSessionCookie,
         )
 
         const oldSessionData = await this.cacheService.get<CachedTokenResponse>(
@@ -422,7 +428,7 @@ export class AuthService {
     res: Response
     query: LogoutDto
   }) {
-    const sidCookie = req.cookies[SESSION_COOKIE_NAME]
+    const sidCookie = this.sessionCookieService.get(req)
 
     if (!sidCookie) {
       this.logger.error('Logout failed: No session cookie found')
@@ -430,9 +436,13 @@ export class AuthService {
       return res.redirect(this.config.logoutRedirectUri)
     }
 
-    if (sidCookie !== query.sid) {
+    const hashedQuerySid = this.sessionCookieService.hash(query.sid)
+
+    if (sidCookie !== hashedQuerySid) {
       this.logger.error(
-        `Logout failed: Cookie sid "${sidCookie}" does not match the session id in query param "${query.sid}"`,
+        `Logout failed: Cookie "${this.cacheService.createKeyError(
+          sidCookie,
+        )}" does not match the session id in query param "sid"`,
       )
 
       return this.redirectWithError(res, {
@@ -443,7 +453,7 @@ export class AuthService {
 
     const currentLoginCacheKey = this.cacheService.createSessionKeyType(
       'current',
-      query.sid,
+      hashedQuerySid,
     )
 
     const cachedTokenResponse =
@@ -470,7 +480,7 @@ export class AuthService {
      * - Delete the current login from the cache
      * - Clear the session cookie
      */
-    res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+    this.sessionCookieService.clear(res)
 
     this.cacheService
       .delete(currentLoginCacheKey)
@@ -553,7 +563,7 @@ export class AuthService {
       // Create cache key and retrieve cached token response
       const cacheKey = this.cacheService.createSessionKeyType(
         'current',
-        payload.sid,
+        this.sessionCookieService.hash(payload.sid),
       )
       const cachedTokenResponse =
         await this.cacheService.get<CachedTokenResponse>(

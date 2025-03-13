@@ -76,9 +76,7 @@ export const mapEntityToOptions = (
 }
 
 export const sortCategories = (cats: EntityOption[]) => {
-  return cats.sort((a, b) => {
-    return sortAlpha('title')(a, b)
-  })
+  return cats.sort(sortAlpha('label'))
 }
 
 export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {

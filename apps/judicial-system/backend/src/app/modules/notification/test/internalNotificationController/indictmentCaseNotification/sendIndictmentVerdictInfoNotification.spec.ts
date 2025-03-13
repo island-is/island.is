@@ -33,11 +33,12 @@ describe('IndictmentCaseService', () => {
     'defender',
   ])
   const caseId = uuid()
-  const courtName = uuid()
+  const courtName = 'Héraðsdómur Reykjavíkur'
   const prosecutorsOfficeName = prosecutorsOffice.name
   const prosecutorsOfficeEmail = prosecutorsOffice.email
   const prosecutorInstitutionId = uuid()
   const courtCaseNumber = uuid()
+  const policeCaseNumbers = [uuid()]
   let theCase = {
     id: caseId,
     court: { name: courtName },
@@ -53,8 +54,8 @@ describe('IndictmentCaseService', () => {
     prosecutor: {
       institution: { name: prosecutorsOfficeName, id: prosecutorInstitutionId },
     },
-
     courtCaseNumber,
+    policeCaseNumbers,
   } as Case
 
   let mockEmailService: EmailService
@@ -112,7 +113,7 @@ describe('IndictmentCaseService', () => {
           ],
           subject: expect.stringContaining(`Máli lokið ${courtCaseNumber}`),
           html: expect.stringContaining(
-            `Máli ${courtCaseNumber} hjá ${courtName} hefur verið lokið.`,
+            `Máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur verið lokið.`,
           ),
         }),
       )

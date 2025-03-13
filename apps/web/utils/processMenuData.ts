@@ -2,8 +2,8 @@ import { Locale } from '@island.is/shared/types'
 
 import {
   ArticleCategory,
-  MenuLinkWithChildren,
   MenuLink,
+  MenuLinkWithChildren,
 } from '../graphql/schema'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -6,6 +6,7 @@ import {
   CreateRecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class RecyclingPartnerService {
@@ -22,6 +23,36 @@ export class RecyclingPartnerService {
     return this.recyclingPartnerModel.findAll({
       where: { active: true },
     })
+  }
+
+  async findRecyclingPartners(
+    isMunicipalityPage: boolean,
+    municipalityId: string | null | undefined,
+  ): Promise<RecyclingPartnerModel[]> {
+    try {
+      // If Role.municipality, return all recycling partners that are not municipalities
+      if (municipalityId) {
+        return await this.recyclingPartnerModel.findAll({
+          where: {
+            isMunicipality: false,
+            municipalityId: municipalityId,
+          },
+        })
+      }
+
+      if (isMunicipalityPage) {
+        return await this.recyclingPartnerModel.findAll({
+          where: { isMunicipality: true },
+        })
+      }
+      return await this.recyclingPartnerModel.findAll({
+        where: {
+          [Op.or]: [{ isMunicipality: false }, { isMunicipality: null }],
+        },
+      })
+    } catch (error) {
+      throw new Error(`Failed to fetch recycling partners: ${error.message}`)
+    }
   }
 
   async findOne(companyId: string): Promise<RecyclingPartnerModel> {
@@ -49,5 +80,22 @@ export class RecyclingPartnerService {
       },
     )
     return accessControl
+  }
+
+  /**
+   * Get the id of the municipality or recyclingpartner that is paying for the recycling request
+   * @param companyId
+   * @returns
+   */
+  async getPayingPartnerId(companyId: string): Promise<string> {
+    const partner = await this.recyclingPartnerModel.findOne({
+      where: { companyId },
+    })
+
+    if (!partner) {
+      throw new Error(`Partner not found for company ID: ${companyId}`)
+    }
+
+    return partner.municipalityId || partner.companyId
   }
 }

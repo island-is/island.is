@@ -37,7 +37,7 @@ export class User extends Model {
   @ApiProperty({ type: Date })
   modified!: Date
 
-  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })
   nationalId!: string
 

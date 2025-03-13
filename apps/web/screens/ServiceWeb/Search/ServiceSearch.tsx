@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -16,6 +15,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
   Card,
   CardTagsProps,
@@ -51,7 +51,11 @@ import {
   GET_SUPPORT_SEARCH_RESULTS_QUERY,
 } from '../../queries'
 import ContactBanner from '../ContactBanner/ContactBanner'
-import { getServiceWebSearchTagQuery, getSlugPart } from '../utils'
+import {
+  getServiceWebSearchTagQuery,
+  getSlugPart,
+  shouldShowInstitutionContactBanner,
+} from '../utils'
 
 const PERPAGE = 10
 
@@ -95,9 +99,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
-  const institutionSlugBelongsToTryggingastofnun =
-    institutionSlug.includes('tryggingastofnun') ||
-    institutionSlug.includes('social-insurance-administration')
+  const showContactBanner = shouldShowInstitutionContactBanner(institutionSlug)
 
   const searchResultsItems = (searchResults.items as Array<SupportQna>)
     .filter(
@@ -335,7 +337,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
             </GridRow>
           )}
 
-          {!institutionSlugBelongsToTryggingastofnun && (
+          {showContactBanner && (
             <GridRow>
               <GridColumn
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -458,6 +460,7 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
     searchResults,
     locale: locale as Locale,
     serviceWebPage: getServiceWebPage,
+    customAlertBanner: getServiceWebPage?.alertBanner,
   }
 }
 

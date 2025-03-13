@@ -26,31 +26,20 @@ export enum Roles {
 }
 
 export enum ReasonForApplicationOptions {
-  TRANSFER_OF_LEGAL_DOMICILE = 'transferOfLegalDomicile',
-  STUDY_STAY_FOR_PARENTS = 'studyStayForParents',
-  PARENTS_PARLIAMENTARY_MEMBERSHIP = 'parentsParliamentaryMembership',
-  TEMPORARY_FROSTER = 'temporaryFoster',
-  EXPERT_SERVICE = 'expertService',
-  SICKLY = 'sickly',
-  LIVES_IN_TWO_HOMES = 'livesInTwoHomes',
-  SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL = 'siblingsInTheSamePrimarySchool',
-  MOVING_ABROAD = 'movingAbroad',
-  OTHER_REASONS = 'otherReasons',
-}
-
-export enum SiblingRelationOptions {
-  SIBLING = 'sibling',
-  HALF_SIBLING = 'halfSibling',
-  STEP_SIBLING = 'stepSibling',
+  MOVING_MUNICIPALITY = 'movingMuniciplaity',
+  SIBLINGS_IN_SAME_SCHOOL = 'siblingsInSameSchool',
 }
 
 export enum OptionsType {
   PRONOUN = 'pronoun',
   GENDER = 'gender',
-  INTOLERANCE = 'intolerence',
-  REASON = 'rejectionReason',
+  FOOD_ALLERGY_AND_INTOLERANCE = 'foodAllergyAndIntolerance',
+  REASON = 'registrationReason',
+  REASON_INTERNATIONAL_SCHOOL = 'registrationReasonInternationalSchool',
+  REASON_PRIVATE_SCHOOL = 'registrationReasonPrivateSchool',
   RELATION = 'relation',
   ALLERGY = 'allergy',
+  LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }
 
 export enum MembershipRole {
@@ -67,4 +56,22 @@ export enum MembershipOrganizationType {
   Municipality = 'municipality',
   National = 'national',
   School = 'school',
+}
+
+export enum LanguageEnvironmentOptions {
+  ONLY_ICELANDIC = 'onlyIcelandic',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER_THAN_ICELANDIC = 'onlyOtherThanIcelandic',
+}
+
+export enum ApplicationType {
+  NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
+  ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
+}
+
+export enum SchoolType {
+  PUBLIC_SCHOOL = 'publicSchool',
+  PRIVATE_SCHOOL = 'privateSchool',
+  INTERNATIONAL_SCHOOL = 'internationalSchool',
+  NURSERY_SCHOOL = 'nurserySchool',
 }

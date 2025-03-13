@@ -76,7 +76,7 @@ describe('Limited Access View Case File Guard', () => {
 
               beforeEach(() => {
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role: UserRole.DEFENDER },
+                  user: { currentUser: { role: UserRole.DEFENDER } },
                   case: { type, state },
                   caseFile: { category },
                 }))
@@ -102,7 +102,7 @@ describe('Limited Access View Case File Guard', () => {
 
             beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER },
+                user: { currentUser: { role: UserRole.DEFENDER } },
                 case: { type, state },
                 caseFile: { category },
               }))
@@ -131,7 +131,7 @@ describe('Limited Access View Case File Guard', () => {
 
               beforeEach(() => {
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role: UserRole.DEFENDER },
+                  user: { currentUser: { role: UserRole.DEFENDER } },
                   case: { type, state },
                   caseFile: { category },
                 }))
@@ -156,7 +156,6 @@ describe('Limited Access View Case File Guard', () => {
         const allowedCaseFileCategories = [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
-          CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
@@ -174,7 +173,9 @@ describe('Limited Access View Case File Guard', () => {
               beforeEach(() => {
                 const nationalId = uuid()
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role: UserRole.DEFENDER, nationalId },
+                  user: {
+                    currentUser: { role: UserRole.DEFENDER, nationalId },
+                  },
                   case: {
                     type,
                     state,
@@ -203,7 +204,9 @@ describe('Limited Access View Case File Guard', () => {
               beforeEach(() => {
                 const nationalId = uuid()
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role: UserRole.DEFENDER, nationalId },
+                  user: {
+                    currentUser: { role: UserRole.DEFENDER, nationalId },
+                  },
                   case: {
                     type,
                     state,
@@ -241,7 +244,7 @@ describe('Limited Access View Case File Guard', () => {
             beforeEach(() => {
               const nationalId = uuid()
               mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER, nationalId },
+                user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
                 case: {
                   type,
                   state,
@@ -267,7 +270,7 @@ describe('Limited Access View Case File Guard', () => {
             beforeEach(() => {
               const nationalId = uuid()
               mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER, nationalId },
+                user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
                 case: {
                   type,
                   state,
@@ -311,7 +314,9 @@ describe('Limited Access View Case File Guard', () => {
               beforeEach(() => {
                 const nationalId = uuid()
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role: UserRole.DEFENDER, nationalId },
+                  user: {
+                    currentUser: { role: UserRole.DEFENDER, nationalId },
+                  },
                   case: {
                     type,
                     state,
@@ -333,7 +338,9 @@ describe('Limited Access View Case File Guard', () => {
               beforeEach(() => {
                 const nationalId = uuid()
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role: UserRole.DEFENDER, nationalId },
+                  user: {
+                    currentUser: { role: UserRole.DEFENDER, nationalId },
+                  },
                   case: {
                     type,
                     state,
@@ -369,7 +376,7 @@ describe('Limited Access View Case File Guard', () => {
             beforeEach(() => {
               const nationalId = uuid()
               mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER, nationalId },
+                user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
                 case: {
                   type,
                   state,
@@ -394,7 +401,7 @@ describe('Limited Access View Case File Guard', () => {
             beforeEach(() => {
               const nationalId = uuid()
               mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER, nationalId },
+                user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
                 case: {
                   type,
                   state,
@@ -435,6 +442,8 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.APPEAL_RULING,
           CaseFileCategory.RULING,
           CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+          CaseFileCategory.COURT_RECORD,
+          CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         ]
 
         describe.each(allowedCaseFileCategories)(
@@ -444,7 +453,7 @@ describe('Limited Access View Case File Guard', () => {
 
             beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
-                user: prisonAdminUser,
+                user: { currentUser: prisonAdminUser },
                 case: { type, state },
                 caseFile: { category },
               }))
@@ -468,7 +477,7 @@ describe('Limited Access View Case File Guard', () => {
 
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
-              user: prisonAdminUser,
+              user: { currentUser: prisonAdminUser },
               case: { type, state },
               caseFile: { category },
             }))
@@ -497,7 +506,7 @@ describe('Limited Access View Case File Guard', () => {
 
             beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
-                user: prisonAdminUser,
+                user: { currentUser: prisonAdminUser },
                 case: { type, state },
                 caseFile: { category },
               }))
@@ -530,20 +539,20 @@ describe('Limited Access View Case File Guard', () => {
         describe.each(allowedCaseFileCategories)(
           'prison users can view %s',
           (category) => {
-            let thenPrisonUser: Then
+            let then: Then
 
             beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
-                user: prisonUser,
+                user: { currentUser: prisonUser },
                 case: { type, state },
                 caseFile: { category },
               }))
 
-              thenPrisonUser = givenWhenThen()
+              then = givenWhenThen()
             })
 
             it('should activate', () => {
-              expect(thenPrisonUser.result).toBe(true)
+              expect(then.result).toBe(true)
             })
           },
         )
@@ -554,21 +563,21 @@ describe('Limited Access View Case File Guard', () => {
               !allowedCaseFileCategories.includes(category as CaseFileCategory),
           ),
         )('prison users can not view %s', (category) => {
-          let thenPrison: Then
+          let then: Then
 
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
-              user: prisonUser,
+              user: { currentUser: prisonUser },
               case: { type, state },
               caseFile: { category },
             }))
 
-            thenPrison = givenWhenThen()
+            then = givenWhenThen()
           })
 
           it('should throw ForbiddenException', () => {
-            expect(thenPrison.error).toBeInstanceOf(ForbiddenException)
-            expect(thenPrison.error.message).toBe(
+            expect(then.error).toBeInstanceOf(ForbiddenException)
+            expect(then.error.message).toBe(
               `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
             )
           })
@@ -587,7 +596,7 @@ describe('Limited Access View Case File Guard', () => {
 
             beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
-                user: prisonUser,
+                user: { currentUser: prisonUser },
                 case: { type, state },
                 caseFile: { category },
               }))
@@ -631,7 +640,12 @@ describe('Limited Access View Case File Guard', () => {
 
               beforeEach(() => {
                 mockRequest.mockImplementationOnce(() => ({
-                  user: { role, institution: { type: institutionType } },
+                  user: {
+                    currentUser: {
+                      role,
+                      institution: { type: institutionType },
+                    },
+                  },
                   case: { type, state },
                   caseFile: { category },
                 }))
@@ -670,7 +684,9 @@ describe('Limited Access View Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user }))
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: user },
+      }))
 
       then = givenWhenThen()
     })
@@ -685,7 +701,10 @@ describe('Limited Access View Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ user: {}, case: {} }))
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: {} },
+        case: {},
+      }))
 
       then = givenWhenThen()
     })

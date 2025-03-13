@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -48,7 +48,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
 import * as styles from './Overview.css'
 

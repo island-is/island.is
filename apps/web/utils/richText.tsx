@@ -17,6 +17,7 @@ import {
   defaultRenderMarkObject,
   defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
+import { GridContainer } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   AccordionSlice,
@@ -28,6 +29,7 @@ import {
   ChartNumberBox,
   ChartsCard,
   ChartsCardsProps,
+  DigitalIcelandMailingListThumbnailCard,
   DrivingInstructorList,
   EmailSignup,
   Form,
@@ -66,8 +68,11 @@ import {
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
   GenericList as GenericListSchema,
+  GetTeamMembersInputOrderBy,
+  GrantCardsList as GrantCardsListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
+  OrganizationParentSubpageList,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
   SectionWithImage as SectionWithImageSchema,
@@ -82,16 +87,20 @@ import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/BenefitsOfDigitalProcessesCalculator/BenefitsOfDigitalProcessesCalculator'
-import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
+import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
+import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
+import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
 import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
+import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
+import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
@@ -130,9 +139,6 @@ export const webRenderConnectedComponent = (
       break
     case 'Fiskistofa/SelectedShip':
       connectedComponent = <SelectedShip />
-      break
-    case 'ElectronicRegistrations/MonthlyStatistics':
-      connectedComponent = <MonthlyStatistics slice={slice} />
       break
     case 'Fiskistofa/ShipSearchBoxedInput':
       connectedComponent = <ShipSearchBoxedInput />
@@ -202,6 +208,22 @@ export const webRenderConnectedComponent = (
       break
     case 'WHODAS/Calculator':
       connectedComponent = <WHODASCalculator slice={slice} />
+      break
+    case 'DigitalIcelandMailingListThumbnailCard':
+      connectedComponent = (
+        <GridContainer>
+          <DigitalIcelandMailingListThumbnailCard slice={slice} />
+        </GridContainer>
+      )
+      break
+    case 'Brennuleyfi/BurningPermitList':
+      connectedComponent = <BurningPermitList slice={slice} />
+      break
+    case 'DigitalIcelandStatistics':
+      connectedComponent = <DigitalIcelandStatistics />
+      break
+    case 'Trufelog/Lifsskodunarfelog':
+      connectedComponent = <ReligiousOrganizationList slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
@@ -275,6 +297,8 @@ const defaultRenderComponent = {
       searchInputPlaceholder={slice.searchInputPlaceholder}
       itemType={slice.itemType}
       filterTags={slice.filterTags}
+      defaultOrder={slice.defaultOrder}
+      showSearchInput={slice.showSearchInput ?? true}
     />
   ),
   TeamList: (slice: TeamList) => (
@@ -283,13 +307,21 @@ const defaultRenderComponent = {
       teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
       filterTags={slice.filterTags}
       variant={slice.variant as 'accordion' | 'card'}
+      showSearchInput={slice.showSearchInput ?? true}
+      orderBy={slice.teamMemberOrder ?? GetTeamMembersInputOrderBy.Name}
     />
   ),
   Image: (slice: ImageProps) => {
     const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
-    const url = slice?.url ? slice.url + '?w=800' : ''
+    const url = slice?.url ? slice.url + '?w=1000' : ''
     return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
   },
+  GrantCardsList: (slice: GrantCardsListSchema) => (
+    <GrantCardsList slice={slice} />
+  ),
+  OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
+    <OrganizationParentSubpageListSlice slice={slice} />
+  ),
 }
 
 export const webRichText = (

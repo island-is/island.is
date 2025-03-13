@@ -18,8 +18,9 @@ import {
   PageLayout,
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
+import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
@@ -112,6 +113,9 @@ const ReceptionAndAssignment = () => {
             </Box>
           )}
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <Box component="section" marginBottom={5}>
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
+        </Box>
         <Box component="section" marginBottom={6}>
           <CourtCaseNumber />
         </Box>

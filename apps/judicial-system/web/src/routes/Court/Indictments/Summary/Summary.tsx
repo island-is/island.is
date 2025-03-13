@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -8,6 +8,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
   ConnectedCaseFilesAccordionItem,
+  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -21,10 +22,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Defendants,
-  Prosecutor,
-} from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
+import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import {
   CaseFile,
   CaseFileCategory,
@@ -32,23 +30,49 @@ import {
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  formatDateForServer,
   useCase,
   useFileList,
+  useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Summary.strings'
 
 const Summary: FC = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
-  const { transitionCase, isTransitioningCase } = useCase()
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+  } = useContext(FormContext)
+  const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
+    useCase()
   const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
   const { user } = useContext(UserContext)
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
+
+  const initialize = useCallback(() => {
+    if (!workingCase.courtEndTime) {
+      const now = new Date()
+      setAndSendCaseToServer(
+        [
+          {
+            courtEndTime: formatDateForServer(now),
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [workingCase, setWorkingCase, setAndSendCaseToServer])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = (destination: string) => {
     return router.push(`${destination}/${workingCase.id}`)
@@ -67,6 +91,24 @@ const Summary: FC = () => {
 
     router.push(`${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`)
   }
+
+  const handleCourtEndTimeChange = useCallback(
+    (date: Date | undefined | null, valid = true) => {
+      if (date && valid) {
+        setAndSendCaseToServer(
+          [
+            {
+              courtEndTime: formatDateForServer(date),
+              force: true,
+            },
+          ],
+          workingCase,
+          setWorkingCase,
+        )
+      }
+    },
+    [setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
 
   const [courtRecordFiles, rulingFiles] = (workingCase.caseFiles || []).reduce(
     (acc, cf) => {
@@ -129,8 +171,7 @@ const Summary: FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={2}>
-          <Prosecutor workingCase={workingCase} />
-          <Defendants workingCase={workingCase} />
+          <ProsecutorAndDefendantsEntries workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
@@ -161,6 +202,21 @@ const Summary: FC = () => {
             )}
           </Box>
         )}
+        <Box marginBottom={8} component="section">
+          <SectionHeading
+            title={formatMessage(strings.courtEndTimeTitle)}
+            description={formatMessage(strings.courtEndTimeDescription)}
+          />
+          <DateTime
+            name="courtEndDate"
+            selectedDate={workingCase.courtEndTime}
+            onChange={handleCourtEndTimeChange}
+            blueBox={true}
+            datepickerLabel="Dagsetning lykta"
+            dateOnly
+            required
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

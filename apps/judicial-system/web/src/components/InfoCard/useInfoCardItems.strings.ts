@@ -1,19 +1,18 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  indictmentCreated: {
-    id: 'judicial.system.core:info_card_indictment.indictment_created',
-    defaultMessage: 'Ákæra skráð',
-    description:
-      'Notaður sem titill á "dagsetningu ákæru" hluta af yfirliti ákæru.',
+  indictmentSentToCourt: {
+    id: 'judicial.system.core:info_card_indictment.indictment_sent_to_court',
+    defaultMessage: 'Útgáfudagur',
+    description: 'Notaður sem titill á "Útgáfudagur" hluta af yfirliti ákæru.',
   },
   prosecutor: {
     id: 'judicial.system.core:info_card_indictment.prosecutor',
     defaultMessage: 'Ákærandi',
     description: 'Notaður sem titill á "ákærandi" hluta af yfirliti ákæru.',
   },
-  offence: {
-    id: 'judicial.system.core:info_card_indictment.offence',
+  offense: {
+    id: 'judicial.system.core:info_card_indictment.offense',
     defaultMessage: 'Brot',
     description: 'Notaður sem titill á "brot" hluta af yfirliti ákæru.',
   },
@@ -71,5 +70,11 @@ export const strings = defineMessages({
     id: 'judicial.system.core:info_card.defendant_info.name',
     defaultMessage: 'Nafn',
     description: 'Notaður sem titill fyrir nafn',
+  },
+  externalMergeCase: {
+    id: 'judicial.system.core:info_card_indictment.external_merge_case',
+    defaultMessage: '{mergeCaseNumber} utan Réttarvörslugáttar',
+    description:
+      'Notaður texti fyrir "Sameinað máli" sem er aðeins til utan gáttar',
   },
 })

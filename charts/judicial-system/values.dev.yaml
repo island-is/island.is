@@ -33,7 +33,7 @@ judicial-system-api:
     HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -71,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+            - '/api/defender'
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -106,6 +107,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://judicial-system.dev01.devland.is'
     CONTENTFUL_ENVIRONMENT: 'test'
@@ -117,7 +121,7 @@ judicial-system-backend:
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     S3_BUCKET: 'island-is-dev-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -209,6 +213,7 @@ judicial-system-backend:
     COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
     COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+    COURT_OF_APPEALS_ASSISTANT_EMAILS: '/k8s/judicial-system/COURT_OF_APPEALS_ASSISTANT_EMAILS'
     COURT_ROBOT_CLIENT_ID: '/k8s/judicial-system/COURT_ROBOT_CLIENT_ID'
     COURT_ROBOT_CLIENT_SECRET: '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET'
     COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'
@@ -229,6 +234,7 @@ judicial-system-backend:
     PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
     PRISON_ADMIN_INDICTMENT_EMAILS: '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS'
     PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
+    PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL: '/k8s/judicial-system/PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'
@@ -251,7 +257,7 @@ judicial-system-digital-mailbox-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -324,7 +330,7 @@ judicial-system-message-handler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -389,7 +395,7 @@ judicial-system-scheduler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -452,7 +458,7 @@ judicial-system-web:
     API_URL: 'https://judicial-system.dev01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -518,7 +524,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'

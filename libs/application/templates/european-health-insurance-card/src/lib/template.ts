@@ -31,6 +31,7 @@ import { Features } from '@island.is/feature-flags'
 import { States } from './types'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -45,6 +46,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
   name: e.form.applicationName,
+  codeOwner: CodeOwners.Fuglar,
   institution: e.form.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
   dataSchema,

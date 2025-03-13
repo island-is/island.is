@@ -17,7 +17,12 @@ import { AccessControlModel } from './accessControl.model'
 import { AccessControlService } from './accessControl.service'
 
 @Authorize({
-  roles: [Role.developer, Role.recyclingFund, Role.recyclingCompanyAdmin],
+  roles: [
+    Role.developer,
+    Role.recyclingFund,
+    Role.recyclingCompanyAdmin,
+    Role.municipality,
+  ],
 })
 @Resolver(() => AccessControlModel)
 export class AccessControlResolver {
@@ -60,6 +65,18 @@ export class AccessControlResolver {
     @CurrentUser() user: User,
   ): Promise<AccessControlModel[]> {
     const isDeveloper = user.role === Role.developer
+
+    if (user.role === Role.municipality) {
+      try {
+        return this.accessControlService.findByRecyclingPartner(user.partnerId)
+      } catch (error) {
+        throw new ApolloError(
+          'Failed to fetch municipality access controls',
+          'MUNICIPALITY_ACCESS_ERROR',
+        )
+      }
+    }
+
     return this.accessControlService.findAll(isDeveloper)
   }
 

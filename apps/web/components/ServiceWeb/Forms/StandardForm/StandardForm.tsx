@@ -10,7 +10,6 @@ import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
 import slugify from '@sindresorhus/slugify'
 
-import { Organizations, SupportCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -35,7 +34,9 @@ import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
+  Organizations,
   SearchableContentTypes,
+  SupportCategory,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -105,6 +106,7 @@ const labels: Record<string, string> = {
   nafn_fyrirtaekis: 'Nafn fyrirtækis',
   starfsstod: 'Starfsstöð',
   oska_eftir_vernd_uppljostrara: 'Óska eftir vernd uppljóstrara',
+  kennitala_thess_sem_malid_vardar: 'Kennitala þess sem málið varðar',
 }
 
 // these should be skipped in the message itself
@@ -460,42 +462,49 @@ export const StandardForm = ({
           </>
         )
         break
-      case SjukratryggingarCategories.FERDAKOSTNADUR:
-      case SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK:
-      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
-      case SjukratryggingarCategories.RETTINDI_MILLI_LANDA:
       case SjukratryggingarCategories.SJUKRADAGPENINGAR:
-      case SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING:
-      case SjukratryggingarCategories.SJUKLINGATRYGGING:
-      case SjukratryggingarCategories.SLYSATRYGGING:
-      case SjukratryggingarCategories.TANNLAEKNINGAR:
-      case SjukratryggingarCategories.VEFGATTIR:
-      case SjukratryggingarCategories.THJALFUN:
-      case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
-      case SjukratryggingarCategories.HJUKRUNARHEIMILI:
-      case SjukratryggingarCategories.TULKATHJONUSTA:
-      case SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID:
+      case SjukratryggingarCategories.LYFJAMAL:
+      case SjukratryggingarCategories.SAMNINGAR_INNKAUP:
+      case SjukratryggingarCategories.ALTHJODAMAL:
+      case SjukratryggingarCategories.ONNUR_THJONUSTA:
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
-              name="kennitala"
+              name="kennitala_thess_sem_malid_vardar"
               format="######-####"
-              label={fn('kennitala', 'label', 'Kennitala')}
+              label={fn(
+                'kennitala_thess_sem_malid_vardar',
+                'label',
+                'Kennitala þess sem málið varðar',
+              )}
+              requiredMessage={fn(
+                'kennitala_thess_sem_malid_vardar',
+                'requiredMessage',
+                'Kennitölu vantar',
+              )}
             />
           </GridColumn>
         )
         break
-      case SjukratryggingarCategories.HJALPARTAEKI:
-      case SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING:
-      case SjukratryggingarCategories.NAERING:
-      case SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR:
+      case SjukratryggingarCategories.SLYSAMAL_SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.HJALPARTAEKI_NAERING:
+      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
         fields = (
           <>
             <GridColumn paddingBottom={3}>
               <BasicInput
-                name="kennitala"
+                name="kennitala_thess_sem_malid_vardar"
                 format="######-####"
-                label={fn('kennitala', 'label', 'Kennitala')}
+                label={fn(
+                  'kennitala_thess_sem_malid_vardar',
+                  'label',
+                  'Kennitala þess sem málið varðar',
+                )}
+                requiredMessage={fn(
+                  'kennitala_thess_sem_malid_vardar',
+                  'requiredMessage',
+                  'Kennitölu vantar',
+                )}
               />
             </GridColumn>
             <GridColumn span="12/12" paddingBottom={3}>
@@ -772,7 +781,7 @@ export const StandardForm = ({
     .sort(sortAlpha('label'))
 
   return (
-    <>
+    <FormProvider {...useFormMethods}>
       <GridContainer>
         <GridRow marginTop={6} marginBottom={4}>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
@@ -926,254 +935,246 @@ export const StandardForm = ({
       </GridContainer>
 
       {called && (
-        <FormProvider {...useFormMethods}>
-          <form onSubmit={handleSubmit(submitWithMessage)}>
-            <GridContainer>
-              {institutionSlugBelongsToMannaudstorg && (
-                <GridRow marginTop={8}>
-                  <GridColumn
-                    paddingBottom={3}
-                    span={['12/12', '12/12', '12/12', '8/12']}
-                  >
-                    <Controller
-                      control={control}
-                      name="rikisadili"
-                      defaultValue=""
-                      rules={{
-                        required: {
-                          value: true,
-                          message: fn(
-                            'rikisadili',
-                            'requiredMessage',
-                            'Vinsamlegast veldu stofnun',
-                          ),
-                        },
-                      }}
-                      render={({ field: { onChange } }) => (
-                        <Select
-                          backgroundColor="blue"
-                          icon="chevronDown"
-                          isSearchable
-                          label={fn('rikisadili', 'label', 'Ríkisaðili')}
-                          name="rikisadili"
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          onChange={({ label }: Option) => {
-                            onChange(label)
-                          }}
-                          hasError={errors?.rikisadili !== undefined}
-                          errorMessage={errors?.rikisadili?.message?.toString()}
-                          options={stateEntityOptions}
-                          placeholder={fn(
-                            'rikisadili',
-                            'requiredMessage',
-                            'Leitaðu að þinni stofnun',
-                          )}
-                          size="md"
-                          required
-                        />
-                      )}
-                    />
-                  </GridColumn>
-                </GridRow>
-              )}
-              <GridRow marginTop={institutionSlugBelongsToMannaudstorg ? 5 : 8}>
+        <form onSubmit={handleSubmit(submitWithMessage)}>
+          <GridContainer>
+            {institutionSlugBelongsToMannaudstorg && (
+              <GridRow marginTop={8}>
                 <GridColumn
                   paddingBottom={3}
                   span={['12/12', '12/12', '12/12', '8/12']}
                 >
                   <Controller
                     control={control}
-                    name="nafn"
+                    name="rikisadili"
                     defaultValue=""
                     rules={{
                       required: {
                         value: true,
-                        message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
+                        message: fn(
+                          'rikisadili',
+                          'requiredMessage',
+                          'Vinsamlegast veldu stofnun',
+                        ),
                       },
                     }}
-                    render={({ field: { onChange, onBlur, value, name } }) => (
-                      <Input
+                    render={({ field: { onChange } }) => (
+                      <Select
                         backgroundColor="blue"
-                        name={name}
-                        onBlur={onBlur}
-                        label={fn('nafn', 'label', 'Nafn')}
-                        value={value}
-                        hasError={errors?.nafn !== undefined}
-                        errorMessage={errors?.nafn?.message as string}
-                        onChange={onChange}
+                        icon="chevronDown"
+                        isSearchable
+                        label={fn('rikisadili', 'label', 'Ríkisaðili')}
+                        name="rikisadili"
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        onChange={({ label }: Option) => {
+                          onChange(label)
+                        }}
+                        hasError={errors?.rikisadili !== undefined}
+                        errorMessage={errors?.rikisadili?.message?.toString()}
+                        options={stateEntityOptions}
+                        placeholder={fn(
+                          'rikisadili',
+                          'requiredMessage',
+                          'Leitaðu að þinni stofnun',
+                        )}
+                        size="md"
                         required
                       />
                     )}
                   />
                 </GridColumn>
-                <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
-                  <GridRow>
-                    <GridColumn paddingBottom={3} span="12/12">
-                      <Controller
-                        control={useFormMethods.control}
-                        name="email"
-                        defaultValue=""
-                        rules={{
-                          required: {
-                            value: true,
-                            message: fn(
-                              'email',
-                              'requiredMessage',
-                              'Netfang vantar',
-                            ),
-                          },
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: fn(
-                              'email',
-                              'patternMessage',
-                              'Netfang er mögulega rangt skrifað',
-                            ),
-                          },
-                        }}
-                        render={({
-                          field: { onChange, onBlur, value, name },
-                        }) => (
-                          <Input
-                            backgroundColor="blue"
-                            name={name}
-                            onBlur={onBlur}
-                            label={fn('email', 'label', 'Tölvupóstfang')}
-                            value={value}
-                            hasError={errors?.email !== undefined}
-                            errorMessage={errors?.email?.message as string}
-                            onChange={onChange}
-                            required
-                          />
-                        )}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  {addonFields}
-                  <GridRow>
-                    <GridColumn span="12/12" paddingTop={5}>
-                      <Controller
-                        control={control}
-                        name="erindi"
-                        defaultValue=""
-                        rules={{
-                          required: {
-                            value: true,
-                            message: fn(
-                              'erindi',
-                              'requiredMessage',
-                              'Erindi vantar',
-                            ),
-                          },
-                        }}
-                        render={({
-                          field: { onChange, onBlur, value, name },
-                        }) => (
-                          <Input
-                            backgroundColor="blue"
-                            name={name}
-                            onBlur={onBlur}
-                            label={fn('erindi', 'label', 'Erindi')}
-                            value={value}
-                            hasError={errors?.erindi !== undefined}
-                            errorMessage={errors?.erindi?.message as string}
-                            onChange={onChange}
-                            rows={10}
-                            textarea
-                            required
-                          />
-                        )}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                  <GridRow marginTop={8}>
-                    <GridColumn
-                      span={['12/12', '12/12', '6/12', '6/12']}
-                      paddingBottom={3}
-                    >
-                      {institutionSlug === 'syslumenn' && (
-                        <Controller
-                          control={control}
-                          name="syslumadur"
-                          defaultValue=""
-                          rules={{
-                            required: {
-                              value: true,
-                              message: fn(
-                                'syslumadur',
-                                'requiredMessage',
-                                'Vinsamlegast veldu sýslumannsembætti',
-                              ),
-                            },
-                          }}
-                          render={({ field: { onChange } }) => (
-                            <Select
-                              backgroundColor="blue"
-                              icon="chevronDown"
-                              isSearchable
-                              label={fn(
-                                'syslumadur',
-                                'label',
-                                'Þinn sýslumaður',
-                              )}
-                              name="syslumadur"
-                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore make web strict
-                              onChange={({ label, value }: Option) => {
-                                onChange(label)
-                                setSyslumadurId(value)
-                              }}
-                              hasError={errors?.syslumadur !== undefined}
-                              errorMessage={
-                                errors?.syslumadur?.message as string
-                              }
-                              options={(syslumenn ?? []).map((x) => ({
-                                label: x.title,
-                                value: x.id,
-                              }))}
-                              placeholder={fn(
-                                'syslumadur',
-                                'placeholder',
-                                'Veldu sýslumannsembætti',
-                              )}
-                              size="sm"
-                              required
-                            />
-                          )}
+              </GridRow>
+            )}
+            <GridRow marginTop={institutionSlugBelongsToMannaudstorg ? 5 : 8}>
+              <GridColumn
+                paddingBottom={3}
+                span={['12/12', '12/12', '12/12', '8/12']}
+              >
+                <Controller
+                  control={control}
+                  name="nafn"
+                  defaultValue=""
+                  rules={{
+                    required: {
+                      value: true,
+                      message: fn('nafn', 'requiredMessage', 'Nafn vantar'),
+                    },
+                  }}
+                  render={({ field: { onChange, onBlur, value, name } }) => (
+                    <Input
+                      backgroundColor="blue"
+                      name={name}
+                      onBlur={onBlur}
+                      label={fn('nafn', 'label', 'Nafn')}
+                      value={value}
+                      hasError={errors?.nafn !== undefined}
+                      errorMessage={errors?.nafn?.message as string}
+                      onChange={onChange}
+                      required
+                    />
+                  )}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+                <GridRow>
+                  <GridColumn paddingBottom={3} span="12/12">
+                    <Controller
+                      control={useFormMethods.control}
+                      name="email"
+                      defaultValue=""
+                      rules={{
+                        required: {
+                          value: true,
+                          message: fn(
+                            'email',
+                            'requiredMessage',
+                            'Netfang vantar',
+                          ),
+                        },
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: fn(
+                            'email',
+                            'patternMessage',
+                            'Netfang er mögulega rangt skrifað',
+                          ),
+                        },
+                      }}
+                      render={({
+                        field: { onChange, onBlur, value, name },
+                      }) => (
+                        <Input
+                          backgroundColor="blue"
+                          name={name}
+                          onBlur={onBlur}
+                          label={fn('email', 'label', 'Tölvupóstfang')}
+                          value={value}
+                          hasError={errors?.email !== undefined}
+                          errorMessage={errors?.email?.message as string}
+                          onChange={onChange}
+                          required
                         />
                       )}
-                    </GridColumn>
-                    <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="flexEnd"
-                        alignItems="flexEnd"
+                    />
+                  </GridColumn>
+                </GridRow>
+                {addonFields}
+                <GridRow>
+                  <GridColumn span="12/12" paddingTop={5}>
+                    <Controller
+                      control={control}
+                      name="erindi"
+                      defaultValue=""
+                      rules={{
+                        required: {
+                          value: true,
+                          message: fn(
+                            'erindi',
+                            'requiredMessage',
+                            'Erindi vantar',
+                          ),
+                        },
+                      }}
+                      render={({
+                        field: { onChange, onBlur, value, name },
+                      }) => (
+                        <Input
+                          backgroundColor="blue"
+                          name={name}
+                          onBlur={onBlur}
+                          label={fn('erindi', 'label', 'Erindi')}
+                          value={value}
+                          hasError={errors?.erindi !== undefined}
+                          errorMessage={errors?.erindi?.message as string}
+                          onChange={onChange}
+                          rows={10}
+                          textarea
+                          required
+                        />
+                      )}
+                    />
+                  </GridColumn>
+                </GridRow>
+                <GridRow marginTop={8}>
+                  <GridColumn
+                    span={['12/12', '12/12', '6/12', '6/12']}
+                    paddingBottom={3}
+                  >
+                    {institutionSlug === 'syslumenn' && (
+                      <Controller
+                        control={control}
+                        name="syslumadur"
+                        defaultValue=""
+                        rules={{
+                          required: {
+                            value: true,
+                            message: fn(
+                              'syslumadur',
+                              'requiredMessage',
+                              'Vinsamlegast veldu sýslumannsembætti',
+                            ),
+                          },
+                        }}
+                        render={({ field: { onChange } }) => (
+                          <Select
+                            backgroundColor="blue"
+                            icon="chevronDown"
+                            isSearchable
+                            label={fn('syslumadur', 'label', 'Þinn sýslumaður')}
+                            name="syslumadur"
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
+                            onChange={({ label, value }: Option) => {
+                              onChange(label)
+                              setSyslumadurId(value)
+                            }}
+                            hasError={errors?.syslumadur !== undefined}
+                            errorMessage={errors?.syslumadur?.message as string}
+                            options={(syslumenn ?? []).map((x) => ({
+                              label: x.title,
+                              value: x.id,
+                            }))}
+                            placeholder={fn(
+                              'syslumadur',
+                              'placeholder',
+                              'Veldu sýslumannsembætti',
+                            )}
+                            size="sm"
+                            required
+                          />
+                        )}
+                      />
+                    )}
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="flexEnd"
+                      alignItems="flexEnd"
+                    >
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        icon="arrowForward"
+                        loading={loading}
+                        disabled={!canSubmit}
                       >
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          icon="arrowForward"
-                          loading={loading}
-                          disabled={!canSubmit}
-                        >
-                          {n(
-                            'submitServiceWebForm',
-                            activeLocale === 'is'
-                              ? 'Senda fyrirspurn'
-                              : 'Submit inquiry',
-                          )}
-                        </Button>
-                      </Box>
-                    </GridColumn>
-                  </GridRow>
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </form>
-        </FormProvider>
+                        {n(
+                          'submitServiceWebForm',
+                          activeLocale === 'is'
+                            ? 'Senda fyrirspurn'
+                            : 'Submit inquiry',
+                        )}
+                      </Button>
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </form>
       )}
-    </>
+    </FormProvider>
   )
 }

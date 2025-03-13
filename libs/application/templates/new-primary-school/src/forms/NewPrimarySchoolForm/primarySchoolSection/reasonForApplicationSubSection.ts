@@ -1,22 +1,32 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildMultiField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
+  NO,
 } from '@island.is/application/core'
-import { getAllCountryCodes } from '@island.is/shared/utils'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  getApplicationAnswers,
-  getReasonForApplicationOptions,
-} from '../../../lib/newPrimarySchoolUtils'
+  ApplicationType,
+  OptionsType,
+  ReasonForApplicationOptions,
+} from '../../../lib/constants'
+import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
 export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
   title:
     newPrimarySchoolMessages.primarySchool.reasonForApplicationSubSectionTitle,
+  condition: (answers) => {
+    const { applyForNeighbourhoodSchool, applicationType } =
+      getApplicationAnswers(answers)
+    return (
+      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+        applyForNeighbourhoodSchool === NO)
+    )
+  },
   children: [
     buildMultiField({
       id: 'reasonForApplication',
@@ -26,40 +36,21 @@ export const reasonForApplicationSubSection = buildSubSection({
       description:
         newPrimarySchoolMessages.primarySchool.reasonForApplicationDescription,
       children: [
-        buildSelectField({
-          id: 'reasonForApplication.reason',
-          dataTestId: 'reason-for-application',
-          title:
-            newPrimarySchoolMessages.primarySchool
-              .reasonForApplicationSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool
-              .reasonForApplicationPlaceholder,
-          options: getReasonForApplicationOptions(),
-        }),
-        buildSelectField({
-          id: 'reasonForApplication.movingAbroad.country',
-          dataTestId: 'reason-for-application-country',
-          title: newPrimarySchoolMessages.primarySchool.country,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool.countryPlaceholder,
-          options: () => {
-            const countries = getAllCountryCodes()
-            return countries.map((country) => {
-              return {
-                label: country.name_is || country.name,
-                value: country.code,
-              }
-            })
+        buildCustomField(
+          {
+            id: 'reasonForApplication.reason',
+            title:
+              newPrimarySchoolMessages.primarySchool
+                .reasonForApplicationSubSectionTitle,
+            component: 'FriggOptionsAsyncSelectField',
           },
-          condition: (answers) => {
-            const { reasonForApplication } = getApplicationAnswers(answers)
-
-            return (
-              reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
-            )
+          {
+            optionsType: OptionsType.REASON,
+            placeholder:
+              newPrimarySchoolMessages.primarySchool
+                .reasonForApplicationPlaceholder,
           },
-        }),
+        ),
         buildTextField({
           id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
           title: newPrimarySchoolMessages.shared.address,
@@ -70,7 +61,7 @@ export const reasonForApplicationSubSection = buildSubSection({
 
             return (
               reasonForApplication ===
-              ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+              ReasonForApplicationOptions.MOVING_MUNICIPALITY
             )
           },
         }),
@@ -85,7 +76,7 @@ export const reasonForApplicationSubSection = buildSubSection({
 
             return (
               reasonForApplication ===
-              ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+              ReasonForApplicationOptions.MOVING_MUNICIPALITY
             )
           },
         }),
@@ -98,15 +89,11 @@ export const reasonForApplicationSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           condition: (answers) => {
-            const { reasonForApplication, reasonForApplicationCountry } =
-              getApplicationAnswers(answers)
+            const { reasonForApplication } = getApplicationAnswers(answers)
 
             return (
               reasonForApplication ===
-                ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE ||
-              (reasonForApplication ===
-                ReasonForApplicationOptions.MOVING_ABROAD &&
-                reasonForApplicationCountry !== undefined)
+              ReasonForApplicationOptions.MOVING_MUNICIPALITY
             )
           },
         }),

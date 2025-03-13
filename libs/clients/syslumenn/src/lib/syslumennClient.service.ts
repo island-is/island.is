@@ -51,6 +51,7 @@ import {
   mapAlcoholLicence,
   mapAssetName,
   mapBroker,
+  mapBurningPermits,
   mapCertificateInfo,
   mapDataUploadResponse,
   mapDepartedToRegistryPerson,
@@ -69,6 +70,7 @@ import {
   mapPropertyCertificate,
   mapRealEstateAgent,
   mapRealEstateResponse,
+  mapReligiousOrganization,
   mapShipResponse,
   mapSyslumennAuction,
   mapTemporaryEventLicence,
@@ -690,5 +692,46 @@ export class SyslumennService {
         (!delegation.gildirTil ||
           delegation.gildirTil > startOfDay(new Date())),
     )
+  }
+
+  async hasElectronicID(
+    nationalId: string,
+    phoneNumber: string,
+  ): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const res = await api.kannaRafraenSkilrikiGet({
+      audkenni: id,
+      kennitala: nationalId,
+      simi: phoneNumber,
+    })
+
+    return res?.stada === 'ok'
+  }
+
+  async checkIfBirthCertificateExists(nationalId: string): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const res = await api.kannaKonnunarvottordGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
+
+    return res.stada ?? false
+  }
+
+  async getBurningPermits() {
+    const { id, api } = await this.createApi()
+    const res = await api.brennuleyfiGet({
+      audkenni: id,
+    })
+    return res.map(mapBurningPermits)
+  }
+
+  async getReligiousOrganizations() {
+    const { id, api } = await this.createApi()
+    const res = await api.trufelogOgLifsskodunarfelogGet({
+      audkenni: id,
+    })
+    const items = res.map(mapReligiousOrganization)
+    return items.filter((item) => Boolean(item?.name))
   }
 }

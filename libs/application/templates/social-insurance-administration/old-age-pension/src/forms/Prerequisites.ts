@@ -9,6 +9,7 @@ import {
   buildSection,
   buildSubmitField,
   buildSubSection,
+  NO,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -16,7 +17,6 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
-  NO,
   UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
@@ -99,9 +99,7 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'approveExternalData',
               title:
                 socialInsuranceAdministrationMessage.pre.externalDataSection,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .externalDataDescription,
+              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
               checkboxLabel:
                 socialInsuranceAdministrationMessage.pre.checkboxProvider,
               dataProviders: [
@@ -189,7 +187,6 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
-                  title: '',
                   options: getYesNoOptions(),
                   width: 'half',
                 }),
@@ -241,13 +238,11 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible',
-              title: '',
               description: getEligibleDesc,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

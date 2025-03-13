@@ -1,16 +1,18 @@
+import { assign, createMachine } from 'xstate'
 import { ApolloClient } from '@apollo/client'
-import {
-  FiskistofaCatchQuotaCategory as CatchQuotaCategory,
-  QueryFiskistofaUpdateShipStatusForCalendarYearArgs as QueryUpdateShipStatusForCalendarYearArgs,
-  QueryFiskistofaGetShipStatusForCalendarYearArgs as QueryGetShipStatusForCalendarYearArgs,
-  FiskistofaQuotaType as QuotaType,
-  FiskistofaShip as Ship,
-  FiskistofaShipStatusInformationResponse,
-  FiskistofaQuotaTypeResponse,
-} from '@island.is/api/schema'
+
 import { sortAlpha } from '@island.is/shared/utils'
 import initApollo from '@island.is/web/graphql/client'
-import { createMachine, assign } from 'xstate'
+import {
+  FiskistofaCatchQuotaCategory as CatchQuotaCategory,
+  FiskistofaQuotaType as QuotaType,
+  FiskistofaQuotaTypeResponse,
+  FiskistofaShip as Ship,
+  FiskistofaShipStatusInformationResponse,
+  QueryFiskistofaGetShipStatusForCalendarYearArgs as QueryGetShipStatusForCalendarYearArgs,
+  QueryFiskistofaUpdateShipStatusForCalendarYearArgs as QueryUpdateShipStatusForCalendarYearArgs,
+} from '@island.is/web/graphql/schema'
+
 import {
   GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
   GET_SHIP_STATUS_FOR_CALENDAR_YEAR,

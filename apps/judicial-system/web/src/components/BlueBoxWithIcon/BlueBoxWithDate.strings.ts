@@ -18,6 +18,12 @@ export const strings = defineMessages({
     description:
       'Notaður sem placeholder texti í dagsetningarinnsláttarsvæði fyrir það hvenær dómur var birtur dómfellda.',
   },
+  defendantViewedVerdictInCourt: {
+    id: 'judicial.system.core:blue_box_with_date.defendant_viewed_verdict_in_court',
+    defaultMessage: 'Dómfelldi var viðstaddur dómsuppkvaðningu',
+    description:
+      'Notaður sem texti um að dómfelldi var viðstaddur dómsuppkvaðningu.',
+  },
   defendantVerdictViewedDate: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_viewed_date',
     defaultMessage: 'Dómur birtur {date}',
@@ -98,5 +104,10 @@ export const strings = defineMessages({
     id: 'judicial.system.core:blue_box_with_date.revoke',
     defaultMessage: 'Afturkalla',
     description: 'Notaður sem texti fyrir aðgerðina að afturkalla mál',
+  },
+  revokeAppeal: {
+    id: 'judicial.system.core:blue_box_with_date.revoke_appeal',
+    defaultMessage: 'Afturkalla áfrýjun',
+    description: 'Notaður sem texti fyrir aðgerðina að afturkalla áfrýjun',
   },
 })

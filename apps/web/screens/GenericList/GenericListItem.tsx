@@ -1,6 +1,21 @@
-import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
+import cn from 'classnames'
+
+import { FaqList, FaqListProps, Image } from '@island.is/island-ui/contentful'
+import {
+  Box,
+  GridContainer,
+  Inline,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  AccordionSlice,
+  HeadWithSocialSharing,
+  Webreader,
+} from '@island.is/web/components'
 import type {
+  AccordionSlice as AccordionSliceSchema,
   GenericListItem,
   Query,
   QueryGetGenericListItemBySlugArgs,
@@ -11,6 +26,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 
 import type { Screen } from '../../types'
 import { GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY } from '../queries/GenericList'
+import * as styles from './GenericListItem.css'
 
 export interface GenericListItemPageProps {
   item: GenericListItem
@@ -24,6 +40,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
   ogTitle,
 }) => {
   const { format } = useDateUtils()
+  const filterTags = item.filterTags ?? []
 
   return (
     <GridContainer className="rs_read">
@@ -32,16 +49,65 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
         <Stack space={1}>
           {item.date && (
             <Text variant="eyebrow">
-              {format(new Date(item.date), 'dd.MM.yyyy')}
+              {format(new Date(item.date), 'do MMMM yyyy')}
             </Text>
           )}
-          <Stack space={1}>
+          <Stack space={2}>
             <Text variant="h1" as="h1">
               {item.title}
             </Text>
+            {filterTags.length > 0 && (
+              <Inline space={1}>
+                {filterTags.map((tag) => (
+                  <Tag
+                    disabled={true}
+                    variant="purple"
+                    outlined={true}
+                    key={tag.id}
+                  >
+                    {tag.title}
+                  </Tag>
+                ))}
+              </Inline>
+            )}
             {showReadspeaker && <Webreader readClass="rs_read" marginTop={0} />}
           </Stack>
-          <Text as="div">{webRichText(item.content ?? [])}</Text>
+          {item.image && (
+            <Box
+              paddingY={2}
+              className={cn({
+                [styles.floatedImage]: item.fullWidthImageInContent !== false,
+              })}
+            >
+              <Image
+                {...item?.image}
+                url={
+                  item?.image?.url
+                    ? item.image.url + '?w=1000&fm=webp&q=80'
+                    : ''
+                }
+                thumbnail={
+                  item?.image?.url ? item.image.url + '?w=50&fm=webp&q=80' : ''
+                }
+              />
+            </Box>
+          )}
+          <Text as="div">
+            {webRichText(item.content ?? [], {
+              renderComponent: {
+                FaqList: (slice: FaqListProps) => (
+                  <Box className={styles.clearBoth}>
+                    <FaqList {...slice} />
+                  </Box>
+                ),
+                AccordionSlice: (slice: AccordionSliceSchema) => (
+                  <Box className={styles.clearBoth}>
+                    <AccordionSlice slice={slice} />
+                  </Box>
+                ),
+              },
+            })}
+          </Text>
         </Stack>
       </Box>
     </GridContainer>
@@ -49,8 +115,9 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
 }
 
 GenericListItemPage.getProps = async ({ apolloClient, query, locale }) => {
+  const querySlugs = (query.slugs ?? []) as string[]
   const slug =
-    (query.slugs as string[])?.[2] ?? (query.genericListItemSlug as string)
+    querySlugs[querySlugs.length - 1] ?? (query.genericListItemSlug as string)
 
   if (!slug) {
     throw new CustomNextError(

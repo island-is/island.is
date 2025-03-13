@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react'
-import cn from 'classnames'
-import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
-import { BackgroundImage } from '@island.is/web/components'
 import { useMeasure } from 'react-use'
+import cn from 'classnames'
+
+import { Box, Hyphen, Stack, Text } from '@island.is/island-ui/core'
+import { BackgroundImage } from '@island.is/web/components'
 
 import * as styles from './StatisticsCard.css'
 

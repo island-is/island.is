@@ -1,7 +1,7 @@
 import { DAY } from './constants'
-import addYears from 'date-fns/addYears'
 import compareDesc from 'date-fns/compareDesc'
 import { Residence } from './types'
+import addDays from 'date-fns/addDays'
 
 /**
  * Compute a summary of how many days you've spent as a resident of each country in
@@ -19,7 +19,10 @@ export const computeCountryResidence = (history: Residence[]) => {
     compareDesc(new Date(a), new Date(b)),
   )
 
-  const yearAgo = addYears(new Date(), -1).getTime()
+  // There is the function addYears available but it's not being used
+  // to avoid the edge case of leap years, but rather to keep the
+  // check constant/static over an interval of time
+  const yearAgo = addDays(new Date(), -365).getTime()
 
   let lastTime = Date.now()
 

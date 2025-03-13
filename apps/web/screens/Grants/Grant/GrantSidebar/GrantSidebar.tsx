@@ -55,19 +55,18 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
   return (
     <>
       {goBackToDashboard()}
-      <Stack space={3}>
-        <DetailPanel grant={grant} locale={locale} />
-        <ExtraPanel grant={grant} />
-        <InstitutionPanel
-          institutionTitle={formatMessage(m.single.provider)}
-          institution={
-            grant.fund?.parentOrganization.title ??
-            formatMessage(m.single.unknownInstitution)
-          }
-          img={grant.fund?.parentOrganization.logo?.url}
-          locale={locale}
-        />
-      </Stack>
+
+      <DetailPanel grant={grant} locale={locale} />
+      <ExtraPanel grant={grant} />
+      <InstitutionPanel
+        institutionTitle={formatMessage(m.single.provider)}
+        institution={
+          grant.fund?.parentOrganization.title ??
+          formatMessage(m.single.unknownInstitution)
+        }
+        img={grant.fund?.parentOrganization.logo?.url}
+        locale={locale}
+      />
     </>
   )
 }

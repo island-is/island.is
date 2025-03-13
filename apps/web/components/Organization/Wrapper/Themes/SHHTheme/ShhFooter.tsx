@@ -1,21 +1,23 @@
+import { ReactNode } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
-  Text,
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
-  Box,
   Hidden,
   Inline,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { webRichText } from '@island.is/web/utils/richText'
+
 import * as styles from './ShhFooter.css'
-import { ReactNode } from 'react'
 
 const defaultBottomIcons = [
   {

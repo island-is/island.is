@@ -1,14 +1,24 @@
-import { YES } from '@island.is/application/types'
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   DataValue,
   RadioValue,
   ReviewGroup,
 } from '@island.is/application/ui-components'
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getLanguageByCode } from '@island.is/shared/utils'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  getSelectedOptionLabel,
+} from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Languages = ({
@@ -18,75 +28,107 @@ export const Languages = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const {
-    nativeLanguage,
-    otherLanguagesSpokenDaily,
-    otherLanguages,
-    icelandicNotSpokenAroundChild,
+    guardianRequiresInterpreter,
+    languageEnvironment,
+    selectedLanguages,
+    preferredLanguage,
+    signLanguage,
   } = getApplicationAnswers(application.answers)
 
-  const icelandicSelected =
-    nativeLanguage === 'is' || otherLanguages?.includes('is')
+  const {
+    options: languageEnvironmentOptions,
+    loading,
+    error,
+  } = useFriggOptions(OptionsType.LANGUAGE_ENVIRONMENT)
 
   return (
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('languages')}
     >
-      <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <DataValue
-              label={formatMessage(
-                newPrimarySchoolMessages.overview.nativeLanguage,
-              )}
-              value={getLanguageByCode(nativeLanguage)?.name}
-            />
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <RadioValue
-              label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds
-                  .otherLanguagesSpokenDaily,
-              )}
-              value={otherLanguagesSpokenDaily}
-            />
-          </GridColumn>
-        </GridRow>
-        {otherLanguagesSpokenDaily === YES && (
-          <>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds.languageTitle,
-                  )}
-                  value={otherLanguages
-                    .map((language) => {
-                      return getLanguageByCode(language)?.name
-                    })
-                    .join(', ')}
-                />
-              </GridColumn>
-            </GridRow>
-            {!icelandicSelected &&
-              icelandicNotSpokenAroundChild?.includes(YES) && (
-                <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+      {loading ? (
+        <SkeletonLoader height={40} width="80%" borderRadius="large" />
+      ) : (
+        <Stack space={2}>
+          <GridRow>
+            <GridColumn span="12/12">
+              <DataValue
+                label={formatMessage(
+                  newPrimarySchoolMessages.overview.languageEnvironment,
+                )}
+                value={
+                  getSelectedOptionLabel(
+                    languageEnvironmentOptions,
+                    languageEnvironment,
+                  ) || ''
+                }
+                error={
+                  error
+                    ? formatMessage(coreErrorMessages.failedDataProvider)
+                    : undefined
+                }
+              />
+            </GridColumn>
+          </GridRow>
+          {languageEnvironment !==
+            LanguageEnvironmentOptions.ONLY_ICELANDIC && (
+            <>
+              <GridRow rowGap={2}>
+                {selectedLanguages?.map(({ code }, index) => (
+                  <GridColumn
+                    key={`${code}-${index}`}
+                    span={['12/12', '5/12', '5/12', '5/12']}
+                  >
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.overview
-                          .icelandicSpokenAroundChild,
+                        newPrimarySchoolMessages.differentNeeds
+                          .languageSelectionTitle,
+                        { index: `${index + 1}` },
                       )}
-                      value={formatMessage(newPrimarySchoolMessages.shared.no)}
+                      value={getLanguageByCode(code)?.name}
+                    />
+                  </GridColumn>
+                ))}
+              </GridRow>
+              {preferredLanguage && (
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.overview.preferredLanguage,
+                      )}
+                      value={getLanguageByCode(preferredLanguage)?.name}
                     />
                   </GridColumn>
                 </GridRow>
               )}
-          </>
-        )}
-      </Stack>
+            </>
+          )}
+
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  newPrimarySchoolMessages.differentNeeds.signLanguage,
+                )}
+                value={signLanguage}
+              />
+            </GridColumn>
+
+            {languageEnvironment !==
+              LanguageEnvironmentOptions.ONLY_ICELANDIC && (
+              <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+                <RadioValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.differentNeeds.interpreter,
+                  )}
+                  value={guardianRequiresInterpreter}
+                />
+              </GridColumn>
+            )}
+          </GridRow>
+        </Stack>
+      )}
     </ReviewGroup>
   )
 }

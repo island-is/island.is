@@ -37,7 +37,6 @@ export const draft: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: PaymentCatalogApi,
-              title: '',
             }),
             buildDataProviderItem({
               provider: MockPaymentCatalogWithTwoItems,

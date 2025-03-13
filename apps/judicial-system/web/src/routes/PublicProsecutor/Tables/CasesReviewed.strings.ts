@@ -60,4 +60,10 @@ export const strings = defineMessages({
     description:
       'Notað sem texti á taggi fyrir "Til fullnustu" í yfirlesin mál málalista',
   },
+  tagDefendantAppealedVerdict: {
+    id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.tag_defendant_appealed_verdict',
+    defaultMessage: 'Ákærði áfrýjar',
+    description:
+      'Notað sem texti á taggi fyrir "Ákærði áfrýjar" í yfirlesin mál málalista',
+  },
 })

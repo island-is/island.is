@@ -162,6 +162,8 @@ const caseTypes: CaseTypes = {
   RESTRAINING_ORDER: 'nálgunarbann',
   RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME:
     'nálgunarbann og brottvísun af heimili',
+  STATEMENT_FROM_MINOR: 'Skýrslutaka brotaþola yngri en 18 ára',
+  STATEMENT_IN_COURT: 'Skýrslutaka fyrir dómi',
   EXPULSION_FROM_HOME: 'brottvísun af heimili',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
@@ -463,4 +465,13 @@ export const getWordByGender = (word: Word, gender?: Gender): string | null => {
     default:
       return null
   }
+}
+
+// þgf to dómur
+export const applyDativeCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName?.replace(target, 'dómi')
+  }
+  return courtName
 }

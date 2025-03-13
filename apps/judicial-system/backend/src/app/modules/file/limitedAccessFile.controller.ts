@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -37,11 +37,7 @@ import {
   LimitedAccessCaseExistsGuard,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import {
-  CivilClaimant,
-  CivilClaimantExistsGuard,
-  CurrentCivilClaimant,
-} from '../defendant'
+import { CivilClaimantExistsGuard } from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -57,7 +53,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
-@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,

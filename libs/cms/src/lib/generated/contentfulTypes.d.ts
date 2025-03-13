@@ -771,6 +771,8 @@ export interface ICustomPageFields {
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
     | 'Grants'
+    | 'DirectorateOfLabourMyPages'
+    | 'Verdicts'
     | undefined
 
   /** Alert Banner */
@@ -1254,6 +1256,34 @@ export interface IFeaturedEvents extends Entry<IFeaturedEventsFields> {
   }
 }
 
+export interface IFeaturedLinksFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Links */
+  links?: IFeatured[] | undefined
+}
+
+export interface IFeaturedLinks extends Entry<IFeaturedLinksFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'featuredLinks'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFeaturedSupportQnAsFields {
   /** Title */
   title?: string | undefined
@@ -1598,6 +1628,12 @@ export interface IGenericListFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Order By */
+  orderBy?: 'Date' | 'Title' | 'Publish Date' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1649,6 +1685,12 @@ export interface IGenericListItemFields {
 
   /** External Link */
   externalLink?: ILinkUrl | undefined
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1832,13 +1874,16 @@ export interface IGrantFields {
   /** Application hints */
   grantApplicationHints?: Document | undefined
 
+  /** Answering questions */
+  grantAnsweringQuestions?: Document | undefined
+
   /** Application url */
   granApplicationUrl?: ILinkUrl | undefined
 
   /** Application button label */
   grantButtonLabel?: string | undefined
 
-  /** Date from */
+  /** Open from */
   grantDateFrom?: string | undefined
 
   /** Open from hour */
@@ -1888,6 +1933,43 @@ export interface IGrant extends Entry<IGrantFields> {
     contentType: {
       sys: {
         id: 'grant'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantCardsListFields {
+  /** Title */
+  grantCardListTitle: string
+
+  /** Display title? */
+  grantCardsListDisplayTitle?: boolean | undefined
+
+  /** Funds */
+  grantCardListFunds?: IFund[] | undefined
+
+  /** Max number of cards */
+  grantCardsListMaxNumberOfCards?: number | undefined
+
+  /** Sorting */
+  grantCardsListSorting?:
+    | 'Alphabetical'
+    | 'Most recently updated first'
+    | undefined
+}
+
+export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grantCardsList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2074,8 +2156,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IAnchorPage
     | undefined
 
@@ -3095,8 +3175,8 @@ export interface IOrganizationFields {
   /** Kennitala */
   kennitala?: string | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
+  /** News Bottom Slices */
+  newsBottomSlices?: IEmailSignup[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3252,6 +3332,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Show past events option */
+  showPastEventsOption?: boolean | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -3292,6 +3375,12 @@ export interface IOrganizationParentSubpageFields {
 
   /** Image */
   image?: Asset | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage?: Asset | undefined
+
+  /** Tiny Thumbnail Image */
+  tinyThumbnailImage?: Asset | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */
@@ -3307,6 +3396,43 @@ export interface IOrganizationParentSubpage
     contentType: {
       sys: {
         id: 'organizationParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageListFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Variant */
+  variant?: 'Service Card' | 'Profile Card - Title Above' | undefined
+
+  /** Page List */
+  pageList?: IOrganizationParentSubpage[] | undefined
+
+  /** See More Link */
+  seeMoreLink?: ILink | undefined
+}
+
+/** List of organization parent subpages */
+
+export interface IOrganizationParentSubpageList
+  extends Entry<IOrganizationParentSubpageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpageList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3378,6 +3504,9 @@ export interface IOrganizationSubpageFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
 }
 
 export interface IOrganizationSubpage
@@ -3421,8 +3550,11 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
 
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
@@ -3432,6 +3564,9 @@ export interface IOverviewLinksFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Link Data */
+  linkData?: Record<string, any> | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {
@@ -3936,6 +4071,9 @@ export interface IServiceWebPageFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -4033,7 +4171,6 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
-    | 'ElectronicRegistrations/MonthlyStatistics'
     | 'LatestNewsCard'
     | 'Fiskistofa/ShipSearch'
     | 'Fiskistofa/ShipSearchSidebarInput'
@@ -4647,6 +4784,12 @@ export interface ITeamListFields {
 
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
+
+  /** Show Search Input */
+  showSearchInput?: boolean | undefined
+
+  /** Order By */
+  orderBy?: 'A - Z' | 'Manual' | undefined
 }
 
 /** list of team members */
@@ -4988,8 +5131,6 @@ export interface IUrlFields {
     | ILifeEventPage
     | INews
     | IProjectPage
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IOrganizationPage
     | undefined
 
@@ -5100,188 +5241,6 @@ export interface IVacancy extends Entry<IVacancyFields> {
   }
 }
 
-export interface IVidspyrnaFrontpageFields {
-  /** Title */
-  title: string
-
-  /** description */
-  description?: string | undefined
-
-  /** Slug */
-  slug: string
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Group */
-  group?: IArticleGroup | undefined
-
-  /** Category */
-  category?: IArticleCategory | undefined
-
-  /** Organization */
-  organization?: IOrganization[] | undefined
-
-  /** Slices */
-  slices: (IVidspyrnaFeaturedNews | IVidspyrnaFlokkur)[]
-
-  /** Featured image */
-  featuredImage?: Asset | undefined
-}
-
-/** Frontpage of /covid-adgerdir */
-
-export interface IVidspyrnaFrontpage extends Entry<IVidspyrnaFrontpageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrna-frontpage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaFeaturedNewsFields {
-  /** Title */
-  title?: string | undefined
-
-  /** featured */
-  featured: INews[]
-}
-
-export interface IVidspyrnaFeaturedNews
-  extends Entry<IVidspyrnaFeaturedNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaFeaturedNews'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaFlokkurFields {
-  /** Subtitle */
-  subtitle: string
-
-  /** Title */
-  title: string
-
-  /** Description */
-  description: string
-
-  /** Image */
-  image?: Asset | undefined
-
-  /** Pages */
-  pages: IVidspyrnaPage[]
-}
-
-/** A group of "covid" articles shown in a slider. */
-
-export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaFlokkur'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaPageFields {
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Short description */
-  description: string
-
-  /** Long description */
-  longDescription?: string | undefined
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Link */
-  link?: string | undefined
-
-  /** Link button text */
-  linkButtonText?: string | undefined
-
-  /** Tags */
-  tags: IVidspyrnaTag[]
-
-  /** Process Entry */
-  processEntry?: IProcessEntry | undefined
-}
-
-/** A "covid" article, seen on /covid-adgerdir */
-
-export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaTagFields {
-  /** Title */
-  title: string
-}
-
-/** A tag used to tag "covid" articles */
-
-export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaTag'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
@@ -5327,6 +5286,7 @@ export type CONTENT_TYPE =
   | 'genericTag'
   | 'genericTagGroup'
   | 'grant'
+  | 'grantCardsList'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'
@@ -5360,6 +5320,7 @@ export type CONTENT_TYPE =
   | 'organization'
   | 'organizationPage'
   | 'organizationParentSubpage'
+  | 'organizationParentSubpageList'
   | 'organizationSubpage'
   | 'organizationTag'
   | 'overviewLinks'
@@ -5402,11 +5363,6 @@ export type CONTENT_TYPE =
   | 'uiConfiguration'
   | 'url'
   | 'vacancy'
-  | 'vidspyrna-frontpage'
-  | 'vidspyrnaFeaturedNews'
-  | 'vidspyrnaFlokkur'
-  | 'vidspyrnaPage'
-  | 'vidspyrnaTag'
 
 export type LOCALE_CODE = 'en' | 'is-IS'
 

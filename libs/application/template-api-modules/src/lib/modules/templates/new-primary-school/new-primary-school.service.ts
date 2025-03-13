@@ -38,66 +38,6 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
-    if (isRunningOnEnvironment('dev')) {
-      if (auth.nationalId === '0101303019') {
-        return [
-          {
-            nationalId: '1111111119',
-            fullName: 'Stubbur Maack',
-            genderCode: '3',
-            livesWithApplicant: true,
-            livesWithBothParents: true,
-          },
-        ]
-      }
-      if (auth.nationalId === '0101302989') {
-        return [
-          {
-            nationalId: '2222222229',
-            fullName: 'Stúfur Maack ',
-            genderCode: '3',
-            livesWithApplicant: true,
-            livesWithBothParents: true,
-            otherParent: {
-              nationalId: '0101302399',
-              fullName: 'Gervimaður Færeyjar',
-              address: {
-                streetName: 'Hvassaleiti 5',
-                postalCode: '103',
-                city: 'Reykjavík',
-                municipalityCode: '0000',
-              },
-              genderCode: '2',
-            },
-          },
-          {
-            nationalId: '5555555559',
-            fullName: 'Bína Maack ',
-            genderCode: '4',
-            livesWithApplicant: true,
-            livesWithBothParents: true,
-          },
-          {
-            nationalId: '6666666669',
-            fullName: 'Snúður Maack',
-            genderCode: '3',
-            livesWithApplicant: true,
-            livesWithBothParents: true,
-          },
-        ]
-      }
-      if (auth.nationalId === '0101304929') {
-        return [
-          {
-            nationalId: '6666666669',
-            fullName: 'Snúður Maack',
-            genderCode: '3',
-            livesWithApplicant: true,
-            livesWithBothParents: true,
-          },
-        ]
-      }
-    }
     const children =
       await this.nationalRegistryService.getChildrenCustodyInformation(auth)
 
@@ -115,7 +55,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
         '6666666669',
       ]
       if (
-        isRunningOnEnvironment('local') &&
+        (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) &&
         validChildren.includes(child.nationalId)
       ) {
         return true

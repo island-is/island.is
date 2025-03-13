@@ -77,6 +77,20 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
+  @Post('cases/postHearingArrangements')
+  async postHearingArrangements(
+    @Body() { date }: { date: Date },
+  ): Promise<void> {
+    this.logger.debug(
+      `Post internal summary of all cases that have court hearing arrangement at ${date}`,
+    )
+
+    const cases = await this.internalCaseService.getCaseHearingArrangements(
+      new Date(date),
+    )
+    await this.eventService.postDailyHearingArrangementEvents(date, cases)
+  }
+
   @Get('cases/indictments/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
@@ -210,6 +224,31 @@ export class InternalCaseController {
       theCase,
       deliverDto.user,
       nationalId,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers set arraignment date in indictment case to court',
+  })
+  deliverIndictmentArraignmentDateToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the set arraignment date of the indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentArraignmentDateToCourt(
+      theCase,
+      deliverDto.user,
     )
   }
 

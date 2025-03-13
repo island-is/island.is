@@ -600,6 +600,11 @@ export const m = defineMessages({
     defaultMessage: 'Innistæða með vöxtum á dánardegi',
     description: '',
   },
+  bankAccountInterestRate: {
+    id: 'es.application:bankAccountInterestRate',
+    defaultMessage: 'Áfallnir vextir',
+    description: '',
+  },
   bankAccountPlaceholder: {
     id: 'es.application:bankAccountPlaceholder',
     defaultMessage: 'xxxx - xx - xxxxxx',
@@ -1144,6 +1149,12 @@ export const m = defineMessages({
     id: 'es.application:missingHeirUndividedEstateValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem engin erfingi er skráður',
+    description: '',
+  },
+  missingSpouseUndividedEstateValidation: {
+    id: 'es.application:missingSpouseUndividedEstateValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem skrá þarf maka í listann af erfingjum',
     description: '',
   },
 
