@@ -29,12 +29,12 @@ import {
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
@@ -334,58 +334,7 @@ const Completed: FC = () => {
                           marginBottom={2}
                           required
                         />
-                        <div className={styles.gridLayout}>
-                          <RadioButton
-                            id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
-                            name={`defendant-${defendant.id}-verdict-appeal-decision`}
-                            checked={
-                              defendant.verdictAppealDecision ===
-                              VerdictAppealDecision.POSTPONE
-                            }
-                            disabled={sentToPublicProsecutor}
-                            onChange={() => {
-                              setAndSendDefendantToServer(
-                                {
-                                  defendantId: defendant.id,
-                                  caseId: workingCase.id,
-                                  verdictAppealDecision:
-                                    VerdictAppealDecision.POSTPONE,
-                                },
-                                setWorkingCase,
-                              )
-                            }}
-                            large
-                            backgroundColor="white"
-                            label={formatMessage(
-                              strings.verdictAppealDecisionPostpone,
-                            )}
-                          />
-                          <RadioButton
-                            id={`defendant-${defendant.id}-verdict-appeal-decision-appeal`}
-                            name={`defendant-${defendant.id}-verdict-appeal-decision`}
-                            checked={
-                              defendant.verdictAppealDecision ===
-                              VerdictAppealDecision.ACCEPT
-                            }
-                            disabled={sentToPublicProsecutor}
-                            onChange={() => {
-                              setAndSendDefendantToServer(
-                                {
-                                  defendantId: defendant.id,
-                                  caseId: workingCase.id,
-                                  verdictAppealDecision:
-                                    VerdictAppealDecision.ACCEPT,
-                                },
-                                setWorkingCase,
-                              )
-                            }}
-                            large
-                            backgroundColor="white"
-                            label={formatMessage(
-                              strings.verdictAppealDecisionAccept,
-                            )}
-                          />
-                        </div>
+                        <VerdictAppealDecisionChoice defendant={defendant} />
                       </motion.div>
                     )}
                   </AnimatePresence>

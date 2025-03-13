@@ -54,18 +54,6 @@ const strings = defineMessages({
     defaultMessage: 'Afstaða dómfellda til dóms',
     description: 'Notaður sem titill fyrir afstöðu dómfellda til dóms.',
   },
-  verdictAppealDecisionPostpone: {
-    id: 'judicial.system.core:court.indictments.completed.verdict_appeal_decision_postpone',
-    defaultMessage: 'Dómfelldi tekur áfrýjunarfrest',
-    description:
-      'Notaður sem texti í valmöguleika fyrir það þegar dómfelldi tekur áfrýjunarfrest í þinghaldi.',
-  },
-  verdictAppealDecisionAccept: {
-    id: 'judicial.system.core:court.indictments.completed.verdict_appeal_decision_accept',
-    defaultMessage: 'Dómfelldi unir',
-    description:
-      'Notaður sem texti í valmöguleika fyrir það þegar dómfelldi unir dómi í þinghaldi',
-  },
   sentToPublicProsecutorModalTitle: {
     id: 'judicial.system.core:court.indictments.completed.sent_to_public_prosecutor_modal_title',
     defaultMessage: 'Mál sent til Ríkissaksóknara',
