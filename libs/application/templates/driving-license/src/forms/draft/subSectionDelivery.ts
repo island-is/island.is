@@ -28,8 +28,8 @@ export const subSectionDelivery = buildSubSection({
         }),
         buildRadioField({
           id: 'delivery.deliveryMethod',
-          title: '',
           defaultValue: Pickup.POST,
+          width: 'half',
           options: [
             { value: Pickup.POST, label: m.overviewPickupPost },
             { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },

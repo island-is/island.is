@@ -13,7 +13,6 @@ import {
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
-  TeacherRights,
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,

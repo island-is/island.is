@@ -498,7 +498,7 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
       category: input.licenseCategory,
-      jurisdictionId: input.jurisdictionId,
+      districtId: input.districtId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,

@@ -146,12 +146,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const jurisdictionId = (answers.delivery as { jurisdiction: string })
-      ?.jurisdiction
+    const districtId = Number(getValueViaPath(answers, 'delivery.jurisdiction'))
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const deliveryMethod = (answers.delivery as { deliveryMethod: Pickup })
-      .deliveryMethod
+    const deliveryMethod = getValueViaPath(answers, 'delivery.deliveryMethod')
     const phone = formatPhoneNumber(answers.phone as string)
 
     const postHealthDeclaration = async (
@@ -178,8 +176,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          districtId: jurisdictionId
-            ? (jurisdictionId as unknown as number)
+          districtId: districtId
+            ? districtId
             : 37,
           ...(deliveryMethod
             ? {
@@ -191,7 +189,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        jurisdictionId: jurisdictionId as unknown as number,
+        districtId: districtId,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
         sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
@@ -208,7 +206,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization.replace('Bearer ', ''),
         {
-          jurisdictionId: jurisdictionId as unknown as number,
+          jurisdictionId: districtId,
           needsToPresentHealthCertificate: needsHealthCert,
           needsToPresentQualityPhoto: needsQualityPhoto,
           teacherNationalId: teacher,
@@ -227,7 +225,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization,
         {
-          jurisdiction: jurisdictionId as unknown as number,
+          jurisdiction: districtId,
           instructorSSN: instructorSSN ?? '',
           primaryPhoneNumber: phone ?? '',
           studentEmail: email ?? '',

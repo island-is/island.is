@@ -21,7 +21,7 @@ export enum Pickup {
 }
 
 export interface NewDrivingLicenseInput {
-  jurisdictionId: number
+  districtId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   licenseCategory: DrivingLicenseCategory
