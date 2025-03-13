@@ -14,17 +14,12 @@ import {
 } from '@island.is/application/types'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
-import { CsvError, parse } from 'csv-parse'
+import { parse } from 'csv-parse'
 import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
-import {
-  validateEmails,
-  validateFields,
-  validatePhoneNumbers,
-  validateSSN,
-} from '../../utils'
+import { validateEmails, validatePhoneNumbers, validateSSN } from '../../utils'
 import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
 import { getValueViaPath } from '@island.is/application/core'
 import { SeminarIndividual } from '@island.is/api/schema'
@@ -76,13 +71,13 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { setValue, trigger } = useFormContext()
   const values = useWatch({ name: 'participantList' })
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const [fileState, setFileState] = useState<Array<UploadFile>>([])
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
   const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
   const [csvInputEmailWarning, setCsvInputEmailWarning] = useState<
-    Array<CSVError>
+    Array<number>
   >([])
   const [csvIsLoading, setCsvIsLoading] = useState<boolean>(false)
   const courseID =
@@ -114,7 +109,6 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const unfinishedValues: Array<Participant> = values?.filter(
       (x: Participant) => x.disabled === undefined,
     )
-    console.log('finishedValues', finishedValues)
 
     if (
       finishedValues?.filter((x: Participant) => x.disabled === 'true')
@@ -123,7 +117,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       unfinishedValues.length === 0
     ) {
       trigger('participantList')
-      setValue('participantValidityError', 'false')
+      setValue('participantValidityError', '')
     }
   }, [values])
 
@@ -156,35 +150,24 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           const errorListFromAnswers: Array<CSVError> = []
 
           const allEmails: Array<string> = []
-          const allEmailWarnings: Array<CSVError> = []
+          const allEmailWarnings: Array<number> = []
+
           const answerValue: Array<Participant> = data
             .map((value: Array<string>, index: number) => {
-              console.log('value[0]', value[0])
               const parsedParticipant = parseDataToParticipantList(value[0])
               const isEmailDuplicate =
                 parsedParticipant?.email &&
                 allEmails.includes(parsedParticipant?.email)
-              // if (isEmailDuplicate) {
-              //   allEmailWarnings.push({
-              //     itemIndex: index,
-              //     errorList: [participantMessages.labels.csvEmailWarningLabel],
-              //   })
-
-              //   return null
-              // }
+              if (isEmailDuplicate) {
+                allEmailWarnings.push(index + 1)
+                return null
+              }
               parsedParticipant?.email &&
                 allEmails.push(parsedParticipant?.email)
               if (parsedParticipant === null) {
                 setValue('participantCsvError', 'true')
                 return []
               } else {
-                // const errorMessages = validateFields(value[0])
-                // if (errorMessages.length > 0) {
-                //   errorListFromAnswers.push({
-                //     itemIndex: index,
-                //     errorList: errorMessages,
-                //   })
-                // }
                 return parsedParticipant
               }
             })
@@ -195,6 +178,8 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           const ssnErrors = validateSSN(allSSN)
           const phoneErrors = validatePhoneNumbers(allPhoneNumbers)
           const emailErrors = validateEmails(allEmails)
+          setCsvInputEmailWarning(allEmailWarnings)
+
           if (emailErrors.length > 0) {
             errorListFromAnswers.push({
               items: emailErrors,
@@ -214,22 +199,30 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             })
           }
 
-          setCsvInputEmailWarning(allEmailWarnings)
+          setCsvInputError(errorListFromAnswers)
+
           const individuals: Array<SeminarIndividual> = answerValue.map((x) => {
             return {
               nationalId: x.nationalIdWithName.nationalId,
               email: x.email,
             }
           })
+
+          //validate that individiduals are allowed to take this seminar
           const response = await getIsIndividualValidCallback(individuals)
-          const hasDisabledParticipant = response?.areIndividualsValid?.find(
+          const disabledParticipant = response?.areIndividualsValid?.find(
             (x) => x.mayTakeCourse === false,
           )
-          if (hasDisabledParticipant) {
-            setValue('participantValidityError', 'true')
+          if (disabledParticipant) {
+            setValue(
+              'participantValidityError',
+              locale === 'is'
+                ? disabledParticipant.errorMessage
+                : disabledParticipant.errorMessageEn,
+            )
             setFoundNotValid(true)
           }
-          setCsvInputError(errorListFromAnswers)
+
           if (errorListFromAnswers.length === 0) {
             const fileWithSuccessStatus: UploadFile = props[0]
             Object.assign(fileWithSuccessStatus, {
@@ -287,7 +280,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
     setValue('participantList', validParticipants)
     setParticipantList(validParticipants)
-    setValue('participantValidityError', 'false')
+    setValue('participantValidityError', '')
     setFoundNotValid(false)
     trigger('participantList')
   }
@@ -372,19 +365,16 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           return <AlertMessage type="error" message={messageString} />
         })}
 
-      {/* {csvInputEmailWarning.length > 0 &&
-        csvInputEmailWarning.map((csvError: CSVError) => {
-          let messageString = `${formatMessage(
+      {csvInputEmailWarning.length > 0 && (
+        <AlertMessage
+          type="warning"
+          message={`${formatMessage(
             participantMessages.labels.csvErrorLabel,
-          )} ${csvError.itemIndex + 1}`
-          csvError.errorList.forEach((errorString) => {
-            messageString = messageString.concat(
-              ' ',
-              formatMessage(errorString),
-            )
-          })
-          return <AlertMessage type="warning" message={messageString} />
-        })} */}
+          )} ${csvInputEmailWarning.join(', ')} - ${formatMessage(
+            participantMessages.labels.csvDuplicateEmailError,
+          )}`}
+        />
+      )}
     </Box>
   )
 }

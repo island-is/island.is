@@ -209,18 +209,10 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
-        buildDescriptionField({
-          id: 'paymentArrangement.explanationWithPayment',
-          title: paymentArrangement.labels.explanationWithPayment,
-          titleVariant: 'h5',
-          marginTop: 3,
-          marginBottom: 1,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
-        }),
         buildTextField({
           id: 'paymentArrangement.explanation',
           title: paymentArrangement.labels.explanation,
+          placeholder: paymentArrangement.labels.explanationPlaceholder,
           maxLength: 40,
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),

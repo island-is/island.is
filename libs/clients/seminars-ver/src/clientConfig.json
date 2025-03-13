@@ -392,10 +392,6 @@
       "PaymentInfoDTO": {
         "type": "object",
         "properties": {
-          "paymentType": {
-            "type": "string",
-            "nullable": true
-          },
           "companyNationalId": {
             "type": "string",
             "nullable": true
@@ -407,10 +403,6 @@
           "paymentExplanation": {
             "type": "string",
             "nullable": true
-          },
-          "totalPrice": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

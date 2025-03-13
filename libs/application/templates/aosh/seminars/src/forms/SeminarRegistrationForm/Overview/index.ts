@@ -2,12 +2,8 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { overview } from '../../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
-import { PaymentOptions } from '../../../shared/contstants'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',

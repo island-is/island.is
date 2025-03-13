@@ -4,16 +4,15 @@ import { NO, YES } from '@island.is/application/core'
 import { error } from './messages'
 
 const UserSchemaBase = z.object({
-  nationalId: z
-    .string()
-    .refine(
-      (nationalId) =>
-        nationalId &&
-        nationalId.length !== 0 &&
-        kennitala.isValid(nationalId) &&
-        (kennitala.isCompany(nationalId) ||
-          kennitala.info(nationalId).age >= 18),
-    ),
+  nationalId: z.string().refine((nationalId) => {
+    console.log('nationalId', kennitala.isValid(nationalId))
+    return (
+      nationalId &&
+      nationalId.length !== 0 &&
+      kennitala.isValid(nationalId) &&
+      (kennitala.isCompany(nationalId) || kennitala.info(nationalId).age >= 18)
+    )
+  }),
   name: z.string().min(1),
   address: z.string().min(1),
   postalCode: z.string().min(1),

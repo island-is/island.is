@@ -29,7 +29,7 @@ export const participants = {
     csvDescription: {
       id: 'aosh.sem.application:participants.labels.csvDescription',
       defaultMessage:
-        'Ef þú ert að skrá marga einstaklinga í einu á námskeið geturðu hlaðið inn .csv skjali hér.',
+        'Ef þú ert að skrá marga einstaklinga í einu á námskeið geturðu hlaðið inn .csv skjali hér. Athugið að .csv skjal yfirskrifar þátttakendur í töflu',
       description: `Participants csv upload description `,
     },
     uploadHeader: {
@@ -69,7 +69,7 @@ export const participants = {
     },
     addParticipantButtonText: {
       id: 'aosh.sem.application:participants.labels.addParticipantButtonText',
-      defaultMessage: 'Skrá fleiri þátttakendur',
+      defaultMessage: 'Skrá þátttakendur',
       description: 'participants add more button text',
     },
     validityError: {
@@ -127,6 +127,12 @@ export const participants = {
       id: 'aosh.sem.application:participants.labels.csvPhoneNumberInputError',
       defaultMessage: 'Símanúmer ekki rétt',
       description: 'csv upload phone number error label',
+    },
+    csvDuplicateEmailError: {
+      id: 'aosh.sem.application:participants.labels.csvDuplicateEmailError',
+      defaultMessage:
+        'netfang sem er nú þegar skráð. Ekki er hægt að skrá tvo með sama netfangi. Þú getur eytt þátttakanda út og skráð aftur með öðru netfangi. ',
+      description: 'csv upload duplicate email error label',
     },
   }),
 }

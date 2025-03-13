@@ -37,7 +37,7 @@ export const overview = {
     },
     personalInfo: {
       id: 'aosh.sem.application:overview.labels.personalInfo',
-      defaultMessage: 'Persónuupplýsingar (skráningaraðili)',
+      defaultMessage: 'Skráningaraðili',
       description: 'Personal info label',
     },
     paymentArrangement: {

@@ -94,18 +94,6 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
         application.externalData,
         'createCharge.data.id',
       ) ?? ''
-
-    const seminar = getValueViaPath<CourseDTO>(
-      application.externalData,
-      'seminar.data',
-    )
-    const paymentItem = getValueViaPath<Array<PaymentCatalogItem>>(
-      application.externalData,
-      'payment.data',
-    )?.filter(
-      (item: PaymentCatalogItem) =>
-        item.chargeItemCode === seminar?.feeCodeDirectPayment,
-    )[0]
     const res = await this.seminarsClientService
       .registerSeminar(auth, {
         courseRegistrationCreateDTO: {
@@ -123,13 +111,6 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
                 : applicant?.phoneNumber,
           },
           paymentInfo: {
-            paymentType:
-              paymentArrangement?.individualOrCompany ===
-              IndividualOrCompany.company
-                ? paymentArrangement?.paymentOptions === 'cashOnDelivery'
-                  ? 'card'
-                  : 'invoice'
-                : 'card',
             companyNationalId:
               paymentArrangement?.individualOrCompany ===
               IndividualOrCompany.company
@@ -137,7 +118,6 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
                 : '',
             paymentId: chargeId,
             paymentExplanation: paymentArrangement?.explanation ?? '',
-            totalPrice: paymentItem?.priceAmount ?? 0,
           },
           students:
             registeringMany === RegisterNumber.many

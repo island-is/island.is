@@ -18,6 +18,11 @@ import { ARE_INDIVIDUALS_VALID } from '../../../graphql/queries'
 import { Participant } from '../../../shared/types'
 import { isApplyingForMultiple } from '../../../utils'
 
+interface ParticipantWitValidation extends Participant {
+  errorMessage: string
+  errorMessageEn: string
+}
+
 export const participantsSection = buildSection({
   id: 'participants',
   title: participantMessages.general.sectionTitle,
@@ -50,6 +55,7 @@ export const participantsSection = buildSection({
               'identity.data.nationalId',
               '',
             )
+
             const individuals: Array<SeminarIndividual> =
               tableItems?.map((x) => {
                 return {
@@ -69,14 +75,18 @@ export const participantsSection = buildSection({
               },
             })
 
-            const updatedParticipants: Array<Participant> = tableItems.map(
-              (x) => {
+            const updatedParticipants: Array<ParticipantWitValidation> =
+              tableItems.map((x) => {
                 const participantInRes = data.areIndividualsValid.filter(
                   (z: any) => z.nationalID === x.nationalIdWithName.nationalId,
                 )
-                return { ...x, disabled: !participantInRes[0].mayTakeCourse }
-              },
-            )
+                return {
+                  ...x,
+                  disabled: !participantInRes[0].mayTakeCourse,
+                  errorMessage: participantInRes[0].errorMessage,
+                  errorMessageEn: participantInRes[0].errorMessageEn,
+                }
+              })
 
             const dictinaryOfItems: Array<{ path: string; value: string }> =
               updatedParticipants.map((x, i) => {
@@ -85,15 +95,17 @@ export const participantsSection = buildSection({
                   value: x.disabled ? 'true' : 'false',
                 }
               })
-            if (updatedParticipants.find((x) => !!x.disabled)) {
+
+            const disabledItem = updatedParticipants.find((x) => !!x.disabled)
+            if (disabledItem) {
               dictinaryOfItems.push({
                 path: 'participantValidityError',
-                value: 'true',
+                value: disabledItem.errorMessage,
               })
             } else {
               dictinaryOfItems.push({
                 path: 'participantValidityError',
-                value: 'false',
+                value: '',
               })
             }
 
@@ -131,16 +143,23 @@ export const participantsSection = buildSection({
         buildAlertMessageField({
           id: 'participantList.validityError',
           title: '',
-          message: participantMessages.labels.validityError,
+          message: (application, _) => {
+            const error = getValueViaPath<string>(
+              application.answers,
+              'participantValidityError',
+              '',
+            )
+            return error
+          },
           alertType: 'warning',
           doesNotRequireAnswer: true,
           condition: (answers: FormValue, _) => {
             const hasError = getValueViaPath<string>(
               answers,
               'participantValidityError',
-              'false',
+              '',
             )
-            return hasError === 'true'
+            return !!hasError
           },
         }),
         buildCustomField({

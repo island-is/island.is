@@ -102,15 +102,15 @@ export const paymentArrangement = {
         'Ekki er hægt að skrá námskeið í reikning. Vinsamlegast hafðu samband við Vinnueftirlitið.',
       description: 'Contact organization alert label on conclusion screen',
     },
-    explanationWithPayment: {
-      id: 'aosh.sem.application:paymentArrangement.labels.explanationWithPayment',
-      defaultMessage: 'Skýring með greiðslu',
-      description: 'Explanation with payment label on conclusion screen',
-    },
     explanation: {
       id: 'aosh.sem.application:paymentArrangement.labels.explanation',
       defaultMessage: 'Skýring',
       description: 'Explanation label on conclusion screen',
+    },
+    explanationPlaceholder: {
+      id: 'aosh.sem.application:paymentArrangement.labels.explanationPlaceholder',
+      defaultMessage: 'Upplýsingar sem eiga að koma fram á reikningi',
+      description: 'Explanation placeholder on conclusion screen',
     },
   }),
 }
