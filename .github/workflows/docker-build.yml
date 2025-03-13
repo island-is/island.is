@@ -66,13 +66,18 @@ jobs:
     steps:
       - name: debug
         run: |
+          echo "inputs:"
           echo "BUILD_CHUNKS: ${{ inputs.BUILD_CHUNKS }}"
+          echo "FEATURE_NAME: ${{ inputs.FEATURE_NAME }}"
+          echo "envs:"
+          echo "BUILD_CHUNKS: ${{ env.BUILD_CHUNKS }}"
+          echo "FEATURE_NAME: ${{ env.FEATURE_NAME }}"
           echo ${{ fromJson(inputs.BUILD_CHUNKS) }}
 
   docker-build:
     runs-on: arc-docker
     timeout-minutes: 45
-    if: ${{ input.BUILD_CHUNKS }}
+    if: ${{ inputs.BUILD_CHUNKS }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
     strategy:
