@@ -1,6 +1,7 @@
 import {
   defineTemplateApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
@@ -24,6 +25,14 @@ export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
+
+export const MockableSamgongustofaPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+    },
+    externalDataId: 'payment',
+  })
 
 // Note: this data provider also confirms if the driving license issuing country is "Ísland"
 export interface CurrentLicenseParameters {
