@@ -292,7 +292,7 @@ jobs:
     with:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+      BUILD_CHUNKS: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
       NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
