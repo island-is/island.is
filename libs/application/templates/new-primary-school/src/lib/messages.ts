@@ -642,50 +642,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Do the parents need an interpreter?',
     },
 
-    // Free school meal
-    freeSchoolMealSubSectionTitle: {
-      id: 'nps.application:different.needs.free.school.meal.sub.section.title',
-      defaultMessage: 'Gjaldfrjáls skólamáltíð',
-      description: 'Free school meal ',
-    },
-    freeSchoolMealDescription: {
-      id: 'nps.application:different.needs.free.school.meal.description',
-      defaultMessage:
-        'Barninu stendur til boða gjaldfrjáls skólamáltíð. Til þess að skólinn geti mætt fæðuþörfum barnsins á sama tíma og spornað er við matarsóun þurfum við upplýsingar er varða matarumhverfi barnsins.',
-      description:
-        "The child is entitled to a free school meal. In order for the school to be able to meet the child's nutritional needs while at the same time preventing food waste, we need information about the child's food environment.",
-    },
-    acceptFreeSchoolLunch: {
-      id: 'nps.application:different.needs.free.school.meal.accept.free.school.lunch',
-      defaultMessage:
-        'Viltu þiggja gjaldfrjálsa máltíð í hádeginu fyrir barnið þitt?',
-      description:
-        'Would you like to accept a free school lunch for your child?',
-    },
-    hasSpecialNeeds: {
-      id: 'nps.application:different.needs.free.school.meal.has.special.needs',
-      defaultMessage:
-        'Er barnið með sérþarfir sem óskað er eftir að tekið sé tillit til?',
-      description:
-        'Does the child have special needs that you wish to be taken into account?',
-    },
-    specialNeedsType: {
-      id: 'nps.application:different.needs.free.school.meal.special.needs.type',
-      defaultMessage: 'Tegund',
-      description: 'Type',
-    },
-    specialNeedsTypePlaceholder: {
-      id: 'nps.application:different.needs.free.school.meal.special.needs.type.placeholder',
-      defaultMessage: 'Veldu tegund',
-      description: 'Select type',
-    },
-    foodAllergiesAlertMessage: {
-      id: 'nps.application:different.needs.free.school.meal.food.allergies.alert.message',
-      defaultMessage: 'Spurt er um matarofnæmi undir ofnæmi og óþól',
-      description:
-        'Food allergies are addressed in the allergies and intolerances section',
-    },
-
     // Allergies and intolerances
     allergiesAndIntolerancesSubSectionTitle: {
       id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
@@ -966,6 +922,13 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Sveitarfélagið og skólinn munu taka afstöðu til umsóknarinnar og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barns og/eða forsjáraðila. Mun þá sveitarfélagið eða skólinn setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, verður forsjáraðili og barn boðað til móttökuviðtals.',
       description:
         "The municipality and the school will make a decision on the application and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information in order to provide better information about the child's and/or guardian's circumstances. The municipality or the school will then contact you.\n\nIf the application for a new school is approved, the guardian and child will be invited to an admission interview.",
+    },
+    privateSchoolExpandableDescription: {
+      id: 'nps.application:conclusion.private.school.expandable.description#markdown',
+      defaultMessage:
+        'Takk fyrir að senda inn umsókn.\n\nUmsóknin fer fyrst til umfjöllunar hjá því sveitarfélagi sem barnið á lögheimili en greiðsluþátttaka sveitarfélagsins, til viðbótar við mótframlag umsækjenda, er forsenda þess að barnið fái skólavist í sjálfstætt starfandi skóla.\n\nÞegar ákvörðun um greiðsluþátttöku liggur fyrir tekur skólinn sjálfur umsóknina til umfjöllunar. Ákvörðun skólastjóra er send til foreldra eins fljótt og auðið er.',
+      description:
+        "Thank you for submitting your application.\n\nFirst the application is reviewed by the municipality in which the child has their place of residence, because the municipality's contribution, in addition to the applicant's contribution, is a prerequisite for the child to be enrolled in an private school.\n\nWhen a decision on payment participation has been made, the school itself will review the application. The decision will be sent to the parents as soon as possible.",
     },
   }),
 }

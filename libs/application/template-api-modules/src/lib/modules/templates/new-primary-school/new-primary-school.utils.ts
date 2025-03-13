@@ -30,9 +30,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
-    acceptFreeSchoolLunch,
-    hasSpecialNeeds,
-    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -195,19 +192,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             guardianRequiresInterpreter: false,
             firstLanguage: 'is',
           }),
-    },
-    schoolMeal: {
-      acceptFreeSchoolLunch: acceptFreeSchoolLunch === YES,
-      ...(acceptFreeSchoolLunch === YES
-        ? {
-            hasSpecialNeeds: hasSpecialNeeds === YES,
-            ...(hasSpecialNeeds === YES
-              ? {
-                  specialNeeds: specialNeedsType,
-                }
-              : {}),
-          }
-        : {}),
     },
   }
 
