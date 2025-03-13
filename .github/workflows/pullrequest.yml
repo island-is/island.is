@@ -300,7 +300,7 @@ jobs:
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ needs.pre-checks.outputs.PRE_CHECK }}
-      PRE_RELASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
+      PRE_RELEASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
 
   deploy:
     uses: ./.github/workflows/deploy.yml
