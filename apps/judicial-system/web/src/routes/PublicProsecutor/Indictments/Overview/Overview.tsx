@@ -8,7 +8,6 @@ import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
