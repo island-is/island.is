@@ -218,7 +218,7 @@ jobs:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
 
       - name: Set AFFECTED_ALL env
-        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || env.BRANCH == 'main' }}
+        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' }}
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
