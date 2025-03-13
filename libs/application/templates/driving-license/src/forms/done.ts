@@ -7,7 +7,6 @@ import { needsHealthCertificateCondition } from '../lib/utils'
 
 export const done: Form = buildForm({
   id: 'done',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({

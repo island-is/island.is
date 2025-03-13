@@ -38,8 +38,8 @@ export enum OptionsType {
   REASON_INTERNATIONAL_SCHOOL = 'registrationReasonInternationalSchool',
   REASON_PRIVATE_SCHOOL = 'registrationReasonPrivateSchool',
   RELATION = 'relation',
-  SCHOOL_MEAL = 'schoolMeal',
   ALLERGY = 'allergy',
+  LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }
 
 export enum MembershipRole {
@@ -60,11 +60,18 @@ export enum MembershipOrganizationType {
 
 export enum LanguageEnvironmentOptions {
   ONLY_ICELANDIC = 'onlyIcelandic',
-  ICELANDIC_AND_FOREIGN = 'icelandicAndForeign',
-  ONLY_FOREIGN = 'onlyForeign',
+  ICELANDIC_AND_OTHER = 'icelandicAndOther',
+  ONLY_OTHER_THAN_ICELANDIC = 'onlyOtherThanIcelandic',
 }
 
 export enum ApplicationType {
   NEW_PRIMARY_SCHOOL = 'newPrimarySchool',
   ENROLLMENT_IN_PRIMARY_SCHOOL = 'enrollmentInPrimarySchool',
+}
+
+export enum SchoolType {
+  PUBLIC_SCHOOL = 'publicSchool',
+  PRIVATE_SCHOOL = 'privateSchool',
+  INTERNATIONAL_SCHOOL = 'internationalSchool',
+  NURSERY_SCHOOL = 'nurserySchool',
 }

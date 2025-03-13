@@ -7,7 +7,6 @@ import { Logo } from '../../assets/Logo'
 
 export const AnonymityInVehicleRegistryForm: Form = buildForm({
   id: 'AnonymityInVehicleRegistryFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

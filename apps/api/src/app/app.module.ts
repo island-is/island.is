@@ -102,6 +102,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
@@ -139,7 +140,7 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
-import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -202,6 +203,8 @@ import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-sk
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
+import { VerdictsClientConfig } from '@island.is/clients/verdicts'
+import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 
@@ -341,6 +344,7 @@ const environment = getConfig
     LawAndOrderModule,
     UmbodsmadurSkuldaraModule,
     HealthDirectorateModule,
+    VerdictsModule,
     SecondarySchoolApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -405,6 +409,7 @@ const environment = getConfig
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
+        HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
@@ -441,6 +446,7 @@ const environment = getConfig
         WorkAccidentClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
+        VerdictsClientConfig,
         SecondarySchoolClientConfig,
       ],
     }),

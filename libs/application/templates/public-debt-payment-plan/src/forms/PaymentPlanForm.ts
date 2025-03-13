@@ -108,7 +108,6 @@ export const PaymentPlanForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'employerInfoDescription',
-              title: '',
               description: employer.general.pageDescription,
             }),
             buildDescriptionField({
@@ -146,7 +145,6 @@ export const PaymentPlanForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'employer.isCorrectInfo',
-              title: '',
               width: 'full',
               largeButtons: true,
               options: [
@@ -172,7 +170,6 @@ export const PaymentPlanForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'employerInfoDescription',
-              title: '',
               doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
@@ -237,13 +234,11 @@ export const PaymentPlanForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'overviewScreen',
-              title: '',
               doesNotRequireAnswer: true,
               component: 'Overview',
             }),
             buildSubmitField({
               id: 'overview.submit',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

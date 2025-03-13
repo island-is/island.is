@@ -143,7 +143,6 @@ export const subSectionSummary = buildSubSection({
         }),
         buildCheckboxField({
           id: 'certificate',
-          title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],

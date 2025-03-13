@@ -87,7 +87,6 @@ export const ParentBForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -128,7 +127,6 @@ export const ParentBForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'reject',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.REJECT,

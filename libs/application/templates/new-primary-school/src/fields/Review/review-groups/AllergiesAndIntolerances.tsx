@@ -33,7 +33,7 @@ export const AllergiesAndIntolerances = ({
     otherAllergies,
     usesEpiPen,
     hasConfirmedMedicalDiagnoses,
-    requestMedicationAssistance,
+    requestsMedicationAdministration,
   } = getApplicationAnswers(application.answers)
 
   const {
@@ -138,9 +138,9 @@ export const AllergiesAndIntolerances = ({
                 <RadioValue
                   label={formatMessage(
                     newPrimarySchoolMessages.differentNeeds
-                      .requestMedicationAssistance,
+                      .requestsMedicationAdministration,
                   )}
-                  value={requestMedicationAssistance}
+                  value={requestsMedicationAdministration}
                 />
               </GridColumn>
             </GridRow>

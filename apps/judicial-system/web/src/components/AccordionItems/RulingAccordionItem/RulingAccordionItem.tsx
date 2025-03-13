@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
-import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { AccordionListItem, SectionHeading } from '../..'

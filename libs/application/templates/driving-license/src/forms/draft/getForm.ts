@@ -12,7 +12,6 @@ import { subSectionSummary } from './subSectionSummary'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

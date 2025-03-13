@@ -630,7 +630,6 @@ export const IncomePlanForm: Form = buildForm({
           description: incomePlanFormMessage.info.tableDescription,
           children: [
             buildCustomField({
-              title: '',
               id: 'overviewPrint',
               doesNotRequireAnswer: true,
               component: 'PrintScreen',
@@ -646,12 +645,10 @@ export const IncomePlanForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'temporaryCalculationTable',
-              title: '',
               component: 'TemporaryCalculationTable',
             }),
             buildDescriptionField({
               id: 'assumptions',
-              title: '',
               description: incomePlanFormMessage.info.assumptions,
             }),
           ],
@@ -664,7 +661,6 @@ export const IncomePlanForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(

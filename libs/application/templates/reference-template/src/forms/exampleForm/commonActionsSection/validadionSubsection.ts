@@ -18,13 +18,11 @@ export const validationSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'validationDescriptionField',
-          title: '',
           description: m.validationDescription,
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'validationDescriptionField2',
-          title: '',
           description:
             'All fields on this page have validation that must be filled out to continue',
         }),
@@ -35,13 +33,11 @@ export const validationSubsection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'validation.validationDescriptionField3',
-          title: '',
           description: m.validationDescription3,
           marginTop: 4,
         }),
         buildRadioField({
           id: 'validation.validationRadioField',
-          title: '',
           options: [
             { label: 'Option 1', value: radioValidationExampleEnum.OPTION_1 },
             { label: 'Option 2', value: radioValidationExampleEnum.OPTION_2 },

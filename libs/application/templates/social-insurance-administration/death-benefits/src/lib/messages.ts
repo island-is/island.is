@@ -180,4 +180,16 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn vegna dánarbóta hefur verið samþykkt',
     description: 'The application for death benefits has been approved',
   },
+  deathBenefitsDismissed: {
+    id: 'db.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um dánarbætur frá',
+    description:
+      'Tryggingastofnun has dismissed your death benefits application',
+  },
+  deathBenefitsDismissedDescription: {
+    id: 'db.application:application.dismissed.description',
+    defaultMessage: 'Umsókn þinni um dánarbætur hefur verið vísað frá',
+    description: 'Your death benefits application has been dimissed',
+  },
 })

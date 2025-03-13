@@ -23,7 +23,6 @@ export const sectionPhoto = buildSection({
       children: [
         buildDescriptionField({
           id: 'descriptionPhoto',
-          title: '',
           description: m.qualityPhotoExistingPhotoText,
           condition: (_, externalData) => {
             return (
@@ -34,7 +33,6 @@ export const sectionPhoto = buildSection({
         }),
         buildDescriptionField({
           id: 'descriptionNoPhoto',
-          title: '',
           description: m.qualityPhotoNoPhotoDescription,
           condition: (_, externalData) => {
             return (
@@ -46,7 +44,6 @@ export const sectionPhoto = buildSection({
         }),
         buildCustomField({
           id: 'qphoto',
-          title: '',
           component: 'QualityPhoto',
           condition: (_, externalData) => {
             return (
@@ -57,7 +54,6 @@ export const sectionPhoto = buildSection({
         }),
         buildRadioField({
           id: 'photo.qualityPhoto',
-          title: '',
           width: 'half',
           disabled: false,
           options: [
@@ -74,7 +70,6 @@ export const sectionPhoto = buildSection({
         }),
         buildFileUploadField({
           id: 'photo.attachments',
-          title: '',
           uploadHeader: m.qualityPhotoFileUploadTitle,
           uploadDescription: m.qualityPhotoFileUploadDescription,
           uploadButtonLabel: m.qualityPhotoUploadButtonLabel,

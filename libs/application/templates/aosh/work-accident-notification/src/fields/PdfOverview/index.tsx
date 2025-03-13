@@ -45,7 +45,9 @@ export const PdfOverview: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [document])
 
   const isNotValid = () => {
-    const lastModified = new Date(application.modified)
+    const lastModified = new Date(
+      application.externalData.submitApplication.date,
+    )
     const dateNow = new Date()
     lastModified.setMinutes(lastModified.getMinutes() + 30)
     return lastModified < dateNow

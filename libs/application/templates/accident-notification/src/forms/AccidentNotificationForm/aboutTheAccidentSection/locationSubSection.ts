@@ -50,7 +50,6 @@ export const locationSubSection = buildSubSection({
         buildRadioField({
           id: 'onPayRoll.answer',
           width: 'half',
-          title: '',
           options: [
             {
               value: YES,
@@ -126,7 +125,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE,
@@ -155,7 +153,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: RescueWorkAccidentLocationEnum.DURINGRESCUE,
@@ -183,7 +180,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: StudiesAccidentLocationEnum.ATTHESCHOOL,
@@ -206,7 +202,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: FishermanWorkplaceAccidentLocationEnum.ONTHESHIP,
@@ -236,7 +231,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value:
@@ -269,7 +263,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'accidentLocation.answer',
-          title: '',
           options: [
             {
               value: AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
@@ -296,7 +289,6 @@ export const locationSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'shipLocation.answer',
-          title: '',
           backgroundColor: 'blue',
           options: [
             {

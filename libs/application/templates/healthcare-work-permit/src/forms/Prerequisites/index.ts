@@ -28,7 +28,6 @@ import {
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -45,7 +44,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

@@ -460,7 +460,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -476,7 +475,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],
@@ -549,7 +547,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -567,7 +564,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],
@@ -584,7 +580,6 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'selectedChild',
-                  title: '',
                   description:
                     parentalLeaveFormMessages.selectChild.screenDescription,
                   required: true,
@@ -646,7 +641,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: '',
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
@@ -663,7 +657,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Tackle that as AS task.
             buildDescriptionField({
               id: 'unused',
-              title: '',
               description: '',
             }),
           ],

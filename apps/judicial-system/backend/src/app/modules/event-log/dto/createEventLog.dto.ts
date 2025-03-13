@@ -30,4 +30,16 @@ export class CreateEventLogDto {
   @IsEnum(UserRole)
   @ApiPropertyOptional({ enum: UserRole })
   readonly userRole?: UserRole
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  readonly userName?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  readonly userTitle?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  readonly institutionName?: string
 }

@@ -108,14 +108,12 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible',
-              title: '',
               description:
                 pensionSupplementFormMessage.pre.isNotEligibleDescription,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

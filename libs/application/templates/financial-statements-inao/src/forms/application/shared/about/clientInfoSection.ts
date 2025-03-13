@@ -31,12 +31,10 @@ export const clientInfoSection = buildSection({
       children: [
         buildDescriptionField({
           id: ABOUTIDS.operatingYear,
-          title: '',
         }),
         buildCustomField({
           id: 'OperatingYear',
           childInputIds: [ABOUTIDS.operatingYear],
-          title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
             return (
@@ -80,11 +78,9 @@ export const clientInfoSection = buildSection({
         }),
         buildDescriptionField({
           id: ABOUTIDS.powerOfAttorneyName,
-          title: '',
         }),
         buildCustomField({
           id: 'powerOfAttorney',
-          title: '',
           description: '',
           component: 'PowerOfAttorneyFields',
           childInputIds: [
@@ -118,7 +114,6 @@ export const clientInfoSection = buildSection({
         buildCustomField({
           id: 'delegation check',
           component: 'DelegationCheck',
-          title: '',
         }),
       ],
     }),

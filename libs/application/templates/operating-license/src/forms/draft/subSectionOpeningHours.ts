@@ -47,7 +47,6 @@ export const subSectionOpeningHours = buildSubSection({
         }),
         buildDescriptionField({
           id: 'overview.space1',
-          title: '',
           space: 'gutter',
         }),
         buildKeyValueField({
@@ -70,7 +69,6 @@ export const subSectionOpeningHours = buildSubSection({
         }),
         buildDescriptionField({
           id: 'overview.space2',
-          title: '',
           space: 'gutter',
         }),
         buildDescriptionField({

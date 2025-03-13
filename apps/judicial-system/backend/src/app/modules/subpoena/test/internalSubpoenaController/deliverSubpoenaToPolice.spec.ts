@@ -37,7 +37,7 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
     const mockGetSubpoenaPdf = mockPdfService.getSubpoenaPdf as jest.Mock
     mockGetSubpoenaPdf.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
 
       await internalSubpoenaController

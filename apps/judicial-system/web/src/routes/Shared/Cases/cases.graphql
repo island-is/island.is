@@ -112,5 +112,9 @@ query Cases {
     courtSessionType
     caseSentToCourtDate
     isCompletedWithoutRuling
+    eventLogs {
+      id
+      eventType
+    }
   }
 }

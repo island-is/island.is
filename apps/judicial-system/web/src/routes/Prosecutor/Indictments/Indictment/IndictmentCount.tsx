@@ -1,5 +1,4 @@
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { IntlShape, useIntl } from 'react-intl'
 
 import {
@@ -13,11 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import {
   capitalize,
-  formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
-  CrimeScene,
+  hasTrafficViolationSubtype,
   IndictmentSubtype,
   isTrafficViolationCase,
   offenseSubstances,
@@ -29,11 +27,15 @@ import {
   IndictmentInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentCountOffense,
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
@@ -43,11 +45,11 @@ import {
   UpdateIndictmentCount,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
-import { Substances as SubstanceChoices } from './Substances/Substances'
+import { getIncidentDescription } from './lib/getIncidentDescription'
+import { Offenses } from './Offenses/Offenses'
 import { indictmentCount as strings } from './IndictmentCount.strings'
-import { indictmentCountEnum as enumStrings } from './IndictmentCountEnum.strings'
-import { indictmentCountSubstanceEnum as substanceStrings } from './IndictmentCountSubstanceEnum.strings'
 import * as styles from './IndictmentCount.css'
 
 interface Props {
@@ -57,33 +59,19 @@ interface Props {
   onChange: (
     indictmentCountId: string,
     updatedIndictmentCount: UpdateIndictmentCount,
+    updatedOffenses?: Offense[],
   ) => void
   onDelete?: (indictmentCountId: string) => Promise<void>
   updateIndictmentCountState: (
     indictmentCountId: string,
     update: UpdateIndictmentCount,
     setWorkingCase: Dispatch<SetStateAction<Case>>,
+    updatedOffenses?: Offense[],
   ) => void
 }
 
-const offensesCompare = (
-  offense1: IndictmentCountOffense,
-  offense2: IndictmentCountOffense,
-) => {
-  const offense1Index = Object.values(IndictmentCountOffense).indexOf(offense1)
-  const offense2Index = Object.values(IndictmentCountOffense).indexOf(offense2)
-
-  if (offense1Index < offense2Index) {
-    return -1
-  }
-  if (offense1Index > offense2Index) {
-    return 1
-  }
-  return 0
-}
-
 /**
- * Indicates what laws are broken for each offence. The first number is
+ * Indicates what laws are broken for each offense. The first number is
  * the paragraph and the second is the article, i.e. [49, 2] means paragraph
  * 49, article 2. If article is set to 0, that means that an article is
  * not specified.
@@ -105,6 +93,7 @@ const offenseLawsMap: Record<
     [48, 2],
   ],
   [IndictmentCountOffense.SPEEDING]: [[37, 0]],
+  [IndictmentCountOffense.OTHER]: [],
 }
 
 const generalLaws: [number, number][] = [[95, 1]]
@@ -131,16 +120,19 @@ const laws = Object.values(offenseLawsMap)
   .sort(lawsCompare)
 
 const getLawsBroken = (
-  deprecatedOffenses?: IndictmentCountOffense[] | null,
+  offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
 ) => {
-  if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
+  const hasOffenses = isNonEmptyArray(offenses)
+  const hasOnlyOtherOffense = offenses?.length === 1 && offenses[0] === IndictmentCountOffense.OTHER
+
+  if (!hasOffenses || hasOnlyOtherOffense) {
     return []
   }
 
   let lawsBroken: [number, number][] = []
 
-  deprecatedOffenses.forEach((offense) => {
+  offenses.forEach((offense) => {
     lawsBroken = lawsBroken.concat(offenseLawsMap[offense])
 
     if (offense === IndictmentCountOffense.DRUNK_DRIVING) {
@@ -180,85 +172,6 @@ export const getRelevantSubstances = (
   return relevantSubstances
 }
 
-export const getIncidentDescriptionReason = (
-  deprecatedOffenses: IndictmentCountOffense[],
-  substances: SubstanceMap,
-  formatMessage: IntlShape['formatMessage'],
-) => {
-  let reason = deprecatedOffenses
-    .filter((offense) => offense !== IndictmentCountOffense.SPEEDING)
-    .reduce((acc, offense, index) => {
-      if (
-        (deprecatedOffenses.length > 1 &&
-          index === deprecatedOffenses.length - 1) ||
-        (deprecatedOffenses.length > 2 &&
-          index === deprecatedOffenses.length - 2 &&
-          offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
-      ) {
-        acc += ' og '
-      } else if (index > 0) {
-        acc += ', '
-      }
-      switch (offense) {
-        case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
-          acc += formatMessage(
-            strings.incidentDescriptionDrivingWithoutLicenceAutofill,
-          )
-          break
-        case IndictmentCountOffense.DRUNK_DRIVING:
-          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
-          break
-        case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-          acc += `${formatMessage(
-            strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-          )} ${formatMessage(
-            strings.incidentDescriptionIllegalDrugsDrivingAutofill,
-          )}`
-          break
-        case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
-          acc +=
-            (deprecatedOffenses.includes(
-              IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-            )
-              ? ''
-              : `${formatMessage(
-                  strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-                )} `) +
-            formatMessage(
-              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
-            )
-          break
-      }
-      return acc
-    }, '')
-
-  const relevantSubstances = getRelevantSubstances(
-    deprecatedOffenses,
-    substances,
-  )
-
-  reason += relevantSubstances.reduce((acc, substance, index) => {
-    if (index === 0) {
-      acc += ` (${formatMessage(
-        strings.incidentDescriptionSubstancesPrefixAutofill,
-      )} `
-    } else if (index === relevantSubstances.length - 1) {
-      acc += ' og '
-    } else {
-      acc += ', '
-    }
-    acc += formatMessage(substanceStrings[substance[0] as Substance], {
-      amount: substance[1],
-    })
-    if (index === relevantSubstances.length - 1) {
-      acc += ')'
-    }
-    return acc
-  }, '')
-
-  return reason
-}
-
 export const getLegalArguments = (
   lawsBroken: number[][],
   formatMessage: IntlShape['formatMessage'],
@@ -281,7 +194,7 @@ export const getLegalArguments = (
     }
   }
 
-  // handle the subarticle of the first laws tuple
+  // handle the sub-article of the first laws tuple
   let articles = lawsBroken[0][1] === 0 ? '' : `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
@@ -305,90 +218,6 @@ export const getLegalArguments = (
   })
 }
 
-export const getIncidentDescription = (
-  indictmentCount: TIndictmentCount,
-  formatMessage: IntlShape['formatMessage'],
-  crimeScene?: CrimeScene,
-  subtypesRecord?: Record<string, IndictmentSubtype[]>,
-) => {
-  const {
-    deprecatedOffenses,
-    substances,
-    vehicleRegistrationNumber,
-    indictmentCountSubtypes,
-    policeCaseNumber,
-  } = indictmentCount
-
-  const incidentLocation = crimeScene?.place || '[Vettvangur]'
-  const incidentDate = crimeScene?.date
-    ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') || ''
-    : '[Dagsetning]'
-
-  const vehicleRegistration =
-    vehicleRegistrationNumber || '[Skráningarnúmer ökutækis]'
-
-  const subtypes =
-    (subtypesRecord && policeCaseNumber && subtypesRecord[policeCaseNumber]) ||
-    []
-
-  if (
-    subtypes.length === 0 ||
-    (subtypes.length > 1 &&
-      (!indictmentCountSubtypes?.length ||
-        indictmentCountSubtypes.length === 0))
-  ) {
-    return ''
-  }
-
-  if (
-    isTrafficViolationIndictmentCount(policeCaseNumber, subtypesRecord) ||
-    indictmentCountSubtypes?.includes(IndictmentSubtype.TRAFFIC_VIOLATION)
-  ) {
-    if (!deprecatedOffenses || deprecatedOffenses.length === 0) {
-      return ''
-    }
-
-    const reason = getIncidentDescriptionReason(
-      deprecatedOffenses,
-      substances || {},
-      formatMessage,
-    )
-
-    const isSpeeding = indictmentCount.deprecatedOffenses?.includes(
-      IndictmentCountOffense.SPEEDING,
-    )
-
-    const recordedSpeed = indictmentCount.recordedSpeed ?? '[Mældur hraði]'
-    const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
-
-    return formatMessage(strings.incidentDescriptionAutofill, {
-      incidentDate,
-      vehicleRegistrationNumber: vehicleRegistration,
-      reason,
-      incidentLocation,
-      isSpeeding,
-      recordedSpeed,
-      speedLimit,
-    })
-  }
-
-  if (subtypes.length === 1) {
-    return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: indictmentSubtypes[subtypes[0]],
-      date: incidentDate,
-    })
-  }
-
-  const allSubtypes = indictmentCountSubtypes
-    ?.map((subtype) => indictmentSubtypes[subtype])
-    .join(', ')
-
-  return formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-    subtypes: allSubtypes,
-    date: incidentDate,
-  })
-}
-
 export const IndictmentCount: FC<Props> = ({
   indictmentCount,
   workingCase,
@@ -399,6 +228,7 @@ export const IndictmentCount: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
+  const { deleteOffense } = useOffenses()
 
   const [
     vehicleRegistrationNumberErrorMessage,
@@ -406,28 +236,12 @@ export const IndictmentCount: FC<Props> = ({
   ] = useState<string>('')
   const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
     useState<string>('')
-  const [bloodAlcoholContentErrorMessage, setBloodAlcoholContentErrorMessage] =
-    useState<string>('')
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
-    useState<string>('')
-  const [recordedSpeedErrorMessage, setRecordedSpeedErrorMessage] =
-    useState<string>('')
-  const [speedLimitErrorMessage, setSpeedLimitErrorMessage] =
     useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
     : []
-
-  const offensesOptions = useMemo(
-    () =>
-      Object.values(IndictmentCountOffense).map((offense) => ({
-        value: offense,
-        label: formatMessage(enumStrings[offense]),
-        disabled: indictmentCount.deprecatedOffenses?.includes(offense),
-      })),
-    [formatMessage, indictmentCount.deprecatedOffenses],
-  )
 
   const lawsBrokenOptions: LawsBrokenOption[] = useMemo(
     () =>
@@ -444,14 +258,22 @@ export const IndictmentCount: FC<Props> = ({
     [lawTag, indictmentCount.lawsBroken],
   )
 
-  const handleIndictmentCountChanges = (update: UpdateIndictmentCount) => {
+  const showLegalArticleSelection = indictmentCount.offenses?.some(({offense}) => offense !== IndictmentCountOffense.OTHER)
+
+  const handleIndictmentCountChanges = (
+    update: UpdateIndictmentCount,
+    updatedOffenses?: Offense[],
+  ) => {
     let lawsBroken
 
-    if (update.substances || update.deprecatedOffenses) {
-      lawsBroken = getLawsBroken(
-        update.deprecatedOffenses || indictmentCount.deprecatedOffenses,
-        update.substances || indictmentCount.substances,
+    if (updatedOffenses) {
+      const offenses = updatedOffenses?.map((o) => o.offense)
+      const substances = updatedOffenses?.reduce(
+        (res, offense) => Object.assign(res, offense.substances),
+        {} as SubstanceMap,
       )
+
+      lawsBroken = getLawsBroken(offenses, substances)
     }
 
     if (lawsBroken !== undefined) {
@@ -466,20 +288,25 @@ export const IndictmentCount: FC<Props> = ({
       ? workingCase.crimeScenes[policeCaseNumber]
       : undefined
 
-    const incidentDescription = getIncidentDescription(
-      {
+    const incidentDescription = getIncidentDescription({
+      indictmentCount: {
         ...indictmentCount,
         ...update,
+        ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
       },
       formatMessage,
       crimeScene,
-      workingCase.indictmentSubtypes,
-    )
-
-    onChange(indictmentCount.id, {
-      incidentDescription,
-      ...update,
+      subtypesRecord: workingCase.indictmentSubtypes,
     })
+
+    onChange(
+      indictmentCount.id,
+      {
+        incidentDescription,
+        ...update,
+      },
+      updatedOffenses,
+    )
   }
 
   const handleSubtypeChange = (
@@ -492,14 +319,31 @@ export const IndictmentCount: FC<Props> = ({
 
     checked ? currentSubtypes.add(subtype) : currentSubtypes.delete(subtype)
 
-    handleIndictmentCountChanges({
-      indictmentCountSubtypes: Array.from(currentSubtypes),
-      ...(!currentSubtypes.has(IndictmentSubtype.TRAFFIC_VIOLATION) && {
-        deprecatedOffenses: [],
-        substances: {},
-        vehicleRegistrationNumber: null,
-      }),
-    })
+    const hasTrafficViolationSubType = currentSubtypes.has(
+      IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
+    if (!hasTrafficViolationSubType) {
+      indictmentCount.offenses?.forEach(
+        async (o) =>
+          await deleteOffense(workingCase.id, indictmentCount.id, o.id),
+      )
+      const updatedOffenses: Offense[] = []
+      handleIndictmentCountChanges(
+        {
+          indictmentCountSubtypes: Array.from(currentSubtypes),
+          deprecatedOffenses: [],
+          substances: {},
+          vehicleRegistrationNumber: null,
+          recordedSpeed: null,
+          speedLimit: null,
+        },
+        updatedOffenses,
+      )
+    } else {
+      handleIndictmentCountChanges({
+        indictmentCountSubtypes: Array.from(currentSubtypes),
+      })
+    }
   }
 
   const shouldShowTrafficViolationFields = () => {
@@ -518,14 +362,9 @@ export const IndictmentCount: FC<Props> = ({
       return true
     }
 
-    if (
-      indictmentCount?.indictmentCountSubtypes?.includes(
-        IndictmentSubtype.TRAFFIC_VIOLATION,
-      )
-    ) {
+    if (hasTrafficViolationSubtype(indictmentCount?.indictmentCountSubtypes || [])) {
       return true
     }
-
     return false
   }
 
@@ -667,261 +506,14 @@ export const IndictmentCount: FC<Props> = ({
               required
             />
           </Box>
-          <Box marginBottom={2}>
-            <SectionHeading
-              heading="h4"
-              title={formatMessage(strings.incidentTitle)}
-              marginBottom={2}
-            />
-            <Select
-              name="deprecatedOffenses"
-              options={offensesOptions}
-              label={formatMessage(strings.incidentLabel)}
-              placeholder={formatMessage(strings.incidentPlaceholder)}
-              onChange={(so) => {
-                const selectedOffense = so?.value as IndictmentCountOffense
-                const deprecatedOffenses = [
-                  ...(indictmentCount.deprecatedOffenses ?? []),
-                  selectedOffense,
-                ].sort(offensesCompare)
-
-                handleIndictmentCountChanges({
-                  deprecatedOffenses,
-                })
-              }}
-              value={null}
-              required
-            />
-          </Box>
-          {indictmentCount.deprecatedOffenses &&
-            indictmentCount.deprecatedOffenses.length > 0 && (
-              <Box marginBottom={2}>
-                {indictmentCount.deprecatedOffenses.map((offense) => (
-                  <Box
-                    display="inlineBlock"
-                    key={`${indictmentCount.id}-${offense}`}
-                    component="span"
-                    marginBottom={1}
-                    marginRight={1}
-                  >
-                    <Tag
-                      variant="darkerBlue"
-                      onClick={() => {
-                        const deprecatedOffenses = (
-                          indictmentCount.deprecatedOffenses ?? []
-                        ).filter((o) => o !== offense)
-
-                        offenseSubstances[offense].forEach((e) => {
-                          if (indictmentCount.substances) {
-                            delete indictmentCount.substances[e]
-                          }
-                        })
-
-                        handleIndictmentCountChanges({
-                          deprecatedOffenses,
-                          substances: indictmentCount.substances,
-                          ...(offense === IndictmentCountOffense.SPEEDING && {
-                            recordedSpeed: null,
-                            speedLimit: null,
-                          }),
-                        })
-                      }}
-                    >
-                      <Box display="flex" alignItems="center">
-                        {formatMessage(enumStrings[offense])}
-                        <Icon icon="close" size="small" />
-                      </Box>
-                    </Tag>
-                  </Box>
-                ))}
-              </Box>
-            )}
-          {indictmentCount.deprecatedOffenses?.includes(
-            IndictmentCountOffense.DRUNK_DRIVING,
-          ) && (
-            <Box marginBottom={2}>
-              <SectionHeading
-                title={formatMessage(strings.bloodAlcoholContentTitle)}
-                heading="h4"
-                marginBottom={2}
-              />
-              <InputMask
-                mask={'9,99'}
-                maskPlaceholder={null}
-                value={indictmentCount.substances?.ALCOHOL ?? ''}
-                onChange={(event) => {
-                  removeErrorMessageIfValid(
-                    ['empty'],
-                    event.target.value,
-                    bloodAlcoholContentErrorMessage,
-                    setBloodAlcoholContentErrorMessage,
-                  )
-
-                  updateIndictmentCountState(
-                    indictmentCount.id,
-                    {
-                      substances: {
-                        ...indictmentCount.substances,
-                        ALCOHOL: event.target.value,
-                      },
-                    },
-                    setWorkingCase,
-                  )
-                }}
-                onBlur={(event) => {
-                  const value =
-                    event.target.value.length > 0
-                      ? `${event.target.value}${'0,00'.slice(
-                          event.target.value.length,
-                        )}`
-                      : event.target.value
-
-                  validateAndSetErrorMessage(
-                    ['empty'],
-                    value,
-                    setBloodAlcoholContentErrorMessage,
-                  )
-
-                  const substances = {
-                    ...indictmentCount.substances,
-                    ALCOHOL: value,
-                  }
-
-                  handleIndictmentCountChanges({
-                    substances,
-                  })
-                }}
-              >
-                <Input
-                  name="alcohol"
-                  autoComplete="off"
-                  label={formatMessage(strings.bloodAlcoholContentLabel)}
-                  placeholder={formatMessage(
-                    strings.bloodAlcoholContentPlaceholder,
-                  )}
-                  errorMessage={bloodAlcoholContentErrorMessage}
-                  hasError={bloodAlcoholContentErrorMessage !== ''}
-                  required
-                />
-              </InputMask>
-            </Box>
-          )}
-          {indictmentCount.deprecatedOffenses?.includes(
-            IndictmentCountOffense.SPEEDING,
-          ) && (
-            <Box marginBottom={2}>
-              <SectionHeading
-                title={formatMessage(strings.speedingTitle)}
-                heading="h4"
-                marginBottom={2}
-              />
-              <Box marginBottom={1}>
-                <InputMask
-                  mask={'999'}
-                  maskPlaceholder={null}
-                  value={indictmentCount.recordedSpeed?.toString() ?? ''}
-                  onChange={(event) => {
-                    const recordedSpeed = parseInt(event.target.value)
-
-                    removeErrorMessageIfValid(
-                      ['empty'],
-                      event.target.value,
-                      recordedSpeedErrorMessage,
-                      setRecordedSpeedErrorMessage,
-                    )
-
-                    updateIndictmentCountState(
-                      indictmentCount.id,
-                      { recordedSpeed },
-                      setWorkingCase,
-                    )
-                  }}
-                  onBlur={(event) => {
-                    const recordedSpeed = parseInt(event.target.value)
-
-                    if (Number.isNaN(recordedSpeed)) {
-                      setRecordedSpeedErrorMessage('Reitur má ekki vera tómur')
-                      return
-                    }
-
-                    handleIndictmentCountChanges({
-                      recordedSpeed,
-                    })
-                  }}
-                >
-                  <Input
-                    name="recordedSpeed"
-                    autoComplete="off"
-                    label={formatMessage(strings.recordedSpeedLabel)}
-                    placeholder="0"
-                    required
-                    errorMessage={recordedSpeedErrorMessage}
-                    hasError={recordedSpeedErrorMessage !== ''}
-                  />
-                </InputMask>
-              </Box>
-              <InputMask
-                mask={'999'}
-                maskPlaceholder={null}
-                value={indictmentCount.speedLimit?.toString() ?? ''}
-                onChange={(event) => {
-                  const speedLimit = parseInt(event.target.value)
-
-                  removeErrorMessageIfValid(
-                    ['empty'],
-                    event.target.value,
-                    speedLimitErrorMessage,
-                    setSpeedLimitErrorMessage,
-                  )
-
-                  updateIndictmentCountState(
-                    indictmentCount.id,
-                    { speedLimit },
-                    setWorkingCase,
-                  )
-                }}
-                onBlur={(event) => {
-                  const speedLimit = parseInt(event.target.value)
-
-                  if (Number.isNaN(speedLimit)) {
-                    setSpeedLimitErrorMessage('Reitur má ekki vera tómur')
-                    return
-                  }
-
-                  handleIndictmentCountChanges({
-                    speedLimit,
-                  })
-                }}
-              >
-                <Input
-                  name="speedLimit"
-                  autoComplete="off"
-                  label={formatMessage(strings.speedLimitLabel)}
-                  placeholder="0"
-                  required
-                  errorMessage={speedLimitErrorMessage}
-                  hasError={speedLimitErrorMessage !== ''}
-                />
-              </InputMask>
-            </Box>
-          )}
-          {indictmentCount.deprecatedOffenses
-            ?.filter(
-              (offenseType) =>
-                offenseType === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||
-                offenseType ===
-                  IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-            )
-            .map((offenseType) => (
-              <Box key={`${indictmentCount.id}-${offenseType}-substances`}>
-                <SubstanceChoices
-                  indictmentCount={indictmentCount}
-                  indictmentCountOffenseType={offenseType}
-                  onChange={handleIndictmentCountChanges}
-                />
-              </Box>
-            ))}
-          <Box marginBottom={2}>
+          <Offenses
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            indictmentCount={indictmentCount}
+            updateIndictmentCountState={updateIndictmentCountState}
+            handleIndictmentCountChanges={handleIndictmentCountChanges}
+          />
+          {showLegalArticleSelection && <Box marginBottom={2}>
             <SectionHeading
               heading="h4"
               title={formatMessage(strings.lawsBrokenTitle)}
@@ -951,7 +543,7 @@ export const IndictmentCount: FC<Props> = ({
               }}
               required
             />
-          </Box>
+          </Box>}
           {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
             <Box marginBottom={2}>
               {indictmentCount.lawsBroken.map((brokenLaw) => (

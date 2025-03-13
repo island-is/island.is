@@ -27,13 +27,11 @@ export const subSectionHealthDeclaration = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription',
-          title: '',
           description: m.healthDeclarationSubTitle,
           marginBottom: 2,
         }),
         buildCustomField({
           id: 'remarks',
-          title: '',
           component: 'HealthRemarks',
           condition: (answers, externalData) =>
             hasHealthRemarks(externalData) && answers.applicationFor !== BE,
@@ -141,7 +139,6 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildAlertMessageField({
           id: 'healthDeclaration.contactGlassesMismatch',
-          title: '',
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
@@ -151,11 +148,9 @@ export const subSectionHealthDeclaration = buildSubSection({
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
           id: 'healthDeclarationValidForBELicense',
-          title: '',
         }),
         buildAlertMessageField({
           id: 'healthDeclaration.BE',
-          title: '',
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
           alertType: 'warning',
           condition: (answers, externalData) =>
@@ -172,7 +167,7 @@ export const subSectionHealthDeclaration = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'healthDeclarationDescription65',
-          title: '',
+          description: m.healthDeclarationMultiField65Description,
         }),
       ],
     }),

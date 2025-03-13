@@ -266,5 +266,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
     }
     isCompletedWithoutRuling
+    caseSentToCourtDate
   }
 }

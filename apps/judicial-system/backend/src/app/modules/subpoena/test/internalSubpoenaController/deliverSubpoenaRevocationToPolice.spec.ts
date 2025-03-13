@@ -1,12 +1,12 @@
 import { uuid } from 'uuidv4'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import { Case } from '../../../case'
-import { DeliverDto } from '../../dto/deliver.dto'
-import { DeliverResponse } from '../../models/deliver.response'
+import { PoliceService } from '../../../police/police.service'
 import { Subpoena } from '../../models/subpoena.model'
-import { SubpoenaService } from '../../subpoena.service'
 
 interface Then {
   error: Error
@@ -17,27 +17,28 @@ type GivenWhenThen = () => Promise<Then>
 describe('InternalSubpoenaController - Deliver subpoena revocation to police', () => {
   const caseId = uuid()
   const subpoenaId = uuid()
+  const policeSubpoenaId = uuid()
   const defendantId = uuid()
 
-  const subpoena = { id: subpoenaId } as Subpoena
+  const subpoena = { id: subpoenaId, subpoenaId: policeSubpoenaId } as Subpoena
   const theCase = { id: caseId } as Case
-  const user = { user: { id: uuid() } } as DeliverDto
-  const delivered = { delivered: true } as DeliverResponse
 
-  let mockSubpoenaService: SubpoenaService
+  const userId = uuid()
+  const user = { id: userId } as User
+
+  let mockPoliceService: PoliceService
+
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { subpoenaService, internalSubpoenaController } =
+    const { internalSubpoenaController, policeService } =
       await createTestingSubpoenaModule()
 
-    mockSubpoenaService = subpoenaService
+    mockPoliceService = policeService
 
-    const deliverSubpoenaRevokedToPoliceMock = jest.fn()
-    mockSubpoenaService.deliverSubpoenaRevocationToPolice =
-      deliverSubpoenaRevokedToPoliceMock
+    const mockRevokeSubpoena = mockPoliceService.revokeSubpoena as jest.Mock
 
-    deliverSubpoenaRevokedToPoliceMock.mockResolvedValueOnce(delivered)
+    mockRevokeSubpoena.mockResolvedValueOnce(true)
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -49,7 +50,7 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
           subpoenaId,
           theCase,
           subpoena,
-          user,
+          { user },
         )
       } catch (error) {
         then.error = error as Error
@@ -64,10 +65,12 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
       await givenWhenThen()
     })
 
-    it('should call deliverSubpoenaRevokedToPolice', () => {
-      expect(
-        mockSubpoenaService.deliverSubpoenaRevocationToPolice,
-      ).toHaveBeenCalledWith(theCase, subpoena, user.user)
+    it('should call the police service with the correct subpoena id', () => {
+      expect(mockPoliceService.revokeSubpoena).toHaveBeenCalledWith(
+        theCase,
+        policeSubpoenaId,
+        user,
+      )
     })
   })
 })

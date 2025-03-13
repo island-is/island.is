@@ -53,7 +53,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space0',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -82,7 +81,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space1',
-      title: '',
       space: 'gutter',
     }),
     buildDividerField({}),
@@ -115,7 +113,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space2',
-      title: '',
       space: 'gutter',
     }),
     buildKeyValueField({
@@ -143,7 +140,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space3',
-      title: '',
       space: 'gutter',
       marginBottom: 'gutter',
     }),
@@ -180,7 +176,6 @@ export const sectionOverview = buildMultiField({
     ),
     buildDescriptionField({
       id: 'overview.space4',
-      title: '',
       space: 'gutter',
     }),
     // TODO: map properties
@@ -202,7 +197,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space5',
-      title: '',
       space: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
@@ -236,7 +230,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space6',
-      title: '',
       space: 'gutter',
       condition: (answers) => displayOpeningHours(answers),
     }),
@@ -314,7 +307,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildDescriptionField({
       id: 'overview.space7',
-      title: '',
       space: 'gutter',
     }),
     buildDividerField({}),
@@ -327,7 +319,6 @@ export const sectionOverview = buildMultiField({
     }),
     buildCustomField({
       id: 'overview.files',
-      title: '',
       component: 'FileOverview',
     }),
   ],

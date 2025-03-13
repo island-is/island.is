@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -29,6 +29,7 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { isEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useCase,
   useDefendants,
@@ -38,11 +39,12 @@ import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/
 
 import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
+import { getIncidentDescription } from '../Indictment/lib/getIncidentDescription'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
 import { defendant } from './Defendant.strings'
+
 
 export interface PoliceCase {
   number: string
@@ -117,8 +119,6 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
-  const [isProsecutorSelected, setIsProsecutorSelected] =
-    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -295,22 +295,27 @@ const Defendant = () => {
             indictmentCount.policeCaseNumber === policeCaseNumber,
         )
         .forEach((indictmentCount) => {
+          const policeCaseNumberSubtypes = subtypes?.[policeCaseNumber] || []
+          const indictmentCountSubtypes = indictmentCount.indictmentCountSubtypes || []
+
+          // handle changes based on police case subtype changes
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter((subtype) => policeCaseNumberSubtypes.includes(subtype))
           const updatedIndictmentCount = {
-            ...indictmentCount,
-            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+            ...indictmentCount, 
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
-          const incidentDescription = getIncidentDescription(
-            updatedIndictmentCount,
+ 
+          const incidentDescription = getIncidentDescription({
+            indictmentCount: updatedIndictmentCount,
             formatMessage,
             crimeScene,
-            subtypes,
-          )
+            subtypesRecord: subtypes,
+          })
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-            ...(subtypes && {
-              indictmentCountSubtypes: subtypes[policeCaseNumber],
-            }),
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
+            policeCaseNumberSubtypes,
           })
         })
     }
@@ -454,16 +459,7 @@ const Defendant = () => {
     }))
   }
 
-  /**
-   * This condition can be a little hard to read. The point is that if the
-   * case exists, i.e. if `workingCase.id` is truthy, then the user has
-   * selected a prosecutor. If the case does not exist, i.e. if
-   * `workingCase.id` is falsy, then the user has not selected a prosecutor
-   * and must do so before proceeding.
-   */
-  const stepIsValid =
-    isDefendantStepValidIndictments(workingCase) &&
-    Boolean(workingCase.id || isProsecutorSelected)
+  const stepIsValid = isDefendantStepValidIndictments(workingCase)
 
   return (
     <PageLayout
@@ -478,11 +474,9 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
-        <ProsecutorSection
-          handleChange={
-            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
-          }
-        />
+        <Box component="section" marginBottom={5}>
+          <ProsecutorSection />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}

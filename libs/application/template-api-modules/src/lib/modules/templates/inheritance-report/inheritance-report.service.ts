@@ -72,6 +72,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
               inheritanceReportInfo.inheritanceTax = inheritanceTax
               resolve()
             })
+            .catch((e) => {
+              this.logger.warn(
+                '[inheritance-report]: Failed to fetch inheritance tax',
+                e,
+              )
+            })
         })
       }),
     )

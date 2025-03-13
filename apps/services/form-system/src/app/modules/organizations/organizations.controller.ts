@@ -6,19 +6,36 @@ import {
   Param,
   NotFoundException,
   VERSION_NEUTRAL,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
-import { Documentation } from '@island.is/nest/swagger'
 import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(AdminPortalScope.formSystemSuperUser)
 @ApiTags('organizations')
 @Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
+  @ApiOperation({ summary: 'Create an organization' })
+  @ApiCreatedResponse({
+    description: 'Create an organization',
+    type: OrganizationDto,
+  })
+  @ApiBody({ type: CreateOrganizationDto })
   @Post()
   create(
     @Body() createOrganizationDto: CreateOrganizationDto,
@@ -26,20 +43,23 @@ export class OrganizationsController {
     return this.organizationsService.create(createOrganizationDto)
   }
 
-  @Get()
-  @Documentation({
+  @ApiOperation({ summary: 'Get all Organizations' })
+  @ApiOkResponse({
     description: 'Get all Organizations',
-    response: { status: 200, type: [OrganizationsResponseDto] },
+    type: OrganizationsResponseDto,
   })
+  @Get()
   async findAll(): Promise<OrganizationsResponseDto> {
     return await this.organizationsService.findAll()
   }
 
-  @Get(':id')
-  @Documentation({
-    description: 'Get Organization by id',
-    response: { status: 200, type: OrganizationDto },
+  @ApiOperation({ summary: 'Get an organization by id' })
+  @ApiOkResponse({
+    description: 'Get an organization by id',
+    type: OrganizationDto,
   })
+  @ApiParam({ name: 'id', type: String })
+  @Get(':id')
   async findOne(@Param('id') id: string): Promise<OrganizationDto> {
     const organization = await this.organizationsService.findOne(id)
     if (!organization) {

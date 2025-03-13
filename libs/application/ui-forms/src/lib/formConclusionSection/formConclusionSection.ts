@@ -114,7 +114,6 @@ export const buildFormConclusionSection = ({
           ...expandableDescriptionField,
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionBottomLink',
-            title: '',
             url: bottomButtonLink,
             buttonTitle: bottomButtonLabel,
             message: bottomButtonMessage,

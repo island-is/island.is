@@ -23,7 +23,6 @@ export const sectionSignatureAndPhoto = buildSection({
       children: [
         buildAlertMessageField({
           id: 'digitalLicenseInfo',
-          title: '',
           message: m.signatureAndImageAlert,
           alertType: 'info',
         }),
@@ -36,7 +35,6 @@ export const sectionSignatureAndPhoto = buildSection({
         }),
         buildCustomField({
           id: 'qSignature',
-          title: '',
           component: 'QualitySignature',
           condition: (_, externalData) => {
             return (
@@ -54,7 +52,6 @@ export const sectionSignatureAndPhoto = buildSection({
         }),
         buildCustomField({
           id: 'qphoto',
-          title: '',
           component: 'QualityPhoto',
           condition: (_, externalData) => {
             return (

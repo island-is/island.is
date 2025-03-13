@@ -73,7 +73,11 @@ const OrganizationParentSubpage: Screen<
       ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router, 3),
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
       mainContent={
         <Box paddingTop={4}>

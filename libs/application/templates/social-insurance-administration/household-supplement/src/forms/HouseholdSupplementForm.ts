@@ -280,7 +280,6 @@ export const HouseholdSupplementForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -667,7 +666,6 @@ export const HouseholdSupplementForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           description: '',
           children: [
             buildCustomField(

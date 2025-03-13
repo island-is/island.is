@@ -16,7 +16,6 @@ import { Routes } from '../lib/constants'
 
 export const ParentB: Form = buildForm({
   id: 'IdCardApplicationParentB',
-  title: '',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: false,
   renderLastScreenBackButton: false,
@@ -46,7 +45,6 @@ export const ParentB: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'preInformation.parentB',
-              title: '',
             }),
           ],
         }),

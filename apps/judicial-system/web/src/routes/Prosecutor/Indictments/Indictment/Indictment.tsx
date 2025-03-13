@@ -1,12 +1,15 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -26,6 +29,7 @@ import {
   IndictmentCountOffense,
   Institution,
   Maybe,
+  Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
@@ -57,7 +61,7 @@ export const getIndictmentIntroductionAutofill = (
         prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court: court?.name?.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
@@ -70,7 +74,7 @@ export const getIndictmentIntroductionAutofill = (
                 ? formatNationalId(defendant.nationalId)
                 : 'Ekki skráð',
             },
-          )}\n          ${defendant.address}`
+          )}\n          ${defendant.address},`
         })}
     `,
       ]
@@ -85,6 +89,7 @@ const Indictment = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const {
@@ -129,14 +134,16 @@ const Indictment = () => {
       // If the case has:
       // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
-      const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.deprecatedOffenses?.some((offense) =>
-          [
-            IndictmentCountOffense.DRUNK_DRIVING,
-            IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-            IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-          ].includes(offense),
-        ),
+      const requestDriversLicenseSuspension = indictmentCounts?.some(
+        (count) => {
+          return count.offenses?.some((o) =>
+            [
+              IndictmentCountOffense.DRUNK_DRIVING,
+              IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+              IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+            ].includes(o.offense),
+          )
+        },
       )
 
       if (
@@ -191,6 +198,7 @@ const Indictment = () => {
     async (
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
+      updatedOffenses?: Offense[],
     ) => {
       if (
         updatedIndictmentCount.policeCaseNumber &&
@@ -218,7 +226,9 @@ const Indictment = () => {
 
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId ? returnedIndictmentCount : count,
+          count.id === indictmentCountId
+            ? { ...returnedIndictmentCount, offenses: updatedOffenses }
+            : count,
         ),
       )
 
@@ -226,6 +236,7 @@ const Indictment = () => {
         indictmentCountId,
         returnedIndictmentCount,
         setWorkingCase,
+        updatedOffenses,
       )
     },
     [
@@ -269,8 +280,13 @@ const Indictment = () => {
   )
 
   const initialize = useCallback(() => {
-    if (workingCase.indictmentCounts?.length === 0) {
+    const indictmentCounts = workingCase.indictmentCounts || []
+    if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
+    }
+    else {
+      // in case indictment subtypes have been modified in earlier step
+      setDriversLicenseSuspensionRequest(indictmentCounts)
     }
 
     setAndSendCaseToServer(
@@ -296,6 +312,7 @@ const Indictment = () => {
     formatMessage,
     setWorkingCase,
     handleCreateIndictmentCount,
+    setDriversLicenseSuspensionRequest
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
@@ -503,6 +520,7 @@ const Indictment = () => {
             caseId={workingCase.id}
             title={formatMessage(strings.pdfButtonIndictment)}
             pdfType="indictment"
+            elementId="Ákæra"
           />
         </Box>
       </FormContentContainer>
@@ -511,7 +529,7 @@ const Indictment = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

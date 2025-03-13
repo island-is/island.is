@@ -6,6 +6,7 @@ import {
   Hidden,
   Icon,
   IconMapIcon,
+  IconMapType,
   Inline,
   Tag,
   TagVariant,
@@ -42,6 +43,7 @@ type ActionCardProps = {
     variant?: ButtonTypes['variant']
     size?: ButtonSizes
     icon?: IconMapIcon
+    iconType?: IconMapType
     onClick?: () => void
     disabled?: boolean
     centered?: boolean
@@ -278,7 +280,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                   <Button
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
-                    iconType="outline"
+                    iconType={cta.iconType ?? 'outline'}
                     size={cta.size ?? 'small'}
                     type="span"
                     unfocusable
@@ -295,6 +297,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                   onClick={cta.onClick}
                   disabled={cta.disabled}
                   icon={cta.icon}
+                  iconType={cta.iconType}
                 >
                   {cta.label}
                 </Button>

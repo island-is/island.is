@@ -58,7 +58,6 @@ export const FormerIcelanderSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'formerIcelander',
-          title: '',
           description: '',
           required: true,
           width: 'half',

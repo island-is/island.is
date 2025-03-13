@@ -11,7 +11,7 @@ import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
+  IntroWrapper,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
@@ -20,9 +20,7 @@ import { getPathFromType } from '../../../utils/mapPaths'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
-  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const { formatMessage, lang } = useLocale()
 
   const includedTypes = [
     GenericLicenseType.AdrLicense,
@@ -38,7 +36,7 @@ export const LicensesOverviewV2 = () => {
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
-      locale,
+      locale: lang,
       input: {
         includedTypes,
       },
@@ -95,12 +93,11 @@ export const LicensesOverviewV2 = () => {
     data?.genericLicenseCollection?.licenses ?? []
 
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(m.title)}
-        intro={formatMessage(m.intro)}
-        marginBottom={4}
-      />
+    <IntroWrapper
+      title={formatMessage(m.title)}
+      intro={formatMessage(m.intro)}
+      marginBottom={4}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !errors?.length && !licenses?.length && (
         <Problem
@@ -148,7 +145,7 @@ export const LicensesOverviewV2 = () => {
             .map((license, index) => generateLicense(license, index))}
         </Stack>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 

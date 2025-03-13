@@ -591,7 +591,7 @@ export class Case extends Model {
   prosecutorPostponedAppealDate?: Date
 
   /**********
-   * The date and time of the judge's ruling (when the csae is completed)
+   * The date and time of the judge's ruling (when the case is completed)
    **********/
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })

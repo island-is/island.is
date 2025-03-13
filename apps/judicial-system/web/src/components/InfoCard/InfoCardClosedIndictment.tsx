@@ -1,7 +1,13 @@
 import { FC, useContext } from 'react'
 
+import {
+  isPrisonAdminUser,
+  isPublicProsecutorUser,
+} from '@island.is/judicial-system/types'
+
 import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
+import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -13,6 +19,7 @@ export interface Props {
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const {
     showItem,
@@ -28,6 +35,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    indictmentCreated,
     civilClaimants,
   } = useInfoCardItems()
 
@@ -61,6 +69,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'case-info-section',
           items: [
+            indictmentCreated,
             policeCaseNumbers,
             courtCaseNumber,
             prosecutorsOffice,
@@ -72,7 +81,8 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           ],
           columns: 2,
         },
-        ...(workingCase.indictmentReviewer?.name
+        ...(workingCase.indictmentReviewer?.name &&
+        (isPublicProsecutorUser(user) || isPrisonAdminUser(user))
           ? [
               {
                 id: 'additional-data-section',

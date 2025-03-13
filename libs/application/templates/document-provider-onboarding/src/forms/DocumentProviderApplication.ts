@@ -29,7 +29,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'description',
-              title: '',
               description: m.termsSubTitle,
               marginBottom: 3,
             }),
@@ -41,7 +40,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'termsOfAgreement.userTerms',
-              title: '',
               options: [
                 { value: YesOrNoEnum.YES, label: m.userAgreementOptionLabel },
               ],

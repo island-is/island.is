@@ -205,4 +205,16 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn vegna uppbóta á lífeyri hefur verið samþykkt',
     description: 'The application for pension supplement has been approved',
   },
+  pensionSupplementDismissed: {
+    id: 'ul.application:application.dismissed',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um uppbót á lífeyri frá',
+    description:
+      'Tryggingastofnun has dismissed your pension supplement application',
+  },
+  pensionSupplementDismissedDescription: {
+    id: 'ul.application:application.dismissed.description',
+    defaultMessage: 'Umsókn þinni um uppbót á lífeyri hefur verið vísað frá',
+    description: 'Your pension supplement application has been dimissed',
+  },
 })

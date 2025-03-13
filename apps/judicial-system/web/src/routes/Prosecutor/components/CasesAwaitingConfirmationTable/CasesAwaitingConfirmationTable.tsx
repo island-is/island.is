@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -24,10 +24,7 @@ import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
-import {
-  CaseListEntry,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesAwaitingConfirmationTable.strings'
 

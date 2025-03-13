@@ -62,7 +62,6 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
   formatPrisonAdministrationRulingNotification,
@@ -752,7 +751,7 @@ export class CaseNotificationService extends BaseNotificationService {
       (d: Defendant) => d.defenderEmail,
     )
     uniqueDefendants.forEach((defendant) => {
-      if (defendant.defenderEmail) {
+      if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
         promises.push(
           this.sendPostponedCourtDateEmailNotificationForIndictmentCase(
             theCase,
@@ -875,7 +874,9 @@ export class CaseNotificationService extends BaseNotificationService {
       }),
       html: this.formatMessage(notifications.caseCompleted.prosecutorBody, {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+        courtName: applyDativeCaseToCourtName(
+          theCase.court?.name || 'héraðsdómi',
+        ),
         caseIndictmentRulingDecision:
           getHumanReadableCaseIndictmentRulingDecision(
             theCase.indictmentRulingDecision,
@@ -889,7 +890,9 @@ export class CaseNotificationService extends BaseNotificationService {
   private getRulingEmailNotificationToProsecutorProps = (theCase: Case) => {
     const sharedHtmlProps = {
       courtCaseNumber: theCase.courtCaseNumber,
-      courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+      courtName: applyDativeCaseToCourtName(
+        theCase.court?.name || 'héraðsdómi',
+      ),
       linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     }
@@ -939,7 +942,9 @@ export class CaseNotificationService extends BaseNotificationService {
   ) {
     const sharedHtmlProps = {
       courtCaseNumber: theCase.courtCaseNumber,
-      courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
+      courtName: applyDativeCaseToCourtName(
+        theCase.court?.name || 'héraðsdómi',
+      ),
       defenderHasAccessToRvg: Boolean(defenderNationalId),
       linkStart: `<a href="${formatDefenderRoute(
         this.config.clientUrl,
@@ -1087,7 +1092,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail) {
+        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
               theCase,
@@ -1356,71 +1361,45 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  private sendRevokedEmailNotificationToDefenderForRequestCase(
+  private sendRevokedEmailNotificationToDefender(
     caseType: CaseType,
-    defendant: Defendant,
-    defenderName?: string,
-    defenderEmail?: string,
-    arraignmentDate?: Date,
-    courtName?: string,
-  ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.subject,
-      { caseType },
-    )
-
-    const html = formatDefenderRevokedEmailNotification(
-      this.formatMessage,
-      caseType,
-      defendant.nationalId,
-      defendant.name,
-      defendant.noNationalId,
-      courtName,
-      arraignmentDate,
-    )
-
-    return this.sendEmail({
-      subject,
-      html,
-      recipientName: defenderName,
-      recipientEmail: defenderEmail,
-      skipTail: true,
-    })
-  }
-
-  private sendRevokedEmailNotificationToDefenderForIndictmentCase(
     caseId: string,
-    defenderNationalId?: string,
+    actorInstitution?: string,
     defenderName?: string,
     defenderEmail?: string,
+    defenderNationalId?: string,
     courtName?: string,
     courtCaseNumber?: string,
   ): Promise<Recipient> {
-    const subject = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentSubject,
-      { courtCaseNumber },
-    )
+    const subject = isIndictmentCase(caseType)
+      ? this.formatMessage(
+          notifications.defenderRevokedEmail.indictmentSubject,
+          { courtCaseNumber },
+        )
+      : this.formatMessage(notifications.defenderRevokedEmail.subject, {
+          caseType,
+        })
 
-    const html = this.formatMessage(
-      notifications.defenderRevokedEmail.indictmentBody,
-      {
-        courtName: courtName?.replace('dómur', 'dómi'),
-        defenderHasAccessToRvg: Boolean(defenderNationalId),
-        linkStart: `<a href="${formatDefenderRoute(
-          this.config.clientUrl,
-          CaseType.INDICTMENT,
-          caseId,
-        )}">`,
-        linkEnd: '</a>',
-      },
-    )
+    const html = this.formatMessage(notifications.defenderRevokedEmail.bodyV2, {
+      actorInstitution,
+      courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+      courtCaseNumber,
+      caseType,
+      defenderHasAccessToRvg: Boolean(defenderNationalId),
+      linkStart: `<a href="${formatDefenderRoute(
+        this.config.clientUrl,
+        caseType,
+        caseId,
+      )}">`,
+      linkEnd: '</a>',
+    })
 
     return this.sendEmail({
       subject,
       html,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      skipTail: !defenderNationalId,
+      skipTail: isIndictmentCase(caseType) || !defenderNationalId,
     })
   }
 
@@ -1456,16 +1435,16 @@ export class CaseNotificationService extends BaseNotificationService {
     )
 
     if (defenderWasNotified && theCase.defendants) {
-      const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
-
       promises.push(
-        this.sendRevokedEmailNotificationToDefenderForRequestCase(
+        this.sendRevokedEmailNotificationToDefender(
           theCase.type,
-          theCase.defendants[0],
+          theCase.id,
+          theCase.creatingProsecutor?.institution?.name,
           theCase.defenderName,
           theCase.defenderEmail,
-          arraignmentDate,
+          theCase.defenderNationalId,
           theCase.court?.name,
+          theCase.courtCaseNumber,
         ),
       )
     }
@@ -1560,11 +1539,13 @@ export class CaseNotificationService extends BaseNotificationService {
 
       if (defenderWasNotified) {
         promises.push(
-          this.sendRevokedEmailNotificationToDefenderForIndictmentCase(
+          this.sendRevokedEmailNotificationToDefender(
+            theCase.type,
             theCase.id,
-            defendant.defenderNationalId,
+            theCase.creatingProsecutor?.institution?.name,
             defendant.defenderName,
             defendant.defenderEmail,
+            defendant.defenderNationalId,
             theCase.court?.name,
             theCase.courtCaseNumber,
           ),
@@ -1778,7 +1759,7 @@ export class CaseNotificationService extends BaseNotificationService {
     })
     const html = this.formatMessage(notifications.caseFilesUpdated.body, {
       courtCaseNumber,
-      court: court?.replace('dómur', 'dómi'),
+      court: applyDativeCaseToCourtName(court || 'héraðsdómi'),
       userHasAccessToRVG: Boolean(link),
       linkStart: `<a href="${link}">`,
       linkEnd: '</a>',
@@ -1806,6 +1787,18 @@ export class CaseNotificationService extends BaseNotificationService {
         theCase.judge?.email,
       ),
     ]
+
+    if (theCase.registrar) {
+      promises.push(
+        this.sendCaseFilesUpdatedNotification(
+          theCase.courtCaseNumber,
+          theCase.court?.name,
+          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
 
     const uniqueSpokespersons = _uniqBy(
       theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
@@ -1836,7 +1829,7 @@ export class CaseNotificationService extends BaseNotificationService {
         (d: Defendant) => d.defenderEmail,
       )
       uniqueDefendants.forEach((defendant) => {
-        if (defendant.defenderEmail) {
+        if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
           promises.push(
             this.sendCaseFilesUpdatedNotification(
               theCase.courtCaseNumber,
@@ -2010,7 +2003,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealedToCourtOfAppeals.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court: theCase.court?.name.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(
+            theCase.court?.name || 'héraðsdómi',
+          ),
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
@@ -2128,7 +2123,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealReceivedByCourt.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court: theCase.court?.name.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(
+            theCase.court?.name || 'héraðsdómi',
+          ),
           courtCaseNumber: theCase.courtCaseNumber,
           statementDeadline: formatDate(statementDeadline, 'PPPp'),
           linkStart: `<a href="${url}">`,
@@ -2262,7 +2259,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealStatement.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court: theCase.court?.name.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(
+            theCase.court?.name || 'héraðsdómi',
+          ),
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCaseNumber ?? 'NONE',
           linkStart: `<a href="${url}">`,
@@ -2472,7 +2471,9 @@ export class CaseNotificationService extends BaseNotificationService {
         notifications.caseAppealCompleted.body,
         {
           userHasAccessToRVG: Boolean(url),
-          court: theCase.court?.name.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(
+            theCase.court?.name || 'héraðsdómi',
+          ),
           courtCaseNumber: theCase.courtCaseNumber,
           appealCaseNumber: theCase.appealCaseNumber,
           appealRulingDecision: getAppealResultTextByValue(
@@ -2489,7 +2490,6 @@ export class CaseNotificationService extends BaseNotificationService {
           html: defenderHtml,
           recipientName: theCase.defenderName,
           recipientEmail: theCase.defenderEmail,
-
           skipTail: !theCase.defenderNationalId,
         }),
       )
@@ -2527,7 +2527,6 @@ export class CaseNotificationService extends BaseNotificationService {
         html,
         recipientName: theCase.defenderName,
         recipientEmail: theCase.defenderEmail,
-
         skipTail: !theCase.defenderNationalId,
       }),
     )
