@@ -14,6 +14,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   ApplicationRole,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -24,7 +25,11 @@ import {
 import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
-
+enum TEMPLATE_API_ACTIONS {
+  // Has to match name of action in template API module
+  // (will be refactored when state machine is a part of API module)
+  sendApplication = 'sendApplication',
+}
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -113,6 +118,19 @@ const RentalAgreementTemplate: ApplicationTemplate<
         entry: 'assignUsers',
         exit: 'clearAssignees',
         meta: {
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+            // (Optional) Should the response/error be persisted to application.externalData
+            // Defaults to true
+            shouldPersistToExternalData: false,
+            // (Optional) Id that will store the result inside application.externalData
+            // Defaults to value of apiModuleAction
+            externalDataId: 'string',
+            // (Optional) Should the state transition be blocked if this action errors out?
+            // Will revert changes to answers/assignees/state
+            // Defaults to true
+            throwOnError: false,
+          }),
           name: 'Summary for review',
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
