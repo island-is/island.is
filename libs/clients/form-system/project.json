@@ -3,6 +3,9 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/form-system/src",
   "projectType": "library",
+  "implicitDependencies": [
+    "services-form-system-api"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",

@@ -271,6 +271,7 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     bffServicePortalService,
     unicornApp,
+    formSystemApi
   ],
 }
 
