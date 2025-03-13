@@ -5,7 +5,6 @@ import { error } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z.string().refine((nationalId) => {
-    console.log('nationalId', kennitala.isValid(nationalId))
     return (
       nationalId &&
       nationalId.length !== 0 &&
