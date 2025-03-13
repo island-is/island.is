@@ -29,4 +29,3 @@ root.render(
     <App />
   </StrictMode>,
 )
-//Dummy
