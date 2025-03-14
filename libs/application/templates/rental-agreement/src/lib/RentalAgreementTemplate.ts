@@ -87,6 +87,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          onExit: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -121,9 +124,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: 'Summary for review',
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
-          onEntry:  defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
-          }),
+          // onEntry:  defineTemplateApi({
+          //   action: TEMPLATE_API_ACTIONS.sendApplication,
+          // }),
           roles: [
             {
               id: Roles.APPLICANT,

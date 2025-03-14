@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -48,6 +49,23 @@ export const SummaryDraftSection = buildSection({
             },
           ],
         }),
+        buildHiddenInput({
+          id: 'htmlSummary',
+          defaultValue: () => {
+            const element = document.getElementById('my-super-email-summary')
+            if (element) {
+              const jsonData = {
+                  id: element.id,
+                  className: element.className,
+                  html: element.outerHTML,
+              };
+          
+              console.log('JSON Data:', JSON.stringify(jsonData));
+              return JSON.stringify(jsonData);
+          }
+          return null;
+          },
+        })
       ],
     }),
   ],

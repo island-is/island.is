@@ -65,11 +65,24 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (
     nationalIdWithName: { name: string }
     email: string
   }>
+  
+  console.log('tölvupóstur before ***===0a', application)
+
+  const htmlSummaryForEmail = getValueViaPath(
+    application.answers,
+    'htmlSummary',
+  ) as string;
+
+  const subidubi = JSON.parse(htmlSummaryForEmail);
+
+  const emailContent = subidubi.html; // Extract the HTML
 
 
-  console.log('application inni í email ***===1', application)
-  console.log('tenantEmails ***===2', tenantEmails)
-  console.log('Landlords ***===3', landlords)
+  console.log('tölvupóstur ***===1a', application)
+  console.log('tölvupóstur ***===2b', emailContent)
+  // console.log('tenantEmails ***===2', tenantEmails)
+  // console.log('Landlords ***===3', landlords)
+  // console.log('Landlords ***===4 þetta er nýtT!!', landlords)
 
   // TODO translate using locale
   const subject ='Umsókn samþykkt: ReferenceTemplate'
@@ -93,9 +106,6 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (
       },
     ],
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    html: emailContent
   }
 }

@@ -15,22 +15,22 @@ export class RentalAgreementService extends BaseTemplateApiService {
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     console.log('Send Application =====> ***', application)
 
-    generateRentalAgreementEmail({
-      application,
-      options: {
-        clientLocationOrigin: '',
-        locale: '',
-        email: {
-          sender: '',
-          address: ''
-        }
-      }
-    })
-
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   generateRentalAgreementEmail,
+    // generateRentalAgreementEmail({
     //   application,
-    // )
+    //   options: {
+    //     clientLocationOrigin: '',
+    //     locale: '',
+    //     email: {
+    //       sender: '',
+    //       address: ''
+    //     }
+    //   }
+    // })
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateRentalAgreementEmail,
+      application,
+    )
     // await this.sharedTemplateAPIService.sendEmailWithAttachment(
     //   generateRentalAgreementNotificationEmail,
     //   application as unknown as Application,
