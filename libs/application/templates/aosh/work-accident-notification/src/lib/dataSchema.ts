@@ -20,7 +20,7 @@ const accidentSchema = z
     accidentLocationParentGroup: option.optional(),
     didAoshCome: z.string(),
     didPoliceCome: z.string(),
-    exactLocation: z.string(),
+    exactLocation: z.string().min(1).max(100),
     municipality: z.string(),
     date: z.string(),
     time: TimeWithRefine,
