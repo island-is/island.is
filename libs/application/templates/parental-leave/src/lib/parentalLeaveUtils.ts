@@ -128,9 +128,7 @@ export const formatPeriods = (
 ): TimelinePeriod[] => {
   const { periods, firstPeriodStart, addPeriods, tempPeriods } =
     getApplicationAnswers(application.answers)
-  const { applicationFundId } = getApplicationExternalData(
-    application.externalData,
-  )
+  const { VMSTPeriods } = getApplicationExternalData(application.externalData)
 
   const timelinePeriods: TimelinePeriod[] = []
 
@@ -141,6 +139,8 @@ export const formatPeriods = (
         : tempPeriods
       : periods
 
+  const VMSTEndDate = new Date(VMSTPeriods[VMSTPeriods.length - 1].to)
+
   periodsArray?.forEach((period, index) => {
     const isActualDob =
       index === 0 && firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
@@ -150,26 +150,14 @@ export const formatPeriods = (
       period.endDate,
     ).toString()
 
-    const startDateDateTime = new Date(period.startDate)
-    let canDelete = startDateDateTime.getTime() > currentDateStartTime()
-    const today = new Date()
-
-    if (!applicationFundId || applicationFundId === '') {
-      canDelete = true
-    } else if (isThisMonth(startDateDateTime)) {
-      if (canDelete && today.getDate() >= 20) {
-        canDelete = false
-      } else if (!canDelete && today.getDate() < 20) {
-        canDelete = true
-      }
-    }
+    const canDelete = new Date(period.startDate) > VMSTEndDate
 
     const timelinePeriod = {
       startDate: period.startDate,
       endDate: period.endDate,
       ratio: period.ratio,
       duration: calculatedLength,
-      canDelete: canDelete,
+      canDelete,
       title: formatMessage(
         'approved' in period
           ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
@@ -1313,9 +1301,6 @@ export const getLastValidPeriodEndDate = (
   application: Application,
 ): Date | null => {
   const { periods } = getApplicationAnswers(application.answers)
-  const { applicationFundId } = getApplicationExternalData(
-    application.externalData,
-  )
 
   if (periods.length === 0) {
     return null
@@ -1332,9 +1317,7 @@ export const getLastValidPeriodEndDate = (
   const today = new Date()
   const beginningOfMonth = getBeginningOfThisMonth()
 
-  if (!applicationFundId || applicationFundId === '') {
-    if (lastEndDate > getBeginningOfMonth3MonthsAgo()) return lastEndDate
-  }
+  if (lastEndDate > getBeginningOfMonth3MonthsAgo()) return lastEndDate
 
   // LastPeriod's endDate is in current month
   if (isThisMonth(lastEndDate)) {
@@ -1650,21 +1633,9 @@ export const synchronizeVMSTPeriods = (
   if (index > 0) {
     const VMSTEndDate = new Date(newPeriods[index - 1].endDate)
     periods.forEach((period) => {
-      // Drop period which is in the past, not in VMST and not in this month
       if (new Date(period.startDate) > VMSTEndDate) {
-        const periodEndDate = new Date(period.endDate)
-        if (periodEndDate.getTime() < today.getTime()) {
-          if (
-            isThisMonth(periodEndDate) &&
-            isThisMonth(new Date(period.startDate))
-          ) {
-            newPeriods.push({ ...period, rawIndex: index })
-            index += 1
-          }
-        } else {
-          newPeriods.push({ ...period, rawIndex: index })
-          index += 1
-        }
+        newPeriods.push({ ...period, rawIndex: index })
+        index += 1
       }
     })
 
