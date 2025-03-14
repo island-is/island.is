@@ -1,14 +1,21 @@
 import React, { useEffect, useRef } from 'react'
 
-import { Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  ModalBase,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 
 import { generateFormHtml } from '../../utils/3ds'
+import * as styles from './ThreeDSecure.css'
 
 interface ThreeDSecureProps {
   isActive: boolean
   postUrl: string
   scriptPath: string
   verificationFields: { name: string; value: string }[]
+  hasData: boolean
   onClose: () => void
 }
 
@@ -17,18 +24,25 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
   postUrl,
   scriptPath,
   verificationFields,
-  onClose,
+  hasData,
+  // onClose,
 }) => {
+  const iframeContainerRef = useRef<HTMLIFrameElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const formReadyRef = useRef(false)
 
   useEffect(() => {
-    if (!isActive && iframeRef.current) {
-      iframeRef.current.contentWindow?.document.close()
-      iframeRef.current = null
+    if (!isActive) {
+      if (iframeRef.current) {
+        iframeRef.current.contentWindow?.document.close()
+        iframeRef.current = null
+      }
+      formReadyRef.current = false
     }
 
-    if (isActive && iframeRef.current) {
+    if (isActive && iframeRef.current && !formReadyRef.current) {
       const iframeDoc = iframeRef.current.contentWindow?.document
+
       if (iframeDoc) {
         const formHtml = generateFormHtml(
           postUrl,
@@ -38,21 +52,68 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
         iframeDoc.open()
         iframeDoc.write(formHtml)
         iframeDoc.close()
+        formReadyRef.current = true
       }
     }
   }, [isActive, postUrl, scriptPath, verificationFields])
 
-  if (!isActive) return null
-
   return (
-    <>
-      <iframe
-        ref={iframeRef}
-        style={{ width: '100%', height: '400px', border: 'none' }}
-      />
-      <Button variant="text" onClick={onClose} fluid>
-        Close
-      </Button>
-    </>
+    <ModalBase
+      baseId="3ds"
+      isVisible={isActive}
+      className={styles.container}
+      hideOnClickOutside={false}
+    >
+      <Box
+        position="relative"
+        width="full"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Box
+          borderRadius="large"
+          overflow="hidden"
+          background="white"
+          width="full"
+          height="full"
+          justifyContent="center"
+          padding={1}
+          className={styles.iframeContainer}
+        >
+          <Box
+            position="relative"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            width="full"
+            height="full"
+            ref={iframeContainerRef}
+            rowGap={2}
+          >
+            <div className={styles.loaderContainer}>
+              <SkeletonLoader display="block" height="100%" width="100%" />
+            </div>
+            {isActive && hasData && (
+              <iframe
+                ref={(el) => {
+                  iframeRef.current = el
+                }}
+                style={{
+                  width: '100%',
+                  height: iframeContainerRef.current?.offsetWidth ?? '500px',
+                  border: 'none',
+                  zIndex: 2,
+                }}
+              />
+            )}
+            {/* <Button variant="text" onClick={onClose} fluid>
+            Close
+          </Button> */}
+          </Box>
+        </Box>
+      </Box>
+    </ModalBase>
   )
 }

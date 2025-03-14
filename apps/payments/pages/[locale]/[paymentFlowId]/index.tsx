@@ -4,7 +4,13 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import { Box, Button, ModalBase } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  ModalBase,
+} from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
@@ -373,7 +379,7 @@ export default function PaymentPage({
     }
 
     if (paymentFlow.redirectToReturnUrlOnSuccess && paymentFlow.returnUrl) {
-      router.push(paymentFlow.returnUrl)
+      window.location.assign(paymentFlow.returnUrl)
     } else {
       router.reload()
     }
@@ -557,48 +563,18 @@ export default function PaymentPage({
           )
         }
       />
-      <ModalBase
-        baseId="3ds"
-        isVisible={isVerifyingCard}
-        hideOnClickOutside={false}
-      >
-        <Box
-          position="relative"
-          width="full"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          marginTop={[1, 8, 15]}
-        >
-          <Box
-            borderRadius="large"
-            overflow="hidden"
-            background="white"
-            width="half"
-            padding={[1, 2, 3]}
-          >
-            <Box
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              rowGap={2}
-            >
-              {threeDSecureData && (
-                <ThreeDSecure
-                  isActive={isVerifyingCard}
-                  onClose={() => {
-                    setVerificationStatus(false)
-                    setIsSubmitting(false)
-                  }}
-                  postUrl={threeDSecureData.postUrl}
-                  scriptPath={threeDSecureData.scriptPath}
-                  verificationFields={threeDSecureData.verificationFields}
-                />
-              )}
-            </Box>
-          </Box>
-        </Box>
-      </ModalBase>
+
+      <ThreeDSecure
+        isActive={isVerifyingCard}
+        onClose={() => {
+          setVerificationStatus(false)
+          setIsSubmitting(false)
+        }}
+        hasData={!!threeDSecureData}
+        postUrl={threeDSecureData?.postUrl}
+        scriptPath={threeDSecureData?.scriptPath}
+        verificationFields={threeDSecureData?.verificationFields ?? []}
+      />
     </>
   )
 }
