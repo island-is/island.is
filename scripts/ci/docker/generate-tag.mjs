@@ -20,6 +20,7 @@ const tagName = getTagname()
 
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
+core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release');
 core.setOutput('GIT_BRANCH', targetBranch)
 core.setOutput('GIT_SHA', sha)
 console.info(`Artifact name: ${artifactName}`)
