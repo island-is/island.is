@@ -1,20 +1,16 @@
 import {
   AsyncSearch,
-  AsyncSearchInput,
   AsyncSearchOption,
-  Box,
   BoxProps,
-  Button,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
-import { useCombobox } from 'downshift'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
+import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
 
@@ -73,11 +69,7 @@ const getNavigationItems = (
   return navigationItems
 }
 
-interface Props {
-  background?: BoxProps['background']
-}
-
-export const SearchInput = ({ background }: Props) => {
+export const SearchInput = () => {
   const { formatMessage } = useLocale()
   const [query, setQuery] = useState<string>()
 
@@ -98,14 +90,24 @@ export const SearchInput = ({ background }: Props) => {
       return results.map((result) => ({
         label: result.item.title,
         value: result.item.uri,
-        component: ({ colored, active, white, selected }) => (
-          <LinkResolver href={result.item.uri} className={styles.item}>
-            <Text variant="h5" as="h5" color="blue400">
-              {result.item.title}
-            </Text>
-            {result.item.content && <Text>{result.item.content}</Text>}
-          </LinkResolver>
-        ),
+        component: ({ active, selected }) => {
+          if (active) {
+            console.log(result.item.title)
+          }
+          return (
+            <LinkResolver
+              href={result.item.uri}
+              className={cn(styles.item, {
+                [styles.active]: active,
+              })}
+            >
+              <Text variant="h5" as="h5" color="blue400">
+                {result.item.title}
+              </Text>
+              {result.item.content && <Text>{result.item.content}</Text>}
+            </LinkResolver>
+          )
+        },
       }))
     }
 
@@ -121,13 +123,10 @@ export const SearchInput = ({ background }: Props) => {
       options={searchResults ?? []}
       inputValue={query}
       closeMenuOnSubmit
-      onChange={(value) => {
-        console.log('on change' + value)
-      }}
-      onSubmit={() => {
-        console.log('on submit')
-      }}
       onInputValueChange={(value) => {
+        if (!value && query) {
+          setQuery(undefined)
+        }
         if (value && value !== query) {
           setQuery(value)
         }
