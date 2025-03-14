@@ -569,7 +569,6 @@ export interface AlertMessageField extends BaseField {
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
-  watchValue?: string
 }
 
 export interface LinkField extends BaseField {

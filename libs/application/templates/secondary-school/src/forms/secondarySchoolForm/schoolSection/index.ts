@@ -181,7 +181,6 @@ export const schoolSection = buildSection({
             }
           },
           condition: (answers) => getAlertSpecialNeedsProgramCondition(answers),
-          watchValue: 'selection',
         }),
 
         buildAlertMessageField({
