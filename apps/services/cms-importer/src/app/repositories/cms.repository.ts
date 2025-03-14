@@ -10,6 +10,16 @@ import { logger } from '@island.is/logging'
 export class CmsRepository {
   constructor(private readonly managementClient: ManagementClientService) {}
 
+  private referenceIdPattern = /^([0-9]+)-([0-9]+)$/
+
+  private parseReferenceId = (referenceId: string): string | null => {
+    const regExResult = this.referenceIdPattern.exec(referenceId)
+    if (!regExResult) {
+      return null
+    }
+    return regExResult[2]
+  }
+
   getContentfulGrants = async (): Promise<Array<CmsGrant>> => {
     const entryResponse = await this.managementClient.getEntries({
       content_type: CONTENT_TYPE,
@@ -27,11 +37,20 @@ export class CmsRepository {
           if (referenceId < 0 || status !== 'Automatic') {
             return
           }
+          const grantId = this.parseReferenceId(referenceId)
+
+          if (!grantId) {
+            logger.warn('Invalid grant id, aborting...', {
+              referenceId: grantId,
+            })
+            return
+          }
 
           return {
             entry: e,
             id: e.sys.id,
             referenceId,
+            grantId,
             dateFrom,
             dateTo,
           }

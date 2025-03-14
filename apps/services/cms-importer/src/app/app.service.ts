@@ -52,17 +52,17 @@ export class AppService {
 
     const grantsToUpdate: CmsGrantInput = clientGrants
       .map((grant) => {
-        const clientGrant = cmsGrants.find((cg) => cg.referenceId === grant.id)
+        const clientGrant = cmsGrants.find((cg) => cg.grantId === grant.id)
 
         if (!clientGrant) {
           logger.debug('No matching client grant discovered, aborting...', {
-            referenceId: grant.id,
+            grantId: grant.id,
           })
           return
         }
 
         logger.info('Grant matched to contentful grant, checking for updates', {
-          referenceId: grant.id,
+          referenceId: clientGrant.referenceId,
         })
 
         const grantDateFrom = grant.dateFrom
@@ -72,7 +72,7 @@ export class AppService {
 
         if (!grantDateFrom || !grantDateTo) {
           logger.warn('Missing dateFrom or dateTo in grant, aborting...', {
-            referenceId: grant.id,
+            referenceId: clientGrant.referenceId,
           })
           return
         }
@@ -82,7 +82,7 @@ export class AppService {
           Number.isNaN(grantDateTo.getTime())
         ) {
           logger.warn('Invalid dateFrom or dateTo in grant, aborting...', {
-            referenceId: grant.id,
+            referenceId: clientGrant.referenceId,
           })
           return
         }
@@ -91,7 +91,7 @@ export class AppService {
           logger.warn(
             'Invalid dates, DateFrom is after DateTo in grant, aborting...',
             {
-              referenceId: grant.id,
+              referenceId: clientGrant.referenceId,
             },
           )
           return
@@ -101,11 +101,11 @@ export class AppService {
         const parsedGrantDateFrom = this.parseGrantDate(grantDateFrom)
 
         logger.info('Grant values parsed successfully', {
-          referenceId: grant.id,
+          referenceId: clientGrant.referenceId,
         })
 
         return {
-          referenceId: grant.id,
+          referenceId: clientGrant.referenceId,
           cmsGrantEntry: clientGrant.entry,
           inputFields: [
             {
