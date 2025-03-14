@@ -518,19 +518,27 @@ jobs:
           CI=true yarn install --immutable
 
       - name: Generate islandis feature-deployment charts for ArgoCD
-        working-directory: monorepo
+        working-directory: monorepo/infra
         env:
           FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
         run: |
-          ./infra/scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$STAGE"
-          echo "Change status $(git status)"
+          for image in ${IMAGES//,/ }; do
+            image=$(echo $image | tr -d '[:space:]' | tr -d "\'" | tr -d '\\')
+            echo "Image name ${image} to generate-feature-values"
+            ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$image" "$STAGE"
+          done
+
           git config user.name andes-it
           git config user.email andes-it@andes.is
 
           git add .
+
+          echo "Change status $(git status)"
           git commit -m "feat: feature-deployment"
+
+          echo "Changeset: $(git show)"
 
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn

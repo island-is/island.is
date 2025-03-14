@@ -12,7 +12,6 @@ export async function main(testContext = null) {
   const context = testContext || github.context
   const branch = getBranch(context)
   const typeOfDeployment = getTypeOfDeployment(branch)
-  const sha = context.sha
 
   const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT'
   const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES'
