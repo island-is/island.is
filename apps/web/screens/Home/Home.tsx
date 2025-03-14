@@ -53,27 +53,25 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
 
   return (
     <Box id="main-content" width="full" overflow="hidden">
-      {Boolean(page) && (
-        <Box
-          component="section"
-          aria-labelledby="search-section-title"
-          borderBottomWidth="standard"
-          borderStyle="solid"
-          borderColor="blue200"
-        >
-          <SearchSection
-            headingId="search-section-title"
-            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-            placeholder={n('heroSearchPlaceholder')}
-            activeLocale={activeLocale}
-            page={page}
-            browserVideoUnsupported={n(
-              'browserVideoUnsupported',
-              'Vafrinn þinn getur ekki spilað HTML myndbönd.',
-            )}
-          />
-        </Box>
-      )}
+      <Box
+        component="section"
+        aria-labelledby="search-section-title"
+        borderBottomWidth="standard"
+        borderStyle="solid"
+        borderColor="blue200"
+      >
+        <SearchSection
+          headingId="search-section-title"
+          quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
+          placeholder={n('heroSearchPlaceholder')}
+          activeLocale={activeLocale}
+          page={page}
+          browserVideoUnsupported={n(
+            'browserVideoUnsupported',
+            'Vafrinn þinn getur ekki spilað HTML myndbönd.',
+          )}
+        />
+      </Box>
       <Box
         component="section"
         paddingTop={6}
