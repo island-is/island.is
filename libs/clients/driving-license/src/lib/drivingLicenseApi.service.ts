@@ -478,7 +478,7 @@ export class DrivingLicenseApi {
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
     jurisdictionId: number
-    sendLicenseInMail: boolean
+    sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
@@ -494,7 +494,7 @@ export class DrivingLicenseApi {
             : 0,
           personIdNumber: params.nationalIdApplicant,
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
-          sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
+          sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
         },
       })
