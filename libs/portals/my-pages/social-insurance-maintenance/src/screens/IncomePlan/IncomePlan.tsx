@@ -1,47 +1,157 @@
 import { AlertMessage, Box, Inline, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  FormatMessage,
-  useLocale,
-  useNamespaces,
-} from '@island.is/localization'
-import {
-  ActionCard,
   CardLoader,
-  FootNote,
-  IntroHeader,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
-  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
-import { useGetIncomePlanQuery } from './IncomePlan.generated'
-import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
+import {
+  useGetIncomePlanApplicationQuery,
+  useGetIncomePlanQuery,
+} from './IncomePlan.generated'
+import { mapStatus } from './mapper'
+import { ApplicationStatus, Status } from './types'
+import { IncomePlanCard } from './IncomePlanCard'
+import { useMemo } from 'react'
 
-const parseSubtext = (
-  tag: SocialInsuranceIncomePlanStatus,
-  date: Date,
-  formatMessage: FormatMessage,
-) => {
-  switch (tag) {
-    case SocialInsuranceIncomePlanStatus.ACCEPTED:
-      return `${formatMessage(coreMessages.approved)}: ${formatDate(date)}`
-    case SocialInsuranceIncomePlanStatus.IN_PROGRESS:
-      return `${formatMessage(m.receivedInProgress)}: ${formatDate(date)}`
-    case SocialInsuranceIncomePlanStatus.CANCELLED:
-      return `${formatMessage(coreMessages.rejected)}: ${formatDate(date)}`
-    default:
-      return
-  }
-}
+const RENDER_ALERT_BOX_CONDITIONALS: Status[] = [
+  'in_review',
+  'accepted_no_changes',
+  'rejected_no_changes',
+]
+
+const RENDER_LINK_BUTTON_CONDITIONALS: Status[] = [
+  'accepted',
+  'accepted_no_changes',
+  'rejected',
+  'rejected_no_changes',
+  'modify_accepted',
+  'no_data',
+  'in_review',
+  'in_progress',
+]
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
 
   const { data, loading, error } = useGetIncomePlanQuery()
+  const {
+    data: applications,
+    error: applicationsError,
+    loading: applicationsLoading,
+  } = useGetIncomePlanApplicationQuery({
+    variables: {
+      input: {
+        typeId: ['IncomePlan'],
+        scopeCheck: true,
+      },
+      locale,
+    },
+  })
+
+  const status: Status = useMemo(() => {
+    if (loading || applicationsLoading) {
+      return 'loading'
+    }
+    if (error || applicationsError) {
+      return 'error'
+    }
+    const applicationState = applications?.applicationApplications?.length
+      ? applications?.applicationApplications?.[
+          applications?.applicationApplications?.length - 1
+        ].state
+      : undefined
+    return mapStatus(
+      data?.socialInsuranceIncomePlan?.status,
+      applicationState ? (applicationState as ApplicationStatus) : undefined,
+      data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible ??
+        undefined,
+    )
+  }, [
+    applications,
+    applicationsError,
+    applicationsLoading,
+    data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible,
+    data?.socialInsuranceIncomePlan?.status,
+    error,
+    loading,
+  ])
+
+  const renderAlertBox = () => {
+    if (RENDER_ALERT_BOX_CONDITIONALS.includes(status)) {
+      return (
+        <AlertMessage
+          type="info"
+          title={formatMessage(m.incomePlanModifyUnavailable)}
+          message={formatMessage(m.incomePlanModifyUnavailableText)}
+        />
+      )
+    }
+  }
+
+  const renderLinkButton = () => {
+    if (RENDER_LINK_BUTTON_CONDITIONALS.includes(status)) {
+      return (
+        <LinkButton
+          to={`${document.location.origin}/${formatMessage(
+            m.incomePlanModifyLink,
+          )}`}
+          text={formatMessage(
+            status === 'modify_accepted'
+              ? m.continueApplication
+              : status === 'no_data'
+              ? m.submitIncomePlan
+              : m.modifyIncomePlan,
+          )}
+          disabled={
+            status === 'accepted_no_changes' ||
+            status === 'rejected_no_changes' ||
+            status === 'in_review'
+          }
+          icon="open"
+          variant="utility"
+          size="small"
+        />
+      )
+    }
+  }
+
+  const renderContent = () => {
+    switch (status) {
+      case 'error':
+        return <Problem error={error || applicationsError} noBorder={false} />
+      case 'loading':
+        return (
+          <Box marginBottom={2}>
+            <CardLoader />
+          </Box>
+        )
+      default: {
+        return (
+          <Stack space={2}>
+            {renderAlertBox()}
+            <Inline space={2}>
+              <LinkButton
+                to={formatMessage(m.incomePlanLink)}
+                text={formatMessage(m.incomePlanLinkText)}
+                icon="open"
+                variant="utility"
+              />
+              {renderLinkButton()}
+            </Inline>
+            <IncomePlanCard
+              status={status}
+              registrationDate={new Date().toISOString()}
+            />
+          </Stack>
+        )
+      }
+    }
+  }
 
   return (
     <IntroWrapper
@@ -52,102 +162,7 @@ const IncomePlan = () => {
         coreMessages.socialInsuranceTooltip,
       )}
     >
-      {error && !loading ? (
-        <Problem error={error} noBorder={false} />
-      ) : loading ? (
-        <Box marginBottom={2}>
-          <CardLoader />
-        </Box>
-      ) : (
-        <Stack space={2}>
-          {!error &&
-            !loading &&
-            data?.socialInsuranceIncomePlan &&
-            !data?.socialInsuranceIncomePlan?.isEligibleForChange
-              .isEligible && (
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.incomePlanModifyUnavailable)}
-                message={formatMessage(m.incomePlanModifyUnavailableText)}
-              />
-            )}
-          <Inline space={2}>
-            <LinkButton
-              to={formatMessage(m.incomePlanLink)}
-              text={formatMessage(m.incomePlanLinkText)}
-              icon="open"
-              variant="utility"
-            />
-            {data?.socialInsuranceIncomePlan && (
-              <LinkButton
-                to={`${document.location.origin}/${formatMessage(
-                  m.incomePlanModifyLink,
-                )}`}
-                text={formatMessage(m.modifyIncomePlan)}
-                disabled={
-                  !data?.socialInsuranceIncomePlan?.isEligibleForChange
-                    .isEligible
-                }
-                icon="open"
-                variant="primary"
-                size="small"
-              />
-            )}
-          </Inline>
-          {data?.socialInsuranceIncomePlan ? (
-            <ActionCard
-              image={{
-                type: 'image',
-                url: './assets/images/tr.svg',
-              }}
-              text={
-                data?.socialInsuranceIncomePlan?.status &&
-                data?.socialInsuranceIncomePlan.registrationDate
-                  ? parseSubtext(
-                      data.socialInsuranceIncomePlan?.status,
-                      new Date(data.socialInsuranceIncomePlan.registrationDate),
-                      formatMessage,
-                    )
-                  : undefined
-              }
-              heading={formatMessage(coreMessages.incomePlan)}
-              cta={{
-                label: formatMessage(m.viewIncomePlan),
-                url:
-                  data.socialInsuranceIncomePlan.status ===
-                  SocialInsuranceIncomePlanStatus.IN_PROGRESS
-                    ? `${document.location.origin}/${formatMessage(
-                        m.incomePlanModifyLink,
-                      )}`
-                    : SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
-                variant: 'text',
-              }}
-            />
-          ) : (
-            <ActionCard
-              image={{
-                type: 'image',
-                url: './assets/images/tr.svg',
-              }}
-              text={formatMessage(m.noActiveIncomePlan)}
-              headingColor="currentColor"
-              heading={formatMessage(coreMessages.incomePlan)}
-              backgroundColor="blue"
-              borderColor="blue200"
-              cta={{
-                label: formatMessage(m.submitIncomePlan),
-                url: `${document.location.origin}/${formatMessage(
-                  m.incomePlanModifyLink,
-                )}`,
-                variant: 'primary',
-                size: 'medium',
-                icon: 'open',
-                centered: true,
-              }}
-            />
-          )}
-        </Stack>
-      )}
+      {renderContent()}
     </IntroWrapper>
   )
 }

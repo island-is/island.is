@@ -18,7 +18,7 @@ export class UserInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: TUser = request.user
+    const user: TUser = request.user?.currentUser
 
     return next.handle().pipe(
       map(async (users: User[]) =>

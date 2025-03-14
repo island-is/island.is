@@ -47,6 +47,8 @@ jobs:
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
+    with:
+      main_branch: ${{ github.base_ref }}
 
   tests:
     needs:
@@ -69,7 +71,6 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
@@ -78,6 +79,58 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  unicorn-tests:
+    name: All projects have some tests
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
+    runs-on: arc-runners
+    env:
+      CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Find unicorn projects
+        id: unicorn
+        run: |
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns --json)
+          jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
+            [
+                $chunks.projects
+              | .[]
+              | select( . | IN( $unicorns | .[] ) )
+            ]
+            | "projects=\(. | join(","))"
+          ' | tee -a "$GITHUB_OUTPUT"
+
+      - name: Verify that projects have some tests
+        env:
+          projects: ${{ steps.unicorn.outputs.projects }}
+        run: |
+          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted)
+          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
+            grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
+          # Get affected projects sorted
+          echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
+          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
+            echo "These projects don't have any tests:"
+            echo "${d}"
+            exit 1
+          fi
+          echo "All projects ($projects) have tests."
 
   e2e:
     needs:

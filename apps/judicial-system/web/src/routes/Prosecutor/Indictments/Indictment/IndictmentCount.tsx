@@ -15,6 +15,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  hasTrafficViolationSubtype,
   IndictmentSubtype,
   isTrafficViolationCase,
   offenseSubstances,
@@ -70,7 +71,7 @@ interface Props {
 }
 
 /**
- * Indicates what laws are broken for each offence. The first number is
+ * Indicates what laws are broken for each offense. The first number is
  * the paragraph and the second is the article, i.e. [49, 2] means paragraph
  * 49, article 2. If article is set to 0, that means that an article is
  * not specified.
@@ -361,14 +362,9 @@ export const IndictmentCount: FC<Props> = ({
       return true
     }
 
-    if (
-      indictmentCount?.indictmentCountSubtypes?.includes(
-        IndictmentSubtype.TRAFFIC_VIOLATION,
-      )
-    ) {
+    if (hasTrafficViolationSubtype(indictmentCount?.indictmentCountSubtypes || [])) {
       return true
     }
-
     return false
   }
 

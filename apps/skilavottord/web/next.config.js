@@ -7,8 +7,7 @@ const {
   API_URL = 'http://localhost:3333',
   API_PATH = '/app/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
-  DD_RUM_APPLICATION_ID,
-  DD_RUM_CLIENT_TOKEN,
+  DD_LOGS_CLIENT_TOKEN,
   APP_VERSION,
   ENVIRONMENT,
 } = process.env
@@ -19,7 +18,10 @@ const graphqlPath = '/graphql'
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  webpack: (config, options) => {
+  webpack: (config, { isServer, dev }) => {
+    if (!dev && isServer) {
+      config.devtool = 'source-map'
+    }
     return config
   },
   serverRuntimeConfig: {
@@ -27,8 +29,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     graphqlEndpoint: `${API_PATH}${graphqlPath}`,
-    ddRumApplicationId: DD_RUM_APPLICATION_ID,
-    ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+    ddRumClientToken: DD_LOGS_CLIENT_TOKEN,
     appVersion: APP_VERSION,
     environment: ENVIRONMENT,
   },
