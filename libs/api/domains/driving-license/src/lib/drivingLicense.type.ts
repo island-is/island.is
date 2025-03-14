@@ -35,7 +35,7 @@ export interface NewTemporaryDrivingLicenseInput {
   teacherNationalId: string
   email: string
   phone: string
-  sendLicenseInMail: number
+  sendLicenseInMail: boolean
 }
 
 export interface NewBEDrivingLicenseInput {

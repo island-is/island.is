@@ -206,7 +206,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         auth.authorization.replace('Bearer ', ''),
         {
           jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
-          sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
+          sendLicenseInMail: deliveryMethod === Pickup.POST ? true : false,
           needsToPresentHealthCertificate: needsHealthCert,
           needsToPresentQualityPhoto: needsQualityPhoto,
           teacherNationalId: teacher,

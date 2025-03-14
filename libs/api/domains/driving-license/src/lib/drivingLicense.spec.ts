@@ -429,6 +429,7 @@ describe('DrivingLicenseService', () => {
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
           email: 'mock@email.com',
           phone: '9999999',
+          sendLicenseInMail: false,
         },
       )
 
@@ -450,6 +451,7 @@ describe('DrivingLicenseService', () => {
             teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
             email: 'mock@email.com',
             phone: '9999999',
+            sendLicenseInMail: false,
           },
         )
         .catch((e) => expect(e).toBeTruthy())

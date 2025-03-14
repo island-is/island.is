@@ -480,7 +480,7 @@ export class DrivingLicenseService {
         jurisdictionId: input.jurisdictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
-        sendLicenseInMail: input.sendLicenseInMail ? true : false,
+        sendLicenseInMail: input.sendLicenseInMail,
         email: input.email,
         phone: input.phone,
         auth,

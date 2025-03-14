@@ -494,7 +494,7 @@ export class DrivingLicenseApi {
             : 0,
           personIdNumber: params.nationalIdApplicant,
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
-          sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
+          sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
         },
       })

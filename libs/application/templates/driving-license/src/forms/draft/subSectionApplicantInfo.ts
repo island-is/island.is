@@ -118,7 +118,7 @@ export const subSectionApplicantInfo = buildSubSection({
           condition: (answers) =>
             answers.applicationFor !== B_FULL_RENEWAL_65 &&
             answers.applicationFor !== B_FULL,
-          //required: true,
+          required: true,
           options: ({
             externalData: {
               teachers: { data },
