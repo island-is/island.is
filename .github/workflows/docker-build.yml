@@ -102,6 +102,9 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
