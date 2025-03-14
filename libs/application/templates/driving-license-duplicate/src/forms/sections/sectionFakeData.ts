@@ -1,6 +1,5 @@
 import {
   buildDateField,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -17,17 +16,8 @@ export const sectionFakeData = buildSubSection({
   children: [
     buildMultiField({
       id: 'shouldFake',
-      title: 'Gervigögn',
-      children: [
-        buildDescriptionField({
-          id: 'gervigognDesc',
-          title: 'Viltu nota gervigögn?',
-          titleVariant: 'h5',
-          // Note: text is rendered by a markdown component.. and when
-          // it sees the indented spaces it seems to assume this is code
-          // and so it will wrap the text in a <code> block when the double
-          // spaces are not removed.
-          description: `
+      title: 'Viltu nota gervigögn?',
+      description: `
             Ath. gervigögn eru eingöngu notuð í stað þess að sækja
             forsendugögn í staging umhverfi (dev x-road) hjá RLS, auk þess
             sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
@@ -37,7 +27,7 @@ export const sectionFakeData = buildSubSection({
             til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
             ökuréttindi í staging grunni RLS.
           `.replace(/\s{1,}/g, ' '),
-        }),
+      children: [
         buildRadioField({
           id: 'fakeData.useFakeData',
           width: 'half',
