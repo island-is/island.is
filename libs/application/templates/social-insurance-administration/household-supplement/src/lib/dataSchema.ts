@@ -3,9 +3,7 @@ import { z } from 'zod'
 import { HouseholdSupplementHousing } from './constants'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
-import {
-  formatBankInfo,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { NO, YES } from '@island.is/application/core'
 

@@ -16,9 +16,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import {
-  fileUploadSharedProps,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getBankIsk,
@@ -250,8 +248,8 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildAlertMessageField({
                   id: 'paymentInfo.alertMessage',
                   title: socialInsuranceAdministrationMessage.shared.alertTitle,
-                  message: socialInsuranceAdministrationMessage.payment
-                    .alertMessage,
+                  message:
+                    socialInsuranceAdministrationMessage.payment.alertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
                 }),

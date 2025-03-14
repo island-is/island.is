@@ -112,11 +112,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: [
-          'clearFileUpload',
-          'clearTemp',
-          'restoreAnswersFromTemp',
-        ],
+        exit: ['clearFileUpload', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',

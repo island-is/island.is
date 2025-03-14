@@ -1,7 +1,5 @@
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
-import {
-  MONTHS,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Attachments,
   BankInfo,
@@ -9,10 +7,7 @@ import {
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
-  Application,
-  ExternalData,
-} from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'

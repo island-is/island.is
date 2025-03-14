@@ -14,9 +14,7 @@ export const Payment = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const {
-    bank,
-  } = getApplicationAnswers(application.answers)
+  const { bank } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 

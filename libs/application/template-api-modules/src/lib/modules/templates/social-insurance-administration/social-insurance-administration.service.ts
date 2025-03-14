@@ -15,10 +15,7 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
   ChildInformation,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
-import {
-  Application,
-  ApplicationTypes,
-} from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
@@ -485,9 +482,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
       const additionalSupportForTheElderlyDTO =
-        transformApplicationToAdditionalSupportForTheElderlyDTO(
-          application,
-        )
+        transformApplicationToAdditionalSupportForTheElderlyDTO(application)
 
       const response = await this.siaClientService.sendApplication(
         auth,
