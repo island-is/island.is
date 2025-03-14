@@ -43,7 +43,7 @@ export const fakeDataSection = buildSection({
           id: 'fakeData.currentLicense',
           title: 'Núverandi ökuréttindi umsækjanda',
           description:
-            'Verður með *issued = today - 12M* og *expires = today + 12M*',
+            'Verður með *issued = today - 1Y* og *expires = today + 14Y*',
           width: 'half',
           condition: (answers) =>
             getValueViaPath(answers, 'fakeData.useFakeData') === YES,

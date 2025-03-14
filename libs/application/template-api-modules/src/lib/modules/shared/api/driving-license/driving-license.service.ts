@@ -170,7 +170,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
             nr: currentLicense,
             name: currentLicense || '', // for useLegacyVersion
             issued: getTodayDateWithMonthDiff(-12),
-            expires: getTodayDateWithMonthDiff(12),
+            expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
             comments: '',
           },
         ],
