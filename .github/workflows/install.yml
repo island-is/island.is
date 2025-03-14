@@ -75,6 +75,7 @@ jobs:
   install:
     outputs:
       MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
+      MQ_HELM_VALUES_BRANCH: ${{ steps.prepare-merge-queue.outputs.HELM_VALUES_BRANCH }}
       MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
       MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
       MQ_GIT_BRANCH: ${{ steps.prepare-merge-queue.outputs.GIT_BRANCH }}
