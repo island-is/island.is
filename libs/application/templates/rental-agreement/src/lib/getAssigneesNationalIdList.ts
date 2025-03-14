@@ -2,6 +2,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { IS_REPRESENTATIVE } from './constants'
 
+// TODO: Add here function for extracting tenant wihtout representative, email name etc
+
 export const getAssigneesNationalIdList = (application: Application) => {
   try {
     const assigneesNationalIdList = [] as string[]

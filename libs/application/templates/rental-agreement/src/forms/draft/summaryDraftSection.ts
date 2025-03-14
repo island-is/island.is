@@ -53,19 +53,54 @@ export const SummaryDraftSection = buildSection({
           id: 'htmlSummary',
           defaultValue: () => {
             const element = document.getElementById('my-super-email-summary')
+
             if (element) {
+              element
+                .querySelectorAll('button')
+                .forEach((button) => button.remove())
+
+              const styles = `
+                <style type="text/css">
+                  label {
+                    font-weight: bold;
+                    display: inline-block;
+                    margin-right: 4px;
+                  }
+                  label::after {
+                    content: ":";
+                    display: inline-block;
+                  }
+                  [class*="useBoxStyles_3"] {
+                    border-bottom: 1px solid;
+                    margin: 20px 0;
+                    padding-bottom: 20px;
+                  }
+                  p {
+                    display: inline-block;
+                  }
+                </style>
+              `
+
+              const styledHtml = `
+              <html>
+              <head>${styles}</head>
+                <body>
+                    ${element.outerHTML} 
+                </body>
+                </html>
+              `
+
               const jsonData = {
-                  id: element.id,
-                  className: element.className,
-                  html: element.outerHTML,
-              };
-          
-              console.log('JSON Data:', JSON.stringify(jsonData));
-              return JSON.stringify(jsonData);
-          }
-          return null;
+                id: element.id,
+                className: element.className,
+                html: element.outerHTML,
+              }
+
+              return JSON.stringify(jsonData)
+            }
+            return null
           },
-        })
+        }),
       ],
     }),
   ],

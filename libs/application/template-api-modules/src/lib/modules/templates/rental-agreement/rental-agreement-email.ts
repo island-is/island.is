@@ -1,5 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { AttachmentEmailTemplateGenerator, EmailTemplateGenerator } from '../../../types'
+import {
+  AttachmentEmailTemplateGenerator,
+  EmailTemplateGenerator,
+} from '../../../types'
 
 export const generateRentalAgreementNotificationEmail: AttachmentEmailTemplateGenerator =
   (props) => {
@@ -37,9 +40,7 @@ export const generateRentalAgreementNotificationEmail: AttachmentEmailTemplateGe
     }
   }
 
-export const generateRentalAgreementEmail: EmailTemplateGenerator = (
-  props,
-) => {
+export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const {
     application,
     // options: { email },
@@ -47,16 +48,13 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (
 
   // const applicantEmail = get(application.answers, 'person.email')
 
-  
-  const tenantEmails = (getValueViaPath(
-    application.answers,
-    'tenantInfo.table',
-    [],
-  ) as Array<{
-    nationalIdWithName: { name: string }
-    email: string
-  }>).map((tenant) => tenant.email)
-  
+  const tenantEmails = (
+    getValueViaPath(application.answers, 'tenantInfo.table', []) as Array<{
+      nationalIdWithName: { name: string }
+      email: string
+    }>
+  ).map((tenant) => tenant.email)
+
   const landlords = getValueViaPath(
     application.answers,
     'landlordInfo.table',
@@ -65,47 +63,79 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (
     nationalIdWithName: { name: string }
     email: string
   }>
-  
-  console.log('tölvupóstur before ***===0a', application)
+
+  // console.log('tölvupóstur before ***===0a', application)
 
   const htmlSummaryForEmail = getValueViaPath(
     application.answers,
     'htmlSummary',
-  ) as string;
+  ) as string
 
-  const subidubi = JSON.parse(htmlSummaryForEmail);
+  const subidubi = JSON.parse(htmlSummaryForEmail)
 
-  const emailContent = subidubi.html; // Extract the HTML
+  const emailContent = subidubi.html // Extract the HTML
 
-
-  console.log('tölvupóstur ***===1a', application)
-  console.log('tölvupóstur ***===2b', emailContent)
+  // console.log('tölvupóstur ***===1a', application)
+  // console.log('tölvupóstur ***===2b', emailContent)
   // console.log('tenantEmails ***===2', tenantEmails)
   // console.log('Landlords ***===3', landlords)
   // console.log('Landlords ***===4 þetta er nýtT!!', landlords)
 
   // TODO translate using locale
-  const subject ='Umsókn samþykkt: ReferenceTemplate'
-  const body =`Góðan dag.
+  const subject = 'Drög að leigusamningi'
+  const body = `Góðan dag.
 
-        Umsókn þín um ReferenceTemplate hefur verið samþykkt.
+       Farðu yfir gögnin hér að neðan til að kanna hvort að réttar upplýsingar hafi verið gefnar upp.
 
-        Með kveðju,
-        starfsfólk ReferenceTemplateStofnunarinnar
+       Hafðu samband við samningsgerðaraðilann ef að eitthvað vantar eða er rangt í umsókninni.
+
+       ${emailContent}
       `
 
   return {
     from: {
-      name: "Prófa póst",
-      address: "sonja@kolibri.is",
+      name: 'Prófa póst',
+      address: 'sonja@kolibri.is',
     },
     to: [
       {
         name: 'Sonja',
-        address: "sonja@kolibri.is",
+        address: 'sonja@kolibri.is',
       },
     ],
     subject,
-    html: emailContent
+    // html: body ?
+    template: {
+      title: subject,
+      body: [
+        // Testing handlebars to take into account alignment:
+        {
+          component: 'Heading',
+          context: { copy: 'Leigusamningur: Center' },
+        },
+        {
+          component: 'Heading',
+          context: { copy: 'Leigusamningur: Samantekt', align: 'left' },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy:
+              `<span>Farðu yfir gögnin hér að neðan til að kanna hvort að réttar upplýsingar hafi verið gefnar upp.</span><br/><br/>` +
+              `<span>Hafðu samband við samningsgerðaraðilan ef að eitthvað vantar eða er rangt í umsókninni.</span>`,
+            align: 'left',
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: emailContent,
+            align: 'left',
+            small: true,
+          },
+        },
+      ],
+    },
   }
 }
