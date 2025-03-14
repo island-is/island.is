@@ -15,6 +15,8 @@ interface Props {
   children?: Array<React.ReactNode>
   label?: MessageDescriptor | string
   labelPadding?: ResponsiveSpace
+  dividerOnLabel?: boolean
+  dividerOnBottom?: boolean
 }
 
 export const InfoLineStack = ({
@@ -23,6 +25,8 @@ export const InfoLineStack = ({
   children,
   label,
   labelPadding = 2,
+  dividerOnLabel = false,
+  dividerOnBottom = true,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -37,12 +41,19 @@ export const InfoLineStack = ({
           {formatMessage(label)}
         </Text>
       )}
+      {label && dividerOnLabel && (
+        <Box paddingBottom={1}>
+          <Divider />
+        </Box>
+      )}
       <Stack space={space} dividers>
         {children}
       </Stack>
-      <Box paddingY={space}>
-        <Divider />
-      </Box>
+      {dividerOnBottom && (
+        <Box paddingY={space}>
+          <Divider />
+        </Box>
+      )}
     </Box>
   )
 }

@@ -20,7 +20,7 @@ import { occupationalLicensesModule } from '@island.is/portals/my-pages/occupati
 import { signatureCollectionModule } from '@island.is/portals/my-pages/signature-collection'
 import { socialInsuranceMaintenanceModule } from '@island.is/portals/my-pages/social-insurance-maintenance'
 import { lawAndOrderModule } from '@island.is/portals/my-pages/law-and-order'
-
+import { educationModuleV2 } from '@island.is/portals/my-pages/education-v2'
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -36,6 +36,7 @@ export const modules: PortalModule[] = [
   documentsModule,
   educationCareerModule,
   educationModule,
+  educationModuleV2,
   educationStudentAssessmentModule,
   financeModule,
   healthModule,
