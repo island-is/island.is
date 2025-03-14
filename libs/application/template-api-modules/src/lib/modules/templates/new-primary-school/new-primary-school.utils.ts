@@ -5,6 +5,7 @@ import {
   getApplicationExternalData,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
+  SchoolType,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -30,9 +31,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
-    acceptFreeSchoolLunch,
-    hasSpecialNeeds,
-    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -48,8 +46,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     caseManagerEmail,
     requestingMeeting,
     expectedStartDate,
-    // expectedEndDate, // TODO: Add this when Júní has added school type
+    temporaryStay,
+    expectedEndDate,
     selectedSchool,
+    selectedSchoolType,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
@@ -115,9 +115,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
             expectedStartDate: new Date(expectedStartDate),
-            // expectedEndDate: new Date(expectedEndDate), // TODO: Add this when Júní has added school type and use school type to determine if value should be used
+            ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+            temporaryStay === YES
+              ? { expectedEndDate: new Date(expectedEndDate) }
+              : {}),
           }
-        : {}),
+        : {
+            expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
+          }),
       reason: reasonForApplication, // TODO: Add a condition for this when Júní has added school type
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
@@ -129,31 +134,27 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
-    ...(applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      ? {
-          health: {
-            ...(hasFoodAllergiesOrIntolerances?.includes(YES)
-              ? {
-                  foodAllergiesOrIntolerances,
-                }
-              : {}),
-            ...(hasOtherAllergies?.includes(YES)
-              ? {
-                  allergies: otherAllergies,
-                }
-              : {}),
-            ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
-            hasOtherAllergies?.includes(YES)
-              ? {
-                  usesEpipen: usesEpiPen === YES,
-                }
-              : {}),
-            hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
-            requestsMedicationAdministration:
-              requestsMedicationAdministration === YES,
-          },
-        }
-      : {}),
+    health: {
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES)
+        ? {
+            foodAllergiesOrIntolerances,
+          }
+        : {}),
+      ...(hasOtherAllergies?.includes(YES)
+        ? {
+            allergies: otherAllergies,
+          }
+        : {}),
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
+      hasOtherAllergies?.includes(YES)
+        ? {
+            usesEpipen: usesEpiPen === YES,
+          }
+        : {}),
+      hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
+      requestsMedicationAdministration:
+        requestsMedicationAdministration === YES,
+    },
     social: {
       hasHadSupport: hasHadSupport === YES,
       hasDiagnoses: hasDiagnoses === YES,
@@ -193,19 +194,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
             guardianRequiresInterpreter: false,
             firstLanguage: 'is',
           }),
-    },
-    schoolMeal: {
-      acceptFreeSchoolLunch: acceptFreeSchoolLunch === YES,
-      ...(acceptFreeSchoolLunch === YES
-        ? {
-            hasSpecialNeeds: hasSpecialNeeds === YES,
-            ...(hasSpecialNeeds === YES
-              ? {
-                  specialNeeds: specialNeedsType,
-                }
-              : {}),
-          }
-        : {}),
     },
   }
 

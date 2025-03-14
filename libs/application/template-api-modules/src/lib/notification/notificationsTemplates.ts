@@ -46,10 +46,10 @@ export const NotificationConfig = {
   },
   [NotificationType.TrainingLicenseOnWorkMachineRejected]: {
     templateId: 'HNIPP.AS.VER.TLWM.REJECTED',
-    keys: {} as { applicantName: string; applicationId: string },
+    keys: {},
   },
   [NotificationType.TrainingLicenseOnWorkMachineApproved]: {
     templateId: 'HNIPP.AS.VER.TLWM.APPROVED',
-    keys: {} as { applicantName: string; applicationId: string },
+    keys: {},
   },
 }

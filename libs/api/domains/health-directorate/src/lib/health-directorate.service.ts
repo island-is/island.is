@@ -240,7 +240,7 @@ export class HealthDirectorateService {
                   name: item.productName,
                   strength: item.productStrength,
                   amount: item.dispensedAmountDisplay,
-                  numberOfPackages: item.numberOfPackages,
+                  numberOfPackages: item.numberOfPackages?.toString(),
                 }
               }),
             }

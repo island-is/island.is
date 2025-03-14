@@ -20,8 +20,8 @@ export class DispensedItem {
   @Field({ nullable: true })
   amount?: string
 
-  @Field(() => Int, { nullable: true })
-  numberOfPackages?: number
+  @Field({ nullable: true })
+  numberOfPackages?: string
 
   @Field({ nullable: true })
   quantity?: string

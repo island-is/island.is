@@ -15,6 +15,8 @@ on:
         value: ${{ jobs.install.outputs.MQ_SHA}}
       MQ_DOCKER_TAG:
         value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
+      MQ_HELM_VALUES_BRANCH:
+         value: ${{ jobs.install.outputs.MQ_HELM_VALUES_BRANCH }}
       MQ_ARTIFACT_NAME:
         value: ${{ jobs.install.outputs.MQ_ARTIFACT_NAME }}
       MQ_GIT_BRANCH:
@@ -39,6 +41,8 @@ on:
         value: ${{ jobs.install.outputs.NX_BASE }}
       DEPLOY_FEATURE:
         value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
+      is-unicorn:
+        value: ${{ jobs.install.outputs.is-unicorn }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
@@ -73,6 +77,7 @@ jobs:
   install:
     outputs:
       MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
+      MQ_HELM_VALUES_BRANCH: ${{ steps.prepare-merge-queue.outputs.HELM_VALUES_BRANCH }}
       MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
       MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
       MQ_GIT_BRANCH: ${{ steps.prepare-merge-queue.outputs.GIT_BRANCH }}
@@ -86,6 +91,7 @@ jobs:
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
+      is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
     runs-on: arc-runners
     permissions:
       contents: 'read'
@@ -253,3 +259,12 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Set unicorn
+        id: unicorn
+        env:
+          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+        run: |
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
+          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
