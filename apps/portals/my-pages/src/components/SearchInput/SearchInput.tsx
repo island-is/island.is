@@ -69,7 +69,12 @@ const getNavigationItems = (
   return navigationItems
 }
 
-export const SearchInput = () => {
+interface Props {
+  white?: boolean
+  colored?: boolean
+}
+
+export const SearchInput = ({ white, colored }: Props) => {
   const { formatMessage } = useLocale()
   const [query, setQuery] = useState<string>()
 
@@ -119,7 +124,8 @@ export const SearchInput = () => {
       ref={ref}
       id="my-pages-async-search"
       placeholder="Leita"
-      colored
+      colored={colored}
+      white={white}
       options={searchResults ?? []}
       inputValue={query}
       closeMenuOnSubmit
