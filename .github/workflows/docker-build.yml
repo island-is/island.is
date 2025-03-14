@@ -18,9 +18,14 @@ on:
       IMAGES:
         type: string
         required: true
+      DEPLOY_FEATURE:
+        type: string
+        required: false
+        default: 'false'
       FEATURE_NAME:
         type: string
-        required: true
+        required: false
+        default: ''
       PRE_CHECK:
         type: string
         required: true
@@ -177,7 +182,6 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
         env:
@@ -204,7 +208,7 @@ jobs:
           echo 'EOF' >> "$GITHUB_ENV"
 
       - name: Comment on PR
-        if: inputs.PRE_CHECK == 'feature-deploy' && !(inputs.PRE_RELEASE == 'true')
+        if: inputs.DEPLOY_FEATURE == 'true' && inputs.PRE_RELEASE != 'true'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

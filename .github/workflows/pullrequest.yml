@@ -301,7 +301,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ needs.pre-checks.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
-
+      DEPLOY_FEATURE: ${{ needs.pre-checks.outputs.DEPLOY_FEATURE }}
   deploy:
     uses: ./.github/workflows/deploy.yml
     if: ${{ !cancelled() && needs.docker-build.result == 'success' }}
