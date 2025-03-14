@@ -3,7 +3,6 @@ import {
   Application,
   ExternalData,
   FormValue,
-  RepeaterOptionValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
@@ -21,8 +20,8 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
+  SchoolType,
 } from './constants'
-
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -84,21 +83,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'languages.guardianRequiresInterpreter',
   ) as YesOrNo
-
-  const acceptFreeSchoolLunch = getValueViaPath(
-    answers,
-    'freeSchoolMeal.acceptFreeSchoolLunch',
-  ) as YesOrNo
-
-  const hasSpecialNeeds = getValueViaPath(
-    answers,
-    'freeSchoolMeal.hasSpecialNeeds',
-  ) as YesOrNo
-
-  const specialNeedsType = getValueViaPath(
-    answers,
-    'freeSchoolMeal.specialNeedsType',
-  ) as string
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -207,6 +191,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     ? selectedSchoolIdAndType.split('::')[0]
     : ''
 
+  const selectedSchoolType = getValueViaPath(
+    answers,
+    'newSchool.type',
+  ) as SchoolType
+
   const currentNurseryMunicipality = getValueViaPath(
     answers,
     'currentNursery.municipality',
@@ -237,9 +226,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
-    acceptFreeSchoolLunch,
-    hasSpecialNeeds,
-    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -260,6 +246,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     expectedEndDate,
     schoolMunicipality,
     selectedSchool,
+    selectedSchoolType,
     currentNurseryMunicipality,
     currentNursery,
     applyForNeighbourhoodSchool,
@@ -499,9 +486,4 @@ export const getGenderMessage = (application: Application) => {
   const selectedChild = getSelectedChild(application)
   const gender = formatGender(selectedChild?.genderCode)
   return gender
-}
-
-export const setOnChangeSchool = (optionValue: RepeaterOptionValue) => {
-  const option = optionValue?.toString()
-  return [{ key: 'newSchool.type', value: option?.split('::')[1] }]
 }

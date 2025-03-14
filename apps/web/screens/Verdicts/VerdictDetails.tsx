@@ -179,9 +179,10 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
   const { format } = useDateUtils()
   const logoUrl = formatMessage(m.verdictPage.htmlVerdictLogoUrl)
 
+  const [a, b] = item.title.split('gegn')
+
   return (
     <>
-      <HeadWithSocialSharing title="Dómur" />
       <Box paddingBottom={3}>
         <GridContainer>
           <Box paddingBottom={2}>
@@ -258,6 +259,15 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                         )}
                       </Text>
                     )}
+                    {Boolean(a) && Boolean(b) && (
+                      <Box display="flex" justifyContent="center" paddingY={3}>
+                        <Box className={styles.verdictHtmlTitleContainer}>
+                          <Text>{a.trim()}</Text>
+                          <Text>gegn</Text>
+                          <Text> {b.trim()}</Text>
+                        </Box>
+                      </Box>
+                    )}
                   </Stack>
                   <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
                     <Text variant="h4" as="h3">
@@ -286,9 +296,20 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
   )
 }
 
-const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({ item }) => {
-  if (item.pdfString) return <PdfView item={item} />
-  return <HtmlView item={item} />
+const VerdictDetails: CustomScreen<VerdictDetailsProps> = ({
+  item,
+  customPageData,
+}) => {
+  return (
+    <>
+      <HeadWithSocialSharing title="Dómur">
+        {Boolean(customPageData?.configJson?.noIndexOnVerdictPage) && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
+      {item.pdfString ? <PdfView item={item} /> : <HtmlView item={item} />}
+    </>
+  )
 }
 
 VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
@@ -328,6 +349,6 @@ VerdictDetails.getProps = async ({ apolloClient, query, customPageData }) => {
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictDetails),
   {
-    showFooter: false,
+    footerVersion: 'organization',
   },
 )
