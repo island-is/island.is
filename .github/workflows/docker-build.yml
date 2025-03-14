@@ -48,7 +48,7 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  NODE_IMAGE_VERSION: ${{ inputs.NODE_IMAGE_VERSION }}
+  NODE_IMAGE_VERSION: '20'
   GIT_BRANCH: ${{ inputs.GIT_BRANCH }}
   DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
   PUBLISH: true
@@ -158,7 +158,7 @@ jobs:
         if: steps.gather.outcome == 'success'
         run: |
           set -x
-          echo "Node image tag is: $NODE_IMAGE_VERSION"
+          echo "Node image tag is: ${NODE_IMAGE_VERSION}"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
@@ -167,7 +167,7 @@ jobs:
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: |
           set -x
-          echo "Node image tag is: $NODE_IMAGE_VERSION"
+          echo "Node image tag is: ${NODE_IMAGE_VERSION}"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
@@ -195,8 +195,8 @@ jobs:
         working-directory: infra
         run: |
           echo "Registry is: ${DOCKER_BASE_IMAGE_REGISTRY}"
-          echo "Image tag is: $NODE_IMAGE_VERSION"
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}" --build-arg NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}"
+          echo "Image tag is: ${NODE_IMAGE_VERSION}"
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}" --build-arg "NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
           echo "Affected services are: ${{inputs.IMAGES}}" >> "$GITHUB_ENV"
