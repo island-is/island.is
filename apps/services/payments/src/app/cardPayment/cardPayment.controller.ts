@@ -185,6 +185,17 @@ export class CardPaymentController {
       // Payment confirmation
       const result = await this.cardPaymentService.charge(chargeCardInput)
 
+      const paymentConfirmation =
+        await this.paymentFlowService.createPaymentConfirmation({
+          acquirerReferenceNumber: result.acquirerReferenceNumber,
+          authorizationCode: result.authorizationCode,
+          cardScheme: result.cardInformation.cardScheme,
+          maskedCardNumber: result.maskedCardNumber,
+          paymentFlowId: chargeCardInput.paymentFlowId,
+          totalPrice,
+          cardUsage: 'single',
+        })
+
       let confirmation: null | PaymentFlowFjsChargeConfirmation = null
 
       // eslint-disable-next-line no-useless-catch
@@ -192,7 +203,6 @@ export class CardPaymentController {
         // Send charge confirmation to FJS
         const fjsChargePayload =
           this.cardPaymentService.createCardPaymentChargePayload({
-            id: paymentFlow.id,
             paymentFlow,
             charges: catalogItems,
             chargeResponse: result,

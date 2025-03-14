@@ -14,6 +14,7 @@ import {
 import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
+import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentF
       PaymentFlowCharge,
       PaymentFlowEvent,
       PaymentFlowFjsChargeConfirmation,
+      PaymentFlowPaymentConfirmation,
     ]),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,

@@ -296,13 +296,11 @@ export class CardPaymentService {
   }
 
   createCardPaymentChargePayload({
-    id,
     paymentFlow,
     charges,
     chargeResponse,
     totalPrice,
   }: {
-    id: string
     paymentFlow: PaymentFlowAttributes
     charges: CatalogItemWithQuantity[]
     chargeResponse: ChargeResponse

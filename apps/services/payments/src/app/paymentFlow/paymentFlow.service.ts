@@ -32,6 +32,10 @@ import {
   fjsErrorMessageToCode,
   generateChargeFJSPayload,
 } from '../../utils/fjsCharge'
+import {
+  PaymentFlowPaymentConfirmation,
+  PaymentFlowPaymentConfirmationAttributes,
+} from './models/paymentFlowPaymentConfirmation.model'
 
 @Injectable()
 export class PaymentFlowService {
@@ -44,6 +48,8 @@ export class PaymentFlowService {
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
     @InjectModel(PaymentFlowFjsChargeConfirmation)
     private readonly paymentFlowFjsChargeConfirmationModel: typeof PaymentFlowFjsChargeConfirmation,
+    @InjectModel(PaymentFlowPaymentConfirmation)
+    private readonly paymentFlowConfirmationModel: typeof PaymentFlowPaymentConfirmation,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -340,6 +346,23 @@ export class PaymentFlowService {
       })
     } catch (e) {
       this.logger.error('Failed to notify onUpdateUrl', e)
+    }
+  }
+
+  async createPaymentConfirmation(
+    payload: PaymentFlowPaymentConfirmationAttributes,
+  ) {
+    try {
+      const paymentConfirmation =
+        await this.paymentFlowConfirmationModel.create(payload)
+
+      return paymentConfirmation
+    } catch {
+      this.logger.error('Failed to create payment confirmation')
+
+      throw new BadRequestException(
+        PaymentServiceCode.CouldNotCreatePaymentConfirmation,
+      )
     }
   }
 
