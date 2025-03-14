@@ -57,7 +57,7 @@ export const NavbarTab = () => {
             setInSettings(true)
           }}
         >
-          {formatMessage(m.basicSettings)}
+          {formatMessage(m.settings)}
         </Box>
       </Inline>
     </Box>

@@ -61,6 +61,22 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:description-english',
     defaultMessage: 'Lýsing á ensku',
   },
+  organizationName: {
+    id: 'portals-admin.form-system:organization-name',
+    defaultMessage: 'Raunheiti stofnunar',
+  },
+  organizationNameEn: {
+    id: 'portals-admin.form-system:organization-name-en',
+    defaultMessage: 'Raunheiti stofnunar á ensku',
+  },
+  organizationDisplayName: {
+    id: 'portals-admin.form-system:organization-display-name',
+    defaultMessage: 'Birt heiti stofnunar',
+  },
+  organizationDisplayNameEn: {
+    id: 'portals-admin.form-system:organization-display-name-en',
+    defaultMessage: 'Birt heiti stofnunar á ensku',
+  },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
     defaultMessage: 'Líftími umsóknar',
@@ -69,9 +85,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:deadline',
     defaultMessage: 'Umsóknarfrestur',
   },
-  basicSettings: {
-    id: 'portals-admin.form-system:basic-settings',
-    defaultMessage: 'Grunnstillingar',
+  settings: {
+    id: 'portals-admin.form-system:settings',
+    defaultMessage: 'Stillingar',
   },
   allowProgress: {
     id: 'portals-admin.form-system:allow-progress',

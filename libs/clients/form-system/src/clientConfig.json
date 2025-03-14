@@ -2139,6 +2139,15 @@
           "organizationId": {
             "type": "string"
           },
+          "organizationNationalId": {
+            "type": "string"
+          },
+          "organizationTitle": {
+            "type": "string"
+          },
+          "organizationTitleEn": {
+            "type": "string"
+          },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
@@ -2224,6 +2233,7 @@
         "required": [
           "id",
           "organizationId",
+          "organizationNationalId",
           "name",
           "slug",
           "created",

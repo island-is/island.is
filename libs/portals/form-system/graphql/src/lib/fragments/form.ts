@@ -10,6 +10,9 @@ export const FormFragment = gql`
   fragment Form on FormSystemForm {
     id
     organizationId
+    organizationNationalId
+    organizationTitle
+    organizationTitleEn
     name {
       ...LanguageFields
     }

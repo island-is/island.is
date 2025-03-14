@@ -50,6 +50,12 @@ export class Form extends Model<Form> {
   slug!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  organizationNationalId!: string
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
     defaultValue: null,

@@ -31,6 +31,8 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
         throw new Error('No form data found')
       }
 
+      console.log('form', JSON.stringify(data.formSystemGetForm.form, null, 2))
+
       return {
         formBuilder: removeTypename(data.formSystemGetForm),
       }

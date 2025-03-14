@@ -3,10 +3,19 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
+import { Loader } from '@island.is/nest/dataloader'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
   DeleteFormInput,
@@ -14,9 +23,32 @@ import {
   GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { FormResponse } from '../../models/form.model'
+import { Form, FormResponse } from '../../models/form.model'
+import {
+  OrganizationLinkByReferenceIdLoader,
+  OrganizationLinkEnByReferenceIdLoader,
+  OrganizationLogoByReferenceIdLoader,
+  // OrganizationTitleByNationalIdLoader,
+  // OrganizationTitleEnByNationalIdLoader,
+} from '@island.is/cms'
+import type {
+  LogoUrl,
+  OrganizationLink,
+  OrganizationLinkByReferenceIdDataLoader,
+  OrganizationLogoByReferenceIdDataLoader,
+  OrganizationTitleByReferenceIdDataLoader,
+  ShortTitle,
+} from '@island.is/cms'
+import {
+  OrganizationTitleByNationalIdDataLoader,
+  OrganizationTitleByNationalIdLoader,
+} from 'libs/cms/src/lib/loaders/organizationTitleByNationalId.loader'
+import {
+  OrganizationTitleEnByNationalIdDataLoader,
+  OrganizationTitleEnByNationalIdLoader,
+} from 'libs/cms/src/lib/loaders/organizationTitleEnByNationalId.loader'
 
-@Resolver()
+@Resolver(() => Form)
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class FormsResolver {
@@ -69,5 +101,31 @@ export class FormsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.formsService.updateForm(user, input)
+  }
+
+  @CacheControl({ maxAge: 600, scope: 'PUBLIC' })
+  @ResolveField('organizationTitle', () => String, { nullable: true })
+  async resolveContentfulTitle(
+    @Loader(OrganizationTitleByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+    @Parent() form: Form,
+  ): Promise<ShortTitle> {
+    if (!form.organizationNationalId) {
+      throw new Error('organizationNationalId is undefined')
+    }
+    return organizationTitleLoader.load(form.organizationNationalId)
+  }
+
+  @CacheControl({ maxAge: 600, scope: 'PUBLIC' })
+  @ResolveField('organizationTitleEn', () => String, { nullable: true })
+  async resolveContentfulTitleEn(
+    @Loader(OrganizationTitleEnByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleEnByNationalIdDataLoader,
+    @Parent() form: Form,
+  ): Promise<ShortTitle> {
+    if (!form.organizationNationalId) {
+      throw new Error('organizationNationalId is undefined')
+    }
+    return organizationTitleLoader.load(form.organizationNationalId)
   }
 }

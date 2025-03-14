@@ -15,6 +15,15 @@ export class FormDto {
   @ApiProperty()
   organizationId!: string
 
+  @ApiProperty()
+  organizationNationalId!: string
+
+  @ApiPropertyOptional()
+  organizationTitle?: string
+
+  @ApiPropertyOptional()
+  organizationTitleEn?: string
+
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 

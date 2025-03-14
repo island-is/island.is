@@ -122,6 +122,7 @@ export class FormsService {
       'id',
       'name',
       'slug',
+      'organizationNationalId',
       'invalidationDate',
       'created',
       'modified',
@@ -193,6 +194,7 @@ export class FormsService {
     const newForm: Form = await this.formModel.create({
       name: { is: 'Nýtt', en: 'New' },
       organizationId: organization.id,
+      organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
     } as Form)
 
@@ -493,6 +495,7 @@ export class FormsService {
     const formKeys = [
       'id',
       'organizationId',
+      'organizationNationalId',
       'name',
       'slug',
       'invalidationDate',

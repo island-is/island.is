@@ -28,6 +28,8 @@ import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
 import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
+import { OrganizationTitleByNationalIdLoader } from './loaders/organizationTitleByNationalId.loader'
+import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTitleEnByNationalId.loader'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -51,6 +53,8 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
     OrganizationTitleEnByReferenceIdLoader,
+    OrganizationTitleByNationalIdLoader,
+    OrganizationTitleEnByNationalIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
@@ -67,6 +71,8 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     OrganizationLinkByReferenceIdLoader,
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleByNationalIdLoader,
+    OrganizationTitleEnByNationalIdLoader,
     CmsElasticsearchService,
   ],
 })

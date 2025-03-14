@@ -21,6 +21,26 @@ export const BaseSettings = () => {
       <Row>
         <Column span="5/10">
           <Input
+            label={formatMessage(m.organizationName)}
+            placeholder={formatMessage(m.organizationName)}
+            name="organizationName"
+            value={form?.organizationTitle ?? ''}
+            disabled={true}
+          />
+        </Column>
+        <Column span="5/10">
+          <Input
+            label={formatMessage(m.organizationNameEn)}
+            placeholder={formatMessage(m.organizationNameEn)}
+            name="organizationNameEn"
+            value={form?.organizationTitleEn ?? ''}
+            disabled={true}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column span="5/10">
+          <Input
             label={formatMessage(m.applicationName)}
             placeholder={formatMessage(m.applicationName)}
             name="formName"
