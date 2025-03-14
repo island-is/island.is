@@ -29,12 +29,13 @@ export interface NewDrivingLicenseInput {
 }
 
 export interface NewTemporaryDrivingLicenseInput {
-  jurisdictionId: number
+  districtId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   teacherNationalId: string
   email: string
   phone: string
+  sendLicenseInMail: number
 }
 
 export interface NewBEDrivingLicenseInput {

@@ -114,7 +114,6 @@ export const subSectionApplicantInfo = buildSubSection({
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
-          required: true,
           condition: (answers) =>
             answers.applicationFor !== B_FULL_RENEWAL_65 &&
             answers.applicationFor !== B_FULL,

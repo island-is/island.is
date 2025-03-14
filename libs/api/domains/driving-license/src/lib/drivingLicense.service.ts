@@ -477,10 +477,10 @@ export class DrivingLicenseService {
       await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
-        jurisdictionId: input.jurisdictionId,
+        jurisdictionId: input.districtId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
-        sendLicenseInMail: false,
+        sendLicenseInMail: input.sendLicenseInMail ? true : false,
         email: input.email,
         phone: input.phone,
         auth,

@@ -12,7 +12,7 @@ import {
 import { DefaultEvents, StaticText } from '@island.is/application/types'
 import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
 import {
   B_FULL,
@@ -41,19 +41,6 @@ export const subSectionSummary = buildSubSection({
       space: 2,
       description: m.overviewMultiFieldDescription,
       children: [
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: m.orderDrivingLicense,
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.PAYMENT,
-              name: m.continue,
-              type: 'primary',
-            },
-          ],
-        }),
         buildKeyValueField({
           label: m.overviewSubType,
           value: ({ answers: { applicationFor } }) =>
@@ -76,7 +63,7 @@ export const subSectionSummary = buildSubSection({
           label: m.overviewNationalId,
           width: 'half',
           value: ({ externalData: { nationalRegistry } }) =>
-            formatKennitala(
+            formatNationalId(
               (nationalRegistry.data as NationalRegistryUser).nationalId,
             ),
         }),
@@ -122,11 +109,11 @@ export const subSectionSummary = buildSubSection({
             answers,
           }) => {
             if (answers.applicationFor === B_TEMP) {
-              const teacher = (data as TeacherV4[]).find(
+              const teacher = (data as TeacherV4[])?.find(
                 ({ nationalId }) =>
                   getValueViaPath(answers, 'drivingInstructor') === nationalId,
               )
-              return teacher?.name
+              return teacher?.name ?? ''
             }
             return (drivingAssessment.data as StudentAssessment).teacherName
           },
@@ -211,6 +198,19 @@ export const subSectionSummary = buildSubSection({
             return (total?.toLocaleString('is-IS') + ' kr.') as StaticText
           },
           width: 'full',
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: m.orderDrivingLicense,
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.PAYMENT,
+              name: m.continue,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),
