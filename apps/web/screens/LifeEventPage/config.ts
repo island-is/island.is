@@ -37,7 +37,7 @@ export const watsonConfig: Record<
         integrationType: 'genesyswebmessenger',
         genesysMessenger: {
           scriptURL:
-            'https://apps.mypurecloud.com/genesys-bootstrap/genesys.min.js',
+            'https://apps.mypurecloud.de/genesys-bootstrap/genesys.min.js',
           deploymentID: 'cbc43df8-d5de-4eeb-bd0c-6503cbffcf6d',
           environment: 'prod-euc1',
         },
