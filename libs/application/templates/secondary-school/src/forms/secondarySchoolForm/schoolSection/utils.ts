@@ -462,16 +462,16 @@ export const getAlertSpecialNeedsProgramCondition = (
   )
 }
 
-export const getSpecialNeedsProgramNames = (
+export const getAlertSpecialNeedsProgramMessage = (
   answers: FormValue,
   lang: Locale,
-): string[] => {
+) => {
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
     answers,
     'selection',
   )
 
-  return (
+  const programNames =
     selection?.flatMap(({ firstProgram, secondProgram }) =>
       [firstProgram, secondProgram]
         .filter((x) => x?.isSpecialNeedsProgram)
@@ -482,5 +482,13 @@ export const getSpecialNeedsProgramNames = (
           }),
         ),
     ) || []
-  )
+
+  return {
+    ...(programNames.length === 1
+      ? school.selection.specialNeedsProgramSingleAlertDescription
+      : school.selection.specialNeedsProgramMultipleAlertDescription),
+    values: {
+      programName: programNames.join(', '),
+    },
+  }
 }

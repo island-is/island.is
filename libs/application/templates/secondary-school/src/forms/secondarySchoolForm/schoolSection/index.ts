@@ -11,6 +11,7 @@ import {
   filterSchoolOptions,
   getAlertMessageAddThirdSelectionCondition,
   getAlertSpecialNeedsProgramCondition,
+  getAlertSpecialNeedsProgramMessage,
   getConditionSecondProgram,
   getFormTitle,
   getIsClearableSecondProgram,
@@ -21,7 +22,6 @@ import {
   getRequiredSecondProgram,
   getRowsLimitCount,
   getSchoolOptions,
-  getSpecialNeedsProgramNames,
   getThirdLanguageCondition,
   getThirdLanguageOptions,
   getUpdateOnSelectFirstProgram,
@@ -166,20 +166,8 @@ export const schoolSection = buildSection({
           id: 'alertSpecialNeedsProgram',
           alertType: 'warning',
           title: school.selection.specialNeedsProgramAlertTitle,
-          message: (application, locale) => {
-            const programNames = getSpecialNeedsProgramNames(
-              application.answers,
-              locale,
-            )
-            return {
-              ...(programNames.length === 1
-                ? school.selection.specialNeedsProgramSingleAlertDescription
-                : school.selection.specialNeedsProgramMultipleAlertDescription),
-              values: {
-                programName: programNames.join(', '),
-              },
-            }
-          },
+          message: (application, locale) =>
+            getAlertSpecialNeedsProgramMessage(application.answers, locale),
           condition: (answers) => getAlertSpecialNeedsProgramCondition(answers),
         }),
 
