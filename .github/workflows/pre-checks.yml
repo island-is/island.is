@@ -74,6 +74,9 @@ jobs:
           echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
 
+          echo "---- INFO ----"
+          echo "GIT_BRANCH: $GIT_BRANCH"
+
       - name: Set GIT_BASE_BRANCH
         id: git-base-branch
         run: |
@@ -86,6 +89,9 @@ jobs:
            # on main
             echo GIT_BASE_BRANCH="main" >> "$GITHUB_OUTPUT"
           fi
+
+          echo "---- INFO ----"
+          echo "GIT_BASE_BRANCH: $GIT_BASE_BRANCH"
 
       - name: Generate deployment branch name
         id: git-branch-deploy
@@ -103,6 +109,11 @@ jobs:
           echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
           echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
+
+          echo "---- INFO ----"
+          echo "GIT_BRANCH_DEPLOY: $GIT_BRANCH_DEPLOY"
+          echo "FEATURE_NAME: $FEATURE_NAME"
+
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -166,3 +177,9 @@ jobs:
                 fi
             done
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
+
+          echo "---- INFO ----"
+          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          echo "PRE_CHECK: $PRE_CHECK"
+          echo "GIT_BRANCH: $GIT_BRANCH"
+          echo "PRE_RELEASE: $PRE_RELEASE"
