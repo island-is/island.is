@@ -1,3 +1,4 @@
+import { Box } from '@island.is/island-ui/core'
 import { OrganizationFooter, ServiceWebFooter } from '@island.is/web/components'
 import { Organization } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -26,17 +27,21 @@ export const DynamicFooter = ({
     ? linkResolver('servicewebcontact', [slug]).href
     : namespace?.serviceWebContactLink
 
-  return organization?.footerItems?.length > 0 ? (
-    <OrganizationFooter organizations={[organization]} />
-  ) : (
-    <ServiceWebFooter
-      title={organization?.title ?? ''}
-      logoSrc={organization?.logo?.url}
-      phone={organization?.phone}
-      contactLink={contactLink}
-      contactLinkLabel={namespace?.serviceWebContactLinkLabel}
-      namespace={namespace}
-    />
+  return (
+    <Box marginTop="auto">
+      {organization?.footerItems?.length > 0 ? (
+        <OrganizationFooter organizations={[organization]} />
+      ) : (
+        <ServiceWebFooter
+          title={organization?.title ?? ''}
+          logoSrc={organization?.logo?.url}
+          phone={organization?.phone}
+          contactLink={contactLink}
+          contactLinkLabel={namespace?.serviceWebContactLinkLabel}
+          namespace={namespace}
+        />
+      )}
+    </Box>
   )
 }
 
