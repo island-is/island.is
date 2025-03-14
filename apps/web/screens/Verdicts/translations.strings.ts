@@ -44,6 +44,11 @@ export const m = {
       defaultMessage: 'Ítarleit',
       description: 'Ítarleit',
     },
+    verdictsFound: {
+      id: 'web.verdicts:listPage.verdictsFound',
+      defaultMessage: 'dómar fundust',
+      description: 'dómar fundust',
+    },
   }),
   verdictPage: {
     heading: {
