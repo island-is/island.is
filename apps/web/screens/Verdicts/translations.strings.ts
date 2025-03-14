@@ -49,6 +49,31 @@ export const m = {
       defaultMessage: 'dómar fundust',
       description: 'dómar fundust',
     },
+    showAllCourts: {
+      id: 'web.verdicts:listPage.showAllCourts',
+      defaultMessage: 'Sýna allt',
+      description: 'Sýna allt',
+    },
+    showDistrictCourts: {
+      id: 'web.verdicts:listPage.showDistrictCourts',
+      defaultMessage: 'Héraðsdómstólar',
+      description: 'Héraðsdómstólar',
+    },
+    showCourtOfAppeal: {
+      id: 'web.verdicts:listPage.showCourtOfAppeal',
+      defaultMessage: 'Landsréttur',
+      description: 'Landsréttur',
+    },
+    showSupremeCourt: {
+      id: 'web.verdicts:listPage.showSupremeCourt',
+      defaultMessage: 'Hæstiréttur',
+      description: 'Hæstiréttur',
+    },
+    showAllDistrictCourts: {
+      id: 'web.verdicts:listPage.showAllDistrictCourts',
+      defaultMessage: 'Allir',
+      description: 'Allir Héraðsdómstólar',
+    },
   }),
   verdictPage: {
     heading: {
