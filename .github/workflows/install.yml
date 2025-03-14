@@ -6,7 +6,7 @@ on:
         default: 'main'
         type: string
       run_merge_queue:
-        description: 'Should the merge que step run'
+        description: 'Should the merge queue step run'
         required: false
         type: boolean
         default: false
@@ -106,7 +106,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
       - name: load-deps
@@ -128,7 +128,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last 
+            # In merge que we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
