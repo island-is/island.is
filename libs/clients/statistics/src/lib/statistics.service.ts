@@ -36,7 +36,11 @@ export class StatisticsClientService {
       const promises = [
         getStatisticsFromCsvUrls(
           this.fetch,
-          this.config?.sourceDataPaths?.split(','),
+          this.config?.sourceDataPaths
+            ?.concat(
+              ',https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?format=csv,https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?gid=69103634&format=csv,https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?gid=88483785&format=csv,https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?gid=1784161095&format=csv,https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?gid=1328499480&format=csv,https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?gid=988483708&format=csv,https://docs.google.com/spreadsheets/d/16lDDimj8cU2hWWvM87GiXDN9AO0Qvpq-R0LXbaFFwtQ/export?gid=940184562&format=csv',
+            )
+            .split(','),
         ),
       ]
 
