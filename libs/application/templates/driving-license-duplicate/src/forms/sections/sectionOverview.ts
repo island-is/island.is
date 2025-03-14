@@ -11,7 +11,6 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { Jurisdiction } from '@island.is/clients/driving-license'
 
@@ -28,8 +27,8 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+          value: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName'),
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,
@@ -70,16 +69,19 @@ export const sectionOverview = buildSection({
           id: 'overview.deliveryTitle',
           title: m.deliveryMethodSectionTitle,
           titleVariant: 'h4',
-          description: ({ answers: { district }, externalData }) => {
-            const districts = getValueViaPath(
+          description: ({ answers, externalData }) => {
+            const district = getValueViaPath(answers, 'delivery.district')
+            const districts = getValueViaPath<Jurisdiction[]>(
               externalData,
               'jurisdictions.data',
-            ) as Jurisdiction[]
-            const selectedDistrict = districts.find(
+            )
+            const selectedDistrict = districts?.find(
               (d) => d.id.toString() === district,
             )
             const districtPlace = `${
-              selectedDistrict?.zip ? selectedDistrict.zip + ' ' : ''
+              selectedDistrict?.zip
+                ? selectedDistrict.zip + ' '
+                : 'Sent heim í pósti'
             }${selectedDistrict?.name ?? ''}`
             return districtPlace
           },

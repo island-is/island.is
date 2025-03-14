@@ -4,10 +4,9 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildAlertMessageField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
-import { HasQualitySignatureData } from '../../fields/QualitySignature/hooks/useQualitySignature'
 import { requirementsMet } from '../../lib/utils'
 
 export const sectionSignatureAndPhoto = buildSection({
@@ -36,12 +35,11 @@ export const sectionSignatureAndPhoto = buildSection({
         buildCustomField({
           id: 'qSignature',
           component: 'QualitySignature',
-          condition: (_, externalData) => {
-            return (
-              (externalData.qualitySignature as HasQualitySignatureData)?.data
-                ?.hasQualitySignature === true
-            )
-          },
+          condition: (_, externalData) =>
+            getValueViaPath(
+              externalData,
+              'qualitySignature.data.hasQualitySignature',
+            ) === true,
         }),
         buildDescriptionField({
           id: 'imgTitle',
@@ -53,12 +51,11 @@ export const sectionSignatureAndPhoto = buildSection({
         buildCustomField({
           id: 'qphoto',
           component: 'QualityPhoto',
-          condition: (_, externalData) => {
-            return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === true
-            )
-          },
+          condition: (_, externalData) =>
+            getValueViaPath(
+              externalData,
+              'qualitySignature.data.hasQualityPhoto',
+            ) === true,
         }),
       ],
     }),

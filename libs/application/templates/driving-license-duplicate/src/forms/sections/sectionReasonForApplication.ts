@@ -7,7 +7,7 @@ import {
 import { m } from '../../lib/messages'
 
 export const sectionReasonForApplication = buildSection({
-  id: 'fakeData',
+  id: 'reason',
   title: m.reasonSectionTitle,
   children: [
     buildMultiField({

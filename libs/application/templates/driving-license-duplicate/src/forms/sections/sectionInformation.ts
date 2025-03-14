@@ -4,11 +4,9 @@ import {
   buildTextField,
   buildCustomField,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import {
-  Application,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { requirementsMet } from '../../lib/utils'
@@ -34,11 +32,9 @@ export const sectionInformation = buildSection({
           title: m.applicantsName,
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.nationalRegistry
-              .data as NationalRegistryIndividual
-            return nationalRegistry.fullName
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildTextField({
           id: 'nationalId',

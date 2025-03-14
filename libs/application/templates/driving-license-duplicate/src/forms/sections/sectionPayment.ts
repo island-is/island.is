@@ -18,7 +18,6 @@ export const sectionPayment = buildSection({
         buildCustomField({
           id: 'paymentCharge',
           component: 'PaymentCharge',
-          doesNotRequireAnswer: true,
         }),
         buildSubmitField({
           id: 'payment',
