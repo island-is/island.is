@@ -27,6 +27,7 @@ console.info(`Artifact name: ${artifactName}`)
 console.info(`Docker tag: ${tagName}`)
 console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
+console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
 
 function shouldRun() {
