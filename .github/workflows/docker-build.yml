@@ -194,9 +194,9 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
-          echo "Registry is: $DOCKER_BASE_IMAGE_REGISTRY"
+          echo "Registry is: ${DOCKER_BASE_IMAGE_REGISTRY}"
           echo "Image tag is: $NODE_IMAGE_VERSION"
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY" --build-arg NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION"
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}" --build-arg NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}"
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
           echo "Affected services are: ${{inputs.IMAGES}}" >> "$GITHUB_ENV"
