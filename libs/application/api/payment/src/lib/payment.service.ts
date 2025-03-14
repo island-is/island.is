@@ -267,7 +267,7 @@ export class PaymentService {
             //   'http://localhost:3333/application-payment/api-client-payment-callback/',
             // onUpdateUrl:
             //   'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
-            onUpdateUrl: `${this.config.clientLocationOrigin}api-client-payment-callback`,
+            onUpdateUrl: `${this.config.paymentApiCallbackUrl}application-payment/api-client-payment-callback`,
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
@@ -279,8 +279,7 @@ export class PaymentService {
         })
 
       console.log('=========================================')
-      console.log('paymentResult' /*paymentResult*/)
-      console.dir(paymentResult, { depth: null })
+      console.log('paymentResult', JSON.stringify(paymentResult, null, 2))
       console.log('=========================================')
 
       paymentUrl =
@@ -298,8 +297,7 @@ export class PaymentService {
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
     console.log('=========================================')
-    console.log('paymentModel' /*paymentModel*/)
-    console.dir(paymentModel, { depth: null })
+    console.log('paymentModel', JSON.stringify(paymentModel, null, 2))
     console.log('=========================================')
 
     return {
@@ -415,6 +413,5 @@ export class PaymentService {
     }
 
     return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
-    // return `https://as-test-new-payment-beta.dev01.devland.is/umsoknir/greida/${applicationId}?done`
   }
 }

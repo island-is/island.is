@@ -7,6 +7,7 @@ const PaymentModule = z.object({
   arkBaseUrl: z.string(),
   clientLocationOrigin: z.string(),
   authIssuer: z.string(),
+  paymentApiCallbackUrl: z.string(),
 })
 
 export const PaymentModuleConfig = defineConfig({
@@ -25,6 +26,10 @@ export const PaymentModuleConfig = defineConfig({
     clientLocationOrigin: env.required(
       'CLIENT_LOCATION_ORIGIN',
       `http://localhost:${process.env.WEB_FRONTEND_PORT ?? '4242'}/umsoknir`,
+    ),
+    paymentApiCallbackUrl: env.required(
+      'PAYMENT_API_CALLBACK_URL',
+      'http://localhost:3333/applications/',
     ),
     authIssuer: env.required(
       'IDENTITY_SERVER_ISSUER_URL',

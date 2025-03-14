@@ -178,7 +178,7 @@ export const serviceSetup = (services: {
           (ctx) =>
             `https://${
               ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }beta.dev01.devland.is/umsoknir`,
+            }beta.dev01.devland.is/umsoknir/`,
         ),
         staging: `https://beta.staging01.devland.is/umsoknir`,
         prod: `https://island.is/umsoknir`,
@@ -297,6 +297,12 @@ export const serviceSetup = (services: {
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
       PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }application-system-api.application-system.svc.cluster.local`,
+      ),
     })
     .xroad(
       Base,
