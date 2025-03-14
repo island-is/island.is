@@ -16,7 +16,9 @@ import {
   DefendantInfo,
   TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table, {
+  useTable,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
@@ -29,12 +31,32 @@ const ActiveCases: FC<Props> = (props) => {
   const { cases, onContextMenuDeleteClick, canDeleteCase } = props
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { sortConfig } = useTable()
 
   return (
     <Table
       thead={[
         {
           title: formatMessage(tables.caseNumber),
+          sortBy: 'courtCaseNumber',
+          sortFn: (a: CaseListEntry, b: CaseListEntry) => {
+            const aa = a.policeCaseNumbers?.[0]?.replace(/\D/g, '') || '0'
+            const bb = b.policeCaseNumbers?.[0]?.replace(/\D/g, '') || '0'
+            const aaa =
+              Number(aa) +
+              (!a.policeCaseNumbers?.[0] ||
+              a.policeCaseNumbers?.[0]?.includes('R')
+                ? 0
+                : Number.MAX_SAFE_INTEGER)
+            const bbb =
+              Number(bb) +
+              (!b.policeCaseNumbers?.[0] ||
+              b.policeCaseNumbers?.[0]?.includes('R')
+                ? 0
+                : Number.MAX_SAFE_INTEGER)
+
+            return sortConfig?.direction === 'ascending' ? aaa - bbb : bbb - aaa
+          },
         },
         {
           title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),

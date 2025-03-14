@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { useContextMenu } from '../../ContextMenu/ContextMenu'
-import Table, { TableWrapper } from '../Table'
+import Table, { TableWrapper, useTable } from '../Table'
 import MobileAppealCase from './MobileAppealCase'
 
 interface Props {
@@ -35,6 +35,7 @@ const AppealCasesTable: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { isOpeningCaseId, handleOpenCase, showLoading } = useCaseList()
   const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { sortConfig } = useTable()
 
   const activeCasesData = useMemo(
     () =>
@@ -73,6 +74,17 @@ const AppealCasesTable: FC<Props> = (props) => {
         thead={[
           {
             title: formatMessage(tables.caseNumber),
+            sortBy: 'appealCaseNumber',
+            sortFn: (a: CaseListEntry, b: CaseListEntry) => {
+              const aa = a.appealCaseNumber?.replace(/\D/g, '') || '0'
+              const bb = b.appealCaseNumber?.replace(/\D/g, '') || '0'
+              const aaa = Number(aa)
+              const bbb = Number(bb)
+
+              return sortConfig?.direction === 'ascending'
+                ? aaa - bbb
+                : bbb - aaa
+            },
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
