@@ -5,10 +5,10 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  YES,
   NO,
+  YES,
 } from '@island.is/application/core'
-import { ApplicationType, OptionsType } from '../../../lib/constants'
+import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -17,11 +17,6 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
   title:
     newPrimarySchoolMessages.differentNeeds
       .allergiesAndIntolerancesSubSectionTitle,
-  condition: (answers) => {
-    // Only display section if application type is "Enrollment in primary school"
-    const { applicationType } = getApplicationAnswers(answers)
-    return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-  },
   children: [
     buildMultiField({
       id: 'allergiesAndIntolerances',
@@ -123,10 +118,12 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'uses-epi-pen',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-uses-epi-pen',
               value: NO,
             },
           ],
@@ -154,10 +151,12 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'has-confirmed-medical-diagnoses',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-has-confirmed-medical-diagnoses',
               value: NO,
             },
           ],
@@ -173,10 +172,12 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
+              dataTestId: 'requests-medication-administration',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
+              dataTestId: 'no-requests-medication-administration',
               value: NO,
             },
           ],
