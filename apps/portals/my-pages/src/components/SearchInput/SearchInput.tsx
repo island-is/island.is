@@ -1,5 +1,7 @@
 import {
+  AsyncSearch,
   AsyncSearchInput,
+  AsyncSearchOption,
   Box,
   BoxProps,
   Button,
@@ -13,6 +15,8 @@ import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
+
+import * as styles from './SearchInput.css'
 
 interface ModuleSet {
   title: string
@@ -33,6 +37,7 @@ const options: IFuseOptions<ModuleSet> = {
     { name: 'content', weight: 0.5 },
     { name: 'keywords', weight: 1 },
   ],
+  threshold: 0.3,
   shouldSort: true,
 }
 
@@ -48,7 +53,13 @@ const getNavigationItems = (
     )
   }
 
-  if (!data.navHide && data.path && !data.active && data.enabled) {
+  if (
+    !data.navHide &&
+    data.path &&
+    !data.active &&
+    data.enabled &&
+    navigationItems.findIndex((n) => n.uri === data.path) < 0
+  ) {
     navigationItems.push({
       title: formatMessage(data.name),
       content: data.description ? formatMessage(data.description) : undefined,
@@ -68,6 +79,7 @@ interface Props {
 
 export const SearchInput = ({ background }: Props) => {
   const { formatMessage } = useLocale()
+  const [query, setQuery] = useState<string>()
 
   const data = useMemo(() => {
     return getNavigationItems(MAIN_NAVIGATION, formatMessage)
@@ -75,111 +87,51 @@ export const SearchInput = ({ background }: Props) => {
 
   const fuse = useMemo(() => new Fuse(data, options), [data])
 
-  const [items, setItems] = useState<ModuleSet[]>([])
-
-  const {
-    getInputProps,
-    getItemProps,
-    getLabelProps,
-    getMenuProps,
-    getToggleButtonProps,
-    closeMenu,
-    isOpen,
-    highlightedIndex,
-    inputValue,
-  } = useCombobox({
-    onInputValueChange({ inputValue }) {
-      search(inputValue ?? '')
-    },
-    items,
-    itemToString(item) {
-      return item ? item.title : ''
-    },
-  })
-
-  const [hasFocus, setHasFocus] = useState<boolean>(false)
-
   const ref = useRef<HTMLInputElement>(null)
 
-  const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
-  const onFocus = useCallback(() => {
-    setHasFocus(true)
-  }, [setHasFocus])
-
-  const search = (query: string) => {
-    const result = fuse.search(query)
-    setItems(result.map((r) => r.item))
-  }
-
-  const onSubmit = () => {
-    if (ref.current?.value) {
-      search(ref.current.value)
+  const searchResults: Array<AsyncSearchOption> = useMemo(() => {
+    if (query) {
+      const results = fuse.search(query)
+      if (results?.length <= 0) {
+        return []
+      }
+      return results.map((result) => ({
+        label: result.item.title,
+        value: result.item.uri,
+        component: ({ colored, active, white, selected }) => (
+          <LinkResolver href={result.item.uri} className={styles.item}>
+            <Text variant="h5" as="h5" color="blue400">
+              {result.item.title}
+            </Text>
+            {result.item.content && <Text>{result.item.content}</Text>}
+          </LinkResolver>
+        ),
+      }))
     }
-  }
 
-  const shouldShowItems = items.length > 0 && isOpen
+    return []
+  }, [fuse, query])
 
   return (
-    <AsyncSearchInput
+    <AsyncSearch
       ref={ref}
-      hasFocus={hasFocus}
-      inputProps={{
-        ...getInputProps({
-          value: inputValue,
-          onFocus,
-          onBlur,
-          ref,
-          spellCheck: true,
-        }),
-
-        colored: true,
-        inputSize: 'medium',
-        isOpen: true,
-        placeholder: 'Leita',
-        onKeyDown: (event) => {
-          if (event.key === 'Enter') {
-            onSubmit()
-          }
-        },
+      id="my-pages-async-search"
+      placeholder="Leita"
+      colored
+      options={searchResults ?? []}
+      inputValue={query}
+      closeMenuOnSubmit
+      onChange={(value) => {
+        console.log('on change' + value)
       }}
-      buttonProps={{
-        onFocus,
-        onBlur,
-        onClick: () => {
-          closeMenu()
-          onSubmit()
-        },
+      onSubmit={() => {
+        console.log('on submit')
       }}
-      labelProps={getLabelProps()}
-      menuProps={{
-        ...getMenuProps(),
-        isOpen,
-        shouldShowItems,
+      onInputValueChange={(value) => {
+        if (value && value !== query) {
+          setQuery(value)
+        }
       }}
-    >
-      <Box
-        display="flex"
-        background="blue100"
-        width="full"
-        paddingY={1}
-        paddingX={3}
-        height="full"
-        as="ul"
-        flexDirection="column"
-      >
-        <Stack space={1}>
-          {items.slice(0, 5).map((item) => (
-            <LinkResolver href={item.uri}>
-              <Button as="span" size="small" variant="text" unfocusable>
-                <Text variant="h5" as="h5" color="blue400">
-                  {item.title}
-                </Text>
-                <Text marginTop={1}>{item.content}</Text>
-              </Button>
-            </LinkResolver>
-          ))}
-        </Stack>
-      </Box>
-    </AsyncSearchInput>
+    />
   )
 }
