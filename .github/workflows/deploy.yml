@@ -14,19 +14,21 @@ on:
       FEATURE_NAME:
         type: string
         required: true
+
+env:
+  GIT_BRANCH_DEPLOY: ${{ inputs.GIT_BRANCH_DEPLOY }}
+  FEATURE_NAME: ${{ inputs.FEATURE_NAME }}
+  DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
+  IMAGES: ${{ inputs.IMAGES }}
+  SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+  SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+
 jobs:
   deploy:
     runs-on: arc-runners
-    env:
-      GIT_BRANCH_DEPLOY: ${{ inputs.GIT_BRANCH_DEPLOY }}
-      FEATURE_NAME: ${{ inputs.FEATURE_NAME }}
-      DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
-      IMAGES: ${{ inputs.IMAGES }}
     steps:
       - uses: actions/checkout@v4
       - name: Trigger Deployment for service
-        env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
           curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
@@ -42,11 +44,6 @@ jobs:
           }
           BODY
       - name: Trigger Deployment for IDS-Services
-        env:
-          DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
-          GIT_BRANCH_DEPLOY: ${{ inputs.GIT_BRANCH_DEPLOY }}
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-          GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
           set -euo pipefail
           if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
