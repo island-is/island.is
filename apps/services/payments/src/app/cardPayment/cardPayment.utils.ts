@@ -81,6 +81,8 @@ export const generateVerificationRequestOptions = ({
       amount: amount * 100, // Convert to ISK (aurar)
       currency: 'ISK',
       authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
+      // authenticationUrl:
+      //   'https://webhook.site/17894ac9-1a34-4e29-9ffa-9ebb1f56cf09',
       MD: md,
       systemCalling,
     }),
