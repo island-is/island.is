@@ -118,22 +118,12 @@ const RentalAgreementTemplate: ApplicationTemplate<
         entry: 'assignUsers',
         exit: 'clearAssignees',
         meta: {
-          onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
-            // (Optional) Should the response/error be persisted to application.externalData
-            // Defaults to true
-            shouldPersistToExternalData: false,
-            // (Optional) Id that will store the result inside application.externalData
-            // Defaults to value of apiModuleAction
-            externalDataId: 'string',
-            // (Optional) Should the state transition be blocked if this action errors out?
-            // Will revert changes to answers/assignees/state
-            // Defaults to true
-            throwOnError: false,
-          }),
           name: 'Summary for review',
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
+          onEntry:  defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
