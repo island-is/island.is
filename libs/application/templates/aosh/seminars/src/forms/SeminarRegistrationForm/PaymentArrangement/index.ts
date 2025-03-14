@@ -221,7 +221,6 @@ export const paymentArrangementSection = buildSection({
 
         buildCheckboxField({
           id: 'paymentArrangement.agreementCheckbox',
-          title: '',
           large: false,
           backgroundColor: 'white',
           marginTop: 3,

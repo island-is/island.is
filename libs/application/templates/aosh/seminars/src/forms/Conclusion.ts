@@ -8,7 +8,6 @@ import { isApplyingForMultiple, isIndividual } from '../utils'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
@@ -16,7 +15,7 @@ export const Conclusion: Form = buildForm({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.pageTitle,
       alertTitle: (application) => {
-        const seminarName = getValueViaPath(
+        const seminarName = getValueViaPath<string>(
           application.externalData,
           'seminar.data.name',
           '',
@@ -30,7 +29,7 @@ export const Conclusion: Form = buildForm({
       expandableHeader: conclusion.default.accordionTitle,
       expandableIntro: '',
       expandableDescription: (application) => {
-        const paymentOptions = getValueViaPath(
+        const paymentOptions = getValueViaPath<PaymentOptions>(
           application.answers,
           'paymentArrangement.paymentOptions',
         )

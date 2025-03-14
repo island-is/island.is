@@ -113,7 +113,6 @@ export const personalInformationSection = buildSection({
         }),
         buildCustomField({
           id: 'applicant.personalValidation',
-          title: '',
           component: 'PersonalValidation',
           condition: (answers: FormValue) => {
             const registerMany = getValueViaPath<RegisterNumber>(

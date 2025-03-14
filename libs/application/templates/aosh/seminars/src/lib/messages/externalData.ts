@@ -18,6 +18,11 @@ export const externalData = {
       description:
         'Agreement of having read the above statements regarding data fetching',
     },
+    tabTitle: {
+      id: 'aosh.sem.application:externalData.dataProvider.tabTitle',
+      defaultMessage: 'Gagnaöflun',
+      description: 'Data fetching',
+    },
   }),
   nationalRegistry: defineMessages({
     title: {

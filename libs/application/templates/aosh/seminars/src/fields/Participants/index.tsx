@@ -123,7 +123,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
-    reader.onload = function (e) {
+    reader.onload = function () {
       if (typeof reader.result !== 'string') {
         setValue('participantCsvError', true)
         throw new TypeError(

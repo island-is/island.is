@@ -81,7 +81,6 @@ export const seminarInformationSection = buildSection({
         }),
         buildAlertMessageField({
           id: 'seminarInformationAlert',
-          title: '',
           message: seminarMessages.labels.alertMessage,
           alertType: 'info',
           marginTop: 4,

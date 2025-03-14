@@ -18,7 +18,7 @@ import { DefaultEvents } from '@island.is/application/types'
 export const prerequisitesSection = buildSection({
   id: 'externalData',
   title: '',
-  tabTitle: 'Gagnaöflun',
+  tabTitle: externalData.dataProvider.tabTitle,
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',
@@ -41,15 +41,12 @@ export const prerequisitesSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           provider: VinnueftirlitidPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: MockableVinnueftirlitidPaymentCatalogApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: getSeminarsApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: IdentityApi,

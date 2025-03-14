@@ -78,7 +78,8 @@ export const participantsSection = buildSection({
             const updatedParticipants: Array<ParticipantWitValidation> =
               tableItems.map((x) => {
                 const participantInRes = data.areIndividualsValid.filter(
-                  (z: any) => z.nationalID === x.nationalIdWithName.nationalId,
+                  (z: SeminarsIndividualValidationItem) =>
+                    z.nationalID === x.nationalIdWithName.nationalId,
                 )
                 return {
                   ...x,
@@ -142,7 +143,6 @@ export const participantsSection = buildSection({
         }),
         buildAlertMessageField({
           id: 'participantList.validityError',
-          title: '',
           message: (application, _) => {
             const error = getValueViaPath<string>(
               application.answers,
@@ -164,13 +164,11 @@ export const participantsSection = buildSection({
         }),
         buildCustomField({
           id: 'participantCSV',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'Participants',
         }),
         buildAlertMessageField({
           id: 'participantList.error',
-          title: '',
           message: participantMessages.labels.csvError,
           alertType: 'error',
           doesNotRequireAnswer: true,

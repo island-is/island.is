@@ -15,7 +15,6 @@ export const overviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'overview',
-          title: '',
           component: 'Overview',
         }),
       ],

@@ -126,7 +126,11 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
