@@ -1,0 +1,24 @@
+schema:
+  - apps/api/src/api.graphql
+documents: apps/payments/**/*.graphql.ts
+generates:
+  apps/payments/graphql/schema.ts:
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: '~@island.is/api/schema'
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      exportFragmentSpreadSubTypes: true
+      scalars:
+        DateTime: Date
+        JSON: '{ [key: string]: any }'
+      namingConvention:
+        typeNames: change-case#pascalCase
+      enumsAsTypes: false
+      enumPrefix: false
+      onlyOperationTypes: false
+hooks:
+  afterAllFileWrite:
+    - prettier --write
