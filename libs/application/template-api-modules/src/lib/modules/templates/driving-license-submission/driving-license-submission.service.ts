@@ -176,9 +176,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          districtId: districtId
-            ? districtId
-            : 37,
+          districtId: districtId ? districtId : 37,
           ...(deliveryMethod
             ? {
                 pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
@@ -189,10 +187,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        districtId: districtId,
+        districtId: districtId ? districtId : 37,
+        sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
-        sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         licenseCategory:
           applicationFor === 'B-full'
             ? DrivingLicenseCategory.B
@@ -206,7 +204,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization.replace('Bearer ', ''),
         {
-          jurisdictionId: districtId,
+          districtId: districtId ? districtId : 37,
+          sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
           needsToPresentHealthCertificate: needsHealthCert,
           needsToPresentQualityPhoto: needsQualityPhoto,
           teacherNationalId: teacher,
