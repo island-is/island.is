@@ -7,7 +7,6 @@ import {
   FormSystemLanguageTypeInput,
   FormSystemListItem,
 } from '@island.is/api/schema'
-import { Icon } from '../../../../../../island-ui/core/src/lib/IconRC/iconMap'
 
 export enum NavbarSelectStatus {
   OFF = 'Off',
@@ -123,8 +122,4 @@ export type ButtonTypes =
   | 'CHANGE_DESCRIPTION'
   | 'SET_MESSAGE_WITH_LINK_SETTINGS'
 
-export type InputButton = {
-  label: string
-  name: Icon
-  onClick: () => void
-}
+

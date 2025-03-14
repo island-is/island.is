@@ -1,6 +1,5 @@
 import { Dispatch } from 'react'
 import { ControlAction } from '../../hooks/controlReducer'
-import { Icon } from '../../../../../../island-ui/core/src/lib/IconRC/iconMap'
 
 
 
@@ -9,7 +8,7 @@ type Types = 'CHANGE_NAME' | 'CHANGE_FORM_NAME' | 'CHANGE_DESCRIPTION'
 
 type InputButton = {
   label: string
-  name: Icon
+  name: string
   onClick: () => void
 }
 export const getTranslationButtons = (

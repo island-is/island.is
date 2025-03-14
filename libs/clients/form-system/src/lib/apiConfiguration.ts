@@ -1,4 +1,4 @@
-import { createEnhancedFetch } from "../../../middlewares/src"
+import { createEnhancedFetch } from "@island.is/clients/middlewares"
 import { Configuration } from "../../gen/fetch"
 import { FormSystemClientConfig } from "./FormSystemClient.config"
 import {
@@ -7,6 +7,7 @@ import {
 
 export const ApiConfiguration = {
   provide: 'FormSystemClientApiConfiguration',
+  // eslint-disable-next-line local-rules/no-async-module-init
   useFactory: async (
     config: ConfigType<typeof FormSystemClientConfig>,
   ) => {
