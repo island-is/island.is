@@ -238,3 +238,14 @@ export class ApplicationPayment {
   @Field()
   paymentUrl!: string
 }
+@ObjectType()
+export class ApplicationDetails {
+  @Field(() => graphqlTypeJson)
+  externalData!: object
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  attachments?: object
+
+  @Field(() => graphqlTypeJson)
+  answers!: object
+}
