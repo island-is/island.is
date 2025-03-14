@@ -26,6 +26,7 @@ export type sortableTableColumn = keyof CaseListEntry
 export interface SortConfig {
   column: sortableTableColumn
   direction: directionType
+  sortFn?: string
 }
 
 interface NationalRegistryPerson {

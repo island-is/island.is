@@ -1,4 +1,11 @@
-import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
+import {
+  Dispatch,
+  FC,
+  PropsWithChildren,
+  ReactNode,
+  SetStateAction,
+  useMemo,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -35,6 +42,7 @@ interface TableProps {
   thead: {
     title: string
     sortBy?: sortableTableColumn
+    sortFn?: (a: CaseListEntry, b: CaseListEntry) => number
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -62,17 +70,21 @@ export const useTable = () => {
     },
   )
 
-  const requestSort = (column: sortableTableColumn) => {
-    let d: directionType = 'ascending'
+  const requestSort = (
+    column: sortableTableColumn,
+    sortFn?: (a: CaseListEntry, b: CaseListEntry) => number,
+  ) => {
+    let direction: directionType = 'ascending'
 
     if (
       sortConfig &&
       sortConfig.column === column &&
       sortConfig.direction === 'ascending'
     ) {
-      d = 'descending'
+      direction = 'descending'
     }
-    setSortConfig({ column, direction: d })
+
+    setSortConfig({ column, direction, sortFn: sortFn?.toString() })
   }
 
   const getClassNamesFor = (name: sortableTableColumn) => {
@@ -164,42 +176,45 @@ const Table: FC<TableProps> = (props) => {
     return null
   }
 
-  const getColumnValue = (
-    entry: CaseListEntry,
-    column: keyof CaseListEntry,
-  ) => {
-    const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
-
-    switch (column) {
-      case 'defendants':
-        return entry.defendants?.[0]?.name ?? ''
-      case 'defendantsPunishmentType':
-        return entry.defendants?.[0]?.punishmentType ?? ''
-      case 'courtCaseNumber':
-        return courtAbbreviation
-          ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
-          : entry.courtCaseNumber ?? ''
-      case 'state':
-        return mapCaseStateToTagVariant(formatMessage, entry).text
-      default:
-        return entry[column]?.toString() ?? ''
-    }
-  }
-
   useMemo(() => {
-    if (sortConfig) {
-      data.sort((a: CaseListEntry, b: CaseListEntry) => {
-        const compareResult = compareLocaleIS(
-          getColumnValue(a, sortConfig.column),
-          getColumnValue(b, sortConfig.column),
-        )
+    const getColumnValue = (
+      entry: CaseListEntry,
+      column: keyof CaseListEntry,
+    ) => {
+      const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
 
-        return sortConfig.direction === 'ascending'
-          ? compareResult
-          : -compareResult
-      })
+      switch (column) {
+        case 'defendants':
+          return entry.defendants?.[0]?.name ?? ''
+        case 'defendantsPunishmentType':
+          return entry.defendants?.[0]?.punishmentType ?? ''
+        case 'courtCaseNumber':
+          return courtAbbreviation
+            ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
+            : entry.courtCaseNumber ?? ''
+        case 'state':
+          return mapCaseStateToTagVariant(formatMessage, entry).text
+        default:
+          return entry[column]?.toString() ?? ''
+      }
     }
-  }, [data, sortConfig])
+
+    if (sortConfig) {
+      const sortFn = sortConfig.sortFn
+        ? eval(`(${sortConfig.sortFn})`)
+        : (a: CaseListEntry, b: CaseListEntry) => {
+            const compareResult = compareLocaleIS(
+              getColumnValue(a, sortConfig.column),
+              getColumnValue(b, sortConfig.column),
+            )
+            return sortConfig.direction === 'ascending'
+              ? compareResult
+              : -compareResult
+          }
+
+      data.sort(sortFn)
+    }
+  }, [data, formatMessage, sortConfig])
 
   return width < theme.breakpoints.lg ? (
     <>
@@ -236,7 +251,10 @@ const Table: FC<TableProps> = (props) => {
               {th.sortBy ? (
                 <SortButton
                   title={th.title}
-                  onClick={() => th.sortBy && requestSort(th.sortBy)}
+                  onClick={() => {
+                    console.log(th)
+                    th.sortBy && requestSort(th.sortBy, th.sortFn)
+                  }}
                   sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortBy) === 'descending'}
                   isActive={sortConfig?.column === th.sortBy}
