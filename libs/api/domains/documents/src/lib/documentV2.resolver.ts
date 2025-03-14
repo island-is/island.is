@@ -62,6 +62,7 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
+    const isCourtCase = input.category === 'Dómsmál'
     try {
       const data = await this.auditService.auditPromise(
         {
@@ -78,19 +79,23 @@ export class DocumentResolverV2 {
           input.includeDocument,
         ),
       )
-      this.logger.info('Single document fetched successfully V1', {
-        category: LOG_CATEGORY,
-        documentId: input.id,
-        includeDocument: input.includeDocument,
-        provider: input.provider,
-        documentCategory: input.category,
-      })
+      if (isCourtCase) {
+        this.logger.info('Court case document fetched successfully', {
+          category: LOG_CATEGORY,
+          documentId: input.id,
+          includeDocument: input.includeDocument,
+          provider: input.provider,
+          documentCategory: input.category,
+          isCourtCase: true,
+        })
+      }
       return data
     } catch (e) {
-      this.logger.error('Failed to get single document', {
+      this.logger.warn('Failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
         documentCategory: input.category,
+        isCourtCase: isCourtCase,
         error: e,
       })
       throw e
@@ -123,7 +128,7 @@ export class DocumentResolverV2 {
       resources: input.id,
       meta: { confirmed: input.confirmed },
     })
-    this.logger.info('confirming document modal', {
+    this.logger.info('confirming urgent document modal', {
       category: LOG_CATEGORY,
       id: input.id,
       confirmed: input.confirmed,
