@@ -207,11 +207,11 @@ export class PaymentService {
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
     console.log('=========================================')
-    console.log('chargeItems', chargeItems)
-    // console.dir(chargeItems, { depth: null })
+    console.log('chargeItems' /*chargeItems*/)
+    console.dir(chargeItems, { depth: null })
     console.log('=========================================')
-    console.log('extraData', extraData)
-    // console.dir(extraData, { depth: null })
+    console.log('extraData' /*extraData*/)
+    console.dir(extraData, { depth: null })
     console.log('=========================================')
 
     //1. Retrieve charge items from FJS
@@ -220,8 +220,8 @@ export class PaymentService {
       chargeItems,
     )
     console.log('=========================================')
-    console.log('catalogChargeItems', catalogChargeItems)
-    // console.dir(catalogChargeItems, { depth: null })
+    console.log('catalogChargeItems' /*catalogChargeItems*/)
+    console.dir(catalogChargeItems, { depth: null })
     console.log('=========================================')
 
     //2. Fetch existing payment if any
@@ -232,8 +232,8 @@ export class PaymentService {
       //payment Model already exists something has previously gone wrong.
 
       console.log('=========================================')
-      console.log('paymentModel EXISTS', paymentModel)
-      // console.dir(paymentModel, { depth: null })
+      console.log('paymentModel EXISTS' /*paymentModel*/)
+      console.dir(paymentModel, { depth: null })
       console.log('=========================================')
 
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
@@ -267,7 +267,7 @@ export class PaymentService {
             // onUpdateUrl:
             //   'http://localhost:3333/application-payment/api-client-payment-callback/',
             onUpdateUrl:
-              'http://application-system-api.application-system.svc.cluster.local/application-payment/api-client-payment-callback',
+              'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
@@ -279,8 +279,8 @@ export class PaymentService {
         })
 
       console.log('=========================================')
-      console.log('paymentResult', paymentResult)
-      // console.dir(paymentResult, { depth: null })
+      console.log('paymentResult' /*paymentResult*/)
+      console.dir(paymentResult, { depth: null })
       console.log('=========================================')
 
       paymentUrl =
@@ -298,8 +298,8 @@ export class PaymentService {
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
     console.log('=========================================')
-    console.log('paymentModel', paymentModel)
-    // console.dir(paymentModel, { depth: null })
+    console.log('paymentModel' /*paymentModel*/)
+    console.dir(paymentModel, { depth: null })
     console.log('=========================================')
 
     return {
