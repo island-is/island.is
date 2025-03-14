@@ -247,7 +247,6 @@ export class PaymentService {
 
       console.log('=========================================')
       console.log('callbackUrl', this.config.callbackBaseUrl)
-      // console.dir(paymentModel, { depth: null })
       console.log('=========================================')
 
       const paymentResult =
@@ -266,8 +265,9 @@ export class PaymentService {
             organisationId: performingOrganizationID,
             // onUpdateUrl:
             //   'http://localhost:3333/application-payment/api-client-payment-callback/',
-            onUpdateUrl:
-              'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
+            // onUpdateUrl:
+            //   'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
+            onUpdateUrl: `${this.config.clientLocationOrigin}api-client-payment-callback`,
             metadata: {
               applicationId,
               paymentId: paymentModel.id,

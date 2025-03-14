@@ -29,7 +29,6 @@ export const PaymentPending: FC<
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
-  // console.log('paymentStatus', paymentStatus)
   const [searchParams, setSearchParams] = useSearchParams()
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
@@ -50,8 +49,6 @@ export const PaymentPending: FC<
   // automatically go to done state if payment has been fulfilled
 
   useEffect(() => {
-    console.log('hasSubmitted', hasSubmitted)
-    console.log('paymentStatus', paymentStatus)
     const removeCancelledFromURL = () => {
       setSearchParams((params) => {
         params.delete('cancelled')
