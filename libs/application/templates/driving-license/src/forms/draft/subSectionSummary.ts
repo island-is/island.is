@@ -56,15 +56,19 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewName,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+          value: ({ externalData }) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildKeyValueField({
           label: m.overviewNationalId,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
+          value: ({ externalData }) =>
             formatNationalId(
-              (nationalRegistry.data as NationalRegistryUser).nationalId,
+              getValueViaPath(
+                externalData,
+                'nationalRegistry.data.nationalId',
+              ) ?? '',
             ),
         }),
         buildKeyValueField({
@@ -145,8 +149,8 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.pickupLocationTitle,
           value: ({ answers }) => {
-            return (answers.delivery as { deliveryMethod: string })
-              .deliveryMethod === Pickup.POST
+            return getValueViaPath(answers, 'delivery.deliveryMethod') ===
+              Pickup.POST
               ? m.overviewPickupPost
               : m.overviewPickupDistrict
           },
@@ -155,8 +159,7 @@ export const subSectionSummary = buildSubSection({
         buildDividerField({}),
         buildKeyValueField({
           label: ({ answers }) =>
-            (answers.delivery as { deliveryMethod: string }).deliveryMethod ===
-            Pickup.POST
+            getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
               ? m.overviewPaymentChargeWithDelivery
               : m.overviewPaymentCharge,
           value: ({ answers, externalData }) => {

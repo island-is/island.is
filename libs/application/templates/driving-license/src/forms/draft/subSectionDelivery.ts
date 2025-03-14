@@ -4,6 +4,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils/formUtils'
@@ -41,7 +42,7 @@ export const subSectionDelivery = buildSubSection({
           required: true,
           placeholder: m.districtCommissionerPickupPlaceholder,
           condition: (answers) =>
-            (answers.delivery as { deliveryMethod: string })?.deliveryMethod ===
+            getValueViaPath(answers, 'delivery.deliveryMethod') ===
             Pickup.DISTRICT,
           options: ({
             externalData: {

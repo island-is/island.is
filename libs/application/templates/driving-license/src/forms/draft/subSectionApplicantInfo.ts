@@ -7,12 +7,12 @@ import {
   buildTextField,
   buildSubSection,
   buildPhoneField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
   NationalRegistryUser,
   TeacherV4,
-  UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import {
@@ -88,18 +88,19 @@ export const subSectionApplicantInfo = buildSubSection({
           width: 'half',
           required: true,
           title: m.phoneNumberTitle,
-          defaultValue: (application: Application) =>
-            application.externalData.userProfile.data.mobilePhoneNumber ?? '',
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(
+              externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ) ?? '',
         }),
         buildTextField({
           id: 'email',
           title: m.informationYourEmail,
           width: 'half',
           required: true,
-          defaultValue: ({ externalData }: Application) => {
-            const data = externalData.userProfile.data as UserProfile
-            return data.email
-          },
+          defaultValue: ({ externalData }: Application) =>
+            getValueViaPath(externalData, 'userProfile.data.email') ?? '',
         }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',

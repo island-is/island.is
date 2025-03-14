@@ -5,6 +5,7 @@ import {
   buildAlertMessageField,
   buildDescriptionField,
   YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
@@ -143,7 +144,10 @@ export const subSectionHealthDeclaration = buildSubSection({
           alertType: 'warning',
           condition: (answers) =>
             answers.applicationFor !== BE &&
-            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+            getValueViaPath(
+              answers,
+              'healthDeclaration.contactGlassesMismatch',
+            ) === true,
         }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
