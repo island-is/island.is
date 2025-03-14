@@ -19,7 +19,6 @@ import {
 import {
   FeatureFlagGuard,
   FeatureFlagService,
-  Features,
 } from '@island.is/nest/feature-flags'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { DocumentInput } from './models/v2/document.input'
@@ -37,6 +36,10 @@ import type { Locale } from '@island.is/shared/types'
 import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
 import { DocumentConfirmActions } from './models/v2/confirmActions.model'
 import { isDefined } from '@island.is/shared/utils'
+import {
+  DocumentPdfRenderer,
+  DocumentPdfRendererInput,
+} from './models/v2/pdfRenderer.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -59,9 +62,9 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
-    const ffEnabled = await this.getFeatureFlag()
+    const isCourtCase = input.category === 'Dómsmál'
     try {
-      return await this.auditService.auditPromise(
+      const data = await this.auditService.auditPromise(
         {
           auth: user,
           namespace: '@island.is/api/document-v2',
@@ -69,20 +72,30 @@ export class DocumentResolverV2 {
           resources: input.id,
           meta: { includeDocument: input.includeDocument },
         },
-        ffEnabled
-          ? this.documentServiceV2.findDocumentByIdV3(
-              user.nationalId,
-              input.id,
-              locale,
-              input.includeDocument,
-            )
-          : this.documentServiceV2.findDocumentById(user.nationalId, input.id),
+        this.documentServiceV2.findDocumentById(
+          user.nationalId,
+          input.id,
+          locale,
+          input.includeDocument,
+        ),
       )
+      if (isCourtCase) {
+        this.logger.info('Court case document fetched successfully', {
+          category: LOG_CATEGORY,
+          documentId: input.id,
+          includeDocument: input.includeDocument,
+          provider: input.provider,
+          documentCategory: input.category,
+          isCourtCase: true,
+        })
+      }
+      return data
     } catch (e) {
-      this.logger.info('failed to get single document', {
+      this.logger.warn('Failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
         documentCategory: input.category,
+        isCourtCase: isCourtCase,
         error: e,
       })
       throw e
@@ -96,8 +109,6 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    const ffEnabled = await this.getFeatureFlag()
-    if (ffEnabled) return this.documentServiceV2.listDocumentsV3(user, input)
     return this.documentServiceV2.listDocuments(user, input)
   }
 
@@ -117,12 +128,45 @@ export class DocumentResolverV2 {
       resources: input.id,
       meta: { confirmed: input.confirmed },
     })
-    this.logger.info('confirming document modal', {
+    this.logger.info('confirming urgent document modal', {
       category: LOG_CATEGORY,
       id: input.id,
       confirmed: input.confirmed,
     })
     return { id: input.id, confirmed: input.confirmed }
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentPdfRenderer, {
+    nullable: true,
+    name: 'documentV2PdfRenderer',
+  })
+  async pdfRenderer(
+    @Args('input') input: DocumentPdfRendererInput,
+    @CurrentUser() user: User,
+  ) {
+    this.auditService.audit({
+      auth: user,
+      namespace: '@island.is/api/document-v2',
+      action: 'pdfRenderer',
+      resources: input.id,
+      meta: { success: input.success },
+    })
+    if (!input.success) {
+      this.logger.error('failed to render document pdf', {
+        category: LOG_CATEGORY,
+        id: input.id,
+        success: input.success,
+      })
+    } else {
+      this.logger.info('rendered document pdf', {
+        category: LOG_CATEGORY,
+        id: input.id,
+        success: input.success,
+      })
+    }
+
+    return { id: input.id, success: input.success }
   }
 
   @ResolveField('categories', () => [Category])
@@ -226,12 +270,5 @@ export class DocumentResolverV2 {
       })
       throw e
     }
-  }
-
-  private async getFeatureFlag(): Promise<boolean> {
-    return await this.featureFlagService.getValue(
-      Features.isServicePortalDocumentsV3PageEnabled,
-      false,
-    )
   }
 }
