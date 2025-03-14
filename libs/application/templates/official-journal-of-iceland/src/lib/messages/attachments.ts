@@ -49,10 +49,15 @@ export const attachments = {
     },
   }),
   additions: defineMessages({
-    title: {
-      id: 'ojoi.application:attachments.additions.title',
+    appendixTitle: {
+      id: 'ojoi.application:attachments.additions.appendixTitle',
       defaultMessage: 'Viðauki {index}',
-      description: 'Title of the additions section',
+      description: 'Title of the additions appendix section',
+    },
+    attachmentTitle: {
+      id: 'ojoi.application:attachments.additions.attachmentTitle',
+      defaultMessage: 'Fylgiskjal {index}',
+      description: 'Title of the additions attachment section',
     },
   }),
   inputs: {
@@ -82,18 +87,32 @@ export const attachments = {
           description: 'Label of the radio buttons',
         },
       }),
-      numeric: defineMessages({
+      appendixNumeric: defineMessages({
         label: {
-          id: 'ojoi.application:attachments.radio.additions.label',
+          id: 'ojoi.application:attachments.radio.appendix.labelNumeric',
           defaultMessage: 'Viðauki (1, 2, 3..)',
-          description: 'Label of the additions radio button',
+          description: 'Label of the appendix radio button with numbers',
         },
       }),
-      roman: defineMessages({
+      appendixRoman: defineMessages({
         label: {
-          id: 'ojoi.application:attachments.radio.documents.label',
+          id: 'ojoi.application:attachments.radio.appendix.labelRoman',
           defaultMessage: 'Viðauki (I, II, III..)',
-          description: 'Label of the documents radio button',
+          description: 'Label of the appendix radio button with roman numerals',
+        },
+      }),
+      attachmentNumeric: defineMessages({
+        label: {
+          id: 'ojoi.application:attachments.radio.attachments.labelNumeric',
+          defaultMessage: 'Fylgiskjal (1, 2, 3..)',
+          description: 'Label of the attachments radio button with numbers',
+        },
+      }),
+      attachmentRoman: defineMessages({
+        label: {
+          id: 'ojoi.application:attachments.radio.attachments.labelRoman',
+          defaultMessage: 'Fylgiskjal (I, II, III..)',
+          description: 'Label of the attachments radio button with roman numerals',
         },
       }),
     },

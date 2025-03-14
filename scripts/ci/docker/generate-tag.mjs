@@ -20,13 +20,13 @@ const tagName = getTagname()
 
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
+core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release');
 core.setOutput('GIT_BRANCH', targetBranch)
 core.setOutput('GIT_SHA', sha)
 console.info(`Artifact name: ${artifactName}`)
 console.info(`Docker tag: ${tagName}`)
 console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
-
 
 function shouldRun() {
     if (eventName === 'merge_group') {
@@ -48,7 +48,7 @@ function getTagname() {
     if (eventName === 'merge_group') {
         const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '')
         if (typeOfDeployment.dev) {
-            return `main_${dateString}_${randomTag}`
+            return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
             return `release_${dateString}_${randomTag}`
@@ -119,3 +119,4 @@ function createRandomString(length) {
     }
     return result
 }
+
