@@ -369,28 +369,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  private async getASFTEAttachments(
-    application: Application,
-  ): Promise<Attachment[]> {
-    const { additionalAttachments } = getASFTEApplicationAnswers(
-      application.answers,
-    )
-
-    const attachments: Attachment[] = []
-
-    if (additionalAttachments && additionalAttachments.length > 0) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.OTHER,
-          additionalAttachments,
-        )),
-      )
-    }
-
-    return attachments
-  }
-
   private async getDBAttachments(
     application: Application,
   ): Promise<Attachment[]> {
@@ -506,11 +484,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
-      const attachments = await this.getASFTEAttachments(application)
       const additionalSupportForTheElderlyDTO =
         transformApplicationToAdditionalSupportForTheElderlyDTO(
           application,
-          attachments,
         )
 
       const response = await this.siaClientService.sendApplication(

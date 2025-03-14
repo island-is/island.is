@@ -11,7 +11,6 @@ import { States } from '@island.is/application/templates/social-insurance-admini
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Comment } from './review-groups/Comment'
 import { Period } from './review-groups/Period'
-import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Payment } from './review-groups/Payment'
 
@@ -159,7 +158,6 @@ export const Review: FC<ReviewScreenProps> = ({
       <Payment {...childProps} />
       <Period {...childProps} />
       <Comment {...childProps} />
-      <Attachments {...childProps} />
     </>
   )
 }
