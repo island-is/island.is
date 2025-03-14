@@ -56,14 +56,15 @@ export const OtherParent = ({
       }
     >
       <Stack space={2}>
-        {(otherParent === NO || otherParent === SINGLE) && (
-          <RadioValue
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.otherParentTitle,
-            )}
-            value={NO}
-          />
-        )}
+        {(otherParent === NO || otherParent === SINGLE) &&
+          !VMSTOtherParent.otherParentId && (
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.otherParentTitle,
+              )}
+              value={NO}
+            />
+          )}
         {(otherParent === SPOUSE ||
           otherParent === MANUAL ||
           VMSTOtherParent.otherParentId) && (
