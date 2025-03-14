@@ -10,6 +10,8 @@ export const informationNavigation: PortalNavigationItem = {
   icon: {
     icon: 'person',
   },
+  searchHide: true,
+
   children: [
     {
       name: m.myInfo,
@@ -43,10 +45,12 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         {
           name: m.mySettingsInformation,
+          searchHide: true,
           path: InformationPaths.Settings,
         },
         {
           name: m.mySettingsNotifications,
+          searchHide: true,
           path: InformationPaths.SettingsNotifications,
         },
       ],
@@ -120,6 +124,7 @@ export const informationNavigation: PortalNavigationItem = {
 
 export const companyNavigation: PortalNavigationItem = {
   name: m.companyTitle,
+  searchHide: true,
   path: InformationPaths.Company,
   icon: {
     icon: 'business',

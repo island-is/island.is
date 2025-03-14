@@ -30,6 +30,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
 
 export const delegationsNavigation: PortalNavigationItem = {
   name: m.accessControl,
+  searchHide: true,
   path: DelegationPaths.Delegations,
   icon: {
     icon: 'lockClosed',

@@ -5,6 +5,7 @@ import { LicensePaths } from './paths'
 export const licenseNavigation: PortalNavigationItem = {
   name: m.licenses,
   path: LicensePaths.LicensesRoot,
+  searchHide: true,
   icon: {
     icon: 'wallet',
   },

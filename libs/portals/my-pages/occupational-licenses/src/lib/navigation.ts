@@ -6,6 +6,7 @@ import { olMessage as om } from './messages'
 export const occupationalLicensesNavigation: PortalNavigationItem = {
   name: om.occupationalLicense,
   path: OccupationalLicensesPaths.OccupationalLicensesRoot,
+  searchHide: true,
   icon: {
     icon: 'receipt',
   },
@@ -13,6 +14,7 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
   children: [
     {
       name: om.myLicenses,
+      searchHide: true,
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
     },
     {

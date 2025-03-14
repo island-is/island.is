@@ -2,16 +2,20 @@ import React, { FC, useState } from 'react'
 import Header from '../Header/Header'
 import { ToastContainer } from '@island.is/island-ui/core'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import { useLocation } from 'react-router-dom'
+import { matchPath, useLocation } from 'react-router-dom'
 import { useNamespaces } from '@island.is/localization'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
 import { useMeasure } from 'react-use'
-import { useDynamicRoutesWithNavigation } from '@island.is/portals/my-pages/core'
+import {
+  ServicePortalPaths,
+  useDynamicRoutesWithNavigation,
+} from '@island.is/portals/my-pages/core'
 import { useActiveModule } from '@island.is/portals/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
+import isDate from 'date-fns/esm/fp/isDate/index'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals'])
@@ -31,6 +35,10 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
   const isFullwidth = activeModule?.layout === 'full'
 
+  const isDashboard = Object.values(ServicePortalPaths).find((route) =>
+    matchPath(route, pathname),
+  )
+
   return (
     <div>
       <AuthOverlay />
@@ -38,7 +46,10 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       {globalBanners.length > 0 && (
         <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
       )}
-      <Header position={height && globalBanners.length > 0 ? height : 0} />
+      <Header
+        position={height && globalBanners.length > 0 ? height : 0}
+        includeSearchInHeader={!isDashboard}
+      />
 
       {!isFullwidth && activeParent && (
         <NarrowLayout

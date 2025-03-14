@@ -17,6 +17,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.overviewTitle,
+      searchHide: true,
       path: HealthPaths.HealthOverview,
     },
     {
