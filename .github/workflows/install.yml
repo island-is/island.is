@@ -139,39 +139,36 @@ jobs:
         id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      - name: Set base/head sha output for merge queue
-        if: inputs.run_merge_queue == 'true'
-        id: export-sha
-        shell: bash
-        run: |
-          # In merge que we always want to use the last
-          # commit as head - last commit sha is alway succesful
-          # since else it won't get merged!
-          # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
-          # when this gets merged we can remove this hack!
-          #
-          # If we do not do this we will get the wrong base sha
-          # :(
-          export NX_HEAD=${{ github.sha }}
-          export NX_BASE=$(git rev-parse HEAD^1)
-          echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
-          echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
-          echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
-          echo BASE="$NX_BASE" >> "$GITHUB_ENV"
-
       - name: Set base/head sha output
-        if: inputs.run_merge_queue == 'false'
         id: export-sha
         shell: bash
         run: |
-          echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
-          echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
-          # NOTE: we reference BASE and HEAD elsewhere
-          echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
-          echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
+          if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
+            # In merge que we always want to use the last
+            # commit as head - last commit sha is alway succesful
+            # since else it won't get merged!
+            # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
+            # when this gets merged we can remove this hack!
+            #
+            # If we do not do this we will get the wrong base sha
+            # :(
+            export NX_HEAD=${{ github.sha }}
+            export NX_BASE=$(git rev-parse HEAD^1)
+            echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
+            echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
+            echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
+            echo BASE="$NX_BASE" >> "$GITHUB_ENV"
+            exit 0
+          else
+            echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
+            echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
+            # NOTE: we reference BASE and HEAD elsewhere
+            echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
+            echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
 
-          echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
-          echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+            echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
+            echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+          fi
 
       - name: Git bot config
         id: git-bot-config
