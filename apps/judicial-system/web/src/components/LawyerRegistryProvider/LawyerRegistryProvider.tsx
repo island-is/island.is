@@ -3,6 +3,7 @@ import { createContext, FC, PropsWithChildren, useContext } from 'react'
 import {
   isDefenceUser,
   isDistrictCourtUser,
+  isProsecutionUser,
   Lawyer,
 } from '@island.is/judicial-system/types'
 
@@ -19,7 +20,8 @@ export const LawyerRegistryContext = createContext<LawyerRegistryContext>({
 
 export const LawyerRegistryProvider: FC<PropsWithChildren> = ({ children }) => {
   const { user } = useContext(UserContext)
-  const shouldFetch = isDistrictCourtUser(user) || isDefenceUser(user)
+  const shouldFetch =
+    isDistrictCourtUser(user) || isDefenceUser(user) || isProsecutionUser(user)
   const { allLawyers: lawyers } = useIndexedDB(shouldFetch)
 
   return (
