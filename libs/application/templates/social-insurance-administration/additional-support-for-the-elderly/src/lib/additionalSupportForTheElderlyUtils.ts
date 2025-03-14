@@ -48,12 +48,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'tempAnswers',
   ) as Application['answers']
-
-  const bankAccountType = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountType',
-  ) as BankAccountType
-
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
@@ -82,7 +76,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     additionalAttachments,
     additionalAttachmentsRequired,
     tempAnswers,
-    bankAccountType,
     bank,
     paymentInfo,
     personalAllowance,
@@ -157,47 +150,6 @@ export const getApplicationExternalData = (
     currencies,
     isEligible,
   }
-}
-
-export const getAttachments = (application: Application) => {
-  const getAttachmentDetails = (
-    attachmentsArr: FileType[] | undefined,
-    attachmentType: AttachmentTypes,
-  ) => {
-    if (attachmentsArr && attachmentsArr.length > 0) {
-      attachments.push({
-        attachments: attachmentsArr,
-        label: AttachmentLabel[attachmentType],
-      })
-    }
-  }
-
-  const { answers } = application
-
-  const attachments: Attachments[] = []
-
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
-
-  const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
-      : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
-      : []),
-  ]
-
-  if (additionalDocuments.length > 0) {
-    getAttachmentDetails(
-      additionalDocuments,
-      AttachmentTypes.ADDITIONAL_DOCUMENTS,
-    )
-  }
-
-  return attachments
 }
 
 // returns available years. Available period is
