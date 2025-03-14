@@ -66,18 +66,11 @@ export const school = {
       defaultMessage: 'Athugið',
       description: 'If selected special needs program alert title',
     },
-    specialNeedsProgramSingleAlertDescription: {
-      id: 'ss.application:school.selection.specialNeedsProgramSingleAlertDescription',
+    specialNeedsProgramAlertDescription: {
+      id: 'ss.application:school.selection.specialNeedsProgramAlertDescription',
       defaultMessage:
-        'Þú hefur valið {programName}. Þessi braut er ætluð nemendum sem stundað hafa nám í sérdeildum grunnskóla eða notið mikillar sérkennslu á grunnskólastigi.',
+        'Þú hefur valið {programNameList}. Starfsbrautir eru ætlaðar nemendum sem hafa stundað nám í sérdeildum grunnskóla eða notið mikillar sérkennslu á grunnskólastigi.',
       description: 'If selected (single) special needs program alert message',
-    },
-    specialNeedsProgramMultipleAlertDescription: {
-      id: 'ss.application:school.selection.specialNeedsProgramMultipleAlertDescription',
-      defaultMessage:
-        'Þú hefur valið {programName}. Þessar brautir er ætlaðar nemendum sem stundað hafa nám í sérdeildum grunnskóla eða notið mikillar sérkennslu á grunnskólastigi.',
-      description:
-        'If selected (multiple) special needs programs alert message',
     },
   }),
   firstSelection: defineMessages({

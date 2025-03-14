@@ -484,11 +484,9 @@ export const getAlertSpecialNeedsProgramMessage = (
     ) || []
 
   return {
-    ...(programNames.length === 1
-      ? school.selection.specialNeedsProgramSingleAlertDescription
-      : school.selection.specialNeedsProgramMultipleAlertDescription),
+    ...school.selection.specialNeedsProgramAlertDescription,
     values: {
-      programName: programNames.join(', '),
+      programNameList: programNames.join(', '),
     },
   }
 }
