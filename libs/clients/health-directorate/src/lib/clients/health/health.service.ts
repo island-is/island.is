@@ -4,15 +4,15 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  DispensationDto,
-  Locale,
-  PrescriptionsApi,
-  ReferralsApi,
-  WaitingListsApi,
-  PrescribedItemDto,
-  ReferralDto,
-  WaitingListEntryDto,
   DispensationHistoryDto,
+  DispensationHistoryItemDto,
+  Locale,
+  PrescribedItemDto,
+  PrescriptionsApi,
+  ReferralDto,
+  ReferralsApi,
+  WaitingListEntryDto,
+  WaitingListsApi,
 } from './gen/fetch'
 
 const LOG_CATEGORY = 'health-directorate-health-api'
@@ -47,7 +47,7 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     atcCode: string,
     locale: string,
-  ): Promise<Array<DispensationHistoryDto> | null> {
+  ): Promise<Array<DispensationHistoryItemDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
       .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
         atcCode,
