@@ -24,37 +24,25 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { formatMessage } = useLocale()
-  const { application, errors, setFieldLoadingState } = props
+  const { application, errors, setFieldLoadingState, field } = props
   const { setValue } = useFormContext()
-
-  const [deliveryMethodIsSend, setDeliveryMethodIsSend] = useState<string>(
-    getValueViaPath(
-      application.answers,
-      'cardDelivery.deliveryMethodIsSend',
-      NO,
-    ) as string,
-  )
 
   const [cardExistsInTachoNet, setCardExistsInTachoNet] = useState<
     boolean | undefined
   >(
-    getValueViaPath(
+    getValueViaPath<boolean>(
       application.answers,
-      'cardDelivery.cardExistsInTachoNet',
+      `${field.id}.cardExistsInTachoNet`,
       undefined,
-    ) as boolean | undefined,
+    ),
   )
 
-  const onRadioControllerSelect = (value: string) => {
-    setDeliveryMethodIsSend(value)
-  }
-
-  const cardType = getValueViaPath(
+  const cardType = getValueViaPath<string>(
     application.answers,
     'cardTypeSelection.cardType',
-    '',
-  ) as string
-  const cardTypeAllowYes = cardType !== 'reissue' && cardType !== 'reprint'
+  )
+  const hasValidCardTypeForDeliveryMethodSend =
+    cardType !== 'reissue' && cardType !== 'reprint'
 
   const [checkTachoNet, { loading, error }] = useLazyQuery(
     gql`
@@ -64,18 +52,17 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
       onCompleted: (result) => {
         const data = result.digitalTachographTachoNetExists
         setCardExistsInTachoNet(data?.exists || false)
-        setValue('cardDelivery.cardExistsInTachoNet', data?.exists || false)
+        setValue(`${field.id}.cardExistsInTachoNet`, data?.exists || false)
       },
     },
   )
 
   const refetchTachoNet = () => {
     const fullNameParts = (
-      getValueViaPath(
+      getValueViaPath<string>(
         application.externalData,
         'nationalRegistry.data.fullName',
-        '',
-      ) as string
+      ) || ''
     ).split(' ')
     const firstName = fullNameParts[0]
     const lastName =
@@ -83,15 +70,16 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
         ? fullNameParts[fullNameParts.length - 1]
         : undefined
     const { birthday } = info(application.applicant)
-    const birthPlace = getValueViaPath(
-      application.externalData,
-      'nationalRegistryBirthplace.data.location',
-      '',
-    ) as string
-    const drivingLicenceNumber = getValueViaPath(
-      application.externalData,
-      'currentLicense.data.id',
-    ) as number
+    const birthPlace =
+      getValueViaPath<string>(
+        application.externalData,
+        'nationalRegistryBirthplace.data.location',
+      ) || ''
+    const drivingLicenceNumber =
+      getValueViaPath<number>(
+        application.externalData,
+        'currentLicense.data.id',
+      )?.toString() || ''
     // Note: We are not exactly fetching the driving license issuing country, but since we
     //       can only continue if user has the necessary license categories through the Icelandic
     //       license registry, we can assume that the user has the issuing country "Ísland"
@@ -105,7 +93,7 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
           lastName: lastName,
           birthDate: birthday,
           birthPlace: birthPlace,
-          drivingLicenceNumber: drivingLicenceNumber?.toString() || '',
+          drivingLicenceNumber: drivingLicenceNumber,
           drivingLicenceIssuingCountry: drivingLicenceIssuingCountry,
         },
       },
@@ -113,33 +101,37 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }
 
   useEffect(() => {
-    if (cardTypeAllowYes && cardExistsInTachoNet === undefined) {
+    if (
+      hasValidCardTypeForDeliveryMethodSend &&
+      cardExistsInTachoNet === undefined
+    ) {
       refetchTachoNet()
     }
-  }, [cardTypeAllowYes])
+  }, [hasValidCardTypeForDeliveryMethodSend])
+
+  // Check if user is allowed to select the delivery method "Send to my legal domicile"
+  const allowDeliveryMethodSend =
+    hasValidCardTypeForDeliveryMethodSend && cardExistsInTachoNet === false
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
-  }, [loading, error])
+  }, [loading, error, setFieldLoadingState])
 
   return (
     <Box paddingTop={2}>
-      {!loading && !error ? (
+      {!loading && !error && (
         <>
           <RadioController
-            id="cardDelivery.deliveryMethodIsSend"
+            id={`${field.id}.deliveryMethodIsSend`}
             largeButtons
-            split={
-              cardTypeAllowYes && cardExistsInTachoNet === false ? '1/2' : '1/1'
-            }
+            split={allowDeliveryMethodSend ? '1/2' : '1/1'}
             backgroundColor="blue"
-            onSelect={onRadioControllerSelect}
             error={
               errors &&
-              getErrorViaPath(errors, 'cardDelivery.deliveryMethodIsSend')
+              getErrorViaPath(errors, `${field.id}.deliveryMethodIsSend`)
             }
             options={
-              cardTypeAllowYes && cardExistsInTachoNet === false
+              allowDeliveryMethodSend
                 ? [
                     {
                       value: YES,
@@ -166,20 +158,20 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   ]
             }
           />
-          <p>
-            <i>
-              <b>
-                {formatMessage(
-                  applicant.labels.cardDelivery.chooseDeliveryNoteTitle,
-                )}
-              </b>{' '}
-              {formatMessage(
-                applicant.labels.cardDelivery.chooseDeliveryNoteText,
-              )}
-            </i>
-          </p>
+
+          <AlertMessage
+            type="info"
+            title={formatMessage(
+              applicant.labels.cardDelivery.chooseDeliveryNoteTitle,
+            )}
+            message={formatMessage(
+              applicant.labels.cardDelivery.chooseDeliveryNoteText,
+            )}
+          />
         </>
-      ) : error ? (
+      )}
+
+      {!!error && (
         <>
           <AlertMessage
             type="error"
@@ -195,7 +187,9 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
             </Button>
           </Box>
         </>
-      ) : (
+      )}
+
+      {loading && (
         <SkeletonLoader
           height={100}
           space={2}

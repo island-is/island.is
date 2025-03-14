@@ -1,6 +1,6 @@
 import {
   buildAsyncSelectField,
-  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
@@ -12,7 +12,6 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  setOnChangeSchool,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
   FriggSchoolsByMunicipalityQuery,
@@ -160,10 +159,11 @@ export const newSchoolSubSection = buildSubSection({
 
             return !!schoolMunicipality
           },
-          setOnChange: (option) => setOnChangeSchool(option),
         }),
-        buildHiddenInput({
+        buildHiddenInputWithWatchedValue({
           id: 'newSchool.type',
+          watchValue: 'newSchool.school',
+          valueModifier: (value) => value?.toString()?.split('::')[1],
         }),
       ],
     }),
