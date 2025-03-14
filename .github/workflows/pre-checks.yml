@@ -19,6 +19,8 @@ on:
         value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
       CACHE_KEY:
         value: ${{ jobs.should-run.outputs.CACHE_KEY }}
+      DEPLOY_FEATURE:
+        value: ${{ jobs.should-run.outputs.DEPLOY_FEATURE }}
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -62,6 +64,7 @@ jobs:
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      DEPLOY_FEATURE: ${{ steps.should-run.outputs.PRE_CHECK == 'deploy-feature' }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -70,6 +73,9 @@ jobs:
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+
+          echo "---- INFO ----"
+          echo "GIT_BRANCH: $GIT_BRANCH"
 
       - name: Set GIT_BASE_BRANCH
         id: git-base-branch
@@ -84,6 +90,9 @@ jobs:
             echo GIT_BASE_BRANCH="main" >> "$GITHUB_OUTPUT"
           fi
 
+          echo "---- INFO ----"
+          echo "GIT_BASE_BRANCH: $GIT_BASE_BRANCH"
+
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
@@ -97,9 +106,15 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
           fi
+          FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
           echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+          echo FEATURE_NAME="${FEATURE_NAME}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
-          echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
+
+          echo "---- INFO ----"
+          echo "GIT_BRANCH_DEPLOY: $GIT_BRANCH_DEPLOY"
+          echo "FEATURE_NAME: $FEATURE_NAME"
+
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -114,10 +129,10 @@ jobs:
             for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                echo "Check if this is a pre-release and if it should generate a deploy-feature"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_CHECK=deploy-feature" >> "$GITHUB_OUTPUT"
                   echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
@@ -145,7 +160,7 @@ jobs:
             fi
             if [[ "$deployFeature" == "true" ]]; then
               echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+              echo "PRE_CHECK=deploy-feature" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
@@ -154,12 +169,18 @@ jobs:
           for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                echo "Check if this is a pre-release and if it should generate a deploy-feature"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_CHECK=deploy-feature" >> "$GITHUB_OUTPUT"
                   echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
           echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
+
+          echo "---- INFO ----"
+          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          echo "PRE_CHECK: $PRE_CHECK"
+          echo "GIT_BRANCH: $GIT_BRANCH"
+          echo "PRE_RELEASE: $PRE_RELEASE"
