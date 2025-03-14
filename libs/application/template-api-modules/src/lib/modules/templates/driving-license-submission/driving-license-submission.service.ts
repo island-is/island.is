@@ -146,11 +146,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const districtId = Number(getValueViaPath(answers, 'delivery.jurisdiction'))
+    const jurisdictionId = Number(getValueViaPath(answers, 'delivery.jurisdiction'))
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const deliveryMethod = getValueViaPath(answers, 'delivery.deliveryMethod')
     const phone = formatPhoneNumber(answers.phone as string)
+    const setJurisdictionToKopavogur = 37
 
     const postHealthDeclaration = async (
       nationalId: string,
@@ -176,7 +177,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          districtId: districtId ? districtId : 37,
+          jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
           ...(deliveryMethod
             ? {
                 pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
@@ -187,7 +188,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        districtId: districtId ? districtId : 37,
+        jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
         sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
@@ -204,7 +205,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization.replace('Bearer ', ''),
         {
-          districtId: districtId ? districtId : 37,
+          jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
           sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
           needsToPresentHealthCertificate: needsHealthCert,
           needsToPresentQualityPhoto: needsQualityPhoto,
@@ -224,7 +225,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization,
         {
-          jurisdiction: districtId,
+          jurisdiction: jurisdictionId,
           instructorSSN: instructorSSN ?? '',
           primaryPhoneNumber: phone ?? '',
           studentEmail: email ?? '',

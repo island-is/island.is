@@ -477,7 +477,7 @@ export class DrivingLicenseService {
       await this.drivingLicenseApi.postCreateDrivingLicenseTemporary({
         willBringHealthCertificate: input.needsToPresentHealthCertificate,
         willBringQualityPhoto: input.needsToPresentQualityPhoto,
-        jurisdictionId: input.districtId,
+        jurisdictionId: input.jurisdictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: input.sendLicenseInMail ? true : false,
@@ -498,7 +498,7 @@ export class DrivingLicenseService {
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
       category: input.licenseCategory,
-      districtId: input.districtId,
+      jurisdictionId: input.jurisdictionId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,

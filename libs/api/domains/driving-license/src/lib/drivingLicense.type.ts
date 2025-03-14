@@ -10,7 +10,7 @@ export interface DrivingLicenseType {
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
 export interface PostRenewal65AndOverInput {
-  districtId?: number
+  jurisdictionId?: number
   pickupPlasticAtDistrict?: boolean | null
   sendPlasticToPerson?: boolean | null
 }
@@ -21,7 +21,7 @@ export enum Pickup {
 }
 
 export interface NewDrivingLicenseInput {
-  districtId: number
+  jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   licenseCategory: DrivingLicenseCategory
@@ -29,7 +29,7 @@ export interface NewDrivingLicenseInput {
 }
 
 export interface NewTemporaryDrivingLicenseInput {
-  districtId: number
+  jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   teacherNationalId: string
