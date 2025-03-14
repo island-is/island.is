@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
@@ -13,6 +13,7 @@ import {
   InfoCardGrid,
   Inline,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -46,6 +47,10 @@ import {
 import { m } from './translations.strings'
 
 const ITEMS_PER_PAGE = 10
+
+const ALL_COURTS_TAG = ''
+const DISTRICT_COURT_TAG = 'Héraðsdómstólar'
+const ALL_DISTRICT_COURTS_TAG = ''
 
 interface VerdictsListProps {
   initialData: {
@@ -120,6 +125,64 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
   const overrideGridLayoutSetting = width < theme.breakpoints.lg
   const heading = formatMessage(m.listPage.heading)
 
+  const [courtFilter, setCourtFilter] = useState(ALL_COURTS_TAG)
+  const [districtCourtFilter, setDistrictCourtFilter] = useState(
+    ALL_DISTRICT_COURTS_TAG,
+  )
+
+  const courtTags = useMemo(() => {
+    return [
+      {
+        label: formatMessage(m.listPage.showDistrictCourts),
+        value: 'Héraðsdómstólar',
+      },
+      {
+        label: formatMessage(m.listPage.showCourtOfAppeal),
+        value: 'Landsréttur',
+      },
+      {
+        label: formatMessage(m.listPage.showSupremeCourt),
+        value: 'Hæstiréttur',
+      },
+    ]
+  }, [formatMessage])
+  const districtCourtTags = useMemo(() => {
+    return [
+      {
+        label: 'Reykjavík',
+        value: 'Héraðsdómur Reykjavíkur',
+      },
+      {
+        label: 'Vesturland',
+        value: 'Héraðsdómur Vesturlands',
+      },
+      {
+        label: 'Vestfirðir',
+        value: 'Héraðsdómur Vestfjarða',
+      },
+      {
+        label: 'Norðurland vestra',
+        value: 'Héraðsdómur Norðurlands vestra',
+      },
+      {
+        label: 'Norðurland eystra',
+        value: 'Héraðsdómur Norðurlands eystra',
+      },
+      {
+        label: 'Austurland',
+        value: 'Héraðsdómur Austurlands',
+      },
+      {
+        label: 'Suðurland',
+        value: 'Héraðsdómur Suðurlands',
+      },
+      {
+        label: 'Reykjanes',
+        value: 'Héraðsdómur Reykjaness',
+      },
+    ]
+  }, [])
+
   return (
     <Box className="rs_read">
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
@@ -140,6 +203,51 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                 {formatMessage(m.listPage.description)}
               </Text>
             </Stack>
+            <Inline alignY="center" space={2}>
+              <Tag
+                active={courtFilter === ALL_COURTS_TAG}
+                onClick={() => {
+                  setCourtFilter(ALL_COURTS_TAG)
+                }}
+              >
+                {formatMessage(m.listPage.showAllCourts)}
+              </Tag>
+              {courtTags.map((tag) => (
+                <Tag
+                  key={tag.value}
+                  active={courtFilter === tag.value}
+                  onClick={() => {
+                    setCourtFilter(tag.value)
+                    setDistrictCourtFilter(ALL_DISTRICT_COURTS_TAG)
+                  }}
+                >
+                  {tag.label}
+                </Tag>
+              ))}
+            </Inline>
+            {courtFilter === DISTRICT_COURT_TAG && (
+              <Inline alignY="center" space={2}>
+                <Tag
+                  active={districtCourtFilter === ALL_DISTRICT_COURTS_TAG}
+                  onClick={() => {
+                    setDistrictCourtFilter(ALL_DISTRICT_COURTS_TAG)
+                  }}
+                >
+                  {formatMessage(m.listPage.showAllDistrictCourts)}
+                </Tag>
+                {districtCourtTags.map((tag) => (
+                  <Tag
+                    key={tag.value}
+                    active={districtCourtFilter === tag.value}
+                    onClick={() => {
+                      setDistrictCourtFilter(tag.value)
+                    }}
+                  >
+                    {tag.label}
+                  </Tag>
+                ))}
+              </Inline>
+            )}
           </Stack>
         </GridContainer>
         <Box background="blue100" paddingTop={[3, 3, 0]}>
