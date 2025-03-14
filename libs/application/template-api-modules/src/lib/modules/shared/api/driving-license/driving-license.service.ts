@@ -26,6 +26,7 @@ import {
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
+import { getTodayDateWithMonthDiff } from './utils'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -140,13 +141,39 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     application,
     params,
   }: TemplateApiModuleActionProps<CurrentLicenseParameters>): Promise<DrivingLicense> {
+    let drivingLicense
+
     const fakeData = getValueViaPath<DrivingLicenseFakeData>(
       application.answers,
       'fakeData',
     )
     if (fakeData?.useFakeData === YES) {
-      return {
-        currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
+      const currentLicense = (() => {
+        switch (fakeData.currentLicense) {
+          case 'temp':
+            return 'B'
+          case 'B':
+          case 'C':
+          case 'C1':
+          case 'D':
+          case 'D1':
+            return fakeData.currentLicense
+          default:
+            return null
+        }
+      })()
+      drivingLicense = {
+        currentLicense,
+        categories: [
+          {
+            id: Math.floor(Math.random() * 100000000),
+            nr: currentLicense,
+            name: currentLicense || '', // for useLegacyVersion
+            issued: getTodayDateWithMonthDiff(-12),
+            expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
+            comments: '',
+          },
+        ],
         remarks:
           fakeData.remarks === YES
             ? [
@@ -157,21 +184,20 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
                 },
               ]
             : undefined,
+        id: Math.floor(Math.random() * 100000000),
       }
-    }
-
-    let drivingLicense
-    if (params?.useLegacyVersion) {
-      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
-        {
-          nationalId: auth.nationalId,
-          token: auth.authorization,
-        },
-      )
     } else {
-      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-        token: auth.authorization,
-      })
+      if (params?.useLegacyVersion) {
+        drivingLicense =
+          await this.drivingLicenseService.legacyGetCurrentLicense({
+            nationalId: auth.nationalId,
+            token: auth.authorization,
+          })
+      } else {
+        drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+          token: auth.authorization,
+        })
+      }
     }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
@@ -187,7 +213,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
           (x) =>
             (!x.expires || x.expires >= today) &&
             params.validCategories?.includes(
-              params?.useLegacyVersion ? x.name : x.nr || '',
+              (params?.useLegacyVersion ? x.name : x.nr) || '',
             ),
         ))
     ) {
