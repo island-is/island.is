@@ -355,13 +355,27 @@ export class DefendantService {
       transaction,
     )
 
-    // Notify the court if the defendant has changed the defender choice
     if (
+      !updatedDefendant.isDefenderChoiceConfirmed &&
+      updatedDefendant.defenderChoice === DefenderChoice.DELEGATE
+    ) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId: theCase.id,
+          elementId: updatedDefendant.id,
+          body: {
+            type: DefendantNotificationType.DEFENDANT_DELEGADED_DEFENDER_CHOICE,
+          },
+        },
+      ])
+    } else if (
       !updatedDefendant.isDefenderChoiceConfirmed &&
       updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
       (updatedDefendant.defenderChoice !== defendant.defenderChoice ||
         updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
     ) {
+      // Notify the court if the defendant has changed the defender choice
       await this.messageService.sendMessagesToQueue([
         {
           type: MessageType.DEFENDANT_NOTIFICATION,
