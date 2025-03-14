@@ -96,6 +96,7 @@ const FinanceTransactions = () => {
     setToDate(new Date())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   const getAllChargeTypes = () => {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
     return allChargeTypeValues ?? []
@@ -120,6 +121,12 @@ const FinanceTransactions = () => {
     value: item.id,
   }))
 
+  const filterCountNumber =
+    dropdownSelect?.length ||
+    0 +
+      (toDate?.getDate() === new Date().getDate() ? 0 : 1) +
+      (fromDate?.getDate() === backInTheDay?.getDate() ? 0 : 1)
+
   return (
     <DynamicWrapper>
       <Box marginBottom={[6, 6, 10]}>
@@ -128,12 +135,15 @@ const FinanceTransactions = () => {
             <Inline space={2}>
               <Filter
                 variant="popover"
+                title={formatMessage(m.filterBy)}
                 align="left"
                 reverse
                 labelClear={formatMessage(m.clearFilter)}
                 labelClearAll={formatMessage(m.clearAllFilters)}
                 labelOpen={formatMessage(m.openFilter)}
                 labelClose={formatMessage(m.closeFilter)}
+                labelResult={formatMessage(m.showResults)}
+                filterCount={filterCountNumber}
                 filterInput={
                   <FilterInput
                     placeholder={formatMessage(m.searchPlaceholder)}
