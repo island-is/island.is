@@ -45,7 +45,7 @@ const Greeting = () => {
               {formatMessage(m.greetingIntro)}
             </Text>
             <Box marginTop={3} component="form" action="/query">
-              <SearchInput />
+              <SearchInput colored />
             </Box>
           </Box>
         </GridColumn>

@@ -12,6 +12,7 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.overview,
+      searchHide: true,
       path: LawAndOrderPaths.Overview,
     },
     {

@@ -5,13 +5,7 @@ import { LicensePaths } from './paths'
 export const licenseNavigation: PortalNavigationItem = {
   name: m.licenses,
   path: LicensePaths.LicensesRoot,
-  searchTags: [
-    m.drivingLicense,
-    m.passport,
-    m.adrLicense,
-    m.firearmLicense,
-    m.machineLicense,
-  ],
+  searchHide: true,
   icon: {
     icon: 'wallet',
   },

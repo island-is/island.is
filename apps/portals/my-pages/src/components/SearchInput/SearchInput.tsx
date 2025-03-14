@@ -1,9 +1,4 @@
-import {
-  AsyncSearch,
-  AsyncSearchOption,
-  BoxProps,
-  Text,
-} from '@island.is/island-ui/core'
+import { AsyncSearch, AsyncSearchOption, Text } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
@@ -37,6 +32,7 @@ const options: IFuseOptions<ModuleSet> = {
   shouldSort: true,
 }
 
+//Only load leaves into navigation results
 const getNavigationItems = (
   data: PortalNavigationItem,
   formatMessage: FormatMessage,
@@ -53,8 +49,8 @@ const getNavigationItems = (
     !data.navHide &&
     data.path &&
     !data.active &&
-    data.enabled &&
-    navigationItems.findIndex((n) => n.uri === data.path) < 0
+    !data.searchHide &&
+    data.enabled
   ) {
     navigationItems.push({
       title: formatMessage(data.name),
@@ -95,10 +91,7 @@ export const SearchInput = ({ white, colored }: Props) => {
       return results.map((result) => ({
         label: result.item.title,
         value: result.item.uri,
-        component: ({ active, selected }) => {
-          if (active) {
-            console.log(result.item.title)
-          }
+        component: ({ active }) => {
           return (
             <LinkResolver
               href={result.item.uri}

@@ -27,6 +27,11 @@ export interface PortalNavigationItem {
   navHide?: boolean
 
   /**
+   * Hides the item from being searched.
+   */
+  searchHide?: boolean
+
+  /**
    * Hides the child item from breadcrumbs.
    */
   breadcrumbHide?: boolean
