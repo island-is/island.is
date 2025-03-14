@@ -53,6 +53,15 @@ env:
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
 jobs:
+  install:
+    uses: ./.github/workflows/install.yml
+    secrets: inherit
+    with:
+      run_merge_queue: true
+      main_branch: ${{ github.event.merge_group.base_ref  }}
+    needs:
+      - pre-checks
+
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
@@ -471,6 +480,7 @@ jobs:
     #   actions: read
     #   contents: read
     needs:
+      - install
       - pre-checks
       - prepare
       - docker-build
@@ -481,6 +491,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+      STAGE: 'dev'
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v4
@@ -513,7 +524,13 @@ jobs:
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
         run: |
-          ./infra/scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES"
+          ./infra/scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$STAGE"
+          echo "Change status $(git status)"
+          git config user.name andes-it
+          git config user.email andes-it@andes.is
+
+          git add .
+          git commit -m "feat: feature-deployment"
 
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
@@ -541,22 +558,40 @@ jobs:
           node scripts/ci/docker/bootstrap.mjs
           node scripts/ci/docker/get-data.mjs
 
-      - name: Commit and push feature-values
-        env:
-          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-        working-directory: feature-values
-        run: |
-          if [[ -z $(git status --porcelain) ]]; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          echo "Trying to push to feature-values repository"
-          git config user.name andes-it
-          git config user.email andes-it@andes.is
-          git add .
-          git commit -m "Generated feature values for $FEATURE_NAME"
-          echo "Changeset $(git show)"
-          # git push
+      - name: Commit and push to helm-values
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.manifest.outpu.MQ_CHANGED_FILES }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+
+      # Will we need this?
+      # Will probably need to change how we generate the changeset, since we do not want to overwrite the artifacts for feature-deployments
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ needs.prepare.outputs.MQ_ARTIFACT_NAME}}
+      #     path: /tmp/data.json
+      #     if-no-files-found: error
+      #     retention-days: 90
+      #     overwrite: true
+      # - name: Commit and push feature-values
+      #   env:
+      #     FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      #   working-directory: feature-values
+      #   run: |
+      #     if [[ -z $(git status --porcelain) ]]; then
+      #       echo "No changes to commit"
+      #       exit 0
+      #     fi
+      #     echo "Trying to push to feature-values repository"
+      #     git config user.name andes-it
+      #     git config user.email andes-it@andes.is
+      #     git add .
+      #     git commit -m "Generated feature values for $FEATURE_NAME"
+      #     echo "Changeset $(git show)"
+      #     # git push
   # TODO: Remove spinnaker deployment
   deploy:
     runs-on: arc-runners

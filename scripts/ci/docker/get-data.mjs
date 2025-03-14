@@ -5,6 +5,7 @@ import core from '@actions/core'
 import github from '@actions/github'
 import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
 import { glob } from 'glob'
+import { isFeatureDeployment } from './utils.mjs'
 
 // Make the main function that can be exported and tested separately
 export async function main(testContext = null) {
@@ -50,7 +51,7 @@ export async function main(testContext = null) {
     // Read all manifest files
     const _MANIFEST_PATHS = [
       'charts/islandis-services',
-      'chart/features',
+      'charts/features',
       'charts/judicial-system-services',
       'charts/identity-server-services',
     ]
@@ -78,6 +79,8 @@ export async function main(testContext = null) {
         })
       }
     }
+
+    console.log('IMAGE_OBJECT', IMAGE_OBJECT)
 
     await parseData(IMAGE_OBJECT)
   }
@@ -113,16 +116,9 @@ export async function main(testContext = null) {
 export function getBranch(context = github.context) {
   if (context.eventName === 'merge_group') {
     return context.payload.merge_group.base_ref.replace('refs/heads/', '')
-  } else if (
-    context.eventName === 'pull_request' &&
-    // github.event.pull_request.labels.*.name, 'deploy-feature'
-    context.payload.pull_request &&
-    Array.isArray(context.payload.pull_request['labels ']) &&
-    context.payload.pull_request['labels '].includes('deploy-feature')
-  ) {
-    return context.payload.merge_group.base_ref.replace('refs/heads/', '')
+  } else if (isFeatureDeployment(context)) {
+    return context.payload.pull_request?.base.ref.replace('refs/heads/', '')
   }
-
   throw new Error(`Unsupported event: ${context.eventName}`)
 }
 
@@ -145,9 +141,7 @@ export function getTypeOfDeployment(branch) {
 }
 
 // Run the main function if this is the main module
-if (import.meta.url === import.meta.main) {
-  main().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
-}
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

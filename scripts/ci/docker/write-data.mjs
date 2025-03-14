@@ -9,6 +9,8 @@ if (typeof data !== 'object' || data == null) {
   throw new Error('Invalid data type')
 }
 
+console.log('data:', data)
+
 const keys = Object.keys(data.value)
 
 const result = keys.map((key) => {
