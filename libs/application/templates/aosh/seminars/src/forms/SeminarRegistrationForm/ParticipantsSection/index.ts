@@ -38,7 +38,6 @@ export const participantsSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'participantList',
-          title: '',
           addItemButtonText:
             participantMessages.labels.addParticipantButtonText,
           loadErrorMessage:
