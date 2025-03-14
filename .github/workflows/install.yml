@@ -139,27 +139,31 @@ jobs:
         id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      - name: Set base/head sha output
+      - name: Set base/head sha output for merge queue
+        if: inputs.run_merge_queue == 'true'
         id: export-sha
         shell: bash
         run: |
-          if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last
-            # commit as head - last commit sha is alway succesful
-            # since else it won't get merged!
-            # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
-            # when this gets merged we can remove this hack!
-            #
-            # If we do not do this we will get the wrong base sha
-            # :(
-            export NX_HEAD=${{ github.sha }}
-            export NX_BASE=$(git rev-parse HEAD^1)
-            echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
-            echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
-            echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
-            echo BASE="$NX_BASE" >> "$GITHUB_ENV"
-            exit 0
-          fi
+          # In merge que we always want to use the last
+          # commit as head - last commit sha is alway succesful
+          # since else it won't get merged!
+          # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
+          # when this gets merged we can remove this hack!
+          #
+          # If we do not do this we will get the wrong base sha
+          # :(
+          export NX_HEAD=${{ github.sha }}
+          export NX_BASE=$(git rev-parse HEAD^1)
+          echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
+          echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
+          echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
+          echo BASE="$NX_BASE" >> "$GITHUB_ENV"
+
+      - name: Set base/head sha output
+        if: inputs.run_merge_queue == 'false'
+        id: export-sha
+        shell: bash
+        run: |
           echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
           echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
           # NOTE: we reference BASE and HEAD elsewhere
@@ -177,7 +181,7 @@ jobs:
 
       - name: Prepare merge queue
         id: prepare-merge-queue
-        if: ${{ inputs.run_merge_queue == 'true' }}
+        if: inputs.run_merge_queue == 'true'
         run: |
           node scripts/ci/docker/generate-tag.mjs
 
@@ -204,9 +208,7 @@ jobs:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-
-        # Don't run this step locally
-        if: ${{ !github.event.localrun && inputs.run_merge_queue == 'false' }}
+        if: ${{ inputs.run_merge_queue == 'false' }}
         with:
           name: pr-event
           path: event.json
@@ -233,7 +235,7 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
-        if: ${{ inputs.deploy_feature != 'true' }}
+        if: inputs.deploy_feature != 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -243,7 +245,7 @@ jobs:
 
       - name: Prepare e2e targets
         id: e2e_projects
-        if: ${{ inputs.deploy_feature != 'true' }}
+        if: inputs.deploy_feature != 'true'
         env:
           CHUNK_SIZE: 1
         run: |
@@ -256,7 +258,7 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        if: ${{ inputs.deploy_feature != 'true' }}
+        if: inputs.deploy_feature != 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
@@ -266,19 +268,19 @@ jobs:
 
       - name: Prepare docker build targets
         id: docker_projects
-        if: ${{ inputs.deploy_feature == 'true' }}
+        if: inputs.deploy_feature == 'true' || inputs.run_merge_queue == 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
-          echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
 
       - name: Prepare deployment targets
         id: deploy_map
-        if: ${{ inputs.deploy_feature == 'true' ||  inputs.pre_release == 'true' }}
+        if: inputs.deploy_feature == 'true' ||  inputs.pre_release == 'true'
         run: |
           set -euo pipefail
           CHUNKS=${{ steps.docker_projects.outputs.CHUNKS }}
