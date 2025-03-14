@@ -245,6 +245,11 @@ export class PaymentService {
         performingOrganizationID,
       )
 
+      console.log('=========================================')
+      console.log('callbackUrl', this.config.callbackBaseUrl)
+      // console.dir(paymentModel, { depth: null })
+      console.log('=========================================')
+
       const paymentResult =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
           createPaymentFlowInput: {
