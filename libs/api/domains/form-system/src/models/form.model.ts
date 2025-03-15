@@ -67,6 +67,9 @@ export class Form {
   organizationTitleEn?: string
 
   @Field(() => LanguageType, { nullable: true })
+  organizationDisplayName?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 
   @Field(() => String, { nullable: true })

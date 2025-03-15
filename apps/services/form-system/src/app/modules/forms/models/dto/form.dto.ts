@@ -24,6 +24,9 @@ export class FormDto {
   @ApiPropertyOptional()
   organizationTitleEn?: string
 
+  @ApiPropertyOptional({ type: LanguageType })
+  organizationDisplayName?: LanguageType
+
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 

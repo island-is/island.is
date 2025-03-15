@@ -56,6 +56,12 @@ export class Form extends Model<Form> {
   organizationNationalId!: string
 
   @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  organizationDisplayName?: LanguageType
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
     defaultValue: null,

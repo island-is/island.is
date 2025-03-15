@@ -18,6 +18,26 @@ export const NavbarTab = () => {
       <Inline space={4}>
         <Box
           className={cn({
+            [styles.notSelected]: !inSettings,
+            [styles.selected]: inSettings,
+          })}
+          onClick={() => {
+            controlDispatch({
+              type: 'SET_ACTIVE_ITEM',
+              payload: {
+                activeItem: {
+                  type: 'Section',
+                  data: baseSettingsStep,
+                },
+              },
+            })
+            setInSettings(true)
+          }}
+        >
+          {formatMessage(m.settings)}
+        </Box>
+        <Box
+          className={cn({
             [styles.notSelected]: inSettings,
             [styles.selected]: !inSettings,
           })}
@@ -38,26 +58,6 @@ export const NavbarTab = () => {
           }}
         >
           {formatMessage(m.step)}
-        </Box>
-        <Box
-          className={cn({
-            [styles.notSelected]: !inSettings,
-            [styles.selected]: inSettings,
-          })}
-          onClick={() => {
-            controlDispatch({
-              type: 'SET_ACTIVE_ITEM',
-              payload: {
-                activeItem: {
-                  type: 'Section',
-                  data: baseSettingsStep,
-                },
-              },
-            })
-            setInSettings(true)
-          }}
-        >
-          {formatMessage(m.settings)}
         </Box>
       </Inline>
     </Box>

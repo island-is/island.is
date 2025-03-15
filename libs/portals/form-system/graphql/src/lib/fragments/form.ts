@@ -13,6 +13,9 @@ export const FormFragment = gql`
     organizationNationalId
     organizationTitle
     organizationTitleEn
+    organizationDisplayName {
+      ...LanguageFields
+    }
     name {
       ...LanguageFields
     }

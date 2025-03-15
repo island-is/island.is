@@ -26,6 +26,10 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
+          organization_display_name: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

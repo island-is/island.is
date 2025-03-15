@@ -31,6 +31,7 @@ export const updateFormFn = async (
           updateFormDto: {
             organizationId: newForm.organizationId,
             name: newForm.name,
+            organizationDisplayName: newForm.organizationDisplayName,
             slug: newForm.slug,
             invalidationDate:
               newForm.invalidationDate === null
@@ -46,7 +47,7 @@ export const updateFormFn = async (
         },
       },
     })
-    console.log('Form updated successfully:', response.data)
+    // console.log('Form updated successfully:', response.data)
   } catch (err) {
     console.error('Error updating form:', err.message)
   }

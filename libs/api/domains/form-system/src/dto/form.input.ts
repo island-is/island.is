@@ -97,6 +97,9 @@ export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
   slug?: string
 
+  @Field(() => LanguageTypeInput, { nullable: true })
+  organizationDisplayName?: LanguageTypeInput
+
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 

@@ -5,6 +5,7 @@ import {
   Input,
   DatePicker,
   Checkbox,
+  Box,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
@@ -38,6 +39,46 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Row>
+        <Column span="5/10">
+          <Input
+            label={formatMessage(m.organizationDisplayName)}
+            placeholder={formatMessage(m.organizationDisplayName)}
+            name="organizationDisplayName"
+            value={form?.organizationDisplayName?.is ?? ''}
+            backgroundColor="blue"
+            onFocus={(e) => setFocus(e.target.value)}
+            onBlur={(e) => e.target.value !== focus && formUpdate()}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'CHANGE_ORGANIZATION_DISPLAY_NAME',
+                payload: {
+                  lang: 'is',
+                  newValue: e.target.value,
+                },
+              })
+            }
+          />
+        </Column>
+        <Column span="5/10">
+          <Input
+            label={formatMessage(m.organizationDisplayNameEn)}
+            placeholder={formatMessage(m.organizationDisplayNameEn)}
+            name="organizationDisplayNameEn"
+            value={form?.organizationDisplayName?.en ?? ''}
+            backgroundColor="blue"
+            onFocus={(e) => setFocus(e.target.value)}
+            onBlur={(e) => e.target.value !== focus && formUpdate()}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'CHANGE_ORGANIZATION_DISPLAY_NAME',
+                payload: { lang: 'en', newValue: e.target.value },
+              })
+            }
+          />
+        </Column>
+      </Row>
+      <Box marginTop={5} />
       <Row>
         <Column span="5/10">
           <Input

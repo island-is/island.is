@@ -2148,6 +2148,9 @@
           "organizationTitleEn": {
             "type": "string"
           },
+          "organizationDisplayName": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
@@ -2550,6 +2553,9 @@
             "type": "string"
           },
           "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "organizationDisplayName": {
             "$ref": "#/components/schemas/LanguageType"
           },
           "slug": {

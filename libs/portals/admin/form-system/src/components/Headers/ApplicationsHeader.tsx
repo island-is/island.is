@@ -52,22 +52,20 @@ export const ApplicationsHeader = (props: Props) => {
                 {formatMessage(m.administration)}
               </Button>
             </Box>
-            {organizations.length > 1 && (
-              <Box>
-                <Select
-                  name="organizations"
-                  label="stofnun"
-                  options={organizations}
-                  size="sm"
-                  defaultValue={organizations.find((org) => org.isSelected)}
-                  onChange={async (selected) => {
-                    if (selected) {
-                      onOrganizationChange({ value: selected.value })
-                    }
-                  }}
-                ></Select>
-              </Box>
-            )}
+            <Box>
+              <Select
+                name="organizations"
+                label="stofnun"
+                options={organizations}
+                size="sm"
+                defaultValue={organizations.find((org) => org.isSelected)}
+                onChange={async (selected) => {
+                  if (selected) {
+                    onOrganizationChange({ value: selected.value })
+                  }
+                }}
+              ></Select>
+            </Box>
           </>
         )}
       </Row>

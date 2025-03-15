@@ -93,6 +93,10 @@ type ChangeActions =
       type: 'CHANGE_FORM_NAME'
       payload: { lang: 'en' | 'is'; newValue: string }
     }
+  | {
+      type: 'CHANGE_ORGANIZATION_DISPLAY_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
@@ -438,6 +442,19 @@ export const controlReducer = (
           ...form,
           name: {
             ...form.name,
+            [lang]: newValue,
+          },
+        },
+      }
+    }
+    case 'CHANGE_ORGANIZATION_DISPLAY_NAME': {
+      const { lang, newValue } = action.payload
+      return {
+        ...state,
+        form: {
+          ...form,
+          organizationDisplayName: {
+            ...form.organizationDisplayName,
             [lang]: newValue,
           },
         },
