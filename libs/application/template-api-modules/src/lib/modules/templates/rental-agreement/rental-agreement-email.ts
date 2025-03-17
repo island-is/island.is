@@ -19,22 +19,32 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const tenants = (
     getValueViaPath(application.answers, 'tenantInfo.table', []) as Array<{
       nationalIdWithName: { name: string }
+      isRepresentative: string[]
       email: string
     }>
-  ).map((tenant) => ({
-    name: tenant.nationalIdWithName.name,
-    address: tenant.email,
-  }))
+  )
+    .filter(
+      ({ isRepresentative }) => !isRepresentative?.includes('isRepresentative'),
+    )
+    .map((tenant) => ({
+      name: tenant.nationalIdWithName.name,
+      address: tenant.email,
+    }))
 
   const landlords = (
     getValueViaPath(application.answers, 'landlordInfo.table', []) as Array<{
       nationalIdWithName: { name: string }
+      isRepresentative: string[]
       email: string
     }>
-  ).map((landlord) => ({
-    name: landlord.nationalIdWithName.name,
-    address: landlord.email,
-  }))
+  )
+    .filter(
+      ({ isRepresentative }) => !isRepresentative?.includes('isRepresentative'),
+    )
+    .map((landlord) => ({
+      name: landlord.nationalIdWithName.name,
+      address: landlord.email,
+    }))
 
   const htmlSummaryForEmail = getValueViaPath(
     application.answers,
