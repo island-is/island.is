@@ -57,9 +57,7 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
         },
       ]}
     >
-      <Box marginTop={SLICE_SPACING}>
-        {webRichText(customPageData?.content as Slice[])}
-      </Box>
+      <Box>{webRichText(customPageData?.content as Slice[])}</Box>
     </OJOIWrapper>
   )
 }

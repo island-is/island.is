@@ -93,9 +93,6 @@ import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
-import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
-import { CustomPage, mapCustomPage } from './models/customPage.model'
-import { GetCustomPageInput } from './dto/getCustomPage.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -696,18 +693,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericPage'))
 
     return (result.items as types.IGenericPage[]).map(mapGenericPage)[0] ?? null
-  }
-
-  async getCustomPage(input: GetCustomPageInput): Promise<CustomPage | null> {
-    const params = {
-      ['content_type']: 'customPage',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ICustomPageFields>(input.lang, params)
-      .catch(errorHandler('getAnchorPage'))
-
-    return (result.items as types.ICustomPage[]).map(mapCustomPage)[0] ?? null
   }
 
   async getGenericOverviewPage({
