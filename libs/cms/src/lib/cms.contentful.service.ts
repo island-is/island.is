@@ -353,6 +353,27 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganizationSubpageById(
+    id: string,
+    lang: string,
+  ): Promise<OrganizationSubpage> {
+    const params = {
+      ['content_type']: 'organizationSubpage',
+      include: 5,
+      'sys.id': id,
+      limit: 1,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
+      .catch(errorHandler('getOrganizationSubpage'))
+
+    return (
+      (result.items as types.IOrganizationSubpage[]).map(
+        mapOrganizationSubpage,
+      )[0] ?? null
+    )
+  }
+
   async getOrganizationSubpage(
     organizationSlug: string,
     slug: string,
