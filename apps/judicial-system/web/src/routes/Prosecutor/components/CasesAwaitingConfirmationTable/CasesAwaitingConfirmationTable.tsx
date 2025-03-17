@@ -61,6 +61,7 @@ const CasesAwaitingConfirmationTable: FC<
                 {
                   title: formatMessage(tables.caseNumber),
                   sortBy: 'policeCaseNumbers',
+                  sortFn: 'number',
                 },
                 {
                   title: capitalize(
