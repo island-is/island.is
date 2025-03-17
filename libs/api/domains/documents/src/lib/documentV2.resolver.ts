@@ -1,46 +1,45 @@
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { UseGuards, Inject } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { AuditService, Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import {
+  FeatureFlagGuard,
+  FeatureFlagService,
+} from '@island.is/nest/feature-flags'
+import type { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
+import { DocumentServiceV2 } from './documentV2.service'
+import { PostRequestPaperInput } from './dto/postRequestPaperInput'
+import { MailActionInput } from './models/v2/bulkMailAction.input'
+import { Category } from './models/v2/category.model'
+import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
+import { DocumentConfirmActions } from './models/v2/confirmActions.model'
+import { DocumentInput } from './models/v2/document.input'
 import {
   DocumentPageNumber,
   Document as DocumentV2,
   PaginatedDocuments,
 } from './models/v2/document.model'
-import {
-  FeatureFlagGuard,
-  FeatureFlagService,
-} from '@island.is/nest/feature-flags'
-import { PostRequestPaperInput } from './dto/postRequestPaperInput'
-import { DocumentInput } from './models/v2/document.input'
-import { DocumentServiceV2 } from './documentV2.service'
 import { DocumentsInput } from './models/v2/documents.input'
-import { Category } from './models/v2/category.model'
-import { Type } from './models/v2/type.model'
-import { Sender } from './models/v2/sender.model'
-import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
-import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
-import type { Locale } from '@island.is/shared/types'
-import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
-import { DocumentConfirmActions } from './models/v2/confirmActions.model'
-import { isDefined } from '@island.is/shared/utils'
+import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import {
   DocumentPdfRenderer,
   DocumentPdfRendererInput,
 } from './models/v2/pdfRenderer.model'
-import { error } from 'console'
+import { Sender } from './models/v2/sender.model'
+import { Type } from './models/v2/type.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -90,6 +89,7 @@ export class DocumentResolverV2 {
           includeDocument: input.includeDocument,
           provider: input.provider,
           documentCategory: input.category,
+          isUrgent: data?.isUrgent,
           isCourtCase: true,
         })
       }

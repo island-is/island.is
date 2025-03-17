@@ -1,32 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   DocumentsClientV2Service,
   MessageAction,
 } from '@island.is/clients/documents-v2'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { Locale } from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Category } from './models/v2/category.model'
+import { Inject, Injectable } from '@nestjs/common'
+import differceInYears from 'date-fns/differenceInYears'
+import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
+import { getBirthday } from './helpers/getBirthday'
 import { MailAction } from './models/v2/bulkMailAction.input'
+import { Category } from './models/v2/category.model'
 import {
-  PaginatedDocuments,
+  Action,
   Document,
   DocumentPageNumber,
-  Action,
+  PaginatedDocuments,
 } from './models/v2/document.model'
-import type { ConfigType } from '@island.is/nest/config'
+import { FileType } from './models/v2/documentContent.model'
 import { DocumentsInput } from './models/v2/documents.input'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { Sender } from './models/v2/sender.model'
-import { FileType } from './models/v2/documentContent.model'
-import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
-import type { User } from '@island.is/auth-nest-tools'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { getBirthday } from './helpers/getBirthday'
-import differceInYears from 'date-fns/differenceInYears'
-import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'documents-api-v2'
 
@@ -74,10 +74,6 @@ export class DocumentServiceV2 {
     let confirmation = document.actions?.find(
       (action) => action.type === 'confirmation',
     )
-    this.logger.debug('Found document action with confirmation action', {
-      documentId: documentId,
-      category: LOG_CATEGORY,
-    })
 
     if (
       !isDefined(confirmation?.title) ||
@@ -93,11 +89,6 @@ export class DocumentServiceV2 {
     const actions = document.actions?.filter(
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
-    if (document.urgent)
-      this.logger.info('Urgent document fetched', {
-        documentId: documentId,
-        includeDocument,
-      })
 
     return {
       ...document,
@@ -459,7 +450,6 @@ export class DocumentServiceV2 {
       // Hide health data if user is a legal guardian and child is 16 or older
       const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
       // Hide law and order data if user is delegated
-      // commented out until we have correct category for law and order files
       const hideLawAndOrderData = isDelegated
       this.logger.debug('Should hide document categories', {
         hideHealthData,
