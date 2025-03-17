@@ -249,6 +249,9 @@ export class PaymentService {
       console.log('returnUrl', await this.getReturnUrl(applicationId))
       console.log('=========================================')
 
+      const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
+      onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+
       const paymentResult =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
           createPaymentFlowInput: {
@@ -267,7 +270,7 @@ export class PaymentService {
             //   'http://localhost:3333/application-payment/api-client-payment-callback/',
             // onUpdateUrl:
             //   'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
-            onUpdateUrl: `${this.config.paymentApiCallbackUrl}/application-payment/api-client-payment-callback`,
+            onUpdateUrl: onUpdateUrl.toString(),
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
@@ -412,13 +415,18 @@ export class PaymentService {
       )
     }
 
+    const returnUrl = new URL(this.config.clientLocationOrigin)
+    returnUrl.pathname = `${applicationSlug}/${applicationId}`
+    returnUrl.searchParams.set('done', 'true')
+
     console.log('=========================================')
     console.log(
       'returnUrl',
       `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`,
     )
+    console.log('returnUrl parsed', returnUrl.toString())
     console.log('=========================================')
 
-    return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
+    return returnUrl.toString()
   }
 }
