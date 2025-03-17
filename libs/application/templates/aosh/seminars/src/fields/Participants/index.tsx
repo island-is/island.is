@@ -19,7 +19,12 @@ import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
-import { validateEmails, validatePhoneNumbers, validateSSN } from '../../utils'
+import {
+  formatPhoneNumber,
+  validateEmails,
+  validatePhoneNumbers,
+  validateSSN,
+} from '../../utils'
 import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
 import { getValueViaPath } from '@island.is/application/core'
 import { SeminarIndividual } from '@island.is/api/schema'
@@ -31,7 +36,7 @@ const predefinedHeaders: IndexableObject = {
   0: ['nafn', 'name'],
   1: ['kennitala', 'ssn'],
   2: ['netfang', 'email'],
-  3: ['sími', 'phone'],
+  3: ['simi', 'phone'],
 }
 
 const parseDataToParticipantList = (csvInput: string): Participant | null => {
@@ -48,7 +53,7 @@ const parseDataToParticipantList = (csvInput: string): Participant | null => {
       nationalId: nationalIdWithoutHyphen,
     },
     email: values[2],
-    phoneNumber: values[3],
+    phoneNumber: formatPhoneNumber(values[3]),
     disabled: 'false',
   }
 }
@@ -183,7 +188,9 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             [],
           )
 
-          const allPhoneNumbers = answerValue.map((x) => x.phoneNumber)
+          const allPhoneNumbers = answerValue.map((x) =>
+            formatPhoneNumber(x.phoneNumber),
+          )
           const allSSN = answerValue.map((x) => x.nationalIdWithName.nationalId)
           const ssnErrors = validateSSN(allSSN)
           const phoneErrors = validatePhoneNumbers(allPhoneNumbers)
@@ -271,7 +278,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;sími`
+  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;simi\nNafn hér;123456-7890;netfang@netfang.com;123-4567`
 
   const onCsvButtonClick = () => {
     const encodeUri = encodeURI(csvFile)

@@ -16,7 +16,7 @@ import {
 } from '@island.is/api/schema'
 import { ARE_INDIVIDUALS_VALID } from '../../../graphql/queries'
 import { Participant } from '../../../shared/types'
-import { isApplyingForMultiple } from '../../../utils'
+import { isApplyingForMultiple, updateOrAdd } from '../../../utils'
 
 interface ParticipantWitValidation extends Participant {
   errorMessage: string
@@ -88,13 +88,30 @@ export const participantsSection = buildSection({
                 }
               })
 
+            const allEmails = tableItems?.map((x) => x.email) ?? []
+            const lastEmailAdded = allEmails[allEmails.length - 1]
+            const emailAlreadyExists = allEmails.filter(
+              (x, i) => x === lastEmailAdded && i < allEmails.length - 1,
+            ).length
+
             const dictionaryOfItems: Array<{ path: string; value: string }> =
               updatedParticipants.map((x, i) => {
+                const mostRecentItem = i === tableItems.length - 1
                 return {
                   path: `participantList[${i}].disabled`,
-                  value: x.disabled ? 'true' : 'false',
+                  value:
+                    x.disabled || (mostRecentItem && emailAlreadyExists)
+                      ? 'true'
+                      : 'false',
                 }
               })
+
+            if (emailAlreadyExists > 0) {
+              dictionaryOfItems.push({
+                path: 'participantValidityError',
+                value: 'Netfang er þegar skráð',
+              })
+            }
 
             const disabledItem = updatedParticipants.find((x) => !!x.disabled)
             if (disabledItem) {
@@ -102,7 +119,7 @@ export const participantsSection = buildSection({
                 path: 'participantValidityError',
                 value: disabledItem.errorMessage,
               })
-            } else {
+            } else if (emailAlreadyExists === 0) {
               dictionaryOfItems.push({
                 path: 'participantValidityError',
                 value: '',

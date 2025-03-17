@@ -83,7 +83,8 @@ export const TableRepeaterFormField: FC<Props> = ({
         submitResponse.dictionaryOfItems.forEach((x) => {
           methods.setValue(x.path, x.value)
         })
-      } catch {
+      } catch (e) {
+        console.error('e', e)
         setLoadError(true)
       }
     }
