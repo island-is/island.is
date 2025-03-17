@@ -412,6 +412,13 @@ export class PaymentService {
       )
     }
 
+    console.log('=========================================')
+    console.log(
+      'returnUrl',
+      `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`,
+    )
+    console.log('=========================================')
+
     return `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
   }
 }
