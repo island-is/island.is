@@ -17,6 +17,7 @@ import {
   GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
+import { UpdateFormResponse } from '@island.is/form-system/dto'
 import { Form, FormResponse } from '../../models/form.model'
 
 @Injectable()
@@ -85,13 +86,18 @@ export class FormsService {
     return response as FormResponse
   }
 
-  async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
+  async updateForm(
+    auth: User,
+    input: UpdateFormInput,
+  ): Promise<UpdateFormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
 
+    console.log('response', response)
+
     if (!response || response instanceof ApolloError) {
-      return void 0
+      throw new Error('Failed to update form')
     }
 
     return response

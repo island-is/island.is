@@ -20,7 +20,8 @@ module.exports = {
           },
           slug: {
             type: Sequelize.STRING,
-            allowNull: false,
+            allowNull: true,
+            unique: true,
           },
           organization_national_id: {
             type: Sequelize.STRING,

@@ -77,6 +77,10 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:organization-display-name-en',
     defaultMessage: 'Birt heiti stofnunar á ensku',
   },
+  slug: {
+    id: 'portals-admin.form-system:slug',
+    defaultMessage: 'slug (tæma og reFocus til að uppfæra)',
+  },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
     defaultMessage: 'Líftími umsóknar',

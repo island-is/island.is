@@ -7,16 +7,51 @@ import {
   Checkbox,
   Box,
 } from '@island.is/island-ui/core'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { UpdateFormResponse } from '@island.is/form-system/dto'
 
 export const BaseSettings = () => {
   const { control, controlDispatch, setFocus, focus, formUpdate } =
     useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const convertToSlug = (text: string): string => {
+    const icelandicToEnglishMap: { [key: string]: string } = {
+      á: 'a',
+      ð: 'd',
+      é: 'e',
+      í: 'i',
+      ó: 'o',
+      ú: 'u',
+      ý: 'y',
+      þ: 'th',
+      æ: 'ae',
+      ö: 'o',
+      Á: 'A',
+      Ð: 'D',
+      É: 'E',
+      Í: 'I',
+      Ó: 'O',
+      Ú: 'U',
+      Ý: 'Y',
+      Þ: 'Th',
+      Æ: 'Ae',
+      Ö: 'O',
+    }
+
+    return text
+      .split('')
+      .map((char) => icelandicToEnglishMap[char] || char)
+      .join('')
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+  }
+
   return (
     <Stack space={2}>
       <Row>
@@ -47,7 +82,18 @@ export const BaseSettings = () => {
             name="organizationDisplayName"
             value={form?.organizationDisplayName?.is ?? ''}
             backgroundColor="blue"
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={(e) => {
+              if (!form.organizationDisplayName?.is) {
+                controlDispatch({
+                  type: 'CHANGE_ORGANIZATION_DISPLAY_NAME',
+                  payload: {
+                    lang: 'is',
+                    newValue: form?.organizationTitle ?? '',
+                  },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>
               controlDispatch({
@@ -67,7 +113,18 @@ export const BaseSettings = () => {
             name="organizationDisplayNameEn"
             value={form?.organizationDisplayName?.en ?? ''}
             backgroundColor="blue"
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={(e) => {
+              if (!form.organizationDisplayName?.en) {
+                controlDispatch({
+                  type: 'CHANGE_ORGANIZATION_DISPLAY_NAME',
+                  payload: {
+                    lang: 'en',
+                    newValue: form?.organizationTitleEn ?? '',
+                  },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>
               controlDispatch({
@@ -80,7 +137,7 @@ export const BaseSettings = () => {
       </Row>
       <Box marginTop={5} />
       <Row>
-        <Column span="5/10">
+        <Column span="8/10">
           <Input
             label={formatMessage(m.applicationName)}
             placeholder={formatMessage(m.applicationName)}
@@ -89,15 +146,17 @@ export const BaseSettings = () => {
             backgroundColor="blue"
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
-            onChange={(e) =>
+            onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_FORM_NAME',
                 payload: { lang: 'is', newValue: e.target.value },
               })
-            }
+            }}
           />
         </Column>
-        <Column span="5/10">
+      </Row>
+      <Row>
+        <Column span="8/10">
           <Input
             label={formatMessage(m.applicationNameEnglish)}
             placeholder={formatMessage(m.applicationNameEnglish)}
@@ -115,6 +174,47 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Row>
+        <Column span="8/10">
+          <Input
+            label={formatMessage(m.slug)}
+            placeholder={formatMessage(m.slug)}
+            name="slug"
+            value={form?.slug ?? ''}
+            backgroundColor="blue"
+            errorMessage={errorMsg}
+            onFocus={(e) => {
+              if (!form.slug) {
+                controlDispatch({
+                  type: 'CHANGE_SLUG',
+                  payload: {
+                    newValue: form?.name?.is ? convertToSlug(form.name.is) : '',
+                  },
+                })
+              }
+              setFocus(e.target.value)
+            }}
+            onBlur={async (e) => {
+              if (e.target.value !== focus) {
+                const response: UpdateFormResponse = await formUpdate()
+                if (response.errors) {
+                  setErrorMsg(response.errors[0].message as string)
+                  // console.log(response.errors[0].message)
+                } else {
+                  setErrorMsg('')
+                }
+              }
+            }}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'CHANGE_SLUG',
+                payload: { newValue: e.target.value },
+              })
+            }
+          />
+        </Column>
+      </Row>
+      <Box marginTop={5} />
       <Row>
         <Column span="5/10">
           <Input

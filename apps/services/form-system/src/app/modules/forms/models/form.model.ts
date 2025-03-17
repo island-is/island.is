@@ -44,8 +44,8 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: ' ',
+    allowNull: true,
+    unique: true,
   })
   slug!: string
 

@@ -12,6 +12,7 @@ import { arrayMove } from '@dnd-kit/sortable'
 import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { SectionTypes } from '@island.is/form-system/enums'
+import { UpdateFormResponse } from '@island.is/form-system/dto'
 
 // TODO
 // This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
@@ -96,6 +97,10 @@ type ChangeActions =
   | {
       type: 'CHANGE_ORGANIZATION_DISPLAY_NAME'
       payload: { lang: 'en' | 'is'; newValue: string }
+    }
+  | {
+      type: 'CHANGE_SLUG'
+      payload: { newValue: string }
     }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
@@ -457,6 +462,15 @@ export const controlReducer = (
             ...form.organizationDisplayName,
             [lang]: newValue,
           },
+        },
+      }
+    }
+    case 'CHANGE_SLUG': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          slug: action.payload.newValue,
         },
       }
     }

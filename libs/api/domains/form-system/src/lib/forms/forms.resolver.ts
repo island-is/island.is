@@ -23,6 +23,7 @@ import {
   GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
+import { UpdateFormResponse } from '@island.is/form-system/dto'
 import { Form, FormResponse } from '../../models/form.model'
 import {
   OrganizationLinkByReferenceIdLoader,
@@ -92,14 +93,13 @@ export class FormsResolver {
     return this.formsService.getAllForms(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => UpdateFormResponse, {
     name: 'formSystemUpdateForm',
-    nullable: true,
   })
   async updateForm(
     @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<UpdateFormResponse> {
     return this.formsService.updateForm(user, input)
   }
 

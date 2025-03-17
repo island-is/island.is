@@ -21,6 +21,7 @@ import {
 import { FormsService } from './forms.service'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { UpdateFormResponse } from '@island.is/form-system/dto'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -74,7 +75,8 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Update form' })
-  @ApiNoContentResponse({
+  @ApiOkResponse({
+    type: UpdateFormResponse,
     description: 'Update form',
   })
   @ApiBody({ type: UpdateFormDto })
@@ -83,7 +85,8 @@ export class FormsController {
   async updateForm(
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
-  ): Promise<void> {
+  ): Promise<UpdateFormResponse> {
+    console.log('halló hoemir')
     return await this.formsService.update(id, updateFormDto)
   }
 

@@ -24,6 +24,7 @@ import {
 } from '@island.is/form-system/graphql'
 import { updateFormFn } from '../lib/utils/updateFormFn'
 import { SectionTypes } from '@island.is/form-system/enums'
+import { UpdateFormResponse } from '@island.is/form-system/dto'
 
 export const FormProvider: React.FC<{
   children: React.ReactNode
@@ -92,7 +93,7 @@ export const FormProvider: React.FC<{
 
   const formUpdate = useCallback(
     (updatedForm?: FormSystemForm) => {
-      updateFormFn(control, updateForm, updatedForm)
+      return updateFormFn(control, updateForm, updatedForm)
     },
     [control, updateForm],
   )

@@ -423,8 +423,15 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "Update form"
+          "200": {
+            "description": "Update form",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateFormResponse"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2584,6 +2591,31 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Dependency"
+            }
+          }
+        }
+      },
+      "UpdateFormError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateFormResponse": {
+        "type": "object",
+        "properties": {
+          "updateSuccess": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateFormError"
             }
           }
         }

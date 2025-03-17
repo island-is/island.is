@@ -17,6 +17,7 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { UpdateFormResponse, UpdateFormError } from '@island.is/form-system/dto'
 import {
   CertificationType,
   CertificationTypes,
@@ -45,13 +46,11 @@ import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '@island.is/form-system/enums'
 import { Option } from '../../dataTypes/option.model'
-import { Op } from 'sequelize'
+import { Op, UniqueConstraintError } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
-import { CmsService, GetOrganizationByNationalId } from '@island.is/clients/cms'
-import { locale } from 'yargs'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 
 @Injectable()
@@ -78,7 +77,6 @@ export class FormsService {
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
-    private readonly cmsService: CmsService,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -193,7 +191,7 @@ export class FormsService {
     }
 
     const newForm: Form = await this.formModel.create({
-      name: { is: 'Nýtt', en: 'New' },
+      // name: { is: '', en: '' },
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
@@ -281,7 +279,10 @@ export class FormsService {
     return this.findAll(user, user.nationalId)
   }
 
-  async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {
+  async update(
+    id: string,
+    updateFormDto: UpdateFormDto,
+  ): Promise<UpdateFormResponse> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
@@ -290,7 +291,26 @@ export class FormsService {
 
     Object.assign(form, updateFormDto)
 
-    await form.save()
+    const response = new UpdateFormResponse()
+
+    try {
+      await form.save()
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        response.updateSuccess = false
+        response.errors = error.errors.map(
+          (err) =>
+            ({
+              field: err.path,
+              message: err.message,
+            } as UpdateFormError),
+        )
+      } else {
+        throw error
+      }
+    }
+
+    return response
   }
 
   async delete(id: string): Promise<void> {
