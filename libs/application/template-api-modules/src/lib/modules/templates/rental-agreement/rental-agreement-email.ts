@@ -1,128 +1,102 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  AttachmentEmailTemplateGenerator,
-  EmailTemplateGenerator,
-} from '../../../types'
-
-export const generateRentalAgreementNotificationEmail: AttachmentEmailTemplateGenerator =
-  (props) => {
-    const {
-      application,
-      options: { email },
-    } = props
-    const subject = 'Hér er email'
-    const body = `
-  Hello
-      `
-
-    return {
-      from: {
-        name: 'Something',
-        address: 'rakel@kolibri.is',
-      },
-      to: [
-        {
-          name: '',
-          address: 'rakel@kolibri.is',
-        },
-      ],
-      subject,
-      html: `<p>${body
-        .split('')
-        .map((c) => (c === '\n' ? `<br />\n` : c))
-        .join('')}</p>`,
-      attachments: [
-        {
-          filename: `${application.id}.pdf`,
-          encoding: 'binary',
-        },
-      ],
-    }
-  }
+import { EmailTemplateGenerator } from '../../../types'
 
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
-  const {
-    application,
-    // options: { email },
-  } = props
+  const { application } = props
 
-  // const applicantEmail = get(application.answers, 'person.email')
+  const applicationCreator = {
+    name:
+      getValueViaPath(
+        application.externalData,
+        'nationalRegistry.fullName',
+        '',
+      ) || '',
+    email:
+      getValueViaPath(application.externalData, 'userProfile.data.email', '') ||
+      '',
+  }
 
-  const tenantEmails = (
+  const tenants = (
     getValueViaPath(application.answers, 'tenantInfo.table', []) as Array<{
       nationalIdWithName: { name: string }
       email: string
     }>
-  ).map((tenant) => tenant.email)
+  ).map((tenant) => ({
+    name: tenant.nationalIdWithName.name,
+    address: tenant.email,
+  }))
 
-  const landlords = getValueViaPath(
-    application.answers,
-    'landlordInfo.table',
-    [],
-  ) as Array<{
-    nationalIdWithName: { name: string }
-    email: string
-  }>
-
-  // console.log('tölvupóstur before ***===0a', application)
+  const landlords = (
+    getValueViaPath(application.answers, 'landlordInfo.table', []) as Array<{
+      nationalIdWithName: { name: string }
+      email: string
+    }>
+  ).map((landlord) => ({
+    name: landlord.nationalIdWithName.name,
+    address: landlord.email,
+  }))
 
   const htmlSummaryForEmail = getValueViaPath(
     application.answers,
     'htmlSummary',
   ) as string
 
-  const subidubi = JSON.parse(htmlSummaryForEmail)
+  const emailContent = JSON.parse(htmlSummaryForEmail).html
+  const emailStyles = `<style type="text/css">
+                  #email-summary-container > div {
+                    border-bottom: 1px solid #CCDFFF;
+                    margin: 20px 0;
+                    padding-bottom: 20px;
+                  }
+                  #email-summary-container > div {
+                    border-bottom: 1px solid #CCDFFF;
+                    margin: 20px 0;
+                    padding-bottom: 6px;
+                  }
+                  #email-summary-container h3 {
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin-bottom: 24px;
+                  }
+                  
+                  #email-summary-container label {
+                    font-size: 14px;
+                    font-weight: 600;
+                  }
+                  #email-summary-container label ~ p {
+                    margin-bottom: 16px;
+                  }
+                </style>`
 
-  const emailContent = subidubi.html // Extract the HTML
-
-  // console.log('tölvupóstur ***===1a', application)
-  // console.log('tölvupóstur ***===2b', emailContent)
-  // console.log('tenantEmails ***===2', tenantEmails)
-  // console.log('Landlords ***===3', landlords)
-  // console.log('Landlords ***===4 þetta er nýtT!!', landlords)
-
-  // TODO translate using locale
-  const subject = 'Drög að leigusamningi'
-  const body = `Góðan dag.
-
-       Farðu yfir gögnin hér að neðan til að kanna hvort að réttar upplýsingar hafi verið gefnar upp.
-
-       Hafðu samband við samningsgerðaraðilann ef að eitthvað vantar eða er rangt í umsókninni.
-
-       ${emailContent}
-      `
+  const allRecipients = [...landlords, ...tenants]
 
   return {
     from: {
-      name: 'Prófa póst',
-      address: 'sonja@kolibri.is',
+      name: applicationCreator.name,
+      address: applicationCreator.email,
     },
-    to: [
-      {
-        name: 'Sonja',
-        address: 'sonja@kolibri.is',
-      },
-    ],
-    subject,
-    // html: body ?
+    replyTo: {
+      name: applicationCreator.name,
+      address: applicationCreator.email,
+    },
+    to: allRecipients,
+    subject: 'Drög að húsaleigusamningi',
     template: {
-      title: subject,
+      title: 'Drög að húsaleigusamningi',
       body: [
-        // Testing handlebars to take into account alignment:
         {
           component: 'Heading',
-          context: { copy: 'Leigusamningur: Center' },
-        },
-        {
-          component: 'Heading',
-          context: { copy: 'Leigusamningur: Samantekt', align: 'left' },
+          context: { copy: 'Drög að húsaleigusamningi', align: 'left' },
         },
         {
           component: 'Copy',
           context: {
             copy:
-              `<span>Farðu yfir gögnin hér að neðan til að kanna hvort að réttar upplýsingar hafi verið gefnar upp.</span><br/><br/>` +
-              `<span>Hafðu samband við samningsgerðaraðilan ef að eitthvað vantar eða er rangt í umsókninni.</span>`,
+              `<br/>` +
+              `<span>Góðan dag.</span>` +
+              `<br/>` +
+              `<span>Vinsamlegast lestu yfir leigusamninginn hér að neðan. Ef þú ert með athugasemdir við innihald hans væri best að þú svaraðir þessum tölvupósti með þeim.</span>` +
+              `<br/><br/>`,
             align: 'left',
             small: true,
           },
@@ -130,7 +104,7 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
         {
           component: 'Copy',
           context: {
-            copy: emailContent,
+            copy: `${emailStyles}${emailContent}`,
             align: 'left',
             small: true,
           },

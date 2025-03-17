@@ -52,43 +52,14 @@ export const SummaryDraftSection = buildSection({
         buildHiddenInput({
           id: 'htmlSummary',
           defaultValue: () => {
-            const element = document.getElementById('my-super-email-summary')
+            // Get email summary html
+            const element = document.getElementById('email-summary-container')
 
+            // Remove buttons from summary
             if (element) {
               element
                 .querySelectorAll('button')
                 .forEach((button) => button.remove())
-
-              const styles = `
-                <style type="text/css">
-                  label {
-                    font-weight: bold;
-                    display: inline-block;
-                    margin-right: 4px;
-                  }
-                  label::after {
-                    content: ":";
-                    display: inline-block;
-                  }
-                  [class*="useBoxStyles_3"] {
-                    border-bottom: 1px solid;
-                    margin: 20px 0;
-                    padding-bottom: 20px;
-                  }
-                  p {
-                    display: inline-block;
-                  }
-                </style>
-              `
-
-              const styledHtml = `
-              <html>
-              <head>${styles}</head>
-                <body>
-                    ${element.outerHTML} 
-                </body>
-                </html>
-              `
 
               const jsonData = {
                 id: element.id,

@@ -63,12 +63,8 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (condition) => !condition.isFilled,
   )
 
-  const element = document.getElementById('my-super-email-summary')
-
-  console.log('element***', element)
-
   return (
-    <Box className={summaryWrap} id="my-super-email-summary">
+    <Box className={summaryWrap} id="email-summary-container">
       <ApplicantsSummary
         application={application}
         field={field}

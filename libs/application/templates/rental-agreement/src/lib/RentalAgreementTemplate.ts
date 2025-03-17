@@ -25,11 +25,11 @@ import {
 import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
-enum TEMPLATE_API_ACTIONS {
-  // Has to match name of action in template API module
-  // (will be refactored when state machine is a part of API module)
-  sendApplication = 'sendApplication',
+
+enum TemplateApiActions {
+  sendApplicationSummary = 'sendApplicationSummary',
 }
+
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -88,7 +88,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           onExit: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication
+            action: TemplateApiActions.sendApplicationSummary,
           }),
           roles: [
             {
@@ -124,9 +124,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: 'Summary for review',
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
-          // onEntry:  defineTemplateApi({
-          //   action: TEMPLATE_API_ACTIONS.sendApplication,
-          // }),
           roles: [
             {
               id: Roles.APPLICANT,
