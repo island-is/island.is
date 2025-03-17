@@ -45,7 +45,6 @@ import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
 import { defendant } from './Defendant.strings'
 
-
 export interface PoliceCase {
   number: string
   subtypes?: IndictmentSubtype[]
@@ -296,15 +295,18 @@ const Defendant = () => {
         )
         .forEach((indictmentCount) => {
           const policeCaseNumberSubtypes = subtypes?.[policeCaseNumber] || []
-          const indictmentCountSubtypes = indictmentCount.indictmentCountSubtypes || []
+          const indictmentCountSubtypes =
+            indictmentCount.indictmentCountSubtypes || []
 
           // handle changes based on police case subtype changes
-          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter((subtype) => policeCaseNumberSubtypes.includes(subtype))
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter(
+            (subtype) => policeCaseNumberSubtypes.includes(subtype),
+          )
           const updatedIndictmentCount = {
-            ...indictmentCount, 
+            ...indictmentCount,
             indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
- 
+
           const incidentDescription = getIncidentDescription({
             indictmentCount: updatedIndictmentCount,
             formatMessage,
