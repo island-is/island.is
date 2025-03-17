@@ -2,11 +2,13 @@ import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   Query,
   QueryGetOrganizationArgs,
+  Slice,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -26,13 +28,12 @@ const OJOIHelpPage: CustomScreen<OJOIHelpProps> = ({
   locale,
   customPageData,
 }) => {
-  console.log(customPageData)
   return (
-    <Box>
+    <Box marginTop={SLICE_SPACING}>
       {webRichText(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
-        customPageData?.content as SliceType[],
+        customPageData?.content as Slice[],
       )}
     </Box>
   )
