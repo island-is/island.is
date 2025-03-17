@@ -292,7 +292,7 @@ export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
  query GetOrganizationSubpageById($input: GetOrganizationSubpageByIdInput!) {
     getOrganizationSubpageById(input: $input) {
      ${organizationSubpageResponse}
-     }
+    }
   }
   ${slices}
 `
@@ -301,7 +301,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
      ${organizationSubpageResponse}
-     }
+    }
   }
   ${slices}
 `
