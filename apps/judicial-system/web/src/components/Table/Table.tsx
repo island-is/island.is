@@ -216,16 +216,16 @@ const Table: FC<TableProps> = (props) => {
             const aValue = a.courtCaseNumber
             const bValue = b.courtCaseNumber
 
-            const addMaxSafeInteger = (value?: string | null): number =>
+            const getSortableValue = (value?: string | null): number =>
               toNumber(value) +
               (!value || value.includes('R') ? 0 : Number.MAX_SAFE_INTEGER)
 
-            const amendedAValue = addMaxSafeInteger(aValue)
-            const amendedBValue = addMaxSafeInteger(bValue)
+            const sortableAValue = getSortableValue(aValue)
+            const sortableBValue = getSortableValue(bValue)
 
             return sortConfig?.direction === 'ascending'
-              ? amendedAValue - amendedBValue
-              : amendedBValue - amendedAValue
+              ? sortableAValue - sortableBValue
+              : sortableBValue - sortableAValue
           }
         default:
           return (a: CaseListEntry, b: CaseListEntry) => {
