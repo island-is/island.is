@@ -45,6 +45,8 @@ export const RenderForm: React.FC<
     validEmail: false,
     touched: false,
   })
+  //dummy
+  const k = 8
 
   const formatMessage = (message: string) => {
     // These messages come from Mailchimp's API and contain links and other stuff we don't want.

@@ -40,6 +40,7 @@ export class AccessLogsController {
   async getAll(
     @Query() query: PaginationWithNationalIdsDto,
   ): Promise<PaginatedPersonalRepresentativeAccessDto> {
+    const k = 8
     return this.personalRepresentativeAccessService.getMany(query)
   }
 }
