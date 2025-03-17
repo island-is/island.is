@@ -151,6 +151,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               description: [
                 { text: formatMessage(m.yourDrivingLicenseDescription) },
               ],
+              photo: t.photo?.image ?? undefined,
             },
           },
         }

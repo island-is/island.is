@@ -145,6 +145,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
               description: [
                 { text: formatMessage(m.huntingLicenseDescription) },
               ],
+              photo: t.holderPhoto,
             },
           },
         }

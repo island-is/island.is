@@ -175,6 +175,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                 description: [
                   { text: formatMessage(m.yourFirearmLicenseDescription) },
                 ],
+                photo: t.licenseInfo?.licenseImgBase64 ?? undefined,
               },
             },
           }
