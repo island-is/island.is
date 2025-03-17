@@ -11,6 +11,7 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../defendant'
 import { EventLog } from '../../event-log'
+import { User } from '../../user/user.model'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
 
@@ -30,6 +31,50 @@ export const transformDefendants = (defendants?: Defendant[]) => {
   }))
 }
 
+const transformCaseRepresentatives = (theCase: Case) => {
+  const { prosecutor, civilClaimants } = theCase
+  const getCaseUserRepresentativeProps = (user?: User) => {
+    if (!user) return undefined
+
+    return { name: user.name, nationalId: user.nationalId, title: user.title }
+  }
+
+  const getDefenderRepresentativeProps = (theCase: Case) => {
+    const { defenderName, defenderNationalId } = theCase
+    if (!(defenderName && defenderNationalId)) return undefined
+
+    return {
+      name: defenderName,
+      nationalId: defenderNationalId,
+      title: 'verjandi',
+    }
+  }
+
+  const civilClaimantSpokespersons = civilClaimants?.map((civilClaimant) => {
+    const { spokespersonName, spokespersonNationalId, spokespersonIsLawyer } =
+      civilClaimant
+    if (!(spokespersonName && spokespersonNationalId)) return undefined
+
+    return {
+      name: spokespersonName,
+      nationalId: spokespersonNationalId,
+      title: spokespersonIsLawyer ? 'lögmaður' : 'réttargæslumaður',
+    }
+  })
+
+  const defendants = theCase.defendants?.map((defendant) => ({
+    name: defendant.name,
+    nationalId: defendant.nationalId,
+    title: 'ákærði',
+  }))
+  return [
+    getCaseUserRepresentativeProps(prosecutor),
+    getDefenderRepresentativeProps(theCase),
+    ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
+    ...(defendants ? defendants : []),
+  ].filter((representative) => !!representative)
+}
+
 const transformCase = (theCase: Case) => {
   return {
     ...theCase.toJSON(),
@@ -39,6 +84,7 @@ const transformCase = (theCase: Case) => {
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
     caseSentToCourtDate: EventLog.caseSentToCourtEvent(theCase.eventLogs)
       ?.created,
+    caseRepresentatives: transformCaseRepresentatives(theCase),
   }
 }
 

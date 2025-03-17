@@ -406,5 +406,6 @@ query Case($input: CaseQueryInput!) {
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    caseRepresentatives
   }
 }
