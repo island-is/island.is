@@ -198,35 +198,34 @@ const Table: FC<TableProps> = (props) => {
       sortConfig: SortConfig,
       sortFnName?: string,
     ): ((a: CaseListEntry, b: CaseListEntry) => number) => {
+      const toNumber = (value?: string | null): number =>
+        Number(value?.replace(/\D/g, '') || '0')
+
       switch (sortFnName) {
         case 'number':
           return (a: CaseListEntry, b: CaseListEntry) => {
-            const aa =
-              getColumnValue(a, sortConfig.column)?.replace(/\D/g, '') || '0'
-            const bb =
-              getColumnValue(b, sortConfig.column)?.replace(/\D/g, '') || '0'
-            const aaa = Number(aa)
-            const bbb = Number(bb)
+            const aValue = getColumnValue(a, sortConfig.column)
+            const bValue = getColumnValue(b, sortConfig.column)
 
-            return sortConfig?.direction === 'ascending' ? aaa - bbb : bbb - aaa
+            return sortConfig?.direction === 'ascending'
+              ? toNumber(aValue) - toNumber(bValue)
+              : toNumber(bValue) - toNumber(aValue)
           }
         case 'courtCaseNumber':
           return (a: CaseListEntry, b: CaseListEntry) => {
-            const aa = a.courtCaseNumber?.replace(/\D/g, '') || '0'
-            const bb = b.courtCaseNumber?.replace(/\D/g, '') || '0'
+            const aValue = a.courtCaseNumber
+            const bValue = b.courtCaseNumber
 
-            const aaa =
-              Number(aa) +
-              (!a.courtCaseNumber || a.courtCaseNumber?.includes('R')
-                ? 0
-                : Number.MAX_SAFE_INTEGER)
-            const bbb =
-              Number(bb) +
-              (!b.courtCaseNumber || b.courtCaseNumber?.includes('R')
-                ? 0
-                : Number.MAX_SAFE_INTEGER)
+            const addMaxSafeInteger = (value?: string | null): number =>
+              toNumber(value) +
+              (!value || value.includes('R') ? 0 : Number.MAX_SAFE_INTEGER)
 
-            return sortConfig?.direction === 'ascending' ? aaa - bbb : bbb - aaa
+            const amendedAValue = addMaxSafeInteger(aValue)
+            const amendedBValue = addMaxSafeInteger(bValue)
+
+            return sortConfig?.direction === 'ascending'
+              ? amendedAValue - amendedBValue
+              : amendedBValue - amendedAValue
           }
         default:
           return (a: CaseListEntry, b: CaseListEntry) => {
@@ -242,9 +241,7 @@ const Table: FC<TableProps> = (props) => {
     }
 
     if (sortConfig) {
-      const sortFn = getSortFn(sortConfig, sortConfig.sortFn)
-
-      data.sort(sortFn)
+      data.sort(getSortFn(sortConfig, sortConfig.sortFn))
     }
   }, [data, formatMessage, sortConfig])
 
