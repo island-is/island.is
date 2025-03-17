@@ -417,7 +417,7 @@ export class PaymentService {
 
     const returnUrl = new URL(this.config.clientLocationOrigin)
     returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
-    returnUrl.searchParams.set('done', 'true')
+    returnUrl.search = 'done'
 
     console.log('=========================================')
     console.log(
