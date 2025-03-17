@@ -20,12 +20,14 @@ const tagName = getTagname()
 
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
+core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release');
 core.setOutput('GIT_BRANCH', targetBranch)
 core.setOutput('GIT_SHA', sha)
 console.info(`Artifact name: ${artifactName}`)
 console.info(`Docker tag: ${tagName}`)
 console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
+console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
 function shouldRun() {
     if (eventName === 'merge_group') {
