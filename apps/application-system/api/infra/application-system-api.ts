@@ -178,7 +178,7 @@ export const serviceSetup = (services: {
           (ctx) =>
             `https://${
               ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-            }beta.dev01.devland.is/umsoknir/`,
+            }beta.dev01.devland.is/umsoknir`,
         ),
         staging: `https://beta.staging01.devland.is/umsoknir`,
         prod: `https://island.is/umsoknir`,
