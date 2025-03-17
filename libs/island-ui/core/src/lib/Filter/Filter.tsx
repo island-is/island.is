@@ -337,7 +337,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   if (isMobile) {
     return (
       <FilterContext.Provider value={{ variant }}>
-        <Inline space={2}>
+        <Box display="flex" alignItems="flexEnd">
           {filterInputContent}
 
           <FilterMobileDrawer
@@ -347,13 +347,13 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             labelShowResult={labelResult}
             labelClearAll={labelClearAll}
             onFilterClear={onFilterClear}
-            title={title}
             disclosure={
               <Box
                 background="white"
-                display="inlineBlock"
+                marginTop={'auto'}
                 borderRadius="large"
                 tabIndex={-1}
+                marginLeft={2}
                 className={filterCount ? styles.filterCountButton : undefined}
               >
                 {filterCount ? (
@@ -404,7 +404,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               </Box>
             </Box>
           </FilterMobileDrawer>
-        </Inline>
+        </Box>
       </FilterContext.Provider>
     )
   }

@@ -30,8 +30,6 @@ interface FilterMobileDrawerProps {
 
   labelClearAll?: string
 
-  title?: string
-
   onFilterClear: () => void
 }
 
@@ -43,7 +41,6 @@ export const FilterMobileDrawer = ({
   labelShowResult,
   labelClearAll,
   onFilterClear,
-  title,
   children,
 }: PropsWithChildren<FilterMobileDrawerProps>) => {
   const [isClosed, setIsClosed] = useState(true)
