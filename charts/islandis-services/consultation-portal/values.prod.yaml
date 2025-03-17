@@ -27,7 +27,7 @@ env:
   IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
   LOG_LEVEL: 'info'
   NEXTAUTH_URL: 'https://island.is/samradsgatt/api/auth'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces: []
 grantNamespacesEnabled: false
