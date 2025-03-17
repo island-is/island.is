@@ -207,7 +207,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       if (needsHealthCert) {
         await postHealthDeclaration(nationalId, answers, auth)
       }
-      console.log('jurisdictionId', jurisdictionId)
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
         auth.authorization.replace('Bearer ', ''),
