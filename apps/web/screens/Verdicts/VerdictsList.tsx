@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce, useWindowSize } from 'react-use'
+import { useWindowSize } from 'react-use'
 import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -11,11 +11,12 @@ import {
   GridContainer,
   Hidden,
   InfoCardGrid,
+  Inline,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Webreader } from '@island.is/web/components'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictCaseCategoriesQuery,
@@ -45,7 +46,6 @@ import {
 import { m } from './translations.strings'
 
 const ITEMS_PER_PAGE = 10
-const DEBOUNCE_TIME = 300
 
 interface VerdictsListProps {
   initialData: {
@@ -55,7 +55,10 @@ interface VerdictsListProps {
   }
 }
 
-const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
+const VerdictsList: CustomScreen<VerdictsListProps> = ({
+  initialData,
+  customPageData,
+}) => {
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
@@ -67,90 +70,76 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
     GetVerdictsQueryVariables
   >(GET_VERDICTS_QUERY)
 
-  useDebounce(
-    () => {
-      if (page <= 1) {
-        return
-      }
+  useEffect(() => {
+    if (page <= 1) {
+      return
+    }
 
-      fetchVerdicts({
-        variables: {
-          input: {
-            page,
-          },
+    fetchVerdicts({
+      variables: {
+        input: {
+          page,
         },
-        onCompleted(response) {
-          setData((prevData) => {
-            const verdicts = response.webVerdicts.items
-              .concat(prevData.invisibleVerdicts)
-              // Remove all duplicate verdicts in case there were new verdicts published since last page load
-              .filter(
-                (verdict) =>
-                  Boolean(verdict.id) &&
-                  !prevData.visibleVerdicts
-                    .map(({ id }) => id)
-                    .includes(verdict.id),
-              )
+      },
+      onCompleted(response) {
+        setData((prevData) => {
+          const verdicts = response.webVerdicts.items
+            .concat(prevData.invisibleVerdicts)
+            // Remove all duplicate verdicts in case there were new verdicts published since last page load
+            .filter(
+              (verdict) =>
+                !verdict.id ||
+                !prevData.visibleVerdicts
+                  .map(({ id }) => id)
+                  .includes(verdict.id),
+            )
 
-            verdicts.sort((a, b) => {
-              if (!a.verdictDate && !b.verdictDate) return 0
-              if (!b.verdictDate) return -1
-              if (!a.verdictDate) return 1
-              return (
-                new Date(b.verdictDate).getTime() -
-                new Date(a.verdictDate).getTime()
-              )
-            })
-
-            return {
-              visibleVerdicts: prevData.visibleVerdicts.concat(
-                verdicts.slice(0, ITEMS_PER_PAGE),
-              ),
-              invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
-              total: initialData.total,
-            }
+          verdicts.sort((a, b) => {
+            if (!a.verdictDate && !b.verdictDate) return 0
+            if (!b.verdictDate) return -1
+            if (!a.verdictDate) return 1
+            return (
+              new Date(b.verdictDate).getTime() -
+              new Date(a.verdictDate).getTime()
+            )
           })
-        },
-      })
-    },
-    DEBOUNCE_TIME,
-    [page],
-  )
+
+          return {
+            visibleVerdicts: prevData.visibleVerdicts.concat(
+              verdicts.slice(0, ITEMS_PER_PAGE),
+            ),
+            invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
+            total: initialData.total,
+          }
+        })
+      },
+    })
+  }, [fetchVerdicts, initialData.total, page])
 
   const [isGridLayout, setIsGridLayout] = useState(false)
   const overrideGridLayoutSetting = width < theme.breakpoints.lg
+  const heading = formatMessage(m.listPage.heading)
 
   return (
     <Box className="rs_read">
+      <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
+        {Boolean(customPageData?.configJson?.noIndexOnListPage) && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <Stack space={3}>
         <GridContainer>
           <Stack space={3}>
             <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-            <Text variant="h1" as="h1">
-              {formatMessage(m.listPage.heading)}{' '}
-            </Text>
-            <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
-            <Text>{formatMessage(m.listPage.description)}</Text>
-            <Hidden below="lg">
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="utility"
-                  icon={isGridLayout ? 'list' : 'grid'}
-                  iconType="outline"
-                  colorScheme="white"
-                  size="small"
-                  onClick={() => {
-                    setIsGridLayout((previousState) => !previousState)
-                  }}
-                >
-                  {formatMessage(
-                    isGridLayout
-                      ? m.listPage.displayList
-                      : m.listPage.displayGrid,
-                  )}
-                </Button>
-              </Box>
-            </Hidden>
+            <Stack space={2}>
+              <Text variant="h1" as="h1">
+                {heading}
+              </Text>
+              <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
+              <Text variant="intro">
+                {formatMessage(m.listPage.description)}
+              </Text>
+            </Stack>
           </Stack>
         </GridContainer>
         <Box background="blue100" paddingTop={[3, 3, 0]}>
@@ -164,64 +153,97 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({ initialData }) => {
               </Stack>
             }
           >
-            <InfoCardGrid
-              variant="detailed"
-              columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
-              cards={data.visibleVerdicts.map((verdict) => {
-                return {
-                  description: verdict.title,
-                  eyebrow: '',
-                  id: verdict.id,
-                  link: { href: `/domar/${verdict.id}`, label: '' },
-                  title: verdict.caseNumber,
-                  borderColor: 'blue200',
-                  detailLines: [
-                    {
-                      icon: 'calendar',
-                      text: verdict.verdictDate
-                        ? format(new Date(verdict.verdictDate), 'd. MMMM yyyy')
-                        : '',
-                    },
-                    { icon: 'hammer', text: verdict.court ?? '' },
-                    {
-                      icon: 'person',
-                      text: `${verdict.presidentJudge?.name ?? ''} ${
-                        verdict.presidentJudge?.title ?? ''
-                      }`,
-                    },
-                  ],
-                }
-              })}
-            />
-            {initialData.total > data.visibleVerdicts.length && (
-              <Box
-                key={page}
-                paddingTop={4}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-              >
-                {error && (
-                  <Box paddingBottom={2}>
-                    <Text variant="medium" color="red600">
-                      {formatMessage(m.listPage.loadingMoreFailed)}
-                    </Text>
+            <Stack space={3}>
+              <Inline justifyContent="spaceBetween" alignY="center" space={2}>
+                <Text>
+                  <strong>{data.total}</strong>{' '}
+                  {formatMessage(m.listPage.verdictsFound)}
+                </Text>
+                <Hidden below="lg">
+                  <Box>
+                    <Button
+                      variant="utility"
+                      icon={isGridLayout ? 'list' : 'grid'}
+                      iconType="outline"
+                      colorScheme="white"
+                      size="small"
+                      onClick={() => {
+                        setIsGridLayout((previousState) => !previousState)
+                      }}
+                    >
+                      {formatMessage(
+                        isGridLayout
+                          ? m.listPage.displayList
+                          : m.listPage.displayGrid,
+                      )}
+                    </Button>
                   </Box>
-                )}
-                <Button
-                  loading={loading}
-                  onClick={() => {
-                    setPage((p) => p + 1)
-                  }}
-                >
-                  {formatMessage(m.listPage.seeMoreVerdicts, {
-                    remainingVerdictCount:
-                      initialData.total - data.visibleVerdicts.length,
+                </Hidden>
+              </Inline>
+              <InfoCardGrid
+                variant="detailed"
+                columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
+                cards={data.visibleVerdicts
+                  .filter((verdict) => Boolean(verdict.id))
+                  .map((verdict) => {
+                    return {
+                      description: verdict.title,
+                      eyebrow: '',
+                      id: verdict.id,
+                      link: { href: `/domar/${verdict.id}`, label: '' },
+                      title: verdict.caseNumber,
+                      borderColor: 'blue200',
+                      detailLines: [
+                        {
+                          icon: 'calendar',
+                          text: verdict.verdictDate
+                            ? format(
+                                new Date(verdict.verdictDate),
+                                'd. MMMM yyyy',
+                              )
+                            : '',
+                        },
+                        { icon: 'hammer', text: verdict.court ?? '' },
+                        {
+                          icon: 'person',
+                          text: `${verdict.presidentJudge?.name ?? ''} ${
+                            verdict.presidentJudge?.title ?? ''
+                          }`,
+                        },
+                      ],
+                    }
                   })}
-                </Button>
-              </Box>
-            )}
+              />
+              {initialData.total > data.visibleVerdicts.length && (
+                <Box
+                  key={page}
+                  paddingTop={4}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  {error && (
+                    <Box paddingBottom={2}>
+                      <Text variant="medium" color="red600">
+                        {formatMessage(m.listPage.loadingMoreFailed)}
+                      </Text>
+                    </Box>
+                  )}
+                  <Button
+                    loading={loading}
+                    onClick={() => {
+                      setPage((p) => p + 1)
+                    }}
+                  >
+                    {formatMessage(m.listPage.seeMoreVerdicts, {
+                      remainingVerdictCount:
+                        initialData.total - data.visibleVerdicts.length,
+                    })}
+                  </Button>
+                </Box>
+              )}
+            </Stack>
           </SidebarLayout>
         </Box>
       </Stack>
@@ -276,9 +298,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
     }),
   ])
 
-  const items = verdictListResponse.data.webVerdicts.items.filter((item) =>
-    Boolean(item?.id),
-  )
+  const items = verdictListResponse.data.webVerdicts.items
 
   if (!customPageData?.configJson?.showVerdictListPage) {
     throw new CustomNextError(
@@ -303,6 +323,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
 export default withMainLayout(
   withCustomPageWrapper(CustomPageUniqueIdentifier.Verdicts, VerdictsList),
   {
-    showFooter: false,
+    footerVersion: 'organization',
   },
 )
