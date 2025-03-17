@@ -40,6 +40,7 @@ import {
   DocumentPdfRenderer,
   DocumentPdfRendererInput,
 } from './models/v2/pdfRenderer.model'
+import { error } from 'console'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -70,7 +71,10 @@ export class DocumentResolverV2 {
           namespace: '@island.is/api/document-v2',
           action: 'getDocument',
           resources: input.id,
-          meta: { includeDocument: input.includeDocument },
+          meta: {
+            includeDocument: input.includeDocument,
+            isCourtCase: isCourtCase,
+          },
         },
         this.documentServiceV2.findDocumentById(
           user.nationalId,
@@ -126,12 +130,13 @@ export class DocumentResolverV2 {
       namespace: '@island.is/api/document-v2',
       action: 'confirmModal',
       resources: input.id,
-      meta: { confirmed: input.confirmed },
+      meta: { confirmed: input.confirmed, isCourtCase: true },
     })
     this.logger.info('confirming urgent document modal', {
       category: LOG_CATEGORY,
       id: input.id,
       confirmed: input.confirmed,
+      isCourtCase: true,
     })
     return { id: input.id, confirmed: input.confirmed }
   }
@@ -150,19 +155,22 @@ export class DocumentResolverV2 {
       namespace: '@island.is/api/document-v2',
       action: 'pdfRenderer',
       resources: input.id,
-      meta: { success: input.success },
+      meta: { success: input.success, isCourtCase: input.isCourtCase },
     })
     if (!input.success) {
       this.logger.error('failed to render document pdf', {
         category: LOG_CATEGORY,
         id: input.id,
         success: input.success,
+        error: input.error,
+        isCourtCase: input.isCourtCase,
       })
-    } else {
-      this.logger.info('rendered document pdf', {
+    } else if (input.isCourtCase) {
+      this.logger.info('succesfully rendered courtcase document pdf', {
         category: LOG_CATEGORY,
         id: input.id,
         success: input.success,
+        isCourtCase: input.isCourtCase,
       })
     }
 

@@ -36,6 +36,8 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
     // Size of PDF Canvas
   }, [ref.current?.querySelectorAll('canvas')?.[0]?.width])
 
+  const isCourtCase = document.categoryId === '12' // Court case category ID
+
   return (
     <>
       <Box
@@ -105,12 +107,13 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
           scale={scalePDF}
           autoWidth={false}
           onLoadingError={(error) => {
-            console.error('PdfViewer loading error', error)
             pdfRendererQuery({
               variables: {
                 input: {
                   id: document.id,
                   success: false,
+                  error: error.message,
+                  isCourtCase: isCourtCase,
                 },
               },
             })
@@ -121,6 +124,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
                 input: {
                   id: document.id,
                   success: true,
+                  isCourtCase: isCourtCase,
                 },
               },
             })
