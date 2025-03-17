@@ -254,7 +254,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
   ${slices}
 `
 
-const organizationSubpageResponse = `
+const organizationSubpageFragment = `
+fragment OrganizationSubpageFragment {
   id
   title
   slug
@@ -286,24 +287,27 @@ const organizationSubpageResponse = `
     width
     height
   }
+}
 `
 
 export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
- query GetOrganizationSubpageById($input: GetOrganizationSubpageByIdInput!) {
+  query GetOrganizationSubpageById($input: GetOrganizationSubpageByIdInput!) {
     getOrganizationSubpageById(input: $input) {
-     ${organizationSubpageResponse}
+      ...OrganizationSubpageFragment
     }
   }
   ${slices}
+  ${organizationSubpageFragment}
 `
 
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
-     ${organizationSubpageResponse}
+      ...OrganizationSubpageFragment
     }
   }
   ${slices}
+  ${organizationSubpageFragment}
 `
 
 export const GET_ORGANIZATION_SERVICES_QUERY = gql`
