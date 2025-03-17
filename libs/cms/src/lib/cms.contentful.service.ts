@@ -707,7 +707,6 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ICustomPageFields>(input.lang, params)
       .catch(errorHandler('getAnchorPage'))
 
-    logger.info('result', result.items[0].fields.uniqueIdentifier)
     return (result.items as types.ICustomPage[]).map(mapCustomPage)[0] ?? null
   }
 
