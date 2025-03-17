@@ -19,7 +19,12 @@ import { core } from '@island.is/judicial-system-web/messages'
 
 import { CaseListEntry, CaseState } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
-import { directionType, sortableTableColumn, SortConfig } from '../../types'
+import {
+  directionType,
+  sortableFn,
+  sortableTableColumn,
+  SortConfig,
+} from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
@@ -35,7 +40,7 @@ interface TableProps {
   thead: {
     title: string
     sortBy?: sortableTableColumn
-    sortFn?: 'number' | 'courtCaseNumber'
+    sortFn?: sortableFn
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -63,10 +68,7 @@ export const useTable = () => {
     },
   )
 
-  const requestSort = (
-    column: sortableTableColumn,
-    sortFn?: 'number' | 'courtCaseNumber',
-  ) => {
+  const requestSort = (column: sortableTableColumn, sortFn?: 'number') => {
     let direction: directionType = 'ascending'
 
     if (
@@ -201,27 +203,24 @@ const Table: FC<TableProps> = (props) => {
       const toNumber = (value?: string | null): number =>
         Number(value?.replace(/\D/g, '') || '0')
 
+      const getSortableValue = (value?: string | null): number =>
+        toNumber(value) +
+        (!value || value.includes('R-') ? 0 : Number.MAX_SAFE_INTEGER)
+
       switch (sortFnName) {
         case 'number':
           return (a: CaseListEntry, b: CaseListEntry) => {
             const aValue = getColumnValue(a, sortConfig.column)
             const bValue = getColumnValue(b, sortConfig.column)
 
-            return sortConfig?.direction === 'ascending'
-              ? toNumber(aValue) - toNumber(bValue)
-              : toNumber(bValue) - toNumber(aValue)
-          }
-        case 'courtCaseNumber':
-          return (a: CaseListEntry, b: CaseListEntry) => {
-            const aValue = a.courtCaseNumber
-            const bValue = b.courtCaseNumber
-
-            const getSortableValue = (value?: string | null): number =>
-              toNumber(value) +
-              (!value || value.includes('R') ? 0 : Number.MAX_SAFE_INTEGER)
-
-            const sortableAValue = getSortableValue(aValue)
-            const sortableBValue = getSortableValue(bValue)
+            const sortableAValue =
+              sortConfig.column === 'courtCaseNumber'
+                ? getSortableValue(aValue)
+                : toNumber(aValue)
+            const sortableBValue =
+              sortConfig.column === 'courtCaseNumber'
+                ? getSortableValue(bValue)
+                : toNumber(bValue)
 
             return sortConfig?.direction === 'ascending'
               ? sortableAValue - sortableBValue
@@ -277,7 +276,7 @@ const Table: FC<TableProps> = (props) => {
         <tr>
           {thead.map((th) => (
             <th key={`${th}-${thead.indexOf(th)}`} className={styles.th}>
-              {th.sortBy ? (
+              {th.sortBy && data.length > 1 ? (
                 <SortButton
                   title={th.title}
                   onClick={() => {
