@@ -1,3 +1,0 @@
-mutation formSystemDeleteStep($input: FormSystemDeleteStepInput!) {
-  formSystemDeleteStep(input: $input)
-}
