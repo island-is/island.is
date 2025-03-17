@@ -1,5 +1,6 @@
 import { useIntl } from 'react-intl'
 
+import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
@@ -10,8 +11,13 @@ import {
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
 
-import { CustomScreen, withCustomSubpageWrapper } from '../CustomPage'
+import { OJOIWrapper } from '../../components/OfficialJournalOfIceland'
+import {
+  CustomScreen,
+  withCustomSubpageWrapper,
+} from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
 import { m } from './messages'
 
@@ -20,21 +26,17 @@ const OJOIHelpPage: CustomScreen<OJOIHelpProps> = ({
   locale,
   customPageData,
 }) => {
-  const { formatMessage } = useIntl()
-  const { linkResolver } = useLinkResolver()
-
-  const baseUrl = linkResolver('ojoihome', [], locale).href
-
-  const breadcrumbItems = [
-    {
-      title: formatMessage(m.breadcrumb.frontpage),
-      href: linkResolver('homepage', [], locale).href,
-    },
-  ]
-
-  console.log('data', customPageData)
-
-  return <p>HJÁLPARSÍÐA</p>
+  console.log(customPageData)
+  return (
+    <Box>
+      {customPageData &&
+        webRichText(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error make web strict
+          customPageData?.content as SliceType[],
+        )}
+    </Box>
+  )
 }
 
 interface OJOIHelpProps {
@@ -47,12 +49,32 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
   customPageData,
   locale,
 }) => {
+  const { formatMessage } = useIntl()
+  const { linkResolver } = useLinkResolver()
+
   return (
-    <OJOIHelpPage
-      locale={locale}
-      customPageData={customPageData}
-      organization={organization}
-    />
+    <OJOIWrapper
+      pageTitle={organization?.title ?? ''}
+      pageDescription={formatMessage(m.home.description)}
+      organization={organization ?? undefined}
+      pageFeaturedImage={formatMessage(m.home.featuredImage)}
+      breadcrumbItems={[
+        {
+          title: formatMessage(m.breadcrumb.frontpage),
+          href: linkResolver('homepage', [], locale).href,
+        },
+        {
+          title: formatMessage(m.breadcrumb.help),
+          href: linkResolver('ojoihelp', [], locale).href,
+        },
+      ]}
+    >
+      <OJOIHelpPage
+        locale={locale}
+        customPageData={customPageData}
+        organization={organization}
+      />
+    </OJOIWrapper>
   )
 }
 

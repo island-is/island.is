@@ -79,6 +79,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
     >
       <Stack space={SLICE_SPACING}>
         <OJOIHomeIntro
+          includeSearchInHeader
           organization={organization ?? undefined}
           searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
           searchUrl={searchUrl}

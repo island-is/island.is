@@ -6,6 +6,10 @@ export const m = {
       id: 'web.ojoi.breadcrumb.frontpage',
       defaultMessage: 'Ísland.is',
     },
+    help: {
+      id: 'web.ojoi.breadcrumb.help',
+      defaultMessage: 'Leiðbeiningar',
+    },
   }),
   general: defineMessages({
     seeMore: {
