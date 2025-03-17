@@ -146,6 +146,7 @@ export class CmsRepository {
           `Invalid field in input fields: ${inputField.key}`,
         )
       }
+
       if (!entry.fields[inputField.key]?.[LOCALE] && inputField.value) {
         logger.info(`Field not found in entry, updating...`, {
           inputField: inputField.key,
@@ -156,7 +157,7 @@ export class CmsRepository {
         entry.fields[inputField.key] = {
           [LOCALE]: inputField.value,
         }
-      } else if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
+      } else if (entry.fields[inputField.key]?.[LOCALE] !== inputField.value) {
         hasChanges = true
         entry.fields[inputField.key][LOCALE] = inputField.value
       }
