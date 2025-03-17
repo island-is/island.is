@@ -367,4 +367,10 @@ export const m = {
         'Í C-deild Stjórnartíðinda skal birta samninga við önnur ríki, svo og auglýsingar varðandi gildi þeirra, sbr. 1. mgr. 4. gr. laga nr. 15/2005.',
     },
   }),
+  help: defineMessages({
+    title: {
+      id: 'web.ojoi:help.title',
+      defaultMessage: 'Leiðbeiningar fyrir Stjórnartíðindi',
+    },
+  }),
 }

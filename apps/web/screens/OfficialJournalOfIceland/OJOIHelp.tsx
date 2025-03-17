@@ -16,7 +16,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { OJOIWrapper } from '../../components/OfficialJournalOfIceland'
 import {
   CustomScreen,
-  withCustomSubpageWrapper,
+  withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
 import { m } from './messages'
@@ -29,12 +29,11 @@ const OJOIHelpPage: CustomScreen<OJOIHelpProps> = ({
   console.log(customPageData)
   return (
     <Box>
-      {customPageData &&
-        webRichText(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error make web strict
-          customPageData?.content as SliceType[],
-        )}
+      {webRichText(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error make web strict
+        customPageData?.content as SliceType[],
+      )}
     </Box>
   )
 }
@@ -54,7 +53,7 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
 
   return (
     <OJOIWrapper
-      pageTitle={organization?.title ?? ''}
+      pageTitle={formatMessage(m.help.title)}
       pageDescription={formatMessage(m.home.description)}
       organization={organization ?? undefined}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
@@ -62,6 +61,10 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
         {
           title: formatMessage(m.breadcrumb.frontpage),
           href: linkResolver('homepage', [], locale).href,
+        },
+        {
+          title: formatMessage(m.home.title),
+          href: linkResolver('ojoihome', [], locale).href,
         },
         {
           title: formatMessage(m.breadcrumb.help),
@@ -108,8 +111,7 @@ OJOIHelp.getProps = async ({ apolloClient, locale }) => {
 }
 
 export default withMainLayout(
-  withCustomSubpageWrapper(
-    'leidbeiningar',
+  withCustomPageWrapper(
     CustomPageUniqueIdentifier.OfficialJournalOfIceland,
     OJOIHelp,
   ),

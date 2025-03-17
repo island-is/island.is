@@ -645,7 +645,7 @@ export class CmsResolver {
   async getCustomPage(
     @Args('input') input: GetCustomPageInput,
   ): Promise<CustomPage | null> {
-    return this.cmsElasticsearchService.getCustomPage(input)
+    return this.cmsContentfulService.getCustomPage(input)
   }
 
   @CacheControl(defaultCache)
