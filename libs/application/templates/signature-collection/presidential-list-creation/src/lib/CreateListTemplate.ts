@@ -8,9 +8,8 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from './constants'
+import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
@@ -113,11 +112,12 @@ const CreateListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
+          // Todo: add back when needed again
+          /*onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),
+          }),*/
           roles: [
             {
               id: Roles.APPLICANT,

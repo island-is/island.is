@@ -1,4 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { AddressModel } from './address.model'
 
 export enum OrganizationModelTypeEnum {
   ChildCare = 'childCare',
@@ -43,4 +44,7 @@ export class FriggOrganizationModel {
 
   @Field({ nullable: true })
   website?: string
+
+  @Field(() => AddressModel, { nullable: true })
+  address?: AddressModel
 }

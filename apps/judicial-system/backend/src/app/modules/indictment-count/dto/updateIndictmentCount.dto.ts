@@ -60,6 +60,12 @@ export class UpdateIndictmentCountDto {
   @IsArray()
   @IsEnum(IndictmentSubtype, { each: true })
   @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
+  readonly policeCaseNumberSubtypes?: IndictmentSubtype[]
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
   readonly indictmentCountSubtypes?: IndictmentSubtype[]
 
   @IsOptional()
