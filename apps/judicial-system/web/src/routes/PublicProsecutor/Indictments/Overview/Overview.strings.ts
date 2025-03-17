@@ -44,11 +44,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti fyrir staðfestingartakka þegar ákvörðun ríkissaksóknara er breytt.',
   },
-  verdictAppealDecisionTitle: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.verdict_appeal_decision_title',
-    defaultMessage: 'Afstaða dómfellda til dóms',
-    description: 'Notaður sem titill fyrir afstöðu dómfellda til dóms.',
-  },
   revokeAppeal: {
     id: 'judicial.system.core:public_prosecutor.indictments.revoke_appeal',
     defaultMessage: 'Afturkalla áfrýjun',

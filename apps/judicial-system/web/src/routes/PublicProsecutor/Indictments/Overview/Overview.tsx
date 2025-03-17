@@ -165,7 +165,7 @@ export const Overview = () => {
                 <Box component="section" marginBottom={2}>
                   <BlueBox>
                     <SectionHeading
-                      title={fm(strings.verdictAppealDecisionTitle)}
+                      title="Afstaða dómfellda til dóms"
                       heading="h4"
                       marginBottom={2}
                       required
