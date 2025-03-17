@@ -134,31 +134,27 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
-    ...(applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-      ? {
-          health: {
-            ...(hasFoodAllergiesOrIntolerances?.includes(YES)
-              ? {
-                  foodAllergiesOrIntolerances,
-                }
-              : {}),
-            ...(hasOtherAllergies?.includes(YES)
-              ? {
-                  allergies: otherAllergies,
-                }
-              : {}),
-            ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
-            hasOtherAllergies?.includes(YES)
-              ? {
-                  usesEpipen: usesEpiPen === YES,
-                }
-              : {}),
-            hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
-            requestsMedicationAdministration:
-              requestsMedicationAdministration === YES,
-          },
-        }
-      : {}),
+    health: {
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES)
+        ? {
+            foodAllergiesOrIntolerances,
+          }
+        : {}),
+      ...(hasOtherAllergies?.includes(YES)
+        ? {
+            allergies: otherAllergies,
+          }
+        : {}),
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
+      hasOtherAllergies?.includes(YES)
+        ? {
+            usesEpipen: usesEpiPen === YES,
+          }
+        : {}),
+      hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
+      requestsMedicationAdministration:
+        requestsMedicationAdministration === YES,
+    },
     social: {
       hasHadSupport: hasHadSupport === YES,
       hasDiagnoses: hasDiagnoses === YES,
