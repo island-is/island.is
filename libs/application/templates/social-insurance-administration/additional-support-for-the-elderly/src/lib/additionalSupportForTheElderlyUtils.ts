@@ -159,20 +159,20 @@ export const getAttachments = (application: Application) => {
   }
 
   const { answers } = application
-
+  
+  const {
+    additionalAttachments,
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
-
   const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
       : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
+    ...(additionalAttachmentsRequired &&
+    additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
       : []),
   ]
 
