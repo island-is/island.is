@@ -430,6 +430,7 @@ export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
       id
       title
       childLinks {
+        id
         label
         href
       }
