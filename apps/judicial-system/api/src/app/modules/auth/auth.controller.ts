@@ -166,18 +166,21 @@ export class AuthController {
         this.accessTokenCookie,
       ])
 
-      res
-        .cookie(
-          this.codeVerifierCookie.name,
-          codeVerifier,
-          this.codeVerifierCookie.options,
-        )
-        .cookie(
+      res.cookie(
+        this.codeVerifierCookie.name,
+        codeVerifier,
+        this.codeVerifierCookie.options,
+      )
+
+      if (userId || redirectRoute) {
+        res.cookie(
           this.redirectCookie.name,
-          { redirectRoute },
+          { userId, redirectRoute },
           this.redirectCookie.options,
         )
-        .redirect(loginUrl)
+      }
+
+      res.redirect(loginUrl)
     } catch (error) {
       this.logger.error('Login failed:', { error })
 
@@ -268,23 +271,27 @@ export class AuthController {
   @Get('activate/:userId')
   async activateUser(
     @Param('userId') userId: string,
-    @CurrentHttpUser() user: User,
     @EligibleHttpUsers() eligibleUsers: User[],
     @Res() res: Response,
     @Req() req: Request,
+    @CurrentHttpUser() user?: User,
   ) {
     try {
       this.logger.debug(`Received activate user ${userId} request`)
 
-      if (userId === user?.id) {
-        return this.redirect(res, user)
+      if (user && userId === user.id) {
+        this.redirect(res, user)
+
+        return
       }
 
-      const csrfToken = req.cookies[this.csrfCookie.name]
+      const csrfCookieToken = req.cookies[this.csrfCookie.name]
+      const csrfToken =
+        csrfCookieToken === 'undefined' ? undefined : csrfCookieToken
 
-      const userIdx = eligibleUsers.findIndex((user) => user.id === userId)
+      const currentUser = eligibleUsers.find((user) => user.id === userId)
 
-      if (userIdx < 0) {
+      if (!currentUser) {
         this.logger.info('Blocking illegal user activation attempt')
 
         await this.backendService.createEventLog({
@@ -301,11 +308,17 @@ export class AuthController {
         return
       }
 
+      // Use the optional redirect route only if a user has not yet been activated
+      // Note that at this point, the redirect cookie does not contain a user id
+      const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
+      const useRedirectRoute = !user
+
       this.redirectAuthorizeUser(
         eligibleUsers,
-        userIdx,
         res,
-        csrfToken === 'undefined' ? undefined : csrfToken,
+        currentUser,
+        csrfToken,
+        useRedirectRoute ? redirectRoute : undefined,
       )
     } catch (error) {
       this.logger.error('Login failed:', { error })
@@ -370,13 +383,19 @@ export class AuthController {
       return
     }
 
-    const currentUserIdx =
+    const currentUser =
       eligibleUsers.length === 1
-        ? 0
+        ? eligibleUsers[0]
         : userId
         ? // attempt to find the user with the given userId
-          eligibleUsers.findIndex((user) => user.id === userId)
-        : -1
+          eligibleUsers.find((user) => user.id === userId)
+        : undefined
+
+    // Use the redirect route if:
+    // - no user id accompanied the redirect route or
+    // - the accompanying user id matches the user being activated
+    const redirectRoute =
+      !userId || currentUser?.id === userId ? requestedRedirectRoute : undefined
 
     if (idToken) {
       res.cookie(this.idToken.name, idToken, {
@@ -389,23 +408,20 @@ export class AuthController {
 
     this.redirectAuthorizeUser(
       eligibleUsers,
-      currentUserIdx,
       res,
+      currentUser,
       csrfToken,
-      requestedRedirectRoute,
+      redirectRoute,
     )
   }
 
   private redirectAuthorizeUser(
     eligibleUsers: User[], // eligibleUsers is an array of one or more users
-    currentUserIdx: number,
     res: Response,
+    currentUser?: User,
     csrfToken?: string,
     requestedRedirectRoute?: string,
   ) {
-    const currentUser =
-      currentUserIdx < 0 ? undefined : eligibleUsers[currentUserIdx]
-
     if (currentUser) {
       this.backendService.createEventLog({
         eventType: csrfToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
@@ -418,12 +434,10 @@ export class AuthController {
     }
 
     const jwtToken = this.sharedAuthService.signJwt(
-      currentUserIdx,
       eligibleUsers,
+      currentUser,
       csrfToken,
     )
-
-    this.clearCookies(res, [this.codeVerifierCookie, this.redirectCookie])
 
     res
       .cookie(
@@ -443,7 +457,7 @@ export class AuthController {
   }
 
   private getRedirectRouteForUser(
-    currentUser?: User,
+    currentUser: User,
     requestedRedirectRoute?: string,
   ) {
     const getRedirectRoute = (
@@ -456,10 +470,6 @@ export class AuthController {
         )
         ? requestedRedirectRoute
         : defaultRoute
-    }
-
-    if (!currentUser) {
-      return '/'
     }
 
     if (isProsecutionUser(currentUser)) {
@@ -519,20 +529,32 @@ export class AuthController {
     currentUser?: User,
     requestedRedirectRoute?: string,
   ) {
-    const redirectRoute = this.getRedirectRouteForUser(
-      currentUser,
-      requestedRedirectRoute,
-    )
-
-    const ret = res.redirect(redirectRoute)
+    this.clearCookies(res, [this.codeVerifierCookie])
 
     if (currentUser) {
+      this.clearCookies(res, [this.redirectCookie])
+
+      const redirectRoute = this.getRedirectRouteForUser(
+        currentUser,
+        requestedRedirectRoute,
+      )
+
       this.auditTrailService.audit(
         currentUser.id,
         AuditedAction.LOGIN,
-        ret,
+        res.redirect(redirectRoute),
         currentUser.id,
       )
+
+      return
     }
+
+    res
+      .cookie(
+        this.redirectCookie.name,
+        { redirectRoute: requestedRedirectRoute },
+        this.redirectCookie.options,
+      )
+      .redirect('/')
   }
 }
