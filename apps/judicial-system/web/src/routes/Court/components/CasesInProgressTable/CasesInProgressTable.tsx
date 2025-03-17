@@ -28,7 +28,6 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
-  useTable,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
@@ -56,7 +55,6 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
   const { getCase } = useContext(FormContext)
-  const { sortConfig } = useTable()
   const [caseToCancelId, setCaseToCancelId] = useState<string>()
   const [caseToCancel, setCaseToCancel] = useState<Case>()
   const { updateCase, isUpdatingCase, transitionCase, isTransitioningCase } =
@@ -112,24 +110,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                 {
                   title: formatMessage(tables.caseNumber),
                   sortBy: 'courtCaseNumber',
-                  sortFn: (a: CaseListEntry, b: CaseListEntry) => {
-                    const aa = a.courtCaseNumber?.replace(/\D/g, '') || '0'
-                    const bb = b.courtCaseNumber?.replace(/\D/g, '') || '0'
-                    const aaa =
-                      Number(aa) +
-                      (!a.courtCaseNumber || a.courtCaseNumber?.includes('R')
-                        ? 0
-                        : Number.MAX_SAFE_INTEGER)
-                    const bbb =
-                      Number(bb) +
-                      (!b.courtCaseNumber || b.courtCaseNumber?.includes('R')
-                        ? 0
-                        : Number.MAX_SAFE_INTEGER)
-
-                    return sortConfig?.direction === 'ascending'
-                      ? aaa - bbb
-                      : bbb - aaa
-                  },
+                  sortFn: 'courtCaseNumber',
                 },
                 {
                   title: capitalize(

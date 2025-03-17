@@ -35,7 +35,7 @@ interface TableProps {
   thead: {
     title: string
     sortBy?: sortableTableColumn
-    sortFn?: (a: CaseListEntry, b: CaseListEntry) => number
+    sortFn?: 'number' | 'courtCaseNumber'
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -65,7 +65,7 @@ export const useTable = () => {
 
   const requestSort = (
     column: sortableTableColumn,
-    sortFn?: (a: CaseListEntry, b: CaseListEntry) => number,
+    sortFn?: 'number' | 'courtCaseNumber',
   ) => {
     let direction: directionType = 'ascending'
 
@@ -77,7 +77,7 @@ export const useTable = () => {
       direction = 'descending'
     }
 
-    setSortConfig({ column, direction, sortFn: sortFn?.toString() })
+    setSortConfig({ column, direction, sortFn })
   }
 
   const getClassNamesFor = (name: sortableTableColumn) => {
@@ -187,15 +187,49 @@ const Table: FC<TableProps> = (props) => {
             : entry.courtCaseNumber ?? ''
         case 'state':
           return mapCaseStateToTagVariant(formatMessage, entry).text
+        case 'policeCaseNumbers':
+          return entry.policeCaseNumbers?.[0] ?? ''
         default:
           return entry[column]?.toString() ?? ''
       }
     }
 
-    if (sortConfig) {
-      const sortFn = sortConfig.sortFn
-        ? eval(`(${sortConfig.sortFn})`)
-        : (a: CaseListEntry, b: CaseListEntry) => {
+    const getSortFn = (
+      sortConfig: SortConfig,
+      sortFnName?: string,
+    ): ((a: CaseListEntry, b: CaseListEntry) => number) => {
+      switch (sortFnName) {
+        case 'number':
+          return (a: CaseListEntry, b: CaseListEntry) => {
+            const aa =
+              getColumnValue(a, sortConfig.column)?.replace(/\D/g, '') || '0'
+            const bb =
+              getColumnValue(b, sortConfig.column)?.replace(/\D/g, '') || '0'
+            const aaa = Number(aa)
+            const bbb = Number(bb)
+
+            return sortConfig?.direction === 'ascending' ? aaa - bbb : bbb - aaa
+          }
+        case 'courtCaseNumber':
+          return (a: CaseListEntry, b: CaseListEntry) => {
+            const aa = a.courtCaseNumber?.replace(/\D/g, '') || '0'
+            const bb = b.courtCaseNumber?.replace(/\D/g, '') || '0'
+
+            const aaa =
+              Number(aa) +
+              (!a.courtCaseNumber || a.courtCaseNumber?.includes('R')
+                ? 0
+                : Number.MAX_SAFE_INTEGER)
+            const bbb =
+              Number(bb) +
+              (!b.courtCaseNumber || b.courtCaseNumber?.includes('R')
+                ? 0
+                : Number.MAX_SAFE_INTEGER)
+
+            return sortConfig?.direction === 'ascending' ? aaa - bbb : bbb - aaa
+          }
+        default:
+          return (a: CaseListEntry, b: CaseListEntry) => {
             const compareResult = compareLocaleIS(
               getColumnValue(a, sortConfig.column),
               getColumnValue(b, sortConfig.column),
@@ -204,6 +238,11 @@ const Table: FC<TableProps> = (props) => {
               ? compareResult
               : -compareResult
           }
+      }
+    }
+
+    if (sortConfig) {
+      const sortFn = getSortFn(sortConfig, sortConfig.sortFn)
 
       data.sort(sortFn)
     }
