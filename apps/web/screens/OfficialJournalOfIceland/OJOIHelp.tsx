@@ -1,14 +1,13 @@
 import { useIntl } from 'react-intl'
 
+import { SliceType } from '@island.is/island-ui/contentful'
 import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   Query,
   QueryGetOrganizationArgs,
-  Slice,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -57,7 +56,7 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
         },
       ]}
     >
-      <Box>{webRichText(customPageData?.content as Slice[])}</Box>
+      <Box>{webRichText((customPageData?.content ?? []) as SliceType[])}</Box>
     </OJOIWrapper>
   )
 }
