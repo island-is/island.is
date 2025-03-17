@@ -1,42 +1,27 @@
-import { ComponentType } from 'react'
 import { IntlProvider } from 'react-intl'
 
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
-  CustomPage,
   CustomPageUniqueIdentifier,
   Query,
-  QueryGetCustomPageArgs,
+  QueryGetCustomSubpageArgs,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_CUSTOM_PAGE_QUERY } from '@island.is/web/screens/queries/CustomPage'
-import { Screen, ScreenContext } from '@island.is/web/types'
+import { GET_CUSTOM_SUBPAGE_QUERY } from '@island.is/web/screens/queries/CustomPage'
+import { Screen } from '@island.is/web/types'
 
-interface CustomScreenContext extends ScreenContext {
-  customPageData: CustomPageWrapperProps['customPageData']
-}
+import { CustomPageWrapperProps, CustomScreen } from './CustomPageWrapper'
 
-export type CustomScreen<Props> = ComponentType<
-  Props & { customPageData: CustomPageWrapperProps['customPageData'] }
-> & {
-  getProps?: (ctx: CustomScreenContext) => Promise<Props>
-}
-
-export interface CustomPageWrapperProps {
-  customPageData?: CustomPage | null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  pageProps: any
-}
-
-export const withCustomPageWrapper = <Props,>(
-  uniqueIdentifier: CustomPageUniqueIdentifier,
+export const withCustomSubpageWrapper = <Props,>(
+  pageSlug: string,
+  parentPageId: CustomPageUniqueIdentifier,
   Component: CustomScreen<
     Props & {
       customPageData?: CustomPageWrapperProps['customPageData']
     }
   >,
 ) => {
-  const CustomPageWrapper: Screen<CustomPageWrapperProps> = ({
+  const CustomSubpageWrapper: Screen<CustomPageWrapperProps> = ({
     customPageData,
     pageProps,
   }) => {
@@ -59,18 +44,19 @@ export const withCustomPageWrapper = <Props,>(
     )
   }
 
-  CustomPageWrapper.getProps = async (context) => {
+  CustomSubpageWrapper.getProps = async (context) => {
     const [
       {
-        data: { getCustomPage: customPageData },
+        data: { getCustomSubpage: customPageData },
       },
     ] = await Promise.all([
-      context.apolloClient.query<Query, QueryGetCustomPageArgs>({
-        query: GET_CUSTOM_PAGE_QUERY,
+      context.apolloClient.query<Query, QueryGetCustomSubpageArgs>({
+        query: GET_CUSTOM_SUBPAGE_QUERY,
         variables: {
           input: {
             lang: context.locale,
-            uniqueIdentifier,
+            slug: pageSlug,
+            parentPageId,
           },
         },
       }),
@@ -88,5 +74,5 @@ export const withCustomPageWrapper = <Props,>(
     }
   }
 
-  return CustomPageWrapper
+  return CustomSubpageWrapper
 }
