@@ -443,12 +443,14 @@ export class DrivingLicenseService {
     districtId: number
     token: string
     stolenOrLost: boolean
+    pickUpLicense: boolean
   }): Promise<number> {
-    const { districtId, token, stolenOrLost } = params
+    const { districtId, token, stolenOrLost, pickUpLicense } = params
     return await this.drivingLicenseApi.postApplicationNewCollaborative({
       districtId,
       stolenOrLost,
       token,
+      pickUpLicense,
     })
   }
 
@@ -480,7 +482,7 @@ export class DrivingLicenseService {
         jurisdictionId: input.jurisdictionId,
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
-        sendLicenseInMail: false,
+        sendLicenseInMail: input.sendLicenseInMail,
         email: input.email,
         phone: input.phone,
         auth,
@@ -502,7 +504,7 @@ export class DrivingLicenseService {
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
-      sendLicenseInMail: false,
+      sendLicenseInMail: input.sendLicenseInMail,
       sendLicenseToAddress: '',
     })
 

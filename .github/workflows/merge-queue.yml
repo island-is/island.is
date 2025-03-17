@@ -224,6 +224,7 @@ jobs:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

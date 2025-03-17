@@ -1,13 +1,5 @@
 import { z } from 'zod'
 import { m } from './messages'
-import * as nationalId from 'kennitala'
-
-const nationalIdAndName = z.object({
-  name: z.string(),
-  nationalId: z.string().refine((v) => nationalId.isPerson(v), {
-    params: m.nationalIdValidationError,
-  }),
-})
 
 export const dataSchema = z.object({
   /* Gagnaöflun */
@@ -34,26 +26,6 @@ export const dataSchema = z.object({
   constituency: z.array(z.string()).refine((arr) => arr.length >= 1, {
     params: m.constituencyValidationError,
   }),
-
-  /* Ábýrgðaraðilar */
-  managers: z.array(
-    z.object({
-      manager: nationalIdAndName,
-      constituency: z.string().refine((v) => v.length >= 1, {
-        params: m.constituencyValidationError,
-      }),
-    }),
-  ),
-
-  /* Umsjónaraðilar */
-  supervisors: z.array(
-    z.object({
-      supervisor: nationalIdAndName,
-      constituency: z.array(z.string()).refine((v) => v.length >= 1, {
-        params: m.constituencyValidationError,
-      }),
-    }),
-  ),
 })
 
 export type ParliamentaryCreateListSchema = z.TypeOf<typeof dataSchema>

@@ -1,6 +1,15 @@
-import { buildDividerField, buildMultiField, buildOverviewField, buildSection, getValueViaPath } from "@island.is/application/core"
-import { m } from "../../lib/messages"
-import { formatPhoneNumber, removeCountryCode } from "@island.is/application/ui-components"
+import {
+  buildDividerField,
+  buildMultiField,
+  buildOverviewField,
+  buildSection,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { m } from '../../lib/messages'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const overview = buildSection({
   id: 'overview',
@@ -20,14 +29,12 @@ export const overview = buildSection({
             {
               width: 'full',
               keyText: m.listMunicipality,
-              valueText:
-                getValueViaPath(answers, 'list.municipality') ?? '',
+              valueText: getValueViaPath(answers, 'list.municipality') ?? '',
             },
             {
               width: 'full',
               keyText: m.listName,
-              valueText:
-                getValueViaPath(answers, 'list.name') ?? '',
+              valueText: getValueViaPath(answers, 'list.name') ?? '',
             },
           ],
         }),
@@ -40,15 +47,12 @@ export const overview = buildSection({
             {
               width: 'half',
               keyText: m.nationalId,
-              valueText:
-                getValueViaPath(answers, 'applicant.nationalId') ??
-                '',
+              valueText: getValueViaPath(answers, 'applicant.nationalId') ?? '',
             },
             {
               width: 'half',
               keyText: m.name,
-              valueText:
-                getValueViaPath(answers, 'applicant.name') ?? '',
+              valueText: getValueViaPath(answers, 'applicant.name') ?? '',
             },
             {
               width: 'half',
@@ -62,8 +66,7 @@ export const overview = buildSection({
             {
               width: 'half',
               keyText: m.email,
-              valueText:
-                getValueViaPath(answers, 'applicant.email') ?? '',
+              valueText: getValueViaPath(answers, 'applicant.email') ?? '',
             },
           ],
         }),

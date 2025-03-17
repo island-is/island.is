@@ -90,6 +90,8 @@
 /libs/application/templates/signature-collection/parliamentary-list-signing                               @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-creation                               @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-signing                                @island-is/juni
+/libs/application/templates/signature-collection/municipal-list-creation                                  @island-is/juni
+/libs/application/templates/signature-collection/municipal-list-signing                                   @island-is/juni
 /libs/api/domains/disability-license                                                                      @island-is/juni
 /libs/portals/admin/petition                                                                              @island-is/juni
 /libs/portals/admin/signature-collection                                                                  @island-is/juni
@@ -306,6 +308,8 @@ codemagic.yaml                                                                  
 /libs/clients/ultraviolet-radiation/                                                                      @island-is/stefna
 /libs/clients/ums-cost-of-living-calculator/                                                              @island-is/stefna
 /libs/api/domains/umbodsmadur-skuldara/                                                                   @island-is/stefna
+/libs/api/domains/verdicts/                                                                               @island-is/stefna
+/libs/clients/verdicts/                                                                                   @island-is/stefna
 
 /libs/island-ui/                                                                                          @island-is/island-ui
 
@@ -313,6 +317,8 @@ codemagic.yaml                                                                  
 /apps/services/form-system/                                                                               @island-is/advania
 /libs/clients/consultation-portal/                                                                        @island-is/advania
 /libs/api/domains/consultation-portal/                                                                    @island-is/advania
+/libs/api/domains/form-system                                                                             @island-is/advania
+/libs/portals/admin/form-system                                                                           @island-is/advania
 
 /apps/skilavottord/                                                                                       @island-is/deloitte
 /libs/skilavottord/                                                                                       @island-is/deloitte
@@ -340,7 +346,7 @@ codemagic.yaml                                                                  
 /apps/services/sessions/                                                                                  @island-is/fuglar @island-is/aranja
 /apps/auth-admin-web/                                                                                     @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                       @island-is/fuglar @island-is/aranja
-/libs/auth-api-lib/seeders/                                                                               @island-is/fuglar @island-is/aranja @island-is/origo-auth
+/libs/auth-api-lib/seeders/                                                                               @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                    @island-is/fuglar @island-is/aranja
 /libs/application/templates/european-health-insurance-card/                                               @island-is/fuglar
 /libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/          @island-is/fuglar
