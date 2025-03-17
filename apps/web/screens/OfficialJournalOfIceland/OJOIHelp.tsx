@@ -23,22 +23,6 @@ import {
 import { GET_ORGANIZATION_QUERY } from '../queries'
 import { m } from './messages'
 
-const OJOIHelpPage: CustomScreen<OJOIHelpProps> = ({
-  organization,
-  locale,
-  customPageData,
-}) => {
-  return (
-    <Box marginTop={SLICE_SPACING}>
-      {webRichText(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error make web strict
-        customPageData?.content as Slice[],
-      )}
-    </Box>
-  )
-}
-
 interface OJOIHelpProps {
   organization?: Query['getOrganization']
   locale: Locale
@@ -73,11 +57,9 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
         },
       ]}
     >
-      <OJOIHelpPage
-        locale={locale}
-        customPageData={customPageData}
-        organization={organization}
-      />
+      <Box marginTop={SLICE_SPACING}>
+        {webRichText(customPageData?.content as Slice[])}
+      </Box>
     </OJOIWrapper>
   )
 }
