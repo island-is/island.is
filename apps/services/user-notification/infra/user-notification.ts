@@ -197,7 +197,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .namespace(serviceName)
     .serviceAccount(serviceBirthdayWorkerName)
     .codeOwner(CodeOwners.Juni)
-    .db({ name: 'user-notifaction' })
+    .db({ name: 'user-notification' })
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=birthday')
     .redis()
