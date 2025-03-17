@@ -370,6 +370,60 @@ applicationTest.describe('New primary school', () => {
         await proceed()
       })
 
+      await applicationTest.step('Allergies and intolerances', async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds
+                .allergiesAndIntolerancesSubSectionTitle,
+            ),
+          }),
+        ).toBeVisible()
+
+        await page
+          .getByRole('checkbox', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds
+                .hasFoodAllergiesOrIntolerances,
+            ),
+          })
+          .click()
+        await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
+        await page
+          .getByTestId(
+            'select-allergiesAndIntolerances.foodAllergiesOrIntolerances',
+          )
+          .click()
+        await page.keyboard.press('Enter')
+        await page.keyboard.press('Enter')
+        await page
+          .getByTestId(
+            'select-allergiesAndIntolerances.foodAllergiesOrIntolerances',
+          )
+          .click()
+
+        await page
+          .getByRole('checkbox', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
+            ),
+          })
+          .click()
+        await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
+        await page
+          .getByTestId('select-allergiesAndIntolerances.otherAllergies')
+          .click()
+        await page.keyboard.press('Enter')
+        await page
+          .getByTestId('select-allergiesAndIntolerances.otherAllergies')
+          .click()
+
+        await page.getByTestId('uses-epi-pen').click()
+        await page.getByTestId('has-confirmed-medical-diagnoses').click()
+        await page.getByTestId('requests-medication-administration').click()
+        await proceed()
+      })
+
       await applicationTest.step('Support', async () => {
         await expect(
           page.getByRole('heading', {
