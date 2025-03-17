@@ -68,7 +68,7 @@ export const useTable = () => {
     },
   )
 
-  const requestSort = (column: sortableTableColumn, sortFn?: 'number') => {
+  const requestSort = (column: sortableTableColumn, sortFn?: sortableFn) => {
     let direction: directionType = 'ascending'
 
     if (
@@ -198,7 +198,7 @@ const Table: FC<TableProps> = (props) => {
 
     const getSortFn = (
       sortConfig: SortConfig,
-      sortFnName?: string,
+      sortFnName?: sortableFn,
     ): ((a: CaseListEntry, b: CaseListEntry) => number) => {
       const toNumber = (value?: string | null): number =>
         Number(value?.replace(/\D/g, '') || '0')
