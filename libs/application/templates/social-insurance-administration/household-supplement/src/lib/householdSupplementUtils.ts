@@ -143,11 +143,6 @@ export const getApplicationExternalData = (
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
-  const currencies = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationCurrencies.data',
-  ) as Array<string>
-
   const eligible = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -184,7 +179,6 @@ export const getApplicationExternalData = (
     bankInfo,
     userProfileEmail,
     userProfilePhoneNumber,
-    currencies,
     eligible,
     spouseName,
     spouseNationalId,

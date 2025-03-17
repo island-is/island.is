@@ -1,6 +1,5 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
-  BankAccountType,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -129,11 +128,6 @@ export const getApplicationExternalData = (
     'userProfile.data.email',
   ) as string
 
-  const currencies = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationCurrencies.data',
-  ) as Array<string>
-
   const isEligible = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -147,9 +141,49 @@ export const getApplicationExternalData = (
     hasSpouse,
     userProfileEmail,
     bankInfo,
-    currencies,
     isEligible,
   }
+}
+
+export const getAttachments = (application: Application) => {
+  const getAttachmentDetails = (
+    attachmentsArr: FileType[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+
+  const attachments: Attachments[] = []
+
+  const additionalInfo =
+    answers.fileUploadAdditionalFiles as AdditionalInformation
+
+  const additionalDocuments = [
+    ...(additionalInfo.additionalDocuments &&
+    additionalInfo.additionalDocuments?.length > 0
+      ? additionalInfo.additionalDocuments
+      : []),
+    ...(additionalInfo.additionalDocumentsRequired &&
+    additionalInfo.additionalDocumentsRequired?.length > 0
+      ? additionalInfo.additionalDocumentsRequired
+      : []),
+  ]
+
+  if (additionalDocuments.length > 0) {
+    getAttachmentDetails(
+      additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
+  }
+
+  return attachments
 }
 
 // returns available years. Available period is

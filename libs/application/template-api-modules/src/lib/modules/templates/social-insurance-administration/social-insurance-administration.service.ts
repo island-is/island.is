@@ -218,7 +218,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     application: Application,
   ): Promise<Attachment[]> {
     const {
-      additionalAttachments,
       schoolConfirmationAttachments,
       leaseAgreementAttachments,
       householdSupplementChildren,
@@ -226,16 +225,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     } = getHSApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
-
-    if (additionalAttachments && additionalAttachments.length > 0) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.OTHER,
-          additionalAttachments,
-        )),
-      )
-    }
 
     if (
       schoolConfirmationAttachments &&
