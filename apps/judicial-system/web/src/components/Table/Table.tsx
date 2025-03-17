@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  PropsWithChildren,
-  ReactNode,
-  SetStateAction,
-  useMemo,
-} from 'react'
+import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -94,7 +87,7 @@ export const useTable = () => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  return { requestSort, getClassNamesFor, sortConfig, setSortConfig }
+  return { requestSort, getClassNamesFor, sortConfig }
 }
 
 const Table: FC<TableProps> = (props) => {
@@ -252,7 +245,6 @@ const Table: FC<TableProps> = (props) => {
                 <SortButton
                   title={th.title}
                   onClick={() => {
-                    console.log(th)
                     th.sortBy && requestSort(th.sortBy, th.sortFn)
                   }}
                   sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
