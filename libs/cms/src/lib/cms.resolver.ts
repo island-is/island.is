@@ -52,7 +52,10 @@ import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { ErrorPage } from './models/errorPage.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
-import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
+import {
+  GetOrganizationSubpageByIdInput,
+  GetOrganizationSubpageInput,
+} from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { OrganizationPage } from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
@@ -264,6 +267,17 @@ export class CmsResolver {
     return this.cmsContentfulService.getOrganizationSubpage(
       input.organizationSlug,
       input.slug,
+      input.lang,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationSubpage, { nullable: true })
+  async getOrganizationSubpageById(
+    @Args('input') input: GetOrganizationSubpageByIdInput,
+  ): Promise<OrganizationSubpage | null> {
+    return this.cmsContentfulService.getOrganizationSubpageById(
+      input.id,
       input.lang,
     )
   }
