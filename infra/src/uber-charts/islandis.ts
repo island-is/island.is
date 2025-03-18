@@ -113,8 +113,6 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const paymentsService = paymentsServiceSetup()
-
 const formSystemApi = formSystemApiSetup()
 
 const api = apiSetup({
@@ -160,7 +158,8 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
 const unicornApp = unicornAppSetup()
 
@@ -284,7 +283,7 @@ export const Services: EnvironmentServices = {
     paymentsService,
     bffServicePortalService,
     unicornApp,
-    formSystemApi
+    formSystemApi,
   ],
 }
 
