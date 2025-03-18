@@ -13,6 +13,7 @@ import {
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericLicenseType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
@@ -25,6 +26,7 @@ import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { formatPhoto } from '../utils/formatPhoto'
 
 const APP_VERSION_CUTOFF = '1.4.7'
 
@@ -175,7 +177,10 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                 description: [
                   { text: formatMessage(m.yourFirearmLicenseDescription) },
                 ],
-                photo: t.licenseInfo?.licenseImgBase64 ?? undefined,
+                photo: formatPhoto(
+                  t.licenseInfo?.licenseImgBase64,
+                  GenericLicenseType.FirearmLicense,
+                ),
               },
             },
           }
