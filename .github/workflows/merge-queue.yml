@@ -188,7 +188,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    runs-on: arc-runners
+    runs-on: arc-docker
     steps:
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
@@ -224,7 +224,7 @@ jobs:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
-      
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -238,7 +238,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -267,7 +267,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-docker
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -288,11 +288,10 @@ jobs:
       - name: Check post-build success
         run: '[[ ${{ needs.post-docker-build.result }} != "failure" ]] || exit 1'
 
-
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-runners
+    runs-on: arc-docker
     env:
       CHECK: 'false'
     steps:
