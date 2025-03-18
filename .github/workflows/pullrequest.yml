@@ -54,7 +54,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -85,7 +85,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     env:
       CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -136,7 +136,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -165,7 +165,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 15
     steps:
       - name: checkout
@@ -198,7 +198,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -228,7 +228,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -254,7 +254,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-test
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -277,7 +277,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-test
     if: ${{ !cancelled() }}
     needs:
       - prepare

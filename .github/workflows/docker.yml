@@ -83,7 +83,7 @@ jobs:
   prepare:
     name: Prepare
     if: ${{ github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci debug') }}
-    runs-on: 'arc-runners'
+    runs-on: 'arc-test'
     outputs:
       build-matrix: ${{ steps.build-matrix.outputs.matrix }}
       deps-matrix: ${{ steps.deps-matrix.outputs.matrix }}
@@ -177,7 +177,7 @@ jobs:
 
   codegen:
     name: Codegen
-    runs-on: arc-runners
+    runs-on: arc-test
     needs: prepare
     steps:
       - uses: actions/checkout@v4
@@ -214,7 +214,7 @@ jobs:
 
   deps:
     name: Docker-build dependencies
-    runs-on: arc-runners
+    runs-on: arc-test
     needs: prepare
     strategy:
       fail-fast: true
@@ -281,7 +281,7 @@ jobs:
 
   build:
     name: Docker-build ${{ matrix.project }}
-    runs-on: arc-runners
+    runs-on: arc-test
     needs:
       - prepare
       - deps
