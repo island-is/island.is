@@ -3,7 +3,6 @@ import { ConfigModule } from '@island.is/nest/config'
 import {
   FinancialStatementsInaoClientConfig,
   FinancialStatementsInaoClientModule,
-  FinancialStatementsInaoClientService,
 } from '@island.is/clients/financial-statements-inao'
 import { FinancialStatementCemeteryResolver } from './financialStatementCemetery.resolver'
 
