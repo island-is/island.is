@@ -8,6 +8,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ARE_INDIVIDUALS_VALID_QUERY } from '../graphql/queries'
 import { ParticipantWithValidation } from '../shared/types'
+import { participants as participantMessages } from '../lib/messages'
 
 export const submitTableForm = async (
   application: Application,
@@ -47,6 +48,14 @@ export const submitTableForm = async (
         (z: SeminarsIndividualValidationItem) =>
           z.nationalID === x.nationalIdWithName.nationalId,
       )
+      if (participantInRes.length === 0) {
+        return {
+          ...x,
+          disabled: true,
+          errorMessage: 'Ógild gögn',
+          errorMessageEn: 'Ógild gögn',
+        }
+      }
       return {
         ...x,
         disabled: !participantInRes[0].mayTakeCourse,
