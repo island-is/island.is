@@ -15,14 +15,14 @@ export const informationCardSubSection = buildSubSection({
         buildInformationFormField({
           paddingX: 3,
           paddingY: 3,
-          items: () => {
+          items: (application, field, locale) => {
             return [
               {
-                label: 'Test label 1',
+                label: locale === 'is' ? 'Test label is 1' : 'Test label en 1',
                 value: 'Test value 1',
               },
               {
-                label: 'Test label 2',
+                label: locale === 'is' ? 'Test label is 2' : 'Test label en 2',
                 value: 'Test value 2',
               },
             ]
