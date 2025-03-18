@@ -110,7 +110,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                 {
                   title: formatMessage(tables.caseNumber),
                   sortBy: 'courtCaseNumber',
-                  sortFn: 'courtCaseNumber',
+                  sortFn: 'number',
                 },
                 {
                   title: capitalize(
