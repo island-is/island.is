@@ -44,8 +44,8 @@ runs:
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
 
     - name: Yarn install
-      run: |
       shell: bash
+      run: |
         yarn install --immutable
 
     - name: Cache Dependencies
