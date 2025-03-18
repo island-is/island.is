@@ -24,7 +24,7 @@ type OtherAssetsRepeaterProps = {
 
 export const OtherAssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & OtherAssetsRepeaterProps>
-> = ({ application, field, errors }) => {
+> = ({ field, errors }) => {
   const { id, props } = field
 
   const { fields, append, remove } = useFieldArray<any>({

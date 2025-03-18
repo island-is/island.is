@@ -12,7 +12,6 @@ import {
 import { Answers, AssetFormField } from '../../types'
 
 import { m } from '../../lib/messages'
-import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalVehicle } from './AdditionalVehicle'
 import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'

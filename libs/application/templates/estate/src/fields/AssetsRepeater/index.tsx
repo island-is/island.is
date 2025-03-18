@@ -44,7 +44,7 @@ export const AssetsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors, setValue } = useFormContext()
+  const { control, clearErrors } = useFormContext()
 
   const estateData = getEstateDataFromApplication(application)
 

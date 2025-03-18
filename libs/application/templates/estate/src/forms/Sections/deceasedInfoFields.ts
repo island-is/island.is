@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
-import { format as formatKennitala } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { getEstateDataFromApplication, isEstateInfo } from '../../lib/utils'
 
 export const deceasedInfoFields = [
@@ -30,7 +30,7 @@ export const deceasedInfoFields = [
     value: (application) => {
       const data = getEstateDataFromApplication(application)
       return isEstateInfo(data)
-        ? formatKennitala(data.estate.nationalIdOfDeceased)
+        ? formatNationalId(data.estate.nationalIdOfDeceased)
         : ''
     },
     width: 'half',
