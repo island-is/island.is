@@ -6,6 +6,10 @@ inputs:
     description: 'Comma seperated string of paths to copy'
     default: ''
     required: false
+  branch:
+    description: 'Branch to push to'
+    default: 'main'
+    required: false
   ssh-key:
     description: 'SSH key so the action can fetch and push to the helm-values repository'
     required: true
@@ -28,7 +32,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: island-is/helm-values
-        ref: main
+        ref: ${{ inputs.branch }}
         token: ${{ steps.get-token.outputs.token }}
         path: helm-values
     - name: Copy affected helm charts from island.is repository to helm-values repository

@@ -21,4 +21,5 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   deleteApplication = 'deleteApplication',
   rejectApplication = 'rejectApplication',
+  initReview = 'initReview',
 }

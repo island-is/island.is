@@ -30,6 +30,7 @@ import {
   Events,
   ReasonForApplicationOptions,
   Roles,
+  SchoolType,
   States,
 } from './constants'
 import { dataSchema } from './dataSchema'
@@ -103,8 +104,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
-          'clearFreeSchoolMeal',
           'clearSupport',
+          'clearExpectedEndDate',
         ],
         meta: {
           name: States.DRAFT,
@@ -244,20 +245,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         return context
       }),
-      clearFreeSchoolMeal: assign((context) => {
-        const { application } = context
-        const { acceptFreeSchoolLunch, hasSpecialNeeds } =
-          getApplicationAnswers(application.answers)
-
-        if (acceptFreeSchoolLunch !== YES) {
-          unset(application.answers, 'freeSchoolMeal.hasSpecialNeeds')
-          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
-        }
-        if (hasSpecialNeeds !== YES) {
-          unset(application.answers, 'freeSchoolMeal.specialNeedsType')
-        }
-        return context
-      }),
       clearSupport: assign((context) => {
         const { application } = context
         const {
@@ -278,6 +265,24 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         }
         if (hasCaseManager !== YES) {
           unset(application.answers, 'support.caseManager')
+        }
+        return context
+      }),
+      clearExpectedEndDate: assign((context) => {
+        const { application } = context
+        const { selectedSchoolType, temporaryStay } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (selectedSchoolType !== SchoolType.INTERNATIONAL_SCHOOL) {
+          unset(application.answers, 'startingSchool.temporaryStay')
+          unset(application.answers, 'startingSchool.expectedEndDate')
+        }
+        if (
+          selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+          temporaryStay !== YES
+        ) {
+          unset(application.answers, 'startingSchool.expectedEndDate')
         }
         return context
       }),

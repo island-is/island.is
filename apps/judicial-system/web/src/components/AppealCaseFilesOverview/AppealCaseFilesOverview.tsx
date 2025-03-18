@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'

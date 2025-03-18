@@ -28,6 +28,7 @@ import {
   QualityPhotoAndSignatureApi,
   NewestDriversCardApi,
   NationalRegistryBirthplaceApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
@@ -70,7 +71,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DigitalTachographDriversCardForm/index').then(
+                import('../forms/digitalTachographDriversCardForm/index').then(
                   (module) =>
                     Promise.resolve(module.DigitalTachographDriversCardForm),
                 ),
@@ -87,6 +88,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 DrivingLicenseApi,
                 QualityPhotoAndSignatureApi,
                 NewestDriversCardApi,
@@ -129,7 +131,7 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Confirmation').then((val) =>
+                import('../forms/confirmation').then((val) =>
                   Promise.resolve(val.Confirmation),
                 ),
               read: 'all',

@@ -5,6 +5,7 @@ import {
   buildAlertMessageField,
   buildDescriptionField,
   YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
@@ -143,7 +144,10 @@ export const subSectionHealthDeclaration = buildSubSection({
           alertType: 'warning',
           condition: (answers) =>
             answers.applicationFor !== BE &&
-            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+            getValueViaPath(
+              answers,
+              'healthDeclaration.contactGlassesMismatch',
+            ) === true,
         }),
         //TODO: Remove when RLS/SGS supports health certificate in BE license
         buildDescriptionField({
@@ -154,6 +158,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
           alertType: 'warning',
           condition: (answers, externalData) =>
+            answers.applicationFor === BE &&
             needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
@@ -161,6 +166,7 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationMultiField65Description,
       condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       children: [
         buildDescriptionField({

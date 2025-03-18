@@ -24,13 +24,12 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'selectCandidateSection',
-      title: m.selectCandidate,
       condition: (_, externalData) => {
-        const lists = getValueViaPath(
-          externalData,
-          'getList.data',
-          [],
-        ) as SignatureCollectionList[]
+        const lists =
+          getValueViaPath<SignatureCollectionList[]>(
+            externalData,
+            'getList.data',
+          ) || []
         return lists.length > 1
       },
       children: [
@@ -44,12 +43,13 @@ export const Draft: Form = buildForm({
               backgroundColor: 'white',
               defaultValue: '',
               required: true,
-              options: ({
-                externalData: {
-                  getList: { data },
-                },
-              }) => {
-                return (data as SignatureCollectionList[]).map((list) => ({
+              options: ({ externalData }) => {
+                const data =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+                return data?.map((list) => ({
                   value: list.id,
                   label: list.title,
                   disabled:
@@ -76,7 +76,6 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'signeeInfo',
-      title: m.information,
       children: [
         buildMultiField({
           id: 'signeeInfo',
@@ -94,11 +93,11 @@ export const Draft: Form = buildForm({
               width: 'full',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
                 if (lists.length === 1) {
                   return lists[0].candidate.name

@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
@@ -140,6 +141,11 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
+    const nationalRegistryData = getValueViaPath<NationalRegistryIndividual>(
+      application.externalData,
+      'nationalRegistry.data',
+    )
+
     // Get values from answers
     const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
       application.answers,
@@ -162,6 +168,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
         id: application.id,
         nationalId: auth.nationalId,
         name: applicant?.name || '',
+        genderCode: nationalRegistryData?.genderCode,
         phone: applicant?.phoneNumber || '',
         email: applicant?.email || '',
         address: applicant?.address || '',

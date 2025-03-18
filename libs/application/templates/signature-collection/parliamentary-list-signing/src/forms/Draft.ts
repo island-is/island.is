@@ -25,11 +25,11 @@ export const Draft: Form = buildForm({
       id: 'selectCandidateSection',
       title: m.selectCandidate,
       condition: (_, externalData) => {
-        const lists = getValueViaPath(
-          externalData,
-          'getList.data',
-          [],
-        ) as SignatureCollectionList[]
+        const lists =
+          getValueViaPath<SignatureCollectionList[]>(
+            externalData,
+            'getList.data',
+          ) || []
         return lists.length > 1
       },
       children: [
@@ -42,12 +42,13 @@ export const Draft: Form = buildForm({
               id: 'listId',
               defaultValue: '',
               required: true,
-              options: ({
-                externalData: {
-                  getList: { data },
-                },
-              }) => {
-                return (data as SignatureCollectionList[]).map((list) => ({
+              options: ({ externalData }) => {
+                const data =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+                return data?.map((list) => ({
                   value: list.id,
                   label: list.candidate.name,
                   disabled:
@@ -93,11 +94,11 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
                 const initialQuery = getValueViaPath(
                   answers,
@@ -118,11 +119,11 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: ({ answers, externalData }: Application) => {
-                const lists = getValueViaPath(
-                  externalData,
-                  'getList.data',
-                  [],
-                ) as SignatureCollectionList[]
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
 
                 const initialQuery = getValueViaPath(
                   answers,

@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Box, toast } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'

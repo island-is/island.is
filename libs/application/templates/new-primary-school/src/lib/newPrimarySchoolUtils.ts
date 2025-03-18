@@ -20,8 +20,8 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
+  SchoolType,
 } from './constants'
-
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -83,21 +83,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'languages.guardianRequiresInterpreter',
   ) as YesOrNo
-
-  const acceptFreeSchoolLunch = getValueViaPath(
-    answers,
-    'freeSchoolMeal.acceptFreeSchoolLunch',
-  ) as YesOrNo
-
-  const hasSpecialNeeds = getValueViaPath(
-    answers,
-    'freeSchoolMeal.hasSpecialNeeds',
-  ) as YesOrNo
-
-  const specialNeedsType = getValueViaPath(
-    answers,
-    'freeSchoolMeal.specialNeedsType',
-  ) as string
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -196,7 +181,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
+  const selectedSchoolIdAndType = getValueViaPath(
+    answers,
+    'newSchool.school',
+  ) as string
+
+  // School type is piggybacked on the value like 'id::type'
+  const selectedSchool = selectedSchoolIdAndType
+    ? selectedSchoolIdAndType.split('::')[0]
+    : ''
+
+  const selectedSchoolType = getValueViaPath(
+    answers,
+    'newSchool.type',
+  ) as SchoolType
 
   const currentNurseryMunicipality = getValueViaPath(
     answers,
@@ -228,9 +226,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
-    acceptFreeSchoolLunch,
-    hasSpecialNeeds,
-    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -251,6 +246,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     expectedEndDate,
     schoolMunicipality,
     selectedSchool,
+    selectedSchoolType,
     currentNurseryMunicipality,
     currentNursery,
     applyForNeighbourhoodSchool,

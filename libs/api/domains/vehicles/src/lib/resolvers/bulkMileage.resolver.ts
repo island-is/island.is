@@ -9,11 +9,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
 import { BulkMileageService } from '../services/bulkMileage.service'
 import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'

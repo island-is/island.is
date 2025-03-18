@@ -68,6 +68,8 @@ const ORGANIZATION_SLUGS_WITH_DIGITAL_ICELAND_VISUALS = [
   'icelandic-police',
   'heilsugaesla-hofudborgarsvaedisins',
   'capital-area-health-care-centre',
+  'domstolar',
+  'the-courts',
 ]
 export const organizationHasDigitalIcelandNewsVisuals = (slug: string) => {
   return ORGANIZATION_SLUGS_WITH_DIGITAL_ICELAND_VISUALS.includes(slug)

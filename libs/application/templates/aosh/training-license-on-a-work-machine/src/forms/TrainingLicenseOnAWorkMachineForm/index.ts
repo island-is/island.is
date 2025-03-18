@@ -29,18 +29,6 @@ export const TrainingLicenseOnAWorkMachineForm: Form = buildForm({
       expandableHeader: conclusion.default.expandableHeader,
       expandableIntro: '',
       expandableDescription: conclusion.default.expandableDescription,
-      condition: (answers) => !isContractor(answers),
-    }),
-    buildFormConclusionSection({
-      sectionTitle: conclusion.general.sectionTitle,
-      multiFieldTitle: conclusion.general.title,
-      alertTitle: conclusion.approvedForApplicant.alertMessage,
-      alertMessage: '',
-      expandableHeader: conclusion.approvedForApplicant.expandableHeader,
-      expandableIntro: '',
-      expandableDescription:
-        conclusion.approvedForApplicant.expandableDescription,
-      condition: (answers) => isContractor(answers),
     }),
   ],
 })

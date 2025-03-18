@@ -39,7 +39,7 @@ export const Prerequisites: Form = buildForm({
               image: DigitalServices,
               imageWidth: 'auto',
               imagePosition: 'center',
-              marginTop: 'none',
+              marginTop: 'gutter',
             }),
           ],
         }),
@@ -78,13 +78,9 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CanSignApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: GetListApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),

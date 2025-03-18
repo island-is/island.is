@@ -17,6 +17,7 @@ import {
 import { m } from '../lib/messages'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import { MunicipalCollectionApi, MunicipalIdentityApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'createListPrerequisites',
@@ -38,6 +39,7 @@ export const Prerequisites: Form = buildForm({
               image: DigitalServices,
               imageWidth: 'auto',
               imagePosition: 'center',
+              marginTop: 'gutter',
             }),
           ],
         }),
@@ -74,7 +76,13 @@ export const Prerequisites: Form = buildForm({
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
-            //Todo: add more providers once known
+            //Todo: update providers once known
+            buildDataProviderItem({
+              provider: MunicipalCollectionApi,
+            }),
+            buildDataProviderItem({
+              provider: MunicipalIdentityApi,
+            }),
           ],
         }),
       ],

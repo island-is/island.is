@@ -235,8 +235,8 @@ const ThemePropertiesField = () => {
             center
           </Radio>
           <Radio
-            name="imageObjectFitRadio"
-            id="imageObjectFitRight"
+            name="imageObjectPositionRadio"
+            id="imageObjectPositionRight"
             value="right"
             isChecked={state.imageObjectPosition === 'right'}
             onChange={() => {

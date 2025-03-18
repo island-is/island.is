@@ -45,9 +45,5 @@ export const servicePortalScopes = [
   ApiScope.healthDentists,
   ApiScope.healthOrganDonation,
   ApiScope.healthVaccinations,
-  ApiScope.healthPrescriptions,
-  ApiScope.healthReferrals,
-  ApiScope.healthDispensations,
-  ApiScope.healthWaitingLists,
   ApiScope.signatureCollection,
 ]

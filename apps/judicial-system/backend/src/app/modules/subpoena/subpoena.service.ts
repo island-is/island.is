@@ -510,7 +510,7 @@ export class SubpoenaService {
       return subpoena
     }
 
-    if (subpoena.serviceStatus) {
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
       // The subpoena has already been served to the defendant
       return subpoena
     }

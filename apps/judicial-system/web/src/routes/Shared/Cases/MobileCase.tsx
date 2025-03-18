@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {

@@ -1,10 +1,11 @@
-import { formatText, formatTextWithLocale } from '@island.is/application/core'
+import { formatTextWithLocale } from '@island.is/application/core'
 import { AlertMessage, Box, Text, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { Markdown } from '@island.is/shared/components'
 import { AlertMessageField, FieldBaseProps } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: AlertMessageField
@@ -15,6 +16,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
 }) => {
   const { formatMessage, lang: locale } = useLocale()
+  const { getValues } = useFormContext()
   return (
     <Box
       marginTop={field.marginTop ?? 2}
@@ -36,7 +38,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
                   <Markdown>
                     {formatTextWithLocale(
                       field.message,
-                      application,
+                      { ...application, answers: getValues() },
                       locale as Locale,
                       formatMessage,
                     )}

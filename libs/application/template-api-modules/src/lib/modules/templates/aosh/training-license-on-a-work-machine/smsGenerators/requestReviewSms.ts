@@ -26,7 +26,7 @@ export const generateRequestReviewSms: RequestReviewSms = (
   return {
     phoneNumber: recipient.phone || '',
     message:
-      `Þín bíður ósamþykkt beiðni um samþykki á starfstíma á vinnuvél á island.is/umsoknir. ` +
+      `Þín bíður beiðni um samþykki á starfstíma á vinnuvél á island.is/umsoknir. ` +
       `Til þess að kennsluréttindi á vinnuvél verði skráð þarftu að samþykkja beiðnina fyrir ${pruneDateStr}. ` +
       `Slóð á umsóknina: ${clientLocationOrigin}/${ApplicationConfigurations.TrainingLicenseOnAWorkMachine.slug}/${application.id}.`,
   }

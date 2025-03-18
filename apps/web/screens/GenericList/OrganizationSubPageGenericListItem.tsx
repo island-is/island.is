@@ -86,8 +86,20 @@ const OrganizationSubPageGenericListItem: Screen<
 }
 
 OrganizationSubPageGenericListItem.getProps = async (context) => {
+  const organizationPageSlug = context.query.slugs?.[0] ?? ''
+  const organizationSubpageSlug =
+    context.query.slugs?.length === 4
+      ? context.query.slugs[2]
+      : context.query.slugs?.[1] ?? ''
+
   const [subPageProps, genericListItemProps] = await Promise.all([
-    SubPage.getProps(context),
+    SubPage.getProps({
+      ...context,
+      query: {
+        ...context.query,
+        slugs: [organizationPageSlug, organizationSubpageSlug],
+      },
+    }),
     GenericListItemPage.getProps(context),
   ])
   return {

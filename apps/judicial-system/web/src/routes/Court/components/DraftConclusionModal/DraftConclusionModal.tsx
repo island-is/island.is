@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { core } from '@island.is/judicial-system-web/messages'
 import {

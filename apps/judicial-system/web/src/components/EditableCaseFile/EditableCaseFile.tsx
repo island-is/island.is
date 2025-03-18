@@ -5,7 +5,7 @@ import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 
 import {
   Box,

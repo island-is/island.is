@@ -58,7 +58,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
           context: {
             copy:
               `<span>Góðan dag,</span><br/><br/>` +
-              `<span>Þín bíður ósamþykkt beiðni um samþykki á starfstíma á vinnuvél á island.is/umsoknir.</span><br/>` +
+              `<span>Þín bíður beiðni um samþykki á starfstíma á vinnuvél á island.is/umsoknir.</span><br/>` +
               `<span>Þú hefur 7 daga til þess að samþykkja beiðnina.</span><br/>` +
               `<span>Ef starfstími á vinnuvél hefur ekki verið samþykkt fyrir ${pruneDateStr} munu umsókn eyðast og ferlið ekki ná til Vinnueftirlitsins.</span><br/>` +
               `<span>Hægt er að fara yfir beiðnina á island.is eða með því að smella á hlekkinn hér fyrir neðan.</span><br/>`,

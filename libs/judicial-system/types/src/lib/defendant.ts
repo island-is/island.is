@@ -44,6 +44,14 @@ export enum PunishmentType {
   SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION',
 }
 
+// We could possibly also have an APPEAL option here if we want,
+// but we can also see from the verdict appeal date if the verdict
+// has been appealed
+export enum VerdictAppealDecision {
+  ACCEPT = 'ACCEPT', // Una
+  POSTPONE = 'POSTPONE', // Taka áfrýjunarfrest
+}
+
 export const successfulServiceStatus: string[] = [
   ServiceStatus.ELECTRONICALLY,
   ServiceStatus.DEFENDER,

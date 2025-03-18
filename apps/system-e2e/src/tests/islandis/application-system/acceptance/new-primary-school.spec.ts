@@ -41,18 +41,6 @@ applicationTest.describe('New primary school', () => {
       const page = applicationPage
       const { proceed } = helpers(page)
 
-      await applicationTest.step('Select type of application', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              newPrimarySchoolMessages.pre.applicationTypeSubSectionTitle,
-            ),
-          }),
-        ).toBeVisible()
-        await page.getByTestId('new-primary-school').click()
-        await proceed()
-      })
-
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
           page.getByRole('heading', {
@@ -382,21 +370,57 @@ applicationTest.describe('New primary school', () => {
         await proceed()
       })
 
-      await applicationTest.step('Free school meal', async () => {
+      await applicationTest.step('Allergies and intolerances', async () => {
         await expect(
           page.getByRole('heading', {
             name: label(
               newPrimarySchoolMessages.differentNeeds
-                .freeSchoolMealSubSectionTitle,
+                .allergiesAndIntolerancesSubSectionTitle,
             ),
           }),
         ).toBeVisible()
 
-        await page.getByTestId('accept-free-school-lunch').click()
-        await page.getByTestId('has-special-needs').click()
+        await page
+          .getByRole('checkbox', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds
+                .hasFoodAllergiesOrIntolerances,
+            ),
+          })
+          .click()
         await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
-        await page.getByTestId('select-freeSchoolMeal.specialNeedsType').click()
+        await page
+          .getByTestId(
+            'select-allergiesAndIntolerances.foodAllergiesOrIntolerances',
+          )
+          .click()
         await page.keyboard.press('Enter')
+        await page.keyboard.press('Enter')
+        await page
+          .getByTestId(
+            'select-allergiesAndIntolerances.foodAllergiesOrIntolerances',
+          )
+          .click()
+
+        await page
+          .getByRole('checkbox', {
+            name: label(
+              newPrimarySchoolMessages.differentNeeds.hasOtherAllergies,
+            ),
+          })
+          .click()
+        await verifyRequestCompletion(page, '/api/graphql', 'FriggOptions')
+        await page
+          .getByTestId('select-allergiesAndIntolerances.otherAllergies')
+          .click()
+        await page.keyboard.press('Enter')
+        await page
+          .getByTestId('select-allergiesAndIntolerances.otherAllergies')
+          .click()
+
+        await page.getByTestId('uses-epi-pen').click()
+        await page.getByTestId('has-confirmed-medical-diagnoses').click()
+        await page.getByTestId('requests-medication-administration').click()
         await proceed()
       })
 

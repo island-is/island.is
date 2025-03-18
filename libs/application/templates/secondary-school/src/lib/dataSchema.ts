@@ -113,6 +113,7 @@ const SelectionSchema = z
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
+        isSpecialNeedsProgram: z.boolean().optional(),
       })
       .optional(),
     thirdLanguage: z

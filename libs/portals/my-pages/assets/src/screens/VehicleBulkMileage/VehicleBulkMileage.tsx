@@ -1,9 +1,6 @@
 import {
   Stack,
   Box,
-  Filter,
-  FilterInput,
-  Checkbox,
   Pagination,
   Text,
   Input,

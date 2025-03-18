@@ -1,6 +1,6 @@
 import { createUnionType } from '@nestjs/graphql'
-import { VehicleMileagePutModel } from '../getVehicleMileage.model'
 import { VehiclesMileageUpdateError } from './vehicleMileageResponseError.model'
+import { VehicleMileagePutModel } from '../getVehicleMileage.model'
 
 export const VehicleMileagePutResponse = createUnionType({
   name: 'VehicleMileagePutResponse',

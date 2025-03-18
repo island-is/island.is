@@ -1,52 +1,65 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
-import { MessageWithLink } from './components/MessageWithLink'
-import { Banknumber } from './components/Banknumber'
-import { Email } from './components/Email'
-import { NationalId } from './components/NationalId'
-import { FileUpload } from './components/FileUpload'
-import { TextInput } from './components/TextInput'
-import { List } from './components/List'
-import { Radio } from './components/Radio'
-import { Currency } from './components/Currency'
-import { CheckboxPreview } from './components/CheckboxPreview'
+import {
+  Banknumber,
+  MessageWithLink,
+  CurrencyField,
+  Email,
+  FileUpload,
+  NationalId,
+  PhoneNumber,
+  PropertyNumber,
+  Radio,
+  TextInput,
+  TimeInput,
+  Checkbox,
+  List,
+  m,
+  FieldTypesEnum,
+} from '@island.is/form-system/ui'
+import { useIntl } from 'react-intl'
 
 interface Props {
-  data: FormSystemInput
+  data: FormSystemField
 }
 
 export const Preview = ({ data }: Props) => {
-  const { type } = data
+  const type = data.fieldType as unknown as FieldTypesEnum
+  const { formatMessage } = useIntl()
   return (
     <Box padding={2} background="blue100">
-      {type === 'Message' && <MessageWithLink data={data} />}
-      {type === 'Bank_account' && (
+      {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
+      {type === FieldTypesEnum.BANK_ACCOUNT && (
         <div>
           <Text variant="h5">{data?.name?.is}</Text>
-          <Banknumber currentItem={data} />
+          <Banknumber item={data} />
         </div>
       )}
-      {type === 'Email' && <Email currentItem={data} />}
-      {type === 'Date_picker' && (
+      {type === FieldTypesEnum.EMAIL && <Email item={data} />}
+      {type === FieldTypesEnum.DATE_PICKER && (
         <Box marginTop={2} width="half">
           <DatePicker
             label={
               data?.name?.is === '' || !data?.name?.is
-                ? 'Dagssetning'
+                ? formatMessage(m.datePicker)
                 : data?.name?.is
             }
-            placeholderText="Veldu dagsetningu"
+            placeholderText={formatMessage(m.chooseDate)}
           />
         </Box>
       )}
-      {type === 'National_id' && <NationalId currentItem={data} />}
-      {type === 'Document' && <FileUpload currentItem={data} />}
-      {type === 'Textalínubox' ||
-        (type === 'Textbox' && <TextInput data={data} />)}
-      {type === 'Dropdown_list' && <List currentItem={data} />}
-      {type === 'Radio_buttons' && <Radio currentItem={data} />}
-      {type === 'ISK_numberbox' && <Currency currentItem={data} />}
-      {type === 'Checkbox' && <CheckboxPreview currentItem={data} />}
+      {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
+      {type === FieldTypesEnum.FILE && <FileUpload item={data} />}
+      {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
+      {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
+      {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}
+      {type === FieldTypesEnum.ISK_NUMBERBOX && <CurrencyField item={data} />}
+      {type === FieldTypesEnum.CHECKBOX && <Checkbox item={data} />}
+      {type === FieldTypesEnum.PHONE_NUMBER && <PhoneNumber item={data} />}
+      {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
+      {type === FieldTypesEnum.PROPERTY_NUMBER && (
+        <PropertyNumber item={data} />
+      )}
     </Box>
   )
 }

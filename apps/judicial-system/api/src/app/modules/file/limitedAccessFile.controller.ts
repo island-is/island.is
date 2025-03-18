@@ -180,7 +180,10 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('subpoena/:defendantId/:subpoenaId')
+  @Get([
+    'subpoena/:defendantId/:subpoenaId',
+    'subpoena/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,

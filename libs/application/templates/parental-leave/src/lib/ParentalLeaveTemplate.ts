@@ -23,6 +23,7 @@ import {
   StateLifeCycle,
   UserProfileApi,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 
 import {
@@ -499,7 +500,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        entry: ['assignToVMST', 'setNavId', 'removeNullPeriod'],
+        entry: ['setNavId', 'removeNullPeriod'],
         exit: [
           'clearAssignees',
           'setNavId',
@@ -566,6 +567,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -578,12 +585,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -605,6 +607,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -634,21 +637,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
-        entry: 'assignToVMST',
         exit: 'setActionName',
         meta: {
           status: 'inprogress',
@@ -683,12 +681,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -696,10 +689,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE]: {
-        entry: ['setPreviousState', 'assignToVMST'],
+        entry: 'setPreviousState',
         exit: 'setPreviousState',
         meta: {
           status: 'inprogress',
@@ -729,6 +723,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+            },
           ],
         },
         on: {
@@ -749,10 +746,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           APPROVE: {
             target: States.RESIDENCE_GRANT_APPLICATION,
           },
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.RESIDENCE_GRANT_APPLICATION]: {
-        entry: ['assignToVMST', 'setResidenceGrant', 'setActionName'],
+        entry: ['setResidenceGrant', 'setActionName'],
         exit: ['setPreviousState', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
@@ -790,6 +788,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+            },
           ],
         },
         on: {
@@ -812,10 +813,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.APPROVED]: {
-        entry: ['assignToVMST', 'removePreviousState'],
+        entry: 'removePreviousState',
         exit: 'setPreviousState',
         meta: {
           name: States.APPROVED,
@@ -853,6 +855,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -865,17 +873,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
         on: {
-          CLOSED: { target: States.CLOSED },
           [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
@@ -888,6 +890,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.CLOSED]: {
@@ -895,9 +898,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.CLOSED,
           status: 'completed',
-          actionCard: {
-            description: statesMessages.closedDescription,
-          },
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -968,6 +968,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+            },
           ],
         },
         on: {
@@ -1002,10 +1005,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        entry: ['clearEmployerNationalRegistryId'],
+        entry: 'clearEmployerNationalRegistryId',
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
@@ -1032,6 +1036,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
@@ -1047,6 +1057,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+            },
           ],
         },
         on: {
@@ -1054,10 +1067,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
-        entry: ['assignToVMST', 'removeNullPeriod'],
+        entry: 'removeNullPeriod',
         exit: [
           'clearAssignees',
           'setIsApprovedOnEmployer',
@@ -1095,6 +1109,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setApplicationRights,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
               throwOnError: false,
             }),
           ],
@@ -1145,6 +1165,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+            },
           ],
         },
         on: {
@@ -1161,6 +1184,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
@@ -1196,6 +1220,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
@@ -1210,6 +1240,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1241,11 +1274,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.APPROVED,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
         entry: [
-          'assignToVMST',
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
           'setNavId',
@@ -1320,6 +1353,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -1332,12 +1371,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1361,6 +1395,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE,
             },
           ],
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
@@ -1397,6 +1432,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'VMSTApplicationRights',
               throwOnError: false,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.setOtherParent,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTOtherParent',
+              throwOnError: false,
+            }),
           ],
           roles: [
             {
@@ -1409,12 +1450,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
+              id: Roles.ORGANISATION_REVIEWER,
             },
           ],
         },
@@ -1425,6 +1461,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.ABORT]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
+          CLOSED: { target: States.CLOSED },
         },
       },
     },
@@ -2199,9 +2236,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       return Roles.ASSIGNEE
     }
 
-    const VMST_ID = process.env.VMST_ID
+    const VMST_ID = InstitutionNationalIds.VINNUMALASTOFNUN
     if (id === VMST_ID) {
-      return Roles.ORGINISATION_REVIEWER
+      return Roles.ORGANISATION_REVIEWER
     }
 
     return undefined

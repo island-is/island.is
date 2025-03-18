@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Box, IconMapIcon, StatusColor, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'

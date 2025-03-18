@@ -126,6 +126,12 @@ export class VerdictsClientService {
         return {
           item: {
             pdfString: response.item.docContent,
+            title: response.item.title ?? '',
+            court: response.item.court ?? '',
+            verdictDate: response.item.verdictDate,
+            caseNumber: response.item.caseNumber ?? '',
+            keywords: response.item.keywords ?? [],
+            presentings: response.item.presentings ?? '',
           },
         }
     } else if (id.startsWith(SUPREME_COURT_ID_PREFIX)) {
@@ -139,6 +145,12 @@ export class VerdictsClientService {
               response.item.verdictHtml,
               'verdictHtml',
             ),
+            title: response.item.title ?? '',
+            court: response.item.court ?? '',
+            verdictDate: response.item.publishDate,
+            caseNumber: response.item.caseNumber ?? '',
+            keywords: response.item.keywords ?? [],
+            presentings: response.item.presentings ?? '',
           },
         }
     }

@@ -24,7 +24,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private nationalRegisryClientService: NationalRegistryClientService,
+    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
@@ -68,7 +68,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       ? auth.actor?.nationalId ?? auth.nationalId
       : auth.nationalId
 
-    const identity = await this.nationalRegisryClientService.getIndividual(
+    const identity = await this.nationalRegistryClientService.getIndividual(
       contactNationalId,
     )
 

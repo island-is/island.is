@@ -61,6 +61,17 @@ export const school = {
       defaultMessage: 'Fjarlægja vali á skóla',
       description: 'Selection remove button label',
     },
+    specialNeedsProgramAlertTitle: {
+      id: 'ss.application:school.selection.specialNeedsProgramAlertTitle',
+      defaultMessage: 'Athugið',
+      description: 'If selected special needs program alert title',
+    },
+    specialNeedsProgramAlertDescription: {
+      id: 'ss.application:school.selection.specialNeedsProgramAlertDescription',
+      defaultMessage:
+        'Þú hefur valið {programNameList}. Starfsbrautir eru ætlaðar nemendum sem hafa stundað nám í sérdeildum grunnskóla eða notið mikillar sérkennslu á grunnskólastigi.',
+      description: 'If selected (single) special needs program alert message',
+    },
   }),
   firstSelection: defineMessages({
     subtitle: {
@@ -82,11 +93,16 @@ export const school = {
       defaultMessage: 'Þriðja val',
       description: 'Third selection sub title',
     },
-    addDescription: {
-      id: 'ss.application:school.thirdSelection.addDescription',
+    addAlertTitle: {
+      id: 'ss.application:school.thirdSelection.addAlertTitle',
+      defaultMessage: 'Viltu bæta við öðrum skóla?',
+      description: 'Add third selection alert title',
+    },
+    addAlertDescription: {
+      id: 'ss.application:school.thirdSelection.addAlertDescription',
       defaultMessage:
         'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inni í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
-      description: 'Add third selection description',
+      description: 'Add third selection alert description',
     },
   }),
 }

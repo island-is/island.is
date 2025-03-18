@@ -93,7 +93,11 @@ export class VehiclesMileageResolver {
       return
     }
 
-    return mileageDetailConstructor(res)
+    return mileageDetailConstructor({
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+      internalId: res.internalId,
+    })
   }
 
   @Mutation(() => VehicleMileagePostResponse, {
@@ -126,16 +130,10 @@ export class VehiclesMileageResolver {
     @Args('input') input: PutVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    const res = await this.vehiclesService.putMileageReadingV2(user, {
+    return this.vehiclesService.putMileageReadingV2(user, {
       ...input,
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
-
-    if (!res || res instanceof VehiclesMileageUpdateError) {
-      return res
-    }
-
-    return mileageDetailConstructor(res)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

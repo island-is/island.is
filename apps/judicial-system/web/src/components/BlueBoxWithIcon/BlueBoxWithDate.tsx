@@ -1,6 +1,6 @@
 import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -174,6 +174,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             ),
           }),
         )
+      } else if (
+        defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+      ) {
+        texts.push(formatMessage(strings.defendantViewedVerdictInCourt))
       }
 
       texts.push(

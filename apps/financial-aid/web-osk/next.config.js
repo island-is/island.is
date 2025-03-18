@@ -8,7 +8,10 @@ const withVanillaExtract = createVanillaExtractPlugin()
 
 module.exports = withNx(
   withVanillaExtract({
-    webpack: (config, options) => {
+    webpack: (config, { isServer, dev }) => {
+      if (!dev && isServer) {
+        config.devtool = 'source-map'
+      }
       return config
     },
     serverRuntimeConfig: {

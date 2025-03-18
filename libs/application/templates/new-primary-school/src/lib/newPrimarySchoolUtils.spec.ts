@@ -1,9 +1,9 @@
 import { ExternalData } from '@island.is/application/types'
+import { LanguageEnvironmentOptions } from './constants'
 import {
   hasOtherGuardian,
   showPreferredLanguageFields,
 } from './newPrimarySchoolUtils'
-import { LanguageEnvironmentOptions } from './constants'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {
