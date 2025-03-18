@@ -36,7 +36,7 @@ import {
 } from '@island.is/application/ui-components'
 
 import Logo from '../assets/Logo'
-import { maxDaysToGiveOrReceive, minPeriodDays } from '../config'
+import { maxDaysToGiveOrReceive } from '../config'
 import {
   ADOPTION,
   FILE_SIZE_LIMIT,
@@ -72,6 +72,7 @@ import {
   getFirstPeriodTitle,
   getLeavePlanTitle,
   getMaxMultipleBirthsDays,
+  getMinimumEndDate,
   getMinimumStartDate,
   getMultipleBirthRequestDays,
   getOtherParentOptions,
@@ -1531,18 +1532,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   },
                   {
-                    minDate: (application: Application) => {
-                      const { rawPeriods } = getApplicationAnswers(
-                        application.answers,
-                      )
-                      const latestStartDate =
-                        rawPeriods[rawPeriods.length - 1]?.startDate
-
-                      return addDays(
-                        new Date(latestStartDate),
-                        minPeriodDays - 1,
-                      )
-                    },
+                    minDate: getMinimumEndDate,
                     excludeDates: (application: Application) => {
                       const { periods } = getApplicationAnswers(
                         application.answers,
