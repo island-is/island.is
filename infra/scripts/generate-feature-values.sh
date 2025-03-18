@@ -4,6 +4,7 @@ set -euxo pipefail
 FEATURE_NAME=$1
 DOCKER_TAG=$2
 IMAGES=$3
+STAGE=${4:-'dev'}
 
 GIT_ROOT="$(git rev-parse --show-toplevel)"
 INFRA_ROOT="${GIT_ROOT}/infra"
@@ -18,11 +19,11 @@ yarn feature-env \
   --feature "$FEATURE_NAME" \
   --images "$IMAGES" \
   --chart islandis \
-  --jobImage "${ECR_REPO}:${DOCKER_TAG}" >"${FEATURE_DIR}/${FEATURE_NAME}-job-manifest.yaml"
+  --jobImage "${ECR_REPO}:${DOCKER_TAG}" >"${FEATURE_DIR}/${FEATURE_NAME}-job-manifest.${STAGE}.yaml"
 
 yarn feature-env \
   values \
   --chart islandis \
   --feature "$FEATURE_NAME" \
   --images "$IMAGES" \
-  --dockertag "$DOCKER_TAG" >"${FEATURE_DIR}/${FEATURE_NAME}.yaml"
+  --dockertag "$DOCKER_TAG" >"${FEATURE_DIR}/${FEATURE_NAME}.${STAGE}.yaml"
