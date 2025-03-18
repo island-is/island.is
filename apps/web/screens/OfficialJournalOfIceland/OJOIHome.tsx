@@ -112,6 +112,11 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
               href: searchUrl + '?tegund=b-deild-gjaldskra',
               variant: 'purple',
             },
+            {
+              title: 'Rss',
+              href: '/stjornartidindi/rss',
+              variant: 'purple',
+            },
           ]}
           breadCrumbs={
             breadcrumbItems && (
