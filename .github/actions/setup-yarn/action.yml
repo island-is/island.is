@@ -1,6 +1,9 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
-
+inputs:
+  RUNS_ON_S3_BUCKET_CACHE:
+    description: ''
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -37,7 +40,7 @@ runs:
           ${{ env.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE}
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache"
 
     - name: Yarn install
@@ -54,5 +57,5 @@ runs:
           ${{ env.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE}
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache"
