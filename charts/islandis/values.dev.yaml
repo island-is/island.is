@@ -2598,7 +2598,7 @@ services-form-system-api:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/form'
+            - '/form-system-api'
   initContainer:
     containers:
       - args:

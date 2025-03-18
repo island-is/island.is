@@ -11,7 +11,7 @@ export const routes: RouteObject[] = [
   {
     element: (
       <HeaderInfoProvider>
-        <UserProfileLocale />
+        {/* <UserProfileLocale /> */}
         <Header />
       </HeaderInfoProvider>
     ),
