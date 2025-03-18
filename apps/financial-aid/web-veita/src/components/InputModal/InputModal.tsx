@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import cn from 'classnames'
 
 interface Props {

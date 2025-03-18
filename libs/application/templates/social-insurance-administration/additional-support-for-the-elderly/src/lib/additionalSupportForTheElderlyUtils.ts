@@ -1,6 +1,5 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
-  BankAccountType,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -48,12 +47,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'tempAnswers',
   ) as Application['answers']
-
-  const bankAccountType = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountType',
-  ) as BankAccountType
-
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
@@ -82,7 +75,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     additionalAttachments,
     additionalAttachmentsRequired,
     tempAnswers,
-    bankAccountType,
     bank,
     paymentInfo,
     personalAllowance,
@@ -136,11 +128,6 @@ export const getApplicationExternalData = (
     'userProfile.data.email',
   ) as string
 
-  const currencies = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationCurrencies.data',
-  ) as Array<string>
-
   const isEligible = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -154,7 +141,6 @@ export const getApplicationExternalData = (
     hasSpouse,
     userProfileEmail,
     bankInfo,
-    currencies,
     isEligible,
   }
 }
@@ -173,20 +159,20 @@ export const getAttachments = (application: Application) => {
   }
 
   const { answers } = application
-
+  
+  const {
+    additionalAttachments,
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
-
   const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
       : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
+    ...(additionalAttachmentsRequired &&
+    additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
       : []),
   ]
 
