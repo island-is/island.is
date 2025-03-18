@@ -127,7 +127,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     )
 
     const formattedBody = this.formatMessage(
-      strings.defendantSelectedDefenderBody,
+      strings.defendantDelegatedDefenderChoiceBody,
       {
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
