@@ -7,5 +7,5 @@ interface IntroLinkImageSliceProps {
 }
 
 export const IntroLinkImageSlice = ({ slice }: IntroLinkImageSliceProps) => {
-  return <IntroLinkImageComponent id={slice.id} item={slice} />
+  return <IntroLinkImageComponent id={slice.entryId} item={slice} />
 }

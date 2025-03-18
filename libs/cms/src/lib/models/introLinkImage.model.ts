@@ -8,7 +8,7 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class IntroLinkImage {
   @Field(() => ID, { nullable: true })
-  id?: string | null
+  entryId?: string | null
 
   @Field()
   title?: string
