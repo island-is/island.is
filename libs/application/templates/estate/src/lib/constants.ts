@@ -19,6 +19,11 @@ export enum States {
   done = 'done',
 }
 
+export enum ApiActions {
+  completeApplication = 'completeApplication',
+  syslumennOnEntry = 'syslumennOnEntry',
+}
+
 export type EstateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }

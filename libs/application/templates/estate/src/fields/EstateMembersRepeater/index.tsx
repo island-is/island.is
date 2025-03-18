@@ -270,8 +270,7 @@ export const EstateMembersRepeater: FC<
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              {application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate &&
+              {selectedEstate === EstateTypes.permitForUndividedEstate &&
                 member.relation !== SPOUSE && (
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <SelectController

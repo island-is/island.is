@@ -49,7 +49,9 @@ export class NationalRegistryProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(result: NationalRegistryPerson): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: NationalRegistryPerson,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

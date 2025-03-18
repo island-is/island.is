@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -22,7 +23,6 @@ import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
-import { useEffect } from 'react'
 
 export const AdditionalEstateMember = ({
   field,
@@ -185,8 +185,7 @@ export const AdditionalEstateMember = ({
             required={!field.initial}
           />
         </GridColumn>
-        {selectedEstate ===
-          EstateTypes.permitForUndividedEstate && (
+        {selectedEstate === EstateTypes.permitForUndividedEstate && (
           <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
             <SelectController
               key={relationWithApplicantField}

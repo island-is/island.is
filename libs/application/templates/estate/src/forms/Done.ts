@@ -19,7 +19,7 @@ export const done: Form = buildForm({
       id: 'done',
       title: m.doneTitle,
       description: (application) => {
-        const selectedEstate = getValueViaPath<string>(
+        const selectedEstate = getValueViaPath(
           application.answers,
           'selectedEstate',
         )
@@ -35,6 +35,7 @@ export const done: Form = buildForm({
         buildImageField({
           id: 'doneImage',
           image: Grieving,
+          marginTop: 3,
           marginBottom: 3,
           imageWidth: 'auto',
           imagePosition: 'center',

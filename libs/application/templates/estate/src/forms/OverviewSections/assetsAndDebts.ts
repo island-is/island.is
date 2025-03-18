@@ -56,7 +56,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
+    description: ({ answers }) => {
       const total = getMarketValueShare(answers)
       return total
     },
@@ -79,23 +79,19 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewInventory',
     title: m.inventoryTextField,
-    description: (application: Application) =>
-      getValueViaPath<string>(application.answers, 'inventory.info'),
+    description: ({ answers }) => getValueViaPath(answers, 'inventory.info'),
     titleVariant: 'h4',
     space: 'gutter',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'inventory.info') !== '',
+    condition: (answers) => getValueViaPath(answers, 'inventory.info') !== '',
   }),
   buildDescriptionField({
     id: 'overviewInventoryValue',
     title: m.inventoryValueTitle,
-    description: (application: Application) => {
-      const value =
-        getValueViaPath<string>(application.answers, 'inventory.value') ?? '0'
-      return formatCurrency(value)
+    description: ({ answers }) => {
+      const value = getValueViaPath<string>(answers, 'inventory.value')
+      return formatCurrency(value ?? '0')
     },
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'inventory.value') !== '',
+    condition: (answers) => getValueViaPath(answers, 'inventory.value') !== '',
     titleVariant: 'h4',
     marginBottom: 'gutter',
     space: 'gutter',
@@ -105,8 +101,7 @@ export const overviewAssetsAndDebts = [
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'inventory.value') === '',
+    condition: (answers) => getValueViaPath(answers, 'inventory.value') === '',
   }),
   buildDividerField({}),
   buildDescriptionField({
@@ -143,7 +138,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateVehicleTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateAsset>(
         answers,
         'estate.vehicles',
@@ -192,7 +187,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateGunsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateAsset>(
         answers,
         'estate.guns',
@@ -241,7 +236,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'bankAccountsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['bankAccounts']>(
         answers,
         'bankAccounts',
@@ -299,7 +294,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'claimsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
@@ -360,7 +355,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'stocksTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
@@ -398,7 +393,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'otherAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['otherAssets']>(
         answers,
         'otherAssets',
@@ -422,8 +417,8 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewMoneyAndDeposit',
     title: m.moneyAndDepositText,
-    description: (application: Application) =>
-      getValueViaPath<string>(application.answers, 'moneyAndDeposit.info'),
+    description: ({ answers }) =>
+      getValueViaPath<string>(answers, 'moneyAndDeposit.info'),
     titleVariant: 'h4',
     space: 'gutter',
     condition: (answers) =>
@@ -432,10 +427,9 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewMoneyAndDepositValue',
     title: m.moneyAndDepositValue,
-    description: (application: Application) => {
+    description: ({ answers }) => {
       const value =
-        getValueViaPath<string>(application.answers, 'moneyAndDeposit.value') ??
-        '0'
+        getValueViaPath<string>(answers, 'moneyAndDeposit.value') ?? '0'
 
       return formatCurrency(value)
     },
@@ -486,7 +480,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'debtsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),

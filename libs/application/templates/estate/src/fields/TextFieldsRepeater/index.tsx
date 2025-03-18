@@ -209,7 +209,9 @@ export const TextFieldsRepeater: FC<
                       readOnly={field.readOnly}
                       type={field.type}
                       error={
-                        !!errors && errors[id] && (errors[id] as ErrorValue)[index]
+                        !!errors &&
+                        errors[id] &&
+                        (errors[id] as ErrorValue)[index]
                           ? (errors[id] as ErrorValue)[index][field.id]
                           : undefined
                       }
