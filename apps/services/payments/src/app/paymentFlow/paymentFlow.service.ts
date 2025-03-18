@@ -331,13 +331,20 @@ export class PaymentFlowService {
         },
       }
 
-      await fetch(paymentFlow.onUpdateUrl, {
+      const res = await fetch(paymentFlow.onUpdateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateBody),
       })
+
+      console.log('=========================================')
+      console.log('paymentflowupdate')
+      console.log('updateBody', JSON.stringify(updateBody, null, 2))
+      console.log('res.status', res.status)
+      console.log('res.statusText', res.statusText)
+      console.log('=========================================')
     } catch (e) {
       this.logger.error('Failed to notify onUpdateUrl', e)
     }
