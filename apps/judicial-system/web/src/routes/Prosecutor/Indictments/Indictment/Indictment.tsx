@@ -283,8 +283,7 @@ const Indictment = () => {
     const indictmentCounts = workingCase.indictmentCounts || []
     if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
-    }
-    else {
+    } else {
       // in case indictment subtypes have been modified in earlier step
       setDriversLicenseSuspensionRequest(indictmentCounts)
     }
@@ -312,7 +311,7 @@ const Indictment = () => {
     formatMessage,
     setWorkingCase,
     handleCreateIndictmentCount,
-    setDriversLicenseSuspensionRequest
+    setDriversLicenseSuspensionRequest,
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
