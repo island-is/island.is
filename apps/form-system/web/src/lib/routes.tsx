@@ -31,7 +31,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <>hoho</>
+        element: <>Dummy</>
       }
     ]
   }

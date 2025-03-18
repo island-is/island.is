@@ -26,8 +26,8 @@ export const App = () => (
         mockedInitialState={mockedInitialState}
       >
         <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-          {/* <Router /> */}
-          <div>test</div>
+          <Router />
+          {/* <div>test</div> */}
         </FeatureFlagProvider>
       </BffProvider>
     </LocaleProvider>
