@@ -49,9 +49,11 @@ env:
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+  YARN_ENABLE_HARDENED_MODE: '0'
+
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -189,6 +191,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -350,7 +354,9 @@ jobs:
             docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
-
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+  
       - name: Building Docker images
         continue-on-error: true
         id: dockerbuild
@@ -384,7 +390,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -406,7 +412,9 @@ jobs:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+    
       - name: Docker build image
         working-directory: infra
         run: |
