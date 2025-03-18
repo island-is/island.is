@@ -7,8 +7,15 @@ export const MainContentColumn = () => {
       border="standard"
       borderRadius="standard"
       width="full"
-      marginTop={5}
-      style={{ minHeight: '500px' }}
+      // marginTop={5}
+      style={{
+        minHeight: '500px',
+        overflow: 'auto',
+        maxHeight: '70vh',
+        maxWidth: '1200px',
+        width: '64%',
+      }}
+      position="fixed"
     >
       <MainContent />
     </Box>

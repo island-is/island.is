@@ -238,9 +238,9 @@ export const Navbar = () => {
 
   const renderSettingsView = () => (
     <div>
-      <Box paddingBottom={2} overflow="hidden" flexDirection="row">
+      {/* <Box paddingBottom={2} overflow="hidden" flexDirection="row">
         <NavbarTab />
-      </Box>
+      </Box> */}
       <div>
         <NavComponent
           type="Section"
@@ -260,14 +260,14 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
-      <Box
+      {/* <Box
         paddingBottom={2}
         overflow="hidden"
         display="flex"
         flexDirection="row"
       >
         <NavbarTab />
-      </Box>
+      </Box> */}
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}

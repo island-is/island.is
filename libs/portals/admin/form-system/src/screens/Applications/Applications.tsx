@@ -37,7 +37,7 @@ export const Applications = () => {
         onOrganizationChange={handleOrganizationChange}
         isAdmin={isAdmin}
       />
-      <div>Applicaions</div>
+      <div>Applications</div>
     </>
   )
 }

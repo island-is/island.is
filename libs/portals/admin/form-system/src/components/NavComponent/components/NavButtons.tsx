@@ -21,8 +21,8 @@ export const NavButtons = () => {
   const { formatMessage } = useIntl()
   const hoverText =
     activeItem.type === 'Section'
-      ? formatMessage(m.addGroupHover)
-      : formatMessage(m.addInputHover)
+      ? formatMessage(m.addScreenHover)
+      : formatMessage(m.addFieldHover)
 
   const containsGroupOrInput = (): boolean | undefined => {
     const { type } = activeItem

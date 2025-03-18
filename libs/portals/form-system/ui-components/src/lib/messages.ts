@@ -445,12 +445,12 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:property-number-input',
     defaultMessage: 'Skrá fasteignanúmer',
   },
-  addGroupHover: {
-    id: 'portals-admin.form-system:add-step-hover',
-    defaultMessage: 'Bæta við hópi',
+  addScreenHover: {
+    id: 'portals-admin.form-system:add-screen-hover',
+    defaultMessage: 'Bæta við skjá',
   },
-  addInputHover: {
-    id: 'portals-admin.form-system:add-input-hover',
+  addFieldHover: {
+    id: 'portals-admin.form-system:add-field-hover',
     defaultMessage: 'Bæta við innslætti',
   },
   areYouSure: {
