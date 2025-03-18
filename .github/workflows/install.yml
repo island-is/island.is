@@ -16,7 +16,7 @@ on:
       MQ_DOCKER_TAG:
         value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
       MQ_HELM_VALUES_BRANCH:
-         value: ${{ jobs.install.outputs.MQ_HELM_VALUES_BRANCH }}
+        value: ${{ jobs.install.outputs.MQ_HELM_VALUES_BRANCH }}
       MQ_ARTIFACT_NAME:
         value: ${{ jobs.install.outputs.MQ_ARTIFACT_NAME }}
       MQ_GIT_BRANCH:
@@ -92,7 +92,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: arc-test
+    runs-on: arc-runners
     permissions:
       contents: 'read'
       actions: 'read'
@@ -106,7 +106,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
@@ -130,7 +130,7 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last 
+            # In merge que we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files

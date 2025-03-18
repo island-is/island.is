@@ -53,7 +53,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-test
+    runs-on: arc-docker
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
@@ -190,7 +190,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    runs-on: arc-test
+    runs-on: arc-docker
     steps:
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
@@ -242,7 +242,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-test
+    runs-on: arc-docker
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -273,7 +273,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   success:
-    runs-on: arc-test
+    runs-on: arc-docker
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -297,7 +297,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-test
+    runs-on: arc-docker
     env:
       CHECK: 'false'
     steps:
