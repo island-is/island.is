@@ -12,7 +12,7 @@ export const Database = {
 
 type LawyerWithCreated = Lawyer & { created: Date }
 
-export const useIndexedDB = (shouldFetchLawyers: boolean) => {
+export const useLawyerRegistry = (shouldFetchLawyers: boolean) => {
   const [allLawyers, setAllLawyers] = useState<Lawyer[]>([])
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
   const lawyers = useGetLawyers(shouldFetch)

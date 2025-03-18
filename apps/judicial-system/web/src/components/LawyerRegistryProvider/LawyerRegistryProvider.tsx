@@ -7,7 +7,7 @@ import {
   Lawyer,
 } from '@island.is/judicial-system/types'
 
-import { useIndexedDB } from '../../utils/hooks/useIndexedDB/useIndexedDB'
+import { useLawyerRegistry } from '../../utils/hooks/useLawyerRegistry/useLawyerRegistry'
 import { UserContext } from '../UserProvider/UserProvider'
 
 interface LawyerRegistryContext {
@@ -22,7 +22,7 @@ export const LawyerRegistryProvider: FC<PropsWithChildren> = ({ children }) => {
   const { user } = useContext(UserContext)
   const shouldFetch =
     isDistrictCourtUser(user) || isDefenceUser(user) || isProsecutionUser(user)
-  const { allLawyers: lawyers } = useIndexedDB(shouldFetch)
+  const { allLawyers: lawyers } = useLawyerRegistry(shouldFetch)
 
   return (
     <LawyerRegistryContext.Provider value={{ lawyers }}>
