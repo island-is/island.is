@@ -1,8 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormatMessage, FormValue } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { PaymentArrangementType } from '../shared/types'
-import { IndividualOrCompany, PaymentOptions } from '../shared/constants'
+import {
+  IndividualOrCompany,
+  PaymentArrangementType,
+  PaymentOptions,
+} from '../shared/types'
 import { paymentArrangement } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'
 import { isApplyingForMultiple } from './isApplyingForMultiple'

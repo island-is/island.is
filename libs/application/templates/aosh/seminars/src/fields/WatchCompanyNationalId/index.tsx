@@ -6,7 +6,7 @@ import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { paymentArrangement } from '../../lib/messages'
 import { isCompanyType } from '../../utils'
-import { IndividualOrCompany, PaymentOptions } from '../../shared/constants'
+import { IndividualOrCompany, PaymentOptions } from '../../shared/types'
 
 export const WatchCompanyNationalId: FC<
   React.PropsWithChildren<FieldBaseProps>
