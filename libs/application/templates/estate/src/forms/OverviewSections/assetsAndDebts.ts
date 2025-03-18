@@ -29,7 +29,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateAssetsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -118,7 +117,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateVehicleCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -170,7 +168,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateGunsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -220,7 +217,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'bankAccountsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -279,7 +275,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'claimsCards',
       condition: (answers) =>
         getValueViaPath(answers, 'selectedEstate') ===
@@ -330,7 +325,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'stocksCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -381,7 +375,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'otherAssetsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -470,7 +463,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'debtsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,

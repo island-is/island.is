@@ -24,7 +24,6 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import {
   EstateTypes,
-  NO,
   YES,
   heirAgeValidation,
   missingHeirUndividedEstateValidation,

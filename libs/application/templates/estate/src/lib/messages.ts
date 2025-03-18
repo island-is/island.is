@@ -36,7 +36,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um dánarbú',
     description: 'Title of provider for pre-collection',
   },
-
   preDataCollectionDescription: {
     id: 'es.application:preDataCollectionDescription',
     defaultMessage: 'Sóttar verða upplýsingar frá sýslumanni um dánarbú',
@@ -85,6 +84,22 @@ export const m = defineMessages({
     id: 'es.application:noContactInfo',
     defaultMessage: 'Án upplýsinga um samskipti',
     description: '',
+  },
+  estateTypeOfficialDivision: {
+    id: 'es.application:selectedEstateOfficialDivision',
+    defaultMessage: 'Opinber skipti',
+  },
+  estateTypeWithoutAssets: {
+    id: 'es.application:estateTypeWithoutAssets',
+    defaultMessage: 'Eignalaust dánarbú',
+  },
+  estateTypeUndividedEstate: {
+    id: 'es.application:estateTypeUndividedEstate',
+    defaultMessage: 'Seta í óskiptu búi',
+  },
+  estateTypeDivisionByHeirs: {
+    id: 'es.application:estateTypeDivisionByHeirs',
+    defaultMessage: 'Einkaskipti',
   },
 
   // Data collection - external data providers
