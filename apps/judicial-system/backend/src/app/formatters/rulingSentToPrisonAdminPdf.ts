@@ -80,11 +80,11 @@ export const createRulingSentToPrisonAdminPdf = (
   const reviewerNameText = theCase.indictmentReviewer?.name || ''
 
   // Measure text widths
-  doc.font('Times-Bold').fontSize(11)
+  doc.font('Times-Bold').fontSize(12)
   const signatureDateTextWidth = doc.widthOfString(signatureDateText)
   const reviewedByTextWidth = doc.widthOfString(reviewedByText)
 
-  doc.font('Times-Roman').fontSize(11)
+  doc.font('Times-Roman').fontSize(12)
   const rulingDateTextWidth = doc.widthOfString(rulingDateText)
   const reviewerNameTextWidth = doc.widthOfString(reviewerNameText)
 
