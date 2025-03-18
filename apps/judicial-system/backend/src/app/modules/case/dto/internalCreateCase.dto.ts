@@ -38,6 +38,14 @@ export class InternalCreateCaseDto {
   @ApiProperty({ type: String })
   readonly prosecutorNationalId!: string
 
+  @IsOptional()
+  @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly prosecutorsOfficeNationalId?: string
+
   @IsNotEmpty()
   @IsString()
   @MinLength(10)
