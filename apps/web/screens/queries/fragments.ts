@@ -958,6 +958,27 @@ export const slices = gql`
     }
   }
 
+  fragment IntroLinkImageFields on IntroLinkImage {
+    id
+    title
+    intro {
+      ...HtmlFields
+    }
+    linkTitle
+    link {
+      type
+      slug
+    }
+    leftImage
+    image {
+      title
+      url
+      width
+      height
+    }
+    openLinkInNewTab
+  }
+
   fragment LatestGenericListItemsFields on LatestGenericListItems {
     title
     genericList {
@@ -1080,6 +1101,7 @@ export const slices = gql`
     ...FeaturedLinksFields
     ...GrantCardsListFields
     ...OrganizationParentSubpageListFields
+    ...IntroLinkImageFields
   }
 
   fragment AllSlices on Slice {
