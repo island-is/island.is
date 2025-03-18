@@ -1,7 +1,6 @@
 // @ts-check
 import fs, { readFileSync } from 'node:fs'
 import jsyaml from 'js-yaml'
-import { execSync } from 'node:child_process'
 import core from '@actions/core'
 import github from '@actions/github'
 import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
@@ -12,7 +11,6 @@ export async function main(testContext = null) {
   const context = testContext || github.context
   const branch = getBranch(context)
   const typeOfDeployment = getTypeOfDeployment(branch)
-  const sha = context.sha
 
   const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT'
   const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES'
@@ -54,9 +52,11 @@ export async function main(testContext = null) {
       'charts/judicial-system-services',
       'charts/identity-server-services',
     ]
+
     const files = await glob(
       `{${_MANIFEST_PATHS.join(',')}}/**/values.${STAGE_NAME}.yaml`,
     )
+
     for (const file of files) {
       const textContent = readFileSync(file, 'utf8')
       const yamlContent = await jsyaml.load(textContent)
@@ -136,9 +136,7 @@ export function getTypeOfDeployment(branch) {
 }
 
 // Run the main function if this is the main module
-if (import.meta.url === import.meta.main) {
-  main().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
-}
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})
