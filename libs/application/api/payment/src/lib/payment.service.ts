@@ -227,11 +227,11 @@ export class PaymentService {
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
     console.log('=========================================')
-    console.log('chargeItems' /*chargeItems*/)
-    console.dir(chargeItems, { depth: null })
+    console.log('chargeItems', JSON.stringify(chargeItems, null, 2))
+    // console.dir(chargeItems, { depth: null })
     console.log('=========================================')
-    console.log('extraData' /*extraData*/)
-    console.dir(extraData, { depth: null })
+    console.log('extraData', JSON.stringify(extraData, null, 2))
+    // console.dir(extraData, { depth: null })
     console.log('=========================================')
 
     //1. Retrieve charge items from FJS
@@ -240,8 +240,11 @@ export class PaymentService {
       chargeItems,
     )
     console.log('=========================================')
-    console.log('catalogChargeItems' /*catalogChargeItems*/)
-    console.dir(catalogChargeItems, { depth: null })
+    console.log(
+      'catalogChargeItems',
+      JSON.stringify(catalogChargeItems, null, 2),
+    )
+    // console.dir(catalogChargeItems, { depth: null })
     console.log('=========================================')
 
     //2. Fetch existing payment if any
@@ -252,8 +255,8 @@ export class PaymentService {
       //payment Model already exists something has previously gone wrong.
 
       console.log('=========================================')
-      console.log('paymentModel EXISTS' /*paymentModel*/)
-      console.dir(paymentModel, { depth: null })
+      console.log('paymentModel EXISTS', JSON.stringify(paymentModel, null, 2))
+      // console.dir(paymentModel, { depth: null })
       console.log('=========================================')
 
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl

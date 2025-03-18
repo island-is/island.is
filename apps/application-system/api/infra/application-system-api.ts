@@ -111,6 +111,12 @@ export const workerSetup = (services: {
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
       PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }application-system-api.application-system.svc.cluster.local`,
+      ),
     })
     .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
     .secrets({
