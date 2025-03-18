@@ -10,7 +10,6 @@ import {
   GridContainer,
   GridRow,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
