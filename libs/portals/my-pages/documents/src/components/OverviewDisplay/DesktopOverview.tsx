@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { m } from '@island.is/portals/my-pages/core'
-import { Box, LoadingDots } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Button } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
@@ -73,7 +73,19 @@ export const DesktopOverview: FC<Props> = ({
         }}
         actions={activeDocument.actions}
       />
-      <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
+      <Box>
+        {<DocumentRenderer doc={activeDocument} />}
+        <Box marginTop={2}>
+          <Button
+            variant="ghost"
+            preTextIcon="undo"
+            preTextIconType="outline"
+            size="small"
+          >
+            Svara pósti
+          </Button>
+        </Box>
+      </Box>
       {activeDocument?.id && (
         <Box className={styles.reveal}>
           <button
