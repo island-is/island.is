@@ -88,6 +88,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.period, path: ['month'] },
     ),
+  infoCheckbox: z.array(z.enum([YES])).nonempty(),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
