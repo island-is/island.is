@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   FocusableBox,
-  Link,
+  Hyphen,
   Text,
 } from '@island.is/island-ui/core'
 
@@ -57,15 +57,11 @@ export const IconTitleCard = ({
       />
     </span>
     <Box display="flex" flexDirection="column" justifyContent="spaceBetween">
-      <div className={styles.titleContainer}>
-        <Text
-          variant={withButton ? 'h4' : 'h5'}
-          color="purple600"
-          whiteSpace="normal"
-        >
-          {heading}
+      <Box paddingRight={1}>
+        <Text variant={withButton ? 'h4' : 'h5'} color="purple600">
+          <Hyphen>{heading}</Hyphen>
         </Text>
-      </div>
+      </Box>
       {withButton && (
         <Box marginTop={1}>
           <Button
