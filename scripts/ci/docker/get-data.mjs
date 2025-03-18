@@ -77,6 +77,7 @@ export async function main(testContext = null) {
         : _MANIFEST_PATHS[0]
     const files = await glob(`${manifestPath}/**/values.${STAGE_NAME}.yaml`)
     console.log(files)
+
     for (const file of files) {
       const textContent = readFileSync(file, 'utf8')
       const yamlContent = await jsyaml.load(textContent)
@@ -173,9 +174,7 @@ function getCommitMsg(context) {
   return `Change from: https://github.com/island-is/island.is/commit/${context.sha}`
 }
 // Run the main function if this is the main module
-if (import.meta.url === import.meta.main) {
-  main().catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
-}
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})
