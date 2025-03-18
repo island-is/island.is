@@ -6,22 +6,10 @@ import {
   buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
-
 import { participants as participantMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
-import {
-  QueryAreIndividualsValidArgs,
-  SeminarIndividual,
-  SeminarsIndividualValidationItem,
-} from '@island.is/api/schema'
-import { ARE_INDIVIDUALS_VALID } from '../../../graphql/queries'
-import { Participant } from '../../../shared/types'
-import { isApplyingForMultiple, updateOrAdd } from '../../../utils'
-
-interface ParticipantWitValidation extends Participant {
-  errorMessage: string
-  errorMessageEn: string
-}
+import { isApplyingForMultiple } from '../../../utils'
+import { submitTableForm } from '../../../utils/submitTableForm'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -43,89 +31,11 @@ export const participantsSection = buildSection({
           loadErrorMessage:
             participantMessages.labels.tableRepeaterLoadErrorMessage,
           onSubmitLoad: async ({ apolloClient, application, tableItems }) => {
-            const courseID =
-              getValueViaPath<string>(
-                application.answers,
-                'initialQuery',
-                '',
-              ) ?? ''
-            const nationalIdOfApplicant = getValueViaPath<string>(
-              application.externalData,
-              'identity.data.nationalId',
-              '',
+            const dictionaryOfItems = await submitTableForm(
+              application,
+              tableItems,
+              apolloClient,
             )
-
-            const individuals: Array<SeminarIndividual> =
-              tableItems?.map((x) => {
-                return {
-                  nationalId: x.nationalIdWithName.nationalId,
-                  email: x.email,
-                }
-              }) ?? []
-            const { data } = await apolloClient.query<
-              { areIndividualsValid: Array<SeminarsIndividualValidationItem> },
-              QueryAreIndividualsValidArgs
-            >({
-              query: ARE_INDIVIDUALS_VALID,
-              variables: {
-                courseID: courseID,
-                nationalIdOfRegisterer: nationalIdOfApplicant,
-                input: { individuals: individuals },
-              },
-            })
-
-            const updatedParticipants: Array<ParticipantWitValidation> =
-              tableItems.map((x) => {
-                const participantInRes = data.areIndividualsValid.filter(
-                  (z: SeminarsIndividualValidationItem) =>
-                    z.nationalID === x.nationalIdWithName.nationalId,
-                )
-                return {
-                  ...x,
-                  disabled: !participantInRes[0].mayTakeCourse,
-                  errorMessage: participantInRes[0].errorMessage,
-                  errorMessageEn: participantInRes[0].errorMessageEn,
-                }
-              })
-
-            const allEmails = tableItems?.map((x) => x.email) ?? []
-            const lastEmailAdded = allEmails[allEmails.length - 1]
-            const emailAlreadyExists = allEmails.filter(
-              (x, i) => x === lastEmailAdded && i < allEmails.length - 1,
-            ).length
-
-            const dictionaryOfItems: Array<{ path: string; value: string }> =
-              updatedParticipants.map((x, i) => {
-                const mostRecentItem = i === tableItems.length - 1
-                return {
-                  path: `participantList[${i}].disabled`,
-                  value:
-                    x.disabled || (mostRecentItem && emailAlreadyExists)
-                      ? 'true'
-                      : 'false',
-                }
-              })
-
-            if (emailAlreadyExists > 0) {
-              dictionaryOfItems.push({
-                path: 'participantValidityError',
-                value: 'Netfang er þegar skráð',
-              })
-            }
-
-            const disabledItem = updatedParticipants.find((x) => !!x.disabled)
-            if (disabledItem) {
-              dictionaryOfItems.push({
-                path: 'participantValidityError',
-                value: disabledItem.errorMessage,
-              })
-            } else if (emailAlreadyExists === 0) {
-              dictionaryOfItems.push({
-                path: 'participantValidityError',
-                value: '',
-              })
-            }
-
             return {
               dictionaryOfItems,
             }

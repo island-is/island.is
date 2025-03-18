@@ -5,8 +5,7 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { PaymentArrangementType } from '../shared/types'
-import { PaymentOptions } from '../shared/constants'
+import { PaymentArrangementType, PaymentOptions } from '../shared/types'
 import { overview } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'
 import { isApplyingForMultiple } from './isApplyingForMultiple'

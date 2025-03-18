@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  ApplicationTypes,
-  PaymentCatalogItem,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { SeminarAnswers } from '@island.is/application/templates/aosh/seminars'
 import type { Logger } from '@island.is/logging'

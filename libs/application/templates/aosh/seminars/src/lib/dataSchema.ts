@@ -1,12 +1,12 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { isValidEmail, isValidPhoneNumber } from '../utils'
+import { YES } from '@island.is/application/core'
 import {
   IndividualOrCompany,
   PaymentOptions,
   RegisterNumber,
-} from '../shared/constants'
-import { isValidEmail, isValidPhoneNumber } from '../utils'
-import { YES } from '@island.is/application/core'
+} from '../shared/types'
 
 const UserSchemaBase = z.object({
   nationalId: z

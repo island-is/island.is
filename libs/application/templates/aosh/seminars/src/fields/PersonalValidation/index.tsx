@@ -7,7 +7,7 @@ import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { personal } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { RegisterNumber } from '../../shared/constants'
+import { RegisterNumber } from '../../shared/types'
 
 export const PersonalValidation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,

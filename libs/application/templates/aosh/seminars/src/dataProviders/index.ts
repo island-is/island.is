@@ -5,9 +5,9 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 import { IdentityApi as IdentityApiProvider } from '@island.is/application/types'
-import { ApiActions } from '../shared/constants'
 
 import { UserProfileApi as UserProfileApiProvider } from '@island.is/application/types'
+import { ApiActions } from '../shared/types'
 
 export const UserProfileApi = UserProfileApiProvider.configure({
   params: {

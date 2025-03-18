@@ -1,6 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
-import { IndividualOrCompany } from '../shared/constants'
+import { ExternalData, FormValue } from '@island.is/application/types'
+import { isCompanyType } from './isCompanyType'
+import { IndividualOrCompany } from '../shared/types'
 
 export const isCompany = (answers: FormValue): boolean => {
   const individualOrCompany = getValueViaPath<IndividualOrCompany>(
@@ -9,3 +10,8 @@ export const isCompany = (answers: FormValue): boolean => {
   )
   return individualOrCompany === IndividualOrCompany.company
 }
+
+export const companyCondition = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => isCompanyType(externalData) || isCompany(answers)

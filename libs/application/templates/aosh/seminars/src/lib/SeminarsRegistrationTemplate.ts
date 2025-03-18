@@ -19,7 +19,6 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-import { Roles, States, Events } from './constants'
 import { SeminarAnswersSchema } from './dataSchema'
 import {
   getSeminarsApi,
@@ -29,11 +28,17 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
-import { ApiActions, PaymentOptions } from '../shared/constants'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
+import {
+  ApiActions,
+  Events,
+  PaymentOptions,
+  Roles,
+  States,
+} from '../shared/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,

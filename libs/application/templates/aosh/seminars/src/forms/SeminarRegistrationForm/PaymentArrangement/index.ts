@@ -13,7 +13,6 @@ import {
   YES,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
-import { IndividualOrCompany, PaymentOptions } from '../../../shared/constants'
 import {
   Application,
   ExternalData,
@@ -25,7 +24,9 @@ import {
   isCompanyType,
   isPersonType,
   isApplyingForMultiple,
+  companyCondition,
 } from '../../../utils'
+import { IndividualOrCompany, PaymentOptions } from '../../../shared/types'
 
 export const paymentArrangementSection = buildSection({
   id: 'paymentArrangementSection',
@@ -77,7 +78,7 @@ export const paymentArrangementSection = buildSection({
               application.externalData,
               'userProfile.data.email',
             ),
-          condition: (answers: FormValue) => isIndividual(answers),
+          condition: isIndividual,
         }),
         buildPhoneField({
           id: 'paymentArrangement.individualInfo.phone',
@@ -91,7 +92,7 @@ export const paymentArrangementSection = buildSection({
               application.externalData,
               'userProfile.data.mobilePhoneNumber',
             ),
-          condition: (answers: FormValue) => isIndividual(answers),
+          condition: isIndividual,
         }),
         buildLinkField({
           id: 'paymentArrangement.individualInfo.changeInfo',
@@ -100,7 +101,7 @@ export const paymentArrangementSection = buildSection({
           variant: 'text',
           iconProps: { icon: 'arrowForward' },
           justifyContent: 'flexEnd',
-          condition: (answers: FormValue) => isIndividual(answers),
+          condition: isIndividual,
         }),
         /* INDIVIDUAL ENDS */
 
@@ -110,8 +111,7 @@ export const paymentArrangementSection = buildSection({
           title: paymentArrangement.labels.paymentOptions,
           titleVariant: 'h5',
           marginTop: 3,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         buildRadioField({
           id: 'paymentArrangement.paymentOptions',
@@ -127,8 +127,7 @@ export const paymentArrangementSection = buildSection({
               label: paymentArrangement.labels.putIntoAccount,
             },
           ],
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         buildDescriptionField({
           id: 'paymentArrangement.companyInfoDescription',
@@ -136,8 +135,7 @@ export const paymentArrangementSection = buildSection({
           titleVariant: 'h5',
           marginTop: 3,
           marginBottom: 1,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         buildTextField({
           id: 'paymentArrangement.companyInfo.nationalId',
@@ -155,7 +153,7 @@ export const paymentArrangementSection = buildSection({
 
             return nationalId
           },
-          condition: (answers: FormValue, externalData: ExternalData) =>
+          condition: (_, externalData: ExternalData) =>
             isCompanyType(externalData),
         }),
         buildTextField({
@@ -173,7 +171,7 @@ export const paymentArrangementSection = buildSection({
 
             return name
           },
-          condition: (answers: FormValue, externalData: ExternalData) =>
+          condition: (_, externalData: ExternalData) =>
             isCompanyType(externalData),
         }),
         buildNationalIdWithNameField({
@@ -191,31 +189,27 @@ export const paymentArrangementSection = buildSection({
           title: paymentArrangement.labels.contactEmail,
           width: 'half',
           required: true,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         buildPhoneField({
           id: 'paymentArrangement.contactInfo.phone',
           title: paymentArrangement.labels.contactPhone,
           width: 'half',
           required: true,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         buildCustomField({
           id: 'paymentArrangement.watchCompanyNationalId',
           title: '',
           component: 'WatchCompanyNationalId',
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         buildTextField({
           id: 'paymentArrangement.explanation',
           title: paymentArrangement.labels.explanation,
           placeholder: paymentArrangement.labels.explanationPlaceholder,
           maxLength: 40,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
+          condition: companyCondition,
         }),
         /* COMPANY ENDS */
 

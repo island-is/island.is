@@ -13,7 +13,7 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { FC, useCallback, useEffect, useState } from 'react'
-import { FILE_SIZE_LIMIT } from '../../lib/constants'
+import { FILE_SIZE_LIMIT, predefinedHeaders } from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
@@ -28,16 +28,6 @@ import {
 import { useLazyAreIndividualsValid } from '../../hooks/useLazyAreIndividualsValid'
 import { getValueViaPath } from '@island.is/application/core'
 import { SeminarIndividual } from '@island.is/api/schema'
-
-interface IndexableObject {
-  [index: number]: Array<string>
-}
-const predefinedHeaders: IndexableObject = {
-  0: ['nafn', 'name'],
-  1: ['kennitala', 'ssn'],
-  2: ['netfang', 'email'],
-  3: ['simi', 'phone'],
-}
 
 const parseDataToParticipantList = (csvInput: string): Participant | null => {
   const values = csvInput.split(';')

@@ -71,22 +71,24 @@ export const TableRepeaterFormField: FC<Props> = ({
   }))
 
   const load = async () => {
-    if (onSubmitLoad) {
-      try {
-        setLoadError(false)
-        const submitResponse = await onSubmitLoad({
-          apolloClient,
-          application,
-          tableItems: values,
-        })
+    if (!onSubmitLoad) {
+      return
+    }
 
-        submitResponse.dictionaryOfItems.forEach((x) => {
-          methods.setValue(x.path, x.value)
-        })
-      } catch (e) {
-        console.error('e', e)
-        setLoadError(true)
-      }
+    try {
+      setLoadError(false)
+      const submitResponse = await onSubmitLoad({
+        apolloClient,
+        application,
+        tableItems: values,
+      })
+
+      submitResponse.dictionaryOfItems.forEach((x) => {
+        methods.setValue(x.path, x.value)
+      })
+    } catch (e) {
+      console.error('e', e)
+      setLoadError(true)
     }
   }
 
