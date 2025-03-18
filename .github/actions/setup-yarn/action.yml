@@ -38,6 +38,7 @@ runs:
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache"
 
     - name: Yarn install
       run: |
@@ -54,3 +55,4 @@ runs:
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache"
