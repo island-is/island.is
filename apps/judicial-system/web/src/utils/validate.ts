@@ -300,16 +300,8 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
   }
 
   const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
-    if (indictmentCount.offenses) {
-      return indictmentCount.offenses.some(
-        (o) => o.offense === IndictmentCountOffense.SPEEDING,
-      )
-        ? Boolean(indictmentCount.recordedSpeed) &&
-            Boolean(indictmentCount.speedLimit)
-        : true
-    }
-    return indictmentCount.deprecatedOffenses?.includes(
-      IndictmentCountOffense.SPEEDING,
+    return indictmentCount.offenses?.some(
+      (o) => o.offense === IndictmentCountOffense.SPEEDING,
     )
       ? Boolean(indictmentCount.recordedSpeed) &&
           Boolean(indictmentCount.speedLimit)
