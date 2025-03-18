@@ -14,7 +14,7 @@ export const deceasedInfoFields = [
     id: 'deceasedHeader',
     title: m.theDeceased,
     titleVariant: 'h3',
-    marginBottom: 2,
+    marginBottom: 3,
     space: 'gutter',
   }),
   buildKeyValueField({

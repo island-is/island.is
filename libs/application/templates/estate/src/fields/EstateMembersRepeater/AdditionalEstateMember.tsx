@@ -185,7 +185,7 @@ export const AdditionalEstateMember = ({
             required={!field.initial}
           />
         </GridColumn>
-        {application.answers.selectedEstate ===
+        {selectedEstate ===
           EstateTypes.permitForUndividedEstate && (
           <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
             <SelectController

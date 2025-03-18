@@ -11,8 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import * as kennitala from 'kennitala'
-import { Answers, EstateMember } from '../../types'
+import { ErrorValue, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -21,7 +20,7 @@ import {
   PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { format as formatNationalId } from 'kennitala'
+import { format as formatNationalId, info as nationalIdInfo } from 'kennitala'
 import {
   EstateTypes,
   YES,
@@ -35,7 +34,7 @@ import intervalToDuration from 'date-fns/intervalToDuration'
 import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const EstateMembersRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers>>
+  React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
@@ -54,7 +53,7 @@ export const EstateMembersRepeater: FC<
         hasForeignCitizenship && birthDate
           ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
               ?.years
-          : kennitala.info(member.nationalId)?.age
+          : nationalIdInfo(member.nationalId)?.age
       return (
         (memberAge ?? 0) < 18 &&
         (member?.nationalId || birthDate) &&
@@ -66,7 +65,7 @@ export const EstateMembersRepeater: FC<
   const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const advocateAge =
-        member.advocate && kennitala.info(member.advocate.nationalId)?.age
+        member.advocate && nationalIdInfo(member.advocate.nationalId)?.age
       return (
         hasEstateMemberUnder18 &&
         member?.advocate?.nationalId &&
@@ -144,7 +143,7 @@ export const EstateMembersRepeater: FC<
       value: relation,
       label: relation,
     })) || []
-  const error = (errors as any)?.estate?.estateMembers
+  const error = (errors as ErrorValue)?.estate?.estateMembers
 
   const handleAddMember = () =>
     append({

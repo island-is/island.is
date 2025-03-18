@@ -940,7 +940,7 @@ export const m = defineMessages({
     description: '',
   },
   divisionOfEstateConfirmActionCheckbox: {
-    id: 'es.application:divisionOfEstateConfirmActionCheckbox',
+    id: 'es.application:divisionOfEstateConfirmActionCheckbox#markdown',
     defaultMessage:
       'Ég krefst þess að eftirfarandi dánarbú verði tekið til opinberra skipta.',
     description: '',

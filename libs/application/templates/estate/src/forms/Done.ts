@@ -8,7 +8,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { EstateTypes } from '../lib/constants'
-import Grieving from '../components/assets/Grieving'
+import Grieving from '../../assets/Grieving'
 
 export const done: Form = buildForm({
   id: 'divisionOfEstateDone',

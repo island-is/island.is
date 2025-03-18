@@ -1,5 +1,9 @@
 import { DefaultEvents } from '@island.is/application/types'
 
+export enum DataProviderTypes {
+  NationalRegistry = 'NationalRegistryProvider',
+}
+
 export const YES = 'Yes'
 export const NO = 'No'
 

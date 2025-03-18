@@ -9,7 +9,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, AssetFormField } from '../../types'
+import { AssetFormField, ErrorValue } from '../../types'
 
 import { m } from '../../lib/messages'
 import { AdditionalVehicle } from './AdditionalVehicle'
@@ -17,9 +17,9 @@ import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const VehicleRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers>>
+  React.PropsWithChildren<FieldBaseProps>
 > = ({ application, field, errors }) => {
-  const error = (errors as any)?.estate?.vehicles
+  const error = (errors as ErrorValue)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({

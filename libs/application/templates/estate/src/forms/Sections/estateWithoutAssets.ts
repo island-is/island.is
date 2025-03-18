@@ -20,7 +20,7 @@ export const estateWithoutAssets = buildSection({
           id: 'estateWithoutAssets.estateAssetsExist',
           title: m.doAssetsExistSelect,
           width: 'half',
-          largeButtons: false,
+          largeButtons: true,
           options: [
             { label: JA, value: YES },
             { label: NEI, value: NO },
@@ -30,7 +30,7 @@ export const estateWithoutAssets = buildSection({
           id: 'estateWithoutAssets.estateDebtsExist',
           title: m.doDebtsExist,
           width: 'half',
-          largeButtons: false,
+          largeButtons: true,
           space: 'containerGutter',
           options: [
             { label: JA, value: YES },
