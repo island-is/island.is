@@ -478,7 +478,7 @@ export class DrivingLicenseApi {
     willBringHealthCertificate: boolean
     willBringQualityPhoto: boolean
     jurisdictionId: number
-    sendLicenseInMail: boolean
+    sendLicenseInMail: number
     sendLicenseToAddress: string
     category: string
   }): Promise<boolean> {
@@ -494,7 +494,7 @@ export class DrivingLicenseApi {
             : 0,
           personIdNumber: params.nationalIdApplicant,
           bringsNewPhoto: params.willBringQualityPhoto ? 1 : 0,
-          sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
+          sendLicenseInMail: params.sendLicenseInMail,
           sendToAddress: params.sendLicenseToAddress,
         },
       })
@@ -586,8 +586,9 @@ export class DrivingLicenseApi {
     token: string
     districtId: number
     stolenOrLost: boolean
+    pickUpLicense: boolean
   }): Promise<number> {
-    const { districtId, token, stolenOrLost } = params
+    const { districtId, token, stolenOrLost, pickUpLicense } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -596,6 +597,7 @@ export class DrivingLicenseApi {
         districtId,
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
+        pickUpLicense,
       },
     })
   }

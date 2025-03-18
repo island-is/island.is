@@ -175,7 +175,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           }),
         )
       } else if (
-        defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+        defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
       ) {
         texts.push(formatMessage(strings.defendantViewedVerdictInCourt))
       }
