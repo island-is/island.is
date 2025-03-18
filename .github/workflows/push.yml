@@ -350,7 +350,9 @@ jobs:
             docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
-
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+  
       - name: Building Docker images
         continue-on-error: true
         id: dockerbuild
@@ -406,7 +408,9 @@ jobs:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+    
       - name: Docker build image
         working-directory: infra
         run: |
