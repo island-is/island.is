@@ -355,10 +355,7 @@ export class DefendantService {
       transaction,
     )
 
-    if (
-      !updatedDefendant.isDefenderChoiceConfirmed &&
-      updatedDefendant.defenderChoice === DefenderChoice.DELEGATE
-    ) {
+    if (updatedDefendant.defenderChoice === DefenderChoice.DELEGATE) {
       await this.messageService.sendMessagesToQueue([
         {
           type: MessageType.DEFENDANT_NOTIFICATION,
