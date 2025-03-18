@@ -29,7 +29,6 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { isEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useCase,
   useDefendants,
