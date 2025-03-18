@@ -15,7 +15,7 @@ const OJOIMissingRecordIdPage: CustomScreen<{}> = () => {
 
 const idParser = parseAsString
 
-OJOIMissingRecordIdPage.getProps = async ({ res, query }) => {
+OJOIMissingRecordIdPage.getProps = async ({ query }) => {
   const recordId = idParser.parseServerSide(query.recordId)
   const recordIdCapitalized = idParser.parseServerSide(query.RecordId)
 
@@ -26,22 +26,12 @@ OJOIMissingRecordIdPage.getProps = async ({ res, query }) => {
   }
 
   const redirectUrl = '/stjornartidindi/nr/' + idToUse
-  console.log('redirectUrl', redirectUrl)
-  if (res) {
-    console.log('redirecting to', redirectUrl)
-    res.writeHead(301, { Location: redirectUrl })
-    res.end()
 
-    return {
-      redirect: {
-        permanent: false,
-        destination: redirectUrl,
-      },
-      props: {},
-    }
-  }
   return {
-    props: {},
+    redirect: {
+      permanent: true,
+      destination: redirectUrl,
+    },
   }
 }
 
