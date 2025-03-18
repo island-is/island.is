@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -19,7 +19,19 @@ type RepresentativeSelectOption = ReactSelectOption & {
   caseRepresentative: CaseRepresentative
 }
 
-export const SelectCaseFileRepresentative = () => {
+export const SelectCaseFileRepresentative = ({
+  fileRepresentative,
+  setFileRepresentative,
+  submittedDate,
+  setSubmittedDate,
+  handleCaseFileRepresentativeUpdate,
+}: {
+  fileRepresentative: RepresentativeSelectOption
+  setFileRepresentative: Dispatch<SetStateAction<RepresentativeSelectOption>>
+  submittedDate: Date
+  setSubmittedDate: Dispatch<SetStateAction<Date>>
+  handleCaseFileRepresentativeUpdate: () => void
+}) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { caseRepresentatives } = workingCase
@@ -28,9 +40,6 @@ export const SelectCaseFileRepresentative = () => {
     value: representative.name,
     caseRepresentative: representative,
   }))
-  const [caseFileRepresentative, setCaseFileRepresentative] = useState(
-    {} as RepresentativeSelectOption,
-  )
 
   return (
     <div className={styles.selectCaseFileRepresentative}>
@@ -43,20 +52,24 @@ export const SelectCaseFileRepresentative = () => {
             name="caseRepresentative"
             label={formatMessage(strings.caseRepresentativeLabel)}
             placeholder={formatMessage(strings.caseRepresentativePlaceholder)}
-            value={caseFileRepresentative}
+            value={fileRepresentative}
             options={options}
-            onChange={(selectedOption) =>
-              setCaseFileRepresentative(
+            onChange={(selectedOption) => {
+              setFileRepresentative(
                 selectedOption as RepresentativeSelectOption,
               )
-            }
+              handleCaseFileRepresentativeUpdate()
+            }}
             required
           />
           <DateTime
             name="fileSubmittedDate"
-            selectedDate={new Date()}
-            onChange={() => {
-              return new Date()
+            selectedDate={submittedDate}
+            onChange={(selectedDate) => {
+              if (!selectedDate) return
+
+              setSubmittedDate(selectedDate)
+              handleCaseFileRepresentativeUpdate()
             }}
             blueBox={false}
             datepickerLabel="Dagsetning móttöku"

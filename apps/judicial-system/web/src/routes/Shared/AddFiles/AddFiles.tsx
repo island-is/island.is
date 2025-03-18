@@ -25,9 +25,13 @@ import {
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFileCategory,
+  CaseRepresentative,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase } from '@island.is/judicial-system-web/src/types'
+import {
+  ReactSelectOption,
+  TempCase,
+} from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useS3Upload,
@@ -50,7 +54,7 @@ const getUserProps = (user: InstitutionUser | undefined) => {
     }
   } else if (isDistrictCourtUser(user)) {
     return {
-      caseFileCategory: CaseFileCategory.COURT_RECORD,
+      caseFileCategory: CaseFileCategory.COURT_RECORD, //nono => case file
       previousRoute: constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
       getCaseInfoNode: (workingCase: TempCase) => (
         <CourtCaseInfo workingCase={workingCase} />
@@ -64,6 +68,10 @@ const getUserProps = (user: InstitutionUser | undefined) => {
     getCaseInfoNode,
     hasFileRepresentativeSelection: false,
   }
+}
+
+type RepresentativeSelectOption = ReactSelectOption & {
+  caseRepresentative: CaseRepresentative
 }
 
 const AddFiles: FC = () => {
@@ -83,6 +91,12 @@ const AddFiles: FC = () => {
 
   const previousRoute = `${previousRouteType}/${workingCase.id}`
 
+  // used when a user submits files on behalf of a case file representative
+  const [fileRepresentative, setFileRepresentative] = useState(
+    {} as RepresentativeSelectOption,
+  )
+  const [submittedDate, setSubmittedDate] = useState(new Date())
+
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -94,16 +108,27 @@ const AddFiles: FC = () => {
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
 
-  const handleChange = (files: File[]) => {
+  const addFiles = (files: File[]) => {
     addUploadFiles(
       files,
       {
         category: caseFileCategory,
         status: 'done',
-        displayDate: new Date().toISOString(),
+        fileRepresentative: fileRepresentative?.caseRepresentative.name,
+        displayDate: submittedDate.toISOString(),
       },
       true,
     )
+  }
+
+  const handleCaseFileRepresentativeUpdate = () => {
+    uploadFiles.forEach((file) => {
+      updateUploadFile({
+        ...file,
+        fileRepresentative: fileRepresentative.caseRepresentative.name,
+        displayDate: submittedDate.toISOString(),
+      })
+    })
   }
 
   const handleRename = useCallback(
@@ -164,13 +189,23 @@ const AddFiles: FC = () => {
         />
         <UploadFiles
           files={uploadFiles}
-          onChange={handleChange}
+          onChange={addFiles}
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
           isBottomComponent={!hasFileRepresentativeSelection}
         />
-        {hasFileRepresentativeSelection && <SelectCaseFileRepresentative />}
+        {hasFileRepresentativeSelection && (
+          <SelectCaseFileRepresentative
+            fileRepresentative={fileRepresentative}
+            setFileRepresentative={setFileRepresentative}
+            submittedDate={submittedDate}
+            setSubmittedDate={setSubmittedDate}
+            handleCaseFileRepresentativeUpdate={
+              handleCaseFileRepresentativeUpdate
+            }
+          />
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
