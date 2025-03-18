@@ -112,7 +112,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientIdByNationalId(nationalId: string): Promise<string | null> {
-    const select = '$select=accountnumber,name,star_type'
+    const select = '$select=accountnumber,name,star_type, accountid'
     const filter = `$filter=accountnumber eq '${encodeURIComponent(
       nationalId,
     )}'`
@@ -122,7 +122,7 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     const clientId = data.value.map((x: any) => {
-      return x.star_clientid
+      return x.accountid
     })
 
     if (clientId && clientId.length > 0) {
