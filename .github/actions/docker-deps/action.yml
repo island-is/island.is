@@ -37,7 +37,7 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       with:
-        driver-opts: image=${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-1.amazonaws.com/moby/buildkit:buildx-stable-1
+        driver-opts: image=${{ inputs.AWS_ACCOUNT_ID }}.dkr.ecr.${{ inputs.AWS_REGION }}.amazonaws.com/moby/buildkit:buildx-stable-1
 
     - name: Build and push deps layer
       uses: docker/build-push-action@v6
@@ -46,6 +46,5 @@ runs:
         file: ./scripts/ci/Dockerfile
         platforms: linux/amd64
         target: deps
-        push: true
         cache-from: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache
         cache-to: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache,mode=max
