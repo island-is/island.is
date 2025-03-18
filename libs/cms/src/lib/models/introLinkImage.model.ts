@@ -36,7 +36,7 @@ export const mapIntroLinkImage = ({
   fields,
   sys,
 }: IIntroLinkImage): IntroLinkImage => ({
-  id: sys.id,
+  entryId: sys.id,
   title: fields.title ?? '',
   intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
   image: fields.image ? mapImage(fields.image) : null,
