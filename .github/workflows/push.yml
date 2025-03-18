@@ -189,6 +189,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -386,7 +388,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
