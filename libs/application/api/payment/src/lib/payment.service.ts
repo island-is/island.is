@@ -122,8 +122,13 @@ export class PaymentService {
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
       )
+    } else {
+      console.log('=========================================')
+      console.log('foundPayment', JSON.stringify(foundPayment, null, 2))
+      console.log('=========================================')
     }
 
+    // if (!foundPayment.user4) {
     // if (!foundPayment.user4) {
     //   throw new InternalServerErrorException(
     //     `valid payment object was not found for application id ${applicationId} - user4 not set`,
@@ -251,6 +256,15 @@ export class PaymentService {
 
       const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
       onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+
+      const paymentFlow =
+        await this.paymentsApi.paymentFlowControllerGetPaymentFlow({
+          id: '123',
+        })
+
+      console.log('=========================================')
+      console.log('paymentFlow', paymentFlow)
+      console.log('=========================================')
 
       const paymentResult =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
