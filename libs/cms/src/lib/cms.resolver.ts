@@ -1,6 +1,13 @@
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  ResolveField,
+  Parent,
+  ID,
+} from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
 import { Organization } from './models/organization.model'
@@ -131,6 +138,7 @@ import {
 import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
+import { IntroLinkImage } from './models/introLinkImage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -922,5 +930,17 @@ export class LatestGenericListItemsResolver {
       return null
     }
     return this.cmsElasticsearchService.getGenericListItems(input)
+  }
+}
+
+// Just in case the id field is missing from elasticsearch instances we return an empty string to prevent a graphql error since id field is non-nullable
+@Resolver(() => IntroLinkImage)
+export class IntroLinkImageResolver {
+  @ResolveField(() => ID)
+  async id(@Parent() { id }: IntroLinkImage) {
+    if (!id) {
+      return ''
+    }
+    return id
   }
 }
