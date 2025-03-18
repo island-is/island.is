@@ -252,10 +252,12 @@ jobs:
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Prepare docker deps
-        id: docker-deps
-        run: |
-          ./scripts/ci/10_prepare-docker-deps.sh
+      - name: Prepare node-modules for docker
+        uses: ./.github/actions/docker-deps
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   docker-build:
     needs:
