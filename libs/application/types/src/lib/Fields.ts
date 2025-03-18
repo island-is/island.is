@@ -912,7 +912,7 @@ export type AttachmentItem = {
   fileType?: FormText
 }
 
-type TableData = {
+export type TableData = {
   header: Array<FormTextWithLocale>
   rows: Array<Array<string>>
 }

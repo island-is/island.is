@@ -51,4 +51,65 @@ export const overview = {
       description: 'Participants label',
     },
   }),
+  seminarInfo: defineMessages({
+    seminarBegins: {
+      id: 'aosh.sem.application:overview.seminarInfo.seminarBegins',
+      defaultMessage: 'Hefst við skráningu',
+      description: 'Overview seminarInfo seminarBegins label',
+    },
+    seminarEnds: {
+      id: 'aosh.sem.application:overview.seminarInfo.seminarEnds',
+      defaultMessage: 'Er opið í 8 vikur frá skráningu',
+      description: 'Overview seminarInfo seminarEnds label',
+    },
+  }),
+  personalInfo: defineMessages({
+    name: {
+      id: 'aosh.sem.application:overview.personalInfo.name',
+      defaultMessage: 'Nafn: {value}',
+      description: 'Overview personalInfo name label',
+    },
+    nationalId: {
+      id: 'aosh.sem.application:overview.personalInfo.nationalId',
+      defaultMessage: 'Kennitala: {value}',
+      description: 'Overview personalInfo nationalId label',
+    },
+  }),
+  paymentArrangement: defineMessages({
+    cashOnDelivery: {
+      id: 'aosh.sem.application:overview.paymentArrangement.cashOnDelivery',
+      defaultMessage: 'Staðgreiðsla',
+      description: 'Overview paymentArrangement cashOnDelivery label',
+    },
+    putIntoAccount: {
+      id: 'aosh.sem.application:overview.paymentArrangement.putIntoAccount',
+      defaultMessage: 'Setja í reikning',
+      description: 'Overview paymentArrangement putIntoAccount label',
+    },
+    contactEmail: {
+      id: 'aosh.sem.application:overview.paymentArrangement.contactEmail',
+      defaultMessage: 'Netfang tengiliðs: {value}',
+      description: 'Overview paymentArrangement contactEmail label',
+    },
+    contactPhone: {
+      id: 'aosh.sem.application:overview.paymentArrangement.contactPhone',
+      defaultMessage: 'Símanúmer tengiliðs: {value}',
+      description: 'Overview paymentArrangement contactPhone label',
+    },
+    explanation: {
+      id: 'aosh.sem.application:overview.paymentArrangement.explanation',
+      defaultMessage: 'Skýring: {value}',
+      description: 'Overview paymentArrangement explanation label',
+    },
+    email: {
+      id: 'aosh.sem.application:overview.paymentArrangement.email',
+      defaultMessage: 'Netfang: {value}',
+      description: 'Overview paymentArrangement email label',
+    },
+    phonenumber: {
+      id: 'aosh.sem.application:overview.paymentArrangement.phonenumber',
+      defaultMessage: 'Símanúmer: {value}',
+      description: 'Overview paymentArrangement phonenumber label',
+    },
+  }),
 }

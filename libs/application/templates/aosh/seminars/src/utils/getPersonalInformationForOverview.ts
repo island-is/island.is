@@ -1,12 +1,16 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue } from '@island.is/application/types'
-import { personal } from '../lib/messages'
+import {
+  ExternalData,
+  FormValue,
+  KeyValueItem,
+} from '@island.is/application/types'
+import { overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 
 export const getPersonalInformationForOverview = (
   answers: FormValue,
-  formatMessage: FormatMessage,
-) => {
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
   const applicantNationalId = getValueViaPath<string>(
     answers,
     'applicant.nationalId',
@@ -14,9 +18,22 @@ export const getPersonalInformationForOverview = (
   const applicantName = getValueViaPath<string>(answers, 'applicant.name')
 
   return [
-    `${formatMessage(personal.labels.userName)}: ${applicantName}`,
-    `${formatMessage(personal.labels.userNationalId)}: ${formatKennitala(
-      applicantNationalId ?? '',
-    )}`,
-  ].filter((n) => n)
+    {
+      width: 'full',
+      valueText: [
+        {
+          ...overview.personalInfo.name,
+          values: {
+            value: applicantName,
+          },
+        },
+        {
+          ...overview.personalInfo.nationalId,
+          values: {
+            value: formatKennitala(applicantNationalId ?? ''),
+          },
+        },
+      ],
+    },
+  ]
 }

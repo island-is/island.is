@@ -1,70 +1,98 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormValue,
+  KeyValueItem,
+} from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { PaymentArrangementType } from '../shared/types'
-import { IndividualOrCompany, PaymentOptions } from '../shared/constants'
-import { paymentArrangement } from '../lib/messages'
+import { PaymentOptions } from '../shared/constants'
+import { overview } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'
 import { isApplyingForMultiple } from './isApplyingForMultiple'
 
-export const getPaymentArrangementForOverview = (
+export const getPaymentArrangementForOverviewMultiple = (
   answers: FormValue,
-  formatMessage: FormatMessage,
-) => {
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
   const paymentArrangementAnswers = getValueViaPath<PaymentArrangementType>(
     answers,
     'paymentArrangement',
   )
+  return [
+    {
+      width: 'full',
+      valueText: [
+        paymentArrangementAnswers?.paymentOptions ===
+        PaymentOptions.cashOnDelivery
+          ? overview.paymentArrangement.cashOnDelivery
+          : overview.paymentArrangement.putIntoAccount,
+        `${paymentArrangementAnswers?.companyInfo?.name}, ${formatKennitala(
+          paymentArrangementAnswers?.companyInfo?.nationalId ?? '',
+        )}`,
+        {
+          ...overview.paymentArrangement.contactEmail,
+          values: {
+            value: paymentArrangementAnswers?.contactInfo?.email,
+          },
+        },
+        {
+          ...overview.paymentArrangement.contactPhone,
+          values: {
+            value: formatPhoneNumber(
+              paymentArrangementAnswers?.contactInfo?.phone ?? '',
+            ),
+          },
+        },
+        {
+          ...overview.paymentArrangement.explanation,
+          values: {
+            value: paymentArrangementAnswers?.explanation,
+          },
+        },
+      ],
+    },
+  ]
+}
 
+export const getPaymentArrangementForOverviewSingle = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  const paymentArrangementAnswers = getValueViaPath<PaymentArrangementType>(
+    answers,
+    'paymentArrangement',
+  )
   const userIsApplyingForMultiple = isApplyingForMultiple(answers)
-
   const applicantEmail = getValueViaPath<string>(answers, 'applicant.email')
-
   const applicantPhone = getValueViaPath<string>(
     answers,
     'applicant.phoneNumber',
   )
-
-  return !userIsApplyingForMultiple ||
-    paymentArrangementAnswers?.individualOrCompany ===
-      IndividualOrCompany.individual
-    ? [
-        `${formatMessage(paymentArrangement.labels.cashOnDelivery)}`,
-        `${formatMessage(paymentArrangement.labels.email)}: ${
-          !userIsApplyingForMultiple
-            ? applicantEmail
-            : paymentArrangementAnswers?.individualInfo?.email
-        }`,
-        `${formatMessage(paymentArrangement.labels.phonenumber)}: ${
-          !userIsApplyingForMultiple
-            ? formatPhoneNumber(applicantPhone ?? '')
-            : formatPhoneNumber(
-                paymentArrangementAnswers?.individualInfo?.phone ?? '',
-              )
-        }`,
-      ]
-    : [
-        `${
-          paymentArrangementAnswers?.paymentOptions ===
-          PaymentOptions.cashOnDelivery
-            ? formatMessage(paymentArrangement.labels.cashOnDelivery)
-            : formatMessage(paymentArrangement.labels.putIntoAccount)
-        }`,
-        `${paymentArrangementAnswers?.companyInfo?.name}, ${formatKennitala(
-          paymentArrangementAnswers?.companyInfo?.nationalId ?? '',
-        )}`,
-        `${formatMessage(paymentArrangement.labels.contactEmail)}: ${
-          paymentArrangementAnswers?.contactInfo?.email
-        }`,
-        `${formatMessage(
-          paymentArrangement.labels.contactPhone,
-        )}: ${formatPhoneNumber(
-          paymentArrangementAnswers?.contactInfo?.phone ?? '',
-        )}`,
-        paymentArrangementAnswers?.explanation
-          ? `${formatMessage(paymentArrangement.labels.explanation)}: ${
-              paymentArrangementAnswers?.explanation
-            }`
-          : '',
-      ].filter((n) => n)
+  return [
+    {
+      width: 'full',
+      valueText: [
+        overview.paymentArrangement.cashOnDelivery,
+        {
+          ...overview.paymentArrangement.email,
+          values: {
+            value: !userIsApplyingForMultiple
+              ? applicantEmail
+              : paymentArrangementAnswers?.individualInfo?.email,
+          },
+        },
+        {
+          ...overview.paymentArrangement.phonenumber,
+          values: {
+            value: !userIsApplyingForMultiple
+              ? formatPhoneNumber(applicantPhone ?? '')
+              : formatPhoneNumber(
+                  paymentArrangementAnswers?.individualInfo?.phone ?? '',
+                ),
+          },
+        },
+      ],
+    },
+  ]
 }
