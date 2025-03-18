@@ -131,14 +131,13 @@ export const createRulingSentToPrisonAdminPdf = (
     addNormalPlusText(doc, 'Dómþoli: ', 'Times-Bold', true)
     addNormalPlusText(doc, defendant.name || '', 'Times-Roman', true)
 
-    const formattedNationalId = formatNationalId(defendant.nationalId)
-    addNormalPlusText(
-      doc,
-      defendant.nationalId ? `, kt. ${formattedNationalId}` : '',
-      'Times-Roman',
-    )
-
-    addEmptyLines(doc)
+    if (defendant.nationalId) {
+      const formattedNationalId = formatNationalId(defendant.nationalId)
+      addNormalPlusText(doc, `, kt. ${formattedNationalId}`, 'Times-Roman')
+      addEmptyLines(doc, 1)
+    } else {
+      addEmptyLines(doc, 2)
+    }
 
     addNormalPlusText(doc, 'Dómur birtur: ', 'Times-Bold', true)
     addNormalPlusText(doc, verdictViewDateText, 'Times-Roman')
