@@ -421,7 +421,7 @@ export const serviceSetup = (services: {
           ],
         },
         paths: ['/application-payment', '/applications'],
-        public: false,
+        // public: false,
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
