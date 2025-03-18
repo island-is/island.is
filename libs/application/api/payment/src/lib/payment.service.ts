@@ -122,11 +122,10 @@ export class PaymentService {
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
       )
-    } else {
-      console.log('=========================================')
-      console.log('foundPayment', JSON.stringify(foundPayment, null, 2))
-      console.log('=========================================')
     }
+    console.log('=========================================')
+    console.log('foundPayment', JSON.stringify(foundPayment, null, 2))
+    console.log('=========================================')
 
     // if (!foundPayment.user4) {
     // if (!foundPayment.user4) {
@@ -135,7 +134,23 @@ export class PaymentService {
     //   )
     // }
 
-    const paymentUrl = JSON.parse(foundPayment.dataValues.definition).paymentUrl
+    const paymentUrl: string = JSON.parse(
+      foundPayment.dataValues.definition,
+    ).paymentUrl
+    const url = new URL(paymentUrl)
+    const paymentFlowId = url.pathname.split('/').filter(Boolean).pop()
+    if (!paymentFlowId) {
+      throw new InternalServerErrorException(
+        `payment flow id was not found for application id ${applicationId}`,
+      )
+    }
+    const paymentFlow =
+      await this.paymentsApi.paymentFlowControllerGetPaymentFlow({
+        id: paymentFlowId,
+      })
+    console.log('=========================================')
+    console.log('paymentFlow', JSON.stringify(paymentFlow, null, 2))
+    console.log('=========================================')
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
