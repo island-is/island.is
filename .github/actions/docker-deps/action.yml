@@ -1,0 +1,41 @@
+name: 'Prepare yarn install docker layer'
+description: ''
+inputs:
+  RUNS_ON_S3_BUCKET_CACHE:
+    description: ''
+    required: true
+  AWS_ACCESS_KEY_ID:
+    description: ''
+    required: true
+  AWS_SECRET_ACCESS_KEY:
+    description: ''
+    required: true
+  AWS_REGION:
+    description: ''
+    required: false
+    default: eu-west-1
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ inputs.AWS_REGION }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        driver-opts: image=821090935708.dkr.ecr.eu-west-1.amazonaws.com/moby/buildkit:buildx-stable-1
+
+    - name: Build and push deps layer
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./scripts/ci/Dockerfile
+        platforms: linux/amd64
+        target: deps
+        push: true
+        cache-from: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache
+        cache-to: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache,mode=max
