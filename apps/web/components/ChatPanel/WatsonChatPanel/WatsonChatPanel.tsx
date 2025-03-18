@@ -334,6 +334,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           },
           serviceDesk: {
             skipConnectAgentCard: true,
+            ...props.serviceDesk,
           },
           ...propsCopy,
           onLoad: (instance) => {
