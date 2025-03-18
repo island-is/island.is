@@ -26,6 +26,12 @@ export const specialProvisions = {
       defaultMessage: 'Lýsing á húsnæðinu og því sem með fylgir  ',
       description: 'Special provisions housing description title',
     },
+    warningBanner: {
+      id: 'ra.application:specialProvisions.housingInfo.warning',
+      defaultMessage:
+        'Þar sem þú breyttir fermetrafjölda leiguhúsnæðisins þarft þú að setja lýsingu á hinu leigða hér fyrir neðan. T.d. „bílskúr innréttaður sem íbúð“ eða „hæð í kjallara“.',
+      description: 'Special provisions housing description warning banner',
+    },
     tooltip: {
       id: 'ra.application:specialProvisions.housingInfo.tooltip',
       defaultMessage:
