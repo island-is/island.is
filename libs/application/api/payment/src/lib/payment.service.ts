@@ -275,15 +275,6 @@ export class PaymentService {
       const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
       onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
-      const paymentFlow =
-        await this.paymentsApi.paymentFlowControllerGetPaymentFlow({
-          id: '123',
-        })
-
-      console.log('=========================================')
-      console.log('paymentFlow', paymentFlow)
-      console.log('=========================================')
-
       const paymentResult =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
           createPaymentFlowInput: {
