@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { CacheField } from '@island.is/nest/graphql'
 import { IIntroLinkImage } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
@@ -38,10 +39,11 @@ export class IntroLinkImage {
 export const mapIntroLinkImage = ({
   fields,
   sys,
-}: IIntroLinkImage): IntroLinkImage => {
+}: IIntroLinkImage): SystemMetadata<IntroLinkImage> => {
   const intro =
     (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null
   return {
+    typename: 'IntroLinkImage',
     id: sys.id,
     title: fields.title ?? '',
     intro,
