@@ -9,9 +9,6 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    // rightsPortalCopaymentStatus: () => {
-    //   return store.getCopaymentStatus
-    // },
     rightsPortalCopaymentPeriods: () => {
       return store.getCopaymentPeriods
     },
@@ -26,6 +23,18 @@ export const resolvers: Resolvers = {
     },
     rightsPortalPaymentOverviewDocument: () => {
       return store.getPaymentOverviewDocument
+    },
+    rightsPortalHealthCenterRegistrationHistory: () => {
+      return store.getHealthCenterRegistrationHistory
+    },
+    rightsPortalInsuranceOverview: () => {
+      return store.getInsuranceOverview
+    },
+    rightsPortalCopaymentStatus: () => {
+      return store.getCopaymentStatus
+    },
+    rightsPortalDrugPeriods: () => {
+      return store.getDrugPeriods
     },
   },
 }
