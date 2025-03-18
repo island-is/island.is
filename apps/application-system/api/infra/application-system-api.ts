@@ -420,10 +420,12 @@ export const serviceSetup = (services: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
           staging: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
