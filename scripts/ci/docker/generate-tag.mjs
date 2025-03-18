@@ -52,7 +52,8 @@ function getTagname() {
             return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
-            return `release_${dateString}_${randomTag}`
+            const version = targetBranch.replace('release/', '');
+            return `release_${version}_${randomTag}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }

@@ -1,34 +1,69 @@
 'use strict'
 
+const { uuid } = require('uuidv4')
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     // We prefer doing delegation duplication to the new FJS scope to avoid
     // any downtime for users while FJS updates the clientId.
-    return queryInterface.sequelize.query(`
-        BEGIN;
 
-        -- Duplicating all delegations granted in the @rikisskaup.is domain to the @fjs.is domain
-        -- for delegations granted to the Ríkiskaup gagnaskilagátt
-        INSERT INTO delegation("id","from_national_id","from_display_name","to_national_id","created","modified","to_name","domain_name","created_by_national_id")
-        SELECT d."id",d."from_national_id",d."from_display_name",d."to_national_id",d."created",d."modified",d."to_name",d."domain_name",d."created_by_national_id"
-        FROM delegation d
-        JOIN delegation_scope ds ON d.id = ds.delegation_id
-        WHERE d.domain_name = '@rikiskaup.is'
-          AND ds.scope_name = '@rikiskaup.is/gagnaskilagatt'
-        ;
+    return queryInterface.sequelize.transaction(async (transaction) => {
+      const [rikiskaupDelegations, _ignore] =
+        await queryInterface.sequelize.query(
+          `
+          SELECT d.*, ds.*, d.created as created, d.modified as modified, ds.created as scope_created, ds.modified as scope_modified
+          FROM delegation d
+          JOIN delegation_scope ds ON d.id = ds.delegation_id
+          WHERE d.domain_name = '@rikiskaup.is'
+            AND ds.scope_name = '@rikiskaup.is/gagnaskilagatt'
+        `,
+          { transaction },
+        )
 
-        -- Duplicating all delegation scopes granted in the @rikisskaup.is domain to the @fjs.is domain
-        -- related to the delegations above.
-        INSERT INTO delegation_scope("delegation_id","scope_name","created","modified","valid_from","valid_to")
-        SELECT ds."delegation_id",ds."scope_name",ds."created",ds."modified",ds."valid_from",ds."valid_to"
-        FROM delegation d
-        JOIN delegation_scope ds ON d.id = ds.delegation_id
-        WHERE d.domain_name = '@rikiskaup.is'
-          AND ds.scope_name = '@rikiskaup.is/gagnaskilagatt'
-       ;
+      const fjsDelegations = rikiskaupDelegations.map((delegation) => ({
+        id: uuid(),
+        from_national_id: delegation.from_national_id,
+        from_display_name: delegation.from_display_name,
+        to_national_id: delegation.to_national_id,
+        to_name: delegation.to_name,
+        created_by_national_id: delegation.created_by_national_id,
+        domain_name: '@fjs.is',
+        created: delegation.created,
+        modified: delegation.modified,
+      }))
 
-        COMMIT;
-    `)
+      const fjsDelegationScopes = fjsDelegations.map((delegation, index) => ({
+        id: uuid(),
+        delegation_id: delegation.id,
+        scope_name: '@fjs.is/rammasamningar',
+        created: rikiskaupDelegations[index].scope_created,
+        modified: rikiskaupDelegations[index].scope_modified,
+      }))
+
+      console.log(
+        `Found ${rikiskaupDelegations.length} delegations to duplicate`,
+        {
+          rikiskaupDelegations: rikiskaupDelegations.map((d) => d.id),
+          fjsDelegations: fjsDelegations.map((d) => d.id),
+          fjsDelegationScopes: fjsDelegationScopes.map((d) => ({
+            id: d.id,
+            delegationId: d.delegation_id,
+          })),
+        },
+      )
+
+      console.log('Inserting new FJS delegations')
+      await queryInterface.bulkInsert('delegation', fjsDelegations, {
+        transaction,
+      })
+
+      console.log('Inserting new FJS delegation scopes')
+      await queryInterface.bulkInsert('delegation_scope', fjsDelegationScopes, {
+        transaction,
+      })
+
+      console.log('Done duplicating to FJS delegations')
+    })
   },
 
   down: () => {
