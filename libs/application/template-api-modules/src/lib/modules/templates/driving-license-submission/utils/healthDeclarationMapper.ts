@@ -7,6 +7,7 @@ import { infer as zinfer } from 'zod'
 
 import { formatPhoneNumber } from './'
 import { getValueViaPath } from '@island.is/application/core'
+import { Pickup } from '@island.is/api/domains/driving-license'
 
 export type DrivingLicenseSchema = zinfer<typeof dataSchema>
 
@@ -28,7 +29,10 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
     authority: getValueViaPath(answers, 'delivery.jurisdiction') || 37,
     bringsHealthCertificate: true,
     bringNewPhoto: false,
-    sendLicenseInMail: false,
+    sendLicenseInMail:
+      getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
+        ? true
+        : false,
     sendToAddress: null,
     instructorSSN: '',
     email: null,
