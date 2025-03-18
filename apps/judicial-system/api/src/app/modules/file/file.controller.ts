@@ -263,7 +263,7 @@ export class FileController {
       user.id,
       AuditedAction.GET_INDICTMENT_RULING_SENT_TO_PRISON_ADMIN_PDF,
       id,
-      `indictment/rulingSentToPrisonAdmin`,
+      `rulingSentToPrisonAdmin`,
       req,
       res,
       'pdf',

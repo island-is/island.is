@@ -15,9 +15,8 @@ describe('CaseController - Get ruling sent to prison admin pdf rules', () => {
     )
   })
 
-  it('should give permission to roles', () => {
-    expect(rules).toHaveLength(2)
-    expect(rules).toContain(prisonSystemStaffRule)
+  it('should give permission to 1 role', () => {
+    expect(rules).toHaveLength(1)
     expect(rules).toContain(publicProsecutorStaffRule)
   })
 })

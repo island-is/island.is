@@ -656,8 +656,8 @@ export class CaseController {
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
-  @RolesRules(prisonSystemStaffRule, publicProsecutorStaffRule)
-  @Get('case/:caseId/indictment/rulingSentToPrisonAdmin')
+  @RolesRules(publicProsecutorStaffRule)
+  @Get('case/:caseId/rulingSentToPrisonAdmin')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
