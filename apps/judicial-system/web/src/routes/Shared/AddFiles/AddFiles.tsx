@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 
 import * as constants from '@island.is/judicial-system/consts'
@@ -79,7 +80,7 @@ const AddFiles: FC = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
-  const [visibleModal, setVisibleModal] = useState<'sendFiles'>()
+  const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
   const { user } = useContext(UserContext)
   const {
@@ -91,7 +92,7 @@ const AddFiles: FC = () => {
 
   const previousRoute = `${previousRouteType}/${workingCase.id}`
 
-  // used when a user submits files on behalf of a case file representative
+  // states used when a user submits files on behalf of a case file representative
   const [fileRepresentative, setFileRepresentative] = useState(
     {} as RepresentativeSelectOption,
   )
@@ -114,19 +115,24 @@ const AddFiles: FC = () => {
       {
         category: caseFileCategory,
         status: 'done',
-        fileRepresentative: fileRepresentative?.caseRepresentative.name,
+        fileRepresentative: fileRepresentative?.caseRepresentative?.name,
         displayDate: submittedDate.toISOString(),
       },
       true,
     )
   }
 
-  const handleCaseFileRepresentativeUpdate = () => {
+  const handleCaseFileRepresentativeUpdate = (
+    updatedFileRepresentative?: RepresentativeSelectOption,
+    updatedSubmittedDate?: Date,
+  ) => {
+    const representative = updatedFileRepresentative || fileRepresentative
+    const date = updatedSubmittedDate || submittedDate
     uploadFiles.forEach((file) => {
       updateUploadFile({
         ...file,
-        fileRepresentative: fileRepresentative.caseRepresentative.name,
-        displayDate: submittedDate.toISOString(),
+        fileRepresentative: representative?.caseRepresentative?.name,
+        displayDate: date.toISOString(),
       })
     })
   }
@@ -158,10 +164,6 @@ const AddFiles: FC = () => {
       // Some files were added successfully so we send a notification
       sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
     }
-
-    if (uploadResult === 'ALL_SUCCEEDED') {
-      setVisibleModal('sendFiles')
-    }
   }, [
     handleUpload,
     sendNotification,
@@ -171,6 +173,13 @@ const AddFiles: FC = () => {
   ])
 
   const CaseInfo = getCaseInfoNode(workingCase)
+  const hasValidFileRepresentativeSelection = () => {
+    if (!hasFileRepresentativeSelection) {
+      return true
+    }
+
+    return !isEmpty(fileRepresentative) && !!submittedDate
+  }
   return (
     <PageLayout
       workingCase={workingCase}
@@ -217,19 +226,30 @@ const AddFiles: FC = () => {
           }
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
           nextIsDisabled={
-            uploadFiles.length === 0 || !allFilesDoneOrError || editCount > 0
+            uploadFiles.length === 0 ||
+            !allFilesDoneOrError ||
+            editCount > 0 ||
+            !hasValidFileRepresentativeSelection()
           }
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => setVisibleModal('confirmation')}
         />
       </FormContentContainer>
-      {visibleModal === 'sendFiles' && (
+      {visibleModal === 'confirmation' && (
         <Modal
           title={formatMessage(strings.filesSentModalTitle)}
           text={formatMessage(strings.filesSentModalText)}
           primaryButtonText={formatMessage(
-            strings.filesSentModalPrimaryButtonText,
+            strings.filesConfirmedModalButtonText,
           )}
-          onPrimaryButtonClick={() => router.push(previousRoute)}
+          secondaryButtonText={formatMessage(
+            strings.filesDismissedModalButtonText,
+          )}
+          onClose={() => setVisibleModal(undefined)}
+          onSecondaryButtonClick={() => setVisibleModal(undefined)}
+          onPrimaryButtonClick={() => {
+            handleNextButtonClick()
+            router.push(previousRoute)
+          }}
         />
       )}
     </PageLayout>

@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import isEmpty from 'lodash/isEmpty'
 
 import { Box, Select } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -30,7 +31,10 @@ export const SelectCaseFileRepresentative = ({
   setFileRepresentative: Dispatch<SetStateAction<RepresentativeSelectOption>>
   submittedDate: Date
   setSubmittedDate: Dispatch<SetStateAction<Date>>
-  handleCaseFileRepresentativeUpdate: () => void
+  handleCaseFileRepresentativeUpdate: (
+    fileRepresentative?: RepresentativeSelectOption,
+    submittedDate?: Date,
+  ) => void
 }) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -52,13 +56,18 @@ export const SelectCaseFileRepresentative = ({
             name="caseRepresentative"
             label={formatMessage(strings.caseRepresentativeLabel)}
             placeholder={formatMessage(strings.caseRepresentativePlaceholder)}
-            value={fileRepresentative}
+            value={
+              !isEmpty(fileRepresentative) ? fileRepresentative : undefined
+            }
             options={options}
             onChange={(selectedOption) => {
               setFileRepresentative(
                 selectedOption as RepresentativeSelectOption,
               )
-              handleCaseFileRepresentativeUpdate()
+              handleCaseFileRepresentativeUpdate(
+                selectedOption as RepresentativeSelectOption,
+                submittedDate,
+              )
             }}
             required
           />
@@ -69,7 +78,10 @@ export const SelectCaseFileRepresentative = ({
               if (!selectedDate) return
 
               setSubmittedDate(selectedDate)
-              handleCaseFileRepresentativeUpdate()
+              handleCaseFileRepresentativeUpdate(
+                fileRepresentative,
+                selectedDate,
+              )
             }}
             blueBox={false}
             datepickerLabel="Dagsetning móttöku"

@@ -47,20 +47,26 @@ export const strings = {
     description: 'Notaður sem texti í Reyna aftur takka á Gögn síðu í ákærum',
   },
   filesSentModalTitle: {
-    id: 'judicial.system.core:add_files.files_sent_modal_title',
-    defaultMessage: 'Gögn send til héraðsdóms',
+    id: 'judicial.system.core:add_files.files_sent_modal_title_v2',
+    defaultMessage: 'Viltu hlaða upp gögnum?',
     description:
       'Notaður sem titill í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
   },
   filesSentModalText: {
-    id: 'judicial.system.core:add_files.files_sent_modal_text',
-    defaultMessage: 'Gögnin eru sýnileg dómstólnum og aðilum máls.',
+    id: 'judicial.system.core:add_files.files_sent_modal_text_v2',
+    defaultMessage: 'Gögnin verða sýnileg aðilum máls.',
     description:
       'Notaður sem texti í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
   },
-  filesSentModalPrimaryButtonText: {
-    id: 'judicial.system.core:add_files.files_sent_modal_primary_button_text',
-    defaultMessage: 'Halda áfram',
+  filesConfirmedModalButtonText: {
+    id: 'judicial.system.core:add_files.files_confirmed_modal_button_text',
+    defaultMessage: 'Já, hlaða upp',
+    description:
+      'Notaður sem texti í takka í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
+  },
+  filesDismissedModalButtonText: {
+    id: 'judicial.system.core:add_files.files_dismissed_modal_button_text',
+    defaultMessage: 'Hætta við',
     description:
       'Notaður sem texti í takka í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
   },

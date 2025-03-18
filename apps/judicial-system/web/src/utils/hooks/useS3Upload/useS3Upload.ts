@@ -87,6 +87,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   displayDate: file.displayDate,
   policeFileId: file.policeFileId,
   userGeneratedFilename: file.userGeneratedFilename,
+  fileRepresentative: file.fileRepresentative,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
@@ -268,6 +269,7 @@ const useS3Upload = (
   const addFileToCaseState = useCallback(
     async (file: TUploadFile) => {
       const addCaseFileToCaseState = async (input: CreateFileInput) => {
+        console.log('addFileToCaseState')
         const mutation = limitedAccess ? limitedAccessCreateFile : createFile
 
         const { data } = await mutation({ variables: { input } })
@@ -343,6 +345,7 @@ const useS3Upload = (
         displayDate: file.displayDate,
         policeFileId: file.policeFileId,
         userGeneratedFilename: file.userGeneratedFilename,
+        fileRepresentative: file.fileRepresentative,
       }
 
       if (defendantId) {
