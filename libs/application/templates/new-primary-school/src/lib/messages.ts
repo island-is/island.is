@@ -375,6 +375,13 @@ export const newPrimarySchoolMessages: MessageDir = {
     reasonForApplicationDescription: {
       id: 'nps.application:primary.school.reason.for.application.description',
       defaultMessage:
+        'Til að aðstoða okkur við að mæta þörfum fjölskyldunnar biðjum við þig að velja þá ástæðu sem best á við í þínu tilfelli.',
+      description:
+        'To help us meet the needs of your family, please select the reason that is most appropriate in your case.',
+    },
+    reasonForApplicationEnrollmentDescription: {
+      id: 'nps.application:primary.school.reason.for.application.enrollment.description',
+      defaultMessage:
         'Barn á alltaf rétt á skólavist í sínum hverfisskóla. Séu ástæður umsóknar aðrar en flutningur lögheimilis getur verið að skólinn sjái sér ekki fært að taka á móti barninu. Það fer eftir aðstæðum í skólanum hverju sinni, svo sem rými.',
       description:
         'A child always has the right to attend school in his district school. If the reasons for the application are other than a change of legal residence, the school may not be able to accept the child. It depends on the situation in the school each time, such as space.',
@@ -642,50 +649,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Do the parents need an interpreter?',
     },
 
-    // Free school meal
-    freeSchoolMealSubSectionTitle: {
-      id: 'nps.application:different.needs.free.school.meal.sub.section.title',
-      defaultMessage: 'Gjaldfrjáls skólamáltíð',
-      description: 'Free school meal ',
-    },
-    freeSchoolMealDescription: {
-      id: 'nps.application:different.needs.free.school.meal.description',
-      defaultMessage:
-        'Barninu stendur til boða gjaldfrjáls skólamáltíð. Til þess að skólinn geti mætt fæðuþörfum barnsins á sama tíma og spornað er við matarsóun þurfum við upplýsingar er varða matarumhverfi barnsins.',
-      description:
-        "The child is entitled to a free school meal. In order for the school to be able to meet the child's nutritional needs while at the same time preventing food waste, we need information about the child's food environment.",
-    },
-    acceptFreeSchoolLunch: {
-      id: 'nps.application:different.needs.free.school.meal.accept.free.school.lunch',
-      defaultMessage:
-        'Viltu þiggja gjaldfrjálsa máltíð í hádeginu fyrir barnið þitt?',
-      description:
-        'Would you like to accept a free school lunch for your child?',
-    },
-    hasSpecialNeeds: {
-      id: 'nps.application:different.needs.free.school.meal.has.special.needs',
-      defaultMessage:
-        'Er barnið með sérþarfir sem óskað er eftir að tekið sé tillit til?',
-      description:
-        'Does the child have special needs that you wish to be taken into account?',
-    },
-    specialNeedsType: {
-      id: 'nps.application:different.needs.free.school.meal.special.needs.type',
-      defaultMessage: 'Tegund',
-      description: 'Type',
-    },
-    specialNeedsTypePlaceholder: {
-      id: 'nps.application:different.needs.free.school.meal.special.needs.type.placeholder',
-      defaultMessage: 'Veldu tegund',
-      description: 'Select type',
-    },
-    foodAllergiesAlertMessage: {
-      id: 'nps.application:different.needs.free.school.meal.food.allergies.alert.message',
-      defaultMessage: 'Spurt er um matarofnæmi undir ofnæmi og óþól',
-      description:
-        'Food allergies are addressed in the allergies and intolerances section',
-    },
-
     // Allergies and intolerances
     allergiesAndIntolerancesSubSectionTitle: {
       id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
@@ -854,19 +817,19 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Netfang málastjóra',
       description: 'Case manager email address',
     },
+    internationalSchoolSupportAlertMessage: {
+      id: 'nps.application:different.needs.international.school.alert.message#markdown',
+      defaultMessage:
+        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
+      description:
+        'If your application is accepted, the school will ask you to send report cards from the last two years, external standardized test results and special needs documentation.',
+    },
     supportAlertMessage: {
       id: 'nps.application:different.needs.support.alert.message#markdown',
       defaultMessage:
-        'Við flutning barns milli leik- og /eða grunnskóla mun skólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
+        'Við flutning barns milli leik- og/eða grunnskóla sjá stjórnendur skólanna til þess að persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í nýjum skóla, sé miðlað með tryggum og öruggum hætti. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
       description:
-        "When transferring a child between nursery and/or primary school, the head of the school ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
-    },
-    enrollmentSupportAlertMessage: {
-      id: 'nps.application:different.needs.enrollment.support.alert.message#markdown',
-      defaultMessage:
-        'Við flutning barns úr leikskóla í grunnskóla mun leikskólastjóri sjá til þess að miðla persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í grunnskóla, með tryggum og öruggum hætti til viðtökuskóla. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
-      description:
-        "When transferring a child from nursery to primary school, the head of the nursery ensures that the personal data of the child necessary for their well-being and adaptation to primary school, is passed on to the receiving school in a safe and secure manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
+        "When a child transfers between nursery and/or primary schools, school administrators ensure that personal information about the child that is necessary for their well-being and adjustment to the new school is communicated in a secure and safe manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
     },
     requestingMeeting: {
       id: 'nps.application:different.needs.requesting.meeting',
@@ -958,6 +921,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:overview.current.nursery',
       defaultMessage: 'Núverandi leikskóli',
       description: 'Current nursery',
+    },
+    expectedEndDate: {
+      id: 'nps.application:overview.expected.end.date',
+      defaultMessage: 'Áætlaður lokadagur',
+      description: 'Expected end date',
     },
   }),
 
