@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { IndividualOrCompany } from '../shared/constants'
+import { IndividualOrCompany } from '../shared/types'
 import { PaymentArrangementType } from '../shared/types'
 import { isApplyingForMultiple } from './isApplyingForMultiple'
 
