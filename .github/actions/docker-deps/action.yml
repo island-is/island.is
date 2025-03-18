@@ -46,5 +46,6 @@ runs:
         file: ./scripts/ci/Dockerfile
         platforms: linux/amd64
         target: deps
-        cache-from: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache
-        cache-to: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache,mode=max
+        push: false
+        cache-from: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache,access_key_id=${{ inputs.AWS_ACCESS_KEY_ID }},secret_access_key=${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        cache-to: type=s3,region=${{ inputs.AWS_REGION }},bucket=${{ inputs.RUNS_ON_S3_BUCKET_CACHE }},name=deps-cache,mode=max,access_key_id=${{ inputs.AWS_ACCESS_KEY_ID }},secret_access_key=${{ inputs.AWS_SECRET_ACCESS_KEY }}
