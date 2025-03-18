@@ -1,0 +1,218 @@
+name: 'Docker build'
+on:
+  workflow_call:
+    inputs:
+      GIT_BRANCH:
+        type: string
+        required: true
+      DOCKER_TAG:
+        type: string
+        required: true
+      BUILD_CHUNKS:
+        type: string
+        required: true
+      NODE_IMAGE_VERSION:
+        type: string
+        required: false
+        default: '20'
+      IMAGES:
+        type: string
+        required: true
+      DEPLOY_FEATURE:
+        type: string
+        required: false
+        default: 'false'
+      FEATURE_NAME:
+        type: string
+        required: false
+        default: ''
+      PRE_CHECK:
+        type: string
+        required: true
+      PRE_RELEASE:
+        type: string
+        required: true
+env:
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+  COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  NX_MAX_PARALLEL: '4'
+  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  NODE_IMAGE_VERSION: '20'
+  GIT_BRANCH: ${{ inputs.GIT_BRANCH }}
+  DOCKER_TAG: ${{ inputs.DOCKER_TAG }}
+  PUBLISH: true
+  DISABLE_CHUNKS: true
+  MAX_JOBS: 3
+  NX_PARALLEL: 1
+  GIT_COMMIT_SHA: ${{ github.sha }}
+  FEATURE_NAME: ${{ inputs.FEATURE_NAME }}
+  BUILD_CHUNKS: ${{ inputs.BUILD_CHUNKS }}
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+jobs:
+  debug:
+    runs-on: arc-runners
+    timeout-minutes: 45
+    steps:
+      - name: debug
+        run: |
+          echo "inputs:"
+          echo "BUILD_CHUNKS: ${{ inputs.BUILD_CHUNKS }}"
+          echo "FEATURE_NAME: ${{ inputs.FEATURE_NAME }}"
+          echo "envs:"
+          echo "BUILD_CHUNKS: ${{ env.BUILD_CHUNKS }}"
+          echo "FEATURE_NAME: ${{ env.FEATURE_NAME }}"
+
+  docker-build:
+    runs-on: arc-docker
+    timeout-minutes: 45
+    if: ${{ inputs.BUILD_CHUNKS }}
+    env:
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(inputs.BUILD_CHUNKS) }}
+    steps:
+      - name: Gather apps
+        id: gather
+        run: |
+          set -euo pipefail
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
+          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
+          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
+          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+        continue-on-error: true
+
+      - uses: actions/checkout@v4
+        if: steps.gather.outcome == 'success'
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        if: steps.gather.outcome == 'success'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Prepare Docker build arguments
+        id: dockerargs
+        if: steps.gather.outcome == 'success'
+        run: |
+          set -x
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+
+          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+
+          # Add secret to EXTRA_DOCKER_BUILD_ARGS
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Building Docker images
+        continue-on-error: true
+        id: dockerbuild
+        if: steps.gather.outcome == 'success'
+        run: |
+          set -x
+          echo "Node image tag is: ${NODE_IMAGE_VERSION}"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+
+      - name: Building Docker images Retry
+        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
+        run: |
+          set -x
+          echo "Node image tag is: ${NODE_IMAGE_VERSION}"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+
+  helm-docker-build:
+    runs-on: arc-runners
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker login
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Docker build image
+        working-directory: infra
+        run: |
+          echo "Registry is: ${DOCKER_BASE_IMAGE_REGISTRY}"
+          echo "Image tag is: ${NODE_IMAGE_VERSION}"
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY} --build-arg NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+          ./scripts/build-docker-container.sh "$DOCKER_TAG"
+          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
+          echo "Affected services are: ${{inputs.IMAGES}}" >> "$GITHUB_ENV"
+          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{inputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
+          echo 'EOF' >> "$GITHUB_ENV"
+
+      - name: Comment on PR
+        if: inputs.DEPLOY_FEATURE == 'true' && inputs.PRE_RELEASE != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const updateComment = require('./.github/actions/update-comment.js')
+            const { COMMENT } = process.env
+            await updateComment({github, context, comment: COMMENT})

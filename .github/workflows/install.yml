@@ -2,14 +2,20 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      deploy_feature:
+        type: string
+        default: 'false'
+      pre_release:
+        type: string
+        default: 'false'
       main_branch:
         default: 'main'
         type: string
       run_merge_queue:
         description: 'Should the merge que step run'
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'false'
     outputs:
       MQ_SHA:
         value: ${{ jobs.install.outputs.MQ_SHA}}
@@ -39,10 +45,15 @@ on:
         value: ${{ jobs.install.outputs.NX_HEAD }}
       NX_BASE:
         value: ${{ jobs.install.outputs.NX_BASE }}
-      DEPLOY_FEATURE:
-        value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
       is-unicorn:
         value: ${{ jobs.install.outputs.is-unicorn }}
+      images:
+        value: ${{ jobs.install.outputs.IMAGES }}
+      DOCKER_TAG:
+        value: ${{ jobs.install.outputs.DOCKER_TAG }}
+      DEPLOY_FEATURE:
+        value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
+
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
@@ -66,7 +77,7 @@ env:
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
-  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  DEPLOY_FEATURE: ${{ inputs.deploy_feature }}
   YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
   CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
   COREPACK_HOME: /home/runner/dependencies/corepack
@@ -90,23 +101,19 @@ jobs:
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-      DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
+      IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
+      DEPLOY_FEATURE: ${{ steps.set-output.outputs.DEPLOY_FEATURE }}
     runs-on: arc-runners
     permissions:
       contents: 'read'
       actions: 'read'
     steps:
-      - name: Set outputs
-        id: set-outputs
-        run: |
-          echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
-          echo DEPLOY_FEATURE="$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
-
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
       - name: load-deps
@@ -118,17 +125,29 @@ jobs:
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
-        if: ${{ inputs.run_merge_queue == false }}
+        if: ${{ inputs.run_merge_queue == 'false' }}
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+
+      - name: Prepare feature deployment
+        if: inputs.deploy_feature == 'true'
+        uses: ./.github/actions/feature-checkout
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+
+      - name: Prepare pre-release
+        if: inputs.pre_release == 'true'
+        id: git_nx_base
+        uses: ./.github/actions/prerelease-checkout
 
       - name: Set base/head sha output
         id: export-sha
         shell: bash
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last 
+            # In merge que we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
@@ -143,35 +162,53 @@ jobs:
             echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
             echo BASE="$NX_BASE" >> "$GITHUB_ENV"
             exit 0
-          fi
-          echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
-          echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
-          # NOTE: we reference BASE and HEAD elsewhere
-          echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
-          echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
+          else
+            echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
+            echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
+            # NOTE: we reference BASE and HEAD elsewhere
+            echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
+            echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
 
-          echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
-          echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+            echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
+            echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+          fi
 
       - name: Git bot config
         id: git-bot-config
         run: |
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+
       - name: Prepare merge queue
         id: prepare-merge-queue
-        if: ${{ inputs.run_merge_queue == true }}
+        if: inputs.run_merge_queue == 'true'
         run: |
           node scripts/ci/docker/generate-tag.mjs
+
+      - name: Generate docker image tag
+        if: inputs.deploy_feature == 'true'
+        id: docker_tags
+        run: |
+          set -euo pipefail
+          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          SHA="${{ github.event.pull_request.head.sha }}"
+          echo "SHA='$SHA' retrieved from event"
+          if [[ "$SHA" == "" ]]; then
+          echo "Error: SHA='$SHA' is not allowed to be empty"
+            exit 1
+          fi
+          echo "Using SHA='$SHA' as docker tag SHA"
+          export DOCKER_TAG="${DOCKER_BRANCH_TAG}_${SHA:0:10}_${GITHUB_RUN_NUMBER}"
+          echo "Docker tag will be '${DOCKER_TAG}'"
+          echo DOCKER_TAG="${DOCKER_TAG}" >> "$GITHUB_OUTPUT"
+          echo "**Monorepo tag:** '${DOCKER_TAG}'" >> "$GITHUB_STEP_SUMMARY"
 
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-
-        # Don't run this step locally
-        if: ${{ !github.event.localrun && inputs.run_merge_queue == false }}
+        if: ${{ inputs.run_merge_queue == 'false' }}
         with:
           name: pr-event
           path: event.json
@@ -198,7 +235,7 @@ jobs:
 
       - name: Prepare test targets
         id: test_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: inputs.deploy_feature != 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -208,7 +245,7 @@ jobs:
 
       - name: Prepare e2e targets
         id: e2e_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: inputs.deploy_feature != 'true'
         env:
           CHUNK_SIZE: 1
         run: |
@@ -221,16 +258,17 @@ jobs:
 
       - name: Prepare build targets
         id: build_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: inputs.deploy_feature != 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
+
       - name: Prepare docker build targets
         id: docker_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: inputs.deploy_feature == 'true' || inputs.run_merge_queue == 'true'
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
@@ -239,6 +277,32 @@ jobs:
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Prepare deployment targets
+        id: deploy_map
+        if: inputs.deploy_feature == 'true' ||  inputs.pre_release == 'true'
+        run: |
+          set -euo pipefail
+          CHUNKS=${{ steps.docker_projects.outputs.CHUNKS }}
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            # NOTE: validate the jq command to trigger failure
+            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
+            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Prepare docker deps
+        id: docker-deps
+        if: ${{ inputs.deploy_feature == 'true' }}
+        run: |
+          ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
@@ -268,3 +332,10 @@ jobs:
         run: |
           is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+        # NOTE: intentionally proxied from input so jobs depending on prepare don't have to depend on pre-check
+
+      - name: Set outputs
+        id: set-output
+        run: |
+          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE"
+          echo "DEPLOY_FEATURE=$DEPLOY_FEATURE" >> $GITHUB_OUTPUT

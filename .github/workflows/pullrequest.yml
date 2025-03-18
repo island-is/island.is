@@ -44,11 +44,20 @@ env:
   COREPACK_ENABLE_STRICT: '0'
 
 jobs:
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
+
   prepare:
     uses: ./.github/workflows/install.yml
+    needs:
+      - pre-checks
     secrets: inherit
     with:
       main_branch: ${{ github.base_ref }}
+      pre_release: 'false'
+      run_merge_queue: 'false'
+      deploy_feature: ${{ needs.pre-checks.outputs.DEPLOY_FEATURE }}
 
   tests:
     needs:
@@ -276,6 +285,37 @@ jobs:
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
+  docker-build:
+    uses: ./.github/workflows/docker-build.yml
+    if: ${{ needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+    needs:
+      - prepare
+      - pre-checks
+    secrets: inherit
+    with:
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      BUILD_CHUNKS: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
+      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      PRE_CHECK: ${{ needs.pre-checks.outputs.PRE_CHECK }}
+      PRE_RELEASE: ${{ needs.pre-checks.outputs.PRE_RELEASE }}
+      DEPLOY_FEATURE: ${{ needs.pre-checks.outputs.DEPLOY_FEATURE }}
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    if: ${{ !cancelled() && needs.docker-build.result == 'success' }}
+    needs:
+      - pre-checks
+      - prepare
+      - docker-build
+    secrets: inherit
+    with:
+      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+
   success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
@@ -288,9 +328,13 @@ jobs:
       - formatting
       - e2e
       - build
+      - docker-build
+      - deploy
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
+      - name: Check deploy success
+        run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
@@ -308,5 +352,11 @@ jobs:
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Check docker build success
+        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
+      - name: Announce skipped
+        if: '!needs.pre-checks.outputs.PRE_CHECK'
+        run: echo "Build was skipped"
       - name: Announce success
+        if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"

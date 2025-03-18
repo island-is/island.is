@@ -29,6 +29,9 @@ runs:
         echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
         echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
 
+        echo "---- INFO ----"
+        echo "GIT_BRANCH: $GIT_BRANCH"
+
     - name: Generate deployment branch name
       shell: bash
       id: git-branch-deploy
@@ -44,3 +47,6 @@ runs:
 
         echo FEATURE_NAME="${FEATURE_NAME}" >> "$GITHUB_OUTPUT"
         echo FEATURE_NAME="${FEATURE_NAME}" >> "$GITHUB_ENV"
+        echo "---- INFO ----"
+        echo "GIT_BRANCH_DEPLOY: $GIT_BRANCH_DEPLOY"
+        echo "FEATURE_NAME: $FEATURE_NAME"
