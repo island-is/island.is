@@ -44,7 +44,7 @@ export const paymentArrangementSection = buildSection({
           id: 'paymentArrangement.individualOrCompanyDescription',
           title: paymentArrangement.labels.registerForWhich,
           titleVariant: 'h5',
-          condition: (answers: FormValue, externalData: ExternalData) =>
+          condition: (_, externalData: ExternalData) =>
             isPersonType(externalData),
         }),
         buildRadioField({
@@ -61,7 +61,7 @@ export const paymentArrangementSection = buildSection({
               label: paymentArrangement.labels.company,
             },
           ],
-          condition: (answers: FormValue, externalData: ExternalData) =>
+          condition: (_, externalData: ExternalData) =>
             isPersonType(externalData),
         }),
 
@@ -148,7 +148,6 @@ export const paymentArrangementSection = buildSection({
             const nationalId = getValueViaPath<string>(
               application.externalData,
               'identity.data.nationalId',
-              undefined,
             )
 
             return nationalId
@@ -166,7 +165,6 @@ export const paymentArrangementSection = buildSection({
             const name = getValueViaPath<string>(
               application.externalData,
               'identity.data.name',
-              undefined,
             )
 
             return name

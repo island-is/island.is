@@ -17,10 +17,12 @@ import {
   Application,
   defineTemplateApi,
   InstitutionNationalIds,
+  FormModes,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { SeminarAnswersSchema } from './dataSchema'
 import {
+  getIndividualValidityApi,
   getSeminarsApi,
   IdentityApi,
   MockableVinnueftirlitidPaymentCatalogApi,
@@ -71,7 +73,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Skilyrði',
           progress: 0,
-          status: 'draft',
+          status: FormModes.DRAFT,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardPrerequisites,
@@ -107,6 +109,7 @@ const template: ApplicationTemplate<
                 VinnueftirlitidPaymentCatalogApi,
                 MockableVinnueftirlitidPaymentCatalogApi,
                 getSeminarsApi,
+                getIndividualValidityApi,
               ],
             },
           ],
@@ -118,7 +121,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Skráning á námskeið hjá Vinnueftirlitinu',
-          status: 'draft',
+          status: FormModes.DRAFT,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,
@@ -146,7 +149,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: applicationMessage.confirmButtonLabel,
                   type: 'primary',
                 },
               ],
@@ -181,7 +184,7 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
-          status: 'completed',
+          status: FormModes.COMPLETED,
           lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,

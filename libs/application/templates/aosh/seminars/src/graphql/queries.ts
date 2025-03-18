@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const IS_COMPANY_VALID = `
+export const IS_COMPANY_VALID_QUERY = gql`
   query IsCompanyValid($nationalId: String!) {
     seminarsVerIsCompanyValid(nationalId: $nationalId) {
       nationalId
@@ -9,7 +9,7 @@ export const IS_COMPANY_VALID = `
   }
 `
 
-export const ARE_INDIVIDUALS_VALID = gql`
+export const ARE_INDIVIDUALS_VALID_QUERY = gql`
   query AreIndividualsValid(
     $input: ValidateSeminarIndividualsInput!
     $courseID: String!

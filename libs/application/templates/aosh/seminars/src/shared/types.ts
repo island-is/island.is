@@ -10,11 +10,6 @@ import { MessageDescriptor } from 'react-intl'
 export type SeminarAnswersSchema = z.TypeOf<typeof SeminarAnswersSchema>
 export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>
 export type Participant = z.TypeOf<typeof ParticipantSchema>
-export enum FileUploadStatus {
-  'error',
-  'done',
-  'uploading',
-}
 
 export interface CSVError {
   items: Array<number>
@@ -47,6 +42,7 @@ export enum Roles {
 export enum ApiActions {
   submitApplication = 'submitApplication',
   getSeminars = 'getSeminars',
+  getIndividualValidity = 'checkIndividual',
 }
 
 export enum IndividualOrCompany {

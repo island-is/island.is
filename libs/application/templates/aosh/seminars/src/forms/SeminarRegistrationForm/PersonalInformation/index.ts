@@ -1,5 +1,7 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -8,7 +10,11 @@ import {
 } from '@island.is/application/core'
 
 import { personal as personalMessages } from '../../../lib/messages'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { isCompanyType, isPersonType } from '../../../utils'
 import { RegisterNumber } from '../../../shared/types'
 
@@ -35,7 +41,6 @@ export const personalInformationSection = buildSection({
             const nationalId = getValueViaPath<string>(
               application.externalData,
               nationalIdPath,
-              undefined,
             )
 
             return nationalId
@@ -48,14 +53,11 @@ export const personalInformationSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const namePath = isCompanyType(application.externalData)
+            const { externalData } = application
+            const namePath = isCompanyType(externalData)
               ? 'identity.data.actor.name'
               : 'identity.data.name'
-            const name = getValueViaPath<string>(
-              application.externalData,
-              namePath,
-              undefined,
-            )
+            const name = getValueViaPath<string>(externalData, namePath)
 
             return name
           },
@@ -111,17 +113,47 @@ export const personalInformationSection = buildSection({
             },
           ],
         }),
-        buildCustomField({
-          id: 'applicant.personalValidation',
-          component: 'PersonalValidation',
-          condition: (answers: FormValue) => {
+        buildHiddenInput({
+          id: 'personalValidation',
+          defaultValue: (application: Application) => {
+            const registerMany = getValueViaPath<RegisterNumber>(
+              application.answers,
+              'applicant.registerManyQuestion',
+              RegisterNumber.one,
+            )
+
+            const canRegister = getValueViaPath<boolean>(
+              application.externalData,
+              'individualValidity.data.mayTakeCourse',
+              true,
+            )
+
+            return canRegister || registerMany === RegisterNumber.many
+          },
+        }),
+        buildAlertMessageField({
+          id: 'applicant.personalValidationAlert',
+          alertType: 'error',
+          message: (application) => {
+            const error = getValueViaPath<string>(
+              application.externalData,
+              'individualValidity.data.errorMessage',
+              '',
+            )
+            return error
+          },
+          condition: (answers: FormValue, externalData: ExternalData) => {
             const registerMany = getValueViaPath<RegisterNumber>(
               answers,
               'applicant.registerManyQuestion',
               RegisterNumber.one,
             )
-
-            return registerMany === RegisterNumber.one
+            const canRegister = getValueViaPath<boolean>(
+              externalData,
+              'individualValidity.data.mayTakeCourse',
+              true,
+            )
+            return !canRegister && registerMany === RegisterNumber.one
           },
         }),
       ],

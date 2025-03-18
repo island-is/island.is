@@ -1,5 +1,4 @@
-import { gql } from '@apollo/client'
-import { IS_COMPANY_VALID } from '../graphql/queries'
+import { IS_COMPANY_VALID_QUERY } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 import { CompanyDTO } from '@island.is/clients/seminars-ver'
 
@@ -11,9 +10,5 @@ export const useLazyIsCompanyValid = () => {
     {
       nationalId: string
     }
-  >(
-    gql`
-      ${IS_COMPANY_VALID}
-    `,
-  )
+  >(IS_COMPANY_VALID_QUERY)
 }

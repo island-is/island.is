@@ -6,7 +6,7 @@ import {
 } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ARE_INDIVIDUALS_VALID } from '../graphql/queries'
+import { ARE_INDIVIDUALS_VALID_QUERY } from '../graphql/queries'
 import { ParticipantWithValidation } from '../shared/types'
 
 export const submitTableForm = async (
@@ -33,7 +33,7 @@ export const submitTableForm = async (
     { areIndividualsValid: Array<SeminarsIndividualValidationItem> },
     QueryAreIndividualsValidArgs
   >({
-    query: ARE_INDIVIDUALS_VALID,
+    query: ARE_INDIVIDUALS_VALID_QUERY,
     variables: {
       courseID: courseID,
       nationalIdOfRegisterer: nationalIdOfApplicant,

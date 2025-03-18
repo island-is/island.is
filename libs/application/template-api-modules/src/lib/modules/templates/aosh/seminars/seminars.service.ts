@@ -7,6 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   CourseDTO,
+  IndividualDTO,
   SeminarsClientService,
 } from '@island.is/clients/seminars-ver'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -58,6 +59,26 @@ export class SeminarsTemplateService extends BaseTemplateApiService {
       })
 
     return data
+  }
+
+  async checkIndividual({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<IndividualDTO | undefined> {
+    const courseId =
+      getValueViaPath<string>(application.answers, 'initialQuery', '') ?? ''
+    const individuals = [{ nationalId: auth.nationalId, email: '' }]
+    const returnedIndividuals =
+      await this.seminarsClientService.checkIndividuals(
+        auth,
+        individuals,
+        courseId,
+        auth.nationalId,
+      )
+    if (returnedIndividuals.length > 0) {
+      return returnedIndividuals[0]
+    }
+    return
   }
 
   async submitApplication({

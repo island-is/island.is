@@ -1,5 +1,4 @@
-import { gql } from '@apollo/client'
-import { ARE_INDIVIDUALS_VALID } from '../graphql/queries'
+import { ARE_INDIVIDUALS_VALID_QUERY } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 import { IndividualDTO } from '@island.is/clients/seminars-ver'
 import { SeminarIndividual } from '@island.is/api/schema'
@@ -14,9 +13,5 @@ export const useLazyAreIndividualsValid = () => {
       courseID: string
       nationalIdOfRegisterer: string
     }
-  >(
-    gql`
-      ${ARE_INDIVIDUALS_VALID}
-    `,
-  )
+  >(ARE_INDIVIDUALS_VALID_QUERY)
 }

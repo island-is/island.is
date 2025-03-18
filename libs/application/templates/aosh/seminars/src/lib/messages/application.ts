@@ -51,4 +51,9 @@ export const application = defineMessages({
     defaultMessage: 'Ekki tókst að skrá námskeið, vinsamlegast reynið síðar',
     description: 'Submission error description',
   },
+  confirmButtonLabel: {
+    id: 'aosh.sem.application:confirmButtonLabel',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm button label',
+  },
 })

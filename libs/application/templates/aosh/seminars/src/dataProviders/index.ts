@@ -41,3 +41,8 @@ export const getSeminarsApi = defineTemplateApi({
   action: ApiActions.getSeminars,
   externalDataId: 'seminar',
 })
+
+export const getIndividualValidityApi = defineTemplateApi({
+  action: ApiActions.getIndividualValidity,
+  externalDataId: 'individualValidity',
+})

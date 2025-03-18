@@ -3,6 +3,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  FileUploadStatus,
   InputFileUpload,
   LoadingDots,
   UploadFile,
@@ -15,7 +16,7 @@ import {
 import { FC, useCallback, useEffect, useState } from 'react'
 import { FILE_SIZE_LIMIT, predefinedHeaders } from '../../lib/constants'
 import { parse } from 'csv-parse'
-import { CSVError, FileUploadStatus, Participant } from '../../shared/types'
+import { CSVError, Participant } from '../../shared/types'
 import { participants as participantMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
