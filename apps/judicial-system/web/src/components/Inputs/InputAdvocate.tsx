@@ -200,7 +200,7 @@ const InputAdvocate: FC<Props> = ({
             lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
           onChange={handleAdvocateChange}
-          noOptionsMessage={formatMessage(nameLabelStrings.noneFoundMessage)}
+          noOptionsMessage="Ekki náðist samband við lögmannaskrá LMFÍ."
           isDisabled={Boolean(disabled)}
           isCreatable
           isClearable

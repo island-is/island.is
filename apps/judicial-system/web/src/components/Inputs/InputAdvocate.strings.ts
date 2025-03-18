@@ -21,11 +21,6 @@ export const nameLabelStrings = defineMessages({
     defaultMessage: 'Nafn réttargæslumanns',
     description: 'Notaður sem titill á nafni fyrir réttargæslumann.',
   },
-  noneFoundMessage: {
-    id: 'judicial.system.core:input_advocate.none_found_message',
-    defaultMessage: 'Ekki náðist samband við lögmannaskrá LMFÍ.',
-    description: 'Notaður sem titill á nafni fyrir réttargæslumann.',
-  },
 })
 
 export const emailLabelStrings = defineMessages({
