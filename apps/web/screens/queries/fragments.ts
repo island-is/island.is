@@ -959,9 +959,9 @@ export const slices = gql`
   }
 
   fragment IntroLinkImageFields on IntroLinkImage {
-    entryId
+    id
     title
-    intro {
+    introHtml {
       ...HtmlFields
     }
     linkTitle

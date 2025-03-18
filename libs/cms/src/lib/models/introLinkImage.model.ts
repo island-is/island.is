@@ -7,14 +7,17 @@ import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class IntroLinkImage {
-  @Field(() => ID, { nullable: true })
-  entryId?: string | null
+  @Field(() => ID)
+  id!: string
 
   @Field()
   title?: string
 
   @CacheField(() => Html, { nullable: true })
   intro?: Html
+
+  @CacheField(() => Html, { nullable: true })
+  introHtml?: Html
 
   @CacheField(() => Image, { nullable: true })
   image?: Image | null
@@ -35,13 +38,18 @@ export class IntroLinkImage {
 export const mapIntroLinkImage = ({
   fields,
   sys,
-}: IIntroLinkImage): IntroLinkImage => ({
-  entryId: sys.id,
-  title: fields.title ?? '',
-  intro: (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null,
-  image: fields.image ? mapImage(fields.image) : null,
-  leftImage: fields.leftImage ?? false,
-  linkTitle: fields.linkTitle ?? '',
-  link: fields.link ? mapReferenceLink(fields.link) : null,
-  openLinkInNewTab: fields.openLinkInNewTab ?? true,
-})
+}: IIntroLinkImage): IntroLinkImage => {
+  const intro =
+    (fields.intro && mapHtml(fields.intro, sys.id + ':intro')) ?? null
+  return {
+    id: sys.id,
+    title: fields.title ?? '',
+    intro,
+    introHtml: intro,
+    image: fields.image ? mapImage(fields.image) : null,
+    leftImage: fields.leftImage ?? false,
+    linkTitle: fields.linkTitle ?? '',
+    link: fields.link ? mapReferenceLink(fields.link) : null,
+    openLinkInNewTab: fields.openLinkInNewTab ?? true,
+  }
+}

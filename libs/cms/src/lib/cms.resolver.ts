@@ -131,6 +131,7 @@ import {
 import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
+import { IntroLinkImage } from './models/introLinkImage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -922,5 +923,16 @@ export class LatestGenericListItemsResolver {
       return null
     }
     return this.cmsElasticsearchService.getGenericListItems(input)
+  }
+}
+
+@Resolver(() => IntroLinkImage)
+export class IntroLinkImageResolver {
+  @ResolveField(() => GenericListItemResponse, { nullable: true })
+  async id(@Parent() { id }: IntroLinkImage) {
+    if (!id) {
+      return ''
+    }
+    return id
   }
 }

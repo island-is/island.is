@@ -18,7 +18,7 @@ import * as styles from './IntroLinkImageComponent.css'
 
 interface IntroLinkImageComponentProps {
   item: IntroLinkImage
-  id?: string
+  id?: string | null
 }
 
 export const IntroLinkImageComponent = ({
