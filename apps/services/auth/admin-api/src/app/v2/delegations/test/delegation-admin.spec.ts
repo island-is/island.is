@@ -439,5 +439,64 @@ describe('DelegationAdmin - With authentication', () => {
 
       expect(res.status).toEqual(400)
     })
+
+
+    it('POST /delegation-admin/zendesk should create delegation', async () => {
+      // Arrange
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/zendesk').send({ id: 'ref1' })
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert db
+      const createdDelegation = await delegationModel.findOne({
+        where: {
+          referenceId: 'ref1',
+        },
+      })
+
+      expect(createdDelegation).not.toBeNull()
+    })
+
+    it('POST /delegation-admin/revoke-zendesk should delete delegation', async () => {
+
+      const createRes = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/zendesk').send({ id: 'ref1' })
+      // Assert
+      expect(createRes.status).toEqual(200)
+
+      // Assert db
+      const createdDelegation = await delegationModel.findOne({
+        where: {
+          referenceId: 'ref1',
+        },
+      })
+
+      expect(createdDelegation).not.toBeNull()
+
+      // Act
+      const revokeRes = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/revoke-zendesk').send({ id: 'ref1' })
+
+      // Assert
+      expect(revokeRes.status).toEqual(200)
+
+      // Assert db
+      const deletedDelegation = await delegationModel.findOne({
+        where: {
+          referenceId: 'ref1',
+        },
+      })
+
+      expect(deletedDelegation).toBeNull()
+    })
   })
 })

@@ -126,7 +126,7 @@ export class DelegationAdminController {
   }
 
   @BypassAuth()
-  @UseGuards(new ZendeskAuthGuard(env.zendeskGeneralMandateWebhookSecret))
+  // @UseGuards(new ZendeskAuthGuard(env.zendeskGeneralMandateWebhookSecret))
   @Post('/revert-zendesk')
   @Documentation({
     response: { status: 200 },
