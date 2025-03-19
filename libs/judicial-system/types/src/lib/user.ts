@@ -32,7 +32,7 @@ export interface User {
   loginCount?: number
 }
 
-export interface InstitutionUser {
+interface InstitutionUser {
   id?: string | null
   role?: string | null
   institution?: {

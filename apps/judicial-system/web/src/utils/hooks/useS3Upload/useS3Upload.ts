@@ -269,7 +269,6 @@ const useS3Upload = (
   const addFileToCaseState = useCallback(
     async (file: TUploadFile) => {
       const addCaseFileToCaseState = async (input: CreateFileInput) => {
-        console.log('addFileToCaseState')
         const mutation = limitedAccess ? limitedAccessCreateFile : createFile
 
         const { data } = await mutation({ variables: { input } })

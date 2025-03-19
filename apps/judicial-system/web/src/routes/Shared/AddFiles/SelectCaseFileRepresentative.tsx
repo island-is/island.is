@@ -68,7 +68,6 @@ export const SelectCaseFileRepresentative = ({
             onChange={(selectedOption) => {
               const representativeSelectOption =
                 selectedOption as RepresentativeSelectOption
-              console.log({ representativeSelectOption })
               setFileRepresentative(representativeSelectOption)
               handleCaseFileRepresentativeUpdate(
                 representativeSelectOption,
