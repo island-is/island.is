@@ -344,6 +344,7 @@ export class PaymentFlowService {
       console.log('updateBody', JSON.stringify(updateBody, null, 2))
       console.log('res.status', res.status)
       console.log('res.statusText', res.statusText)
+      console.log('res.text', await res.text())
       console.log('=========================================')
     } catch (e) {
       this.logger.error('Failed to notify onUpdateUrl', e)
