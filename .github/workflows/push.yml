@@ -293,6 +293,12 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
         id: restore-generated-files-cache
