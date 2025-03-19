@@ -1,6 +1,6 @@
 # --TEMPLATE--
 
-This template for an application was generated with the `nx generate-template --TEMPLATE--` command.
+This template for an application was generated with the `nx generate-template --KEBAB-CASE-TEMPLATE--` command.
 
 Write documentation here.
 
@@ -12,4 +12,4 @@ Write documentation here.
 
 ## Running unit tests
 
-Run `nx test --TEMPLATE--` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test --KEBAB-CASE-TEMPLATE--` to execute the unit tests via [Jest](https://jestjs.io).
