@@ -68,6 +68,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -99,6 +101,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -155,6 +159,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -173,6 +179,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -211,6 +219,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -244,6 +254,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -269,6 +281,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
