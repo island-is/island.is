@@ -50,13 +50,16 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       env:
+        dir: ${{ inputs.working-directory }}
         files: ${{ inputs.files }}
       run: |
+        path_prefix=$([ "$dir" != "." ] && echo "../" || echo "")
+
         IFS=$IFS,
         paths=()
         read -a paths <<< $files
         for path in ${paths[@]}; do
-          export DEST="helm-values/helm-values/${path#charts/}"
+          export DEST="${path_prefix}helm-values/helm-values/${path#charts/}"
           export DEST_PATH=$(dirname $DEST)
           mkdir -p $DEST_PATH
           echo "Copying filepath: ${path} to $DEST"
@@ -73,5 +76,4 @@ runs:
 
         git add .
         git commit -m "${{ inputs.commit-msg }}"
-        echo "Showing changeset\n $(git show)"
         git push

@@ -5,6 +5,14 @@ import core from '@actions/core'
 import github from '@actions/github'
 import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
 import { glob } from 'glob'
+import { isMainModule } from './utils.mjs'
+
+if (isMainModule(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
+}
 
 // Make the main function that can be exported and tested separately
 export async function main(testContext = null) {
@@ -168,13 +176,8 @@ export function getTypeOfDeployment(branch) {
 
 function getCommitMsg(context) {
   if (context.eventName === 'merge_group') {
-    const pr = github.context.ref.split('pr-')[1].split('-')[0]
+    const pr = context.ref.split('pr-')[1].split('-')[0]
     return `Change from: island-is/island.is#${pr}`
   }
   return `Change from: https://github.com/island-is/island.is/commit/${context.sha}`
 }
-// Run the main function if this is the main module
-main().catch((error) => {
-  console.error(error)
-  process.exit(1)
-})

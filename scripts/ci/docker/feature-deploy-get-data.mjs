@@ -3,69 +3,90 @@ import { glob } from 'glob'
 import jsyaml from 'js-yaml'
 import core from '@actions/core'
 import fs, { readFileSync } from 'node:fs'
+import github from '@actions/github'
 import { findNestedObjectByKey } from './utils.mjs'
+import { isMainModule } from './utils.mjs'
 
-const imageTag = process.env.DOCKER_TAG
-
-if (!imageTag || typeof imageTag !== 'string') {
-  throw new Error(
-    `Either \`DOCKER_TAG\` is not set or is of the wrong type, expected string type but got ${imageTag}.`,
-  )
+if (isMainModule(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
 }
 
-const STAGE_NAME = 'dev'
-const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT'
-core.setOutput(_KEY_HAS_OUTPUT, 'false')
-const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES'
+function getCommitMsg(context) {
+  if (context.eventName === 'pull_request') {
+    let pr = context.payload.pull_request
+    console.log('PR: ', pr)
+    return `Change from: ${pr.html_url}`
+  }
+  return `Change from: https://github.com/island-is/island.is/commit/${context.sha}`
+}
 
-const _MANIFEST_PATHS = ['charts/features']
+async function main(testContext = null) {
+  const imageTag = process.env.DOCKER_TAG
+  const featureName = process.env.FEATURE_NAME
 
-const changedFiles = new Set()
+  const context = testContext || github.context
 
-console.log(`Feature name ${process.env.FEATURE_NAME}`)
+  if (!imageTag || typeof imageTag !== 'string') {
+    throw new Error(
+      `Either \`DOCKER_TAG\` is not set or is of the wrong type, expected string type but got ${imageTag}.`,
+    )
+  }
 
-const globPattern = `${_MANIFEST_PATHS.join(',')}/**/${
-  process.env.FEATURE_NAME
-}*.${STAGE_NAME}.yaml`
+  if (!featureName || typeof featureName !== 'string') {
+    throw new Error(
+      `Either \`FEATURE_NAME\` is not set or is of the wrong type, expected string type but got ${featureName}.`,
+    )
+  }
 
-const files = await glob(globPattern)
+  const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT'
+  core.setOutput(_KEY_HAS_OUTPUT, 'false')
+  const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES'
+  const _KEY_COMMIT_MSG = 'MQ_COMMIT_MSG'
 
-for (const file of files) {
-  const textContent = readFileSync(file, 'utf8')
-  const yamlContent = await jsyaml.load(textContent)
+  core.setOutput(_KEY_COMMIT_MSG, getCommitMsg(context))
 
-  for (const [_, val] of Object.entries(yamlContent)) {
-    const content = findNestedObjectByKey(val, 'image')
+  const _MANIFEST_PATHS = ['charts/features']
 
-    if (
-      typeof content === 'object' &&
-      typeof content.image === 'object' &&
-      content.image.repository &&
-      typeof content.image.repository === 'string'
-    ) {
-      content.image.tag = imageTag
-      fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
-      console.log(`Changed file ${file}`)
-      changedFiles.add(file)
-    } else {
-      console.log(`Skipping file ${file}`)
+  const changedFiles = new Set()
+
+  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/values.yaml`
+
+  const files = await glob(globPattern)
+
+  for (const file of files) {
+    const textContent = readFileSync(file, 'utf8')
+    const yamlContent = await jsyaml.load(textContent)
+
+    for (const val of Object.values(yamlContent)) {
+      const content = findNestedObjectByKey(val, 'image')
+
+      if (
+        typeof content === 'object' &&
+        typeof content.image === 'object' &&
+        content.image.repository &&
+        typeof content.image.repository === 'string'
+      ) {
+        content.image.tag = imageTag
+        fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
+        console.log(`Changed file ${file}`)
+        changedFiles.add(file)
+      } else if (file.includes('job-manifest') && !changedFiles.has(file)) {
+        console.log(`Adding job-manifest file ${file}`)
+        changedFiles.add(file)
+      } else if (!changedFiles.has(file)) {
+        console.log(`Skipping file ${file}`)
+      }
     }
   }
-}
 
-if (changedFiles.size > 0) {
-  const _BOOTSTRAP_CHARTS = 'charts/bootstrap'
+  if (changedFiles.size > 0) {
+    let c = Array.from(changedFiles)
 
-  const bootstrapChart = await glob(
-    `${_BOOTSTRAP_CHARTS}/**/${process.env.FEATURE_NAME}.${STAGE_NAME}.yaml`,
-  )
-  for (const file of bootstrapChart) {
-    changedFiles.add(file)
+    console.log(`Changed files: ${c.join(', ')}`)
+    core.setOutput(_KEY_HAS_OUTPUT, 'true')
+    core.setOutput(_KEY_CHANGED_FILES, c.join(','))
   }
-
-  let _changedFiles = Array.from(changedFiles)
-
-  console.log(`Changed files: ${_changedFiles.join(', ')}`)
-  core.setOutput(_KEY_HAS_OUTPUT, 'true')
-  core.setOutput(_KEY_CHANGED_FILES, _changedFiles.join(','))
 }
