@@ -43,17 +43,11 @@ export class OrganizationsService {
     auth: User,
     input: GetOrganizationInput,
   ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(auth)
-      .organizationsControllerCreate(
-        input as OrganizationsControllerCreateRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create organization'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
+    const response = await this.organizationsApiWithAuth(
+      auth,
+    ).organizationsControllerCreate(
+      input as OrganizationsControllerCreateRequest,
+    )
 
     return response as Organization
   }
@@ -69,10 +63,6 @@ export class OrganizationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to get organizations'),
       )
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
 
     return response as Organization
   }

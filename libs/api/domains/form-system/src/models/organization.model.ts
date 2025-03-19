@@ -6,8 +6,8 @@ import { Option } from './option.model'
 
 @ObjectType('FormSystemOrganization')
 export class Organization {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType

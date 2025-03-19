@@ -293,6 +293,45 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   ${slices}
 `
 
+export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
+  query GetOrganizationSubpageById($input: GetOrganizationSubpageByIdInput!) {
+    getOrganizationSubpageById(input: $input) {
+      id
+      title
+      slug
+      signLanguageVideo {
+        url
+        thumbnailImageUrl
+      }
+      description {
+        ...AllSlices
+        ${nestedFields}
+      }
+      links {
+        text
+        url
+      }
+      slices {
+        ...AllSlices
+        ${nestedFields}
+      }
+      bottomSlices {
+        ...AllSlices
+      }
+      showTableOfContents
+      sliceCustomRenderer
+      sliceExtraText
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+  ${slices}
+`
+
 export const GET_ORGANIZATION_SERVICES_QUERY = gql`
   query GetOrganizationServices($input: GetArticlesInput!) {
     getArticles(input: $input) {
@@ -430,6 +469,7 @@ export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
       id
       title
       childLinks {
+        id
         label
         href
       }

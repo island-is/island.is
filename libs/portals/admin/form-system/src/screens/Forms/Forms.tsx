@@ -48,8 +48,8 @@ export const Forms = () => {
         },
       },
     })
-    if (data?.formSystemGetAllForms?.forms) {
-      setFormsState(data.formSystemGetAllForms.forms)
+    if (data?.formSystemAllForms?.forms) {
+      setFormsState(data.formSystemAllForms.forms)
     }
   }
 

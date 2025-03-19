@@ -401,15 +401,37 @@ export const controlReducer = (
     // Change
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
-      const newActive = {
-        ...activeItem,
-        data: {
-          ...activeItem.data,
+      let newData
+      if (activeItem.type === 'Section') {
+        newData = {
+          ...(activeItem.data as FormSystemSection),
           name: {
-            ...activeItem.data?.name,
+            ...(activeItem.data as FormSystemSection).name,
             [lang]: newValue,
           },
-        },
+        }
+      } else if (activeItem.type === 'Screen') {
+        newData = {
+          ...(activeItem.data as FormSystemScreen),
+          name: {
+            ...(activeItem.data as FormSystemScreen).name,
+            [lang]: newValue,
+          },
+        }
+      } else if (activeItem.type === 'Field') {
+        newData = {
+          ...(activeItem.data as FormSystemField),
+          name: {
+            ...(activeItem.data as FormSystemField).name,
+            [lang]: newValue,
+          },
+        }
+      } else {
+        newData = activeItem.data
+      }
+      const newActive = {
+        ...activeItem,
+        data: newData,
       }
       const { type } = activeItem
       let updatedList

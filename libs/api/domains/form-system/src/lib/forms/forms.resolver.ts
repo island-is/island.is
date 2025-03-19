@@ -57,7 +57,7 @@ export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => FormResponse, {
-    name: 'formSystemCreateForm',
+    name: 'createFormSystemForm',
   })
   async createForm(
     @Args('input', { type: () => CreateFormInput }) input: CreateFormInput,
@@ -67,7 +67,7 @@ export class FormsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteForm',
+    name: 'deleteFormSystemForm',
     nullable: true,
   })
   async deleteForm(
@@ -78,7 +78,7 @@ export class FormsResolver {
   }
 
   @Query(() => FormResponse, {
-    name: 'formSystemGetForm',
+    name: 'formSystemForm',
   })
   async getForm(
     @Args('input', { type: () => GetFormInput }) id: GetFormInput,
@@ -88,7 +88,7 @@ export class FormsResolver {
   }
 
   @Query(() => FormResponse, {
-    name: 'formSystemGetAllForms',
+    name: 'formSystemForms',
   })
   async getAllForms(
     @Args('input', { type: () => GetFormsInput }) input: GetFormsInput,
@@ -97,8 +97,9 @@ export class FormsResolver {
     return this.formsService.getAllForms(user, input)
   }
 
-  @Mutation(() => UpdateFormResponse, {
-    name: 'formSystemUpdateForm',
+  @Mutation(() => Boolean, {
+    name: 'updateFormSystemForm',
+    nullable: true,
   })
   async updateForm(
     @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,

@@ -4,11 +4,11 @@ import { Field as FieldModel } from './field.model'
 
 @ObjectType('FormSystemScreen')
 export class Screen {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  sectionId?: string
+  @Field(() => String)
+  sectionId!: string
 
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType

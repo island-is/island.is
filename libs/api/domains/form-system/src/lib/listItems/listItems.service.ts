@@ -45,59 +45,33 @@ export class ListItemsService {
     auth: User,
     input: CreateListItemInput,
   ): Promise<ListItem> {
-    const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerCreate(input as ListItemsControllerCreateRequest)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create list item'),
-      )
+    const response = await this.listItemsApiWithAuth(
+      auth,
+    ).listItemsControllerCreate(input as ListItemsControllerCreateRequest)
 
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response
+    return response as ListItem
   }
 
   async deleteListItem(auth: User, input: DeleteListItemInput): Promise<void> {
-    const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerDelete(input as ListItemsControllerDeleteRequest)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete list item'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
+    await this.listItemsApiWithAuth(auth).listItemsControllerDelete(
+      input as ListItemsControllerDeleteRequest,
+    )
   }
 
   async updateListItem(auth: User, input: UpdateListItemInput): Promise<void> {
-    const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdate(input as ListItemsControllerUpdateRequest)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update list item'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
+    await this.listItemsApiWithAuth(auth).listItemsControllerUpdate(
+      input as ListItemsControllerUpdateRequest,
+    )
   }
 
   async updateListItemsDisplayOrder(
     auth: User,
     input: UpdateListItemDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdateDisplayOrder(
-        input as ListItemsControllerUpdateDisplayOrderRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update list item'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
+    const response = await this.listItemsApiWithAuth(
+      auth,
+    ).listItemsControllerUpdateDisplayOrder(
+      input as ListItemsControllerUpdateDisplayOrderRequest,
+    )
   }
 }

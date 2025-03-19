@@ -3,19 +3,19 @@ import { OrganizationInput } from './organization.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
 
-@InputType('FormSystemCreateApplicationInput')
+@InputType('CreateFormSystemApplicationInput')
 export class CreateApplicationInput {
   @Field(() => String, { nullable: true })
   slug?: string
 }
 
-@InputType('FormSystemGetApplicationInput')
+@InputType('FormSystemApplicationInput')
 export class GetApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
 }
 
-@InputType('FormSystemSubmitScreenInput')
+@InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {
   @Field(() => String, { nullable: true })
   screenId?: string
@@ -70,4 +70,13 @@ export class ApplicationInput {
 
   @Field(() => [SectionInput], { nullable: 'itemsAndList' })
   sections?: SectionInput[]
+}
+
+@InputType('UpdateFormSystemApplicationDependenciesInput')
+export class UpdateApplicationDependenciesInput {
+  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
+  dependencies?: DependencyInput[]
+
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  completed?: string[]
 }

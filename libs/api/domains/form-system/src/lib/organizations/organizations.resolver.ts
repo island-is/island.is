@@ -22,7 +22,7 @@ export class OrganizationsResolver {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Query(() => Organization, {
-    name: 'formSystemGetOrganization',
+    name: 'formSystemOrganization',
   })
   async getOrganization(
     @Args('input', { type: () => GetOrganizationInput })
@@ -33,7 +33,7 @@ export class OrganizationsResolver {
   }
 
   @Query(() => OrganizationAdmin, {
-    name: 'formSystemGetOrganizationAdmin',
+    name: 'formSystemOrganizationAdmin',
   })
   async getOrganizationAdmin(
     @Args('input', { type: () => GetOrganizationAdminInput })
@@ -44,7 +44,7 @@ export class OrganizationsResolver {
   }
 
   @Mutation(() => Organization, {
-    name: 'formSystemCreateOrganization',
+    name: 'createFormSystemOrganization',
   })
   async createOrganization(
     @Args('input', { type: () => GetOrganizationInput })

@@ -9,6 +9,7 @@ import {
   FormSystemScreen,
   FormSystemField,
   FormSystemSection,
+
   Maybe,
 } from '@island.is/api/schema'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
@@ -58,6 +59,7 @@ export const Navbar = () => {
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
 
+
   const addSection = async () => {
     try {
       const newSection = await createSection({
@@ -76,7 +78,7 @@ export const Navbar = () => {
           type: 'ADD_SECTION',
           payload: {
             section: removeTypename(
-              newSection.data?.formSystemCreateSection,
+              newSection.data?.createFormSystemSection,
             ) as FormSystemSection,
           },
         })
@@ -91,7 +93,7 @@ export const Navbar = () => {
               updateSectionsDisplayOrderDto: {
                 sectionsDisplayOrderDto: [
                   ...(updatedSections ?? []),
-                  { id: newSection.data?.formSystemCreateSection.id },
+                  { id: newSection.data?.createFormSystemSection.id },
                 ],
               },
             },
@@ -118,10 +120,13 @@ export const Navbar = () => {
           )
 
     if (id === baseSettingsStep.id) {
+
+    if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
         payload: {
           activeItem: {
+            type: 'Section',
             type: 'Section',
             data: baseSettingsStep,
           },

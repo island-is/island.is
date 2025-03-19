@@ -46,7 +46,7 @@ export const RelevantParties = () => {
                 },
               },
             })
-            return removeTypename(newApplicant.data.formSystemCreateApplicant)
+            return removeTypename(newApplicant.data.createFormSystemApplicant)
           }),
         )
         setFormApplicants([...formApplicants, ...newApplicants])

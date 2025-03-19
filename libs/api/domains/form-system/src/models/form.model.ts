@@ -51,8 +51,8 @@ export class FormUrl {
 
 @ObjectType('FormSystemForm')
 export class Form {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => String, { nullable: true })
   organizationId?: string
@@ -69,38 +69,38 @@ export class Form {
   @Field(() => LanguageType, { nullable: true })
   organizationDisplayName?: LanguageType
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
-
-  @Field(() => String, { nullable: true })
-  slug?: string
-
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  created?: Date
-
-  @Field(() => Date, { nullable: true })
-  modified?: Date
 
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  isTranslated?: boolean
-
-  @Field(() => Boolean, { nullable: true })
   beenPublished?: boolean
-
-  @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
 
   @Field(() => Int, { nullable: true })
   derivedFrom?: number
 
-  @Field(() => Boolean, { nullable: true })
-  stopProgressOnValidatingScreen?: boolean
+  @Field(() => LanguageType)
+  name!: LanguageType
+
+  @Field(() => String)
+  slug!: string
+
+  @Field(() => Date)
+  created!: Date
+
+  @Field(() => Date)
+  modified!: Date
+
+  @Field(() => Boolean)
+  isTranslated!: boolean
+
+  @Field(() => Int)
+  applicationDaysToRemove!: number
+
+  @Field(() => Boolean)
+  stopProgressOnValidatingScreen!: boolean
 
   @Field(() => LanguageType, { nullable: true })
   completedMessage?: LanguageType
@@ -123,8 +123,8 @@ export class Form {
   @Field(() => [Dependency], { nullable: 'itemsAndList' })
   dependencies?: Dependency[]
 
-  @Field(() => String, { nullable: true })
-  status?: string
+  @Field(() => String)
+  status!: string
 
   @Field(() => [FormUrl], { nullable: 'itemsAndList' })
   urls?: FormUrl[]

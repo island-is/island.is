@@ -4,8 +4,8 @@ import { Screen as ScreenModel } from './screen.model'
 
 @ObjectType('FormSystemSection')
 export class Section {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType

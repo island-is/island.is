@@ -49,7 +49,7 @@ jobs:
 
   helm-values-validation:
     runs-on: arc-runners
-    timeout-minutes: 5
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
@@ -63,8 +63,13 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
+      - name: Install yarn in infra
+        working-directory: infra
+        run: yarn install --immutable
+
       - name: Run unit tests
-        run: ./infra/scripts/ci/test-unit.sh
+        working-directory: infra
+        run: yarn test
 
       - name: Check chart values are up-to-date
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -89,6 +94,10 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: Install yarn in infra
+        working-directory: infra
+        run: yarn install --immutable
 
       - name: Select role
         env:

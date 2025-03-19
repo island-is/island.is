@@ -27,7 +27,6 @@ export const List = ({ item }: Props) => {
       value: item?.label?.is ?? '',
     })) ?? []
 
-  console.log('item', item)
   return (
     <Select
       name="list"

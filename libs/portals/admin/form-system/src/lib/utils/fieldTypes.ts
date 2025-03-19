@@ -10,7 +10,6 @@ enum FieldTypes {
   PAYMENT = 'Greiðsla',
   CHECKBOX = 'Hakbox',
   HOMESTAY_NUMBER = 'Heimagistingarnúmer',
-  HOMESTAY_OVERVIEW = 'Heimagistingaryfirlit',
   NATIONAL_ID = 'Kennitala',
   NATIONAL_ID_ALL = 'Kennitala (allt)',
   NATIONAL_ID_ESTATE = 'Kennitala (dánarbú)',

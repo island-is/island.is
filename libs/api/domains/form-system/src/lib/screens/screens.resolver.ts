@@ -21,10 +21,10 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) { }
+  constructor(private readonly screensService: ScreensService) {}
 
   @Mutation(() => Screen, {
-    name: 'formSystemCreateScreen',
+    name: 'createFormSystemScreen',
   })
   async createScreen(
     @Args('input') input: CreateScreenInput,
@@ -34,7 +34,7 @@ export class ScreensResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteScreen',
+    name: 'deleteFormSystemScreen',
     nullable: true,
   })
   async deleteScreen(
@@ -45,7 +45,8 @@ export class ScreensResolver {
   }
 
   @Mutation(() => Screen, {
-    name: 'formSystemUpdateScreen',
+    name: 'updateFormSystemScreen',
+    nullable: true,
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,
@@ -55,7 +56,7 @@ export class ScreensResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateScreensDisplayOrder',
+    name: 'updateFormSystemScreensDisplayOrder',
     nullable: true,
   })
   async updateScreensDisplayOrder(

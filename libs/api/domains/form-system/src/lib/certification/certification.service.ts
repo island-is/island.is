@@ -20,8 +20,6 @@ import {
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
-  // OrganizationCertificationTypeUpdateInput,
-  // OrganizationPermissionUpdateInput,
 } from '../../dto/certification.input'
 
 @Injectable()
@@ -58,33 +56,23 @@ export class CertificationsService {
     auth: User,
     input: CreateCertificationInput,
   ): Promise<FormCertificationTypeDto> {
-    const response = await this.certificationsApiWithAuth(auth)
-      .formCertificationTypesControllerCreate(
-        input as FormCertificationTypesControllerCreateRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to create certification'),
-      )
+    const response = await this.certificationsApiWithAuth(
+      auth,
+    ).formCertificationTypesControllerCreate(
+      input as FormCertificationTypesControllerCreateRequest,
+    )
 
-    if (!response || response instanceof ApolloError) {
-      return {
-        id: '',
-        certificationTypeId: '',
-      }
-    }
-    return response
+    return response as FormCertificationTypeDto
   }
 
   async deleteCertification(
     auth: User,
     input: DeleteCertificationInput,
   ): Promise<void> {
-    await this.certificationsApiWithAuth(auth)
-      .formCertificationTypesControllerDelete(
-        input as FormCertificationTypesControllerDeleteRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to delete certification'),
-      )
+    await this.certificationsApiWithAuth(
+      auth,
+    ).formCertificationTypesControllerDelete(
+      input as FormCertificationTypesControllerDeleteRequest,
+    )
   }
 }

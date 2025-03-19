@@ -24,7 +24,7 @@ export class FieldsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fieldsApi: FieldsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -41,55 +41,33 @@ export class FieldsService {
   }
 
   async createField(auth: User, input: CreateFieldInput): Promise<Field> {
-    const response = await this.fieldsApiWithAuth(auth)
-      .fieldsControllerCreate(input as FieldsControllerCreateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create field'))
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
+    const response = await this.fieldsApiWithAuth(auth).fieldsControllerCreate(
+      input as FieldsControllerCreateRequest,
+    )
     return response
   }
 
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth)
-      .fieldsControllerDelete(input as FieldsControllerDeleteRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete field'))
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
+    const response = await this.fieldsApiWithAuth(auth).fieldsControllerDelete(
+      input as FieldsControllerDeleteRequest,
+    )
   }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth)
-      .fieldsControllerUpdate(input as unknown as FieldsControllerUpdateRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update field'))
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
+    const response = await this.fieldsApiWithAuth(auth).fieldsControllerUpdate(
+      input as unknown as FieldsControllerUpdateRequest,
+    )
   }
 
   async updateFieldsDisplayOrder(
     auth: User,
     input: UpdateFieldsDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth)
-      .fieldsControllerUpdateDisplayOrder({
-        updateFieldsDisplayOrderDto: {
-          fieldsDisplayOrderDto:
-            input.updateFieldsDisplayOrderDto as FieldDisplayOrderDto[],
-        },
-      })
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update field display order'),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return
-    }
-    return response
+    await this.fieldsApiWithAuth(auth).fieldsControllerUpdateDisplayOrder({
+      updateFieldsDisplayOrderDto: {
+        fieldsDisplayOrderDto:
+          input.updateFieldsDisplayOrderDto as FieldDisplayOrderDto[],
+      },
+    })
   }
 }

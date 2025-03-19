@@ -20,10 +20,10 @@ import { ListItem } from '../../models/listItem.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ListItemsResolver {
-  constructor(private readonly listItemsService: ListItemsService) { }
+  constructor(private readonly listItemsService: ListItemsService) {}
 
   @Mutation(() => ListItem, {
-    name: 'formSystemCreateListItem',
+    name: 'createFormSystemListItem',
   })
   async createListItem(
     @Args('input', { type: () => CreateListItemInput })
@@ -34,7 +34,7 @@ export class ListItemsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteListItem',
+    name: 'deleteFormSystemListItem',
     nullable: true,
   })
   async deleteListItem(
@@ -46,7 +46,7 @@ export class ListItemsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateListItem',
+    name: 'updateFormSystemListItem',
     nullable: true,
   })
   async updateListItem(
@@ -58,7 +58,7 @@ export class ListItemsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemUpdateListItemsDisplayOrder',
+    name: 'updateFormSystemListItemsDisplayOrder',
     nullable: true,
   })
   async updateListItemsDisplayOrder(
