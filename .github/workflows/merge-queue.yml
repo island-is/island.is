@@ -152,7 +152,7 @@ jobs:
           done
 
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" | tee -a "${GITHUB_ENV}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
           # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
           echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
