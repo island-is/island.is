@@ -36,6 +36,12 @@ mkargs() {
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
   done
+  # Add --build-arg for every `DOCKER_METADATA_OUTPUT` environment variable
+  for key in $(env | grep -E "^DOCKER_METADATA_OUTPUT_" | cut -d "=" -f 1); do
+    value="${!key}"
+    BUILD_ARGS+=("--label=${key}=${value}")
+    echo "BUILD_ARGS: ${BUILD_ARGS[*]}"
+  done
   echo "${BUILD_ARGS[@]}"
 }
 
