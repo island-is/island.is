@@ -149,39 +149,18 @@ jobs:
           fi
 
       - name: Building Docker images
-        continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          DOCKER_TYPE: ${{ env.DOCKER_TYPE }}
+          NODE_IMAGE_VERSION: ${{ env.NODE_IMAGE_VERSION }}
+          EXTRA_DOCKER_BUILD_ARGS: ${{ env.EXTRA_DOCKER_BUILD_ARGS }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
         run: |
           set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          node ./scripts/ci/docker-build.mjs
 
-      - name: Building Docker images Retry
-        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
-      - name: Docker build output
-        uses: cloudposse/github-action-matrix-outputs-write@v1
-        with:
-          matrix-step-name: ${{ github.job }}
-          matrix-key: ${{ env.MATRIX_ID }}
-          outputs: |-
-            value: ${{ env.JSON_value }}
-            project: ${{ env.JSON_project }}
-            target: ${{ env.JSON_target }}
-            imageName: ${{ env.JSON_imageName }}
-            imageTag: ${{ env.JSON_imageTag }}
   post-docker-build:
     needs:
       - docker-build
