@@ -27,7 +27,7 @@ export const useLawyerRegistry = (shouldFetchLawyers: boolean) => {
       request.onupgradeneeded = () => {
         const db = request.result
         const objectStore = db.createObjectStore(Database.lawyerTable, {
-          autoIncrement: true,
+          autoIncrement: false,
           keyPath: 'nationalId',
         })
 
