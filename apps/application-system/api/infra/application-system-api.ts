@@ -440,4 +440,4 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('services-payments', 'nginx-ingress-internal', 'islandis')
