@@ -314,6 +314,17 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Generate metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{env.DOCKER_REGISTRY}}/${{env.APP}}
+          # Tags aren't used yet, but setting for future-proofing and exampling
+          tags: |
+            type=raw,value=${{env.DOCKER_TAG}},priority=1100
+            type=ref,event=branch
+            type=sha
+
       - name: Prepare Docker build arguments
         id: dockerargs
         if: steps.gather.outcome == 'success'
@@ -321,6 +332,7 @@ jobs:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          METADATA_LABELS: ${{ steps.meta.outputs.labels }}
         run: |
           set -x
           # Strip protocol prefix and .git postfix
@@ -337,6 +349,16 @@ jobs:
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
           )
+
+          # Add labels from metadata action
+          for label in ${METADATA_LABELS}; do
+            build_args+=("--label=${label}")
+          done
+          # Add annotations from metadata action
+          for annotation in ${METADATA_LABELS}; do
+            build_args+=("--annotation=${annotation}")
+          done
+
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
