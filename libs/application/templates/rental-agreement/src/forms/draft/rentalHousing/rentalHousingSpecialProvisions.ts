@@ -3,6 +3,8 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildTextField,
+  buildAlertMessageField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { specialProvisions } from '../../../lib/messages'
@@ -16,6 +18,20 @@ export const RentalHousingSpecialProvisions = buildSubSection({
       title: specialProvisions.subsection.pageTitle,
       description: specialProvisions.subsection.pageDescription,
       children: [
+        buildAlertMessageField({
+          id: 'specialProvisions.descriptionInputAlert',
+          alertType: 'warning',
+          message: specialProvisions.housingInfo.warningBanner,
+          // TODO: change condition to check if m2 have been altered
+          condition: (answers) => {
+            return (
+              getValueViaPath<string>(
+                answers,
+                'registerProperty.categoryClassGroup',
+              ) === 'studentHousing'
+            )
+          },
+        }),
         buildDescriptionField({
           id: 'specialProvisions.descriptionTitle',
           title: specialProvisions.housingInfo.title,
@@ -29,6 +45,15 @@ export const RentalHousingSpecialProvisions = buildSubSection({
           placeholder: specialProvisions.housingInfo.inputPlaceholder,
           variant: 'textarea',
           rows: 8,
+          // TODO: change condition to check if m2 have been altered
+          required: (application) => {
+            return (
+              getValueViaPath<string>(
+                application.answers,
+                'registerProperty.categoryClassGroup',
+              ) === 'studentHousing'
+            )
+          },
         }),
         buildDescriptionField({
           id: 'specialProvisions.rulesTitle',
