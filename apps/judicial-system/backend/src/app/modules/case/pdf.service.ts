@@ -24,6 +24,7 @@ import {
   Confirmation,
   createCaseFilesRecord,
   createIndictment,
+  createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
   getCourtRecordPdfAsBuffer,
@@ -364,5 +365,9 @@ export class PdfService {
     )
 
     return generatedPdf
+  }
+
+  async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
+    return await createRulingSentToPrisonAdminPdf(theCase)
   }
 }
