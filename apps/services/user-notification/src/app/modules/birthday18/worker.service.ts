@@ -39,6 +39,11 @@ export class UserNotificationBirthday18WorkerService {
         }
         this.queue.add(dto)
       }),
+    ).catch((e) =>
+      this.logger.warn(
+        'User-notifications-birthday-worker error on notification',
+        e,
+      ),
     )
   }
 }
