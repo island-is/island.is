@@ -36,6 +36,8 @@ export class FriggClientService {
   ): Promise<UserModel | null> {
     return Promise.resolve({
       id: '1234567890',
+      phone: {},
+      mobile: {},
       nationalId: '0101302399',
       name: 'Stuttli Maack',
       preferredName: { name: 'Fullorðni Maðurinn' },
