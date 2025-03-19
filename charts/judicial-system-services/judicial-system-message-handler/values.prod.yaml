@@ -26,7 +26,7 @@ enabled: true
 env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
   SQS_QUEUE_NAME: 'sqs-judicial-system'

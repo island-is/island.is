@@ -14,7 +14,7 @@ export const TrainingLicenseOnAWorkMachineForm: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
-  renderLastScreenButton: true,
+  renderLastScreenButton: false,
   renderLastScreenBackButton: false,
   children: [
     informationSection,
@@ -27,18 +27,8 @@ export const TrainingLicenseOnAWorkMachineForm: Form = buildForm({
       alertTitle: conclusion.default.alertMessage,
       alertMessage: '',
       expandableHeader: conclusion.default.expandableHeader,
+      expandableIntro: '',
       expandableDescription: conclusion.default.expandableDescription,
-      condition: (answers) => !isContractor(answers),
-    }),
-    buildFormConclusionSection({
-      sectionTitle: conclusion.general.sectionTitle,
-      multiFieldTitle: conclusion.general.title,
-      alertTitle: conclusion.approvedForApplicant.alertMessage,
-      alertMessage: '',
-      expandableHeader: conclusion.approvedForApplicant.expandableHeader,
-      expandableDescription:
-        conclusion.approvedForApplicant.expandableDescription,
-      condition: (answers) => isContractor(answers),
     }),
   ],
 })
