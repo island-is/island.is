@@ -14,6 +14,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   ApplicationRole,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -24,6 +25,10 @@ import {
 import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
+
+enum TemplateApiActions {
+  sendApplicationSummary = 'sendApplicationSummary',
+}
 
 const RentalAgreementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -82,6 +87,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
+          onExit: defineTemplateApi({
+            action: TemplateApiActions.sendApplicationSummary,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

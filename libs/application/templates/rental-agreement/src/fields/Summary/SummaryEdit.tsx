@@ -64,7 +64,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 
   return (
-    <Box className={summaryWrap}>
+    <Box className={summaryWrap} id="email-summary-container">
       <ApplicantsSummary
         application={application}
         field={field}
