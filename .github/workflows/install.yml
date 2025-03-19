@@ -277,6 +277,6 @@ jobs:
 
       - name: DEBUG judicial affected output
         id: judicial-debug
-        if: steps.is-judicial-affected.ouputs.AFFECTED == 'false' || steps.is-judicial-affected.ouputs.AFFECTED == 'true'
+        if: steps.is-judicial-affected.ouputs.AFFECTED == 'true'
         run: |
           echo ${{ steps.is-judicial-affected.ouputs.AFFECTED }}
