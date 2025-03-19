@@ -12,6 +12,13 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  webpack: (config, { isServer, dev }) => {
+    if (!dev && isServer) {
+      config.devtool = 'source-map'
+    }
+    return config
+  },
 }
 
 const plugins = [
