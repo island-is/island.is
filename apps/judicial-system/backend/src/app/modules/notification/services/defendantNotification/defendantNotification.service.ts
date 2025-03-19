@@ -137,7 +137,7 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     return this.sendEmails(
       theCase,
-      DefendantNotificationType.DEFENDANT_DELEGADED_DEFENDER_CHOICE,
+      DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
       formattedSubject,
       formattedBody,
       [
@@ -298,7 +298,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     switch (notificationType) {
       case DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER:
         return this.sendDefendantSelectedDefenderNotification(theCase)
-      case DefendantNotificationType.DEFENDANT_DELEGADED_DEFENDER_CHOICE:
+      case DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE:
         return this.sendDefendantDelegatedDefenderChoiceNotification(theCase)
       case DefendantNotificationType.DEFENDER_ASSIGNED:
         return this.sendDefenderAssignedNotification(theCase, defendant)

@@ -362,7 +362,7 @@ export class DefendantService {
           caseId: theCase.id,
           elementId: updatedDefendant.id,
           body: {
-            type: DefendantNotificationType.DEFENDANT_DELEGADED_DEFENDER_CHOICE,
+            type: DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
           },
         },
       ])
