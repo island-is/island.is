@@ -13,11 +13,7 @@ export const serviceSetup = (services: {
     .namespace('islandis')
     .codeOwner(CodeOwners.Stefna)
     .env({
-      API_URL: {
-        dev: "http://api",
-        staging: ref((h) => `http://${h.svc(services.api)}`),
-        prod: ref((h) => `http://${h.svc(services.api)}`),
-      },
+      API_URL: ref((h) => `http://${h.svc(services.api)}`),
       TRACKING_DOMAIN: {
         dev: 'beta.dev01.devland.is',
         staging: 'beta.staging01.devland.is',
