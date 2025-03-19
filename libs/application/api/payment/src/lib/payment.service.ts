@@ -291,9 +291,9 @@ export class PaymentService {
             organisationId: performingOrganizationID,
             // onUpdateUrl:
             //   'http://localhost:3333/application-payment/api-client-payment-callback/',
-            onUpdateUrl:
-              'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
-            // onUpdateUrl: onUpdateUrl.toString(),
+            // onUpdateUrl:
+            //   'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
+            onUpdateUrl: onUpdateUrl.toString(),
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
