@@ -103,6 +103,9 @@ export const aboutSection = buildSubSection({
           title: accident.about.exactLocation,
           width: 'half',
           placeholder: accident.about.exactLocationPlaceholder,
+          maxLength: 100,
+          minLength: 1,
+          required: true
         }),
         buildDescriptionField({
           id: 'accident.describe.descriptionHeading',

@@ -11,6 +11,7 @@ import { useFriggOptions } from '../../../hooks/useFriggOptions'
 import {
   OptionsType,
   ReasonForApplicationOptions,
+  SchoolType,
 } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
@@ -29,13 +30,21 @@ export const ReasonForApplication = ({
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
+    selectedSchoolType,
   } = getApplicationAnswers(application.answers)
+
+  const friggOptionsType =
+    selectedSchoolType === SchoolType.PRIVATE_SCHOOL
+      ? OptionsType.REASON_PRIVATE_SCHOOL
+      : selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+      ? OptionsType.REASON_INTERNATIONAL_SCHOOL
+      : OptionsType.REASON
 
   const {
     options: relationFriggOptions,
     loading,
     error,
-  } = useFriggOptions(OptionsType.REASON)
+  } = useFriggOptions(friggOptionsType)
 
   return (
     <ReviewGroup

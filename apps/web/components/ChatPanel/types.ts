@@ -30,6 +30,16 @@ export interface WatsonChatPanelProps {
     | 'skatturinn'
     | 'samgongustofa'
 
+  serviceDesk?: {
+    integrationType: 'genesyswebmessenger'
+    genesysMessenger: {
+      scriptURL: string
+      deploymentID: string
+      environment: string
+    }
+    skipConnectAgentCard: boolean
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onLoad?: (instance: any) => void
 
@@ -82,6 +92,9 @@ export type WatsonIntegration =
 
   // Samgöngustofa - english
   | 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b'
+
+  // Gott að eldast
+  | '580730f3-3d88-4c5a-92e6-30e79ea09f24'
 
 export type WatsonServiceInstance =
   // Askur

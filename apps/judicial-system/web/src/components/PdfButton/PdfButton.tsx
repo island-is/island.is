@@ -19,6 +19,7 @@ interface Props {
     | 'indictment'
     | 'subpoena'
     | 'serviceCertificate'
+    | 'rulingSentToPrisonAdmin'
 
   disabled?: boolean
   renderAs?: 'button' | 'row'
