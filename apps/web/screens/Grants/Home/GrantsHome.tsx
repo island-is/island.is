@@ -47,9 +47,6 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   const intl = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  //DUMMY
-  const k = 8
-
   const { width } = useWindowSize()
   const isTablet = theme.breakpoints.sm < width && width < theme.breakpoints.md
 
