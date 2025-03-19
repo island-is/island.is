@@ -1,36 +1,26 @@
 import { Locale } from '@island.is/shared/types'
-import { LICENSE_NAMESPACE } from '../licenseService.constants'
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  type IdentityDocument,
-  type IdentityDocumentChild,
-} from '@island.is/clients/passports'
+import { type IdentityDocument } from '@island.is/clients/passports'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
-import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
-import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
 import { capitalizeEveryWord } from '../utils/capitalize'
 import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
-  AlertType,
   ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
   GenericUserLicenseDataFieldTagColor,
   GenericUserLicenseDataFieldTagType,
-  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
-
-const isChildDoc = (
-  passport: IdentityDocument | IdentityDocumentChild,
-): passport is IdentityDocumentChild => {
-  return (passport as IdentityDocumentChild).childNationalId !== undefined
-}
 
 @Injectable()
 export class IdentityDocumentMapper implements GenericLicenseMapper {
@@ -126,7 +116,10 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(document),
       metadata: {
         licenseNumber: document.number?.toString(),
-        licenseId: document.number?.toString(),
+        licenseId: DEFAULT_LICENSE_ID,
+        subtitle: formatMessage(m.licenseNumberVariant, {
+          arg: document.number?.toString() ?? formatMessage(m.unknown),
+        }),
         expiryStatus:
           document.expiryStatus === 'EXPIRED'
             ? ExpiryStatus.EXPIRED
