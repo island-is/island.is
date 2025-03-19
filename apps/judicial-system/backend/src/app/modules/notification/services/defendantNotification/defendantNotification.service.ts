@@ -12,6 +12,7 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import {
   DEFENDER_INDICTMENT_ROUTE,
+  PRISON_CASES_ROUTE,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -227,7 +228,7 @@ export class DefendantNotificationService extends BaseNotificationService {
       strings.indictmentSentToPrisonAdminBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${PRISON_CASES_ROUTE}">`,
         linkEnd: '</a>',
       },
     )

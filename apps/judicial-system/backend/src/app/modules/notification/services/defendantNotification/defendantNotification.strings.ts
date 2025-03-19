@@ -47,9 +47,9 @@ export const strings = {
       'Titill í tilkynningu til FMST þegar mál er sent til fullnustu',
   }),
   indictmentSentToPrisonAdminBody: defineMessage({
-    id: 'judicial.system.backend:defendant_notifications.indictment_sent_to_prison_admin_body',
+    id: 'judicial.system.backend:defendant_notifications.indictment_sent_to_prison_admin_body_V1',
     defaultMessage:
-      'Ríkissaksóknari hefur sent mál {courtCaseNumber} til fullnustu.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      'Ríkissaksóknari hefur sent mál {courtCaseNumber} til fullnustu.<br /><br />Málið er aðgengilegt í {linkStart}Réttarvörslugátt{linkEnd}.',
     description: 'Texti í tilkynningu til FMST þegar mál er sent til fullnustu',
   }),
   indictmentWithdrawnFromPrisonAdminSubject: defineMessage({
