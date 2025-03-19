@@ -67,6 +67,7 @@ export const serviceSetup = (services: {
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  formSystemService: ServiceBuilder<'services-form-system-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -74,26 +75,10 @@ export const serviceSetup = (services: {
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
     .env({
-      APPLICATION_SYSTEM_API_URL: {
-        dev: "http://application-system-api.application-system.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
-        prod: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
-      },
-      USER_NOTIFICATION_API_URL: {
-        dev: "http://user-notification.user-notification.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.userNotificationService)}`,),
-        prod: ref((h) => `http://${h.svc(services.userNotificationService)}`,),
-      },
-      ICELANDIC_NAMES_REGISTRY_BACKEND_URL: {
-        dev: "http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,),
-        prod: ref((h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,),
-      },
-      AIR_DISCOUNT_SCHEME_BACKEND_URL: {
-        dev: "http://air-discount-scheme-backend.air-discount-scheme.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,),
-        prod: ref((h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,),
-      },
+      APPLICATION_SYSTEM_API_URL: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
+      USER_NOTIFICATION_API_URL: ref((h) => `http://${h.svc(services.userNotificationService)}`,),
+      ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref((h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,),
+      AIR_DISCOUNT_SCHEME_BACKEND_URL: ref((h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
         dev: 'loftbru.dev01.devland.is',
         staging: 'loftbru.staging01.devland.is',
@@ -115,7 +100,6 @@ export const serviceSetup = (services: {
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
         prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
-
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
@@ -141,36 +125,20 @@ export const serviceSetup = (services: {
         staging: 'development@island.is',
         prod: 'island@island.is',
       },
-      USER_PROFILE_CLIENT_URL: {
-        dev: "http://service-portal-api.service-portal.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.servicePortalApi)}`,),
-        prod: ref((h) => `http://${h.svc(services.servicePortalApi)}`,),
-      },
+      USER_PROFILE_CLIENT_URL: ref((h) => `http://${h.svc(services.servicePortalApi)}`,),
       FILE_DOWNLOAD_BUCKET: {
         dev: 'island-is-dev-download-cache-api',
         staging: 'island-is-staging-download-cache-api',
         prod: 'island-is-prod-download-cache-api',
       },
-      SERVICE_DOCUMENTS_BASEPATH: {
-        dev: "http://services-documents.services-documents.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.documentsService)}`,),
-        prod: ref((h) => `http://${h.svc(services.documentsService)}`,),
-      },
+      SERVICE_DOCUMENTS_BASEPATH: ref((h) => `http://${h.svc(services.documentsService)}`,),
       DOWNLOAD_SERVICE_BASE_PATH: {
         prod: 'https://api.island.is',
         dev: 'https://api.dev01.devland.is',
         staging: 'https://api.staging01.devland.is',
       },
-      ENDORSEMENT_SYSTEM_BASE_API_URL: {
-        dev: "http://endorsement-system-api.endorsement-system.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.servicesEndorsementApi)}`,),
-        prod: ref((h) => `http://${h.svc(services.servicesEndorsementApi)}`,),
-      },
-      REGULATIONS_ADMIN_URL: {
-        dev: "http://regulations-admin-backend.regulations-admin.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`,),
-        prod: ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`,),
-      },
+      ENDORSEMENT_SYSTEM_BASE_API_URL: ref((h) => `http://${h.svc(services.servicesEndorsementApi)}`,),
+      REGULATIONS_ADMIN_URL: ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`,),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
@@ -209,11 +177,7 @@ export const serviceSetup = (services: {
       },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
-      FORM_SYSTEM_API_BASE_PATH: {
-        dev: 'https://profun.island.is/umsoknarkerfi',
-        staging: '',
-        prod: '',
-      },
+      FORM_SYSTEM_API_BASE_PATH: ref((h) => `http://${h.svc(services.formSystemService)}`),
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
@@ -221,11 +185,7 @@ export const serviceSetup = (services: {
       },
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
-      SESSIONS_API_URL: {
-        dev: "http://services-sessions.services-sessions.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.sessionsApi)}`),
-        prod: ref((h) => `http://${h.svc(services.sessionsApi)}`),
-      },
+      SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
       AUTH_ADMIN_API_PATH: {
         dev: 'https://identity-server.dev01.devland.is/backend',
         staging: 'https://identity-server.staging01.devland.is/backend',
@@ -292,18 +252,18 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
-      UNIVERSITY_GATEWAY_API_URL: {
-        dev: "http://services-university-gateway.services-university-gateway.svc.cluster.local",
-        staging: ref((h) => `http://${h.svc(services.universityGatewayApi)}`,),
-        prod: ref((h) => `http://${h.svc(services.universityGatewayApi)}`,),
-      },
+      UNIVERSITY_GATEWAY_API_URL: ref((h) => `http://${h.svc(services.universityGatewayApi)}`,),
       WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
         dev: 'island-is-assistant-feedback',
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
+      RANNIS_GRANTS_URL: {
+        dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+      },
     })
-
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
@@ -413,6 +373,8 @@ export const serviceSetup = (services: {
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
       VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
         '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
+      VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
+      VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
     })
     .xroad(
       AdrAndMachine,

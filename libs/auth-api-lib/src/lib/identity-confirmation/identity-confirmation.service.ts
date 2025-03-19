@@ -11,6 +11,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { NoContentException } from '@island.is/nest/problem'
 import { Op } from 'sequelize'
+import { NoContentException } from '@island.is/nest/problem'
 
 const LIFE_TIME = 28 * 24 * 60 * 60 * 1000
 const EXPIRATION = 2 * LIFE_TIME

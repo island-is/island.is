@@ -239,8 +239,16 @@ export const routesTemplate = {
     is: '/stjornartidindi/malaflokkar',
     en: '',
   },
+  ojoirss: {
+    is: '/stjornartidindi/rss',
+    en: '',
+  },
   ojoihome: {
     is: '/stjornartidindi',
+    en: '',
+  },
+  ojoihelp: {
+    is: '/stjornartidindi/leidbeiningar',
     en: '',
   },
   login: {

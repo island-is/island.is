@@ -134,6 +134,7 @@ export class SecondarySchoolClient {
       islandIsApplicationId: application.id,
       applicantNationalId: application.nationalId,
       applicantName: application.name,
+      applicantGender: application.genderCode,
       isFreshman: application.isFreshman,
       phoneNumber: application.phone,
       email: application.email,
