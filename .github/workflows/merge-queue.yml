@@ -114,6 +114,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{env.DOCKER_REGISTRY}}/${{env.APP}}
+          # Tags aren't used yet, but setting for future-proofing and exampling
           tags: |
             type=raw,value=${{env.DOCKER_TAG}},priority=1100
             type=ref,event=branch
