@@ -146,11 +146,11 @@ jobs:
 
           # Add labels from metadata action
           labels=$(echo  "${METADATA_LABELS}" | while IFS= read -r label; do
-            echo -n "${label:+--label=}${label}"
+            echo -n " ${label:+--label=}${label} "
           done)
           # Add annotations from metadata action
           metadata=$(echo  "${METADATA_ANNOTATIONS}" | while IFS= read -r annotation; do
-            echo -n "${annotation:+--annotation=}${annotation}"
+            echo -n " ${annotation:+--annotation=}${annotation} "
           done)
 
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]} ${labels} ${metadata}"
