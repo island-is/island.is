@@ -1,9 +1,13 @@
+import { YES } from '@island.is/application/core'
 import {
+  ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
+  LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
+  SchoolType,
 } from '@island.is/application/templates/new-primary-school'
-import { Application, YES } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import {
   AgentDto,
   FormDto,
@@ -14,57 +18,54 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
 ): FormDto => {
   const {
+    applicationType,
     childInfo,
-    parents,
-    siblings,
+    guardians,
     contacts,
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
-    selectedSchool,
-    language1,
-    language2,
-    language3,
-    language4,
-    childLanguage,
+    siblings,
     languageEnvironment,
+    selectedLanguages,
+    preferredLanguage,
     signLanguage,
-    interpreter,
-    developmentalAssessment,
-    specialSupport,
-    startDate,
-    requestMeeting,
+    guardianRequiresInterpreter,
+    hasFoodAllergiesOrIntolerances,
+    foodAllergiesOrIntolerances,
+    hasOtherAllergies,
+    otherAllergies,
+    usesEpiPen,
+    hasConfirmedMedicalDiagnoses,
+    requestsMedicationAdministration,
+    hasDiagnoses,
+    hasHadSupport,
+    hasIntegratedServices,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
+    requestingMeeting,
+    expectedStartDate,
+    temporaryStay,
+    expectedEndDate,
+    selectedSchool,
+    selectedSchoolType,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
 
   const agents: AgentDto[] = [
-    {
-      name: parents.parent1.fullName,
-      nationalId: parents.parent1.nationalId,
+    ...guardians.map((guardian) => ({
+      name: guardian.fullName,
+      nationalId: guardian.nationalId,
       domicile: {
-        address: parents.parent1.address.streetAddress,
-        postCode: parents.parent1.address.postalCode,
+        address: guardian.address.streetAddress,
+        postCode: guardian.address.postalCode,
       },
-      email: parents.parent1.email,
-      phone: parents.parent1.phoneNumber,
+      email: guardian.email,
+      phone: guardian.phoneNumber,
       role: 'guardian',
-    },
-    ...(parents.parent2
-      ? [
-          {
-            name: parents.parent2.fullName,
-            nationalId: parents.parent2.nationalId,
-            domicile: {
-              address: parents.parent2.address.streetAddress,
-              postCode: parents.parent2.address.postalCode,
-            },
-            email: parents.parent2.email,
-            phone: parents.parent2.phoneNumber,
-            role: 'guardian',
-          },
-        ]
-      : []),
+    })),
     ...contacts.map((contact) => ({
       name: contact.fullName,
       nationalId: contact.nationalId,
@@ -110,9 +111,19 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     registration: {
       defaultOrg: primaryOrgId,
       selectedOrg: selectedSchool,
-      requestingMeeting: requestMeeting === YES,
-      expectedStartDate: new Date(startDate),
-      reason: reasonForApplication,
+      requestingMeeting: requestingMeeting === YES,
+      ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
+        ? {
+            expectedStartDate: new Date(expectedStartDate),
+            ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+            temporaryStay === YES
+              ? { expectedEndDate: new Date(expectedEndDate) }
+              : {}),
+          }
+        : {
+            expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
+          }),
+      reason: reasonForApplication, // TODO: Add a condition for this when Júní has added school type
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ? {
@@ -123,14 +134,66 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           }
         : {}),
     },
+    health: {
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES)
+        ? {
+            foodAllergiesOrIntolerances,
+          }
+        : {}),
+      ...(hasOtherAllergies?.includes(YES)
+        ? {
+            allergies: otherAllergies,
+          }
+        : {}),
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
+      hasOtherAllergies?.includes(YES)
+        ? {
+            usesEpipen: usesEpiPen === YES,
+          }
+        : {}),
+      hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
+      requestsMedicationAdministration:
+        requestsMedicationAdministration === YES,
+    },
     social: {
-      hasHadSupport: specialSupport === YES,
-      hasDiagnoses: developmentalAssessment === YES,
-    }, // Languages needs to be updated when Juni is ready with the data struccture
+      hasHadSupport: hasHadSupport === YES,
+      hasDiagnoses: hasDiagnoses === YES,
+      ...(hasHadSupport === YES || hasDiagnoses === YES
+        ? {
+            hasIntegratedServices: hasIntegratedServices === YES,
+            ...(hasIntegratedServices === YES
+              ? {
+                  hasCaseManager: hasCaseManager === YES,
+                  ...(hasCaseManager === YES
+                    ? {
+                        caseManager: {
+                          name: caseManagerName,
+                          email: caseManagerEmail,
+                        },
+                      }
+                    : {}),
+                }
+              : {}),
+          }
+        : {}),
+    },
     language: {
-      nativeLanguage: '',
-      noIcelandic: false,
-      otherLanguages: undefined,
+      languageEnvironment,
+      signLanguage: signLanguage === YES,
+      ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
+        ? {
+            preferredLanguage,
+            guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
+            firstLanguage: selectedLanguages[0]?.code,
+            secondLanguage: selectedLanguages[1]?.code,
+            thirdLanguage: selectedLanguages[2]?.code,
+            fourthLanguage: selectedLanguages[3]?.code,
+          }
+        : {
+            preferredLanguage: 'is',
+            guardianRequiresInterpreter: false,
+            firstLanguage: 'is',
+          }),
     },
   }
 

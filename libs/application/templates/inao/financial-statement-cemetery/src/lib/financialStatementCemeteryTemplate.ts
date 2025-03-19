@@ -26,6 +26,7 @@ import {
 import { ApiActions, Events, Roles, States } from '../types/types'
 import { Features } from '@island.is/feature-flags'
 import { CEMETERY_USER_TYPE } from '../utils/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]
@@ -37,6 +38,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY,
   name: m.applicationTitle,
+  codeOwner: CodeOwners.NordaApplications,
   institution: m.institutionName,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.FinancialStatementCemetery,

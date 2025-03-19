@@ -4,7 +4,10 @@ import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule } from '@island.is/portals/core'
 import { FinancePaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
-import { financeRoutesLoader } from './screens/FinanceRoutes.loader'
+import {
+  financeDomainLoader,
+  financeRoutesLoader,
+} from './screens/FinanceRoutes.loader'
 import { redirects } from './financeRedirects'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
@@ -42,12 +45,14 @@ export const financeModule: PortalModule = {
       path: FinancePaths.FinanceStatus,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceStatus />,
+      loader: financeDomainLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeBills,
       path: FinancePaths.FinancePaymentsBills,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceBills />,
+      loader: financeDomainLoader({ userInfo, ...rest }),
     },
     {
       name: m.financeTransactionsCategories,
@@ -84,7 +89,7 @@ export const financeModule: PortalModule = {
     },
     {
       name: m.financeSchedules,
-      path: FinancePaths.FinancePaymentsSchedule,
+      path: FinancePaths.FinancePaymentsSchedule, //
       enabled: userInfo.scopes.includes(ApiScope.financeSchedule),
       element: <FinanceSchedule />,
       dynamic: true,

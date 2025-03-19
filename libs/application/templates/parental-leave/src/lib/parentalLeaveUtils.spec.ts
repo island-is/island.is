@@ -12,8 +12,6 @@ import {
 } from '@island.is/application/types'
 
 import {
-  NO,
-  YES,
   MANUAL,
   SINGLE,
   SPOUSE,
@@ -58,6 +56,7 @@ import {
   getActionName,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
+import { NO, YES } from '@island.is/application/core'
 
 const buildApplication = (data?: {
   answers?: FormValue
@@ -1227,6 +1226,7 @@ describe('getApplicationExternalData', () => {
       dataProvider: {
         children: 'Mock child',
       },
+      VMSTOtherParent: {},
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',

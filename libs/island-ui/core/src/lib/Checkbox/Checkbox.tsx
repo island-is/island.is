@@ -128,13 +128,15 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text
-            as="span"
-            variant={labelVariant}
-            fontWeight={checked || strong ? 'semiBold' : 'light'}
+          <div
+            className={cn({
+              [styles.labelChildrenFontWeightToggle]: checked || strong,
+            })}
           >
-            {label}
-          </Text>
+            <Text as="span" variant={labelVariant}>
+              {label}
+            </Text>
+          </div>
           <div
             aria-hidden="true"
             className={styles.fixJumpingContentFromFontWeightToggle}

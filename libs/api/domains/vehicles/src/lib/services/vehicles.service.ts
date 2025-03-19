@@ -17,7 +17,6 @@ import {
   GetMileageReadingRequest,
   MileageReadingApi,
   MileageReadingDto,
-  PostMileageReadingModel,
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
@@ -414,7 +413,7 @@ export class VehiclesService {
   async postMileageReading(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | null> {
+  ): Promise<MileageReadingDto | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -460,18 +459,32 @@ export class VehiclesService {
       })
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
+    try {
+      const res = await this.getMileageWithAuth(auth).rootPutRaw({
+        putMileageReadingModel: input,
+      })
 
-    const dtos = await this.getMileageWithAuth(auth).rootPut({
-      putMileageReadingModel: input,
-    })
-
-    return dtos.length > 0 ? dtos[0] : null
+      if (res.raw.status === 204) {
+        this.logger.debug('Successfully updated mileage reading')
+        return {
+          ...input,
+          internalId: input.internalId + 1,
+        }
+      }
+      return null
+    } catch (error) {
+      this.logger.warn('milege update failed', {
+        category: LOG_CATEGORY,
+        error,
+      })
+      throw error
+    }
   }
 
   async postMileageReadingV2(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | VehiclesMileageUpdateError | null> {
+  ): Promise<MileageReadingDto | VehiclesMileageUpdateError | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -530,10 +543,23 @@ export class VehiclesService {
     }
 
     try {
-      const dtos = await this.getMileageWithAuth(auth).rootPut({
+      const res = await this.getMileageWithAuth(auth).rootPutRaw({
         putMileageReadingModel: input,
       })
-      return dtos.length > 0 ? dtos[0] : null
+
+      if (res.raw.status === 204) {
+        this.logger.debug('mileage update successful')
+        return {
+          ...input,
+          internalId: input.internalId + 1,
+        }
+      }
+
+      this.logger.warn('Something went wrong while updating mileage')
+      return {
+        code: 500,
+        message: 'Something went wrong while updating mileage',
+      }
     } catch (e) {
       if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
         const errorBody = e.body as UpdateResponseError

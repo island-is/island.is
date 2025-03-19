@@ -81,36 +81,35 @@ The aim is to have all applications to be coded in a similar way, so that every 
 
 ## Folder structure
 
-|-- assets/--------------------------------# optional folder for assets like images, icons, etc.
+|-- assets/--------------------------------# optional folder for assets like images, icons, etc. \
 |
-|-- components/----------------------------# optional folder for React components that are used by custom components.
+|-- components/----------------------------# optional folder for React components that are used by custom components.\
 |
-|-- dataProviders/-------------------------# folder for data providers.
+|-- dataProviders/-------------------------# folder for data providers.\
 |
-|-- fields/--------------------------------# optional folder for custom components if the application needs any.
-|-- |-- index.ts---------------------------# Exports all fields from the folder.
-|-- |-- myCustomComponent/-----------------# Folder for a custom component, camelCase.
-|-- |-- |-- MyCustomComponent.tsx----------# React component file, PascalCase.
-|-- |-- |-- MyCustomComponent.css.ts-------# CSS file, PascalCase.
+|-- fields/--------------------------------# optional folder for custom components if the application needs any.\
+|-- |-- index.ts---------------------------# Exports all fields from the folder.\
+|-- |-- myCustomComponent/-----------------# Folder for a custom component, camelCase.\
+|-- |-- |-- MyCustomComponent.tsx----------# React component file, PascalCase.\
+|-- |-- |-- MyCustomComponent.css.ts-------# CSS file, PascalCase.\
 |
-|-- forms/---------------------------------# folder for forms. More about form folder structure in the form folder README.
+|-- forms/---------------------------------# folder for forms. More about form folder structure in the form folder README.\
 |-- |-- prerequisitesForm/
 |-- |-- mainForm/
-|-- |-- conclusionForm/--------------------# More forms if needed
+|-- |-- conclusionForm/--------------------# More forms if needed\
 |
-|-- graphql/-------------------------------# optional folder for graphql queries and mutations.
+|-- graphql/-------------------------------# optional folder for graphql queries and mutations.\
 |
-|-- lib/-----------------------------------# folder for data schema, messages, and the main template file.
-|-- |-- dataScema.ts-----------------------# Validation for the application.
-|-- |-- mainTemplate.ts--------------------# Main template file. State machine for the application, mapUsersToRole and more
-|-- |-- messages.ts------------------------# File for all text that appears on the screen, synced with Contentful.
-|-- |-- messages/--------------------------# optional folder for messages if there is a need to have the messages more organized.
+|-- lib/-----------------------------------# folder for data schema, messages, and the main template file.\
+|-- |-- dataScema.ts-----------------------# Validation for the application.\
+|-- |-- mainTemplate.ts--------------------# Main template file. State machine for the application, mapUsersToRole and more\
+|-- |-- messages.ts------------------------# File for all text that appears on the screen, synced with Contentful.\
+|-- |-- messages/--------------------------# optional folder for messages if there is a need to have the messages more organized.\
 |
-|-- shared/--------------------------------# optional folder for code that might be needed in the template-api-modules or  
-|------------------------------------------# other places outside the template.
+|-- shared/--------------------------------# optional folder for code that might be needed in the template-api-modules or other places outside the template.\
 |
-|-- utils/---------------------------------# folder for utility functions, constants, enums and types.
-|-- |-- constants.ts-----------------------# Constants for the application.
-|-- |-- enums.ts---------------------------# Enums for the application.
-|-- |-- types.ts---------------------------# Types for the application.
-|-- |-- helperFunctions.ts-----------------# Helper functions for the application, this can be many files.
+|-- utils/---------------------------------# folder for utility functions, constants, enums and types.\
+|-- |-- constants.ts-----------------------# Constants for the application.\
+|-- |-- enums.ts---------------------------# Enums for the application.\
+|-- |-- types.ts---------------------------# Types for the application.\
+|-- |-- helperFunctions.ts-----------------# Helper functions for the application, this can be many files.\

@@ -84,8 +84,6 @@ export const NationalIdWithName: FC<
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
-  const [personName, setPersonName] = useState('')
-  const [companyName, setCompanyName] = useState('')
 
   const getFieldErrorString = (
     error: unknown,
@@ -144,7 +142,20 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
-          setPersonName(data.identity?.name ?? '')
+          if (data.identity?.name) {
+            setValue(nameField, data.identity?.name)
+          } else if (
+            searchPersons &&
+            !searchCompanies &&
+            data?.identity === null
+          ) {
+            setValue(nameField, '')
+          } else if (
+            searchCompanies &&
+            companyData?.companyRegistryCompany === null
+          ) {
+            setValue(nameField, '')
+          }
         },
       },
     )
@@ -165,7 +176,20 @@ export const NationalIdWithName: FC<
       onCompleted: (companyData) => {
         onNameChange &&
           onNameChange(companyData.companyRegistryCompany?.name ?? '')
-        setCompanyName(companyData.companyRegistryCompany?.name ?? '')
+        if (companyData.companyRegistryCompany?.name) {
+          setValue(nameField, companyData.companyRegistryCompany?.name)
+        } else if (
+          !searchPersons &&
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          setValue(nameField, '')
+        } else if (
+          searchCompanies &&
+          companyData?.companyRegistryCompany === null
+        ) {
+          setValue(nameField, '')
+        }
       },
     },
   )
@@ -203,15 +227,6 @@ export const NationalIdWithName: FC<
     searchCompanies,
   ])
 
-  useEffect(() => {
-    const nameInAnswers = getValueViaPath(application.answers, nameField)
-    if (personName && nameInAnswers !== personName) {
-      setValue(nameField, personName)
-    } else if (companyName && nameInAnswers !== companyName) {
-      setValue(nameField, companyName)
-    }
-  }, [personName, companyName, setValue, nameField, application.answers])
-
   return (
     <>
       <GridRow>
@@ -247,7 +262,7 @@ export const NationalIdWithName: FC<
                 ? formatMessage(customNameLabel)
                 : formatMessage(coreErrorMessages.nationalRegistryName)
             }
-            required={required}
+            required={disabled ? required : false}
             error={
               searchPersons
                 ? queryError || data?.identity === null

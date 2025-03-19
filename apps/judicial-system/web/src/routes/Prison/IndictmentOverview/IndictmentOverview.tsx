@@ -15,9 +15,15 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import {
+  CaseFileCategory,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useDefendants,
   useFileList,
@@ -26,7 +32,8 @@ import {
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
   const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
 
@@ -53,16 +60,41 @@ const IndictmentOverview = () => {
   const sentToPrisonAdminFiles = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
   )
+  const criminalRecordUpdateFile = workingCase.caseFiles?.filter(
+    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+  )
+
+  const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const isCompletedWithRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const displaySentToPrisonAdminFiles =
+    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    isNonEmptyArray(sentToPrisonAdminFiles)
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
+  const hasRuling = workingCase.caseFiles?.some(
+    (file) => file.category === CaseFileCategory.RULING,
+  )
+  const fileCategory = hasRuling
+    ? CaseFileCategory.RULING
+    : CaseFileCategory.COURT_RECORD
 
   return (
-    <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
+    >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle previousUrl={constants.PRISON_CASES_ROUTE}>
-          {formatMessage(strings.title)}
+          {formatMessage(strings.title, {
+            isFine:
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.FINE,
+          })}
         </PageTitle>
         <Box marginBottom={5}>
           {workingCase.courtCaseNumber && (
@@ -92,29 +124,54 @@ const IndictmentOverview = () => {
         <Box marginBottom={5}>
           <InfoCardClosedIndictment displayVerdictViewDate />
         </Box>
+        {isNonEmptyArray(criminalRecordUpdateFile) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(strings.criminalRecordUpdateSection)}
+            </Text>
+            <RenderFiles
+              onOpenFile={onOpen}
+              caseFiles={criminalRecordUpdateFile}
+            />
+          </Box>
+        )}
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(strings.verdictTitle)}
+            {formatMessage(
+              hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
+            )}
           </Text>
           <RenderFiles
             onOpenFile={onOpen}
             caseFiles={
               workingCase.caseFiles?.filter(
-                (file) => file.category === CaseFileCategory.RULING,
-              ) || []
+                (file) => file.category === fileCategory,
+              ) ?? []
             }
           />
         </Box>
-
-        {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+        {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(strings.sentToPrisonAdminFileTitle)}
             </Text>
-            <RenderFiles
-              onOpenFile={onOpen}
-              caseFiles={sentToPrisonAdminFiles}
-            />
+            {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+              <RenderFiles
+                onOpenFile={onOpen}
+                caseFiles={sentToPrisonAdminFiles}
+              />
+            )}
+            {isCompletedWithRuling && sentToPrisonAdminDate && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Dómur til fullnustu ${formatDate(
+                  sentToPrisonAdminDate,
+                )}.pdf`}
+                pdfType="rulingSentToPrisonAdmin"
+                elementId={'Dómur til fullnustu'}
+                renderAs="row"
+              />
+            )}
           </Box>
         )}
         <Box marginBottom={10}>

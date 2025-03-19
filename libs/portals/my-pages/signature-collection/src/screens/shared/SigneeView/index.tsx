@@ -48,7 +48,7 @@ const SigneeView = ({
             </Box>
           )}
 
-          <Box marginTop={[2, 7]}>
+          <Box marginTop={[0, 5]}>
             {/* Signed list */}
             <SignedList currentCollection={currentCollection} />
 

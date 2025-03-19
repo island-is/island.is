@@ -15,7 +15,7 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
-import { customCurrencyFormat } from '../../lib/utils'
+import { customCurrencyFormat, valueToNumber } from '../../lib/utils'
 import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
 import { getMarketValueShare } from '../../utils/getMarketValueShare'
 type EstateSchema = zinfer<typeof estateSchema>
@@ -103,7 +103,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildDescriptionField({
     id: 'inventoryNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],
@@ -233,7 +232,10 @@ export const overviewAssetsAndDebts = [
             title: formatBankInfo(account.accountNumber ?? ''),
             description: [
               `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                account.balance ?? '0',
+                (
+                  valueToNumber(account.balance) +
+                  valueToNumber(account.exchangeRateOrInterest)
+                ).toString() ?? '0',
               )}`,
             ],
           }),
@@ -247,13 +249,13 @@ export const overviewAssetsAndDebts = [
       getSumFromAnswers<EstateSchema['bankAccounts']>(
         answers,
         'bankAccounts',
-        'balance',
+        'accountTotal',
       ),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['bankAccounts']>(
         answers,
         'bankAccounts',
-        'balance',
+        'accountTotal',
       ),
     titleVariant: 'h4',
   }),
@@ -452,7 +454,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildDescriptionField({
     id: 'moneyAndDepositNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],

@@ -20,18 +20,11 @@ import {
 } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import {
-  AnswerOption,
-  DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
-  DEFAULT_REGULAR_SIGNATURE_COUNT,
-  DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-  OJOI_INPUT_HEIGHT,
-} from '../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
-import { getCommitteeSignature, getRegularSignature } from '../lib/utils'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { HTMLText } from '@island.is/regulations-tools/types'
 import { useApplicationCase } from '../hooks/useApplicationCase'
+import { YesOrNoEnum } from '@island.is/application/core'
+import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 export const Submitted = (props: OJOIFieldBaseProps) => {
   const { formatMessage, locale } = useLocale()
 
@@ -40,12 +33,7 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
   const slug =
     ApplicationConfigurations[ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND].slug
 
-  const {
-    createApplication,
-    postApplication,
-    postApplicationError,
-    postApplicationLoading,
-  } = useApplication({
+  const { createApplication, postApplicationError } = useApplication({
     applicationId: props.application.id,
   })
 
@@ -66,19 +54,8 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
     currentAnswers = set(
       currentAnswers,
       InputFields.requirements.approveExternalData,
-      AnswerOption.YES,
+      YesOrNoEnum.YES,
     )
-
-    currentAnswers = set(currentAnswers, InputFields.signature.regular, [
-      ...getRegularSignature(
-        DEFAULT_REGULAR_SIGNATURE_COUNT,
-        DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-      ),
-    ])
-
-    currentAnswers = set(currentAnswers, InputFields.signature.committee, {
-      ...getCommitteeSignature(DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT),
-    })
 
     updateApplicationMutation({
       variables: {
@@ -93,6 +70,8 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
       },
     })
   }
+
+  const subject = props.application.answers.advert?.title
 
   const path = window.location.origin
   const isLocalhost = path.includes('localhost')
@@ -127,30 +106,6 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
                 )}
               />
             )}
-            <Inline justifyContent="spaceBetween">
-              <Button
-                variant="ghost"
-                size="small"
-                icon="reload"
-                onClick={() => window.location.reload()}
-              >
-                {formatMessage(submitted.buttons.reload)}
-              </Button>
-              <Button
-                loading={postApplicationLoading}
-                disabled={!!postApplicationError}
-                size="small"
-                icon="arrowUp"
-                iconType="outline"
-                onClick={() =>
-                  postApplication(props.application.id, () =>
-                    window.location.reload(),
-                  )
-                }
-              >
-                Senda inn umsókn
-              </Button>
-            </Inline>
           </Stack>
         ) : (
           <Stack space={[2, 2, 3]}>
@@ -171,12 +126,10 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
               ))}
             </Inline>
             <Box border="standard" borderRadius="large">
-              <HTMLEditor
-                name="submitted.document"
-                readOnly={true}
-                hideWarnings={true}
-                value={caseData?.html as HTMLText}
-                config={{ toolbar: false }}
+              <AdvertPreview
+                advertSubject={subject}
+                advertType={caseData?.type}
+                advertText={caseData?.html}
               />
             </Box>
           </Stack>

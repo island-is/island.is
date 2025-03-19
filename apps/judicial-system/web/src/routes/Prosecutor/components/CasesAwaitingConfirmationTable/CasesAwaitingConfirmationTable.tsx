@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -17,17 +17,14 @@ import { contextMenu } from '@island.is/judicial-system-web/src/components/Conte
 import {
   ColumnCaseType,
   CourtCaseNumber,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
-import {
-  CaseListEntry,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesAwaitingConfirmationTable.strings'
 
@@ -68,14 +65,14 @@ const CasesAwaitingConfirmationTable: FC<
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortBy: 'defendants',
                 },
                 {
                   title: formatMessage(tables.type),
                 },
                 {
-                  title: capitalize(formatMessage(tables.created)),
-                  sortable: { isSortable: true, key: 'created' },
+                  title: capitalize(formatMessage(tables.sentToCourtDate)),
+                  sortBy: 'caseSentToCourtDate',
                 },
                 { title: formatMessage(tables.state) },
                 {
@@ -116,14 +113,12 @@ const CasesAwaitingConfirmationTable: FC<
                   cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row) => <CreatedDate created={row.created} />,
+                  cell: (row) => (
+                    <TableDate displayDate={row.caseSentToCourtDate} />
+                  ),
                 },
                 {
-                  cell: () => (
-                    <TagCaseState
-                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
-                    />
-                  ),
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
                 {
                   cell: (row) => <Text as="span">{row.prosecutor?.name}</Text>,

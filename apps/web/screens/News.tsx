@@ -25,7 +25,7 @@ import {
   NewsCard,
   Webreader,
 } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -412,7 +412,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y, { minValue: 1000, maxValue: 9999 })
   const month = year && getIntParam(query.m, { minValue: 1, maxValue: 12 })
   const selectedPage = getIntParam(query.page, { minValue: 1 }) ?? 1
-  const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
+  const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_SLUG
   const [
     {
       data: { getNewsDates: newsDatesList },
@@ -492,7 +492,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   const filterOutFrontpageTag = (tag: GenericTag) =>
-    tag?.slug !== FRONTPAGE_NEWS_TAG_ID
+    tag?.slug !== FRONTPAGE_NEWS_TAG_SLUG
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

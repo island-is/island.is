@@ -2,7 +2,8 @@ import isEmpty from 'lodash/isEmpty'
 import { BankInfo, PaymentInfo } from '../types'
 import { BankAccountType, TaxLevelOptions } from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
-import { Option, YES, NO } from '@island.is/application/types'
+import { Option } from '@island.is/application/types'
+import { YES, NO } from '@island.is/application/core'
 
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
@@ -86,7 +87,7 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   } else {
-    return getBankIsk(bankInfo) === bank ?? false
+    return getBankIsk(bankInfo) === bank
   }
 }
 

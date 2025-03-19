@@ -13,8 +13,8 @@ import {
   ColumnCaseType,
   CourtCaseNumber,
   CourtDate,
-  CreatedDate,
   DefendantInfo,
+  TableDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -38,22 +38,19 @@ const ActiveCases: FC<Props> = (props) => {
         },
         {
           title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-          sortable: { isSortable: true, key: 'defendants' },
+          sortBy: 'defendants',
         },
         {
           title: formatMessage(tables.type),
         },
         {
-          title: capitalize(formatMessage(tables.created, { suffix: 'i' })),
-          sortable: { isSortable: true, key: 'created' },
+          title: capitalize(formatMessage(tables.sentToCourtDate)),
+          sortBy: 'caseSentToCourtDate',
         },
-        { title: formatMessage(tables.state) },
+        { title: formatMessage(tables.state), sortBy: 'state' },
         {
           title: formatMessage(tables.hearingArrangementDate),
-          sortable: {
-            isSortable: true,
-            key: 'courtDate',
-          },
+          sortBy: 'courtDate',
         },
       ]}
       data={cases}
@@ -94,20 +91,10 @@ const ActiveCases: FC<Props> = (props) => {
           ),
         },
         {
-          cell: (row) => <CreatedDate created={row.created} />,
+          cell: (row) => <TableDate displayDate={row.caseSentToCourtDate} />,
         },
         {
-          cell: (row) => (
-            <TagCaseState
-              caseState={row.state}
-              caseType={row.type}
-              isValidToDateInThePast={row.isValidToDateInThePast}
-              courtDate={row.courtDate}
-              indictmentDecision={row.indictmentDecision}
-              indictmentRulingDecision={row.indictmentRulingDecision}
-              defendants={row.defendants}
-            />
-          ),
+          cell: (row) => <TagCaseState theCase={row} />,
         },
         {
           cell: (row) => (

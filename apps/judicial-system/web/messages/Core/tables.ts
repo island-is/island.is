@@ -57,10 +57,10 @@ export const tables = defineMessages({
     description:
       'Notaður sem texti sem segir til um hvort mál sé framlenging í málalista.',
   },
-  created: {
-    id: 'judicial.system.core:tables.created',
-    defaultMessage: 'Stofnað',
-    description: 'Notaður sem titill fyrir stofnað dálk í lista yfir mál.',
+  sentToCourtDate: {
+    id: 'judicial.system.core:tables.sent_to_court_date',
+    defaultMessage: 'Útgáfudagur',
+    description: 'Notaður sem titill fyrir Útgáfudagur dálk í lista yfir mál.',
   },
   hearingArrangementDate: {
     id: 'judicial.system.core:tables.hearing_arrangement_date',

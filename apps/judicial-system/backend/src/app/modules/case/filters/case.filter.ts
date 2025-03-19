@@ -112,18 +112,6 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
 }
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
-  // Check case type access
-  if (
-    ![
-      UserRole.DISTRICT_COURT_JUDGE,
-      UserRole.DISTRICT_COURT_REGISTRAR,
-    ].includes(user.role)
-  ) {
-    if (!isIndictmentCase(theCase.type)) {
-      return false
-    }
-  }
-
   // Check case state access
   if (isRequestCase(theCase.type)) {
     if (

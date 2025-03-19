@@ -1,5 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 
 export const isOwnerOtherThanImporter = (answers: FormValue) => {
   const isOwnerOtherThanImporter = getValueViaPath(

@@ -16,7 +16,6 @@ export const CountriesOfResidenceSubSection = buildSubSection({
       children: [
         buildCustomField({
           id: 'countriesOfResidence',
-          title: '',
           component: 'ResidenceCountries',
         }),
       ],

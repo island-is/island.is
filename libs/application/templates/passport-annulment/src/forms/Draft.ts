@@ -60,20 +60,16 @@ export const Draft: Form = buildForm({
           children: [
             buildCustomField({
               id: 'passport',
-              title: '',
               component: 'PassportSelection',
             }),
             buildDescriptionField({
               id: 'passportNumber',
-              title: '',
             }),
             buildDescriptionField({
               id: 'passportName',
-              title: '',
             }),
             buildDescriptionField({
               id: 'productionRequestID',
-              title: '',
             }),
           ],
         }),

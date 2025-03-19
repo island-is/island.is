@@ -53,6 +53,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as unknown as WorkAccidentNotification
+
     const payload = {
       xCorrelationId: application.id,
       accidentForCreationDto: {
@@ -61,15 +62,10 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
           answers.basicInformation.numberOfEmployees,
           10,
         ),
-        nameOfBranchOrDepartment:
-          answers.companyInformation.nameOfBranch ??
-          answers.basicInformation.name,
-        address:
-          answers.companyInformation.addressOfBranch ??
-          answers.basicInformation.address,
+        nameOfBranchOrDepartment: answers.companyInformation.nameOfBranch || '',
+        address: answers.companyInformation.addressOfBranch || '',
         postcode:
-          answers.companyInformation.postnumberOfBranch?.slice(0, 3) ??
-          answers.basicInformation.postnumber.slice(0, 3),
+          answers.companyInformation.postnumberOfBranch?.slice(0, 3) || '',
         workplaceHealthAndSafety:
           answers.companyLaborProtection.workhealthAndSafetyOccupation?.map(
             (code: string) => {
@@ -77,7 +73,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
             },
           ),
 
-        buyersSSN: answers.projectPurchase.nationalId ?? '',
+        buyersSSN: answers.projectPurchase.contractor?.nationalId ?? '',
         dateAndTimeOfAccident: getDateAndTime(
           answers.accident.date,
           answers.accident.time.slice(0, 2),

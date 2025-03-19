@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { companyInfo, representativeInfo } from '../lib/messages'
 
 export type CompanyInfo = {
@@ -66,11 +67,6 @@ export enum AccidentTypeEnum {
   RESCUEWORK = 'rescueWork',
   STUDIES = 'studies',
   SPORTS = 'sports',
-}
-
-export enum YesOrNo {
-  YES = 'yes',
-  NO = 'no',
 }
 
 export enum AttachmentsEnum {

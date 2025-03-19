@@ -15,11 +15,7 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
   ChildInformation,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
-import {
-  Application,
-  ApplicationTypes,
-  YES,
-} from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
@@ -46,6 +42,7 @@ import * as kennitala from 'kennitala'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
 import { S3Service } from '@island.is/nest/aws'
+import { YES } from '@island.is/application/core'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -221,7 +218,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     application: Application,
   ): Promise<Attachment[]> {
     const {
-      additionalAttachments,
       schoolConfirmationAttachments,
       leaseAgreementAttachments,
       householdSupplementChildren,
@@ -229,16 +225,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     } = getHSApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
-
-    if (additionalAttachments && additionalAttachments.length > 0) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.OTHER,
-          additionalAttachments,
-        )),
-      )
-    }
 
     if (
       schoolConfirmationAttachments &&
@@ -369,28 +355,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  private async getASFTEAttachments(
-    application: Application,
-  ): Promise<Attachment[]> {
-    const { additionalAttachments } = getASFTEApplicationAnswers(
-      application.answers,
-    )
-
-    const attachments: Attachment[] = []
-
-    if (additionalAttachments && additionalAttachments.length > 0) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.OTHER,
-          additionalAttachments,
-        )),
-      )
-    }
-
-    return attachments
-  }
-
   private async getDBAttachments(
     application: Application,
   ): Promise<Attachment[]> {
@@ -506,12 +470,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
-      const attachments = await this.getASFTEAttachments(application)
       const additionalSupportForTheElderlyDTO =
-        transformApplicationToAdditionalSupportForTheElderlyDTO(
-          application,
-          attachments,
-        )
+        transformApplicationToAdditionalSupportForTheElderlyDTO(application)
 
       const response = await this.siaClientService.sendApplication(
         auth,

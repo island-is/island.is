@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -11,28 +11,30 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  formatGrade,
   getApplicationAnswers,
-  getApplicationExternalData,
+  getNeighbourhoodSchoolName,
 } from '../../../lib/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
-import { ApplicationType } from '../../../lib/constants'
 
 export const School = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage, formatDate, lang } = useLocale()
-  const { applicationType, startDate, selectedSchool } = getApplicationAnswers(
-    application.answers,
-  )
-  const { childGradeLevel } = getApplicationExternalData(
-    application.externalData,
-  )
+  const { formatMessage, formatDate } = useLocale()
+  const {
+    applicationType,
+    expectedStartDate,
+    selectedSchool,
+    applyForNeighbourhoodSchool,
+    selectedSchoolType,
+    temporaryStay,
+    expectedEndDate,
+  } = getApplicationAnswers(application.answers)
 
   const { data, loading, error } = useQuery<FriggSchoolsByMunicipalityQuery>(
     friggSchoolsByMunicipalityQuery,
@@ -43,11 +45,18 @@ export const School = ({
       .find((school) => school?.id === selectedSchool)?.name
   }, [data, selectedSchool])
 
+  let label = newPrimarySchoolMessages.overview.selectedSchool
+  let screen = 'newSchool'
+  let schoolName = selectedSchoolName
+
+  if (applyForNeighbourhoodSchool === YES) {
+    label = newPrimarySchoolMessages.overview.neighbourhoodSchool
+    screen = 'school'
+    schoolName = getNeighbourhoodSchoolName(application)
+  }
+
   return (
-    <ReviewGroup
-      isEditable={editable}
-      editAction={() => goToScreen?.('school')}
-    >
+    <ReviewGroup isEditable={editable} editAction={() => goToScreen?.(screen)}>
       <Stack space={2}>
         <GridRow>
           <GridColumn span="12/12">
@@ -56,7 +65,6 @@ export const School = ({
             </Text>
           </GridColumn>
         </GridRow>
-
         {loading ? (
           <SkeletonLoader height={40} width="100%" borderRadius="large" />
         ) : (
@@ -64,10 +72,8 @@ export const School = ({
             <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.overview.selectedSchool,
-                  )}
-                  value={selectedSchoolName || ''}
+                  label={formatMessage(label)}
+                  value={schoolName || ''}
                   error={
                     error
                       ? formatMessage(coreErrorMessages.failedDataProvider)
@@ -75,30 +81,29 @@ export const School = ({
                   }
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.primarySchool.grade,
-                  )}
-                  value={formatMessage(
-                    newPrimarySchoolMessages.primarySchool.currentGrade,
-                    {
-                      grade: formatGrade(childGradeLevel, lang),
-                    },
-                  )}
-                />
-              </GridColumn>
-            </GridRow>
-            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
-              <GridRow>
+              {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <DataValue
                     label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                    value={formatDate(startDate)}
+                    value={formatDate(expectedStartDate)}
                   />
                 </GridColumn>
-              </GridRow>
-            )}
+              )}
+            </GridRow>
+            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              temporaryStay === YES && (
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.overview.expectedEndDate,
+                      )}
+                      value={formatDate(expectedEndDate)}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
           </>
         )}
       </Stack>

@@ -1,5 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue, YES } from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
+import { FormatMessage, FormValue } from '@island.is/application/types'
 import { AboutMachine, BasicInformation } from '../lib/dataSchema'
 import { information, machine } from '../lib/messages'
 import { NEW } from '../shared/types'

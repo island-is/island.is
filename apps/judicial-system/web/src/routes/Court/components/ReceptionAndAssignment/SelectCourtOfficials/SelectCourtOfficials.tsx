@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
+import { isRequestCase } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContext,
@@ -73,7 +74,9 @@ const SelectCourtOfficials = () => {
   const registrars = (usersData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.DISTRICT_COURT_REGISTRAR &&
+        (user.role === UserRole.DISTRICT_COURT_REGISTRAR ||
+          (isRequestCase(workingCase.type) &&
+            user.role === UserRole.DISTRICT_COURT_ASSISTANT)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {

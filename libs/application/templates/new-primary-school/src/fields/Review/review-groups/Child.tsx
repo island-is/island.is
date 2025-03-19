@@ -1,5 +1,4 @@
-import { coreErrorMessages } from '@island.is/application/core'
-import { YES } from '@island.is/application/types'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
@@ -99,7 +98,7 @@ export const Child = ({
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
+                        newPrimarySchoolMessages.childrenNGuardians
                           .childInfoPreferredName,
                       )}
                       value={childInfo.preferredName}
@@ -111,7 +110,7 @@ export const Child = ({
                   <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                     <DataValue
                       label={formatMessage(
-                        newPrimarySchoolMessages.childrenNParents
+                        newPrimarySchoolMessages.childrenNGuardians
                           .childInfoPronouns,
                       )}
                       value={childInfo.pronouns
@@ -131,7 +130,7 @@ export const Child = ({
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                   <DataValue
                     label={formatMessage(
-                      newPrimarySchoolMessages.childrenNParents
+                      newPrimarySchoolMessages.childrenNGuardians
                         .childInfoPlaceOfResidence,
                     )}
                     value={`${childInfo.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`}

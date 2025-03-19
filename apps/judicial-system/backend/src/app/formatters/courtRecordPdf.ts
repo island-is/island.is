@@ -317,6 +317,8 @@ const constructInvestigationCourtRecordPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
+  const isCaseCompletedWithRuling = theCase.isCompletedWithoutRuling !== true
+
   const title = formatMessage(courtRecord.title)
 
   setTitle(doc, title)
@@ -437,30 +439,38 @@ const constructInvestigationCourtRecordPdf = (
       formatMessage(courtRecord.missingSessionBookings),
   )
   setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
-  setLineGap(doc, 1)
-  addNormalJustifiedText(
-    doc,
-    theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
-  )
-  addEmptyLines(doc)
-  addNormalCenteredText(
-    doc,
-    theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
-    'Times-Bold',
-  )
-  addEmptyLines(doc, 2)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.conclusionIntro),
-    'Times-Roman',
-  )
 
-  if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+  addEmptyLines(doc, 2)
+  if (isCaseCompletedWithRuling) {
+    setLineGap(doc, 16)
+
+    addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
+
+    setLineGap(doc, 1)
+
+    addNormalJustifiedText(
+      doc,
+      theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
+    )
+
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
+    addNormalCenteredText(
+      doc,
+      theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
+      'Times-Bold',
+    )
+    addEmptyLines(doc, 2)
+
+    addNormalJustifiedText(
+      doc,
+      formatMessage(courtRecord.conclusionIntro),
+      'Times-Roman',
+    )
+
+    if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+      addEmptyLines(doc)
+      addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
+    }
   }
 
   let prosecutorAppeal = formatAppeal(
