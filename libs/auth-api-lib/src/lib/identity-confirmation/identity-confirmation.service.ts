@@ -10,8 +10,11 @@ import { IdentityConfirmationDTO } from './dto/identity-confirmation-dto.dto'
 import type { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { NoContentException } from '@island.is/nest/problem'
+import { Op } from 'sequelize'
 
-const EXPIRATION = 28 * 24 * 60 * 60 * 1000
+const LIFE_TIME = 28 * 24 * 60 * 60 * 1000
+const EXPIRATION = 2 * LIFE_TIME
+
 const ZENDESK_CUSTOM_FIELDS = {
   Link: 24596286118546,
 }
@@ -134,7 +137,7 @@ export class IdentityConfirmationService {
 
     // Throw error if identity is older than 2 days
     if (
-      new Date(identityConfirmation.created).getTime() + EXPIRATION <
+      new Date(identityConfirmation.created).getTime() + LIFE_TIME <
       Date.now()
     ) {
       throw new Error('Identity confirmation expired')
@@ -185,8 +188,18 @@ export class IdentityConfirmationService {
       type: identityConfirmation.type,
       // Check if time now is 2 days older than created at time
       isExpired:
-        new Date(identityConfirmation.created).getTime() + EXPIRATION <
+        new Date(identityConfirmation.created).getTime() + LIFE_TIME <
         Date.now(),
     }
+  }
+
+  async deleteExpiredIdentityConfirmations(): Promise<number> {
+    return this.identityConfirmationModel.destroy({
+      where: {
+        created: {
+          [Op.lt]: new Date(Date.now() - EXPIRATION),
+        },
+      },
+    })
   }
 }
