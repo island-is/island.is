@@ -14,7 +14,6 @@ DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-jest)>'}}
 ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
-CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 UPLOAD_ARTIFACT_DOCKER="${UPLOAD_ARTIFACT_DOCKER:-false}"
 
@@ -41,7 +40,7 @@ mkargs() {
 }
 
 container_build() {
-  $CONTAINER_BUILDER buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+  docker buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
 }
 
 docker_build() {
