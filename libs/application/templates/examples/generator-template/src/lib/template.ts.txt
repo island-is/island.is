@@ -28,7 +28,7 @@ const template: ApplicationTemplate<
   name: '--KEBAB-CASE-TEMPLATE-- template',
   codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
   institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.ExampleInputs.translation], // TODO: Change to the correct translation namespace
+  translationNamespaces: [ApplicationConfigurations.--PASCAL-CASE-TEMPLATE--.translation], // TODO: Change to the correct translation namespace
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
