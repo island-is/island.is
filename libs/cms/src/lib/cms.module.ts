@@ -14,6 +14,7 @@ import {
   LatestEventsSliceResolver,
   TeamListResolver,
   LatestGenericListItemsResolver,
+  IntroLinkImageResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -56,6 +57,7 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     LatestEventsSliceResolver,
     TeamListResolver,
     LatestGenericListItemsResolver,
+    IntroLinkImageResolver,
   ],
   exports: [
     ContentfulRepository,

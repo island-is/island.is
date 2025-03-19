@@ -22,7 +22,7 @@ import LogoEhic from '../../assets/card/sjukratryggingar.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
-import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
+import LogoNatureConservationAgency from '../../assets/card/nvs-logo.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
@@ -134,7 +134,7 @@ export const LicenseCardPresets: Record<GenericLicenseType, CardPreset> = {
   },
   HuntingLicense: {
     title: 'Veiðikort',
-    logo: LogoEnvironmentAgency,
+    logo: LogoNatureConservationAgency,
     backgroundImage: BackgroundHuntingCard,
     backgroundColor: '#E2EDFF',
     barcode: {
