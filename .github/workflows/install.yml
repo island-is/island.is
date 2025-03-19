@@ -158,7 +158,7 @@ jobs:
         run: |
           AFFECTED="$(node ./scripts/ci/is-affected.mjs judicial)"
           echo AFFECTED="$AFFECTED"
-          echo AFFECTED="$AFFECTED" >> $GITHUB_OUTPUT
+          echo AFFECTED="$AFFECTED" >> "$GITHUB_OUTPUT"
 
       - name: Git bot config
         id: git-bot-config
