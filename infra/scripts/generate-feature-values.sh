@@ -10,7 +10,7 @@ GIT_ROOT="$(git rev-parse --show-toplevel)"
 INFRA_ROOT="${GIT_ROOT}/infra"
 ECR_REPO='821090935708.dkr.ecr.eu-west-1.amazonaws.com/helm-config'
 FEATURE_DIR="${GIT_ROOT}/charts/features"
-mkdir -p "$FEATURE_DIR"
+mkdir -p "$FEATURE_DIR/$FEATURE_NAME"
 
 cd "$INFRA_ROOT"
 
@@ -19,11 +19,11 @@ yarn feature-env \
   --feature "$FEATURE_NAME" \
   --images "$IMAGES" \
   --chart islandis \
-  --jobImage "${ECR_REPO}:${DOCKER_TAG}" >"${FEATURE_DIR}/${FEATURE_NAME}-job-manifest.${STAGE}.yaml"
+  --jobImage "${ECR_REPO}:${DOCKER_TAG}" >"${FEATURE_DIR}/${FEATURE_NAME}/values-job-manifest.${STAGE}.yaml"
 
 yarn feature-env \
   values \
   --chart islandis \
   --feature "$FEATURE_NAME" \
   --images "$IMAGES" \
-  --dockertag "$DOCKER_TAG" >"${FEATURE_DIR}/${FEATURE_NAME}.${STAGE}.yaml"
+  --dockertag "$DOCKER_TAG" >"${FEATURE_DIR}/${FEATURE_NAME}/values.${STAGE}.yaml"

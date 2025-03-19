@@ -44,8 +44,6 @@ env:
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
-  ACTIONS_STEP_DEBUG: true
-
 jobs:
   install:
     uses: ./.github/workflows/install.yml
@@ -484,7 +482,7 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
-      # - helm-docker-build
+      - helm-docker-build
       # - retag-unaffected
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -548,10 +546,7 @@ jobs:
 
           git add .
 
-          echo "Change status $(git status)"
           git commit -m "feat: feature-deployment"
-
-          echo "Changeset: $(git show)"
 
       - name: load-deps
         uses: ./monorepo/.github/actions/load-deps
@@ -573,7 +568,6 @@ jobs:
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           DOCKER_TAG: ${{ env.DOCKER_TAG }}
         run: |
-          node scripts/ci/docker/feature-deploy-bootstrap.mjs
           node scripts/ci/docker/feature-deploy-get-data.mjs
 
       - name: Commit and push to helm-values
@@ -583,6 +577,7 @@ jobs:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
           working-directory: monorepo
 
       # Will we need this?
@@ -595,23 +590,6 @@ jobs:
       #     if-no-files-found: error
       #     retention-days: 90
       #     overwrite: true
-      # - name: Commit and push feature-values
-      #   env:
-      #     FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
-      #   working-directory: feature-values
-      #   run: |
-      #     if [[ -z $(git status --porcelain) ]]; then
-      #       echo "No changes to commit"
-      #       exit 0
-      #     fi
-      #     echo "Trying to push to feature-values repository"
-      #     git config user.name andes-it
-      #     git config user.email andes-it@andes.is
-      #     git add .
-      #     git commit -m "Generated feature values for $FEATURE_NAME"
-      #     echo "Changeset $(git show)"
-      #     # git push
-  # TODO: Remove spinnaker deployment
   deploy:
     runs-on: arc-runners
     if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}

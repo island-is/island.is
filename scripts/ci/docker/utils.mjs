@@ -1,4 +1,8 @@
 // @ts-check
+import { fileURLToPath } from 'url'
+
+export const isMainModule = (importMetaUrl) =>
+  process.argv[1] === fileURLToPath(importMetaUrl)
 
 export const isFeatureDeployment = (context) =>
   context.eventName === 'pull_request' &&

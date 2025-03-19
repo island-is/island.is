@@ -183,6 +183,7 @@ describe('get-data.mjs', () => {
     test('exits when data.json does not exist', async () => {
       const testContext = {
         eventName: 'merge_group',
+        ref: 'pr-test-ble',
         payload: {
           merge_group: {
             base_ref: 'refs/heads/main',
@@ -209,6 +210,7 @@ describe('get-data.mjs', () => {
     test('sets MQ_HAS_OUTPUT to false when no files are changed', async () => {
       const testContext = {
         eventName: 'merge_group',
+        ref: 'pr-test-ble',
         payload: {
           merge_group: {
             base_ref: 'refs/heads/main',
@@ -427,6 +429,7 @@ describe('get-data.mjs', () => {
 
       const testContext = {
         eventName: 'merge_group',
+        ref: 'pr-test-ble',
         payload: {
           merge_group: {
             base_ref: 'refs/heads/main',
