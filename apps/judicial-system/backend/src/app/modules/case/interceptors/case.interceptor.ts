@@ -7,7 +7,10 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { DefendantEventType } from '@island.is/judicial-system/types'
+import {
+  CaseRepresentativeType,
+  DefendantEventType,
+} from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../defendant'
 import { EventLog } from '../../event-log'
@@ -33,11 +36,14 @@ export const transformDefendants = (defendants?: Defendant[]) => {
 
 const transformCaseRepresentatives = (theCase: Case) => {
   const { prosecutor, civilClaimants } = theCase
-  const getCaseUserRepresentativeProps = (user?: User) => {
-    if (!user) return undefined
-
-    return { name: user.name, nationalId: user.nationalId, title: user.title }
-  }
+  const prosecutorRepresentativeProps =
+    prosecutor?.name && prosecutor?.nationalId
+      ? {
+          name: prosecutor.name,
+          nationalId: prosecutor.nationalId,
+          type: CaseRepresentativeType.PROSECUTOR,
+        }
+      : undefined
 
   const getDefenderRepresentativeProps = (theCase: Case) => {
     const { defenderName, defenderNationalId } = theCase
@@ -46,7 +52,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return {
       name: defenderName,
       nationalId: defenderNationalId,
-      title: 'verjandi',
+      type: CaseRepresentativeType.DEFENDER,
     }
   }
 
@@ -58,17 +64,19 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return {
       name: spokespersonName,
       nationalId: spokespersonNationalId,
-      title: spokespersonIsLawyer ? 'lögmaður' : 'réttargæslumaður',
+      type: spokespersonIsLawyer
+        ? CaseRepresentativeType.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON
+        : CaseRepresentativeType.CIVIL_CLAIMANT_SPOKESPERSON,
     }
   })
 
   const defendants = theCase.defendants?.map((defendant) => ({
     name: defendant.name,
     nationalId: defendant.nationalId,
-    title: 'ákærði',
+    type: CaseRepresentativeType.DEFENDANT,
   }))
   return [
-    getCaseUserRepresentativeProps(prosecutor),
+    prosecutorRepresentativeProps,
     getDefenderRepresentativeProps(theCase),
     ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
     ...(defendants ? defendants : []),

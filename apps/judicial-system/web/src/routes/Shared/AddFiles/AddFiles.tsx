@@ -39,7 +39,10 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { SelectCaseFileRepresentative } from './SelectCaseFileRepresentative'
+import {
+  RepresentativeSelectOption,
+  SelectCaseFileRepresentative,
+} from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
 const getUserProps = (user: InstitutionUser | undefined) => {
@@ -55,7 +58,6 @@ const getUserProps = (user: InstitutionUser | undefined) => {
     }
   } else if (isDistrictCourtUser(user)) {
     return {
-      caseFileCategory: CaseFileCategory.COURT_RECORD, //nono => case file
       previousRoute: constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
       getCaseInfoNode: (workingCase: TempCase) => (
         <CourtCaseInfo workingCase={workingCase} />
@@ -69,10 +71,6 @@ const getUserProps = (user: InstitutionUser | undefined) => {
     getCaseInfoNode,
     hasFileRepresentativeSelection: false,
   }
-}
-
-type RepresentativeSelectOption = ReactSelectOption & {
-  caseRepresentative: CaseRepresentative
 }
 
 const AddFiles: FC = () => {
@@ -113,9 +111,10 @@ const AddFiles: FC = () => {
     addUploadFiles(
       files,
       {
-        category: caseFileCategory,
         status: 'done',
         fileRepresentative: fileRepresentative?.caseRepresentative?.name,
+        // TODO
+        category: fileRepresentative?.caseFileCategory || caseFileCategory,
         displayDate: submittedDate.toISOString(),
       },
       true,
@@ -133,6 +132,8 @@ const AddFiles: FC = () => {
         ...file,
         fileRepresentative: representative?.caseRepresentative?.name,
         displayDate: date.toISOString(),
+        // TODO
+        category: !!representative?.caseFileCategory,
       })
     })
   }

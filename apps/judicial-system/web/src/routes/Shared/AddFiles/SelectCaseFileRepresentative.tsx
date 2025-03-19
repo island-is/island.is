@@ -5,6 +5,10 @@ import isEmpty from 'lodash/isEmpty'
 import { Box, Select } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
+  CaseFileCategory,
+  CaseRepresentativeType,
+} from '@island.is/judicial-system/types'
+import {
   BlueBox,
   DateTime,
   FormContext,
@@ -16,9 +20,52 @@ import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { strings } from './AddFiles.strings'
 import * as styles from './SelectCaseFileRepresentative.css'
 
-type RepresentativeSelectOption = ReactSelectOption & {
+export type RepresentativeSelectOption = ReactSelectOption & {
   caseRepresentative: CaseRepresentative
+  caseFileCategory: CaseFileCategory
 }
+
+const CASE_REPRESENTATIVE_PROPS_MAP: Map<
+  CaseRepresentativeType,
+  { title: string; caseFileCategory: CaseFileCategory }
+> = new Map([
+  [
+    CaseRepresentativeType.PROSECUTOR,
+    {
+      title: 'Sækjandi',
+      caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
+    },
+  ],
+  [
+    CaseRepresentativeType.DEFENDER,
+    {
+      title: 'Verjandi',
+      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+    },
+  ],
+  [
+    CaseRepresentativeType.DEFENDANT,
+    {
+      title: 'Ákærði',
+      caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+    },
+  ],
+  [
+    CaseRepresentativeType.CIVIL_CLAIMANT_SPOKESPERSON,
+    {
+      title: 'Réttargæslumaður',
+      caseFileCategory: CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+    },
+  ],
+  [
+    CaseRepresentativeType.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON,
+    {
+      title: 'Lögmaður',
+      caseFileCategory:
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+    },
+  ],
+])
 
 export const SelectCaseFileRepresentative = ({
   fileRepresentative,
@@ -39,11 +86,16 @@ export const SelectCaseFileRepresentative = ({
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { caseRepresentatives } = workingCase
-  const options = caseRepresentatives?.map((representative) => ({
-    label: `${representative.name} (${capitalize(representative.title)})`,
-    value: representative.name,
-    caseRepresentative: representative,
-  }))
+
+  const options = caseRepresentatives?.map((representative) => {
+    const props = CASE_REPRESENTATIVE_PROPS_MAP.get(representative.type)
+    return {
+      label: `${representative.name} (${props?.title})`,
+      value: representative.name,
+      caseRepresentative: representative,
+      caseFileCategory: props?.caseFileCategory,
+    }
+  })
 
   return (
     <div className={styles.selectCaseFileRepresentative}>
@@ -61,11 +113,11 @@ export const SelectCaseFileRepresentative = ({
             }
             options={options}
             onChange={(selectedOption) => {
-              setFileRepresentative(
-                selectedOption as RepresentativeSelectOption,
-              )
+              const representativeSelectOption =
+                selectedOption as RepresentativeSelectOption
+              setFileRepresentative(representativeSelectOption)
               handleCaseFileRepresentativeUpdate(
-                selectedOption as RepresentativeSelectOption,
+                representativeSelectOption,
                 submittedDate,
               )
             }}
