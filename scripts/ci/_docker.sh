@@ -14,8 +14,10 @@ DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-jest)>'}}
 ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
+CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 UPLOAD_ARTIFACT_DOCKER="${UPLOAD_ARTIFACT_DOCKER:-false}"
+
 
 BUILD_ARGS=()
 
@@ -36,17 +38,11 @@ mkargs() {
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
   done
-  # Add --build-arg for every `DOCKER_METADATA_OUTPUT` environment variable
-  for key in $(env | grep -E "^DOCKER_METADATA_OUTPUT_" | cut -d "=" -f 1); do
-    value="${!key}"
-    BUILD_ARGS+=("--label=${key}=${value}")
-    echo "BUILD_ARGS: ${BUILD_ARGS[*]}"
-  done
   echo "${BUILD_ARGS[@]}"
 }
 
 container_build() {
-  docker buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+  $CONTAINER_BUILDER buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
 }
 
 docker_build() {
@@ -77,9 +73,10 @@ main() {
 _upload_artifact() {
   case $UPLOAD_ARTIFACT_DOCKER in
   true)
-    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET" node "$DIR/docker/write-build-data.mjs"
+    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET"  node "$DIR/docker/write-build-data.mjs"
     ;;
-  false) ;;
+  false)
+    ;;
   esac
 }
 
