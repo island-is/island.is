@@ -8,10 +8,6 @@ import {
 } from '@island.is/clients/work-machines'
 import { isDefined } from '@island.is/shared/utils'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  WorkMachine,
-  PaginatedCollectionResponse,
-} from './models/getWorkMachines'
 import { Inject, Injectable } from '@nestjs/common'
 import { Action, ExternalLink } from './workMachines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
@@ -22,6 +18,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
 import isValid from 'date-fns/isValid'
+import { PaginatedCollectionResponse } from './models/v2/workMachineCollection.model'
+import { WorkMachine } from './models/v2/workMachine.model'
+import { Type } from './models/v2/type.model'
+import format from 'date-fns/format'
+import { CollectionLink } from './models/v2/collectionLink.model'
 
 @Injectable()
 export class WorkMachinesService {
@@ -31,8 +32,8 @@ export class WorkMachinesService {
     private readonly machineService: WorkMachinesClientService,
   ) {}
 
-  private mapRelToAction = (rel?: string) => {
-    switch (rel) {
+  private mapRelToAction = (relation?: string) => {
+    switch (relation) {
       case 'requestInspection':
         return Action.REQUEST_INSPECTION
       case 'changeStatus':
@@ -48,8 +49,8 @@ export class WorkMachinesService {
     }
   }
 
-  private mapRelToCollectionLink = (rel?: string) => {
-    switch (rel) {
+  private mapRelationToCollectionLink = (relation?: string) => {
+    switch (relation) {
       case 'self':
         return ExternalLink.SELF
       case 'nextPage':
@@ -82,33 +83,82 @@ export class WorkMachinesService {
     const workMachines: Array<WorkMachine> =
       data.value
         ?.map((v) => {
+          if (!v.id || !v.registrationNumber) {
+            return null
+          }
           const inspectionDate = v.dateLastInspection
             ? new Date(v.dateLastInspection)
             : undefined
+
+          let type: Type | undefined
+          if (v.type) {
+            const [mainType, ...subtype] = v.type.split(' ')
+            type = {
+              type: mainType,
+              subtype: subtype.join(),
+              fullType: v.type,
+            }
+          }
+
           return {
-            ...v,
-            dateLastInspection: isValid(inspectionDate)
-              ? inspectionDate
+            id: v.id,
+            registrationNumber: v.registrationNumber,
+            type,
+            owner: v.owner
+              ? {
+                  name: v.owner ?? undefined,
+                  number: v.ownerNumber ?? undefined,
+                }
               : undefined,
-            ownerName: v.owner,
-            supervisorName: v.supervisor,
+            supervisor: v.supervisor
+              ? {
+                  name: v.supervisor,
+                }
+              : undefined,
+            status: v.status ?? undefined,
+            category: v.category ?? undefined,
+            subcategory: v.subCategory ?? undefined,
+            licensePlateNumber: v.licensePlateNumber ?? undefined,
+            paymentRequiredForOwnerChange:
+              v.paymentRequiredForOwnerChange ?? undefined,
+            mayStreetRegister: v.mayStreetRegister ?? undefined,
+            dateLastInspection:
+              inspectionDate && isValid(inspectionDate)
+                ? format(inspectionDate, 'dd-MM-yyyy')
+                : undefined,
           }
         })
         .filter(isDefined) ?? []
 
-    const links = data.links?.length
-      ? data.links.map((l) => {
+    const links: Array<CollectionLink> =
+      data?.links
+        ?.map((l) => {
+          if (!l.href || !l.method || !l.rel) {
+            return null
+          }
+          const rel = this.mapRelationToCollectionLink(l.rel ?? '')
+
+          if (!rel) {
+            return null
+          }
+
           return {
-            ...l,
-            rel: this.mapRelToCollectionLink(l.rel ?? ''),
+            href: l.href,
+            method: l.method,
+            displayTitle: l.displayTitle ?? undefined,
+            rel,
           }
         })
-      : null
+        .filter(isDefined) ?? []
 
     return {
       data: workMachines,
       links,
-      labels: data.labels,
+      labels: data.labels?.map((l) => ({
+        columnName: l.columnName ?? undefined,
+        displayTitle: l.displayTitle ?? undefined,
+        tooltip: l.tooltip ?? undefined,
+      })),
       totalCount: data.pagination?.totalCount ?? 0,
       pageInfo: {
         hasNextPage:
