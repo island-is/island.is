@@ -37,6 +37,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     indictmentReviewedDate,
     indictmentCreated,
     civilClaimants,
+    registrar,
   } = useInfoCardItems()
 
   const {
@@ -77,6 +78,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             court,
             prosecutor(workingCase.type),
             judge,
+            ...(workingCase.registrar ? [registrar] : []),
             offenses,
           ],
           columns: 2,
