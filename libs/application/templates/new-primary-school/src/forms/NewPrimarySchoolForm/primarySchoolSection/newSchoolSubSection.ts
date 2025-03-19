@@ -12,7 +12,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getMunicipalityCodeBySchoolId,
+  getMunicipalityCodeBySchoolUnitId,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
   Application,
@@ -121,7 +121,7 @@ export const newSchoolSubSection = buildSubSection({
                         ({ type, gradeLevels, unitId }) =>
                           gradeLevels?.includes(childGradeLevel) &&
                           unitId &&
-                          getMunicipalityCodeBySchoolId(unitId) ===
+                          getMunicipalityCodeBySchoolUnitId(unitId) ===
                             municipalityCode &&
                           type === OrganizationModelTypeEnum.School,
                       )

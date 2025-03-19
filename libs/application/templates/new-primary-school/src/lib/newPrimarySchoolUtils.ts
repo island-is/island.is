@@ -496,10 +496,10 @@ export const getGenderMessage = (application: Application) => {
 }
 
 /*
- This function is used to get the municipality code based on the school id for private owned shcools.
+ This function is used to get the municipality code based on the school unit id for private owned shcools.
  This should be removed when Frigg starts to return the private owned in the same way as the public schools, under the municipality.
 */
-export const getMunicipalityCodeBySchoolId = (schoolId: string) => {
+export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
   const municipalities = [
     {
       // Kopavogur
@@ -548,7 +548,7 @@ export const getMunicipalityCodeBySchoolId = (schoolId: string) => {
   ]
 
   const municipalityCode = municipalities.find((municipality) =>
-    municipality.schools.includes(schoolId),
+    municipality.schools.includes(schoolUnitId),
   )?.municipalityCode
 
   return municipalityCode
