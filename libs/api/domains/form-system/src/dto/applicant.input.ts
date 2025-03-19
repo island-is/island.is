@@ -38,15 +38,6 @@ export class UpdateApplicantInput {
   updateFormApplicantTypeDto?: FormSystemUpdateApplicantDtoInput
 }
 
-@InputType('FormSystemUpdateApplicationDependenciesInput')
-export class UpdateApplicationDependenciesInput {
-  @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
-  dependencies?: DependencyInput[]
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  completed?: string[]
-}
-
 @InputType('FormSystemFormApplicantInput')
 export class FormApplicantInput {
   @Field(() => String)
