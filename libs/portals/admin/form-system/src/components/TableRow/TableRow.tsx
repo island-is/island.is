@@ -13,23 +13,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../lib/paths'
-import {
-  LicenseProviderEnum,
-  ApplicationTemplateStatus,
-} from '../../lib/utils/interfaces'
+import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-import { m } from '../../lib/messages'
+import { m } from '@island.is/form-system/ui'
 
 interface Props {
-  id?: number | null
+  id?: string | null
   name?: string
   created?: Date
   lastModified?: Date
-  org?: number | null
+  org?: string | null
   state?: number
   options?: string
   isHeader: boolean
   translated?: boolean
+  slug?: string
 }
 
 interface ColumnTextProps {
@@ -50,6 +48,7 @@ export const TableRow = ({
   state,
   isHeader,
   translated,
+  slug,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -58,11 +57,10 @@ export const TableRow = ({
     <>
       <Box className={styles.header}>
         <Row>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.number)}</Text>
-          </Column>
-          <Column span="4/12">
-            <Text variant="medium">{formatMessage(m.name)}</Text>
+          <Column span="5/12">
+            <Box paddingLeft={2}>
+              <Text variant="medium">{formatMessage(m.name)}</Text>
+            </Box>
           </Column>
           <Column span="2/12">
             <Text variant="medium">{formatMessage(m.lastModified)}</Text>
@@ -92,10 +90,7 @@ export const TableRow = ({
       style={{ cursor: '' }}
     >
       <Row key={id}>
-        <Column span="1/12">
-          <ColumnText text={id ? id : ''} />
-        </Column>
-        <Column span="4/12">
+        <Column span="5/12">
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
@@ -113,7 +108,7 @@ export const TableRow = ({
           </Box>
         </Column>
         <Column span="2/12">
-          <ColumnText text={LicenseProviderEnum[org ? org : 1]} />
+          <ColumnText text={org ?? ''} />
         </Column>
         <Column span="1/12">
           <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} />
@@ -153,13 +148,10 @@ export const TableRow = ({
                   title: formatMessage(m.translateToEnglish),
                 },
                 {
-                  title: formatMessage(m.translateToEnglish),
-                },
-                {
                   title: 'Export',
                 },
                 {
-                  title: formatMessage(m.getJson),
+                  title: 'Json',
                 },
               ]}
             />
