@@ -34,7 +34,7 @@ for (const file of files) {
   const textContent = readFileSync(file, 'utf8')
   const yamlContent = await jsyaml.load(textContent)
 
-  for (const [_, val] of Object.entries(yamlContent)) {
+  for (const val of Object.values(yamlContent)) {
     const content = findNestedObjectByKey(val, 'image')
 
     if (
@@ -46,6 +46,9 @@ for (const file of files) {
       content.image.tag = imageTag
       fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       console.log(`Changed file ${file}`)
+      changedFiles.add(file)
+    } else if (file.includes('job-manifest')) {
+      console.log(`Adding job-manifest file ${file}`)
       changedFiles.add(file)
     } else {
       console.log(`Skipping file ${file}`)
