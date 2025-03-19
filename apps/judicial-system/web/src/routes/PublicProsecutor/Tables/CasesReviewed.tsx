@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Tag, Text } from '@island.is/island-ui/core'
 import {

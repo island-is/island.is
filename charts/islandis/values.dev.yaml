@@ -14,7 +14,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -93,7 +93,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -202,7 +202,7 @@ air-discount-scheme-web:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -301,7 +301,7 @@ api:
     FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
-    FORM_SYSTEM_API_BASE_PATH: 'https://profun.island.is/umsoknarkerfi'
+    FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
@@ -315,7 +315,8 @@ api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+    RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -623,7 +624,7 @@ application-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     NOVA_USERNAME: 'IslandIs_User_Development'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
@@ -855,7 +856,7 @@ application-system-api-worker:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
@@ -941,7 +942,7 @@ application-system-form:
   env:
     BASEPATH: '/umsoknir'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
@@ -1001,6 +1002,60 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+cms-importer-worker:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
+  namespace: 'cms-importer'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '0 */3 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 consultation-portal:
   enabled: true
   env:
@@ -1012,7 +1067,7 @@ consultation-portal:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://beta.dev01.devland.is/samradsgatt/api/auth'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1072,7 +1127,7 @@ contentful-apps:
   enabled: true
   env:
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1135,7 +1190,7 @@ contentful-entry-tagger-service:
   enabled: true
   env:
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1202,7 +1257,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
@@ -1321,7 +1376,7 @@ endorsement-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1412,7 +1467,7 @@ external-contracts-tests:
   enabled: true
   env:
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1474,7 +1529,7 @@ github-actions-cache:
   enabled: true
   env:
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     REDIS_NODES: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -1555,7 +1610,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1640,7 +1695,7 @@ island-ui-storybook:
   enabled: true
   env:
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1701,7 +1756,7 @@ license-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1810,19 +1865,20 @@ namespaces:
     - 'user-notification'
     - 'external-contracts-tests'
     - 'contentful-entry-tagger'
+    - 'cms-importer'
     - 'license-api'
-    - 'services-form-system-api'
     - 'services-sessions'
     - 'contentful-apps'
     - 'services-university-gateway'
     - 'portals-my-pages'
     - 'unicorn-app'
+    - 'services-form-system-api'
 portals-admin:
   enabled: true
   env:
     BASEPATH: '/stjornbord'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
@@ -1896,7 +1952,7 @@ regulations-admin-backend:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1990,7 +2046,7 @@ search-indexer-service:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ENVIRONMENT: 'dev'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=3686 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -2115,7 +2171,7 @@ service-portal:
   env:
     BASEPATH: '/minarsidur'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
@@ -2195,7 +2251,7 @@ service-portal-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.dev01.devland.is/minarsidur'
@@ -2324,7 +2380,7 @@ services-bff-portals-admin:
     IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2407,10 +2463,10 @@ services-bff-portals-my-pages:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/health/prescriptions","@island.is/health/referrals","@island.is/health/dispensations","@island.is/health/waiting-lists","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2486,7 +2542,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -2565,7 +2621,7 @@ services-form-system-api:
     DB_USER: 'services_form_system_api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -2666,7 +2722,7 @@ services-sessions:
     DB_USER: 'services_sessions_read'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2738,7 +2794,7 @@ services-sessions-cleanup:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_sessions'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2802,7 +2858,7 @@ services-sessions-worker:
     DB_USER: 'services_sessions'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -2897,7 +2953,7 @@ services-university-gateway:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -3027,7 +3083,7 @@ services-university-gateway-worker:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -3102,7 +3158,7 @@ skilavottord-web:
     API_URL: 'http://skilavottord-ws'
     ENVIRONMENT: 'dev'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -3171,7 +3227,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'application-system'
@@ -3284,7 +3340,7 @@ user-notification:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -3388,7 +3444,7 @@ user-notification-cleanup-worker:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -3496,7 +3552,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -3599,7 +3655,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'dev'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.dev01.devland.is'
   grantNamespaces:
@@ -3670,7 +3726,7 @@ xroad-collector:
   env:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'

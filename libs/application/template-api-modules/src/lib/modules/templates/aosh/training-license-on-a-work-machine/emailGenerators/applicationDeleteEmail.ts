@@ -54,8 +54,7 @@ export const generateApplicationDeleteEmail: ApplicationDeleteEmail = (
             copy:
               `<span>Góðan dag,</span><br/><br/>` +
               `<span>Beiðni um samþykkt á starfstíma á vinnuvél hefur verið afturkölluð þar sem umsækjandi eyddi umsókninni.</span><br/>` +
-              `<span>Til þess að skrá kennsluréttindi á vinnuvél rafrænt verður að byrja ferlið upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
-              `<span>Vinsamlegast hafið samband við Vinnueftirlitið vinnueftirlit@ver.is ef nánari upplýsinga er þörf.</span>`,
+              `<span>Nánari upplýsingar á island.is/umsoknir.</span><br/>`,
           },
         },
       ],

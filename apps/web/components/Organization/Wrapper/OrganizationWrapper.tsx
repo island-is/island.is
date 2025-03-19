@@ -513,6 +513,10 @@ export const OrganizationExternalLinks: React.FC<
               organizationPage.slug === 'icelandic-health-insurance' ||
               organizationPage.slug === 'iceland-health'
 
+            const buttonHasLockIcon =
+              isSjukratryggingar &&
+              (link.text.includes('Gagna') || link.text.includes('Data'))
+
             let variant = undefined
             if (
               isSjukratryggingar &&
@@ -533,7 +537,7 @@ export const OrganizationExternalLinks: React.FC<
                   // @ts-ignore make web strict
                   variant={variant}
                   unfocusable
-                  icon={isSjukratryggingar ? 'lockClosed' : 'open'}
+                  icon={buttonHasLockIcon ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
                 >
