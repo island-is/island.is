@@ -6,7 +6,7 @@ import { CheckboxController } from '@island.is/shared/form-fields'
 import { Markdown } from '@island.is/shared/components'
 import { paymentArrangement } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { IndividualOrCompany } from '../../shared/constants'
+import { IndividualOrCompany } from '../../utils/enums'
 import { isCompanyType } from '../../utils'
 
 export const AgreementCheckbox: FC<React.PropsWithChildren<FieldBaseProps>> = ({

@@ -11,8 +11,8 @@ import {
 import { information } from '../../../lib/messages/information'
 import { shared } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
-import { SelfOrOthers } from '../../../utils/types'
 import { getAllCountryCodes } from '@island.is/shared/utils'
+import { SelfOrOthers } from '../../../utils/enums'
 
 export const informationSection = buildSection({
   id: 'informationSection',
@@ -93,7 +93,10 @@ export const informationSection = buildSection({
               label: information.general.registerOthers,
             },
           ],
-          clearOnChange: ['information.countryOfIssue', 'information.licenseNumber'],
+          clearOnChange: [
+            'information.countryOfIssue',
+            'information.licenseNumber',
+          ],
         }),
         buildTextField({
           id: 'information.licenseNumber',
@@ -102,7 +105,10 @@ export const informationSection = buildSection({
           format: '########',
           required: true,
           condition: (answers: FormValue) => {
-            const isForOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+            const isForOthers = getValueViaPath<SelfOrOthers>(
+              answers,
+              'information.selfOrOthers',
+            )
             return isForOthers === SelfOrOthers.others ? true : false
           },
         }),
@@ -112,7 +118,10 @@ export const informationSection = buildSection({
           title: information.general.countryLabel,
           defaultValue: SelfOrOthers.self,
           condition: (answers: FormValue) => {
-            const isForOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+            const isForOthers = getValueViaPath<SelfOrOthers>(
+              answers,
+              'information.selfOrOthers',
+            )
             return isForOthers === SelfOrOthers.others ? true : false
           },
           options: () => {

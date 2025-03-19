@@ -12,7 +12,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
-import { IndividualOrCompany, PaymentOptions } from '../../../shared/constants'
+import { IndividualOrCompany, PaymentOptions } from '../../../utils/enums'
 import {
   Application,
   ExternalData,

@@ -4,7 +4,7 @@ import {
   MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
-//import { ApiActions } from '../shared/constants'
+import { ApiActions } from '../utils/constants'
 
 export { IdentityApi, UserProfileApi } from '@island.is/application/types'
 
@@ -23,7 +23,7 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
     externalDataId: 'payment',
   })
 
-// export const getAoshInputOptionsApi = defineTemplateApi({
-//   action: ApiActions.getInputOptions,
-//   externalDataId: 'aoshData',
-// })
+export const getExamCategoriesApi = defineTemplateApi({
+  action: ApiActions.getExamCategories,
+  externalDataId: 'examCategories',
+})

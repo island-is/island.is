@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { PracticalExamTemplateService } from './practical-exam.service'
-import {
-  WorkAccidentClientConfig,
-  WorkAccidentClientModule,
-} from '@island.is/clients/work-accident-ver'
 import { ConfigModule } from '@nestjs/config'
-
+import {
+  PracticalExamsClientModule,
+  PracticalExamsClientConfig,
+} from '@island.is/clients/practical-exams-ver'
 @Module({
   imports: [
     SharedTemplateAPIModule,
-    WorkAccidentClientModule,
+    PracticalExamsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [WorkAccidentClientConfig], // TODO(balli) Replace with actual client when VER provides it
+      load: [PracticalExamsClientConfig], // TODO(balli) Replace with actual client when VER provides it
     }),
   ],
   providers: [PracticalExamTemplateService],

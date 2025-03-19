@@ -154,6 +154,8 @@ import { SecondarySchoolModule } from './secondary-school/secondary-school.modul
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
+import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -234,6 +236,7 @@ export const modules = [
   SocialInsuranceAdministrationModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  PracticalExamTemplateModule,
 ]
 
 export const services = [
@@ -314,4 +317,5 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  PracticalExamTemplateService,
 ]

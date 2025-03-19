@@ -2,32 +2,42 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidEmail } from '../utils'
 import { isValidPhoneNumber } from '../utils/validation'
-import { IndividualOrCompany, PaymentOptions } from '../shared/constants'
-import { SelfOrOthers } from '../utils/types'
+import {
+  IndividualOrCompany,
+  PaymentOptions,
+  SelfOrOthers,
+} from '../utils/enums'
 
-const InformationSchema = z.object({
-  name: z.string().min(1).max(256),
-  nationalId: z
-    .string()
-    .refine(
-      (nationalId) =>
-        nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
-    ),
-  phone: z.string().optional(),//.refine((v) => isValidPhoneNumber(v)), // TODO Refine again, dev issues with no email/phone
-  email: z.string().optional(), // TODO Remove optional add .email(), dev issues with no email/phone
-  selfOrOthers: z.nativeEnum(SelfOrOthers),
-  licenseNumber: z.string().optional(),
-  countryOfIssue: z.string().nullish(),
-}).refine((data) => {
-  if (data.selfOrOthers === SelfOrOthers.others) {
-    // TODO(balli) Create util function to validate license number ??
-    return data.licenseNumber && data.countryOfIssue
-  }
+const InformationSchema = z
+  .object({
+    name: z.string().min(1).max(256),
+    nationalId: z
+      .string()
+      .refine(
+        (nationalId) =>
+          nationalId &&
+          nationalId.length !== 0 &&
+          kennitala.isValid(nationalId),
+      ),
+    phone: z.string().optional(), //.refine((v) => isValidPhoneNumber(v)), // TODO Refine again, dev issues with no email/phone
+    email: z.string().optional(), // TODO Remove optional add .email(), dev issues with no email/phone
+    selfOrOthers: z.nativeEnum(SelfOrOthers),
+    licenseNumber: z.string().optional(),
+    countryOfIssue: z.string().nullish(),
+  })
+  .refine(
+    (data) => {
+      if (data.selfOrOthers === SelfOrOthers.others) {
+        // TODO(balli) Create util function to validate license number ??
+        return data.licenseNumber && data.countryOfIssue
+      }
 
-  return true
-}, {
-  path: ['']
-})
+      return true
+    },
+    {
+      path: [''],
+    },
+  )
 
 const PaymentArrangementSchema = z
   .object({

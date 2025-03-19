@@ -21,6 +21,7 @@ import { Roles, States, Events } from './constants'
 import { buildPaymentState } from '@island.is/application/utils'
 import { PracticalExamAnswersSchema } from './dataSchema'
 import {
+  getExamCategoriesApi,
   IdentityApi,
   MockableVinnueftirlitidPaymentCatalogApi,
   VinnueftirlitidPaymentCatalogApi,
@@ -29,7 +30,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { shared } from './messages/shared'
 import { getChargeItems, isCompany } from '../utils'
-import { PaymentOptions } from '../shared/constants'
+import { PaymentOptions } from '../utils/enums'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
 
@@ -96,6 +97,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 VinnueftirlitidPaymentCatalogApi,
+                getExamCategoriesApi,
                 MockableVinnueftirlitidPaymentCatalogApi,
               ],
             },

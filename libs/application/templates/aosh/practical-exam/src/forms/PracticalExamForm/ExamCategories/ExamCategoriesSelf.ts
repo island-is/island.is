@@ -8,13 +8,16 @@ import {
 } from '@island.is/application/core'
 import { examCategories } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
-import { SelfOrOthers } from '../../../utils/types'
+import { SelfOrOthers } from '../../../utils/enums'
 
 export const examCategoriesSectionSelf = buildSection({
   id: 'examCategoriesSectionSelf',
   title: examCategories.general.sectionTitle,
   condition: (answers: FormValue) => {
-    const selfOrOthers = getValueViaPath<SelfOrOthers>(answers, 'information.selfOrOthers')
+    const selfOrOthers = getValueViaPath<SelfOrOthers>(
+      answers,
+      'information.selfOrOthers',
+    )
     return selfOrOthers === SelfOrOthers.self ? true : false
   },
   children: [
@@ -25,7 +28,7 @@ export const examCategoriesSectionSelf = buildSection({
       children: [
         buildTextField({
           id: '',
-        })
+        }),
       ],
     }),
   ],

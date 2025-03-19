@@ -3,7 +3,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion } from '../lib/messages'
-import { PaymentOptions } from '../shared/constants'
+import { PaymentOptions } from '../utils/enums'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',

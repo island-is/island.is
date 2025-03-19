@@ -8,7 +8,7 @@ import {
 import { examinee, shared } from '../../../lib/messages'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { FormValue } from '@island.is/application/types'
-import { SelfOrOthers } from '../../../utils/types'
+import { SelfOrOthers } from '../../../utils/enums'
 
 export const examineeSection = buildSection({
   id: 'examineeSection',

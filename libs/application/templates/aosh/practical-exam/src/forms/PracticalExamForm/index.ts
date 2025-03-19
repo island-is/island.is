@@ -12,8 +12,11 @@ import {
 } from '@island.is/application/ui-forms'
 import { getChargeItems } from '../../utils'
 import { conclusion, payment } from '../../lib/messages'
-import { PaymentOptions } from '../../shared/constants'
-import { examCategoriesSectionOthers, examCategoriesSectionSelf } from './ExamCategories'
+import { PaymentOptions } from '../../utils/enums'
+import {
+  examCategoriesSectionOthers,
+  examCategoriesSectionSelf,
+} from './ExamCategories'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',

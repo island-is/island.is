@@ -1,5 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+// TODO(Balli): Replace this with the shared core one.
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
