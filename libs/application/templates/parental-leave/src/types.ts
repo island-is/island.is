@@ -68,6 +68,11 @@ export interface VMSTPeriod {
   approved: boolean
 }
 
+export interface VMSTOtherParent {
+  otherParentId: string | null
+  otherParentName: string | null
+}
+
 export interface Period {
   startDate: string
   endDate: string
