@@ -41,10 +41,14 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
-  InstitutionType,
+  isAdminUser,
+  isCourtOfAppealsUser,
+  isDefenceUser,
+  isDistrictCourtUser,
   isPrisonSystemUser,
+  isProsecutionUser,
+  isPublicProsecutorUser,
   type User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
@@ -106,9 +110,10 @@ export class AuthController {
     this.defaultCookieOptions.secure = this.config.production
   }
 
-  @Get('login')
+  @Get(['login', 'login/:userId'])
   async login(
     @Res() res: Response,
+    @Param('userId') userId?: string,
     @Query('redirectRoute') redirectRoute?: string,
     @Query('nationalId') nationalId?: string,
   ) {
@@ -119,7 +124,12 @@ export class AuthController {
       if (this.config.allowAuthBypass && nationalId) {
         this.logger.debug(`Logging in using development mode`)
 
-        await this.redirectAuthenticatedUser(nationalId, res, redirectRoute)
+        await this.redirectAuthenticatedUser(
+          nationalId,
+          res,
+          userId,
+          redirectRoute,
+        )
 
         return
       }
@@ -156,18 +166,21 @@ export class AuthController {
         this.accessTokenCookie,
       ])
 
-      res
-        .cookie(
-          this.codeVerifierCookie.name,
-          codeVerifier,
-          this.codeVerifierCookie.options,
-        )
-        .cookie(
+      res.cookie(
+        this.codeVerifierCookie.name,
+        codeVerifier,
+        this.codeVerifierCookie.options,
+      )
+
+      if (userId || redirectRoute) {
+        res.cookie(
           this.redirectCookie.name,
-          { redirectRoute },
+          { userId, redirectRoute },
           this.redirectCookie.options,
         )
-        .redirect(loginUrl)
+      }
+
+      res.redirect(loginUrl)
     } catch (error) {
       this.logger.error('Login failed:', { error })
 
@@ -186,7 +199,8 @@ export class AuthController {
     try {
       this.logger.debug('Received callback request')
 
-      const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
+      const { userId, redirectRoute } =
+        req.cookies[this.redirectCookie.name] ?? {}
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
 
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
@@ -200,6 +214,7 @@ export class AuthController {
         await this.redirectAuthenticatedUser(
           verifiedUserToken.nationalId,
           res,
+          userId,
           redirectRoute,
           idsTokens.id_token,
           new Entropy({ bits: 128 }).string(),
@@ -256,23 +271,27 @@ export class AuthController {
   @Get('activate/:userId')
   async activateUser(
     @Param('userId') userId: string,
-    @CurrentHttpUser() user: User,
     @EligibleHttpUsers() eligibleUsers: User[],
     @Res() res: Response,
     @Req() req: Request,
+    @CurrentHttpUser() user?: User,
   ) {
     try {
       this.logger.debug(`Received activate user ${userId} request`)
 
-      if (userId === user?.id) {
-        return this.redirect(res, user)
+      if (user && userId === user.id) {
+        this.redirect(res, user)
+
+        return
       }
 
-      const csrfToken = req.cookies[this.csrfCookie.name]
+      const csrfCookieToken = req.cookies[this.csrfCookie.name]
+      const csrfToken =
+        csrfCookieToken === 'undefined' ? undefined : csrfCookieToken
 
-      const userIdx = eligibleUsers.findIndex((user) => user.id === userId)
+      const currentUser = eligibleUsers.find((user) => user.id === userId)
 
-      if (userIdx < 0) {
+      if (!currentUser) {
         this.logger.info('Blocking illegal user activation attempt')
 
         await this.backendService.createEventLog({
@@ -289,12 +308,17 @@ export class AuthController {
         return
       }
 
-      // this.clearCookies(res, false)
+      // Use the optional redirect route only if a user has not yet been activated
+      // Note that at this point, the redirect cookie does not contain a user id
+      const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
+      const useRedirectRoute = !user
+
       this.redirectAuthorizeUser(
         eligibleUsers,
-        userIdx,
         res,
-        csrfToken === 'undefined' ? undefined : csrfToken,
+        currentUser,
+        csrfToken,
+        useRedirectRoute ? redirectRoute : undefined,
       )
     } catch (error) {
       this.logger.error('Login failed:', { error })
@@ -342,6 +366,7 @@ export class AuthController {
   private async redirectAuthenticatedUser(
     nationalId: string,
     res: Response,
+    userId?: string,
     requestedRedirectRoute?: string,
     idToken?: string,
     csrfToken?: string,
@@ -358,7 +383,19 @@ export class AuthController {
       return
     }
 
-    const currentUserIdx = eligibleUsers.length === 1 ? 0 : -1
+    const currentUser =
+      eligibleUsers.length === 1
+        ? eligibleUsers[0]
+        : userId
+        ? // attempt to find the user with the given userId
+          eligibleUsers.find((user) => user.id === userId)
+        : undefined
+
+    // Use the redirect route if:
+    // - no user id accompanied the redirect route or
+    // - the accompanying user id matches the user being activated
+    const redirectRoute =
+      !userId || currentUser?.id === userId ? requestedRedirectRoute : undefined
 
     if (idToken) {
       res.cookie(this.idToken.name, idToken, {
@@ -371,23 +408,20 @@ export class AuthController {
 
     this.redirectAuthorizeUser(
       eligibleUsers,
-      currentUserIdx,
       res,
+      currentUser,
       csrfToken,
-      requestedRedirectRoute,
+      redirectRoute,
     )
   }
 
   private redirectAuthorizeUser(
     eligibleUsers: User[], // eligibleUsers is an array of one or more users
-    currentUserIdx: number,
     res: Response,
+    currentUser?: User,
     csrfToken?: string,
     requestedRedirectRoute?: string,
   ) {
-    const currentUser =
-      currentUserIdx < 0 ? undefined : eligibleUsers[currentUserIdx]
-
     if (currentUser) {
       this.backendService.createEventLog({
         eventType: csrfToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
@@ -400,12 +434,10 @@ export class AuthController {
     }
 
     const jwtToken = this.sharedAuthService.signJwt(
-      currentUserIdx,
       eligibleUsers,
+      currentUser,
       csrfToken,
     )
-
-    this.clearCookies(res, [this.codeVerifierCookie, this.redirectCookie])
 
     res
       .cookie(
@@ -424,34 +456,105 @@ export class AuthController {
     this.redirect(res, currentUser, requestedRedirectRoute)
   }
 
+  private getRedirectRouteForUser(
+    currentUser: User,
+    requestedRedirectRoute?: string,
+  ) {
+    const getRedirectRoute = (
+      defaultRoute: string,
+      allowedPrefixes: string[],
+    ) => {
+      return requestedRedirectRoute &&
+        allowedPrefixes.some((prefix) =>
+          requestedRedirectRoute.startsWith(prefix),
+        )
+        ? requestedRedirectRoute
+        : defaultRoute
+    }
+
+    if (isProsecutionUser(currentUser)) {
+      return getRedirectRoute(CASES_ROUTE, [
+        '/beinir',
+        '/krafa',
+        '/kaera',
+        '/greinargerd',
+        '/akaera',
+      ])
+    }
+
+    if (isPublicProsecutorUser(currentUser)) {
+      return getRedirectRoute(CASES_ROUTE, [
+        '/beinir',
+        '/krafa/yfirlit',
+        '/rikissaksoknari',
+      ])
+    }
+
+    if (isDistrictCourtUser(currentUser)) {
+      return getRedirectRoute(CASES_ROUTE, [
+        '/beinir',
+        '/krafa/yfirlit',
+        '/domur',
+      ])
+    }
+
+    if (isCourtOfAppealsUser(currentUser)) {
+      return getRedirectRoute(COURT_OF_APPEAL_CASES_ROUTE, ['/landsrettur'])
+    }
+
+    if (isPrisonSystemUser(currentUser)) {
+      return getRedirectRoute(PRISON_CASES_ROUTE, [
+        '/beinir',
+        '/krafa/yfirlit',
+        '/fangelsi',
+      ])
+    }
+
+    if (isDefenceUser(currentUser)) {
+      return getRedirectRoute(DEFENDER_CASES_ROUTE, [
+        '/krafa/yfirlit',
+        '/verjandi',
+      ])
+    }
+
+    if (isAdminUser(currentUser)) {
+      return getRedirectRoute(USERS_ROUTE, ['/notendur'])
+    }
+
+    return '/'
+  }
+
   private redirect(
     res: Response,
     currentUser?: User,
     requestedRedirectRoute?: string,
   ) {
-    const redirectRoute = !currentUser
-      ? '/'
-      : requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
-      ? requestedRedirectRoute
-      : currentUser.role === UserRole.ADMIN
-      ? USERS_ROUTE
-      : currentUser.role === UserRole.DEFENDER
-      ? DEFENDER_CASES_ROUTE
-      : currentUser.institution?.type === InstitutionType.COURT_OF_APPEALS
-      ? COURT_OF_APPEAL_CASES_ROUTE
-      : isPrisonSystemUser(currentUser)
-      ? PRISON_CASES_ROUTE
-      : CASES_ROUTE
-
-    const ret = res.redirect(redirectRoute)
+    this.clearCookies(res, [this.codeVerifierCookie])
 
     if (currentUser) {
+      this.clearCookies(res, [this.redirectCookie])
+
+      const redirectRoute = this.getRedirectRouteForUser(
+        currentUser,
+        requestedRedirectRoute,
+      )
+
       this.auditTrailService.audit(
         currentUser.id,
         AuditedAction.LOGIN,
-        ret,
+        res.redirect(redirectRoute),
         currentUser.id,
       )
+
+      return
     }
+
+    res
+      .cookie(
+        this.redirectCookie.name,
+        { redirectRoute: requestedRedirectRoute },
+        this.redirectCookie.options,
+      )
+      .redirect('/')
   }
 }

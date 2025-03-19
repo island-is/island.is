@@ -773,6 +773,7 @@ export interface ICustomPageFields {
     | 'Grants'
     | 'DirectorateOfLabourMyPages'
     | 'Verdicts'
+    | 'OfficialJournalOfIcelandHelp'
     | undefined
 
   /** Alert Banner */
