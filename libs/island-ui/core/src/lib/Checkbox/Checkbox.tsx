@@ -28,7 +28,6 @@ export interface CheckboxProps {
   /** subLabel and rightContent can only be used if the 'large' prop set to true */
   subLabel?: React.ReactNode
   rightContent?: React.ReactNode
-  children?: React.ReactNode
 }
 
 interface AriaError {
