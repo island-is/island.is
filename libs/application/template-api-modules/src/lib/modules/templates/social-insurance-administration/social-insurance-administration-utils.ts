@@ -21,7 +21,6 @@ import {
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
-  HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
   getApplicationExternalData as getHSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
@@ -143,7 +142,6 @@ export const transformApplicationToHouseholdSupplementDTO = (
     bank,
     comment,
     paymentInfo,
-    householdSupplementHousing,
     householdSupplementChildren,
   } = getHSApplicationAnswers(application.answers)
   const { bankInfo, userProfileEmail } = getHSApplicationExternalData(
@@ -161,7 +159,6 @@ export const transformApplicationToHouseholdSupplementDTO = (
         bank: formatBank(bank),
       },
     }),
-    isRental: householdSupplementHousing === HouseholdSupplementHousing.RENTER,
     hasAStudyingAdolescenceResident: YES === householdSupplementChildren,
     period: {
       year: +selectedYear,
