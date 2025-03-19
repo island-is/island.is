@@ -23,7 +23,10 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import {
+  isEmptyArray,
+  isNonEmptyArray,
+} from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useDefendants,
   useFileList,
@@ -69,7 +72,8 @@ const IndictmentOverview = () => {
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
   const displaySentToPrisonAdminFiles =
-    (isCompletedWithRuling && sentToPrisonAdminDate) || sentToPrisonAdminFiles
+    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    isNonEmptyArray(sentToPrisonAdminFiles)
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
