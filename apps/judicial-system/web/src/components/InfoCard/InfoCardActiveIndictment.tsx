@@ -30,8 +30,6 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     showItem,
   } = useInfoCardItems()
 
-  console.log(registrar)
-
   return (
     <InfoCard
       sections={[
