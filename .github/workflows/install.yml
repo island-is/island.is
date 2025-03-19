@@ -156,7 +156,7 @@ jobs:
       - name: DEBUG Is judicial affected
         id: is-judicial-affected
         run: |
-          AFFECTED=$(node ./scripts/ci/is-affected.mjs judicial)
+          AFFECTED="$(node ./scripts/ci/is-affected.mjs judicial)"
           echo AFFECTED="$AFFECTED"
           echo AFFECTED="$AFFECTED" >> $GITHUB_OUTPUT
 
