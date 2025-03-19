@@ -1,0 +1,14 @@
+import { Module } from '@nestjs/common'
+
+// This is a shared module that gives you access to common methods
+import { SharedTemplateAPIModule } from '--IS-NESTED--../../shared'
+
+// Here you import your module service
+import { --PASCAL-CASE-TEMPLATE--Service } from './--KEBAB-CASE-TEMPLATE--.service'
+import { ApplicationsNotificationsModule } from '--IS-NESTED--../../../notification/notifications.module'
+@Module({
+  imports: [SharedTemplateAPIModule, ApplicationsNotificationsModule],
+  providers: [--PASCAL-CASE-TEMPLATE--Service],
+  exports: [--PASCAL-CASE-TEMPLATE--Service],
+})
+export class --PASCAL-CASE-TEMPLATE--Module {}
