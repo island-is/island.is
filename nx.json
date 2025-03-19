@@ -173,6 +173,11 @@
         "runtime": "node --version"
       }
     ],
+    "forceRebuild": [
+      {
+        "runtime": "node .github/actions/force-build.mjs"
+      }
+    ],
     "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
     "CI": [
       "{workspaceRoot}/.github/actions/",

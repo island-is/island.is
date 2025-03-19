@@ -4,6 +4,8 @@ import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 import { WorkflowID } from './git-action-status'
 
+// …
+
 const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
 
 ;(async () => {
