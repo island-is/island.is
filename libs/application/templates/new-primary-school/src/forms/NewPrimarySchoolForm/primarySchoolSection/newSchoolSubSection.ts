@@ -71,7 +71,7 @@ export const newSchoolSubSection = buildSubSection({
                     )?.length > 0,
                 )
                 ?.map(({ name, unitId }) => ({
-                  value: unitId || name || '',
+                  value: unitId || '',
                   label: name,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
