@@ -6,6 +6,8 @@ import { dataSchema } from '@island.is/application/templates/driving-license'
 import { infer as zinfer } from 'zod'
 
 import { formatPhoneNumber } from './'
+import { getValueViaPath } from '@island.is/application/core'
+import { Pickup } from '@island.is/api/domains/driving-license'
 
 export type DrivingLicenseSchema = zinfer<typeof dataSchema>
 
@@ -16,7 +18,6 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
     string,
     keyof PostTemporaryLicenseWithHealthDeclaration
   > = {
-    jurisdiction: 'authority',
     willBringQualityPhoto: 'bringNewPhoto',
     drivingInstructor: 'instructorSSN',
     email: 'email',
@@ -24,10 +25,14 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
   }
 
   const mappedAnswers: PostTemporaryLicenseWithHealthDeclaration = {
-    authority: 0,
+    // Setting default district authority to Kópavogur
+    authority: getValueViaPath(answers, 'delivery.jurisdiction') || 37,
     bringsHealthCertificate: true,
     bringNewPhoto: false,
-    sendLicenseInMail: false,
+    sendLicenseInMail:
+      getValueViaPath(answers, 'delivery.deliveryMethod') === Pickup.POST
+        ? true
+        : false,
     sendToAddress: null,
     instructorSSN: '',
     email: null,
