@@ -46,6 +46,11 @@ module.exports = {
             allowNull: true,
             defaultValue: null,
           },
+          has_payment: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
           been_published: {
             type: Sequelize.BOOLEAN,
             allowNull: false,

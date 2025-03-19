@@ -126,6 +126,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
+      'hasPayment',
       'beenPublished',
       'status',
       'applicationDaysToRemove',
@@ -524,6 +525,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
+      'hasPayment',
       'beenPublished',
       'status',
       'applicationDaysToRemove',
@@ -672,13 +674,20 @@ export class FormsService {
         displayOrder: 1,
         name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
       } as Section,
-      {
-        formId: form.id,
-        sectionType: SectionTypes.PAYMENT,
-        displayOrder: 3,
-        name: { is: 'Greiðsla', en: 'Payment' },
-      } as Section,
     ])
+
+    const paymentSection = await this.sectionModel.create({
+      formId: form.id,
+      sectionType: SectionTypes.PAYMENT,
+      displayOrder: 3,
+      name: { is: 'Greiðsla', en: 'Payment' },
+    } as Section)
+
+    await this.screenModel.create({
+      sectionId: paymentSection.id,
+      displayOrder: 0,
+      name: { is: 'Greiðslusíða', en: 'Payment screen' },
+    } as Screen)
 
     const inputSection = await this.sectionModel.create({
       formId: form.id,

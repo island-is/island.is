@@ -4,7 +4,7 @@ import { useContext, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Box, Button } from '@island.is/island-ui/core'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
-import { NavbarTab } from './components/NavbarTab/NavbarTab'
+// import { NavbarTab } from './components/NavbarTab/NavbarTab'
 import {
   FormSystemScreen,
   FormSystemField,
@@ -140,21 +140,21 @@ export const Navbar = () => {
     }
   }
 
-  const handleSaveAndContinue = () => {
-    setInSettings(false)
-    const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
-    if (section) {
-      controlDispatch({
-        type: 'SET_ACTIVE_ITEM',
-        payload: {
-          activeItem: {
-            type: 'Section',
-            data: section,
-          },
-        },
-      })
-    }
-  }
+  // const handleSaveAndContinue = () => {
+  //   setInSettings(false)
+  //   const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
+  //   if (section) {
+  //     controlDispatch({
+  //       type: 'SET_ACTIVE_ITEM',
+  //       payload: {
+  //         activeItem: {
+  //           type: 'Section',
+  //           data: section,
+  //         },
+  //       },
+  //     })
+  //   }
+  // }
 
   const { sensors, onDragStart, onDragOver, onDragEnd } = useNavbarDnD()
 
@@ -250,11 +250,11 @@ export const Navbar = () => {
         />
       </div>
       {renderNonInputSections()}
-      <Box display="flex" justifyContent="center" paddingTop={3}>
+      {/* <Box display="flex" justifyContent="center" paddingTop={3}>
         <Button variant="ghost" size="small" onClick={handleSaveAndContinue}>
           {formatMessage(m.saveAndContinue)}
         </Button>
-      </Box>
+      </Box> */}
     </div>
   )
 

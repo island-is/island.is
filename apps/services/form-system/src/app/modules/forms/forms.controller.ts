@@ -86,7 +86,6 @@ export class FormsController {
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
-    console.log('halló hoemir')
     return await this.formsService.update(id, updateFormDto)
   }
 

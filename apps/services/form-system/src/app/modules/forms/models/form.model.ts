@@ -79,6 +79,13 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: false,
   })
+  hasPayment!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
   beenPublished!: boolean
 
   @Column({

@@ -85,6 +85,9 @@ export class Form {
   modified?: Date
 
   @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
 
   @Field(() => Boolean, { nullable: true })

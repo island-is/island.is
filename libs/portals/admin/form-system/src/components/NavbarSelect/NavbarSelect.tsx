@@ -84,12 +84,5 @@ export const NavbarSelect = () => {
     ))
   }
 
-  return (
-    <div>
-      <Box paddingBottom={2} overflow="hidden">
-        <Text variant="h5">{formatMessage(m.step)}</Text>
-      </Box>
-      {renderSections()}
-    </div>
-  )
+  return <>{renderSections()}</>
 }

@@ -43,6 +43,9 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
+  hasPayment!: boolean
+
+  @ApiProperty()
   beenPublished!: boolean
 
   @ApiProperty()

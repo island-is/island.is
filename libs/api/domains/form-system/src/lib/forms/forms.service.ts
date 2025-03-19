@@ -94,8 +94,6 @@ export class FormsService {
       .formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
 
-    console.log('response', response)
-
     if (!response || response instanceof ApolloError) {
       throw new Error('Failed to update form')
     }

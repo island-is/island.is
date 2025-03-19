@@ -2176,6 +2176,9 @@
             "format": "date-time",
             "type": "string"
           },
+          "hasPayment": {
+            "type": "boolean"
+          },
           "beenPublished": {
             "type": "boolean"
           },
@@ -2248,6 +2251,7 @@
           "slug",
           "created",
           "modified",
+          "hasPayment",
           "beenPublished",
           "isTranslated",
           "applicationDaysToRemove",
@@ -2571,6 +2575,9 @@
           "invalidationDate": {
             "format": "date-time",
             "type": "string"
+          },
+          "hasPayment": {
+            "type": "boolean"
           },
           "beenPublished": {
             "type": "boolean"

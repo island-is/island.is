@@ -43,6 +43,11 @@ export class UpdateFormDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
+  hasPayment?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
   beenPublished?: boolean
 
   @IsBoolean()

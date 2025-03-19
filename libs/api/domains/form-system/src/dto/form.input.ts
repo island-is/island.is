@@ -104,6 +104,9 @@ export class UpdateFormDtoInput {
   invalidationDate?: Date
 
   @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
 
   @Field(() => Int, { nullable: true })
@@ -159,6 +162,9 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
   beenPublished?: boolean

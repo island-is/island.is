@@ -24,6 +24,7 @@ export const FormFragment = gql`
     created
     modified
     isTranslated
+    hasPayment
     beenPublished
     applicationDaysToRemove
     derivedFrom

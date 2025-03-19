@@ -31,9 +31,7 @@ export const FormProvider: React.FC<{
   formBuilder: FormSystemFormResponse
 }> = ({ children, formBuilder }) => {
   const [focus, setFocus] = useState<string>('')
-  const [inSettings, setInSettings] = useState(
-    formBuilder?.form?.name?.is === '',
-  )
+  const [inSettings, setInSettings] = useState(true)
   const [inListBuilder, setInListBuilder] = useState<boolean>(false)
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
     NavbarSelectStatus.OFF,
