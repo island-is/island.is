@@ -1,9 +1,6 @@
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
-import {
-  HouseholdSupplementHousing,
-  getApplicationAnswers as getHSApplicationAnswers,
-} from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   ApplicationType,
   Employment,
@@ -217,12 +214,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   private async getHSAttachments(
     application: Application,
   ): Promise<Attachment[]> {
-    const {
-      schoolConfirmationAttachments,
-      leaseAgreementAttachments,
-      householdSupplementChildren,
-      householdSupplementHousing,
-    } = getHSApplicationAnswers(application.answers)
+    const { schoolConfirmationAttachments, householdSupplementChildren } =
+      getHSApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -236,20 +229,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           application,
           DocumentTypeEnum.SCHOOL_CONFIRMATION,
           schoolConfirmationAttachments,
-        )),
-      )
-    }
-
-    if (
-      leaseAgreementAttachments &&
-      leaseAgreementAttachments.length > 0 &&
-      householdSupplementHousing === HouseholdSupplementHousing.RENTER
-    ) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.RENTAL_AGREEMENT,
-          leaseAgreementAttachments,
         )),
       )
     }
