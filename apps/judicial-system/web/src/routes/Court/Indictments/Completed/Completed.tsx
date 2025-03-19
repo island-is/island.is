@@ -328,9 +328,7 @@ const Completed: FC = () => {
                       >
                         <SectionHeading
                           heading="h4"
-                          title={formatMessage(
-                            strings.verdictAppealDecisionTitle,
-                          )}
+                          title="Afstaða dómfellda til dóms"
                           marginBottom={2}
                           required
                         />

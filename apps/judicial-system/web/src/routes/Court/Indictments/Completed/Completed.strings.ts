@@ -49,11 +49,6 @@ const strings = defineMessages({
     description:
       'Notaður sem texti í valmöguleika fyrir það þegar birting dóms á ekki við.',
   },
-  verdictAppealDecisionTitle: {
-    id: 'judicial.system.core:court.indictments.completed.verdict_appeal_decision_title',
-    defaultMessage: 'Afstaða dómfellda til dóms',
-    description: 'Notaður sem titill fyrir afstöðu dómfellda til dóms.',
-  },
   sentToPublicProsecutorModalTitle: {
     id: 'judicial.system.core:court.indictments.completed.sent_to_public_prosecutor_modal_title',
     defaultMessage: 'Mál sent til Ríkissaksóknara',
