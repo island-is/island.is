@@ -26,13 +26,9 @@ import {
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFileCategory,
-  CaseRepresentative,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  ReactSelectOption,
-  TempCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useS3Upload,
@@ -74,7 +70,7 @@ const getUserProps = (user: InstitutionUser | undefined) => {
 }
 
 const AddFiles: FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
@@ -108,13 +104,16 @@ const AddFiles: FC = () => {
   const { sendNotification } = useCase()
 
   const addFiles = (files: File[]) => {
+    const { selectedCaseRepresentative } = fileRepresentative
+
     addUploadFiles(
       files,
       {
         status: 'done',
-        fileRepresentative: fileRepresentative?.caseRepresentative?.name,
-        // TODO
-        category: fileRepresentative?.caseFileCategory || caseFileCategory,
+        fileRepresentative: selectedCaseRepresentative?.name,
+        category: !isEmpty(selectedCaseRepresentative)
+          ? selectedCaseRepresentative.caseFileCategory
+          : caseFileCategory,
         displayDate: submittedDate.toISOString(),
       },
       true,
@@ -125,15 +124,19 @@ const AddFiles: FC = () => {
     updatedFileRepresentative?: RepresentativeSelectOption,
     updatedSubmittedDate?: Date,
   ) => {
-    const representative = updatedFileRepresentative || fileRepresentative
+    const currentRepresentativeSelection =
+      updatedFileRepresentative || fileRepresentative
+    const { selectedCaseRepresentative } = currentRepresentativeSelection
     const date = updatedSubmittedDate || submittedDate
+
     uploadFiles.forEach((file) => {
       updateUploadFile({
         ...file,
-        fileRepresentative: representative?.caseRepresentative?.name,
+        fileRepresentative: selectedCaseRepresentative?.name,
         displayDate: date.toISOString(),
-        // TODO
-        category: !!representative?.caseFileCategory,
+        category: !isEmpty(selectedCaseRepresentative)
+          ? selectedCaseRepresentative.caseFileCategory
+          : caseFileCategory,
       })
     })
   }
@@ -247,8 +250,8 @@ const AddFiles: FC = () => {
           )}
           onClose={() => setVisibleModal(undefined)}
           onSecondaryButtonClick={() => setVisibleModal(undefined)}
-          onPrimaryButtonClick={() => {
-            handleNextButtonClick()
+          onPrimaryButtonClick={async () => {
+            await handleNextButtonClick()
             router.push(previousRoute)
           }}
         />

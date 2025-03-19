@@ -8,13 +8,12 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseRepresentativeType,
+  CaseFileCategory,
   DefendantEventType,
 } from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../defendant'
 import { EventLog } from '../../event-log'
-import { User } from '../../user/user.model'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
 
@@ -41,7 +40,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
       ? {
           name: prosecutor.name,
           nationalId: prosecutor.nationalId,
-          type: CaseRepresentativeType.PROSECUTOR,
+          caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
         }
       : undefined
 
@@ -52,7 +51,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return {
       name: defenderName,
       nationalId: defenderNationalId,
-      type: CaseRepresentativeType.DEFENDER,
+      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
     }
   }
 
@@ -64,16 +63,16 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return {
       name: spokespersonName,
       nationalId: spokespersonNationalId,
-      type: spokespersonIsLawyer
-        ? CaseRepresentativeType.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON
-        : CaseRepresentativeType.CIVIL_CLAIMANT_SPOKESPERSON,
+      caseFileCategory: spokespersonIsLawyer
+        ? CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE
+        : CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
     }
   })
 
   const defendants = theCase.defendants?.map((defendant) => ({
     name: defendant.name,
     nationalId: defendant.nationalId,
-    type: CaseRepresentativeType.DEFENDANT,
+    caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
   }))
   return [
     prosecutorRepresentativeProps,

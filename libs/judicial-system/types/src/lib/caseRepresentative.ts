@@ -1,7 +1,0 @@
-export enum CaseRepresentativeType {
-  PROSECUTOR = 'PROSECUTOR', // sækjandi
-  DEFENDER = 'DEFENDER', // verjandi
-  DEFENDANT = 'DEFENDANT', // ákærði
-  CIVIL_CLAIMANT_SPOKESPERSON = 'CIVIL_CLAIMANT_SPOKESPERSON', // réttargæslumaður
-  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON', // lögmaður
-}

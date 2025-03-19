@@ -1,8 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { CaseRepresentativeType } from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 
-registerEnumType(CaseRepresentativeType, { name: 'CaseRepresentativeType' })
+registerEnumType(CaseFileCategory, { name: 'CaseFileCategory' })
 
 @ObjectType()
 export class CaseRepresentative {
@@ -12,6 +12,6 @@ export class CaseRepresentative {
   @Field(() => String)
   readonly name!: string
 
-  @Field(() => CaseRepresentativeType)
-  readonly type!: CaseRepresentativeType
+  @Field(() => CaseFileCategory)
+  readonly caseFileCategory!: CaseFileCategory
 }
