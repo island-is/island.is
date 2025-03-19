@@ -1,4 +1,4 @@
-# --TEMPLATE--
+# --KEBAB-CASE-TEMPLATE--
 
 This template for an application was generated with the `nx generate-template --KEBAB-CASE-TEMPLATE--` command.
 
