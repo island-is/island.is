@@ -1,4 +1,4 @@
-import { Application, YES, YesOrNo } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
   ApplicationDTO,
@@ -14,7 +14,7 @@ import {
   getApplicationAnswers as getOAPApplicationAnswers,
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
@@ -141,13 +141,7 @@ export const transformApplicationToHouseholdSupplementDTO = (
     selectedMonth,
     applicantPhonenumber,
     bank,
-    bankAccountType,
     comment,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     householdSupplementHousing,
     householdSupplementChildren,
@@ -163,21 +157,9 @@ export const transformApplicationToHouseholdSupplementDTO = (
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+      domesticBankInfo: {
+        bank: formatBank(bank),
+      },
     }),
     isRental: householdSupplementHousing === HouseholdSupplementHousing.RENTER,
     hasAStudyingAdolescenceResident: YES === householdSupplementChildren,
@@ -194,20 +176,13 @@ export const transformApplicationToHouseholdSupplementDTO = (
 
 export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
   application: Application,
-  uploads: Attachment[],
 ): ApplicationDTO => {
   const {
     selectedYear,
     selectedMonth,
     applicantPhonenumber,
     bank,
-    bankAccountType,
     comment,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
@@ -224,21 +199,9 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+      domesticBankInfo: {
+        bank: formatBank(bank),
+      },
     }),
     taxInfo: {
       personalAllowance: YES === personalAllowance,
@@ -250,7 +213,6 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
     },
-    uploads,
     comment: comment,
   }
 
@@ -400,6 +362,7 @@ export const transformApplicationToIncomePlanDTO = (
     applicationId: application.id,
     incomePlan: {
       incomeYear: incomePlanConditions.incomePlanYear,
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(application),
       incomeTypes: getIncomeTypes(application),
     },
   }
@@ -461,6 +424,16 @@ export const getIncomeTypes = (application: Application): IncomeTypes[] => {
           amountDec: Number(i.incomePerYear) / 12,
         }),
   }))
+}
+
+export const shouldDistributeIncomeByMonth = (application: Application) => {
+  // Let TR know if there is any case where income is uneven during the year
+  const { incomePlan } = getIPApplicationAnswers(application.answers)
+
+  const hasUnevenIncome = incomePlan.some(
+    (i) => i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
+  )
+  return hasUnevenIncome
 }
 
 export const getMonthNumber = (monthName: string): number => {

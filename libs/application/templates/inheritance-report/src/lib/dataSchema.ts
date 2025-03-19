@@ -60,23 +60,26 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
           ...deceasedShare,
         })
         .refine(
-          ({ propertyValuation }) => {
-            return propertyValuation !== ''
+          ({ propertyValuation, enabled }) => {
+            return !enabled || propertyValuation !== ''
           },
           {
             path: ['propertyValuation'],
           },
         )
         .refine(
-          ({ assetNumber }) => {
-            return isValidString(assetNumber)
+          ({ assetNumber, enabled }) => {
+            return !enabled || isValidString(assetNumber)
           },
           {
             path: ['assetNumber'],
           },
         )
         .refine(
-          ({ share = undefined }) => {
+          ({ enabled, share = undefined }) => {
+            if (!enabled) {
+              return true
+            }
             if (withShare && typeof share === 'string') {
               const num = parseInt(share, 10)
 
@@ -92,8 +95,8 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
           },
         )
         .refine(
-          ({ description }) => {
-            return isValidString(description)
+          ({ description, enabled }) => {
+            return !enabled || isValidString(description)
           },
           {
             path: ['description'],
@@ -153,7 +156,7 @@ export const inheritanceReportSchema = z.object({
           email: z.string().optional(),
           phone: z.string().optional(),
           name: z.string(),
-          nationalId: z.string().refine((v) => kennitala.isValid(v)),
+          nationalId: z.string().optional(),
         })
         .optional(),
     })
@@ -179,6 +182,17 @@ export const inheritanceReportSchema = z.object({
       },
       {
         path: ['spouse', 'phone'],
+      },
+    )
+    .refine(
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
+          return kennitala.isValid(spouse?.nationalId ?? '')
+        }
+        return true
+      },
+      {
+        path: ['spouse', 'nationalId'],
       },
     ),
 
@@ -253,8 +267,8 @@ export const inheritanceReportSchema = z.object({
             ...deceasedShare,
           })
           .refine(
-            ({ assetNumber }) => {
-              return assetNumber && assetNumber !== ''
+            ({ assetNumber, enabled }) => {
+              return assetNumber && assetNumber !== '' && enabled
                 ? kennitala.isValid(assetNumber)
                 : true
             },
@@ -301,8 +315,8 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ assetNumber }) => {
-              return assetNumber === ''
+            ({ assetNumber, enabled }) => {
+              return assetNumber === '' || !enabled
                 ? true
                 : assetNumber && kennitala.isValid(assetNumber)
             },
@@ -603,7 +617,7 @@ export const inheritanceReportSchema = z.object({
         },
       )
 
-      /* Validating email and phone of member depending on whether the field is 
+      /* Validating email and phone of member depending on whether the field is
           enabled and whether member has advocate */
       .refine(
         ({ enabled, advocate, phone }) => {

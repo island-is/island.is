@@ -7,6 +7,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
 } from 'class-validator'
@@ -90,4 +91,9 @@ export class CreateCaseDto {
   @IsObject()
   @ApiPropertyOptional({ type: Object })
   readonly crimeScenes?: CrimeSceneMap
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly prosecutorId?: string
 }

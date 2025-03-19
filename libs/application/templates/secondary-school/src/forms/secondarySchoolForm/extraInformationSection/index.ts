@@ -24,7 +24,6 @@ export const extraInformationSection = buildSection({
     buildMultiField({
       id: 'extraInformationMultiField',
       title: extraInformation.general.pageTitle,
-      description: extraInformation.general.description,
       children: [
         buildAlertMessageField({
           id: 'alertPastRegistrationEndDate',
@@ -91,10 +90,10 @@ export const extraInformationSection = buildSection({
         }),
         buildFileUploadField({
           id: 'extraInformation.supportingDocuments',
-          title: '',
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          uploadMultiple: true,
           uploadHeader: extraInformation.supportingDocuments.fileUploadHeader,
           uploadDescription:
             extraInformation.supportingDocuments.fileUploadDescription,

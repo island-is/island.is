@@ -35,6 +35,9 @@ export class Grant {
   @Field()
   name!: string
 
+  @Field()
+  lastUpdateTimestamp!: string
+
   @Field({ nullable: true })
   description?: string
 
@@ -148,6 +151,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
   return {
     id: sys.id,
     name: fields.grantName,
+    lastUpdateTimestamp: sys.updatedAt ?? sys.createdAt,
     description: fields.grantDescription,
     applicationId: fields.grantApplicationId,
     applicationUrl: fields.granApplicationUrl?.fields

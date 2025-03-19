@@ -9,7 +9,6 @@ import { getChargeItemsWithExtraLabel } from '../../utils'
 
 export const HealthcareLicenseCertificateForm: Form = buildForm({
   id: 'HealthcareLicenseCertificateForm',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

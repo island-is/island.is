@@ -9,10 +9,9 @@ import { App } from './app/App'
 import { environment } from './environments'
 
 if (!isRunningOnEnvironment('local')) {
-  userMonitoring.initDdRum({
+  userMonitoring.initDdLogs({
     service: 'service-portal',
-    applicationId: environment.DD_RUM_APPLICATION_ID,
-    clientToken: environment.DD_RUM_CLIENT_TOKEN,
+    clientToken: environment.DD_LOGS_CLIENT_TOKEN,
     env: environment.ENVIRONMENT,
     version: environment.APP_VERSION,
   })

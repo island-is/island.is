@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
   FileType,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -15,7 +14,6 @@ import {
   SINGLE,
   States,
   UnEmployedBenefitTypes,
-  YES,
   calculateDaysUsedByPeriods,
   calculatePeriodLength,
   getAdditionalSingleParentRightsInDays,
@@ -83,7 +81,7 @@ import {
   getRightsCode,
   transformApplicationToParentalLeaveDTO,
   getFromDate,
-  isPreBirthRight,
+  isFixedRight,
 } from './parental-leave.utils'
 import {
   generateAssignEmployerApplicationSms,
@@ -848,9 +846,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   ): Period[] {
     return periods.map((period, index) => {
       const isFirstPeriod = index === 0
-      const preBirthRight = isPreBirthRight(period.rightCodePeriod)
+      const fixedRight = isFixedRight(period.rightCodePeriod)
       return {
-        rightsCodePeriod: preBirthRight ? period.rightCodePeriod : rights,
+        rightsCodePeriod: fixedRight ? period.rightCodePeriod : rights,
         from: getFromDate(
           isFirstPeriod,
           isActualDateOfBirth,
@@ -880,7 +878,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const rightsDTO = await this.createRightsDTO(application)
     const rightUnits = rightsDTO.map(({ rightsUnit }) => rightsUnit)
     const rights = rightUnits
-      .filter((rightUnit) => !isPreBirthRight(rightUnit))
+      .filter((rightUnit) => !isFixedRight(rightUnit))
       .join(',')
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
@@ -1075,6 +1073,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationRights on nationalId with error: ${e}`,
+      )
+    }
+
+    return null
+  }
+
+  async setOtherParent({ application }: TemplateApiModuleActionProps) {
+    try {
+      const { otherParentId, otherParentName } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return { otherParentId, otherParentName }
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch otherParent on applicationId: ${application.id} with error: ${e}`,
       )
     }
 

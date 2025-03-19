@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -40,7 +40,7 @@ import { DefendantService } from './defendant.service'
 
 @Controller('api/case/:caseId/defendant')
 @ApiTags('defendants')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,
@@ -91,12 +91,16 @@ export class DefendantController {
 
     // If the defendant was present at the court hearing,
     // then set the verdict view date to the case ruling date
-    if (
-      defendantToUpdate.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-    ) {
+    // Otherwise we want to set the verdict view date to null
+    // in case it has already been set by selecting NOT_APPLICABLE
+    if (defendantToUpdate.serviceRequirement !== undefined) {
       defendantToUpdate = {
         ...defendantToUpdate,
-        verdictViewDate: theCase.rulingDate,
+        verdictViewDate:
+          defendantToUpdate.serviceRequirement ===
+          ServiceRequirement.NOT_APPLICABLE
+            ? theCase.rulingDate
+            : null,
       }
     }
 

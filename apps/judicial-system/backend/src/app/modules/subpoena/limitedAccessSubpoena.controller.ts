@@ -15,7 +15,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -40,7 +40,7 @@ import { Subpoena } from './models/subpoena.model'
 ])
 @ApiTags('limited access subpoenas')
 @UseGuards(
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   CaseExistsGuard,
   RolesGuard,
   new CaseTypeGuard(indictmentCases),

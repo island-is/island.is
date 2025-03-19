@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
+import flatMap from 'lodash/flatMap'
+import uniqBy from 'lodash/uniqBy'
 import { useRouter } from 'next/router'
 
 import {
@@ -103,9 +105,23 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
 
   const filteredData = useMemo(() => {
     let filtered = categories
+    let filteredMain = mainCategories
+
+    if (queryDepartment) {
+      const found = departments?.find((c) => c.slug === queryDepartment)
+      filteredMain = mainCategories?.filter(
+        (category) => category.departmentId === found?.id,
+      )
+      const filteredMainCategories: OfficialJournalOfIcelandAdvertCategory[] =
+        uniqBy(flatMap(filteredMain, 'categories'), 'id')
+
+      if (filteredMainCategories.length) {
+        filtered = filteredMainCategories
+      }
+    }
 
     if (queryMainCateogry) {
-      const found = mainCategories?.find((c) => c.slug === queryMainCateogry)
+      const found = filteredMain?.find((c) => c.slug === queryMainCateogry)
 
       if (found) {
         const subCategorySlugs = found.categories?.map((c) => c.slug)
@@ -117,10 +133,6 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
       filtered = filtered.filter((c) =>
         c.title.toLowerCase().includes(search.toLowerCase()),
       )
-    }
-
-    if (queryDepartment) {
-      filtered = filtered.filter((c) => c.department?.slug === queryDepartment)
     }
 
     if (queryLetters.length > 0) {
@@ -152,6 +164,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
         ...c,
         letter: c.title.charAt(0),
       })),
+      mainCategories: filteredMain,
       group: groupedByLetter,
       letters: letters,
     }
@@ -249,7 +262,9 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
   }
 
   const departmentsOptions = mapEntityToOptions(departments)
-  const mainCategoriesOptions = mapEntityToOptions(mainCategories)
+  const mainCategoriesOptions = mapEntityToOptions(
+    filteredData.mainCategories ?? mainCategories,
+  )
 
   return (
     <OJOIWrapper
@@ -297,21 +312,19 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
               </Button>
             </Box>
 
-            <Box hidden>
-              <Select
-                name="deild"
-                label={formatMessage(m.categories.departmentLabel)}
-                size="xs"
-                placeholder={formatMessage(m.categories.departmentPlaceholder)}
-                options={[
-                  { ...emptyOption(formatMessage(m.categories.departmentAll)) },
-                  ...departmentsOptions,
-                ]}
-                isClearable
-                value={findValueOption(departmentsOptions, queryDepartment)}
-                onChange={(v) => onDepartmentChange(v?.value)}
-              />
-            </Box>
+            <Select
+              name="deild"
+              label={formatMessage(m.categories.departmentLabel)}
+              size="xs"
+              placeholder={formatMessage(m.categories.departmentPlaceholder)}
+              options={[
+                { ...emptyOption(formatMessage(m.categories.departmentAll)) },
+                ...departmentsOptions,
+              ]}
+              isClearable
+              value={findValueOption(departmentsOptions, queryDepartment)}
+              onChange={(v) => onDepartmentChange(v?.value)}
+            />
 
             <Select
               name="yfirflokkur"
@@ -372,7 +385,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
                     {groups.map((grp, i) => (
                       <T.Row key={i}>
                         {grp.map((cat) => (
-                          <T.Data key={i}>
+                          <T.Data key={`d-${cat.value}`}>
                             <LinkV2
                               color="blue400"
                               underline={'normal'}

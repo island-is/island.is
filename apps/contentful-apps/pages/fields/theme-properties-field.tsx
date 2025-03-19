@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
-  Paragraph,
   FormControl,
+  Paragraph,
   Radio,
   Stack,
   TextInput,
@@ -235,8 +235,8 @@ const ThemePropertiesField = () => {
             center
           </Radio>
           <Radio
-            name="imageObjectFitRadio"
-            id="imageObjectFitRight"
+            name="imageObjectPositionRadio"
+            id="imageObjectPositionRight"
             value="right"
             isChecked={state.imageObjectPosition === 'right'}
             onChange={() => {

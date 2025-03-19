@@ -5,10 +5,12 @@ import {
   buildRadioField,
   buildDescriptionField,
   buildFileUploadField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
-import { UPLOAD_ACCEPT, YES, NO } from '../../lib/constants'
+import { UPLOAD_ACCEPT } from '../../lib/constants'
 import { Photo } from '../../types'
 
 export const sectionPhoto = buildSection({
@@ -21,7 +23,6 @@ export const sectionPhoto = buildSection({
       children: [
         buildDescriptionField({
           id: 'descriptionPhoto',
-          title: '',
           description: m.qualityPhotoExistingPhotoText,
           condition: (_, externalData) => {
             return (
@@ -32,7 +33,6 @@ export const sectionPhoto = buildSection({
         }),
         buildDescriptionField({
           id: 'descriptionNoPhoto',
-          title: '',
           description: m.qualityPhotoNoPhotoDescription,
           condition: (_, externalData) => {
             return (
@@ -44,7 +44,6 @@ export const sectionPhoto = buildSection({
         }),
         buildCustomField({
           id: 'qphoto',
-          title: '',
           component: 'QualityPhoto',
           condition: (_, externalData) => {
             return (
@@ -55,7 +54,6 @@ export const sectionPhoto = buildSection({
         }),
         buildRadioField({
           id: 'photo.qualityPhoto',
-          title: '',
           width: 'half',
           disabled: false,
           options: [
@@ -72,7 +70,6 @@ export const sectionPhoto = buildSection({
         }),
         buildFileUploadField({
           id: 'photo.attachments',
-          title: '',
           uploadHeader: m.qualityPhotoFileUploadTitle,
           uploadDescription: m.qualityPhotoFileUploadDescription,
           uploadButtonLabel: m.qualityPhotoUploadButtonLabel,

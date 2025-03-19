@@ -479,6 +479,8 @@ export class DocumentServiceV2 {
         return this.documentService.bookmarkMail(nationalId, documentId)
       case MailAction.UNBOOKMARK:
         return this.documentService.unbookmarkMail(nationalId, documentId)
+      case MailAction.READ:
+        return this.documentService.batchReadMail(nationalId, [documentId])
       default:
         this.logger.error('Invalid single document action', {
           action,

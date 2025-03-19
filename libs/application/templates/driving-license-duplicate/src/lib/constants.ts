@@ -1,3 +1,4 @@
+import { YesOrNo } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 
 export type Events =
@@ -17,20 +18,11 @@ export enum Roles {
   ACTOR = 'actor',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
 export const IGNORE = 'IgnoreQualityPhotoAndSignature'
-
-type YesOrNo = 'yes' | 'no'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
-}
-
-export type SubmitResponse = {
-  success: boolean
-  orderId?: string
 }
 
 export type DrivingLicenseDuplicateFakeData = {
@@ -39,4 +31,9 @@ export type DrivingLicenseDuplicateFakeData = {
   licenseIssuedDate?: string
   hasQualityPhoto: YesOrNo
   hasQualitySignature: YesOrNo
+}
+
+export enum Delivery {
+  SEND_HOME = 'sendHome',
+  PICKUP = 'pickup',
 }

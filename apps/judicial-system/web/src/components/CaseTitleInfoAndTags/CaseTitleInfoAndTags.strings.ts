@@ -27,4 +27,9 @@ export const CaseTitleInfoAndTags = defineMessages({
     description:
       'Texti í viðvörunarglugga sem birtir upplýsingar um hvenær kæra var móttekin',
   },
+  caseCompletedDatePrefix: {
+    id: 'judicial.system.core:case_overview_header.case_completed_date_prefix',
+    defaultMessage: 'Máli lokið',
+    description: 'Notaður sem texti fyrir "Máli lokið" á yfirlitsskjá mála.',
+  },
 })

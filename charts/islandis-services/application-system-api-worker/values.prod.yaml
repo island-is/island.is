@@ -26,6 +26,7 @@ command:
 enabled: true
 env:
   APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
+  APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
   CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
   CODE_OWNER: 'norda-applications'
   DB_HOST: 'postgres-applications.internal'
@@ -38,7 +39,7 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'

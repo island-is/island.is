@@ -4,10 +4,10 @@ import {
   ReviewGroup,
 } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
-import { YES } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
+import { YES } from '@island.is/application/core'
 
 export const PersonalAllowance = ({
   application,

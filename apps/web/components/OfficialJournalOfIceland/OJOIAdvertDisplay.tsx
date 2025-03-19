@@ -39,7 +39,7 @@ export const OJOIAdvertDisplay = ({
           Nr. {advertNumber}
         </Text>
         <Text variant="eyebrow" color="purple400">
-          Undirritað: {signatureDate}
+          {signatureDate}
         </Text>
       </Box>
       <Box textAlign="center" marginBottom={[2, 3, 4]}>

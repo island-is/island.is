@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { LayoutGroup } from 'framer-motion'
+import { LayoutGroup } from 'motion/react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box } from '@island.is/island-ui/core'
@@ -108,7 +108,7 @@ const CaseFile = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
           nextIsDisabled={editCount > 0}

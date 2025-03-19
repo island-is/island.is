@@ -1,20 +1,13 @@
-import { getValueViaPath } from '@island.is/application/core'
-import {
-  BankAccountType,
-  MONTHS,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Attachments,
   BankInfo,
+  Eligible,
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
-  Application,
-  ExternalData,
-  YES,
-  YesOrNo,
-} from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
@@ -72,25 +65,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
-  const bankAccountType = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountType',
-  ) as BankAccountType
-
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
-  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
-
-  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
-
-  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
-
-  const bankAddress = getValueViaPath(
-    answers,
-    'paymentInfo.bankAddress',
-  ) as string
-
-  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
@@ -111,13 +86,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     additionalAttachments,
     additionalAttachmentsRequired,
     comment,
-    bankAccountType,
     bank,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     tempAnswers,
   }
@@ -174,15 +143,10 @@ export const getApplicationExternalData = (
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
-  const currencies = getValueViaPath(
+  const eligible = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationCurrencies.data',
-  ) as Array<string>
-
-  const isEligible = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-  ) as boolean
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  ) as Eligible
 
   const spouseName = getValueViaPath(
     externalData,
@@ -215,8 +179,7 @@ export const getApplicationExternalData = (
     bankInfo,
     userProfileEmail,
     userProfilePhoneNumber,
-    currencies,
-    isEligible,
+    eligible,
     spouseName,
     spouseNationalId,
     maritalStatus,
@@ -337,8 +300,8 @@ export const getAvailableMonths = (selectedYear: string) => {
   return months
 }
 
-export const isEligible = (externalData: ExternalData): boolean => {
-  const { isEligible } = getApplicationExternalData(externalData)
+export const eligible = (externalData: ExternalData): boolean => {
+  const { eligible } = getApplicationExternalData(externalData)
 
-  return isEligible
+  return eligible?.isEligible
 }

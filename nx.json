@@ -17,6 +17,22 @@
         "parallel": 1
       }
     },
+    "ci": {
+      "runner": "nx-cloud",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e",
+          "codegen/backend-client",
+          "codegen/backend-schema",
+          "codegen/frontend-client",
+          "generateDevIndexHTML"
+        ],
+        "nxCloudId": "64e4eb6a54304f090734e8df"
+      }
+    },
     "docker-test": {
       "runner": "@nx/workspace/tasks-runners/default",
       "options": {
@@ -25,7 +41,6 @@
       }
     }
   },
-  "defaultProject": "web",
   "generators": {
     "@nrwl/nx-plugin": {
       "plugin": {
@@ -51,6 +66,7 @@
       "application": {
         "style": "scss",
         "linter": "eslint",
+        "bundler": "webpack",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -147,6 +163,11 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "forceRebuild": [
+      {
+        "runtime": "node .github/actions/force-build.mjs"
+      }
+    ],
     "nodeVersion": [
       {
         "runtime": "node --version"
@@ -171,6 +192,7 @@
     ],
     "production": [
       "default",
+      "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",

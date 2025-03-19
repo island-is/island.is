@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
+import { DateType, type User } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -21,7 +21,6 @@ import {
   DeleteCivilClaimantResponse,
   DeleteDefendantResponse,
 } from '../defendant'
-import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
   DeleteFileResponse,
@@ -32,10 +31,14 @@ import {
 } from '../file'
 import {
   CreateIndictmentCountInput,
+  CreateOffenseInput,
   DeleteIndictmentCountInput,
-  DeleteIndictmentCountResponse,
+  DeleteOffenseInput,
+  DeleteResponse,
   IndictmentCount,
+  Offense,
   UpdateIndictmentCountInput,
+  UpdateOffenseInput,
 } from '../indictment-count'
 import { Institution } from '../institution'
 import {
@@ -429,10 +432,36 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   deleteIndictmentCount(
     input: DeleteIndictmentCountInput,
-  ): Promise<DeleteIndictmentCountResponse> {
+  ): Promise<DeleteResponse> {
     const { caseId, indictmentCountId } = input
 
     return this.delete(`case/${caseId}/indictmentCount/${indictmentCountId}`)
+  }
+
+  createOffense(input: CreateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, ...createOffense } = input
+
+    return this.post(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense`,
+      createOffense,
+    )
+  }
+
+  updateOffense(input: UpdateOffenseInput): Promise<Offense> {
+    const { caseId, indictmentCountId, offenseId, ...updateOffense } = input
+
+    return this.patch(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+      updateOffense,
+    )
+  }
+
+  deleteOffense(input: DeleteOffenseInput): Promise<DeleteResponse> {
+    const { caseId, offenseId, indictmentCountId } = input
+
+    return this.delete(
+      `case/${caseId}/indictmentCount/${indictmentCountId}/offense/${offenseId}`,
+    )
   }
 
   limitedAccessGetCase(id: string): Promise<Case> {
@@ -515,17 +544,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
+  createEventLog(createEventLog: unknown) {
     return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${this.config.secretToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...eventLog,
-        userRole,
-      }),
+      body: JSON.stringify(createEventLog),
     })
   }
 }

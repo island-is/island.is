@@ -1,9 +1,6 @@
 name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
-  affected-projects:
-    description: 'Generated projects'
-    required: true
   dd-api-key:
     description: 'Datadog API key'
     required: true
@@ -30,23 +27,13 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-        AFFECTED_PROJECTS: ${{ inputs.affected-projects }}
     - name: Set Codeconv version numner
       run: |
         echo "CODECOV_REV=v0.3.2" >> $GITHUB_ENV
       shell: bash
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
-
-    - name: Setup yarn
-      run: corepack enable
-      shell: bash
-
     - name: Running tests
-      run: |
-        bash ./scripts/ci/30_test.sh
+      run: ./scripts/ci/30_test.sh
       shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}

@@ -521,4 +521,9 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly hasCivilClaims?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isCompletedWithoutRuling?: boolean
 }

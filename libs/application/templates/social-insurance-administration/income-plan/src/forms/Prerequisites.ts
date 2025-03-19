@@ -115,14 +115,12 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible10Days',
-              title: '',
               description: (application: Application) =>
                 eligibleText(application.externalData),
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

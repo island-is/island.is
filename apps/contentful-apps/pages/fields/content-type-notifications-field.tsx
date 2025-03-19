@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Note, Paragraph } from '@contentful/f36-components'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Note, Paragraph } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
+
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,

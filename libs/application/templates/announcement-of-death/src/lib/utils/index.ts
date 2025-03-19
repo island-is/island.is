@@ -1,7 +1,6 @@
 import { RelationEnum, Answers } from '../../types'
-import { YES } from '../constants'
 import { Application, StaticText } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { m } from '../messages'
 
 export const getRelationOptions = (): Record<
