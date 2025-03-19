@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -7,9 +7,6 @@ import { UserInformation } from '../../shared'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { BuyerItem } from './BuyerItem'
-
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 
 export const Buyer: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { locale } = useLocale()
@@ -49,7 +46,7 @@ export const Buyer: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
       buyer.name.length > 0 &&
       buyer.nationalId.length === 10 &&
       buyer.phone.length >= 7 &&
-      emailRegex.test(buyer.email)
+      EMAIL_REGEX.test(buyer.email)
     ) {
       updateBuyer(buyer)
     }

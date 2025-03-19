@@ -113,7 +113,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: ['clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
