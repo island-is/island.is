@@ -5,6 +5,9 @@ import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
 @ObjectType()
 class OrganizationSubpageLink {
+  @Field(() => String, { nullable: true })
+  id?: string | null
+
   @Field()
   label!: string
 
@@ -42,6 +45,7 @@ export const mapOrganizationParentSubpage = ({
             Boolean(page.fields.slug),
         )
         .map((page) => ({
+          id: page.sys.id,
           label: page.fields.title,
           href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${
             page.fields.organizationPage.fields.slug
