@@ -7,6 +7,7 @@ const MAX_ATTEMPTS = process.env.MAX_ATTEMPTS || 5
 const WAIT_TIME_SECONDS = process.env.WAIT_TIME_SECONDS || 300
 const DOCKER_TYPE = process.env.DOCKER_TYPE
 const NODE_IMAGE_VERSION = process.env.NODE_IMAGE_VERSION
+const EXTRA_DOCKER_BUILD_ARGS = process.env.EXTRA_DOCKER_BUILD_ARGS
 
 /**
  * Executes a shell command and returns the output

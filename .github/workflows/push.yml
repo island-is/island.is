@@ -345,6 +345,7 @@ jobs:
 
           # Add secret to EXTRA_DOCKER_BUILD_ARGS
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "$GITHUB_OUTPUT"
 
       - name: Check if cached buildx image exists
         id: cache-check
@@ -366,7 +367,7 @@ jobs:
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
           DOCKER_TYPE: ${{ env.DOCKER_TYPE }}
           NODE_IMAGE_VERSION: ${{ env.NODE_IMAGE_VERSION }}
-          EXTRA_DOCKER_BUILD_ARGS: ${{ env.EXTRA_DOCKER_BUILD_ARGS }}
+          EXTRA_DOCKER_BUILD_ARGS: ${{ steps.dockerargs.outputs.EXTRA_DOCKER_BUILD_ARGS }}
           GIT_COMMIT_SHA: ${{ github.sha }}
         run: |
           set -x
