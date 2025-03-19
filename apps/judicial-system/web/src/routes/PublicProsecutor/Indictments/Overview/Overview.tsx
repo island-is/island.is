@@ -165,7 +165,7 @@ export const Overview = () => {
                 <Box component="section" marginBottom={2}>
                   <BlueBox>
                     <SectionHeading
-                      title={fm(strings.verdictAppealDecisionTitle)}
+                      title="Afstaða dómfellda til dóms"
                       heading="h4"
                       marginBottom={2}
                       required
@@ -185,7 +185,7 @@ export const Overview = () => {
                     size="small"
                     colorScheme="destructive"
                   >
-                    {fm(strings.revokeAppeal)}
+                    Afturkalla áfrýjun
                   </Button>
                 ) : defendant.isSentToPrisonAdmin ? (
                   <Button
@@ -199,7 +199,7 @@ export const Overview = () => {
                     size="small"
                     colorScheme="destructive"
                   >
-                    {fm(strings.revokeSendToPrisonAdmin)}
+                    Afturkalla úr fullnustu
                   </Button>
                 ) : (
                   <Button
@@ -212,7 +212,7 @@ export const Overview = () => {
                       (!isFine && !defendant.verdictViewDate && serviceRequired)
                     }
                   >
-                    {fm(strings.sendToPrisonAdmin)}
+                    Senda til fullnustu
                   </Button>
                 )}
               </Box>
@@ -300,15 +300,12 @@ export const Overview = () => {
       )}
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal
-          title={fm(strings.revokeSendToPrisonAdminModalTitle)}
-          text={fm(strings.revokeSendToPrisonAdminModalText, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-            defendant: modalVisible.defendant.name,
-          })}
+          title="Afturkalla úr fullnustu"
+          text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
           onPrimaryButtonClick={() =>
             handleRevokeSendToPrisonAdmin(modalVisible.defendant)
           }
-          primaryButtonText={fm(strings.revoke)}
+          primaryButtonText="Afturkalla"
           isPrimaryButtonLoading={isUpdatingDefendant}
           secondaryButtonText={fm(core.cancel)}
           onSecondaryButtonClick={() => setModalVisible(undefined)}
