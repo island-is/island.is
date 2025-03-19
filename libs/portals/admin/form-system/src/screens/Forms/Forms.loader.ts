@@ -3,6 +3,8 @@ import { FormSystemForm, FormSystemFormResponse } from '@island.is/api/schema'
 import { GET_FORMS } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { Option } from '@island.is/island-ui/core'
+import { useContext } from 'react'
+import { ControlContext } from '../../context/ControlContext'
 
 export interface FormsLoaderQueryResponse {
   formSystemGetAllForms?: FormSystemFormResponse
@@ -20,7 +22,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       query: GET_FORMS,
       variables: {
         input: {
-          nationalId: '0',
+          nationalId: userInfo?.profile.nationalId,
         },
       },
       fetchPolicy: 'no-cache',

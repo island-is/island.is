@@ -6,12 +6,14 @@ import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
 import {
   FormsApi,
+  FormsControllerCreateRequest,
   FormsControllerDeleteRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
 import {
+  CreateFormInput,
   DeleteFormInput,
   GetFormInput,
   GetFormsInput,
@@ -42,9 +44,9 @@ export class FormsService {
     return this.formsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createForm(auth: User): Promise<FormResponse> {
+  async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerCreate()
+      .formsControllerCreate(input as FormsControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
     if (!response || response instanceof ApolloError) {
       return {}

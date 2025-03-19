@@ -13,6 +13,8 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { Dispatch, SetStateAction } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
+import { useContext } from 'react'
+import { ControlContext } from '../../context/ControlContext'
 
 interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
@@ -25,6 +27,8 @@ export const FormsHeader = (props: Props) => {
   const { setFormsState, organizations, onOrganizationChange, isAdmin } = props
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
+  const { control, controlDispatch, inSettings, setInSettings } =
+    useContext(ControlContext)
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
     onCompleted: (newFormData) => {
@@ -45,7 +49,13 @@ export const FormsHeader = (props: Props) => {
             variant="ghost"
             size="default"
             onClick={async () => {
-              const { data } = await formSystemCreateFormMutation()
+              const { data } = await formSystemCreateFormMutation({
+                variables: {
+                  input: {
+                    organizationNationalId: control.organizationNationalId,
+                  },
+                },
+              })
               navigate(
                 FormSystemPaths.Form.replace(
                   ':formId',
@@ -88,8 +98,12 @@ export const FormsHeader = (props: Props) => {
                 options={organizations}
                 size="sm"
                 defaultValue={organizations.find((org) => org.isSelected)}
+                value={organizations.find(
+                  (org) => org.value === control.organizationNationalId,
+                )}
                 onChange={async (selected) => {
                   if (selected) {
+                    control.organizationNationalId = selected.value
                     onOrganizationChange({ value: selected.value })
                   }
                 }}

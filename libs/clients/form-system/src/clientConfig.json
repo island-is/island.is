@@ -316,11 +316,20 @@
         ]
       }
     },
-    "/forms": {
+    "/forms/{organizationNationalId}": {
       "post": {
         "operationId": "FormsController_create",
         "summary": "Create new form",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "organizationNationalId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Create new form",

@@ -84,8 +84,11 @@ export class FormsService {
       user.authorization,
     )
 
+    console.log('organizationNationalId', nationalId)
+
     // the loader is not sending the nationalId
     if (nationalId === '0') {
+      console.log('changing nationalId')
       nationalId = token.nationalId
     }
 
@@ -179,8 +182,11 @@ export class FormsService {
     return formResponse
   }
 
-  async create(user: User): Promise<FormResponseDto> {
-    const organizationNationalId = user.nationalId
+  async create(
+    user: User,
+    organizationNationalId: string,
+  ): Promise<FormResponseDto> {
+    // const organizationNationalId = user.nationalId
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
@@ -192,7 +198,6 @@ export class FormsService {
     }
 
     const newForm: Form = await this.formModel.create({
-      // name: { is: '', en: '' },
       organizationId: organization.id,
       organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,

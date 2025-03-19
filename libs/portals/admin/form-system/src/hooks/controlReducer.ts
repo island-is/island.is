@@ -99,6 +99,10 @@ type ChangeActions =
       payload: { lang: 'en' | 'is'; newValue: string }
     }
   | {
+      type: 'CHANGE_ORGANIZATION_NATIONAL_ID'
+      payload: { newValue: string }
+    }
+  | {
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
@@ -203,6 +207,7 @@ export interface ControlState {
   activeItem: ActiveItem
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
+  organizationNationalId: string | null
 }
 
 export const controlReducer = (
@@ -463,6 +468,12 @@ export const controlReducer = (
             [lang]: newValue,
           },
         },
+      }
+    }
+    case 'CHANGE_ORGANIZATION_NATIONAL_ID': {
+      return {
+        ...state,
+        organizationNationalId: action.payload.newValue,
       }
     }
     case 'CHANGE_SLUG': {

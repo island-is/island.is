@@ -43,9 +43,13 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Create new form',
   })
-  @Post()
-  async create(@CurrentUser() user: User): Promise<FormResponseDto> {
-    return await this.formsService.create(user)
+  @ApiParam({ name: 'organizationNationalId', type: String })
+  @Post(':organizationNationalId')
+  async create(
+    @CurrentUser() user: User,
+    @Param('organizationNationalId') organizationNationalId: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.create(user, organizationNationalId)
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })

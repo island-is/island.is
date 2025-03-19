@@ -29,6 +29,12 @@ export class DeleteFormInput {
   id?: string
 }
 
+@InputType('FormSystemCreateFormInput')
+export class CreateFormInput {
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
+}
+
 @InputType('FormSystemGetFormInput')
 export class GetFormInput {
   @Field(() => String, { nullable: true })

@@ -18,6 +18,7 @@ import {
 } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
+  CreateFormInput,
   DeleteFormInput,
   GetFormInput,
   GetFormsInput,
@@ -58,8 +59,11 @@ export class FormsResolver {
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',
   })
-  async createForm(@CurrentUser() user: User): Promise<FormResponse> {
-    return this.formsService.createForm(user)
+  async createForm(
+    @Args('input', { type: () => CreateFormInput }) input: CreateFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.createForm(user, input)
   }
 
   @Mutation(() => Boolean, {

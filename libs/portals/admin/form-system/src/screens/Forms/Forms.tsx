@@ -7,22 +7,30 @@ import { FormsLoaderResponse } from './Forms.loader'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormsHeader } from '../../components/Headers/FormsHeader'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
+import { useContext } from 'react'
+import { ControlContext } from '../../context/ControlContext'
+import Control from 'react-select/dist/declarations/src/components/Control'
+
 // import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
 export const Forms = () => {
   const navigate = useNavigate()
+  const { control, controlDispatch, inSettings, setInSettings } =
+    useContext(ControlContext)
   const { forms, organizations, isAdmin } =
     useLoaderData() as FormsLoaderResponse
   const { formatMessage } = useIntl()
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
-  const [getFormsQuery] = useLazyQuery(GET_FORMS)
+  const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
 
   const [formsState, setFormsState] = useState<FormSystemForm[]>(forms)
   const [organizationsState, setOrganizationsState] = useState(organizations)
+
+  console.log('control organizationNationalId', control.organizationNationalId)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
@@ -44,6 +52,12 @@ export const Forms = () => {
       setFormsState(data.formSystemGetAllForms.forms)
     }
   }
+
+  useEffect(() => {
+    if (isAdmin && control.organizationNationalId) {
+      handleOrganizationChange({ value: control.organizationNationalId })
+    }
+  }, [])
 
   if (forms) {
     return (
