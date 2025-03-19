@@ -14,6 +14,8 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
+import { size } from 'lodash'
+import { value } from 'libs/island-ui/core/src/lib/DatePicker/DatePicker.css'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
@@ -48,56 +50,6 @@ const fileSchema = z.object({
   key: z.string(),
   url: z.string().optional(),
 })
-
-const fasteignByStadfangNrDataSchema = z
-  .object({
-    fastnum: z.number().optional(),
-    fasteign_nr: z.number().optional(),
-    landeign_nr: z.number().optional(),
-    stadfang_nr: z.number().optional(),
-    heimilisfang: z.string().optional(),
-    postnumer: z.number().optional(),
-    sveitarfelag: z.string().optional(),
-    merking: z.string().optional(),
-    lysing: z.string().optional(),
-    flatarmal: z.number().optional(),
-    fasteignamat_nuverandi: z.number().optional(),
-    fasteignamat_naesta_ar: z.number().optional(),
-    lodamat_nuverandi: z.number().optional(),
-    lodaamat_naesta_ar: z.number().optional(),
-    brunabotamat: z.number().optional(),
-    tengd_stadfang_nr: z.array(z.number().optional()),
-  })
-  .optional()
-
-// const matseiningSchema = z
-//   .object({
-//     fnum: z.number().optional(),
-//     fasteignamat: z.number().optional(),
-//     fastnum: z.number().optional(),
-//     notkun: z.string().optional(),
-//     merking: z.string().optional(),
-//     stadfang_nr: z.number().optional(),
-//     stadfang_birting: z.string().nullable(),
-//     brunabotamat: z.number().optional(),
-//     eining: z.string().optional(),
-//     einflm: z.number().optional(),
-//   })
-//   .optional()
-
-// const adalmatseiningByFasteignNrDataSchema = z
-//   .object({
-//     fastnum: z.number().optional(),
-//     fasteignanumer: z.number().optional(),
-//     fasteignamat: z.number().optional(),
-//     brunabotamat: z.number().optional(),
-//     notkun: z.string().optional(),
-//     stadfang_nr: z.number().optional(),
-//     stadfang_birting: z.string().optional(),
-//     merking: z.string().optional(),
-//     matseiningar: z.array(matseiningSchema).optional(),
-//   })
-//   .optional()
 
 const landlordInfo = z
   .object({
@@ -220,20 +172,31 @@ const registerProperty = z
     searchresults: z
       .object({
         label: z.string().optional(),
+        units: z.array(
+          z.object({
+            size: z.number().optional(),
+            address: z.string().optional(),
+            checked: z.boolean().optional(),
+            sizeUnit: z.string().optional(),
+            unitCode: z.string().optional(),
+            addressCode: z.number().optional(),
+            propertyCode: z.number().optional(),
+            propertyValue: z.number().optional(),
+            appraisalUnitCode: z.number().optional(),
+            fireInsuranceValuation: z.number().optional(),
+            propertyUsageDescription: z.string().optional(),
+          }),
+        ),
         value: z.string().optional(),
-        stadfang_nr: z.number().optional(),
-        stadfang: z.string().optional(),
-        sveitarfelag_nafn: z.string().optional(),
-        sveitarfelag_nr: z.number().optional(),
-        birting_sveitarfelag_nr: z.string().optional(),
-        postnumer: z.number().optional(),
-        landeign_nr: z.number().optional(),
-        stadvisir: z.string().optional(),
-        stadgreinir: z.string().optional(),
-        vidskeyti: z.string().nullable(),
-        propertiesByStadfangNr: z
-          .array(fasteignByStadfangNrDataSchema)
-          .optional(),
+        address: z.string().optional(),
+        landCode: z.number().optional(),
+        postalCode: z.number().optional(),
+        streetName: z.string().optional(),
+        addressCode: z.number().optional(),
+        checkedUnits: z.object({}).optional(),
+        streetNumber: z.number().optional(),
+        municipalityCode: z.number().optional(),
+        municipalityName: z.string().optional(),
       })
       .optional(),
     categoryType: z

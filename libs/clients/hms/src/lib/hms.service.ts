@@ -8,8 +8,6 @@ import {
   FasteignApi,
   StadfangApi,
 } from '../../gen/fetch'
-import { handle204 } from '@island.is/clients/middlewares'
-import { any } from 'zod'
 
 @Injectable()
 export class HmsService {
@@ -86,12 +84,13 @@ export class HmsService {
         municipalityCode: fasteign.sveitarfelagNr,
         unitCode: fasteign.merking ?? undefined,
         propertyUsageDescription: fasteign.notkunTexti ?? undefined,
-        size: fasteign.einflm,
+        size: fasteign.einflm ?? undefined,
         sizeUnit: fasteign.eining ?? undefined,
         propertyValue: fasteign.fasteignamat,
         propertyLandValue: fasteign.lhlmat,
         appraisalUnits: adalmatseining.map((a) => {
           return {
+            propertyNumber: a.fastnum,
             propertyCode: a.fasteignNr,
             propertyValue: a.fasteignamat,
             propertyLandValue: a.lhlmat,
@@ -109,8 +108,8 @@ export class HmsService {
                 addressCode: m.stadfangNr,
                 address: m.stadfangBirting ?? undefined,
                 fireInsuranceValuation: m.brunabotamat,
-                size: m.eining ?? undefined,
-                sizeUnit: m.einflm ?? undefined,
+                sizeUnit: m.eining ?? undefined,
+                size: m.einflm ?? undefined,
               }
             }),
           }

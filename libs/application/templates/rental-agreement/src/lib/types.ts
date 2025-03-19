@@ -11,18 +11,6 @@ export interface ExternalData {
 export type StatusProvider = 'failure' | 'success'
 
 // interface for property search data
-export interface StadfangProps {
-  stadfang_nr: number
-  stadfang: string
-  sveitarfelag_nafn: string
-  sveitarfelag_nr: number
-  birting_sveitarfelag_nr: string
-  postnumer: number
-  landeign_nr: number
-  stadvisir: string
-  stadgreinir: string
-  vidskeyti: null | string
-}
 export interface FasteignByStadfangNrProps {
   fastnum: number
   fasteign_nr: number

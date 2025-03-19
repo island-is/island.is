@@ -12,7 +12,7 @@ import { Audit } from '@island.is/nest/audit'
 import { Addresses } from './models/hmsSearch.model'
 import { HmsSearchInput } from './dto/hmsSearch.input'
 import { HmsPropertyInfoInput } from './dto/hmsPropertyInfo.input'
-import { PropertyInfo } from './models/hmsPropertyInfo.model'
+import { PropertyInfos } from './models/hmsPropertyInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -36,7 +36,7 @@ export class HmsResolver {
   }
 
   // TODO: Detailed propertyInfo
-  @Query(() => PropertyInfo, {
+  @Query(() => PropertyInfos, {
     name: 'hmsPropertyInfo',
     nullable: true,
   })
@@ -44,10 +44,11 @@ export class HmsResolver {
   async getHmsPropertyInfo(
     @CurrentUser() user: User,
     @Args('input') input: HmsPropertyInfoInput,
-  ): Promise<PropertyInfo> {
-    return await this.hmsService.hmsPropertyInfo(user, {
+  ): Promise<PropertyInfos> {
+    const propertyInfos = await this.hmsService.hmsPropertyInfo(user, {
       ...input,
     })
+    return { propertyInfos }
   }
 
   // DTO for detailed propertyInfo

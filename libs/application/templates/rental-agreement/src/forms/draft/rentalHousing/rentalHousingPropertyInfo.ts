@@ -5,6 +5,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildStaticTableField,
+  buildSubmitField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -21,6 +22,7 @@ import {
   getPropertyClassGroupOptions,
 } from '../../../lib/utils'
 import { registerProperty } from '../../../lib/messages'
+import { RentalAgreement } from '../../../lib/dataSchema'
 
 const messagesInfo = registerProperty.info
 const messagesSummary = registerProperty.infoSummary
@@ -73,37 +75,19 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
             messagesSummary.tableHeaderNumOfRooms,
           ],
           rows({ answers }) {
-            console.log('searchresults: ', answers.registerProperty)
+            const selectedPropertyUnits =
+              getValueViaPath<any[]>(
+                answers,
+                'registerProperty.searchresults.units',
+              ) || []
 
-            // const propertyUsageValue = getValueViaPath(
-            //   answers,
-            //   'answers.registerProperty.searchresults?.adalmatseiningByFasteignNr[2522506].notkun',
-            // )
-            // const unitIdValue = getValueViaPath(
-            //   answers,
-            //   'answers.registerProperty.searchresults?.propertiesByStadfangNr[0].merking',
-            // )
-            // const sizeValue = getValueViaPath(
-            //   answers,
-            //   'answers.registerProperty.searchresults?.propertiesByStadfangNr[0].flatarmal',
-            // )
-            // const roomsValue = getValueViaPath(
-            //   answers,
-            //   'answers.registerProperty.searchresults.numberOfRooms',
-            // )
-
-            return [
-              [
-                // propertyUsageValue ? propertyUsageValue : '--',
-                // unitIdValue ? unitIdValue : '--',
-                // sizeValue ? `${sizeValue} m²` : '--',
-                // roomsValue ? roomsValue : '--',
-                'Íbúð á hæð',
-                '010303',
-                '144 m²',
-                '3',
-              ],
-            ]
+            // Return an array of selectedPropertyUnits
+            return selectedPropertyUnits?.map((unit) => [
+              unit.propertyUsageDescription || '',
+              unit.unitCode || '',
+              `${unit.size} ${unit.sizeUnit}` || '',
+              '', // TODO: Add number of rooms
+            ])
           },
         }),
 

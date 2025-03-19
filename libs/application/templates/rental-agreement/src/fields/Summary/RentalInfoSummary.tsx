@@ -78,22 +78,24 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       {/* Property Address */}
       <SummaryCardRow hasChangeButton={false}>
         <GridColumn span={['12/12']}>
-          {answers.registerProperty.searchresults?.propertiesByStadfangNr && (
-            // TODO: Add correct value
-            <KeyValue
-              label={`${answers.registerProperty.searchresults.label}`}
-              value={
-                `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                  answers.registerProperty.searchresults
-                    .propertiesByStadfangNr[0]?.fasteign_nr
-                }` || '-'
-              }
-              labelVariant="h4"
-              labelAs="h4"
-              valueVariant="medium"
-              valueAs="p"
-            />
-          )}
+          {/* {answers.registerProperty.searchresults?.propertiesByStadfangNr && (
+            // TODO: Add correct value */}
+          <KeyValue
+            // label={`${answers.registerProperty.searchresults.label}`}
+            label={'Address'}
+            value={'Krummahólar 2'}
+            // value={
+            //   `${formatMessage(summary.rentalPropertyIdPrefix)}${
+            //     answers.registerProperty.searchresults
+            //       .propertiesByStadfangNr[0]?.fasteign_nr
+            //   }` || '-'
+            // }
+            labelVariant="h4"
+            labelAs="h4"
+            valueVariant="medium"
+            valueAs="p"
+          />
+          {/* )} */}
         </GridColumn>
       </SummaryCardRow>
 
