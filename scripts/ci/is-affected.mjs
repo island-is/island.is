@@ -26,7 +26,7 @@ try {
     /** @param {string} project */ (project) => project.includes(app),
   )
   console.error(`Contains '${app}': ${isAppAffected}`)
-  console.log(isAppAffected ? 'true' : 'false')
+  console.log(isAppAffected)
 } catch (e) {
   console.error(e.message)
   process.exit(1)
