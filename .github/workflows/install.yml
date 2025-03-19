@@ -279,5 +279,5 @@ jobs:
       - name: DEBUG judicial affected output
         id: judicial-debug
         run: |
-          echo ${{ steps.is-judicial-affected.ouputs.AFFECTED }}
-          echo "AFFECTED: ${{ steps.is-judicial-affected.ouputs.AFFECTED }}"
+          echo ${{ steps.is-judicial-affected.outputs.AFFECTED }}
+          echo "AFFECTED: ${{ steps.is-judicial-affected.outputs.AFFECTED }}"
