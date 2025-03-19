@@ -144,11 +144,11 @@ jobs:
           )
 
           # Add labels from metadata action
-          for label in ${METADATA_LABELS}; do
+          echo  "${METADATA_LABELS}" | while IFS= read -r label; do
             build_args+=("--label=${label}")
           done
           # Add annotations from metadata action
-          for annotation in ${METADATA_LABELS}; do
+          echo  "${METADATA_LABELS}" | while IFS= read -r label; do
             build_args+=("--annotation=${annotation}")
           done
 
