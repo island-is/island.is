@@ -333,6 +333,7 @@ jobs:
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
           METADATA_LABELS: ${{ steps.meta.outputs.labels }}
+          METADATA_ANNOTATIONS: ${{ steps.meta.outputs.annotations }}
         run: |
           set -x
           # Strip protocol prefix and .git postfix
@@ -355,7 +356,7 @@ jobs:
             build_args+=("--label=${label}")
           done
           # Add annotations from metadata action
-          echo  "${METADATA_LABELS}" | while IFS= read -r label; do
+          echo  "${METADATA_ANNOTATIONS}" | while IFS= read -r annotation; do
             build_args+=("--annotation=${annotation}")
           done
 
