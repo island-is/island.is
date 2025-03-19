@@ -14,8 +14,6 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
-import { size } from 'lodash'
-import { value } from 'libs/island-ui/core/src/lib/DatePicker/DatePicker.css'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/

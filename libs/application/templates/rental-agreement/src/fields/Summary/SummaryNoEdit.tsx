@@ -15,8 +15,6 @@ export const SummaryNoEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { application, field, goToScreen } = props
 
-  console.log('applicationAnswers', application.answers)
-
   return (
     <Box className={`${summaryWrap} ${summaryWrapNoEdit}`}>
       <ApplicantsSummary

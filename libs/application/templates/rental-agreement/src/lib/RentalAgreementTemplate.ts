@@ -214,8 +214,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     const { applicant, assignees } = application
 
-    console.log('Assignees: ', assignees)
-
     if (id === applicant) {
       return Roles.APPLICANT
     }

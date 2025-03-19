@@ -35,7 +35,6 @@ export class HmsResolver {
     return { addresses: addressesArray }
   }
 
-  // TODO: Detailed propertyInfo
   @Query(() => PropertyInfos, {
     name: 'hmsPropertyInfo',
     nullable: true,
@@ -50,7 +49,4 @@ export class HmsResolver {
     })
     return { propertyInfos }
   }
-
-  // DTO for detailed propertyInfo
-  // Model for detailed propertyInfo
 }
