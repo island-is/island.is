@@ -272,7 +272,7 @@ jobs:
     runs-on: arc-docker
     timeout-minutes: 45
 
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && ((needs.pre-checks.outputs.PRE_CHECK != 'push') || needs.prepare.outputs.IS_JUDICIAL_AFFECTED == 'true') }}
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && (needs.pre-checks.outputs.PRE_CHECK != 'push' || needs.prepare.outputs.IS_JUDICIAL_AFFECTED == 'true') }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -400,7 +400,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    if: ${{ needs.prepare.outputs.IMAGES && ((needs.pre-checks.outputs.PRE_CHECK != 'push') || needs.prepare.outputs.IS_JUDICIAL_AFFECTED == 'true') }}
+    if: ${{ needs.prepare.outputs.IMAGES && (needs.pre-checks.outputs.PRE_CHECK != 'push' || needs.prepare.outputs.IS_JUDICIAL_AFFECTED == 'true') }}
     runs-on: arc-docker
     timeout-minutes: 30
     env:
