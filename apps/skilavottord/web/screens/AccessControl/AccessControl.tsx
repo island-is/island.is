@@ -45,6 +45,8 @@ import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHe
 import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies/RecyclingCompanies'
 import * as styles from './AccessControl.css'
 
+// DEPLOYME
+
 const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
     skilavottordAllRecyclingPartners {
