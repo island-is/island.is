@@ -159,7 +159,6 @@ jobs:
           AFFECTED=$(node ./scripts/ci/is-affected.mjs judicial)
           echo AFFECTED="$AFFECTED"
           echo AFFECTED="$AFFECTED" >> $GITHUB_OUTPUT
-          exit 1
 
       - name: Git bot config
         id: git-bot-config
