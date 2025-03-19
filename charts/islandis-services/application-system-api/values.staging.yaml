@@ -143,6 +143,7 @@ env:
 files:
   - 'islyklar.p12'
 grantNamespaces:
+  - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
 grantNamespacesEnabled: true

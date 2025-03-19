@@ -707,6 +707,7 @@ application-system-api:
   files:
     - 'islyklar.p12'
   grantNamespaces:
+    - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
@@ -878,6 +879,7 @@ application-system-api-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
+    - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
