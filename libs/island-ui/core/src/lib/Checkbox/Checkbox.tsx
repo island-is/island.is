@@ -174,7 +174,6 @@ export const Checkbox = ({
           </div>
         )}
       </label>
-      {children}
     </Box>
   )
 }
