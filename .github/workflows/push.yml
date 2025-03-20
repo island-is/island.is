@@ -285,9 +285,9 @@ jobs:
         id: gather
         run: |
           set -euo pipefail
-          echo "${{ matrix.chunk.projects }}"
-          echo '${{ matrix.chunk.projects }}'
-          echo ${{ matrix.chunk.projects }}
+          echo "${{ matrix.chunk }}"
+          echo '${{ matrix.chunk }}'
+          echo ${{ matrix.chunk }}
           AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
