@@ -1,7 +1,7 @@
 import type { User, UserRole } from '@island.is/judicial-system/types'
 
 export type Credentials = {
-  currentUserIdx: number
+  currentUser?: User
   eligibleUsers: User[]
   csrfToken?: string
 }

@@ -287,13 +287,13 @@ jobs:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" ]] || exit 1'
       # - name: Check e2e success
       #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
+        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" ]] || exit 1'
       - name: Check post-build success
-        run: '[[ ${{ needs.post-docker-build.result }} != "failure" ]] || exit 1'
+        run: '[[ ${{ needs.post-docker-build.result }} != "failure" && ${{ needs.post-docker-build.result }} != "abandoned" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
