@@ -1,11 +1,14 @@
 // @ts-check
 import fs, { readFileSync } from 'node:fs'
 import jsyaml from 'js-yaml'
-import { execSync } from 'node:child_process'
 import core from '@actions/core'
 import github from '@actions/github'
 import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs';
 import { glob } from 'glob'
+
+
+const SHOULD_DEPLOY_JUDICIAL = process.env["SHOULD_DEPLOY_JUDICIAL"] === 'true';
+
 
 const context = github.context
 const branch = getBranch()
@@ -18,8 +21,6 @@ const changedFiles = []
 const judicialDev = []
 const judicialProd = []
 const _KEY_JUDICIAL_PROD = 'MQ_JUDICIAL_PROD'
-
-const SHOULD_DEPLOY_JUDICIAL = process.argv.includes('--deploy-judicial');
 
 
 if (!SHOULD_DEPLOY_JUDICIAL) {
