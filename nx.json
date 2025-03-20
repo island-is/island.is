@@ -66,6 +66,7 @@
       "application": {
         "style": "scss",
         "linter": "eslint",
+        "bundler": "webpack",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -162,6 +163,11 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "forceRebuild": [
+      {
+        "runtime": "node .github/actions/force-build.mjs"
+      }
+    ],
     "nodeVersion": [
       {
         "runtime": "node --version"
@@ -186,6 +192,7 @@
     ],
     "production": [
       "default",
+      "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",

@@ -12,6 +12,7 @@ import {
 import {
   getAvailableYears,
   getAvailableMonths,
+  isExistsCohabitantBetween18and25,
 } from './householdSupplementUtils'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
@@ -165,6 +166,60 @@ describe('isExistsCohabitantOlderThan25', () => {
     })
 
     const res = isExistsCohabitantOlderThan25(application.externalData)
+
+    expect(res).toEqual(false)
+  })
+})
+
+describe('isExistsCohabitantBetween18and25', () => {
+  it('should return true if user has cohabitant that is between 18 and 25 of age', () => {
+    const birthday = new Date()
+    birthday.setFullYear(birthday.getFullYear() - 24)
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        nationalRegistryCohabitants: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
+          data: [generatePerson(birthday)],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isExistsCohabitantBetween18and25(application.externalData)
+
+    expect(res).toEqual(true)
+  })
+
+  it('should return false if user has cohabitant that is between 18 and 25 of age', () => {
+    const birthday = new Date()
+    birthday.setFullYear(birthday.getFullYear() - 26)
+    const application = buildApplication({
+      externalData: {
+        nationalRegistry: {
+          data: {
+            nationalId: '0101307789',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        nationalRegistryCohabitants: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
+          data: [generatePerson(birthday)],
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = isExistsCohabitantBetween18and25(application.externalData)
 
     expect(res).toEqual(false)
   })

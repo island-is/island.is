@@ -21,7 +21,6 @@ import {
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
-  HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
   getApplicationExternalData as getHSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
@@ -36,7 +35,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
 import {
-  ChildInformation,
   getApplicationAnswers as getDBApplicationAnswers,
   getApplicationExternalData as getDBApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
@@ -141,15 +139,8 @@ export const transformApplicationToHouseholdSupplementDTO = (
     selectedMonth,
     applicantPhonenumber,
     bank,
-    bankAccountType,
     comment,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
-    householdSupplementHousing,
     householdSupplementChildren,
   } = getHSApplicationAnswers(application.answers)
   const { bankInfo, userProfileEmail } = getHSApplicationExternalData(
@@ -163,23 +154,10 @@ export const transformApplicationToHouseholdSupplementDTO = (
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+      domesticBankInfo: {
+        bank: formatBank(bank),
+      },
     }),
-    isRental: householdSupplementHousing === HouseholdSupplementHousing.RENTER,
     hasAStudyingAdolescenceResident: YES === householdSupplementChildren,
     period: {
       year: +selectedYear,
@@ -194,7 +172,6 @@ export const transformApplicationToHouseholdSupplementDTO = (
 
 export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
   application: Application,
-  uploads: Attachment[],
 ): ApplicationDTO => {
   const {
     selectedYear,
@@ -232,7 +209,6 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
     },
-    uploads,
     comment: comment,
   }
 
