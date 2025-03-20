@@ -18,22 +18,23 @@ CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 UPLOAD_ARTIFACT_DOCKER="${UPLOAD_ARTIFACT_DOCKER:-false}"
 
-
 BUILD_ARGS=()
 
 mkargs() {
   BUILD_ARGS=(
-    --platform=linux/amd64
-    --file="${DIR}/$DOCKERFILE"
+    --context="$PROJECT_ROOT"
+    --dockerfile="${DIR}/$DOCKERFILE"
     --target="$TARGET"
-    "${PUBLISH_TO_REGISTRY[@]}"
-    --secret "id=nx_cloud_access_token,src=nx_cloud_access_token.txt"
+    --context="$PROJECT_ROOT"
     --build-arg="APP=${APP}"
     --build-arg="APP_HOME=${APP_HOME}"
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
-    -t "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
+    --build-arg="NX_CLOUD_ACCESS_TOKEN=$(cat nx_cloud_access_token.txt)"
+    --destination "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
-    --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache"
+    --cache=true
+    --cache-run-layers=true
+    --cache-repo="${DOCKER_REGISTRY}/docker-cache"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
@@ -42,12 +43,12 @@ mkargs() {
 }
 
 container_build() {
-  $CONTAINER_BUILDER buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+  /kaniko/executor "${BUILD_ARGS[@]}"
 }
 
 docker_build() {
-  mkargs local-cache=true
-  container_build docker
+  mkargs
+  container_build
 }
 
 _set_publish() {
@@ -73,10 +74,9 @@ main() {
 _upload_artifact() {
   case $UPLOAD_ARTIFACT_DOCKER in
   true)
-    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET"  node "$DIR/docker/write-build-data.mjs"
+    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET" node "$DIR/docker/write-build-data.mjs"
     ;;
-  false)
-    ;;
+  false) ;;
   esac
 }
 
