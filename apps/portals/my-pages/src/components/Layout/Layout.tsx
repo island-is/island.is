@@ -18,7 +18,7 @@ import { NarrowLayout } from './NarrowLayout'
 import isDate from 'date-fns/esm/fp/isDate/index'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-  useNamespaces(['service.portal', 'global', 'portals'])
+  useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
   const activeModule = useActiveModule()
   const { pathname } = useLocation()
 
