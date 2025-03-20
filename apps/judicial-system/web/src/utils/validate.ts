@@ -5,6 +5,7 @@ import {
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
@@ -18,7 +19,6 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { isBusiness } from './utils'
 

@@ -21,11 +21,11 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseFile,
   CaseFileCategory,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'

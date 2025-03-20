@@ -26,11 +26,11 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   isTrafficViolationIndictmentCount,
