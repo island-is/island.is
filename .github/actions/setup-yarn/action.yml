@@ -45,7 +45,6 @@ runs:
         corepack enable
 
     - name: Setup NPM pull-through
-      if: inputs.AWS_ACCESS_KEY_ID != '' || inputs.AWS_SECRET_ACCESS_KEY != ''
       shell: bash
       run: |
         yarn config set npmRegistryServer "${{ inputs.YARN_NPM_REGISTRY_SERVER }}"
