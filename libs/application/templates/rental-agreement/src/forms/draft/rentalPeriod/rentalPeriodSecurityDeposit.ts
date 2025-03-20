@@ -225,10 +225,10 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
-              securityDeposit.securityAmount !=
+              securityDeposit.securityAmount !==
                 SecurityDepositAmountOptions.OTHER &&
               securityDeposit &&
-              securityDeposit.securityType !=
+              securityDeposit.securityType !==
                 SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
             )
           },

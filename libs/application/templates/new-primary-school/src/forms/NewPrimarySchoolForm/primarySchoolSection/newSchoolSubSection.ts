@@ -1,18 +1,17 @@
 import {
   buildAsyncSelectField,
-  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
   NO,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  setOnChangeSchool,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
   FriggSchoolsByMunicipalityQuery,
@@ -88,6 +87,14 @@ export const newSchoolSubSection = buildSubSection({
 
             const municipality = selectedValues?.[0]
 
+            // Since the data from Frigg is not structured for international schools, we need to manually identify them
+            const internationalSchoolsIds = [
+              'G-2250-A',
+              'G-2250-B',
+              'G-1157-A',
+              'G-1157-B',
+            ] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
+
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
@@ -109,7 +116,11 @@ export const newSchoolSubSection = buildSubSection({
                       )
                       ?.map((school) => ({
                         ...school,
-                        type: OrganizationModelTypeEnum.PrivateOwner,
+                        type: internationalSchoolsIds.some(
+                          (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
+                        )
+                          ? SchoolType.INTERNATIONAL_SCHOOL
+                          : SchoolType.PRIVATE_SCHOOL,
                       })) || [],
                 ) || []
 
@@ -121,7 +132,11 @@ export const newSchoolSubSection = buildSubSection({
                   ({ type, gradeLevels }) =>
                     type === OrganizationModelTypeEnum.School &&
                     gradeLevels?.includes(childGradeLevel),
-                ) || []
+                )
+                ?.map((school) => ({
+                  ...school,
+                  type: SchoolType.PUBLIC_SCHOOL,
+                })) || []
 
             // Merge the private owned schools and the municipality schools together
             const allMunicipalitySchools = [
@@ -144,10 +159,11 @@ export const newSchoolSubSection = buildSubSection({
 
             return !!schoolMunicipality
           },
-          setOnChange: (option) => setOnChangeSchool(option),
         }),
-        buildHiddenInput({
+        buildHiddenInputWithWatchedValue({
           id: 'newSchool.type',
+          watchValue: 'newSchool.school',
+          valueModifier: (value) => value?.toString()?.split('::')[1],
         }),
       ],
     }),

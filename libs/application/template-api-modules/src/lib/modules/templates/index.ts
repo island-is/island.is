@@ -1,3 +1,15 @@
+import { ReferenceTemplateModule } from './reference-template/reference-template.module'
+import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
+import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
+import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
+import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
+import { ExampleStateTransfersModule } from './examples/example-state-transfers/example-state-transfers.module'
+import { ExampleStateTransfersService } from './examples/example-state-transfers/example-state-transfers.service'
+import { ExampleInputsModule } from './examples/example-inputs/example-inputs.module'
+import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
+import { ExampleNoInputsModule } from './examples/example-no-inputs/example-no-inputs.module'
+import { ExampleNoInputsService } from './examples/example-no-inputs/example-no-inputs-service'
 import { AccidentNotificationModule } from './accident-notification/accident-notification.module'
 import { AccidentNotificationService } from './accident-notification/accident-notification.service'
 import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
@@ -18,8 +30,6 @@ import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/d
 import { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
-import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
-import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
 import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
@@ -62,14 +72,6 @@ import { PassportModule } from './passport/passport.module'
 import { PassportService } from './passport/passport.service'
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
-import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
-import { ExampleCommonActionsService } from './examples/example-common-actions/example-common-actions.service'
-import { ExampleStateTransfersModule } from './examples/example-state-transfers/example-state-transfers.module'
-import { ExampleStateTransfersService } from './examples/example-state-transfers/example-state-transfers.service'
-import { ExampleInputsModule } from './examples/example-inputs/example-inputs.module'
-import { ExampleInputsService } from './examples/example-inputs/example-inputs.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -144,12 +146,16 @@ import { ParliamentaryListCreationModule } from './signature-collection/parliame
 import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
+import { MunicipalListCreationModule } from './signature-collection/municipal-list-creation/municipal-list-creation.module'
+import { MunicipalListCreationService } from './signature-collection/municipal-list-creation/municipal-list-creation.service'
 import { MunicipalListSigningModule } from './signature-collection/municipal-list-signing/municipal-list-signing.module'
 import { MunicipalListSigningService } from './signature-collection/municipal-list-signing/municipal-list-signing.service'
 import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
+import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -158,6 +164,7 @@ export const modules = [
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
   ExampleInputsModule,
+  ExampleNoInputsModule,
   ExamplePaymentActionsModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
@@ -223,11 +230,13 @@ export const modules = [
   WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
+  MunicipalListCreationModule,
   MunicipalListSigningModule,
   ParentalLeaveModule,
   SocialInsuranceAdministrationModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  RentalAgreementModule,
 ]
 
 export const services = [
@@ -235,6 +244,7 @@ export const services = [
   ExampleCommonActionsService,
   ExampleStateTransfersService,
   ExampleInputsService,
+  ExampleNoInputsService,
   ExamplePaymentActionsService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
@@ -303,7 +313,9 @@ export const services = [
   WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
+  MunicipalListCreationService,
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  RentalAgreementService,
 ]

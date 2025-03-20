@@ -39,6 +39,26 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
         'Veldu tímabil sem þú vilt byrja að fá greiddan félagslegan viðbótastuðning. Hægt er að sækja um fyrir þrjá mánuði aftur í tímann.',
       description: `english translation`,
     },
+    instructionsShortTitle: {
+      id: 'asfte.application:info.instructions.shortTitle',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    instructionsTitle: {
+      id: 'asfte.application:info.instructions.title',
+      defaultMessage: 'Upplýsingar til umsækjanda',
+      description: 'Information for applicant',
+    },
+    instructionsDescription: {
+      id: 'asfte.application:info.instructions.description#markdown',
+      defaultMessage: '* Það sem þú þarft að gera til þess að þessi umsókn taki gildi: Mæta í þjónustumiðstöð/umboð og framvísa gildu persónuskilríki (ökuskírteini, nafnskírteini eða vegabréf) innan við 30 daga frá því að þú sendir inn þessa umsókn.\n* Það sem þú þarft að gera til þess að viðhalda réttinum til félagslegs viðbótarstuðnings: Mæta árlega í þjónustumiðstöð/umboð og framvísa gildu persónuskilríki (ökuskírteini, nafnskírteini eða vegabréf).\n* Til að halda áfram og ljúka umsókninni þarftu að merkja við að þú hafir lesið og skilið þessa skilmála.',
+      description: 'Information on conditions regarding asfte application',
+    },
+    instructionsCheckbox: {
+      id: 'asfte.application:info.instructions.checkbox',
+      defaultMessage: 'Ég staðfesti að ég hef lesið ofangreindar upplýsingar.',
+      description: 'I confirm that I have read the above information.',
+    },
   }),
 
   conclusionScreen: defineMessages({

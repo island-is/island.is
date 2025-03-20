@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -47,6 +48,29 @@ export const SummaryDraftSection = buildSection({
               type: 'primary',
             },
           ],
+        }),
+        buildHiddenInput({
+          id: 'htmlSummary',
+          defaultValue: () => {
+            // Get email summary html
+            const element = document.getElementById('email-summary-container')
+
+            // Remove buttons from summary
+            if (element) {
+              element
+                .querySelectorAll('button')
+                .forEach((button) => button.remove())
+
+              const jsonData = {
+                id: element.id,
+                className: element.className,
+                html: element.outerHTML,
+              }
+
+              return JSON.stringify(jsonData)
+            }
+            return null
+          },
         }),
       ],
     }),

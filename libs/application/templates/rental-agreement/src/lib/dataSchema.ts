@@ -14,6 +14,7 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
+import { getValueViaPath } from '@island.is/application/core'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
@@ -237,7 +238,7 @@ const registerProperty = z
 const specialProvisions = z.object({
   descriptionInput: z.string().optional(),
   rulesInput: z.string().optional(),
-})
+}) // TODO: Add validation for descriptionInput if property size has been altered for chosen property unit/s
 
 const condition = z
   .object({
@@ -335,7 +336,7 @@ const rentalAmount = z
   })
   .superRefine((data, ctx) => {
     // Error message if amount is not filled and if it is negative
-    if (!Boolean(data.amount)) {
+    if (!data.amount || !data.amount.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',

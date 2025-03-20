@@ -7,8 +7,8 @@ import {
   AsyncSearchOption,
   Box,
   Checkbox,
+  LoadingDots,
   Table as T,
-  Text,
 } from '@island.is/island-ui/core'
 import IconCircleClose from '../../assets/IconCircleClose'
 import IconCircleOpen from '../../assets/IconCircleOpen'
@@ -116,17 +116,17 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     },
     onCompleted: (data) => {
       if (data.hmsSearch) {
-        const heba = data.hmsSearch.addresses.map((address) => ({
+        const searchOptions = data.hmsSearch.addresses.map((address) => ({
           ...address,
           label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
           value: `${address.addressCode}`,
         }))
-        setSearchOptions(heba)
+        setSearchOptions(searchOptions)
       }
     },
   })
 
-  const [hmsPropertyInfo] = useLazyQuery<
+  const [hmsPropertyInfo, { loading: propertiesLoading }] = useLazyQuery<
     Query,
     { input: HmsPropertyInfoInput }
   >(PROPERTY_INFO_QUERY, {
@@ -243,248 +243,253 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       </Box>
 
       {selectedAddress && (
-        <Box marginTop={8}>
-          {/* <Text variant="h3" marginBottom={4}>
-            {selectedAddress.label}
-          </Text> */}
-          {propertiesByAddressCode && propertiesByAddressCode.length > 0 && (
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData
-                    box={{
-                      className: `${tableHeadingCell} ${tableCellExpand}`,
-                    }}
-                  ></T.HeadData>
-                  <T.HeadData
-                    box={{
-                      className: `${tableHeadingCell} ${tableCellFastNum}`,
-                    }}
-                  >
-                    {formatMessage(
-                      registerProperty.info.searchResultHeaderPropertyId,
-                    )}
-                  </T.HeadData>
-                  <T.HeadData
-                    box={{
-                      className: `${tableHeadingCell} ${tableCellMerking}`,
-                    }}
-                  >
-                    {formatMessage(
-                      registerProperty.info.searchResultHeaderMarking,
-                    )}
-                  </T.HeadData>
-                  <T.HeadData
-                    box={{
-                      className: `${tableHeadingCell} ${tableCellSize}`,
-                    }}
-                  >
-                    {formatMessage(
-                      registerProperty.info.searchResultHeaderPropertySize,
-                    )}
-                  </T.HeadData>
-                  <T.HeadData
-                    box={{
-                      className: `${tableHeadingCell} ${tableCellNumOfRooms}`,
-                    }}
-                  >
-                    {formatMessage(
-                      registerProperty.info.searchResultsHeaderNumOfRooms,
-                    )}
-                  </T.HeadData>
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {propertiesByAddressCode.map((property) => {
-                  return (
-                    <Fragment key={property.propertyCode}>
-                      <T.Row>
-                        <T.Data
-                          box={{
-                            className: `${tableCell} ${tableCellExpand}`,
-                          }}
-                        >
-                          {property.appraisalUnits &&
-                            property.appraisalUnits.length > 0 && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  toggleExpand(property.propertyCode || 0)
-                                }}
-                              >
-                                {property.propertyCode &&
-                                tableExpanded[property.propertyCode] ? (
-                                  <IconCircleClose />
-                                ) : (
-                                  <IconCircleOpen />
-                                )}
-                              </button>
-                            )}
-                        </T.Data>
-                        <T.Data
-                          box={{
-                            className: `${tableCell} ${tableCellFastNum}`,
-                          }}
-                        >
-                          {property.propertyCode}
-                        </T.Data>
-                        <T.Data
-                          box={{
-                            className: `${tableCell} ${tableCellMerking}`,
-                          }}
-                        >
-                          {property.unitCode}
-                        </T.Data>
-                        <T.Data
-                          box={{
-                            className: `${tableCell} ${tableCellSize}`,
-                          }}
-                        >
-                          {`${property.size} m²`}
-                        </T.Data>
-                        <T.Data
-                          box={{
-                            className: `${tableCell} ${tableCellNumOfRooms}`,
-                          }}
-                        >
-                          {'-'}
-                        </T.Data>
-                      </T.Row>
-                      {property.appraisalUnits &&
-                        property.appraisalUnits.length > 0 && (
-                          <>
-                            {property.appraisalUnits.map((appraisalUnit) => {
-                              return (
-                                <Fragment key={appraisalUnit.unitCode}>
-                                  {appraisalUnit.units &&
-                                    appraisalUnit.units.map((unit) => (
-                                      <tr key={unit.unitCode}>
-                                        <T.Data
-                                          colSpan={5}
-                                          box={{
-                                            paddingLeft: 0,
-                                            paddingRight: 0,
-                                            paddingTop: 0,
-                                            paddingBottom: 0,
-                                            borderColor: 'transparent',
-                                          }}
-                                        >
-                                          <div
-                                            className={`${hiddenTableRow} ${
-                                              tableExpanded[
-                                                unit.propertyCode ?? 0
-                                              ] && hiddenTableRowExpanded
-                                            }`}
+        <Box marginTop={6}>
+          {propertiesLoading ? (
+            <div style={{ textAlign: 'center' }}>
+              <LoadingDots large />
+            </div>
+          ) : (
+            propertiesByAddressCode &&
+            propertiesByAddressCode.length > 0 && (
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData
+                      box={{
+                        className: `${tableHeadingCell} ${tableCellExpand}`,
+                      }}
+                    ></T.HeadData>
+                    <T.HeadData
+                      box={{
+                        className: `${tableHeadingCell} ${tableCellFastNum}`,
+                      }}
+                    >
+                      {formatMessage(
+                        registerProperty.info.searchResultHeaderPropertyId,
+                      )}
+                    </T.HeadData>
+                    <T.HeadData
+                      box={{
+                        className: `${tableHeadingCell} ${tableCellMerking}`,
+                      }}
+                    >
+                      {formatMessage(
+                        registerProperty.info.searchResultHeaderMarking,
+                      )}
+                    </T.HeadData>
+                    <T.HeadData
+                      box={{
+                        className: `${tableHeadingCell} ${tableCellSize}`,
+                      }}
+                    >
+                      {formatMessage(
+                        registerProperty.info.searchResultHeaderPropertySize,
+                      )}
+                    </T.HeadData>
+                    <T.HeadData
+                      box={{
+                        className: `${tableHeadingCell} ${tableCellNumOfRooms}`,
+                      }}
+                    >
+                      {formatMessage(
+                        registerProperty.info.searchResultsHeaderNumOfRooms,
+                      )}
+                    </T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
+                  {propertiesByAddressCode.map((property) => {
+                    return (
+                      <Fragment key={property.propertyCode}>
+                        <T.Row>
+                          <T.Data
+                            box={{
+                              className: `${tableCell} ${tableCellExpand}`,
+                            }}
+                          >
+                            {property.appraisalUnits &&
+                              property.appraisalUnits.length > 0 && (
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    toggleExpand(property.propertyCode || 0)
+                                  }}
+                                >
+                                  {property.propertyCode &&
+                                  tableExpanded[property.propertyCode] ? (
+                                    <IconCircleClose />
+                                  ) : (
+                                    <IconCircleOpen />
+                                  )}
+                                </button>
+                              )}
+                          </T.Data>
+                          <T.Data
+                            box={{
+                              className: `${tableCell} ${tableCellFastNum}`,
+                            }}
+                          >
+                            {property.propertyCode}
+                          </T.Data>
+                          <T.Data
+                            box={{
+                              className: `${tableCell} ${tableCellMerking}`,
+                            }}
+                          >
+                            {property.unitCode}
+                          </T.Data>
+                          <T.Data
+                            box={{
+                              className: `${tableCell} ${tableCellSize}`,
+                            }}
+                          >
+                            {`${property.size} m²`}
+                          </T.Data>
+                          <T.Data
+                            box={{
+                              className: `${tableCell} ${tableCellNumOfRooms}`,
+                            }}
+                          >
+                            {'-'}
+                          </T.Data>
+                        </T.Row>
+                        {property.appraisalUnits &&
+                          property.appraisalUnits.length > 0 && (
+                            <>
+                              {property.appraisalUnits.map((appraisalUnit) => {
+                                return (
+                                  <Fragment key={appraisalUnit.unitCode}>
+                                    {appraisalUnit.units &&
+                                      appraisalUnit.units.map((unit) => (
+                                        <tr key={unit.unitCode}>
+                                          <T.Data
+                                            colSpan={5}
+                                            box={{
+                                              paddingLeft: 0,
+                                              paddingRight: 0,
+                                              paddingTop: 0,
+                                              paddingBottom: 0,
+                                              borderColor: 'transparent',
+                                            }}
                                           >
-                                            <T.Data
-                                              box={{
-                                                className: `${dropdownTableCell} ${tableCellExpand}`,
-                                              }}
-                                            ></T.Data>
-                                            <T.Data
-                                              box={{
-                                                className: `${dropdownTableCell} ${tableCellFastNum}`,
-                                              }}
+                                            <div
+                                              className={`${hiddenTableRow} ${
+                                                tableExpanded[
+                                                  unit.propertyCode ?? 0
+                                                ] && hiddenTableRowExpanded
+                                              }`}
                                             >
-                                              <Checkbox
-                                                id={unit.unitCode ?? ''}
-                                                name={
-                                                  unit.propertyUsageDescription ??
-                                                  ''
-                                                }
-                                                label={
-                                                  unit.propertyUsageDescription ??
-                                                  ''
-                                                }
-                                                checked={
-                                                  checkedUnits[
-                                                    unit.unitCode ?? ''
-                                                  ]
-                                                }
-                                                onChange={(event) =>
-                                                  handleCheckboxChange(
-                                                    unit,
-                                                    event.currentTarget.checked,
-                                                  )
-                                                }
-                                              />
-                                            </T.Data>
-                                            <T.Data
-                                              box={{
-                                                className: `${dropdownTableCell} ${tableCellMerking}`,
-                                              }}
-                                            >
-                                              {unit.unitCode ?? ''}
-                                            </T.Data>
-                                            <T.Data
-                                              box={{
-                                                className: `${dropdownTableCell} ${tableCellSize}`,
-                                              }}
-                                            >
-                                              <input
-                                                className={input}
-                                                type="text"
-                                                name="propertySize"
-                                                value={
-                                                  unitSizeChangeValue[
-                                                    unit.unitCode ?? ''
-                                                  ] ||
-                                                  `${unit.size} ${unit.sizeUnit}`
-                                                }
-                                                onChange={(e) =>
-                                                  handleUnitSizeChange(
-                                                    unit.unitCode ?? '',
-                                                    e.target.value,
-                                                  )
-                                                }
-                                                disabled={
-                                                  !checkedUnits[
-                                                    unit.unitCode ?? ''
-                                                  ]
-                                                }
-                                              />
-                                            </T.Data>
-                                            <T.Data
-                                              box={{
-                                                className: `${dropdownTableCell} ${tableCellNumOfRooms}`,
-                                              }}
-                                            >
-                                              <input
-                                                className={input}
-                                                type="text"
-                                                name="numOfRooms"
-                                                value={
-                                                  unitRoomsChangeValue[
-                                                    unit.unitCode ?? ''
-                                                  ] || ''
-                                                }
-                                                onChange={(e) =>
-                                                  handleUnitRoomsChange(
-                                                    unit.unitCode ?? '',
-                                                    e.target.value,
-                                                  )
-                                                }
-                                                disabled={
-                                                  !checkedUnits[
-                                                    unit.unitCode ?? ''
-                                                  ]
-                                                }
-                                              />
-                                            </T.Data>
-                                          </div>
-                                        </T.Data>
-                                      </tr>
-                                    ))}
-                                </Fragment>
-                              )
-                            })}
-                          </>
-                        )}
-                    </Fragment>
-                  )
-                })}
-              </T.Body>
-            </T.Table>
+                                              <T.Data
+                                                box={{
+                                                  className: `${dropdownTableCell} ${tableCellExpand}`,
+                                                }}
+                                              ></T.Data>
+                                              <T.Data
+                                                box={{
+                                                  className: `${dropdownTableCell} ${tableCellFastNum}`,
+                                                }}
+                                              >
+                                                <Checkbox
+                                                  id={unit.unitCode ?? ''}
+                                                  name={
+                                                    unit.propertyUsageDescription ??
+                                                    ''
+                                                  }
+                                                  label={
+                                                    unit.propertyUsageDescription ??
+                                                    ''
+                                                  }
+                                                  checked={
+                                                    checkedUnits[
+                                                      unit.unitCode ?? ''
+                                                    ]
+                                                  }
+                                                  onChange={(event) =>
+                                                    handleCheckboxChange(
+                                                      unit,
+                                                      event.currentTarget
+                                                        .checked,
+                                                    )
+                                                  }
+                                                />
+                                              </T.Data>
+                                              <T.Data
+                                                box={{
+                                                  className: `${dropdownTableCell} ${tableCellMerking}`,
+                                                }}
+                                              >
+                                                {unit.unitCode ?? ''}
+                                              </T.Data>
+                                              <T.Data
+                                                box={{
+                                                  className: `${dropdownTableCell} ${tableCellSize}`,
+                                                }}
+                                              >
+                                                <input
+                                                  className={input}
+                                                  type="text"
+                                                  name="propertySize"
+                                                  value={
+                                                    unitSizeChangeValue[
+                                                      unit.unitCode ?? ''
+                                                    ] ||
+                                                    `${unit.size} ${unit.sizeUnit}`
+                                                  }
+                                                  onChange={(e) =>
+                                                    handleUnitSizeChange(
+                                                      unit.unitCode ?? '',
+                                                      e.target.value,
+                                                    )
+                                                  }
+                                                  disabled={
+                                                    !checkedUnits[
+                                                      unit.unitCode ?? ''
+                                                    ]
+                                                  }
+                                                />
+                                              </T.Data>
+                                              <T.Data
+                                                box={{
+                                                  className: `${dropdownTableCell} ${tableCellNumOfRooms}`,
+                                                }}
+                                              >
+                                                <input
+                                                  className={input}
+                                                  type="text"
+                                                  name="numOfRooms"
+                                                  value={
+                                                    unitRoomsChangeValue[
+                                                      unit.unitCode ?? ''
+                                                    ] || ''
+                                                  }
+                                                  onChange={(e) =>
+                                                    handleUnitRoomsChange(
+                                                      unit.unitCode ?? '',
+                                                      e.target.value,
+                                                    )
+                                                  }
+                                                  disabled={
+                                                    !checkedUnits[
+                                                      unit.unitCode ?? ''
+                                                    ]
+                                                  }
+                                                />
+                                              </T.Data>
+                                            </div>
+                                          </T.Data>
+                                        </tr>
+                                      ))}
+                                  </Fragment>
+                                )
+                              })}
+                            </>
+                          )}
+                      </Fragment>
+                    )
+                  })}
+                </T.Body>
+              </T.Table>
+            )
           )}
         </Box>
       )}

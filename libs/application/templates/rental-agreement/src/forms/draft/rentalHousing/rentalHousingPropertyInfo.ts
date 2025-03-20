@@ -22,7 +22,6 @@ import {
   getPropertyClassGroupOptions,
 } from '../../../lib/utils'
 import { registerProperty } from '../../../lib/messages'
-import { RentalAgreement } from '../../../lib/dataSchema'
 
 const messagesInfo = registerProperty.info
 const messagesSummary = registerProperty.infoSummary

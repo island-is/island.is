@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
