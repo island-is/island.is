@@ -70,9 +70,11 @@ async function prepareManifests(STAGE_NAME) {
     'charts/islandis-services',
     'charts/identity-server-services',
   ] : ['charts/judicial-system-services']
+  const manifestPath = _MANIFEST_PATHS.length > 1 ? `{${_MANIFEST_PATHS.join(',')}}` : _MANIFEST_PATHS[0];
   const files = await glob(
-    `{${_MANIFEST_PATHS.join(',')}}/**/values.${STAGE_NAME}.yaml`,
+    `${manifestPath}/**/values.${STAGE_NAME}.yaml`,
   )
+  console.log(files);
   for (const file of files) {
     const textContent = readFileSync(file, 'utf8')
     const yamlContent = await jsyaml.load(textContent)
