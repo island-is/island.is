@@ -9,11 +9,7 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const CurrentSchool = ({
-  application,
-  editable,
-  goToScreen,
-}: ReviewGroupProps) => {
+export const CurrentSchool = ({ application, editable }: ReviewGroupProps) => {
   const { formatMessage, lang } = useLocale()
 
   const { childGradeLevel } = getApplicationExternalData(
@@ -21,10 +17,7 @@ export const CurrentSchool = ({
   )
 
   return (
-    <ReviewGroup
-      isEditable={editable}
-      editAction={() => goToScreen?.('currentSchool')}
-    >
+    <ReviewGroup isEditable={editable}>
       <Stack space={2}>
         <GridRow>
           <GridColumn span="10/12">

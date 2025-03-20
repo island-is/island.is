@@ -1,8 +1,8 @@
-import { ExternalData, RepeaterOptionValue } from '@island.is/application/types'
+import { ExternalData } from '@island.is/application/types'
 import { LanguageEnvironmentOptions } from './constants'
 import {
+  getMunicipalityCodeBySchoolUnitId,
   hasOtherGuardian,
-  setOnChangeSchool,
   showPreferredLanguageFields,
 } from './newPrimarySchoolUtils'
 
@@ -110,20 +110,16 @@ describe('showPreferredLanguageFields', () => {
     }
     expect(showPreferredLanguageFields(answers)).toBe(true)
   })
-})
 
-describe('setOnChangeSchool', () => {
-  it('should return the correct key-value pair when optionValue is provided', () => {
-    const optionValue: RepeaterOptionValue = '123::PrivateOwner'
-    expect(setOnChangeSchool(optionValue)).toEqual([
-      { key: 'newSchool.type', value: 'PrivateOwner' },
-    ])
-  })
+  describe('getMunicipalityCodeBySchoolUnitId', () => {
+    it('should return the correct municipality code for a given school unitId', () => {
+      const schoolId = 'G-2297-A'
+      expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
+    })
 
-  it('should return an empty value when optionValue is undefined', () => {
-    const optionValue: RepeaterOptionValue = undefined
-    expect(setOnChangeSchool(optionValue)).toEqual([
-      { key: 'newSchool.type', value: undefined },
-    ])
+    it('should return undefined for an unknown school unit id', () => {
+      const schoolId = 'unknown-school-id'
+      expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
+    })
   })
 })

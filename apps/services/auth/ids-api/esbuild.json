@@ -55,7 +55,8 @@
     "safer-buffer",
     "ioredis",
     "path-scurry",
-    "@mikro-orm/core"
+    "@mikro-orm/core",
+    "uuidv4"
   ],
   "keepNames": true
 }

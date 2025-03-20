@@ -10,7 +10,6 @@ import {
   GridContainer,
   GridRow,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -110,6 +109,11 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
             {
               title: 'Gjaldskrár',
               href: searchUrl + '?tegund=b-deild-gjaldskra',
+              variant: 'purple',
+            },
+            {
+              title: 'Rss',
+              href: '/stjornartidindi/rss',
               variant: 'purple',
             },
           ]}

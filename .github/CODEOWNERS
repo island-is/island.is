@@ -195,10 +195,12 @@ codemagic.yaml                                                                  
 /libs/clients/university-careers/                                                                         @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                          @island-is/hugsmidjan
 /libs/clients/inna/                                                                                       @island-is/hugsmidjan
+/libs/clients/grants/                                                                                     @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                  @island-is/hugsmidjan
 /libs/clients/official-journal-of-iceland/                                                                @island-is/hugsmidjan
 /libs/clients/hms-housing-benefits/                                                                       @island-is/hugsmidjan
 /apps/services/license-api/                                                                               @island-is/hugsmidjan
+/apps/services/cms-importer/                                                                              @island-is/hugsmidjan
 /libs/regulations/                                                                                        @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                    @island-is/hugsmidjan
 /libs/portals/admin/document-provider/                                                                    @island-is/hugsmidjan @island-is/core
@@ -317,6 +319,8 @@ codemagic.yaml                                                                  
 /apps/services/form-system/                                                                               @island-is/advania
 /libs/clients/consultation-portal/                                                                        @island-is/advania
 /libs/api/domains/consultation-portal/                                                                    @island-is/advania
+/libs/api/domains/form-system                                                                             @island-is/advania
+/libs/portals/admin/form-system                                                                           @island-is/advania
 
 /apps/skilavottord/                                                                                       @island-is/deloitte
 /libs/skilavottord/                                                                                       @island-is/deloitte
