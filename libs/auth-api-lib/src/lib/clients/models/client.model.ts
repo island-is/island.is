@@ -518,7 +518,7 @@ export class Client extends Model {
   singleSession!: boolean
 
   @Column({
-    type: DataType.ENUM('allow', 'disabled', 'client'),
+    type: DataType.ENUM('enabled', 'disabled'),
     allowNull: false,
   })
   @ApiProperty({
