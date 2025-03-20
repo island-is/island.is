@@ -79,6 +79,9 @@ export class PaymentService {
           },
         },
       )
+      console.log('=========================================')
+      console.log('payment fulfilled', paymentId, receptionID, applicationId)
+      console.log('=========================================')
     } catch (e) {
       this.logger.error('Error fulfilling payment', e)
       throw e
@@ -127,30 +130,10 @@ export class PaymentService {
     console.log('foundPayment', JSON.stringify(foundPayment, null, 2))
     console.log('=========================================')
 
-    // if (!foundPayment.user4) {
-    // if (!foundPayment.user4) {
-    //   throw new InternalServerErrorException(
-    //     `valid payment object was not found for application id ${applicationId} - user4 not set`,
-    //   )
-    // }
-
     const paymentUrl: string = JSON.parse(
       foundPayment.dataValues.definition,
     ).paymentUrl
-    const url = new URL(paymentUrl)
-    const paymentFlowId = url.pathname.split('/').filter(Boolean).pop()
-    if (!paymentFlowId) {
-      throw new InternalServerErrorException(
-        `payment flow id was not found for application id ${applicationId}`,
-      )
-    }
-    const paymentFlow =
-      await this.paymentsApi.paymentFlowControllerGetPaymentFlow({
-        id: paymentFlowId,
-      })
-    console.log('=========================================')
-    console.log('paymentFlow', JSON.stringify(paymentFlow, null, 2))
-    console.log('=========================================')
+
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
@@ -289,13 +272,7 @@ export class PaymentService {
             })),
             payerNationalId: user.nationalId,
             organisationId: performingOrganizationID,
-            // onUpdateUrl:
-            //   'http://localhost:3333/application-payment/api-client-payment-callback/',
-            // onUpdateUrl:
-            //   'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
             onUpdateUrl: onUpdateUrl.toString(),
-            // onUpdateUrl:
-            //   'http://application-system-api.feature-as-test-new-payment.svc.cluster.local/application-payment/api-client-payment-callback',
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
