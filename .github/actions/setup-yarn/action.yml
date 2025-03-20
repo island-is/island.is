@@ -4,13 +4,39 @@ inputs:
   RUNS_ON_S3_BUCKET_CACHE:
     description: ''
     required: true
+  YARN_NPM_REGISTRY_SERVER:
+    description: ''
+    required: true
+  AWS_ACCOUNT_ID:
+    description: ''
+    required: false
+    default: '821090935708'
+  AWS_REGION:
+    description: ''
+    required: false
+    default: 'eu-west-1'
 runs:
   using: 'composite'
   steps:
+    - name: Log in to Amazon ECR
+      id: ecr-login
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Log in Docker
+      if: ${{ steps.ecr-login.conclusion == 'success' }}
+      id: docker-login
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ steps.ecr-login.outputs.registry }}
+
     - name: Corepack
       shell: bash
       run: |
         corepack enable
+        yarn config set npmRegistryServer "${{ inputs.YARN_NPM_REGISTRY_SERVER }}"
+        export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner ${{ inputs.AWS_ACCOUNT_ID }} --region ${{ inputs.AWS_REGION }} --query authorizationToken --output text`
+        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAuthToken' "${CODEARTIFACT_AUTH_TOKEN}"
+        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAlwaysAuth' "true"
 
     - name: Check node version
       shell: bash
