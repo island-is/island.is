@@ -285,8 +285,8 @@ jobs:
         run: |
           set -euo pipefail
           echo "${{ matrix.chunk }}"
-          echo '${{ matrix.chunk }}'
-          echo ${{ matrix.chunk }}
+          # echo '${{ matrix.chunk }}'
+          # echo ${{ matrix.chunk }}
           AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
@@ -303,12 +303,16 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: ./scripts/ci/docker-login-ecr.sh
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Prepare Docker build arguments
         id: dockerargs
