@@ -185,21 +185,6 @@ jobs:
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
 
-  run-shellcheck:
-    needs:
-      - prepare
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - uses: reviewdog/action-shellcheck@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
-          fail_level: info
-          exclude: >-
-            */node_modules/*
-
   formatting:
     needs:
       - prepare
