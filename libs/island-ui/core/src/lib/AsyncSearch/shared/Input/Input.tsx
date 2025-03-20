@@ -12,21 +12,11 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   color?: 'white' | 'blueberry' | 'dark'
   inputSize: AsyncSearchSizes
   hasError?: boolean
-  isCompanySearch?: boolean
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    {
-      isOpen,
-      colored,
-      hasLabel,
-      inputSize,
-      hasError,
-      isCompanySearch,
-      color,
-      ...props
-    },
+    { isOpen, colored, hasLabel, inputSize, hasError, color, ...props },
     ref,
   ) => {
     return (
@@ -41,7 +31,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           [styles.white]: color === 'white',
           [styles.blueberry]: color === 'blueberry',
           [styles.dark]: color === 'dark',
-          [styles.isCompanySearch]: isCompanySearch,
         })}
         ref={ref}
       />
