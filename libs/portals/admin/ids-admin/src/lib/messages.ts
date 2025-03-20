@@ -487,14 +487,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:allow-sso-description',
     defaultMessage: 'Allow users to sign in with the same session on other applications using the island.is authentication service.',
   },
-  allowClientSSO: {
-    id: 'ap.ids-admin:allow-client-sso',
-    defaultMessage: 'Only for this client',
-  },
-  allowClientSSODescription: {
-    id: 'ap.ids-admin:allow-client-sso-description',
-    defaultMessage: 'Only allow single sign-on for this client. Users will not be able to sign in with the same session on other applications using the island.is authentication service, but the same session is used when switching between delegations',
-  },
   singleSession: {
     id: 'ap.ids-admin:single-session',
     defaultMessage: 'Single session client',
