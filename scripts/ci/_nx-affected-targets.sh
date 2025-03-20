@@ -15,6 +15,11 @@ TEST_EVERYTHING=${TEST_EVERYTHING:-}
 AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 
+LAST_COMMIT_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+if echo "$LAST_COMMIT_FILES" | grep -q ".github/actions/force-build.mjs"; then
+  export TEST_EVERYTHING=true
+fi
+
 if [[ (-n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH") || (-n "$NX_AFFECTED_ALL" && "$NX_AFFECTED_ALL" == "true") || (-n "$TEST_EVERYTHING" && "$TEST_EVERYTHING" == "true") ]]; then
   EXTRA_ARGS=""
 else
