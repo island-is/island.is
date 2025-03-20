@@ -1,15 +1,21 @@
-import { FC } from 'react'
-import { m } from '@island.is/portals/my-pages/core'
-import { Box, LoadingDots, Button } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
+import { Box, Divider, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
-import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
-import NoPDF from '../NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import * as styles from './OverviewDisplay.css'
+import { formatDate, getInitials, m } from '@island.is/portals/my-pages/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { dateFormatWithTime } from '@island.is/shared/constants'
+import { isDefined } from '@island.is/shared/utils'
+import { FC, useState } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
+import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
+import NoPDF from '../NoPDF/NoPDF'
+import ReplyContainer from '../Reply/ReplyContainer'
+import ReplyHeader from '../Reply/ReplyHeader'
+import ReplySent from '../Reply/ReplySent'
+import * as styles from './OverviewDisplay.css'
 
 interface Props {
   activeBookmark: boolean
@@ -24,7 +30,9 @@ export const DesktopOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { activeDocument } = useDocumentContext()
+  const { profile } = useUserInfo()
+
+  const { activeDocument, replyable, replies } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
   if (loading) {
@@ -75,16 +83,28 @@ export const DesktopOverview: FC<Props> = ({
       />
       <Box>
         {<DocumentRenderer doc={activeDocument} />}
-        <Box marginTop={2}>
-          <Button
-            variant="ghost"
-            preTextIcon="undo"
-            preTextIconType="outline"
-            size="small"
-          >
-            Svara pósti
-          </Button>
-        </Box>
+        {replies?.map((reply) => (
+          <>
+            <Box paddingY={3}>
+              <Divider />
+            </Box>
+            <ReplyHeader
+              initials={getInitials(profile.name)}
+              title={profile.name}
+              hasEmail={isDefined(profile.email)}
+              subTitle={formatDate(reply?.date, dateFormatWithTime.is)}
+            />
+            <ReplySent
+              date={reply.date}
+              id={reply.id}
+              reply={reply.reply}
+              email={reply.email}
+              intro={reply.intro}
+            />
+          </>
+        ))}
+        {/* {If document is marked replyable, we render the reply form} */}
+        {replyable && <ReplyContainer sender={activeDocument.sender} />}
       </Box>
       {activeDocument?.id && (
         <Box className={styles.reveal}>

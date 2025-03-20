@@ -2,14 +2,14 @@ import { DocumentsV2Category, DocumentsV2Sender } from '@island.is/api/schema'
 import {
   createContext,
   Dispatch,
-  SetStateAction,
   FC,
-  useState,
+  SetStateAction,
   useContext,
+  useState,
 } from 'react'
-import { ActiveDocumentType2 } from '../../lib/types'
-import { FilterValuesType, defaultFilterValues } from '../../utils/types'
 import { useLoaderData } from 'react-router-dom'
+import { ActiveDocumentType2 } from '../../lib/types'
+import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 
 type SelectedLineType = Array<string>
 type ActiveDocumentStateType = ActiveDocumentType2 | null
@@ -25,6 +25,14 @@ export type DocumentsStateProps = {
   docLoading: boolean
   documentDisplayError?: string
   localRead: string[]
+  replyable: boolean
+  replies: {
+    id: string
+    date: Date
+    email: string
+    reply: string
+    intro?: string
+  }[]
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
   setActiveDocument: Dispatch<SetStateAction<ActiveDocumentStateType>>
@@ -36,6 +44,12 @@ export type DocumentsStateProps = {
   setDocLoading: Dispatch<SetStateAction<boolean>>
   setDocumentDisplayError: Dispatch<SetStateAction<string | undefined>>
   setLocalRead: Dispatch<SetStateAction<string[]>>
+  setReplyable: Dispatch<SetStateAction<boolean>>
+  setReplies: Dispatch<
+    SetStateAction<
+      { id: string; date: Date; email: string; reply: string; intro?: string }[]
+    >
+  >
 }
 
 export const DocumentsContext = createContext<DocumentsStateProps>({
@@ -49,6 +63,8 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   docLoading: false,
   documentDisplayError: undefined,
   localRead: [],
+  replyable: false,
+  replies: [],
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
@@ -60,6 +76,8 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setDocLoading: () => undefined,
   setDocumentDisplayError: () => undefined,
   setLocalRead: () => undefined,
+  setReplyable: () => undefined,
+  setReplies: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -82,6 +100,27 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [docLoading, setDocLoading] = useState(false)
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [localRead, setLocalRead] = useState<string[]>([])
+  const [replyable, setReplyable] = useState<boolean>(true) // TODO: Set to false
+  const [replies, setReplies] = useState<
+    { id: string; date: Date; email: string; reply: string; intro?: string }[]
+  >([
+    {
+      id: '123',
+      date: new Date(),
+      email: 'lisa@skb.is',
+      reply:
+        'Þetta er svar 1 við þræðinum. Ég bara skrifa og skrifa og tala, síðan aðeins meira. ',
+      intro:
+        'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang.',
+    },
+    {
+      id: '124',
+      date: new Date(),
+      email: 'lisa@skb.is',
+      reply:
+        'Þetta er svar 2 við þræðinum. Ég bara skrifa og skrifa og tala, síðan aðeins meira.  Ég bara skrifa og skrifa og tala, síðan aðeins meira. ',
+    },
+  ])
 
   return (
     <DocumentsContext.Provider
@@ -96,6 +135,8 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         docLoading,
         documentDisplayError,
         localRead,
+        replyable,
+        replies,
 
         setSelectedLines,
         setActiveDocument,
@@ -107,6 +148,8 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setDocLoading,
         setDocumentDisplayError,
         setLocalRead,
+        setReplyable,
+        setReplies,
       }}
     >
       {children}
