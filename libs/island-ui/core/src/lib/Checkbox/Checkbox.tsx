@@ -55,7 +55,6 @@ export const Checkbox = ({
   dataTestId,
   filled = false,
   rightContent,
-  children
 }: CheckboxProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
