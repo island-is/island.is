@@ -1060,10 +1060,12 @@ export const OrganizationWrapper: React.FC<
           <meta name="robots" content="noindex, nofollow" />
         )}
       </HeadWithSocialSharing>
-      <OrganizationHeader
-        organizationPage={organizationPage}
-        isSubpage={isSubpage}
-      />
+      <Box>
+        <OrganizationHeader
+          organizationPage={organizationPage}
+          isSubpage={isSubpage}
+        />
+      </Box>
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
@@ -1309,7 +1311,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {!!mainContent && <Box className="rs_read">{children}</Box>}
       {!minimal && (
-        <Box className="rs_read">
+        <Box className="rs_read" marginTop="auto">
           <OrganizationFooter
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
