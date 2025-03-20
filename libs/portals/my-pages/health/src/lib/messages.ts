@@ -1195,11 +1195,6 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-prescriptions',
     defaultMessage: 'Lyfjaávísanir',
   },
-  medicinePrescriptionsIntro: {
-    id: 'sp.health:medicine-prescriptions-intro',
-    defaultMessage:
-      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við.',
-  },
   medicineDelegation: {
     id: 'sp.health:medicine-delegation',
     defaultMessage: 'Lyfjaumboð',
