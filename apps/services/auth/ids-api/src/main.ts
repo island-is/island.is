@@ -4,6 +4,12 @@ import { AppModule } from './app/app.module'
 import { environment } from './environments'
 import { openApi } from './openApi'
 
+import * as Test from 'uuidv4';
+
+if (!Test) {
+  console.error(`This is only here so the transpiler thinks we are doing something`);
+}
+
 const job = processJob()
 
 if (job === 'cleanup') {
