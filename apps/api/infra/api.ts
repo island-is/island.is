@@ -109,7 +109,6 @@ export const serviceSetup = (services: {
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
         prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
-
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
@@ -279,8 +278,12 @@ export const serviceSetup = (services: {
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
+      RANNIS_GRANTS_URL: {
+        dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+      },
     })
-
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',

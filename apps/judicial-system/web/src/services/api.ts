@@ -1,3 +1,4 @@
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
 
 import 'isomorphic-fetch'
@@ -6,7 +7,7 @@ const { API_URL = '' } = process.env // eslint-disable-line @typescript-eslint/n
 export const apiUrl = API_URL
 
 export const logout = () => {
-  deleteCookie('judicial-system.csrf')
+  deleteCookie(CSRF_COOKIE_NAME)
   window.location.href = `${apiUrl}/api/auth/logout`
 }
 

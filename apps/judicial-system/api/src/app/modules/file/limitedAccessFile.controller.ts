@@ -208,6 +208,29 @@ export class LimitedAccessFileController {
     )
   }
 
+  @Get(['rulingSentToPrisonAdmin', 'rulingSentToPrisonAdmin/:fileName'])
+  @Header('Content-Type', 'application/pdf')
+  getIndictmentRulingSentToPrisonAdminPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the indictment ruling sent to prison admin for case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_INDICTMENT_RULING_SENT_TO_PRISON_ADMIN_PDF,
+      id,
+      `limitedAccess/rulingSentToPrisonAdmin`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
   @Get('allFiles')
   @Header('Content-Type', 'application/zip')
   async getAllFiles(
