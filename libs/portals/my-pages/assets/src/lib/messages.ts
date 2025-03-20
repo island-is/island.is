@@ -1159,7 +1159,7 @@ export const ipMessages = defineMessages({
   },
   description: {
     id: 'sp.intellectual-property:description',
-    defaultMessage: 'Hér getur þú skoðað yfirlit yfir þín hugverkaréttindi',
+    defaultMessage: 'Lýsing',
   },
   baseInfo: {
     id: 'sp.intellectual-property:base-info',
