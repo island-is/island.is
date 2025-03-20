@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
+// import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { SyslumennService, PersonType } from '@island.is/clients/syslumenn'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
-import { UserProfile } from './types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { info } from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -18,7 +17,7 @@ import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNo
 export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly criminalRecordService: CriminalRecordService,
+    // private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
   ) {
     super(ApplicationTypes.CRIMINAL_RECORD)
