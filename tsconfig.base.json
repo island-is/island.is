@@ -773,6 +773,9 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
+      "@island.is/clients/practical-exams-ver": [
+        "libs/clients/practical-exams-ver/src/index.ts"
+      ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -880,9 +883,6 @@
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
-      ],
-      "@island.is/clients/practical-exams-ver": [
-        "libs/clients/practical-exams-ver/src/index.ts"
       ],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
@@ -1182,6 +1182,9 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/api/domains/practical-exams": [
+        "libs/api/domains/practical-exams/src/index.ts"
       ],
       "application/templates/examples/example-no-inputs": [
         "libs/application/templates/examples/example-no-inputs/src/index.ts"
