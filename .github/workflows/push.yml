@@ -261,6 +261,8 @@ jobs:
       - pre-checks
       - prepare
     runs-on: arc-test
+    permissions:
+      contents: read
     container:
       image: gcr.io/kaniko-project/executor:debug
     timeout-minutes: 45
@@ -283,6 +285,9 @@ jobs:
         id: gather
         run: |
           set -euo pipefail
+          echo "${{ matrix.chunk.projects }}"
+          echo '${{ matrix.chunk.projects }}'
+          echo ${{ matrix.chunk.projects }}
           AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
@@ -301,10 +306,10 @@ jobs:
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: ./scripts/ci/docker-login-ecr.sh
 
       - name: Prepare Docker build arguments
         id: dockerargs
