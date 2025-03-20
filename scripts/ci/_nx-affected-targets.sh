@@ -7,9 +7,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 export HEAD=${HEAD:-HEAD}
 export BASE=${BASE:-main}
-SKIP_JUDICIAL_SYSTEM=${SKIP_JUDICIAL_SYSTEM:-false}
-echo $SKIP_JUDICIAL_SYSTEM
-exit 99
+SKIP_JUDICIAL=${SKIP_JUDICIAL_SYSTEM:-false}
+
 NX_AFFECTED_ALL=${NX_AFFECTED_ALL:-}
 TEST_EVERYTHING=${TEST_EVERYTHING:-}
 # This is a helper script to find NX affected projects for a specific target
@@ -23,7 +22,7 @@ else
   EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
 fi
 
-if [[ "$SKIP_JUDICIAL_SYSTEM" == "true" ]]; then
+if [[ "$SKIP_JUDICIAL" == "true" ]]; then
   npx nx show projects --withTarget="$1" "${EXTRA_ARGS[@]}" --json | jq -r '[ .[] | select(startswith("judicial-") | not) ] | join(", ")'
 else
   npx nx show projects --withTarget="$1" "${EXTRA_ARGS[@]}" --json | jq -r 'join(", ")'
