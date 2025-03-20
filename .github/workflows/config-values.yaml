@@ -62,6 +62,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Install yarn in infra
         working-directory: infra
@@ -94,6 +97,9 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Install yarn in infra
         working-directory: infra

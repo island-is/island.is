@@ -15,30 +15,9 @@ inputs:
     description: ''
     required: false
     default: 'eu-west-1'
-  AWS_ACCESS_KEY_ID:
-    description: ''
-    required: false
-    default: ''
-  AWS_SECRET_ACCESS_KEY:
-    description: ''
-    required: false
-    default: ''
 runs:
   using: 'composite'
   steps:
-    - name: Check inputs
-      shell: bash
-      run: |
-        [ "${{ inputs.AWS_SECRET_ACCESS_KEY }}" != "" ] && echo "We have access" || echo "No access key provided"
-
-    - name: Configure AWS Credentials
-      if: inputs.AWS_ACCESS_KEY_ID != '' || inputs.AWS_SECRET_ACCESS_KEY != ''
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
-
     - name: Corepack
       shell: bash
       run: |
@@ -48,7 +27,9 @@ runs:
       shell: bash
       run: |
         yarn config set npmRegistryServer "${{ inputs.YARN_NPM_REGISTRY_SERVER }}"
-        export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner ${{ inputs.AWS_ACCOUNT_ID }} --region ${{ inputs.AWS_REGION }} --query authorizationToken --output text`
+        CODEARTIFACT_AUTH_TOKEN="$(aws codeartifact get-authorization-token --domain npm-upstream --domain-owner ${{ inputs.AWS_ACCOUNT_ID }} --region ${{ inputs.AWS_REGION }} --query authorizationToken --output text)"
+        export CODEARTIFACT_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN
+        [ "${CODEARTIFACT_AUTH_TOKEN}" != "" ] && echo "We have token" || echo "Token missing"
         yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAuthToken' "${CODEARTIFACT_AUTH_TOKEN}"
         yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAlwaysAuth' "true"
 
