@@ -47,6 +47,7 @@ export const PaymentPending: FC<
     })
   const hasSubmitted = useRef(false)
   // automatically go to done state if payment has been fulfilled
+
   useEffect(() => {
     const removeCancelledFromURL = () => {
       setSearchParams((params) => {
@@ -66,10 +67,13 @@ export const PaymentPending: FC<
 
     if (!paymentStatus.fulfilled) {
       if (shouldRedirect) {
-        window.document.location.href = getRedirectUrl(paymentStatus.paymentUrl)
+        window.document.location.href = paymentStatus.paymentUrl
       }
       return
     }
+    console.log('=========================================')
+    console.log('payment fulfilled', paymentStatus)
+    console.log('=========================================')
     stopPolling()
     submitApplication()
     hasSubmitted.current = true
