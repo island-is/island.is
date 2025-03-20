@@ -53,7 +53,7 @@ fi
 echo $EXTRA_OPTS
 
 # Set Datadog config per-project
-jq -n --arg p "${AFFECTED_PROJECTS}" '$p | split(",") | .[]' | xargs -I% nx show project --json % | jq -re '"echo DD_SERVICE=\(.name) >> \(.root)/.env"' | xargs -I% sh -c '%'
+jq -n --arg p "${AFFECTED_PROJECTS}" '$p | split(",") | .[]' | xargs -I% yarn nx show project --json % | jq -re '"echo DD_SERVICE=\(.name) >> \(.root)/.env"' | xargs -I% sh -c '%'
 
 yarn nx run-many \
   --projects "${AFFECTED_PROJECTS}" \
