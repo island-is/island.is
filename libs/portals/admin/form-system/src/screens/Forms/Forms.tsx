@@ -2,14 +2,18 @@ import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
-import { CREATE_FORM, GET_FORMS } from '@island.is/form-system/graphql'
-import { FormsLoaderResponse } from './Forms.loader'
+import {
+  CREATE_FORM,
+  FormsLoaderResponse,
+  GET_FORMS,
+} from '@island.is/form-system/graphql'
+// import { FormsLoaderResponse } from './Forms.loader'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { useEffect, useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
-import { FormsHeader } from '../../components/Headers/FormsHeader'
+import { FormsHeader } from './FormsHeader'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
@@ -21,7 +25,7 @@ export const Forms = () => {
   const navigate = useNavigate()
   const { control, controlDispatch, inSettings, setInSettings } =
     useContext(ControlContext)
-  const { forms, organizations, isAdmin } =
+  const { forms, organizations, isAdmin, organizationNationalId } =
     useLoaderData() as FormsLoaderResponse
   const { formatMessage } = useIntl()
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
@@ -29,8 +33,6 @@ export const Forms = () => {
 
   const [formsState, setFormsState] = useState<FormSystemForm[]>(forms)
   const [organizationsState, setOrganizationsState] = useState(organizations)
-
-  console.log('control organizationNationalId', control.organizationNationalId)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
@@ -48,8 +50,9 @@ export const Forms = () => {
         },
       },
     })
-    if (data?.formSystemAllForms?.forms) {
-      setFormsState(data.formSystemAllForms.forms)
+    console.log('data in forms', data)
+    if (data?.formSystemForms?.forms) {
+      setFormsState(data.formSystemForms.forms)
     }
   }
 
@@ -59,6 +62,9 @@ export const Forms = () => {
     }
   }, [])
 
+  console.log('control orgID', control.organizationNationalId)
+  console.log('forms', forms)
+
   if (forms) {
     return (
       <>
@@ -67,6 +73,7 @@ export const Forms = () => {
           organizations={organizationsState}
           onOrganizationChange={handleOrganizationChange}
           isAdmin={isAdmin}
+          organizationNationalId={organizationNationalId}
         />
 
         <Box marginTop={5}></Box>

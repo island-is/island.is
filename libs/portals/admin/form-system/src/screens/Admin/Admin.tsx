@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
 import {
+  AdminLoaderResponse,
   CREATE_FORM,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
@@ -14,8 +15,7 @@ import { useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { divide } from 'lodash'
-import { AdminHeader } from '../../components/Admin/AdminHeader'
-import { AdminLoaderResponse } from './Admin.loader'
+import { AdminHeader } from './AdminHeader'
 import { PermissionsList } from '../../components/Admin/PermissionsList'
 
 export const Admin = () => {
@@ -62,25 +62,25 @@ export const Admin = () => {
       },
     })
 
-    if (data?.formSystemGetOrganizationAdmin.organizationId) {
-      setOrganizationIdState(data.formSystemGetOrganizationAdmin.organizationId)
+    if (data?.formSystemOrganizationAdmin.organizationId) {
+      setOrganizationIdState(data.formSystemOrganizationAdmin.organizationId)
     }
 
-    if (data?.formSystemGetOrganizationAdmin.selectedCertificationTypes) {
+    if (data?.formSystemOrganizationAdmin.selectedCertificationTypes) {
       setSelectedCertificationTypesState(
-        data.formSystemGetOrganizationAdmin.selectedCertificationTypes,
+        data.formSystemOrganizationAdmin.selectedCertificationTypes,
       )
     }
 
-    if (data?.formSystemGetOrganizationAdmin.selectedListTypes) {
+    if (data?.formSystemOrganizationAdmin.selectedListTypes) {
       setSelectedListTypesState(
-        data.formSystemGetOrganizationAdmin.selectedListTypes,
+        data.formSystemOrganizationAdmin.selectedListTypes,
       )
     }
 
-    if (data?.formSystemGetOrganizationAdmin.selectedFieldTypes) {
+    if (data?.formSystemOrganizationAdmin.selectedFieldTypes) {
       setSelectedFieldTypesState(
-        data.formSystemGetOrganizationAdmin.selectedFieldTypes,
+        data.formSystemOrganizationAdmin.selectedFieldTypes,
       )
     }
   }

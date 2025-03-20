@@ -25,6 +25,8 @@ export const ApplicationsHeader = (props: Props) => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
+  console.log('organizations in applicationsHeader', organizations)
+
   return (
     <Box marginBottom={4} marginLeft={2}>
       <Row>

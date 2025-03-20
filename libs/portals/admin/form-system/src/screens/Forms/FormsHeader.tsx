@@ -21,10 +21,17 @@ interface Props {
   organizations: Option<string>[]
   onOrganizationChange: (selected: { value: string }) => void
   isAdmin: boolean
+  organizationNationalId: string
 }
 
 export const FormsHeader = (props: Props) => {
-  const { setFormsState, organizations, onOrganizationChange, isAdmin } = props
+  const {
+    setFormsState,
+    organizations,
+    onOrganizationChange,
+    isAdmin,
+    organizationNationalId,
+  } = props
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
   const { control, controlDispatch, inSettings, setInSettings } =
@@ -32,14 +39,18 @@ export const FormsHeader = (props: Props) => {
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
     onCompleted: (newFormData) => {
-      if (newFormData?.formSystemCreateForm?.form) {
+      if (newFormData?.createFormSystemForm?.form) {
         setFormsState((prevForms) => [
           ...prevForms,
-          newFormData.formSystemCreateForm.form,
+          newFormData.createFormSystemForm.form,
         ])
       }
     },
   })
+
+  if (!control.organizationNationalId) {
+    control.organizationNationalId = organizationNationalId
+  }
 
   return (
     <Box marginBottom={4} marginLeft={2}>
@@ -59,7 +70,7 @@ export const FormsHeader = (props: Props) => {
               navigate(
                 FormSystemPaths.Form.replace(
                   ':formId',
-                  String(data?.formSystemCreateForm?.form?.id),
+                  String(data?.createFormSystemForm?.form?.id),
                 ),
               )
             }}

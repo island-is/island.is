@@ -331,10 +331,11 @@ export const controlReducer = (
     }
     case 'CHANGE_FIELD_TYPE': {
       const { newValue, fieldSettings, update } = action.payload
+      const currentData = activeItem.data as FormSystemField
       const newActive = {
         ...activeItem,
         data: {
-          ...activeItem.data,
+          ...currentData,
           fieldType: newValue,
           fieldSettings: removeTypename(fieldSettings),
         },

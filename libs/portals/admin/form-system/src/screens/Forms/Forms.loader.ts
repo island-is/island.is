@@ -40,10 +40,13 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       '@admin.island.is/form-system:admin',
     )
 
+    const organizationNationalId = userInfo?.profile.nationalId
+
     return {
       forms,
       organizations,
       isAdmin,
+      organizationNationalId,
     }
   }
 }

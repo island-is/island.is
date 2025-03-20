@@ -1,27 +1,21 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemForm, FormSystemFormResponse } from '@island.is/api/schema'
-import { GET_FORMS } from '@island.is/form-system/graphql'
+import { GET_FORMS, LoaderResponse } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { Option } from '@island.is/island-ui/core'
 
 export interface ApplicationsLoaderQueryResponse {
-  formSystemGetAllForms?: FormSystemFormResponse
-}
-
-export interface ApplicationsLoaderResponse {
-  forms: FormSystemForm[]
-  organizations: Option<string>[]
-  isAdmin: boolean
+  formSystemForms?: FormSystemFormResponse
 }
 
 export const applicationsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
-  return async (): Promise<ApplicationsLoaderResponse> => {
+  return async (): Promise<LoaderResponse> => {
     const { data, error } = await client.query<ApplicationsLoaderQueryResponse>(
       {
         query: GET_FORMS,
         variables: {
           input: {
-            nationalId: '0',
+            nationalId: userInfo?.profile.nationalId,
           },
         },
         fetchPolicy: 'no-cache',
@@ -34,17 +28,15 @@ export const applicationsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       throw new Error('No forms were found')
     }
 
-    const forms = data.formSystemGetAllForms?.forms
+    const forms = data.formSystemForms?.forms
       ?.filter((form) => form !== null)
       .map((form) => removeTypename(form)) as FormSystemForm[]
 
-    const organizations = data.formSystemGetAllForms?.organizations?.map(
-      (org) => ({
-        label: org?.label,
-        value: org?.value,
-        isSelected: org?.isSelected,
-      }),
-    ) as Option<string>[]
+    const organizations = data.formSystemForms?.organizations?.map((org) => ({
+      label: org?.label,
+      value: org?.value,
+      isSelected: org?.isSelected,
+    })) as Option<string>[]
 
     const isAdmin = userInfo?.scopes.includes(
       '@admin.island.is/form-system:admin',

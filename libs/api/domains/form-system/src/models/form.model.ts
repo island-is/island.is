@@ -84,8 +84,8 @@ export class Form {
   @Field(() => LanguageType)
   name!: LanguageType
 
-  @Field(() => String)
-  slug!: string
+  @Field(() => String, { nullable: true })
+  slug?: string
 
   @Field(() => Date)
   created!: Date

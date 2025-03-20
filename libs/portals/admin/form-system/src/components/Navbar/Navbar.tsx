@@ -9,7 +9,6 @@ import {
   FormSystemScreen,
   FormSystemField,
   FormSystemSection,
-
   Maybe,
 } from '@island.is/api/schema'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
@@ -22,8 +21,7 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { m } from '@island.is/form-system/ui'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { m, SectionTypes } from '@island.is/form-system/ui'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 
 export const Navbar = () => {
@@ -58,7 +56,6 @@ export const Navbar = () => {
 
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
-
 
   const addSection = async () => {
     try {
@@ -120,13 +117,10 @@ export const Navbar = () => {
           )
 
     if (id === baseSettingsStep.id) {
-
-    if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
         payload: {
           activeItem: {
-            type: 'Section',
             type: 'Section',
             data: baseSettingsStep,
           },
@@ -265,14 +259,14 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
-      {/* <Box
+      <Box
         paddingBottom={2}
         overflow="hidden"
         display="flex"
         flexDirection="row"
       >
-        <NavbarTab />
-      </Box> */}
+        {/* <NavbarTab /> */}
+      </Box>
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
@@ -282,6 +276,7 @@ export const Navbar = () => {
         <SortableContext items={sectionIds ?? []}>
           {renderInputSections()}
         </SortableContext>
+
         {createPortal(
           <DragOverlay
             dropAnimation={{
