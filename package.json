@@ -63,7 +63,9 @@
     "run-proxies": "./scripts/run-proxies.sh",
     "proxies": "yarn run-proxies",
     "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts",
-    "mock": "nx mock"
+    "mock": "nx mock",
+    "test:helm-values": "npx -p jest -p @actions/github -p @actions/core -- node --experimental-vm-modules node_modules/jest/bin/jest.js --config=scripts/ci/docker/jest.config.mjs scripts/ci/docker/",
+    "generate-feature-values": "./scripts/ci/generate-feature-values.sh"
   },
   "dependencies": {
     "@actions/core": "1.11.1",
