@@ -629,7 +629,7 @@ application-system-api:
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     NOVA_USERNAME: 'IslandIs_User_Development'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
-    PAYMENT_API_CALLBACK_URL: 'http://application-system-api.feature-as-test-new-payment.svc.cluster.local/application-payment/api-client-payment-callback'
+    PAYMENT_API_CALLBACK_URL: 'http://application-system-api.feature-as-test-new-payment.svc.cluster.local'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
