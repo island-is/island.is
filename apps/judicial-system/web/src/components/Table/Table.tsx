@@ -213,14 +213,13 @@ const Table: FC<TableProps> = (props) => {
             const aValue = getColumnValue(a, sortConfig.column)
             const bValue = getColumnValue(b, sortConfig.column)
 
-            const sortableAValue =
+            const getValue =
               sortConfig.column === 'courtCaseNumber'
-                ? getSortableValue(aValue)
-                : toNumber(aValue)
-            const sortableBValue =
-              sortConfig.column === 'courtCaseNumber'
-                ? getSortableValue(bValue)
-                : toNumber(bValue)
+                ? getSortableValue
+                : toNumber
+
+            const sortableAValue = getValue(aValue)
+            const sortableBValue = getValue(bValue)
 
             return sortConfig?.direction === 'ascending'
               ? sortableAValue - sortableBValue
