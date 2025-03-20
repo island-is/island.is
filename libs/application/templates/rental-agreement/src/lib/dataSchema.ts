@@ -14,7 +14,6 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
-import { getValueViaPath } from '@island.is/application/core'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
