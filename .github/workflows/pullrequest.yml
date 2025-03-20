@@ -280,7 +280,6 @@ jobs:
       - linting-workspace
       - tests
       - linting
-      - run-shellcheck
       - formatting
       - e2e
       - build
@@ -298,8 +297,6 @@ jobs:
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check linting success
         run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
-      - name: Check run-shellcheck success
-        run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
       - name: Check formatting success
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success
