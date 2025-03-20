@@ -295,7 +295,7 @@ export class PaymentService {
             //   'https://as-test-new-payment-beta.dev01.devland.is/application-payment/api-client-payment-callback',
             onUpdateUrl: onUpdateUrl.toString(),
             // onUpdateUrl:
-            //   'http://application-system-api/application-payment/api-client-payment-callback',
+            //   'http://application-system-api.feature-as-test-new-payment.svc.cluster.local/application-payment/api-client-payment-callback',
             metadata: {
               applicationId,
               paymentId: paymentModel.id,
