@@ -963,7 +963,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+              name: formatMessage(sections.indictmentsCourtSection.conclusion),
               isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
               href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
               onClick:
