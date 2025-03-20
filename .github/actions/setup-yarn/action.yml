@@ -4,17 +4,6 @@ inputs:
   RUNS_ON_S3_BUCKET_CACHE:
     description: ''
     required: true
-  YARN_NPM_REGISTRY_SERVER:
-    description: ''
-    required: true
-  AWS_ACCOUNT_ID:
-    description: ''
-    required: false
-    default: '821090935708'
-  AWS_REGION:
-    description: ''
-    required: false
-    default: 'eu-west-1'
 runs:
   using: 'composite'
   steps:
@@ -22,16 +11,6 @@ runs:
       shell: bash
       run: |
         corepack enable
-
-    - name: Setup NPM pull-through
-      shell: bash
-      run: |
-        yarn config set npmRegistryServer "${{ inputs.YARN_NPM_REGISTRY_SERVER }}"
-        CODEARTIFACT_AUTH_TOKEN="$(aws codeartifact get-authorization-token --domain npm-upstream --domain-owner ${{ inputs.AWS_ACCOUNT_ID }} --region ${{ inputs.AWS_REGION }} --query authorizationToken --output text)"
-        export CODEARTIFACT_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN
-        [ "${CODEARTIFACT_AUTH_TOKEN}" != "" ] && echo "We have token" || echo "Token missing"
-        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAuthToken' "${CODEARTIFACT_AUTH_TOKEN}"
-        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAlwaysAuth' "true"
 
     - name: Check node version
       shell: bash
@@ -45,7 +24,7 @@ runs:
       shell: bash
       id: set-cache-key
       run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-4" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Get Yarn Cache Directory Path
       shell: bash
