@@ -185,9 +185,7 @@ export const Review: FC<ReviewScreenProps> = ({
         <Siblings {...childProps} />
       )}
       <Languages {...childProps} />
-      {applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && (
-        <AllergiesAndIntolerances {...childProps} />
-      )}
+      <AllergiesAndIntolerances {...childProps} />
       <Support {...childProps} />
     </>
   )
