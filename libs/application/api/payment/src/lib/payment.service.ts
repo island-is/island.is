@@ -304,8 +304,6 @@ export class PaymentService {
           },
         })
 
-      // Trigger build
-
       console.log('=========================================')
       console.log('paymentResult', JSON.stringify(paymentResult, null, 2))
       console.log('=========================================')
