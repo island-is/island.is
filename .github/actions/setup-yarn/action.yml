@@ -26,6 +26,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Check inputs
+      shell: bash
+      run: |
+        [ "${{ inputs.AWS_SECRET_ACCESS_KEY }}" != '' ] && echo "We have access"
+
     - name: Configure AWS Credentials
       if: inputs.AWS_ACCESS_KEY_ID != '' || inputs.AWS_SECRET_ACCESS_KEY != ''
       uses: aws-actions/configure-aws-credentials@v4
