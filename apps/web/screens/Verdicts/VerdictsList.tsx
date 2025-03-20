@@ -17,6 +17,7 @@ import {
   InfoCardGrid,
   Inline,
   Input,
+  Select,
   Stack,
   Tag,
   Text,
@@ -167,6 +168,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
   const courtTags = useMemo(() => {
     return [
       {
+        label: formatMessage(m.listPage.showAllCourts),
+        value: ALL_COURTS_TAG,
+      },
+      {
         label: formatMessage(m.listPage.showDistrictCourts),
         value: DEFAULT_DISTRICT_COURT_TAG,
       },
@@ -263,54 +268,79 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                     backgroundColor="blue"
                   />
                 </Box>
-                <Inline alignY="center" space={2}>
-                  <Tag
-                    active={courtFilter === ALL_COURTS_TAG}
-                    onClick={() => {
-                      setPage(1)
-                      setCourtFilter(ALL_COURTS_TAG)
+                <Hidden above="xs">
+                  <Select
+                    options={courtTags}
+                    value={courtTags.find((tag) => tag.value === courtFilter)}
+                    label={formatMessage(m.listPage.courtSelectLabel)}
+                    onChange={(option) => {
+                      if (option) setCourtFilter(option.value)
                     }}
-                  >
-                    {formatMessage(m.listPage.showAllCourts)}
-                  </Tag>
-                  {courtTags.map((tag) => {
-                    let isActive = courtFilter === tag.value
-                    if (
-                      !isActive &&
-                      tag.value === DEFAULT_DISTRICT_COURT_TAG &&
-                      districtCourtTagValues.includes(courtFilter)
-                    ) {
-                      isActive = true
-                    }
-                    return (
-                      <Tag
-                        key={tag.value}
-                        active={isActive}
-                        onClick={() => {
-                          setPage(1)
-                          setCourtFilter(tag.value)
-                        }}
-                      >
-                        {tag.label}
-                      </Tag>
-                    )
-                  })}
-                </Inline>
-                {districtCourtTagValues.includes(courtFilter) && (
+                    size="sm"
+                    backgroundColor="blue"
+                  />
+                </Hidden>
+                <Hidden below="sm">
                   <Inline alignY="center" space={2}>
-                    {districtCourtTags.map((tag) => (
-                      <Tag
-                        key={tag.value}
-                        active={courtFilter === tag.value}
-                        onClick={() => {
-                          setPage(1)
-                          setCourtFilter(tag.value)
-                        }}
-                      >
-                        {tag.label}
-                      </Tag>
-                    ))}
+                    {courtTags.map((tag) => {
+                      let isActive = courtFilter === tag.value
+                      if (
+                        !isActive &&
+                        tag.value === DEFAULT_DISTRICT_COURT_TAG &&
+                        districtCourtTagValues.includes(courtFilter)
+                      ) {
+                        isActive = true
+                      }
+                      return (
+                        <Tag
+                          key={tag.value}
+                          active={isActive}
+                          onClick={() => {
+                            setPage(1)
+                            setCourtFilter(tag.value)
+                          }}
+                        >
+                          {tag.label}
+                        </Tag>
+                      )
+                    })}
                   </Inline>
+                </Hidden>
+                {districtCourtTagValues.includes(courtFilter) && (
+                  <>
+                    <Hidden below="sm">
+                      <Inline alignY="center" space={2}>
+                        {districtCourtTags.map((tag) => (
+                          <Tag
+                            key={tag.value}
+                            active={courtFilter === tag.value}
+                            onClick={() => {
+                              setPage(1)
+                              setCourtFilter(tag.value)
+                            }}
+                          >
+                            {tag.label}
+                          </Tag>
+                        ))}
+                      </Inline>
+                    </Hidden>
+                    <Hidden above="xs">
+                      <Select
+                        options={districtCourtTags}
+                        value={districtCourtTags.find(
+                          (tag) => tag.value === courtFilter,
+                        )}
+                        label={formatMessage(
+                          m.listPage.districtCourtSelectLabel,
+                        )}
+                        onChange={(option) => {
+                          if (option) setCourtFilter(option.value)
+                        }}
+                        size="sm"
+                        backgroundColor="blue"
+                      />
+                    </Hidden>
+                  </>
                 )}
               </Stack>
             </Stack>

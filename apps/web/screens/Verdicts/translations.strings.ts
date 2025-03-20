@@ -42,6 +42,16 @@ export const m = {
       defaultMessage: 'Reifun',
       description: 'Reifun',
     },
+    courtSelectLabel: {
+      id: 'web.verdicts:listPage.courtSelectLabel',
+      defaultMessage: 'Veldu dómstól',
+      description: 'Label á dómstól select einingu',
+    },
+    districtCourtSelectLabel: {
+      id: 'web.verdicts:listPage.districtCourtSelectLabel',
+      defaultMessage: 'Veldu héraðsdómstól',
+      description: 'Label á héraðsdómstól select einingu',
+    },
     loadingMoreFailed: {
       id: 'web.verdicts:listPage.loadingMoreFailed',
       defaultMessage:
