@@ -150,7 +150,7 @@ jobs:
           # NOTE: we reference BASE and HEAD elsewhere
           echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
-          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* || "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == main ]]; then
+          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* ]]; then
           echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
           echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
           export SKIP_JUDICIAL="true"

@@ -6,6 +6,10 @@ inputs:
     description: 'Comma seperated string of paths to copy'
     default: ''
     required: false
+  filter:
+    description: 'Filter to use when selecting files to copy'
+    default: '*'
+    required: false
   branch:
     description: 'Branch to push to'
     default: 'main'
@@ -39,12 +43,19 @@ runs:
       shell: bash
       env:
         files: ${{ inputs.files }}
+        filter: ${{ inputs.filter }}
       run: |
         IFS=$IFS,
         paths=()
         read -a paths <<< $files
-        echo "$files\n$paths"
-        for path in ${paths[@]}; do
+        filtered_paths=()
+        for path in "${paths[@]}"; do
+          if [[ $path == $filter ]]; then
+            filtered_paths+=("$path")
+          fi
+        done
+        paths=("${filtered_paths[@]}")    echo "$files\n$paths"
+        for path in ${filtered_paths[@]}; do
           export DEST="helm-values/helm-values/${path#charts/}"
           export DEST_PATH=$(dirname $DEST)
           mkdir -p $DEST_PATH
