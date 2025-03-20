@@ -52,9 +52,6 @@ fi
 
 echo $EXTRA_OPTS
 
-# Set Datadog config per-project
-jq -n --arg p "${AFFECTED_PROJECTS}" '$p | split(",").[]' | xargs -I% sh -c 'echo DD_SERVICE=% >> .env.%'
-
 yarn nx run-many \
   --projects "${AFFECTED_PROJECTS}" \
   --target test \
