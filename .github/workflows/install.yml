@@ -110,6 +110,8 @@ jobs:
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
           YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps

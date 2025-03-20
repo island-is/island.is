@@ -29,7 +29,7 @@ runs:
     - name: Check inputs
       shell: bash
       run: |
-        [ "${{ inputs.AWS_SECRET_ACCESS_KEY }}" != '' ] && echo "We have access"
+        [ "${{ inputs.AWS_SECRET_ACCESS_KEY }}" != "" ] && echo "We have access" || echo "No access key provided"
 
     - name: Configure AWS Credentials
       if: inputs.AWS_ACCESS_KEY_ID != '' || inputs.AWS_SECRET_ACCESS_KEY != ''
