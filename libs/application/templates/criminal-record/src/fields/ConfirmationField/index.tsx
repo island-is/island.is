@@ -17,29 +17,9 @@ import { m } from '../../lib/messages'
 import { Bus } from '../../assets'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 
-type ConfirmationFieldProps = {
-  field: {
-    props: {
-      link?: {
-        title: string
-        url: string
-      }
-    }
-  }
-  application: {
-    externalData: {
-      getCriminalRecord: {
-        data: {
-          contentBase64: string
-        }
-      }
-    }
-  }
-}
-
-export const ConfirmationField: FC<
-  React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
-> = (props) => {
+export const ConfirmationField: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { application } = props
   const { formatMessage } = useLocale()
 
@@ -54,9 +34,40 @@ export const ConfirmationField: FC<
           title={formatText(m.successTitle, application, formatMessage)}
           message={
             <Box component="span" display="block">
-              <Text variant="small">
-                {formatText(m.successDescription, application, formatMessage)}
-              </Text>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <a
+                      style={{
+                        color: '#0061ff',
+                        textDecoration: 'none',
+                        boxShadow: 'inset 0 -1px 0 0 currentColor',
+                      }}
+                      href={href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                <Text variant="small">
+                  {formatText(m.successDescription, application, formatMessage)}{' '}
+                  <Link
+                    href={`${window.location.origin}/minarsidur/postholf`}
+                    color="blue400"
+                    underline="normal"
+                    underlineVisibility="always"
+                  >
+                    {formatText(
+                      m.successDescriptionLinkText,
+                      application,
+                      formatMessage,
+                    )}
+                  </Link>
+                </Text>
+              </LinkContext.Provider>
             </Box>
           }
         />

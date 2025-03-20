@@ -136,10 +136,14 @@ export const m = defineMessages({
     description: '',
   },
   successDescription: {
-    id: 'cr.application:successDescription',
-    defaultMessage:
-      'Þú getur nú nálgast umsóknina þína í stafrænu pósthólfi á Ísland.is',
-    description: '',
+    id: 'cr.application:successDescriptionx', //TODOx update contentful
+    defaultMessage: 'Þú getur nú nálgast umsóknina þína í',
+    description: 'Description for success alert message',
+  },
+  successDescriptionLinkText: {
+    id: 'cr.application:successDescriptionLinkText',
+    defaultMessage: 'stafrænu pósthólfi á Ísland.is',
+    description: 'Link text for digital inbox on Ísland.is',
   },
   vertificationDescription: {
     id: 'cr.application:vertificationDescription',
@@ -157,11 +161,6 @@ export const m = defineMessages({
     defaultMessage: 'island.is/sannreyna',
     description:
       'The title for the link to further information about the verification',
-  },
-  criminalRecordInboxText: {
-    id: 'cr.application:criminalRecordInboxText',
-    defaultMessage: 'Þú getur fundið sakavottorðið í pósthólfinu þínu',
-    description: 'You can also find the criminal record in your inbox',
   },
   downloadCriminalRecord: {
     id: 'cr.application:downloadCriminalRecord',
