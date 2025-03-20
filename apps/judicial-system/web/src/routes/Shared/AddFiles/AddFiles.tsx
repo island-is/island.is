@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  InstitutionUser,
   isDefenceUser,
   isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
@@ -27,6 +26,7 @@ import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFil
 import {
   CaseFileCategory,
   NotificationType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 import {
@@ -41,7 +41,7 @@ import {
 } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
-const getUserProps = (user: InstitutionUser | undefined) => {
+const getUserProps = (user: User | undefined) => {
   const getCaseInfoNode = (workingCase: TempCase) => (
     <ProsecutorCaseInfo workingCase={workingCase} />
   )
@@ -70,7 +70,7 @@ const getUserProps = (user: InstitutionUser | undefined) => {
 }
 
 const AddFiles: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
