@@ -6,8 +6,6 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-# shellcheck disable=SC1091
-source "$DIR"/09_load-buildkit-driver.sh
 
 APP_DIST_HOME="dist/${APP_HOME}"
 DOCKERFILE=${1:-Dockerfile}
@@ -82,4 +80,4 @@ _upload_artifact() {
 
 _set_publish
 main "$@"
-_upload_artifact
+# _upload_artifact
