@@ -125,6 +125,8 @@ jobs:
       - name: Set base/head sha output
         id: export-sha
         shell: bash
+        env:
+          MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
             # In merge que we always want to use the last
@@ -148,7 +150,12 @@ jobs:
           # NOTE: we reference BASE and HEAD elsewhere
           echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
-
+          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* || "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == judicial-changes ]]; then
+          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
+          else
+          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
+          fi
+          echo Skipping judicial: $SKIP_JUDICIAL
           echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
           echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
 
