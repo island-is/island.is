@@ -4,7 +4,6 @@ set -euxo pipefail
 : "${DD_CIVISIBILITY_AGENTLESS_ENABLED:=true}"
 : "${DD_SITE:=datadoghq.eu}"
 : "${DD_ENV:=ci}"
-: "${DD_SERVICE:=}"
 : "${DD_API_KEY:='<set-api-key>'}"
 : "${NODE_OPTIONS:=}"
 : "${FLAKY_TEST_RETRIES:=3}"
@@ -29,10 +28,10 @@ services_to_skip=(
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_SITE \
   DD_ENV \
-  DD_SERVICE \
   DD_API_KEY \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
+unset DD_SERVICE
 
 # Determine if any project requires code coverage
 requires_code_coverage() {
