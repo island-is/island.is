@@ -110,6 +110,9 @@ export enum Features {
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
 
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
+
+  // Allow fake data
+  digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 }
 
 export enum ServerSideFeature {
