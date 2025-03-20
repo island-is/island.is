@@ -193,7 +193,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -296,8 +295,17 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
+      - name: Restore generated files
+        uses: runs-on/cache/restore@v4
+        id: restore-generated-files-cache
+        with:
+          path: |
+            ${{ env.GENERATED_FILES }}
+          key: generated-files-${{ github.sha }}
+
+      - name: Extract generated files
+        run: |
+          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
@@ -350,7 +358,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -411,7 +418,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Docker build image
         working-directory: infra
