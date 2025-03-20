@@ -105,14 +105,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure AWS Credentials
-        if: steps.gather.outcome == 'success'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
@@ -127,6 +119,7 @@ jobs:
         run: |
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
+
       - name: Derive appropriate SHAs
         if: ${{ inputs.run_merge_queue == false }}
         uses: nrwl/nx-set-shas@v4
