@@ -291,8 +291,8 @@ jobs:
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
         continue-on-error: true
 
-      - uses: actions/checkout@v4
-        if: steps.gather.outcome == 'success'
+      # - uses: actions/checkout@v4
+      #   if: steps.gather.outcome == 'success'
 
       # - name: load-deps
       #   uses: ./.github/actions/load-deps
