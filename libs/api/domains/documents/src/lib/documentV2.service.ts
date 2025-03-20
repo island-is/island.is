@@ -10,7 +10,7 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import differceInYears from 'date-fns/differenceInYears'
+import differenceInYears from 'date-fns/differenceInYears'
 import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { getBirthday } from './helpers/getBirthday'
 import { MailAction } from './models/v2/bulkMailAction.input'
@@ -444,7 +444,7 @@ export class DocumentServiceV2 {
       )
       const birthdate = getBirthday(user.nationalId)
       const childAgeIs16OrOlder = birthdate
-        ? differceInYears(new Date(), birthdate) > 15
+        ? differenceInYears(new Date(), birthdate) > 15
         : false
 
       // Hide health data if user is a legal guardian and child is 16 or older
