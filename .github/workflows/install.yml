@@ -152,9 +152,11 @@ jobs:
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
           if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* || "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == main ]]; then
           echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
+          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
           export SKIP_JUDICIAL="true"
           else
           echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
+          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
           export SKIP_JUDICIAL="false"
           fi
           echo Skipping judicial: $SKIP_JUDICIAL
@@ -197,7 +199,6 @@ jobs:
           DISABLE_CHUNKS: 'true'
           DISABLE_GROUPING: 'true'
           DISABLE_PROBLEMATIC: 'true'
-          SKIP_JUDICIAL: ${{ steps.export-sha.outputs.SKIP_JUDICIAL }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
@@ -208,8 +209,6 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
-        env:
-          SKIP_JUDICIAL: ${{ steps.export-sha.outputs.SKIP_JUDICIAL }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
@@ -222,7 +221,6 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         env:
           CHUNK_SIZE: 1
-          SKIP_JUDICIAL: ${{ steps.export-sha.outputs.SKIP_JUDICIAL }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
@@ -234,8 +232,6 @@ jobs:
       - name: Prepare build targets
         id: build_projects
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
-        env:
-          SKIP_JUDICIAL: ${{ steps.export-sha.outputs.SKIP_JUDICIAL }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
@@ -245,8 +241,6 @@ jobs:
       - name: Prepare docker build targets
         id: docker_projects
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
-        env:
-          SKIP_JUDICIAL: ${{ steps.export-sha.outputs.SKIP_JUDICIAL }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"

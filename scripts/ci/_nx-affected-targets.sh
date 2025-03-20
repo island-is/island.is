@@ -7,7 +7,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 export HEAD=${HEAD:-HEAD}
 export BASE=${BASE:-main}
-SKIP_JUDICIAL=${SKIP_JUDICIAL_SYSTEM:-false}
+SKIP_JUDICIAL=${SKIP_JUDICIAL:-false}
+
+echo "Skipping judicial projects: $SKIP_JUDICIAL"
 
 NX_AFFECTED_ALL=${NX_AFFECTED_ALL:-}
 TEST_EVERYTHING=${TEST_EVERYTHING:-}
