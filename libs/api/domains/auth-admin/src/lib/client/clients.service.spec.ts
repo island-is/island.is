@@ -57,7 +57,7 @@ const baseResponse: AdminClientDto = {
   accessTokenLifetime: 3600,
   customClaims: [{ type: 'string', value: 'test' }],
   singleSession: false,
-  sso: ClientSso.Enabled,
+  sso: ClientSso.enabled,
 }
 
 const secretResponse: ClientSecret = {
