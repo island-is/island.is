@@ -2,7 +2,6 @@ name: Monorepo pipeline - build and deploy
 
 on:
   workflow_dispatch:
-  create:
   pull_request:
     types:
       - opened
