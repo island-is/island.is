@@ -50,7 +50,7 @@ export const specialProvisions = {
     },
     inputRequiredErrorMessage: {
       id: 'ra.application:specialProvisions.housingInfo.inputRequiredErrorMessage',
-      defaultMessage: 'Lýsing á húsnæði er þarf að vera til staðar',
+      defaultMessage: 'Lýsing á húsnæði þarf að vera til staðar',
       description:
         'Special provisions housing description input required error message',
     },
