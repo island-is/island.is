@@ -251,11 +251,6 @@ jobs:
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
 
-      # - name: Prepare docker deps
-      #   id: docker-deps
-      #   run: |
-      #     ./scripts/ci/10_prepare-docker-deps.sh
-
   docker-build:
     needs:
       - pre-checks
@@ -299,20 +294,9 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: eu-west-1
+      # - name: load-deps
+      #   uses: ./.github/actions/load-deps
       #
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v2
-
       - name: Prepare Docker build arguments
         id: dockerargs
         if: steps.gather.outcome == 'success'
@@ -360,19 +344,6 @@ jobs:
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
-      - name: Building Docker images Retry
-        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
-
   helm-docker-build:
     needs:
       - prepare
@@ -400,16 +371,16 @@ jobs:
       #     AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
       #     AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: eu-west-1
+      #
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v2
 
       - name: Docker build image
         working-directory: infra
