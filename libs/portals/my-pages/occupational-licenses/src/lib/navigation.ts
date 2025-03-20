@@ -3,7 +3,7 @@ import { m } from '@island.is/portals/my-pages/core'
 import { OccupationalLicensesPaths } from './paths'
 
 export const occupationalLicensesNavigation: PortalNavigationItem = {
-  name: m.occupationaLicenses,
+  name: m.occupationalLicenses,
   path: OccupationalLicensesPaths.OccupationalLicensesRoot,
   icon: {
     icon: 'receipt',
