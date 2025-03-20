@@ -896,8 +896,16 @@ export const m = defineMessages({
     defaultMessage: 'Fæðingarorlof',
   },
   drivingLicense: {
-    id: 'service.portal:drivingLicense',
+    id: 'service.portal:driving-license',
     defaultMessage: 'Ökuréttindi',
+  },
+  huntingLicense: {
+    id: 'service.portal:hunting-license',
+    defaultMessage: 'Veiðikort',
+  },
+  disabilityLicense: {
+    id: 'service.portal:disability-license',
+    defaultMessage: 'Örorkuskírteini',
   },
   adrLicense: {
     id: 'service.portal:adr-license',
@@ -906,6 +914,14 @@ export const m = defineMessages({
   machineLicense: {
     id: 'service.portal:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',
+  },
+  pCard: {
+    id: 'service.portal:p-card',
+    defaultMessage: 'P-kort',
+  },
+  ehic: {
+    id: 'service.portal:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
   firearmLicense: {
     id: 'service.portal:firearm-license',
@@ -1882,5 +1898,120 @@ export const m = defineMessages({
   sortBy: {
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
+  },
+})
+
+export const searchTagsMessages = defineMessages({
+  documentsMail: {
+    id: 'sp.search.tags:documents-mail',
+    defaultMessage: 'Póstur',
+  },
+  documentsMailTwo: {
+    id: 'sp.search.tags:documents-mail-two',
+    defaultMessage: 'Bréf',
+  },
+  applicationsApply: {
+    id: 'sp.search.tags:applications-apply',
+    defaultMessage: 'Sækja um',
+  },
+  applicationsApplicant: {
+    id: 'sp.search.tags:applications-applicant',
+    defaultMessage: 'Umsækjandi',
+  },
+  informationMe: {
+    id: 'sp.search.tags:information-me',
+    defaultMessage: 'Ég',
+  },
+  informationSpouse: {
+    id: 'sp.search.tags:information-spouse',
+    defaultMessage: 'Maki',
+  },
+  informationChild: {
+    id: 'sp.search.tags:information-child',
+    defaultMessage: 'Barn',
+  },
+  informationWife: {
+    id: 'sp.search.tags:information-wife',
+    defaultMessage: 'Kona',
+  },
+  informationHusband: {
+    id: 'sp.search.tags:information-husband',
+    defaultMessage: 'Maður',
+  },
+  informationFamily: {
+    id: 'sp.search.tags:information-family',
+    defaultMessage: 'Fjölskylda',
+  },
+  assetsHouse: {
+    id: 'sp.search.tags:assets-house',
+    defaultMessage: 'Hús',
+  },
+  assetsVehicle: {
+    id: 'sp.search.tags:assets-vehicle',
+    defaultMessage: 'Bíll',
+  },
+  assetsVehicles: {
+    id: 'sp.search.tags:assets-vehicles',
+    defaultMessage: 'Bílar',
+  },
+  lawAndOrderVerdict: {
+    id: 'sp.search.tags:law-and-order-verdict',
+    defaultMessage: 'Dómur',
+  },
+  lawAndOrderLaw: {
+    id: 'sp.search.tags:law-and-order-law',
+    defaultMessage: 'Lög',
+  },
+  lawAndOrderOrder: {
+    id: 'sp.search.tags:law-and-order-order',
+    defaultMessage: 'Reglur',
+  },
+  lawAndOrderCase: {
+    id: 'sp.search.tags:law-and-order-case',
+    defaultMessage: 'Mál',
+  },
+  educationDegree: {
+    id: 'sp.search.tags:education-degree',
+    defaultMessage: 'Gráða',
+  },
+  airDiscountFlight: {
+    id: 'sp.search.tags:air-discount-flight',
+    defaultMessage: 'Flug',
+  },
+  occupationalLicensesRights: {
+    id: 'sp.search.tags:occupational-licenses-rights',
+    defaultMessage: 'Réttindi',
+  },
+  occupationalLicensesJobRights: {
+    id: 'sp.search.tags:occupational-licenses-job-rights',
+    defaultMessage: 'Starfsréttindi',
+  },
+  occupationalLicensesCertificate: {
+    id: 'sp.search.tags:occupational-licenses-certificate',
+    defaultMessage: 'Vottorð',
+  },
+  occupationalLicensesSpecialLicense: {
+    id: 'sp.search.tags:occupational-licenses-special-license',
+    defaultMessage: 'Leyfisbréf',
+  },
+  healthShorter: {
+    id: 'sp.search.tags:health-shorter',
+    defaultMessage: 'Sjúkra',
+  },
+  licensesAlternative: {
+    id: 'sp.search.tags:licenses-alternative',
+    defaultMessage: 'Skilríki',
+  },
+  licensesCard: {
+    id: 'sp.search.tags:licenses-card',
+    defaultMessage: 'Kort',
+  },
+  assetsWorkMachines: {
+    id: 'sp.search.tags:assets-work-machines',
+    defaultMessage: 'Vinnutæki',
+  },
+  assetsMachines: {
+    id: 'sp.search.tags:assets-machines',
+    defaultMessage: 'Vélar',
   },
 })

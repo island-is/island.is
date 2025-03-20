@@ -1,10 +1,11 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { EducationPaths } from './paths'
 
 export const educationNavigation: PortalNavigationItem = {
   name: m.education,
   description: m.educationDescription,
+  searchTags: [s.educationDegree],
   path: EducationPaths.EducationRoot,
   icon: {
     icon: 'school',

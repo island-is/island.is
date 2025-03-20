@@ -1,10 +1,14 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages } from '@island.is/portals/my-pages/core'
 import { ApplicationsPaths } from './paths'
 
 export const applicationsNavigation: PortalNavigationItem = {
   name: m.applications,
   path: ApplicationsPaths.ApplicationRoot,
+  searchTags: [
+    searchTagsMessages.applicationsApplicant,
+    searchTagsMessages.applicationsApply,
+  ],
   description: m.applicationsDescription,
   icon: {
     icon: 'fileTrayFull',

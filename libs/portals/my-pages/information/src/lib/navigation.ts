@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages } from '@island.is/portals/my-pages/core'
 import { PetitionPaths } from '@island.is/portals/my-pages/petitions'
 import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { InformationPaths } from './paths'
@@ -7,6 +7,14 @@ import { InformationPaths } from './paths'
 export const informationNavigation: PortalNavigationItem = {
   name: m.userInfo,
   description: m.userInfoDescription,
+  searchTags: [
+    searchTagsMessages.informationMe,
+    searchTagsMessages.informationWife,
+    searchTagsMessages.informationHusband,
+    searchTagsMessages.informationSpouse,
+    searchTagsMessages.informationChild,
+    searchTagsMessages.informationFamily,
+  ],
   path: InformationPaths.MyInfoRoot,
   icon: {
     icon: 'person',

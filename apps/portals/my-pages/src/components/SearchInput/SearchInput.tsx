@@ -8,6 +8,8 @@ import { FormatMessage, useLocale } from '@island.is/localization'
 import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
+import { MessageDescriptor } from 'react-intl'
+import { isDefined } from '@island.is/shared/utils'
 
 interface ModuleSet {
   title: string
@@ -39,6 +41,27 @@ const getNavigationItems = (
 ): Array<ModuleSet> => {
   let navigationItems: Array<ModuleSet> = []
 
+  const parseContent = (
+    messageIds: Array<MessageDescriptor | undefined>,
+  ): string | undefined => {
+    const content = messageIds
+      .map((m) => {
+        if (!m) {
+          return null
+        }
+        return formatMessage(m)
+      })
+      .filter(isDefined)
+      .join()
+
+    if (content.length > 150) {
+      return content.substring(0, 147) + '...'
+    } else if (content.length < 1) {
+      return undefined
+    }
+    return content
+  }
+
   if (data.children) {
     navigationItems = data.children.flatMap((child) =>
       getNavigationItems(child, formatMessage),
@@ -54,7 +77,7 @@ const getNavigationItems = (
   ) {
     navigationItems.push({
       title: formatMessage(data.name),
-      content: data.description ? formatMessage(data.description) : undefined,
+      content: parseContent([data.description, data.intro]),
       uri: data.path,
       keywords: data.searchTags
         ? data.searchTags.map((st) => formatMessage(st))

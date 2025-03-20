@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { messages } from './messages'
 import { HealthPaths } from './paths'
 
@@ -7,6 +7,7 @@ export const healthNavigation: PortalNavigationItem = {
   name: m.health,
   description: m.healthDescription,
   intro: m.healthIntro,
+  searchTags: [s.healthShorter],
   path: HealthPaths.HealthRoot,
   icon: {
     icon: 'heart',

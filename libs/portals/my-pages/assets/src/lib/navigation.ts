@@ -1,10 +1,9 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { AssetsPaths } from './paths'
 
 export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
-  description: m.realEstateDescription,
   path: AssetsPaths.AssetsRoot,
   icon: {
     icon: 'homeWithCar',
@@ -13,6 +12,7 @@ export const assetsNavigation: PortalNavigationItem = {
     {
       name: m.realEstate,
       description: m.realEstateDescription,
+      searchTags: [s.assetsHouse],
       path: AssetsPaths.AssetsRealEstate,
       children: [
         {
@@ -30,6 +30,8 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.myVehicles,
           description: m.vehiclesDescription,
+          searchTags: [s.assetsVehicle, s.assetsVehicles],
+
           path: AssetsPaths.AssetsMyVehicles,
           breadcrumbHide: true,
           children: [
@@ -109,6 +111,7 @@ export const assetsNavigation: PortalNavigationItem = {
     {
       name: m.workMachines,
       description: m.workMachinesIntro,
+      searchTags: [s.assetsWorkMachines, s.assetsMachines],
       path: AssetsPaths.AssetsWorkMachines,
       children: [
         {
