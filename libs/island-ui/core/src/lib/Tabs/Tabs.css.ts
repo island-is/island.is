@@ -40,6 +40,8 @@ export const tabList = style({
   borderColor: theme.border.color.blue100,
   borderWidth: theme.border.width.large,
   background: theme.color.blue100,
+  position: 'relative',
+  zIndex: theme.zIndex.base,
 })
 
 export const tabListAlternative = style({

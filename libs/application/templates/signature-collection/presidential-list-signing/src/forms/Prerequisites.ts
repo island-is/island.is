@@ -1,8 +1,8 @@
 import {
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildImageField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -12,29 +12,34 @@ import {
   Form,
   FormModes,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { CanSignApi, GetListApi } from '../dataProviders/index'
+import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'intro',
-      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
           title: m.introTitle,
           description: m.introDescription,
           children: [
-            buildDescriptionField({
-              id: 'introText',
+            buildImageField({
+              id: 'introImage',
+              image: DigitalServices,
+              imageWidth: 'auto',
+              imagePosition: 'center',
+              marginTop: 'gutter',
             }),
           ],
         }),
@@ -42,7 +47,6 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      title: m.dataCollection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -69,27 +73,13 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CanSignApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: GetListApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen4',
-      title: m.listSignedShort,
-      children: [],
     }),
   ],
 })

@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import {
@@ -28,6 +29,7 @@ import {
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -42,6 +44,7 @@ import {
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
 import strings from './Completed.strings'
+import * as styles from './Completed.css'
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
@@ -125,10 +128,10 @@ const Completed: FC = () => {
 
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every(
-          (defendant) =>
-            defendant.serviceRequirement !== undefined &&
-            defendant.serviceRequirement !== null,
+      ? workingCase.defendants?.every((defendant) =>
+          defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            ? Boolean(defendant.verdictAppealDecision)
+            : Boolean(defendant.serviceRequirement),
         )
       : true
 
@@ -262,6 +265,7 @@ const Completed: FC = () => {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
                             serviceRequirement: ServiceRequirement.REQUIRED,
+                            verdictAppealDecision: null,
                           },
                           setWorkingCase,
                         )
@@ -285,6 +289,7 @@ const Completed: FC = () => {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
                           serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+                          verdictAppealDecision: null,
                         },
                         setWorkingCase,
                       )
@@ -296,6 +301,41 @@ const Completed: FC = () => {
                       strings.serviceRequirementNotRequiredTooltip,
                     )}
                   />
+                  <AnimatePresence>
+                    {defendant.serviceRequirement ===
+                      ServiceRequirement.NOT_APPLICABLE && (
+                      <motion.div
+                        key="verdict-appeal-decision"
+                        className={styles.motionBox}
+                        initial={{
+                          opacity: 0,
+                          height: 0,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          height: 'auto',
+                          transition: {
+                            opacity: { delay: 0.2 },
+                          },
+                        }}
+                        exit={{
+                          opacity: 0,
+                          height: 0,
+                          transition: {
+                            height: { delay: 0.2 },
+                          },
+                        }}
+                      >
+                        <SectionHeading
+                          heading="h4"
+                          title="Afstaða dómfellda til dóms"
+                          marginBottom={2}
+                          required
+                        />
+                        <VerdictAppealDecisionChoice defendant={defendant} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </BlueBox>
               </Box>
             ))}

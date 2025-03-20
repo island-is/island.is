@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -9,13 +9,11 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  Feature,
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -119,8 +117,6 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
-  const [isProsecutorSelected, setIsProsecutorSelected] =
-    useState<boolean>(false)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -297,10 +293,19 @@ const Defendant = () => {
             indictmentCount.policeCaseNumber === policeCaseNumber,
         )
         .forEach((indictmentCount) => {
+          const policeCaseNumberSubtypes = subtypes?.[policeCaseNumber] || []
+          const indictmentCountSubtypes =
+            indictmentCount.indictmentCountSubtypes || []
+
+          // handle changes based on police case subtype changes
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter(
+            (subtype) => policeCaseNumberSubtypes.includes(subtype),
+          )
           const updatedIndictmentCount = {
             ...indictmentCount,
-            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
+
           const incidentDescription = getIncidentDescription({
             indictmentCount: updatedIndictmentCount,
             formatMessage,
@@ -310,9 +315,8 @@ const Defendant = () => {
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-            ...(subtypes && {
-              indictmentCountSubtypes: subtypes[policeCaseNumber],
-            }),
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
+            policeCaseNumberSubtypes,
           })
         })
     }
@@ -456,16 +460,7 @@ const Defendant = () => {
     }))
   }
 
-  /**
-   * This condition can be a little hard to read. The point is that if the
-   * case exists, i.e. if `workingCase.id` is truthy, then the user has
-   * selected a prosecutor. If the case does not exist, i.e. if
-   * `workingCase.id` is falsy, then the user has not selected a prosecutor
-   * and must do so before proceeding.
-   */
-  const stepIsValid =
-    isDefendantStepValidIndictments(workingCase) &&
-    Boolean(workingCase.id || isProsecutorSelected)
+  const stepIsValid = isDefendantStepValidIndictments(workingCase)
 
   return (
     <PageLayout
@@ -480,11 +475,9 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
-        <ProsecutorSection
-          handleChange={
-            workingCase.id ? undefined : () => setIsProsecutorSelected(true)
-          }
-        />
+        <Box component="section" marginBottom={5}>
+          <ProsecutorSection />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}

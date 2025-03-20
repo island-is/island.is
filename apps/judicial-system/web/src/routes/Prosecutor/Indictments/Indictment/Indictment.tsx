@@ -1,17 +1,18 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
+import {
+  applyDativeCaseToCourtName,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -60,7 +61,7 @@ export const getIndictmentIntroductionAutofill = (
         prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court: court?.name?.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
@@ -73,7 +74,7 @@ export const getIndictmentIntroductionAutofill = (
                 ? formatNationalId(defendant.nationalId)
                 : 'Ekki skráð',
             },
-          )}\n          ${defendant.address}`
+          )}\n          ${defendant.address},`
         })}
     `,
       ]
@@ -164,12 +165,7 @@ const Indictment = () => {
         )
       }
     },
-    [
-      formatMessage,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -284,8 +280,12 @@ const Indictment = () => {
   )
 
   const initialize = useCallback(() => {
-    if (workingCase.indictmentCounts?.length === 0) {
+    const indictmentCounts = workingCase.indictmentCounts || []
+    if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
+    } else {
+      // in case indictment subtypes have been modified in earlier step
+      setDriversLicenseSuspensionRequest(indictmentCounts)
     }
 
     setAndSendCaseToServer(
@@ -311,6 +311,7 @@ const Indictment = () => {
     formatMessage,
     setWorkingCase,
     handleCreateIndictmentCount,
+    setDriversLicenseSuspensionRequest,
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
@@ -518,6 +519,7 @@ const Indictment = () => {
             caseId={workingCase.id}
             title={formatMessage(strings.pdfButtonIndictment)}
             pdfType="indictment"
+            elementId="Ákæra"
           />
         </Box>
       </FormContentContainer>

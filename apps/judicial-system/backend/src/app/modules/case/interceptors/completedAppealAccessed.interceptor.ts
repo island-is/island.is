@@ -24,7 +24,7 @@ export class CompletedAppealAccessedInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     return next.handle().pipe(
       map((data) => {
@@ -34,12 +34,11 @@ export class CompletedAppealAccessedInterceptor implements NestInterceptor {
             isDefenceUser(user) ||
             isPrisonStaffUser(user))
         ) {
-          this.eventLogService.create({
-            eventType: EventType.APPEAL_RESULT_ACCESSED,
-            caseId: data.id,
-            nationalId: user.nationalId,
-            userRole: user.role,
-          })
+          this.eventLogService.createWithUser(
+            EventType.APPEAL_RESULT_ACCESSED,
+            data.id,
+            user,
+          )
         }
 
         return data

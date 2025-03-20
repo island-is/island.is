@@ -4,7 +4,6 @@ import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   getValueViaPath,
-  formatText,
   formatTextWithLocale,
 } from '@island.is/application/core'
 import { FieldBaseProps, Application } from '@island.is/application/types'
@@ -47,11 +46,7 @@ export const LinkExistingApplication: FC<
         <ApplicationList
           applications={existing.map((app) => ({
             ...app,
-            name: formatText(
-              m.applicationForDrivingLicense,
-              application,
-              formatMessage,
-            ),
+            name: formatMessage(m.applicationForDrivingLicense),
           }))}
           onClick={(url) => navigate(`../../${url}`)}
         />

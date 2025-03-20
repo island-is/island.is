@@ -15,6 +15,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
+  hasTrafficViolationSubtype,
   IndictmentSubtype,
   isTrafficViolationCase,
   offenseSubstances,
@@ -34,6 +35,7 @@ import {
   TempCase as Case,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
@@ -69,7 +71,7 @@ interface Props {
 }
 
 /**
- * Indicates what laws are broken for each offence. The first number is
+ * Indicates what laws are broken for each offense. The first number is
  * the paragraph and the second is the article, i.e. [49, 2] means paragraph
  * 49, article 2. If article is set to 0, that means that an article is
  * not specified.
@@ -91,6 +93,7 @@ const offenseLawsMap: Record<
     [48, 2],
   ],
   [IndictmentCountOffense.SPEEDING]: [[37, 0]],
+  [IndictmentCountOffense.OTHER]: [],
 }
 
 const generalLaws: [number, number][] = [[95, 1]]
@@ -120,7 +123,10 @@ const getLawsBroken = (
   offenses?: IndictmentCountOffense[] | null,
   substances?: SubstanceMap | null,
 ) => {
-  if (!offenses || offenses.length === 0) {
+  const hasOffenses = isNonEmptyArray(offenses)
+  const hasOnlyOtherOffense = offenses?.length === 1 && offenses[0] === IndictmentCountOffense.OTHER
+
+  if (!hasOffenses || hasOnlyOtherOffense) {
     return []
   }
 
@@ -252,6 +258,8 @@ export const IndictmentCount: FC<Props> = ({
     [lawTag, indictmentCount.lawsBroken],
   )
 
+  const showLegalArticleSelection = indictmentCount.offenses?.some(({offense}) => offense !== IndictmentCountOffense.OTHER)
+
   const handleIndictmentCountChanges = (
     update: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
@@ -354,14 +362,9 @@ export const IndictmentCount: FC<Props> = ({
       return true
     }
 
-    if (
-      indictmentCount?.indictmentCountSubtypes?.includes(
-        IndictmentSubtype.TRAFFIC_VIOLATION,
-      )
-    ) {
+    if (hasTrafficViolationSubtype(indictmentCount?.indictmentCountSubtypes || [])) {
       return true
     }
-
     return false
   }
 
@@ -510,7 +513,7 @@ export const IndictmentCount: FC<Props> = ({
             updateIndictmentCountState={updateIndictmentCountState}
             handleIndictmentCountChanges={handleIndictmentCountChanges}
           />
-          <Box marginBottom={2}>
+          {showLegalArticleSelection && <Box marginBottom={2}>
             <SectionHeading
               heading="h4"
               title={formatMessage(strings.lawsBrokenTitle)}
@@ -540,7 +543,7 @@ export const IndictmentCount: FC<Props> = ({
               }}
               required
             />
-          </Box>
+          </Box>}
           {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
             <Box marginBottom={2}>
               {indictmentCount.lawsBroken.map((brokenLaw) => (

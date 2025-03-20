@@ -10,7 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
@@ -125,7 +125,7 @@ export const NewsItems = ({
                 // @ts-ignore make web strict
                 image={image}
                 tags={genericTags
-                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG)
                   .map(({ slug, title, __typename: tn }) => {
                     return {
                       label: title,

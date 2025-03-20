@@ -20,6 +20,7 @@ export enum CollectionType {
   OtherUnknown,
   Parliamentary,
   Presidential,
+  Municipal,
   Referendum, // is: Þjóðaratkvæðagreiðsla
   OtherSameRulesAsParliamentary,
   LocalGovernmental, // is: Sveitarstjórnarkosningar

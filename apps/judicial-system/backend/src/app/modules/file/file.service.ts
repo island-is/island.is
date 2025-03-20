@@ -168,15 +168,7 @@ export class FileService {
       (file.category !== CaseFileCategory.RULING &&
         file.category !== CaseFileCategory.COURT_RECORD)
     ) {
-      return undefined
-    }
-
-    const confirmationEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-    )
-
-    if (!confirmationEvent || !confirmationEvent.nationalId) {
-      return undefined
+      return undefined // This should never happen
     }
 
     const completedEvent = theCase.eventLogs?.find(
@@ -466,6 +458,14 @@ export class FileService {
     }
 
     await this.verifyCaseFile(file, theCase)
+
+    if (file.size === 0) {
+      this.logger.warn(
+        `Ignoring upload for empty file ${file.id} of case ${theCase.id}`,
+      )
+
+      return { success: true }
+    }
 
     this.throttle = this.throttleUpload(file, theCase, user)
 

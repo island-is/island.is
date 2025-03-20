@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -21,7 +21,7 @@ import { UpdateIndictmentCountInput } from './dto/updateIndictmentCount.input'
 import { DeleteResponse } from './models/delete.response'
 import { IndictmentCount } from './models/indictmentCount.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class IndictmentCountResolver {
   constructor(

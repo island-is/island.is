@@ -1,8 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
 import { GenericUserLicenseMetadataDescription } from './GenericUserLicenseMetadataDescription.dto'
 import { GenericUserLicenseAlert } from './GenericUserLicenseAlert.dto'
+import { ExpiryStatus } from '../licenceService.type'
+
+registerEnumType(ExpiryStatus, {
+  name: 'GenericUserLicenseExpiryStatus',
+})
 
 @ObjectType()
 export class GenericUserLicenseMetadata {
@@ -23,6 +28,9 @@ export class GenericUserLicenseMetadata {
 
   @Field({ nullable: true })
   expireDate?: string
+
+  @Field(() => ExpiryStatus, { nullable: true })
+  expiryStatus?: ExpiryStatus
 
   @Field(() => GenericUserLicenseMetaTag, { nullable: true })
   displayTag?: GenericUserLicenseMetaTag

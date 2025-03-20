@@ -1,13 +1,10 @@
-import { Field, Int, InputType, ID } from '@nestjs/graphql'
-import { LanguageTypeInput } from './language.input'
+import { Field, InputType } from '@nestjs/graphql'
+import { LanguageTypeInput } from './languageType.input'
 
 @InputType('FormSystemListTypeInput')
 export class ListTypeInput {
-  @Field(() => Int, { nullable: true })
-  id?: number
-
   @Field(() => String, { nullable: true })
-  type?: string | null
+  id?: string
 
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
@@ -15,6 +12,9 @@ export class ListTypeInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
 
-  @Field(() => ID, { nullable: true })
-  guid?: string
+  @Field(() => String, { nullable: true })
+  type?: string
+
+  @Field(() => Boolean, { nullable: true })
+  isCommon?: boolean
 }

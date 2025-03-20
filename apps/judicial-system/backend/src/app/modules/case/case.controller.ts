@@ -28,7 +28,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -39,6 +39,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseOrigin,
   CaseState,
   CaseType,
   indictmentCases,
@@ -137,7 +138,7 @@ export class CaseController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseInterceptor)
   @Post('case')
@@ -155,7 +156,7 @@ export class CaseController {
     return createdCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
@@ -271,11 +272,27 @@ export class CaseController {
       )
     }
 
+    // If the case comes from LOKE then we don't want to allow the removal or
+    // moving around of the first police case number as that coupled with the
+    // case id is the identifier used to update the case in LOKE.
+    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
+      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
+
+      if (
+        mainPoliceCaseNumber &&
+        update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
+      ) {
+        throw new BadRequestException(
+          `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+        )
+      }
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     CaseWriteGuard,
@@ -320,7 +337,7 @@ export class CaseController {
     return updatedCase ?? theCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -347,7 +364,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -368,7 +385,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthGuard, CaseExistsGuard)
+  @UseGuards(JwtAuthUserGuard, CaseExistsGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -397,7 +414,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -433,7 +450,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -482,7 +499,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -519,7 +536,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -553,7 +570,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]),
@@ -594,7 +611,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
@@ -633,7 +650,52 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Get('case/:caseId/rulingSentToPrisonAdmin')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the ruling sent to prison admin file for an existing case as a pdf document',
+  })
+  async getRulingSentToPrisonAdminPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the ruling sent to prison admin pdf for indictment case ${caseId} as a pdf document`,
+    )
+
+    // TODO: Clarity on if/when we should prevent this PDF from being created
+    // Like if certain defendants aren't in the right state in terms of
+    // being sent to prison admin. To start with lets assume we surely
+    // don't want to make this PDF if none of the defendants have been
+    // sent to the prison admin.
+    const isSentToPrisonAdmin = theCase.defendants?.some(
+      (defendant) => defendant.isSentToPrisonAdmin,
+    )
+
+    if (!isSentToPrisonAdmin) {
+      throw new BadRequestException(
+        `Cannot generate a ruling sent to prison admin pdf for case ${caseId} as none of the defendants have been sent to prison admin
+        `,
+      )
+    }
+
+    const pdf = await this.pdfService.getRulingSentToPrisonAdminPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -678,7 +740,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -713,7 +775,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -750,7 +812,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     CaseExistsGuard,
     RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -779,7 +841,7 @@ export class CaseController {
   }
 
   @UseGuards(
-    JwtAuthGuard,
+    JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
@@ -810,7 +872,7 @@ export class CaseController {
     return extendedCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,

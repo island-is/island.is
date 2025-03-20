@@ -91,6 +91,8 @@ import {
 } from './models/organizationPageStandaloneSitemap.model'
 import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import { NewsList } from './models/newsList.model'
+import { GetCmsNewsInput } from './dto/getNews.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -375,6 +377,27 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganizationSubpageById(
+    id: string,
+    lang: string,
+  ): Promise<OrganizationSubpage> {
+    const params = {
+      ['content_type']: 'organizationSubpage',
+      include: 5,
+      'sys.id': id,
+      limit: 1,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
+      .catch(errorHandler('getOrganizationSubpage'))
+
+    return (
+      (result.items as types.IOrganizationSubpage[]).map(
+        mapOrganizationSubpage,
+      )[0] ?? null
+    )
+  }
+
   async getServiceWebPage(slug: string, lang: string) {
     const params = {
       ['content_type']: 'serviceWebPage',
@@ -518,7 +541,7 @@ export class CmsContentfulService {
     return sortBy(results, (a) => sortedIds.indexOf(a.id))
   }
 
-  async getNews(lang: string, slug: string): Promise<News | null> {
+  async getSingleNewsItem(lang: string, slug: string): Promise<News | null> {
     const params = {
       ['content_type']: 'news',
       include: 5,
@@ -531,6 +554,34 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getNews(input: GetCmsNewsInput): Promise<NewsList> {
+    const size = input.size ?? 10
+    const page = input.page ?? 1
+
+    const orderPrefix = input.order === 'asc' ? '' : '-'
+
+    const params = {
+      ['content_type']: 'news',
+      include: 5,
+      limit: size,
+      skip: (page - 1) * size,
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': input.organization,
+      order: `${orderPrefix}fields.date,${orderPrefix}fields.initialPublishDate,${orderPrefix}sys.firstPublishedAt`,
+      'fields.title[exists]': true,
+      'fields.slug[exists]': true,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.INewsFields>(input.lang, params)
+      .catch(errorHandler('getNews'))
+
+    return {
+      items: ((result.items as types.INews[]) ?? []).map(mapNews),
+      total: result.total,
+    }
   }
 
   async getGrant(lang: string, id: string): Promise<Grant | null> {
