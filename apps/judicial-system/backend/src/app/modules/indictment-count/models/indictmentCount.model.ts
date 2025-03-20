@@ -57,10 +57,6 @@ export class IndictmentCount extends Model {
   offenses?: Offense[]
 
   @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional({ type: Object })
-  substances?: SubstanceMap
-
-  @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: [Number, Number], isArray: true })
   lawsBroken?: [number, number][]
 

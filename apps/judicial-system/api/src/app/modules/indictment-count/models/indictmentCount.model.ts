@@ -32,9 +32,6 @@ export class IndictmentCount {
   @Field(() => [Offense], { nullable: true })
   readonly offenses?: Offense[]
 
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  readonly substances?: SubstanceMap
-
   @Field(() => [[Number, Number]], { nullable: true })
   readonly lawsBroken?: [number, number][]
 

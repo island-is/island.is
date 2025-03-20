@@ -28,11 +28,6 @@ export class UpdateIndictmentCountDto {
   readonly vehicleRegistrationNumber?: string
 
   @IsOptional()
-  @IsObject()
-  @ApiPropertyOptional({ type: Object })
-  readonly substances?: SubstanceMap
-
-  @IsOptional()
   @IsArray()
   @ApiPropertyOptional({ type: [Number, Number], isArray: true })
   readonly lawsBroken?: [number, number][]

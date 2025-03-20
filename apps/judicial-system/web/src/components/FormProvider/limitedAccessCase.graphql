@@ -211,7 +211,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         offense
         substances
       }
-      substances
       lawsBroken
       incidentDescription
       legalArguments

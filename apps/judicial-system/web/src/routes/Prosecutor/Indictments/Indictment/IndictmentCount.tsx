@@ -26,13 +26,11 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  TempCase as Case,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   isTrafficViolationIndictmentCount,
@@ -314,7 +312,6 @@ export const IndictmentCount: FC<Props> = ({
       handleIndictmentCountChanges(
         {
           indictmentCountSubtypes: Array.from(currentSubtypes),
-          substances: {},
           vehicleRegistrationNumber: null,
           recordedSpeed: null,
           speedLimit: null,

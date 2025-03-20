@@ -16,12 +16,7 @@ import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.genera
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
-  extends Omit<
-    UpdateIndictmentCountInput,
-    'caseId' | 'indictmentCountId' | 'substances'
-  > {
-  substances?: SubstanceMap | null
-}
+  extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
 
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()

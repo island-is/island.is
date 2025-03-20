@@ -1,8 +1,6 @@
-import { CourtDocument, SubstanceMap } from '@island.is/judicial-system/types'
 import {
   Case,
   CaseListEntry,
-  IndictmentCount,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export type ReactSelectOption = {
@@ -173,18 +171,7 @@ export interface NationalRegistryResponseBusiness {
  * We use this type so that we don't have to migrate all the code
  * at once and this type will be removed when we are done.
  */
-export interface TempIndictmentCount
-  extends Omit<IndictmentCount, 'substances'> {
-  substances?: SubstanceMap | null
-}
-
-export interface TempCase
-  extends Omit<
-    Case,
-    'courtDocuments' | 'parentCase' | 'childCase' | 'indictmentCounts'
-  > {
-  courtDocuments?: CourtDocument[] | null
+export interface TempCase extends Omit<Case, 'parentCase' | 'childCase'> {
   parentCase?: TempCase | null
   childCase?: TempCase | null
-  indictmentCounts?: TempIndictmentCount[] | null
 }

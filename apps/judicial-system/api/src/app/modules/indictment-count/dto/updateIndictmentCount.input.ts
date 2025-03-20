@@ -35,11 +35,6 @@ export class UpdateIndictmentCountInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  readonly substances?: SubstanceMap
-
-  @Allow()
-  @IsOptional()
   @IsArray()
   @Field(() => [[Number, Number]], { nullable: true })
   readonly lawsBroken?: [number, number][]
