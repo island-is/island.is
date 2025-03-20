@@ -45,7 +45,7 @@ runs:
       shell: bash
       id: set-cache-key
       run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-3" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-4" >> $GITHUB_OUTPUT
 
     - name: Get Yarn Cache Directory Path
       shell: bash
