@@ -261,8 +261,6 @@ jobs:
       - pre-checks
       - prepare
     runs-on: arc-test
-    permissions:
-      contents: read
     container:
       image: gcr.io/kaniko-project/executor:debug
     timeout-minutes: 45
