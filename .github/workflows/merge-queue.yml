@@ -12,6 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  ACTIONS_STEP_DEBUG: 'true'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
@@ -235,6 +236,7 @@ jobs:
         if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_DEPLOY_JUDICIAL: true
         run: |
           node scripts/ci/docker/get-data.mjs --deploy-judicial
       - name: Update helm-values repository with judicial system DEV
