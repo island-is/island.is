@@ -9,10 +9,11 @@ import * as styles from './VerdictAppealDecisionChoice.css'
 
 interface Props {
   defendant: Defendant
+  disabled?: boolean
 }
 
 const VerdictAppealDecisionChoice: FC<Props> = (props) => {
-  const { defendant } = props
+  const { defendant, disabled } = props
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
@@ -37,6 +38,7 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         large
         backgroundColor="white"
         label="Dómfelldi tekur áfrýjunarfrest"
+        disabled={disabled}
       />
       <RadioButton
         id={`defendant-${defendant.id}-verdict-appeal-decision-accept`}
@@ -57,6 +59,7 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         large
         backgroundColor="white"
         label="Dómfelldi unir"
+        disabled={disabled}
       />
     </div>
   )
