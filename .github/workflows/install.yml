@@ -152,8 +152,10 @@ jobs:
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
           if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* || "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == main ]]; then
           echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
+          export SKIP_JUDICIAL="true"
           else
           echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
+          export SKIP_JUDICIAL="false"
           fi
           echo Skipping judicial: $SKIP_JUDICIAL
           echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
