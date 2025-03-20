@@ -6,10 +6,6 @@ inputs:
     description: 'Comma seperated string of paths to copy'
     default: ''
     required: false
-  filter:
-    description: 'Filter to use when selecting files to copy'
-    default: '*'
-    required: false
   branch:
     description: 'Branch to push to'
     default: 'main'
