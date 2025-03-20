@@ -8,9 +8,6 @@ source "$DIR"/_common.sh
 export HEAD=${HEAD:-HEAD}
 export BASE=${BASE:-main}
 SKIP_JUDICIAL=${SKIP_JUDICIAL:-false}
-
-echo "Skipping judicial projects: $SKIP_JUDICIAL"
-
 NX_AFFECTED_ALL=${NX_AFFECTED_ALL:-}
 TEST_EVERYTHING=${TEST_EVERYTHING:-}
 # This is a helper script to find NX affected projects for a specific target
