@@ -65,7 +65,7 @@ async function prepareManifests(STAGE_NAME) {
   const IMAGE_OBJECT = {}
 
   // Read all manifest files
-  const _MANIFEST_PATHS = SHOULD_DEPLOY_JUDICIAL ? [
+  const _MANIFEST_PATHS = !SHOULD_DEPLOY_JUDICIAL ? [
     'charts/islandis-services',
     'charts/identity-server-services',
   ] : ['charts/judicial-system-services']
@@ -117,7 +117,7 @@ async function parseData(IMAGE_OBJECT) {
         fs.writeFileSync(filePath, newFile, { encoding: 'utf-8' })
         changedFiles.push(filePath)
         if (SHOULD_DEPLOY_JUDICIAL) {
-          if (fileName.endsWith('.dev.yaml')) {
+          if (filePath.endsWith('.dev.yaml')) {
             judicialDev.push(filePath)
           } else {
             judicialProd.push(filePath);
