@@ -7,7 +7,8 @@ import { openApi } from './openApi'
 import * as Test from 'uuidv4';
 
 if (!Test) {
-  console.error(`This is only here so the transpiler thinks we are doing something`);
+  console.error(`This is only here so the transpiler thinks we are doing something`)
+  // Ugly
 }
 
 const job = processJob()
