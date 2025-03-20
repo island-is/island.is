@@ -31,12 +31,13 @@ import {
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
-import { HouseholdSupplementHousing, maritalStatuses } from '../lib/constants'
+import { maritalStatuses } from '../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailableMonths,
   getAvailableYears,
+  isExistsCohabitantBetween18and25,
   isExistsCohabitantOlderThan25,
 } from '../lib/householdSupplementUtils'
 import { householdSupplementFormMessage } from '../lib/messages'
@@ -274,6 +275,9 @@ export const HouseholdSupplementForm: Form = buildForm({
     buildSection({
       id: 'householdSupplementSection',
       title: householdSupplementFormMessage.shared.householdSupplement,
+      condition: (_, externalData) => {
+        return isExistsCohabitantBetween18and25(externalData)
+      },
       children: [
         buildMultiField({
           id: 'householdSupplement',
@@ -294,27 +298,6 @@ export const HouseholdSupplementForm: Form = buildForm({
               condition: (_, externalData) => {
                 return isExistsCohabitantOlderThan25(externalData)
               },
-            }),
-            buildRadioField({
-              id: 'householdSupplement.housing',
-              title:
-                householdSupplementFormMessage.info.householdSupplementHousing,
-              options: [
-                {
-                  value: HouseholdSupplementHousing.HOUSEOWNER,
-                  label:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousingOwner,
-                },
-                {
-                  value: HouseholdSupplementHousing.RENTER,
-                  label:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousingRenter,
-                },
-              ],
-              width: 'half',
-              required: true,
             }),
             buildRadioField({
               id: 'householdSupplement.children',
@@ -379,37 +362,10 @@ export const HouseholdSupplementForm: Form = buildForm({
       id: 'fileUpload',
       title: socialInsuranceAdministrationMessage.fileUpload.title,
       condition: (answers) => {
-        const { householdSupplementHousing, householdSupplementChildren } =
-          getApplicationAnswers(answers)
-        return (
-          householdSupplementHousing === HouseholdSupplementHousing.RENTER ||
-          householdSupplementChildren === YES
-        )
+        const { householdSupplementChildren } = getApplicationAnswers(answers)
+        return householdSupplementChildren === YES
       },
       children: [
-        buildSubSection({
-          id: 'fileUploadLeaseAgreement',
-          title: householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
-          condition: (answers) => {
-            const { householdSupplementHousing } =
-              getApplicationAnswers(answers)
-            return (
-              householdSupplementHousing === HouseholdSupplementHousing.RENTER
-            )
-          },
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.leaseAgreement',
-              title:
-                householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
-              description:
-                householdSupplementFormMessage.fileUpload.leaseAgreement,
-              introduction:
-                householdSupplementFormMessage.fileUpload.leaseAgreement,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'fileUploadSchoolConfirmation',
           title:
