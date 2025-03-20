@@ -26,14 +26,14 @@ export class UserNotificationBirthday18WorkerService {
       `User-notifications-birthday-worker: About to send messages for ${birthdays.length} birthdays`,
     )
     await Promise.all(
-      birthdays.map((birthdaySsn) => {
+      birthdays.map(async (birthdaySsn) => {
         const dto: CreateHnippNotificationDto = {
           recipient: birthdaySsn,
           templateId: 'HNIPP.DIGITALICELAND.BIRTHDAYMESSAGE',
           args: [
             {
-              key: 'organization',
-              value: 'Hnipp Test Crew',
+              key: 'name',
+              value: 'Nafnur Nafnabur',
             },
           ],
         }
