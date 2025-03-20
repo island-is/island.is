@@ -56,21 +56,13 @@ const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 1000
 
 const ALL_COURTS_TAG = ''
-const DISTRICT_COURT_TAG = 'Héraðsdómstólar'
-const ALL_DISTRICT_COURTS_TAG = ''
+const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
 
 const SEARCH_TERM_QUERY_PARAM_KEY = 'q'
 const COURT_QUERY_PARAM_KEY = 'court'
-const DISTRICT_COURT_QUERY_PARAM_KEY = 'districtCourt'
 
-const extractCourtLevelFromState = (
-  court: string | null | undefined,
-  districtCourt: string | null | undefined,
-) => {
-  return court === DISTRICT_COURT_TAG
-    ? districtCourt || DISTRICT_COURT_TAG
-    : court
-}
+const extractCourtLevelFromState = (court: string | null | undefined) =>
+  court || ALL_COURTS_TAG
 
 interface VerdictsListProps {
   initialData: {
@@ -115,19 +107,9 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       .withOptions({
         clearOnDefault: true,
         throttleMs: DEBOUNCE_TIME_IN_MS,
-        shallow: true,
+        shallow: false,
       })
       .withDefault(ALL_COURTS_TAG),
-  )
-  const [districtCourtFilter, setDistrictCourtFilter] = useQueryState(
-    DISTRICT_COURT_QUERY_PARAM_KEY,
-    parseAsString
-      .withOptions({
-        clearOnDefault: true,
-        throttleMs: DEBOUNCE_TIME_IN_MS,
-        shallow: true,
-      })
-      .withDefault(ALL_DISTRICT_COURTS_TAG),
   )
 
   useEffect(() => {
@@ -140,10 +122,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
         input: {
           page,
           searchTerm,
-          courtLevel: extractCourtLevelFromState(
-            courtFilter,
-            districtCourtFilter,
-          ),
+          courtLevel: extractCourtLevelFromState(courtFilter),
         },
       },
       onCompleted(response) {
@@ -179,14 +158,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
         })
       },
     })
-  }, [
-    courtFilter,
-    districtCourtFilter,
-    fetchVerdicts,
-    initialData.total,
-    page,
-    searchTerm,
-  ])
+  }, [courtFilter, fetchVerdicts, initialData.total, page, searchTerm])
 
   const [isGridLayout, setIsGridLayout] = useState(false)
   const overrideGridLayoutSetting = width < theme.breakpoints.lg
@@ -196,7 +168,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
     return [
       {
         label: formatMessage(m.listPage.showDistrictCourts),
-        value: 'Héraðsdómstólar',
+        value: DEFAULT_DISTRICT_COURT_TAG,
       },
       {
         label: formatMessage(m.listPage.showCourtOfAppeal),
@@ -212,7 +184,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
     return [
       {
         label: 'Reykjavík',
-        value: 'Héraðsdómur Reykjavíkur',
+        value: DEFAULT_DISTRICT_COURT_TAG,
       },
       {
         label: 'Vesturland',
@@ -244,6 +216,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       },
     ]
   }, [])
+
+  const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
   return (
     <Box className="rs_read">
@@ -293,44 +267,44 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                   <Tag
                     active={courtFilter === ALL_COURTS_TAG}
                     onClick={() => {
-                      setCourtFilter(ALL_COURTS_TAG)
                       setPage(1)
+                      setCourtFilter(ALL_COURTS_TAG)
                     }}
                   >
                     {formatMessage(m.listPage.showAllCourts)}
                   </Tag>
-                  {courtTags.map((tag) => (
-                    <Tag
-                      key={tag.value}
-                      active={courtFilter === tag.value}
-                      onClick={() => {
-                        setCourtFilter(tag.value)
-                        setDistrictCourtFilter(ALL_DISTRICT_COURTS_TAG)
-                        setPage(1)
-                      }}
-                    >
-                      {tag.label}
-                    </Tag>
-                  ))}
+                  {courtTags.map((tag) => {
+                    let isActive = courtFilter === tag.value
+                    if (
+                      !isActive &&
+                      tag.value === DEFAULT_DISTRICT_COURT_TAG &&
+                      districtCourtTagValues.includes(courtFilter)
+                    ) {
+                      isActive = true
+                    }
+                    return (
+                      <Tag
+                        key={tag.value}
+                        active={isActive}
+                        onClick={() => {
+                          setPage(1)
+                          setCourtFilter(tag.value)
+                        }}
+                      >
+                        {tag.label}
+                      </Tag>
+                    )
+                  })}
                 </Inline>
-                {courtFilter === DISTRICT_COURT_TAG && (
+                {districtCourtTagValues.includes(courtFilter) && (
                   <Inline alignY="center" space={2}>
-                    <Tag
-                      active={districtCourtFilter === ALL_DISTRICT_COURTS_TAG}
-                      onClick={() => {
-                        setDistrictCourtFilter(ALL_DISTRICT_COURTS_TAG)
-                        setPage(1)
-                      }}
-                    >
-                      {formatMessage(m.listPage.showAllDistrictCourts)}
-                    </Tag>
                     {districtCourtTags.map((tag) => (
                       <Tag
                         key={tag.value}
-                        active={districtCourtFilter === tag.value}
+                        active={courtFilter === tag.value}
                         onClick={() => {
-                          setDistrictCourtFilter(tag.value)
                           setPage(1)
+                          setCourtFilter(tag.value)
                         }}
                       >
                         {tag.label}
@@ -463,10 +437,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
     query[SEARCH_TERM_QUERY_PARAM_KEY],
   )
   const court = parseAsString.parseServerSide(query[COURT_QUERY_PARAM_KEY])
-  const districtCourt = parseAsString.parseServerSide(
-    query[DISTRICT_COURT_QUERY_PARAM_KEY],
-  )
-
   const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseCategories,
   )
@@ -489,7 +459,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           caseTypes,
           keywords,
           page: 1,
-          courtLevel: extractCourtLevelFromState(court, districtCourt),
+          courtLevel: extractCourtLevelFromState(court),
         },
       },
     }),

@@ -32,11 +32,6 @@ export const m = {
       defaultMessage: 'Hæstiréttur',
       description: 'Hæstiréttur',
     },
-    showAllDistrictCourts: {
-      id: 'web.verdicts:listPage.showAllDistrictCourts',
-      defaultMessage: 'Allir',
-      description: 'Allir Héraðsdómstólar',
-    },
     searchInputPlaceholder: {
       id: 'web.verdicts:listPage.searchInputPlaceholder',
       defaultMessage: 'Sláðu inn orð, málsnúmer, málsaðila',
