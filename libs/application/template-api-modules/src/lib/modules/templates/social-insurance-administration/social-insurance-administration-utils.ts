@@ -35,7 +35,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
 import {
-  ChildInformation,
   getApplicationAnswers as getDBApplicationAnswers,
   getApplicationExternalData as getDBApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
