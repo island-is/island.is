@@ -10,22 +10,34 @@ import { glob } from 'glob'
 const context = github.context
 const branch = getBranch()
 const typeOfDeployment = getTypeOfDeployment()
-const sha = context.sha
 
 const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT'
 const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES'
+const _KEY_JUDICIAL_DEV = 'MQ_JUDICIAL_DEV'
 const changedFiles = []
+const judicialDev = []
+const judicialProd = []
+const _KEY_JUDICIAL_PROD = 'MQ_JUDICIAL_PROD'
+
+const SHOULD_DEPLOY_JUDICIAL = process.argv.includes('--deploy-judicial');
 
 
-if (typeOfDeployment.dev) {
+if (!SHOULD_DEPLOY_JUDICIAL) {
+  if (typeOfDeployment.dev) {
+    await prepareManifests('dev');
+  }
+
+  if (typeOfDeployment.staging) {
+    await prepareManifests('staging');
+  }
+
+  if (typeOfDeployment.prod) {
+    await prepareManifests('prod');
+  }
+}
+if (SHOULD_DEPLOY_JUDICIAL) {
   await prepareManifests('dev');
-}
-
-if (typeOfDeployment.staging) {
   await prepareManifests('staging');
-}
-
-if (typeOfDeployment.prod) {
   await prepareManifests('prod');
 }
 
@@ -39,7 +51,11 @@ if (changedFiles.length > 0) {
   console.log(`Changed files is ${changedFiles.join(',')}`)
   core.setOutput(_KEY_HAS_OUTPUT, 'true')
   core.setOutput(_KEY_CHANGED_FILES, changedFiles.join(','))
-  
+  if (SHOULD_DEPLOY_JUDICIAL) {
+    core.setOutput(_KEY_JUDICIAL_DEV, judicialDev.join(','))
+    core.setOutput(_KEY_JUDICIAL_PROD, judicialProd.join(','))
+  }
+
 } else {
   console.log('No files changed')
   core.setOutput(_KEY_HAS_OUTPUT, 'false')
@@ -49,11 +65,10 @@ async function prepareManifests(STAGE_NAME) {
   const IMAGE_OBJECT = {}
 
   // Read all manifest files
-  const _MANIFEST_PATHS = [
+  const _MANIFEST_PATHS = !SHOULD_DEPLOY_JUDICIAL ? [
     'charts/islandis-services',
-    'charts/judicial-system-services',
     'charts/identity-server-services',
-  ]
+  ] : ['charts/judicial-system-services']
   const files = await glob(
     `{${_MANIFEST_PATHS.join(',')}}/**/values.${STAGE_NAME}.yaml`,
   )
@@ -101,6 +116,13 @@ async function parseData(IMAGE_OBJECT) {
         console.log(newFile)
         fs.writeFileSync(filePath, newFile, { encoding: 'utf-8' })
         changedFiles.push(filePath)
+        if (SHOULD_DEPLOY_JUDICIAL) {
+          if (filePath.endsWith('.dev.yaml')) {
+            judicialDev.push(filePath)
+          } else {
+            judicialProd.push(filePath);
+          }
+        }
         console.info(`Updated ${filePath}`)
       })
     } else {
