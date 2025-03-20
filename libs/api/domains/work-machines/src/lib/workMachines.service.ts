@@ -32,38 +32,6 @@ export class WorkMachinesService {
     private readonly machineService: WorkMachinesClientService,
   ) {}
 
-  private mapRelToAction = (relation?: string) => {
-    switch (relation) {
-      case 'requestInspection':
-        return Action.REQUEST_INSPECTION
-      case 'changeStatus':
-        return Action.CHANGE_STATUS
-      case 'ownerChange':
-        return Action.OWNER_CHANGE
-      case 'supervisorChange':
-        return Action.SUPERVISOR_CHANGE
-      case 'registerForTraffic':
-        return Action.REGISTER_FOR_TRAFFIC
-      default:
-        return null
-    }
-  }
-
-  private mapRelationToCollectionLink = (relation?: string) => {
-    switch (relation) {
-      case 'self':
-        return ExternalLink.SELF
-      case 'nextPage':
-        return ExternalLink.NEXT_PAGE
-      case 'excel':
-        return ExternalLink.EXCEL
-      case 'csv':
-        return ExternalLink.CSV
-      default:
-        return null
-    }
-  }
-
   async getWorkMachines(
     user: User,
     input: GetWorkMachineCollectionInput,
@@ -184,12 +152,14 @@ export class WorkMachinesService {
     }
 
     const links = data.links?.length
-      ? data.links.map((l) => {
-          return {
-            ...l,
-            rel: this.mapRelToAction(l.rel ?? ''),
-          }
-        })
+      ? data.links
+          .map((l) => {
+            return {
+              ...l,
+              rel: this.mapRelToAction(l.rel ?? ''),
+            }
+          })
+          .filter(isDefined)
       : null
 
     const inspectionDate = data.dateLastInspection
@@ -198,8 +168,10 @@ export class WorkMachinesService {
 
     return {
       ...data,
-      dateLastInspection: isValid(inspectionDate) ? inspectionDate : undefined,
-      links,
+      dateLastInspection: isValid(inspectionDate)
+        ? inspectionDate?.toISOString()
+        : undefined,
+      links: links ?? [],
     }
   }
 

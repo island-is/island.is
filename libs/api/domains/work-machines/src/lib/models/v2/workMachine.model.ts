@@ -45,6 +45,9 @@ export class WorkMachine {
   @Field({ nullable: true })
   mayStreetRegister?: boolean
 
+  @Field({ nullable: true })
+  paymentRequiredForOwnerChange?: boolean
+
   @Field(() => Person, { nullable: true })
   owner?: Person
 
