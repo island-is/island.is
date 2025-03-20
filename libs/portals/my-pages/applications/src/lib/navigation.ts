@@ -5,7 +5,6 @@ import { ApplicationsPaths } from './paths'
 export const applicationsNavigation: PortalNavigationItem = {
   name: m.applications,
   path: ApplicationsPaths.ApplicationRoot,
-  searchHide: true,
   description: m.applicationsDescription,
   icon: {
     icon: 'fileTrayFull',
@@ -13,18 +12,22 @@ export const applicationsNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.myApplications,
+      description: m.applicationsIntro,
       path: ApplicationsPaths.ApplicationRoot,
     },
     {
       name: m.inProgressApplications,
+      description: m.applicationsIntroInProgress,
       path: ApplicationsPaths.ApplicationInProgressApplications,
     },
     {
       name: m.unfinishedApplications,
+      description: m.applicationsIntroUnfinished,
       path: ApplicationsPaths.ApplicationIncompleteApplications,
     },
     {
       name: m.finishedApplications,
+      description: m.applicationsIntroFinished,
       path: ApplicationsPaths.ApplicationCompleteApplications,
     },
   ],

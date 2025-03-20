@@ -5,10 +5,17 @@ import { AirDiscountPaths } from './paths'
 export const airDiscountNavigation: PortalNavigationItem = {
   name: m.airDiscount,
   description: m.airDiscountDescription,
+  intro: m.airDiscountIntro,
   path: AirDiscountPaths.AirDiscountRoot,
   icon: {
     icon: 'airplane',
     type: 'outline',
   },
-  children: [{ name: m.delegation, path: AirDiscountPaths.AirDiscountRoot }],
+  children: [
+    {
+      name: m.delegation,
+      searchHide: true,
+      path: AirDiscountPaths.AirDiscountRoot,
+    },
+  ],
 }

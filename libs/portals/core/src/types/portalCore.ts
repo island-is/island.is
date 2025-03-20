@@ -50,6 +50,11 @@ export interface PortalNavigationItem {
   description?: MessageDescriptor
 
   /**
+   * Intro for module, for search purposes
+   */
+  intro?: MessageDescriptor
+
+  /**
    * Search tags for module
    */
   searchTags?: MessageDescriptor[]

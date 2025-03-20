@@ -5,6 +5,7 @@ import { LawAndOrderPaths } from './paths'
 export const lawAndOrderNavigation: PortalNavigationItem = {
   name: m.lawAndOrder,
   description: m.lawAndOrderDashboard,
+  intro: m.lawAndOrderDescription,
   path: LawAndOrderPaths.Root,
   icon: {
     icon: 'gavel',
@@ -17,6 +18,7 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
     },
     {
       name: m.myCourtCases,
+      description: m.myCourtCasesIntro,
       path: LawAndOrderPaths.CourtCases,
       children: [
         {

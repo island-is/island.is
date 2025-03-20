@@ -4,14 +4,16 @@ import { LicensePaths } from './paths'
 
 export const licenseNavigation: PortalNavigationItem = {
   name: m.licenses,
+  description: m.licensesDescription,
+  intro: m.licensesIntro,
   path: LicensePaths.LicensesRoot,
-  searchHide: true,
   icon: {
     icon: 'wallet',
   },
   children: [
     {
       name: m.myLicenses,
+      searchHide: true,
       path: LicensePaths.LicensesRoot,
     },
     {
@@ -31,5 +33,4 @@ export const licenseNavigation: PortalNavigationItem = {
       activeIfExact: false,
     },
   ],
-  description: m.licensesDescription,
 }

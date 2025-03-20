@@ -4,6 +4,7 @@ import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
   name: m.finance,
+  description: m.financeHeading,
   path: FinancePaths.FinanceRoot,
   children: [
     {
@@ -87,5 +88,4 @@ export const financeNavigation: PortalNavigationItem = {
   icon: {
     icon: 'cellular',
   },
-  description: m.financeHeading,
 }

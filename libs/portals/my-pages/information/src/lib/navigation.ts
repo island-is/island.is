@@ -6,15 +6,15 @@ import { InformationPaths } from './paths'
 
 export const informationNavigation: PortalNavigationItem = {
   name: m.userInfo,
+  description: m.userInfoDescription,
   path: InformationPaths.MyInfoRoot,
   icon: {
     icon: 'person',
   },
-  searchHide: true,
-
   children: [
     {
       name: m.myInfo,
+      description: m.userInfoIntro,
       path: InformationPaths.MyInfoRootOverview,
       children: [
         {
@@ -119,7 +119,6 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.Notifications,
     },
   ],
-  description: m.userInfoDescription,
 }
 
 export const companyNavigation: PortalNavigationItem = {

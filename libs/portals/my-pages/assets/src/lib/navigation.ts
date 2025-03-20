@@ -4,6 +4,7 @@ import { AssetsPaths } from './paths'
 
 export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
+  description: m.realEstateDescription,
   path: AssetsPaths.AssetsRoot,
   icon: {
     icon: 'homeWithCar',
@@ -11,6 +12,7 @@ export const assetsNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.realEstate,
+      description: m.realEstateDescription,
       path: AssetsPaths.AssetsRealEstate,
       children: [
         {
@@ -22,10 +24,12 @@ export const assetsNavigation: PortalNavigationItem = {
     },
     {
       name: m.vehicles,
+      searchHide: true,
       path: AssetsPaths.AssetsVehicles,
       children: [
         {
           name: m.myVehicles,
+          description: m.vehiclesDescription,
           path: AssetsPaths.AssetsMyVehicles,
           breadcrumbHide: true,
           children: [
@@ -46,6 +50,7 @@ export const assetsNavigation: PortalNavigationItem = {
         },
         {
           name: m.vehiclesRegisterMileage,
+          description: m.vehiclesRegisterMileageIntro,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
           children: [
             {
@@ -74,12 +79,14 @@ export const assetsNavigation: PortalNavigationItem = {
 
         {
           name: m.vehiclesHistory,
+          description: m.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,
         },
       ],
     },
     {
       name: m.intellectualProperties,
+      description: m.intellectualPropertiesIntro,
       path: AssetsPaths.AssetsIntellectualProperties,
       children: [
         {
@@ -101,6 +108,7 @@ export const assetsNavigation: PortalNavigationItem = {
     },
     {
       name: m.workMachines,
+      description: m.workMachinesIntro,
       path: AssetsPaths.AssetsWorkMachines,
       children: [
         {
@@ -111,5 +119,4 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
   ],
-  description: m.realEstateDescription,
 }
