@@ -262,7 +262,10 @@ jobs:
       - prepare
     runs-on: arc-test
     container:
-      image: gcr.io/kaniko-project/executor:debug
+      image: gcr.io/kaniko-project/executor
+    permissions:
+      contents: read
+      packages: write
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
