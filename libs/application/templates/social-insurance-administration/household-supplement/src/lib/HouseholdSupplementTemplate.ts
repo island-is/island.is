@@ -25,7 +25,6 @@ import {
   EphemeralStateLifeCycle,
   YES,
 } from '@island.is/application/core'
-import { HouseholdSupplementHousing } from './constants'
 import { dataSchema } from './dataSchema'
 import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
@@ -473,15 +472,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        const { householdSupplementHousing, householdSupplementChildren } =
-          getApplicationAnswers(answers)
+        const { householdSupplementChildren } = getApplicationAnswers(answers)
 
         if (householdSupplementChildren !== YES) {
           unset(answers, 'fileUpload.schoolConfirmation')
-        }
-
-        if (householdSupplementHousing !== HouseholdSupplementHousing.RENTER) {
-          unset(answers, 'fileUpload.leaseAgreement')
         }
 
         return context
