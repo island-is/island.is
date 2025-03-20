@@ -31,18 +31,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
-  userProfileInformationTitle: {
-    id: 'cr.application:userprofile.title',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
-    description: 'Your user profile information',
-  },
-  userProfileInformationSubTitle: {
-    id: 'cr.application:userprofile.subTitle',
-    defaultMessage:
-      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-    description:
-      'In order to apply for this application we need your email and phone number',
-  },
   actionCardDraft: {
     id: 'cr.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
