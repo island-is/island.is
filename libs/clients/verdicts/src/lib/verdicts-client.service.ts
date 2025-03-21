@@ -28,21 +28,32 @@ export class VerdictsClientService {
     private readonly supremeCourtApi: DefaultApi,
   ) {}
 
-  async getVerdicts(input: { pageNumber: number; searchTerm: string }) {
+  async getVerdicts(input: {
+    pageNumber: number
+    searchTerm: string
+    courtLevel?: string
+  }) {
+    const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
+
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
-      this.goproApi.getVerdicts({
-        requestData: {
-          orderBy: 'verdictDate desc',
-          itemsPerPage: ITEMS_PER_PAGE,
-          pageNumber: input.pageNumber,
-          searchTerm: input.searchTerm,
-        },
-      }),
-      this.supremeCourtApi.apiV2VerdictGetVerdictsGet({
-        page: input.pageNumber,
-        limit: ITEMS_PER_PAGE,
-        orderBy: 'publishDate DESC',
-      }),
+      !onlyFetchSupremeCourtVerdicts
+        ? this.goproApi.getVerdicts({
+            requestData: {
+              orderBy: 'verdictDate desc',
+              itemsPerPage: ITEMS_PER_PAGE,
+              pageNumber: input.pageNumber,
+              searchTerm: input.searchTerm,
+              courtLevel: input.courtLevel,
+            },
+          })
+        : { status: 'rejected', items: [], total: 0 },
+      !input.searchTerm && (!input.courtLevel || onlyFetchSupremeCourtVerdicts)
+        ? this.supremeCourtApi.apiV2VerdictGetVerdictsGet({
+            page: input.pageNumber,
+            limit: ITEMS_PER_PAGE,
+            orderBy: 'publishDate DESC',
+          })
+        : { status: 'rejected', items: [], total: 0 },
     ])
 
     const items: {
