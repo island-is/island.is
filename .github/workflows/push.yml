@@ -236,11 +236,13 @@ jobs:
           set -euo pipefail
           CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
           echo "CHUNKS: '$CHUNKS'"
-          if [[ "$CHUNKS" != "[]" ]]; then
+          if [[ "$CHUNKS" != "[]" && "$CHUNKS" != "" ]]; then
             # NOTE: validate the jq command to trigger failure
             echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
             IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
+          else
+            echo IMAGES='' >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
@@ -252,7 +254,10 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-docker
+    runs-on: arc-test
+    container: gcr.io/kaniko-project/executor:debug # the kaniko image
+    permissions:
+      contents: read
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
