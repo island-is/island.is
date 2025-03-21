@@ -1,5 +1,4 @@
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import * as kennitala from 'kennitala'
 import NextLink from 'next/link'
 import React, { FC, useContext, useState } from 'react'
@@ -42,85 +41,16 @@ import { AccessControlCreate, AccessControlUpdate } from './components'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import {
+  CreateSkilavottordAccessControlMutation,
+  DeleteSkilavottordAccessControlMutation,
+  SkilavottordAccessControlsQuery,
+  SkilavottordAllRecyclingPartnersQuery,
+  SkilavottordRecyclingPartnerQuery,
+  UpdateSkilavottordAccessControlMutation,
+} from '@island.is/skilavottord-web/graphql/queries'
 import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies/RecyclingCompanies'
 import * as styles from './AccessControl.css'
-
-const SkilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery {
-    skilavottordAllRecyclingPartners {
-      companyId
-      companyName
-      active
-      municipalityId
-      isMunicipality
-    }
-  }
-`
-
-const SkilavottordAccessControlsQuery = gql`
-  query skilavottordAccessControlsQuery {
-    skilavottordAccessControls {
-      nationalId
-      name
-      role
-      email
-      phone
-      recyclingPartner {
-        companyId
-        companyName
-        municipalityId
-        isMunicipality
-      }
-    }
-  }
-`
-
-export const CreateSkilavottordAccessControlMutation = gql`
-  mutation createSkilavottordAccessControlMutation(
-    $input: CreateAccessControlInput!
-  ) {
-    createSkilavottordAccessControl(input: $input) {
-      nationalId
-      name
-      role
-      email
-      phone
-      partnerId
-      recyclingPartner {
-        companyId
-        companyName
-        municipalityId
-        isMunicipality
-      }
-    }
-  }
-`
-
-export const UpdateSkilavottordAccessControlMutation = gql`
-  mutation updateSkilavottordAccessControlMutation(
-    $input: UpdateAccessControlInput!
-  ) {
-    updateSkilavottordAccessControl(input: $input) {
-      nationalId
-      name
-      role
-      email
-      phone
-      recyclingPartner {
-        companyId
-        companyName
-      }
-    }
-  }
-`
-
-export const DeleteSkilavottordAccessControlMutation = gql`
-  mutation deleteSkilavottordAccessControlMutation(
-    $input: DeleteAccessControlInput!
-  ) {
-    deleteSkilavottordAccessControl(input: $input)
-  }
-`
 
 const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
@@ -198,6 +128,18 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const [
+    getUserMunicipality,
+    {
+      data: userMunicipalityData,
+      error: userMunicipalityError,
+      loading: userMunicipalityLoading,
+    },
+  ] = useLazyQuery<Query>(SkilavottordRecyclingPartnerQuery, {
+    variables: { input: { companyId: user?.partnerId || '' } },
+    ssr: false,
+  })
+
+  const [
     isCreateAccessControlModalVisible,
     setIsCreateAccessControlModalVisible,
   ] = useState(false)
@@ -241,9 +183,8 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
       return !partner.isMunicipality
     })
     .map((partner) => ({
-      label: partner.municipalityId
-        ? `${partner.municipalityId} - ${partner.companyName}`
-        : partner.companyName,
+      municipalityId: partner.municipalityId,
+      label: partner.companyName,
       value: partner.companyId,
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
@@ -253,10 +194,26 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
       return partner.isMunicipality
     })
     .map((partner) => ({
+      municipalityId: partner.companyId,
       label: partner.companyName,
       value: partner.companyId,
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
+
+  console.log('recyclingPartners', recyclingPartners)
+  console.log('municipalities', municipalities)
+
+  if (hasMunicipalityRole(user?.role)) {
+    if (userMunicipalityData) {
+      const userMunicipality =
+        userMunicipalityData?.skilavottordRecyclingPartner
+      recyclingPartners.unshift({
+        municipalityId: userMunicipality?.companyId,
+        label: userMunicipality?.companyName,
+        value: userMunicipality?.companyId,
+      })
+    }
+  }
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
@@ -288,6 +245,8 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     } else {
       getAllRecyclingPartner()
     }
+
+    getUserMunicipality()
 
     setIsCreateAccessControlModalVisible(true)
   }

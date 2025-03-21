@@ -105,6 +105,58 @@ export const AccessControlModal: FC<
     }
   }
 
+  const getOptions = () => {
+    if (hasMunicipalityRole(user?.role)) {
+      return recyclingPartners
+    } else {
+      // Group recycling companies without a municipality
+      const otherRecyclingCompanies = recyclingPartners
+        .filter(
+          (partner) =>
+            !municipalities?.some(
+              (municipality) => municipality.value === partner.municipalityId,
+            ),
+        )
+        .map((partner) => ({
+          label: partner.label,
+          value: partner.value,
+        }))
+
+      console.log('municipalities', municipalities)
+
+      // Build the select options
+      return [
+        // Map municipalities and their recycling companies
+        ...(municipalities?.map((municipality) => {
+          const relatedRecyclingCompanies = recyclingPartners
+            .filter((partner) => partner.municipalityId === municipality.value)
+            .map((partner) => ({
+              label: partner.label,
+              value: partner.value,
+            }))
+
+          return {
+            label: municipality.label,
+            value: municipality.value,
+            options: [
+              {
+                label: `${municipality.label}`,
+                value: municipality.value,
+              },
+              ...relatedRecyclingCompanies,
+            ],
+          }
+        }) ?? []),
+        // Add "Other" category
+        {
+          label: 'Aðrir',
+          value: '-1',
+          options: otherRecyclingCompanies,
+        },
+      ]
+    }
+  }
+
   return (
     <Modal
       title={title}
@@ -253,7 +305,7 @@ export const AccessControlModal: FC<
                     hasError={!!errors?.partnerId?.message}
                     errorMessage={errors?.partnerId?.message}
                     backgroundColor="blue"
-                    options={recyclingPartners}
+                    options={getOptions()}
                     onChange={onChange}
                     required={partnerIdRequired}
                     isCreatable
