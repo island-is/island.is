@@ -1,6 +1,6 @@
 const { composePlugins, withNx } = require('@nx/webpack')
 const { withReact } = require('@nx/react')
-const nrwlConfig = require('../../../libs/shared/webpack/nrwl-config')
+const nrwlConfig = require('./../../../libs/shared/webpack/nrwl-config')
 
 const isDev = process.env.NODE_ENV === 'development'
 

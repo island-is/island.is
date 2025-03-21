@@ -1,16 +1,47 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { useLocale, useLocalizedQuery } from '@island.is/localization'
+import { CREATE_APPLICATION } from "@island.is/application/graphql"
+import { useMutation } from "@apollo/client"
+import { Button } from "@island.is/island-ui/core"
+
 
 interface Params {
   slug: string
-  id: string
 }
 
 export const Applications = () => {
-  const { slug, id } = useParams() as unknown as Params
+  const { slug } = useParams() as unknown as Params
   const navigate = useNavigate()
-  const { formatMessage } = useLocale()
+
+  const [createApplicationMutation, { error: createError }] = useMutation(
+    CREATE_APPLICATION, {
+    onCompleted({ createApplication }) {
+      if (slug) {
+        console.log(createApplication)
+      }
+    }
+  })
+  console.log(slug)
+  const createApplication = async () => {
+    const app = await createApplicationMutation({
+      variables: {
+        input: {
+          slug: slug,
+          createApplicationDto: {
+            isTest: false
+          }
+        }
+      }
+    })
+    console.log(app)
+    if (app) {
+      navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
+    }
+
+  }
   return (
-    <>Applications</>
+    <>
+      <Button onClick={createApplication}>Create</Button>
+    </>
+
   )
 }

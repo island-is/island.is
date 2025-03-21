@@ -3,7 +3,9 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/form-system/web/src",
   "projectType": "application",
-  "tags": [],
+  "tags": [
+    "scope:application-system-web"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -14,7 +16,7 @@
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/form-system/web",
-        "index": "apps/form-system/web/src/index.html",
+        "index": "apps/form-system/web/src/index.src.html",
         "baseHref": "/",
         "main": "apps/form-system/web/src/main.tsx",
         "tsConfig": "apps/form-system/web/tsconfig.app.json",
