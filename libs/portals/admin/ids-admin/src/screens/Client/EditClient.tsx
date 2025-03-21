@@ -169,6 +169,7 @@ export const EditClient = () => {
               accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
               customClaims={selectedEnvironment.customClaims}
               singleSession={selectedEnvironment.singleSession}
+              sso={selectedEnvironment.sso}
             />
           )}
           <DangerZone />
