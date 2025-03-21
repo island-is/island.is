@@ -113,6 +113,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/my-pages/consent                                                                            @island-is/aranja
 /libs/portals/my-pages/restrictions                                                                       @island-is/aranja
 /libs/portals/my-pages/sessions                                                                           @island-is/aranja
+/apps/payments                                                                                            @island-is/aranja
+/apps/services/payments                                                                                   @island-is/aranja
+/libs/clients/payments                                                                                    @island-is/aranja
 /apps/native/app/                                                                                         @island-is/aranja-app
 codemagic.yaml                                                                                            @island-is/aranja-app
 /apps/web/public/.well-known/                                                                             @island-is/aranja-app
