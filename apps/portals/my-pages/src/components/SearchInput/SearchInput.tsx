@@ -1,4 +1,9 @@
-import { AsyncSearch, AsyncSearchOption, Text } from '@island.is/island-ui/core'
+import {
+  AsyncSearch,
+  AsyncSearchOption,
+  Breadcrumbs,
+  Text,
+} from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
@@ -9,11 +14,12 @@ import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
 import { MessageDescriptor } from 'react-intl'
-import { isDefined } from '@island.is/shared/utils'
 
 interface ModuleSet {
   title: string
-  content?: string
+  breadcrumbs: string[]
+  description?: string
+  intro?: string
   keywords?: Array<string>
   uri: string
 }
@@ -23,41 +29,34 @@ const options: IFuseOptions<ModuleSet> = {
   findAllMatches: true,
   includeMatches: true,
   includeScore: true,
-
-  //ignoreLocation: true,
+  minMatchCharLength: 2,
   keys: [
-    { name: 'title', weight: 10 },
+    { name: 'title', weight: 2 },
     { name: 'description', weight: 0.5 },
     { name: 'intro', weight: 0.5 },
     { name: 'keywords', weight: 5 },
   ],
   threshold: 0.2,
   shouldSort: true,
-  sortFn: (a, b) => a.score + b.score,
+  sortFn: (a, b) => a.score - b.score,
 }
 
 //Only load leaves into navigation results
 const getNavigationItems = (
   data: PortalNavigationItem,
+  breadcrumbs: string[],
   formatMessage: FormatMessage,
 ): Array<ModuleSet> => {
   let navigationItems: Array<ModuleSet> = []
 
   const parseContent = (
-    messageIds: Array<MessageDescriptor | undefined>,
+    messageId: MessageDescriptor | undefined,
   ): string | undefined => {
-    const content = messageIds
-      .map((m) => {
-        if (!m) {
-          return null
-        }
-        return formatMessage(m)
-      })
-      .filter(isDefined)
-      .join()
+    if (!messageId) return undefined
+    const content = formatMessage(messageId)
 
-    if (content.length > 150) {
-      return content.substring(0, 147) + '...'
+    if (content.length > 97) {
+      return content.substring(0, 97) + '...'
     } else if (content.length < 1) {
       return undefined
     }
@@ -66,20 +65,29 @@ const getNavigationItems = (
 
   if (data.children) {
     navigationItems = data.children.flatMap((child) =>
-      getNavigationItems(child, formatMessage),
+      getNavigationItems(
+        child,
+        [...breadcrumbs, formatMessage(data.name)],
+        formatMessage,
+      ),
     )
   }
+
+  const moduleName = formatMessage(data.name)
 
   if (
     !data.navHide &&
     data.path &&
     !data.active &&
     !data.searchHide &&
-    data.enabled
+    data.enabled &&
+    navigationItems.findIndex((n) => n.title === moduleName) < 0
   ) {
     navigationItems.push({
-      title: formatMessage(data.name),
-      content: parseContent([data.description, data.intro]),
+      title: moduleName,
+      breadcrumbs: [...breadcrumbs, formatMessage(data.name)],
+      description: parseContent(data.description),
+      intro: parseContent(data.intro),
       uri: data.path,
       keywords: data.searchTags
         ? data.searchTags.map((st) => formatMessage(st))
@@ -100,7 +108,7 @@ export const SearchInput = ({ white, colored }: Props) => {
   const [query, setQuery] = useState<string>()
 
   const data = useMemo(() => {
-    return getNavigationItems(MAIN_NAVIGATION, formatMessage)
+    return getNavigationItems(MAIN_NAVIGATION, [], formatMessage)
   }, [formatMessage])
 
   const fuse = useMemo(() => new Fuse(data, options), [data])
@@ -108,11 +116,15 @@ export const SearchInput = ({ white, colored }: Props) => {
   const ref = useRef<HTMLInputElement>(null)
 
   const searchResults: Array<AsyncSearchOption> = useMemo(() => {
-    if (query) {
-      const results = fuse.search(query)
+    if (query && query.length > 1) {
+      const results = fuse.search(query, {
+        limit: 5,
+      })
+
       if (results?.length <= 0) {
         return []
       }
+
       return results.map((result) => ({
         label: result.item.title,
         value: result.item.uri,
@@ -124,10 +136,12 @@ export const SearchInput = ({ white, colored }: Props) => {
                 [styles.active]: active,
               })}
             >
-              <Text variant="h5" as="h5" color="blue400">
-                {result.item.title}
-              </Text>
-              {result.item.content && <Text>{result.item.content}</Text>}
+              <Breadcrumbs
+                items={result.item.breadcrumbs.slice(1).map((b) => ({
+                  title: b,
+                }))}
+              />
+              <Text>{result.item.description}</Text>
             </LinkResolver>
           )
         },
