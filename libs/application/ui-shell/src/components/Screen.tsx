@@ -54,6 +54,7 @@ import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -151,7 +152,16 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     reset,
   } = hookFormData
 
-  const submitField = useMemo(() => findSubmitField(screen), [screen])
+  const user = useUserInfo()
+
+  const submitField = useMemo(() => {
+    const foundSubmitField = findSubmitField(screen)
+    const submitFieldCondition =
+      typeof foundSubmitField?.condition === 'function'
+        ? foundSubmitField?.condition(formValue, externalData, user)
+        : true
+    return submitFieldCondition ? foundSubmitField : undefined
+  }, [formValue, externalData, screen, user])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)

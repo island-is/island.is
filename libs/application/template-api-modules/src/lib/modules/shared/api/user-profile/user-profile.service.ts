@@ -154,7 +154,7 @@ export class UserProfileService extends BaseTemplateApiService {
 
   private getIDSLink(
     application: ApplicationWithAttachments,
-    include: { email?: boolean, phone?: boolean },
+    include: { email?: boolean; phone?: boolean },
   ) {
     let idsUserProfileLink = ''
     if (include.email && include.phone) {
