@@ -1,6 +1,38 @@
-# application-templates-rental-agreement
+# Rental Agreement
 
-This library was generated with [Nx](https://nx.dev).
+(application-templates-rental-agreement)
+
+## About
+
+[Introduction about the project and its purpose]
+
+## URLs
+
+- [Dev](https://beta.dev01.devland.is)
+- [Staging](https://beta.staging01.devland.is)
+- [Production](https://island.is)
+
+## API
+
+To run the api
+
+```bash
+yarn start api
+```
+
+To build the production bundle
+
+```bash
+yarn build api --prod
+```
+
+## Web
+
+To run the dev server
+
+```bash
+yarn start web
+```
 
 ### Localisation
 
@@ -19,3 +51,11 @@ For more info see [message extraction](../../../localization/README.md#message-e
 ## Running unit tests
 
 Run `nx test application-templates-rental-agreement` to execute the unit tests via [Vitest](https://vitest.dev/).
+
+## Project owner
+
+- [Húsnæðis- og mannvirkjastofnun](http://www.hms.is)
+
+## Code owners and maintainers
+
+- [Kolibri Kotid](https://github.com/orgs/island-is/teams/kolibri-kotid)

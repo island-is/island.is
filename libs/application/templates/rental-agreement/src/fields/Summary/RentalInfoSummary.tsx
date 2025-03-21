@@ -78,14 +78,12 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       {/* Property Address */}
       <SummaryCardRow hasChangeButton={false}>
         <GridColumn span={['12/12']}>
-          {answers.registerProperty.searchresults?.propertiesByStadfangNr && (
-            // TODO: Add correct value
+          {answers.registerProperty.searchresults?.label && (
             <KeyValue
               label={`${answers.registerProperty.searchresults.label}`}
               value={
                 `${formatMessage(summary.rentalPropertyIdPrefix)}${
-                  answers.registerProperty.searchresults
-                    .propertiesByStadfangNr[0]?.fasteign_nr
+                  answers.registerProperty.searchresults.units[0].propertyCode
                 }` || '-'
               }
               labelVariant="h4"

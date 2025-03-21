@@ -212,8 +212,28 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
                       iconType="outline"
                       truncate={true}
                       onClick={() => {
-                        // TODO: Implement action to open file in new tab
-                        window.open(file.key)
+                        // TODO: go over this, check if (code given by coderabbit)
+                        const fileUrl = new URL(
+                          file.key as string,
+                          window.location.origin,
+                        )
+                        if (
+                          fileUrl.origin === window.location.origin ||
+                          process.env.ALLOWED_FILE_DOMAINS?.includes(
+                            fileUrl.origin,
+                          )
+                        ) {
+                          window.open(
+                            fileUrl.toString(),
+                            '_blank',
+                            'noopener,noreferrer',
+                          )
+                        } else {
+                          console.error(
+                            'Attempted to open file from disallowed origin:',
+                            fileUrl.origin,
+                          )
+                        }
                       }}
                     >
                       {file.name}

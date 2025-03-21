@@ -48,6 +48,12 @@ export const specialProvisions = {
       defaultMessage: 'Skrifaðu hér lýsingu á húsnæðinu ',
       description: 'Special provisions housing description input placeholder',
     },
+    inputRequiredErrorMessage: {
+      id: 'ra.application:specialProvisions.housingInfo.inputRequiredErrorMessage',
+      defaultMessage: 'Lýsing á húsnæði þarf að vera til staðar',
+      description:
+        'Special provisions housing description input required error message',
+    },
   }),
 
   housingRules: defineMessages({
