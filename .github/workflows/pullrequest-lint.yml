@@ -49,9 +49,8 @@ jobs:
       - name: Get changed files
         id: changed-files
         run: |
-          echo "CHANGED_FILES=$(git diff --name-only origin/main...HEAD | grep -E '\\.(js|ts|tsx)$' || git diff --name-only | grep -E '\\.(js|ts|tsx)$')" >> $GITHUB_ENV
+          echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.ref }})" >> $GITHUB_ENV
 
       - name: Run lint on changed files
         if: env.CHANGED_FILES != ''
         run: npx nx run web:lint --lintFilePatterns=$CHANGED_FILES --cache
-
