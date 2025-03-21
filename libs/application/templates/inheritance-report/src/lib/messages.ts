@@ -128,13 +128,6 @@ export const m = defineMessages({
     description: '',
   },
   // Data collection - external data providers
-  errorDataProviderEstateValidationNothingFoundSummary: {
-    id: 'ir.application:errorDataProviderEstateValidationNothingFoundSummary',
-    defaultMessage:
-      'Engin dánarbú fundust. Vinsamlegast hafðu samband við Sýslumenn ef þú telur að um villu sé að ræða.',
-    description:
-      'Text that appears when district comissioner has no estate data in pre-data',
-  },
   dataCollectionTitle: {
     id: 'ir.application:dataCollectionTitle',
     defaultMessage: 'Gagnaöflun',
