@@ -223,7 +223,7 @@ export const createCaseFilesRecord = async (
 
       const nameChunks =
         pageReference.name.length > 40
-          ? pageReference.name.match(/(.{1,40})(?=.|$)/g)
+          ? pageReference.name.match(/.{1,40}(?=\s|$)/g)
           : [pageReference.name]
 
       for (const chunck of nameChunks ?? []) {
