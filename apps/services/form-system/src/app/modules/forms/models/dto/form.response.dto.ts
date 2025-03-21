@@ -1,11 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { FormDto } from './form.dto'
 import { ApplicantType } from '../../../../dataTypes/applicantTypes/applicantType.model'
 import { FieldType } from '../../../../dataTypes/fieldTypes/fieldType.model'
 import { ListType } from '../../../../dataTypes/listTypes/listType.model'
 import { CertificationType } from '../../../../dataTypes/certificationTypes/certificationType.model'
 import { OrganizationUrlDto } from '../../../organizationUrls/models/dto/organizationUrl.dto'
-import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 import { Option } from '../../../../dataTypes/option.model'
 
 export class FormResponseDto {

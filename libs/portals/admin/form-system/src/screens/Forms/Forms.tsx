@@ -1,34 +1,19 @@
-import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
-import { useLoaderData, useNavigate } from 'react-router-dom'
-import { FormSystemPaths } from '../../lib/paths'
+import { Box } from '@island.is/island-ui/core'
+import { useLoaderData } from 'react-router-dom'
 import { TableRow } from '../../components/TableRow/TableRow'
-import {
-  CREATE_FORM,
-  FormsLoaderResponse,
-  GET_FORMS,
-} from '@island.is/form-system/graphql'
-// import { FormsLoaderResponse } from './Forms.loader'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
+import { FormsLoaderResponse, GET_FORMS } from '@island.is/form-system/graphql'
+import { useLazyQuery } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { FormSystemForm } from '@island.is/api/schema'
 import { FormsHeader } from './FormsHeader'
 import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
 import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
-import Control from 'react-select/dist/declarations/src/components/Control'
-
-// import { Option } from '../../../../../../island-ui/core/src/lib/Select/Select.types'
 
 export const Forms = () => {
-  const navigate = useNavigate()
-  const { control, controlDispatch, inSettings, setInSettings } =
-    useContext(ControlContext)
+  const { control } = useContext(ControlContext)
   const { forms, organizations, isAdmin, organizationNationalId } =
     useLoaderData() as FormsLoaderResponse
-  const { formatMessage } = useIntl()
-  const [formSystemCreateFormMutation] = useMutation(CREATE_FORM)
   const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
 
   const [formsState, setFormsState] = useState<FormSystemForm[]>(forms)
@@ -50,7 +35,6 @@ export const Forms = () => {
         },
       },
     })
-    console.log('data in forms', data)
     if (data?.formSystemForms?.forms) {
       setFormsState(data.formSystemForms.forms)
     }
@@ -61,9 +45,6 @@ export const Forms = () => {
       handleOrganizationChange({ value: control.organizationNationalId })
     }
   }, [])
-
-  console.log('control orgID', control.organizationNationalId)
-  console.log('forms', forms)
 
   if (forms) {
     return (

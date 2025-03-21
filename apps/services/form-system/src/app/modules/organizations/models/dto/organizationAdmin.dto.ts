@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { CertificationType } from '../../../../dataTypes/certificationTypes/certificationType.model'
 import { Option } from '../../../../dataTypes/option.model'
 import { ListType } from '../../../../dataTypes/listTypes/listType.model'

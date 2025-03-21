@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   Button,
 } from '@island.is/island-ui/core'
-import * as styles from './TableRow.css'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
@@ -16,7 +15,6 @@ import { FormSystemPaths } from '../../lib/paths'
 import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-import { boolean } from 'zod'
 import { FormSystemForm } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { DELETE_FORM } from '@island.is/form-system/graphql'
@@ -52,44 +50,12 @@ export const TableRow = ({
   lastModified,
   org,
   state,
-  isHeader,
   translated,
-  slug,
-  beenPublished,
   setFormsState,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
-  // const header = () => (
-  //   <>
-  //     <Box className={styles.header}>
-  //       <Row>
-  //         <Column span="5/12">
-  //           <Box paddingLeft={2}>
-  //             <Text variant="medium">{formatMessage(m.name)}</Text>
-  //           </Box>
-  //         </Column>
-  //         <Column span="2/12">
-  //           <Text variant="medium">{formatMessage(m.lastModified)}</Text>
-  //         </Column>
-  //         <Column span="1/12">
-  //           <Text variant="medium">{formatMessage(m.translations)}</Text>
-  //         </Column>
-  //         <Column span="2/12">
-  //           <Text variant="medium">{formatMessage(m.organization)}</Text>
-  //         </Column>
-  //         <Column span="1/12">
-  //           <Text variant="medium">{formatMessage(m.state)}</Text>
-  //         </Column>
-  //         <Column span="1/12">
-  //           <Text variant="medium">{formatMessage(m.actions)}</Text>
-  //         </Column>
-  //       </Row>
-  //     </Box>
-  //   </>
-  // )
-  // if (isHeader) return header()
   const deleteForm = useMutation(DELETE_FORM)
   return (
     <Box

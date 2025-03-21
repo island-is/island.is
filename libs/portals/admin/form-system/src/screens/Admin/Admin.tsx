@@ -1,27 +1,18 @@
-import { Box, Button, Text, Inline, Tabs } from '@island.is/island-ui/core'
-import { useLoaderData, useNavigate } from 'react-router-dom'
-import { FormSystemPaths } from '../../lib/paths'
-import { TableRow } from '../../components/TableRow/TableRow'
+import { Tabs } from '@island.is/island-ui/core'
+import { useLoaderData } from 'react-router-dom'
 import {
   AdminLoaderResponse,
-  CREATE_FORM,
-  GET_FORMS,
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
-import { useLazyQuery, useMutation } from '@apollo/client'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
+import { useLazyQuery } from '@apollo/client'
 import { useState } from 'react'
-import { FormSystemForm } from '@island.is/api/schema'
-import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
-import { divide } from 'lodash'
 import { AdminHeader } from './AdminHeader'
 import { PermissionsList } from '../../components/Admin/PermissionsList'
+import { useIntl } from 'react-intl'
+import { m } from '@island.is/form-system/ui'
 
 export const Admin = () => {
-  const navigate = useNavigate()
   const { formatMessage } = useIntl()
-
   const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN, {
     fetchPolicy: 'no-cache',
   })
@@ -87,7 +78,7 @@ export const Admin = () => {
 
   const tabs = [
     {
-      label: 'Vottorð',
+      label: formatMessage(m.certifications),
       content: (
         <PermissionsList
           selectedPermissions={selectedCertificationTypesState}
@@ -98,7 +89,7 @@ export const Admin = () => {
       ),
     },
     {
-      label: 'Listar',
+      label: formatMessage(m.lists),
       content: (
         <PermissionsList
           selectedPermissions={selectedListTypesState}
@@ -109,7 +100,7 @@ export const Admin = () => {
       ),
     },
     {
-      label: 'Innsláttarreitir',
+      label: formatMessage(m.inputFields),
       content: (
         <PermissionsList
           selectedPermissions={selectedFieldTypesState}
@@ -127,7 +118,11 @@ export const Admin = () => {
         organizations={organizationsState}
         onOrganizationChange={handleOrganizationChange}
       />
-      <Tabs label="Reglugerðir" tabs={tabs} contentBackground="white" />
+      <Tabs
+        label={formatMessage(m.regulations)}
+        tabs={tabs}
+        contentBackground="white"
+      />
     </>
   )
 }

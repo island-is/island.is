@@ -10,7 +10,6 @@ import { ListType } from './listItem.model'
 import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
-import { Organization } from './organization.model'
 import { Option } from './option.model'
 
 @ObjectType('FormSystemDependency')

@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { OrganizationPermission } from './models/organizationPermission.model'
 import { UpdateOrganizationPermissionDto } from './models/dto/updateOrganizationPermission.dto'
 import { OrganizationPermissionDto } from './models/dto/organizationPermission.dto'
-import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
@@ -18,17 +17,6 @@ export class OrganizationPermissionsService {
   async create(
     createOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<OrganizationPermissionDto> {
-    // const permission = await this.getCombinedTypes.find(
-    //   (permission) =>
-    //     certificationType.id === createOrganizationPermissionDto.permission,
-    // )
-
-    // if (!certificationType) {
-    //   throw new NotFoundException(
-    //     `certificationType with id '${createOrganizationPermissionDto.permission}' not found`,
-    //   )
-    // }
-
     const organizationPermission =
       createOrganizationPermissionDto as OrganizationPermission
 
@@ -68,13 +56,4 @@ export class OrganizationPermissionsService {
     }
     organizationPermission.destroy()
   }
-
-  // private async getCombinedTypes(): Promise<string[]> {
-  //   const combinedTypes = [
-  //     ...Object.values(CertificationTypes),
-  //     ...Object.values(ListTypes),
-  //     ...Object.values(FieldTypes),
-  //   ]
-  //   return combinedTypes
-  // }
 }

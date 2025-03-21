@@ -2,19 +2,11 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   FormCertificationTypeDto,
   FormCertificationTypesApi,
   FormCertificationTypesControllerCreateRequest,
-  // OrganizationCertificationTypesControllerCreateRequest,
   FormCertificationTypesControllerDeleteRequest,
-  // OrganizationCertificationTypeDto,
-  // OrganizationCertificationTypesApi,
-  // OrganizationCertificationTypesControllerDeleteRequest,
-  OrganizationPermissionDto,
-  OrganizationPermissionsControllerDeleteRequest,
-  OrganizationPermissionsControllerCreateRequest,
   OrganizationPermissionsApi,
 } from '@island.is/clients/form-system'
 import {
@@ -28,7 +20,7 @@ export class CertificationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private certificationsApi: FormCertificationTypesApi,
-    private organizationPermissionsApi: OrganizationPermissionsApi, // private organizationCertificationsApi: OrganizationCertificationTypesApi,
+    private organizationPermissionsApi: OrganizationPermissionsApi,
   ) {}
 
   // eslint-disable-next-line

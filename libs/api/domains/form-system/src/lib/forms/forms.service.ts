@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 
 import {
   FormsApi,
@@ -21,7 +20,7 @@ import {
   UpdateFormInput,
 } from '../../dto/form.input'
 import { UpdateFormResponse } from '@island.is/form-system/dto'
-import { Form, FormResponse } from '../../models/form.model'
+import { FormResponse } from '../../models/form.model'
 
 @Injectable()
 export class FormsService {
@@ -36,9 +35,8 @@ export class FormsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    console.error(err)
-    console.error(err)
     this.logger.error(errorDetail || 'Error in forms service', err)
+
     throw new ApolloError(error.message)
   }
 
@@ -61,17 +59,17 @@ export class FormsService {
   }
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindOne(input as FormsControllerFindOneRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
+    const response = await this.formsApiWithAuth(auth).formsControllerFindOne(
+      input as FormsControllerFindOneRequest,
+    )
 
     return response as FormResponse
   }
 
   async getAllForms(auth: User, input: GetFormsInput): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll(input as FormsControllerFindAllRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+    const response = await this.formsApiWithAuth(auth).formsControllerFindAll(
+      input as FormsControllerFindAllRequest,
+    )
 
     return response as FormResponse
   }
@@ -80,14 +78,10 @@ export class FormsService {
     auth: User,
     input: UpdateFormInput,
   ): Promise<UpdateFormResponse> {
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
+    const response = await this.formsApiWithAuth(
+      auth,
+    ).formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
 
-    if (!response || response instanceof ApolloError) {
-      throw new Error('Failed to update form')
-    }
-
-    return response
+    return response as UpdateFormResponse
   }
 }

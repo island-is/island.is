@@ -12,7 +12,7 @@ const retryLink = new RetryLink()
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
-    graphQLErrors.map(({ message, locations, path, extensions }) => {
+    graphQLErrors.map(({ message, path, extensions }) => {
       const problem = JSON.stringify(extensions?.problem, null, '  ')
       console.log(
         `[GraphQL error]: Message: ${message}, Path: ${path}, Problem: ${problem}`,

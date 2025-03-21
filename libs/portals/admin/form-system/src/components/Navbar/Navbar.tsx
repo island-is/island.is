@@ -4,7 +4,6 @@ import { useContext, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Box, Button } from '@island.is/island-ui/core'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
-// import { NavbarTab } from './components/NavbarTab/NavbarTab'
 import {
   FormSystemScreen,
   FormSystemField,
@@ -25,7 +24,7 @@ import { m, SectionTypes } from '@island.is/form-system/ui'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 
 export const Navbar = () => {
-  const { control, controlDispatch, setInSettings, inSettings } = useContext(
+  const { control, controlDispatch, inSettings } = useContext(
     ControlContext,
   ) as IControlContext
   const { formatMessage } = useIntl()
@@ -139,22 +138,6 @@ export const Navbar = () => {
     }
   }
 
-  // const handleSaveAndContinue = () => {
-  //   setInSettings(false)
-  //   const section = sections?.find((s) => s?.sectionType === SectionTypes.INPUT)
-  //   if (section) {
-  //     controlDispatch({
-  //       type: 'SET_ACTIVE_ITEM',
-  //       payload: {
-  //         activeItem: {
-  //           type: 'Section',
-  //           data: section,
-  //         },
-  //       },
-  //     })
-  //   }
-  // }
-
   const { sensors, onDragStart, onDragOver, onDragEnd } = useNavbarDnD()
 
   const renderNonInputSections = () => {
@@ -236,10 +219,7 @@ export const Navbar = () => {
   }
 
   const renderSettingsView = () => (
-    <div>
-      {/* <Box paddingBottom={2} overflow="hidden" flexDirection="row">
-        <NavbarTab />
-      </Box> */}
+    <>
       <div>
         <NavComponent
           type="Section"
@@ -249,24 +229,11 @@ export const Navbar = () => {
         />
       </div>
       {renderNonInputSections()}
-      {/* <Box display="flex" justifyContent="center" paddingTop={3}>
-        <Button variant="ghost" size="small" onClick={handleSaveAndContinue}>
-          {formatMessage(m.saveAndContinue)}
-        </Button>
-      </Box> */}
-    </div>
+    </>
   )
 
   const renderDnDView = () => (
     <div>
-      <Box
-        paddingBottom={2}
-        overflow="hidden"
-        display="flex"
-        flexDirection="row"
-      >
-        {/* <NavbarTab /> */}
-      </Box>
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}

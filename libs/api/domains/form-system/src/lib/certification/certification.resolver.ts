@@ -11,13 +11,8 @@ import { CertificationsService } from './certification.service'
 import {
   CreateCertificationInput,
   DeleteCertificationInput,
-  // OrganizationCertificationTypeUpdateInput,
-  // OrganizationPermissionUpdateInput,
 } from '../../dto/certification.input'
-import {
-  FormCertificationTypeDto,
-  // OrganizationPermissionDto,
-} from '../../models/certification.model'
+import { FormCertificationTypeDto } from '../../models/certification.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)

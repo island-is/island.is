@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   OrganizationsApi,
   OrganizationsControllerCreateRequest,
@@ -56,13 +55,11 @@ export class OrganizationsService {
     auth: User,
     input: GetOrganizationInput,
   ): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(auth)
-      .organizationsControllerFindOne(
-        input as OrganizationsControllerFindOneRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get organizations'),
-      )
+    const response = await this.organizationsApiWithAuth(
+      auth,
+    ).organizationsControllerFindOne(
+      input as OrganizationsControllerFindOneRequest,
+    )
 
     return response as Organization
   }
@@ -71,13 +68,11 @@ export class OrganizationsService {
     auth: User,
     input: GetOrganizationAdminInput,
   ): Promise<OrganizationAdmin> {
-    const response = await this.organizationsApiWithAuth(auth)
-      .organizationsControllerFindAdmin(
-        input as OrganizationsControllerFindAdminRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get organization admin'),
-      )
+    const response = await this.organizationsApiWithAuth(
+      auth,
+    ).organizationsControllerFindAdmin(
+      input as OrganizationsControllerFindAdminRequest,
+    )
 
     return response as OrganizationAdmin
   }

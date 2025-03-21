@@ -4,7 +4,7 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
-import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
+import { CacheControl } from '@island.is/nest/graphql'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
@@ -26,21 +26,7 @@ import {
 } from '../../dto/form.input'
 import { UpdateFormResponse } from '@island.is/form-system/dto'
 import { Form, FormResponse } from '../../models/form.model'
-import {
-  OrganizationLinkByReferenceIdLoader,
-  OrganizationLinkEnByReferenceIdLoader,
-  OrganizationLogoByReferenceIdLoader,
-  // OrganizationTitleByNationalIdLoader,
-  // OrganizationTitleEnByNationalIdLoader,
-} from '@island.is/cms'
-import type {
-  LogoUrl,
-  OrganizationLink,
-  OrganizationLinkByReferenceIdDataLoader,
-  OrganizationLogoByReferenceIdDataLoader,
-  OrganizationTitleByReferenceIdDataLoader,
-  ShortTitle,
-} from '@island.is/cms'
+import type { ShortTitle } from '@island.is/cms'
 import {
   OrganizationTitleByNationalIdDataLoader,
   OrganizationTitleByNationalIdLoader,

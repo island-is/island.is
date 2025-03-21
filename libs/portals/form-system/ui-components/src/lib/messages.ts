@@ -98,6 +98,22 @@ export const m = defineMessages({
     defaultMessage:
       'Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi',
   },
+  certifications: {
+    id: 'portals-admin.form-system:certifications',
+    defaultMessage: 'Vottorð',
+  },
+  lists: {
+    id: 'portals-admin.form-system:lists',
+    defaultMessage: 'Listar',
+  },
+  inputFields: {
+    id: 'portals-admin.form-system:inputFields',
+    defaultMessage: 'Innsláttarreitir',
+  },
+  regulations: {
+    id: 'portals-admin.form-system:regulations',
+    defaultMessage: 'Reglugerðir',
+  },
   premisesTitle: {
     id: 'portals-admin.form-system:premises-title',
     defaultMessage:

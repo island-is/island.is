@@ -1,5 +1,4 @@
 import {
-  FormSystemFormCertificationType,
   FormSystemOrganizationAdmin,
   FormSystemPermissionType,
 } from '@island.is/api/schema'
@@ -31,8 +30,6 @@ export const adminLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     if (!data) {
       throw new Error('No organization admin was found')
     }
-
-    console.log('data', data)
 
     const organizationId = data.formSystemOrganizationAdmin
       ?.organizationId as string

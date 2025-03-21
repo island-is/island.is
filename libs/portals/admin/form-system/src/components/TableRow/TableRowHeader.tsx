@@ -2,17 +2,14 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Text,
-  Divider,
   Box,
-  DropdownMenu,
-  Button,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import * as styles from './TableRow.css'
 import { useIntl } from 'react-intl'
 
 export const TableRowHeader = () => {
-  const { formatMessage, formatDate } = useIntl()
+  const { formatMessage } = useIntl()
   return (
     <Box className={styles.header}>
       <Row>

@@ -7,7 +7,6 @@ export const MainContentColumn = () => {
       border="standard"
       borderRadius="standard"
       width="full"
-      // marginTop={5}
       style={{
         minHeight: '500px',
         overflow: 'auto',

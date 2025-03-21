@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { NavComponent as SelectNavComponent } from '../NavComponent/NavComponent'
 import { ControlContext } from '../../context/ControlContext'
 import {
@@ -9,8 +9,6 @@ import {
   Maybe,
 } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
 import { SectionTypes } from '@island.is/form-system/enums'
 
 const filterSections = (
@@ -30,7 +28,6 @@ export const NavbarSelect = () => {
   const { activeItem, form } = control
   const { sections, screens, fields } = form
   let selectable = false
-  const { formatMessage } = useIntl()
 
   const renderFieldsForScreen = (screen: Maybe<FormSystemScreen>) => {
     return fields

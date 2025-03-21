@@ -7,17 +7,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-// import { CertificationsService } from './certification.service'
-import {
-  CreateCertificationInput,
-  DeleteCertificationInput,
-  // OrganizationCertificationTypeUpdateInput,
-  // OrganizationPermissionUpdateInput,
-} from '../../dto/certification.input'
-import {
-  FormCertificationTypeDto,
-  // OrganizationPermissionDto,
-} from '../../models/certification.model'
 import { OrganizationPermissionDto } from '../../models/organizationPermission.model'
 import { OrganizationPermissionUpdateInput } from '../../dto/organizationPermission.input'
 import { OrganizationPermissionsService } from './organizationPermissions.service'

@@ -1,8 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
 import { Form } from './form.model'
-import { FormCertificationType } from './certification.model'
-import { Option } from './option.model'
 
 @ObjectType('FormSystemOrganization')
 export class Organization {

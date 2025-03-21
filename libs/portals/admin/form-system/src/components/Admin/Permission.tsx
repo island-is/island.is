@@ -1,21 +1,10 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemPermissionType } from '@island.is/api/schema'
 import {
-  FormSystemFormCertificationType,
-  FormSystemLanguageType,
-  FormSystemPermissionType,
-} from '@island.is/api/schema'
-import {
-  CREATE_CERTIFICATION,
-  DELETE_CERTIFICATION,
   CREATE_ORGANIZATION_PERMISSION,
   DELETE_ORGANIZATION_PERMISSION,
 } from '@island.is/form-system/graphql'
-import {
-  Box,
-  GridRow,
-  ToggleSwitchButton,
-  ToggleSwitchCheckbox,
-} from '@island.is/island-ui/core'
+import { Box, GridRow, ToggleSwitchCheckbox } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 interface Props {

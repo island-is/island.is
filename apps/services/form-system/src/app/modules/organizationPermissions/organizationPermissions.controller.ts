@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
-  Param,
   Post,
   UseGuards,
   VERSION_NEUTRAL,
@@ -13,7 +11,6 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOperation,
-  ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
