@@ -12,6 +12,7 @@ if [[ "${SKIP_TESTS:-}" == true ]]; then
   echo "$chunks"
   exit 0
 fi
+
 LAST_COMMIT_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
 if echo "$LAST_COMMIT_FILES" | grep -q ".github/actions/force-build.mjs"; then
   export TEST_EVERYTHING=true
