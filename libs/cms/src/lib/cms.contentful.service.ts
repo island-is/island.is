@@ -364,6 +364,7 @@ export class CmsContentfulService {
       'fields.slug': slug,
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
       'fields.organizationPage.fields.slug': organizationSlug,
+      'fields.organizationParentSubpage[exists]': false,
       limit: 1,
     }
     const result = await this.contentfulRepository
