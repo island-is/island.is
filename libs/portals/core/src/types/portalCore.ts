@@ -27,16 +27,15 @@ export interface PortalNavigationItem {
   navHide?: boolean
 
   /**
+   * Hides the item from being searched.
+   */
+  searchHide?: boolean
+
+  /**
    * Hides the child item from breadcrumbs.
    */
   breadcrumbHide?: boolean
 
-  // These two fields are used for the MVP version of the  portal where
-  // the routes are pretty uniform, this will most likely be removed in the future
-  // Optional header to be displayed above the nav item in the sidebar
-  heading?: MessageDescriptor
-  // Optional divider to be displayed above the nav item in the sidebar
-  divider?: boolean
   /**
    * Indicates if the user has access to the navigation item
    */
@@ -49,6 +48,17 @@ export interface PortalNavigationItem {
    * Description for module
    */
   description?: MessageDescriptor
+
+  /**
+   * Intro for module, for search purposes
+   */
+  intro?: MessageDescriptor
+
+  /**
+   * Search tags for module
+   */
+  searchTags?: MessageDescriptor[]
+
   /**
    * Active state for navigation item
    */
