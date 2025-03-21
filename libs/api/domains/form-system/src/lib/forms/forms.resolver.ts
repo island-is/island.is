@@ -30,11 +30,11 @@ import type { ShortTitle } from '@island.is/cms'
 import {
   OrganizationTitleByNationalIdDataLoader,
   OrganizationTitleByNationalIdLoader,
-} from 'libs/cms/src/lib/loaders/organizationTitleByNationalId.loader'
+} from '@island.is/cms'
 import {
   OrganizationTitleEnByNationalIdDataLoader,
   OrganizationTitleEnByNationalIdLoader,
-} from 'libs/cms/src/lib/loaders/organizationTitleEnByNationalId.loader'
+} from '@island.is/cms'
 
 @Resolver(() => Form)
 @UseGuards(IdsUserGuard)

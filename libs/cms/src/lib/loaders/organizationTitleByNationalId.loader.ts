@@ -3,15 +3,13 @@ import { Injectable } from '@nestjs/common'
 
 import { NestDataLoader } from '@island.is/nest/dataloader'
 import { CmsContentfulService } from '../cms.contentful.service'
-
-export type ShortTitle = string | null
+import { ShortTitle } from './organizationTitleByKey.loader'
 
 export type OrganizationTitleByNationalIdDataLoader = DataLoader<
   string,
   ShortTitle,
   string
 >
-
 @Injectable()
 export class OrganizationTitleByNationalIdLoader
   implements NestDataLoader<string, ShortTitle>

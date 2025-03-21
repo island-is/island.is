@@ -47,13 +47,13 @@ export class FieldsService {
   }
 
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth).fieldsControllerDelete(
+    await this.fieldsApiWithAuth(auth).fieldsControllerDelete(
       input as FieldsControllerDeleteRequest,
     )
   }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth).fieldsControllerUpdate(
+    await this.fieldsApiWithAuth(auth).fieldsControllerUpdate(
       input as unknown as FieldsControllerUpdateRequest,
     )
   }

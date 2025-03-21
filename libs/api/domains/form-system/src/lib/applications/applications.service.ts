@@ -69,24 +69,22 @@ export class ApplicationsService {
     auth: User,
     input: UpdateApplicationDependenciesInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerUpdate(input as ApplicationsControllerUpdateRequest)
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
+    )
   }
 
   async submitApplication(
     auth: User,
     input: GetApplicationInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSubmit(input as ApplicationsControllerSubmitRequest)
+    await this.applicationsApiWithAuth(auth).applicationsControllerSubmit(
+      input as ApplicationsControllerSubmitRequest,
+    )
   }
 
   async submitScreen(auth: User, input: SubmitScreenInput): Promise<void> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSubmitScreen(
+    await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
       input as ApplicationsControllerSubmitScreenRequest,
     )
   }

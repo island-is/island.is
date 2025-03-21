@@ -67,9 +67,7 @@ export class ListItemsService {
     auth: User,
     input: UpdateListItemDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.listItemsApiWithAuth(
-      auth,
-    ).listItemsControllerUpdateDisplayOrder(
+    await this.listItemsApiWithAuth(auth).listItemsControllerUpdateDisplayOrder(
       input as ListItemsControllerUpdateDisplayOrderRequest,
     )
   }

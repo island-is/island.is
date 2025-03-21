@@ -66,9 +66,7 @@ export class SectionsService {
     auth: User,
     input: UpdateSectionsDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.sectionsApiWithAuth(
-      auth,
-    ).sectionsControllerUpdateDisplayOrder(
+    await this.sectionsApiWithAuth(auth).sectionsControllerUpdateDisplayOrder(
       input as SectionsControllerUpdateDisplayOrderRequest,
     )
   }
