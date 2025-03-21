@@ -43,6 +43,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs
+        if: ${{ inputs.run_merge_queue == false }}
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
 
       - name: Get changed files
         id: changed-files
