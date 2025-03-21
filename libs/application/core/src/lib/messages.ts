@@ -391,7 +391,7 @@ export const coreErrorMessages = defineMessages({
       'Text that appears when district comissioner has validation fails in pre-data',
   },
   errorDataProviderEstateValidationNothingFoundSummary: {
-    id: 'ir.application:errorDataProviderEstateValidationNothingFoundSummary',
+    id: 'application.system:core.error.dataProviderEstateValidationNothingFoundSummary',
     defaultMessage:
       'Engin dánarbú fundust. Vinsamlegast hafðu samband við Sýslumenn ef þú telur að um villu sé að ræða.',
     description:
