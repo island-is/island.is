@@ -52,5 +52,5 @@ jobs:
           echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.ref }})" >> "$GITHUB_ENV"
 
       - name: Run lint on changed files
-        if: env.CHANGED_FILES != ''
-        run: npx nx run web:lint --lintFilePatterns=$CHANGED_FILES --cache
+        if: ${{ env.CHANGED_FILES != '' }}
+        run: yarn nx affected -t lint --lintFilePatterns=$(echo ${CHANGED_FILES}) --verbose
