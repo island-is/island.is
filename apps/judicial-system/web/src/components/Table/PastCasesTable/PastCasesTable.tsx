@@ -3,7 +3,11 @@ import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  isIndictmentCase,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -58,6 +62,12 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
         thead={[
           {
             title: formatMessage(tables.caseNumber),
+            sortBy: isProsecutionUser(user)
+              ? 'policeCaseNumbers'
+              : isDistrictCourtUser(user)
+              ? 'courtCaseNumber'
+              : undefined,
+            sortFn: 'number',
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),

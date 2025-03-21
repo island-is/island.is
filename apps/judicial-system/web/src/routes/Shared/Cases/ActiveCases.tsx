@@ -35,6 +35,8 @@ const ActiveCases: FC<Props> = (props) => {
       thead={[
         {
           title: formatMessage(tables.caseNumber),
+          sortBy: 'policeCaseNumbers',
+          sortFn: 'number',
         },
         {
           title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
