@@ -6,7 +6,7 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'

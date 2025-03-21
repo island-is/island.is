@@ -8,10 +8,10 @@ import {
 import { ApolloError } from '@apollo/client'
 
 import {
+  Case,
   CaseFile,
   CaseFileState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
 

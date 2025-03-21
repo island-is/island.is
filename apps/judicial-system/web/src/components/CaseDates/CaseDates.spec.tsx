@@ -1,8 +1,10 @@
 import { IntlProvider } from 'react-intl'
 import { render, screen } from '@testing-library/react'
 
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import CaseDates, { Props } from './CaseDates'
 

@@ -25,8 +25,10 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseAppealState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { findFirstInvalidStep } from '../../formHelper'
 import useCase from '../useCase'

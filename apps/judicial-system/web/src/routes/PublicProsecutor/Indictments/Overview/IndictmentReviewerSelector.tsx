@@ -10,7 +10,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { TempCase } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Overview.strings'
 
@@ -19,7 +19,7 @@ export const IndictmentReviewerSelector = ({
   selectedIndictmentReviewer,
   setSelectedIndictmentReviewer,
 }: {
-  workingCase: TempCase
+  workingCase: Case
   selectedIndictmentReviewer: Option<string> | null | undefined
   setSelectedIndictmentReviewer: Dispatch<
     SetStateAction<Option<string> | null | undefined>

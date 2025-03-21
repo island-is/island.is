@@ -26,13 +26,13 @@ import {
 import {
   CaseOrigin,
   Defendant,
+  IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
   Maybe,
   Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

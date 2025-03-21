@@ -21,6 +21,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseAppealState,
@@ -28,7 +29,6 @@ import {
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase } from '@island.is/judicial-system-web/src/types'
 
 import { hasSentNotification } from '../../utils'
 import { strings } from './useAppealAlertBanner.strings'
@@ -74,7 +74,7 @@ export const getAppealDecision = (
 }
 
 const useAppealAlertBanner = (
-  workingCase: TempCase,
+  workingCase: Case,
   onAppealAfterDeadline?: () => void,
   onStatementAfterDeadline?: () => void,
   onReceiveAppeal?: () => void,

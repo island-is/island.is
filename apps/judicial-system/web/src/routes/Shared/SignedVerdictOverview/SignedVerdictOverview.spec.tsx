@@ -2,6 +2,7 @@ import { createIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import {
+  Case,
   CaseDecision,
   CaseState,
   CaseType,
@@ -9,7 +10,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import {
   getExtensionInfoText,

@@ -1,4 +1,4 @@
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { formatUpdates, update, UpdateCase } from './'
 

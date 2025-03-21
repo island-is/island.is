@@ -8,7 +8,7 @@ import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCase } from '../../utils/hooks'
 

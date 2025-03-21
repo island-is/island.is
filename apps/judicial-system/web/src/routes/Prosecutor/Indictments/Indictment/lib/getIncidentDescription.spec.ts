@@ -21,7 +21,7 @@ describe('getIncidentDescription', () => {
     expect(result).toBe('')
   })
 
-  test('should return an empty string if deprecatedOffenses are missing in traffic violations', () => {
+  test('should return an empty string if offenses are missing in traffic violations', () => {
     const result = getIncidentDescription({
       indictmentCount: { id: 'testId', policeCaseNumber: '123-123-123' },
       formatMessage,

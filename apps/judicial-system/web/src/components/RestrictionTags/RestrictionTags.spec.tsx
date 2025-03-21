@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react'
 
 import {
+  Case,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import RestrctionTags from './RestrictionTags'
 

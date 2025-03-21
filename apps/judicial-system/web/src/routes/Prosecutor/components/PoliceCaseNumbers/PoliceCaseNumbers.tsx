@@ -15,8 +15,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 

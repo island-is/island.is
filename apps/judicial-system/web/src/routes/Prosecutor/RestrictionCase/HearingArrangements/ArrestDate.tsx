@@ -2,8 +2,10 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
   useCase,

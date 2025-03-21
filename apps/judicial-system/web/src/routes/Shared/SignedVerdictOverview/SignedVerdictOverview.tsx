@@ -54,6 +54,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
+  Case,
   CaseAppealState,
   CaseDecision,
   CaseState,
@@ -63,10 +64,7 @@ import {
   SignatureConfirmationResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   UpdateCase,
   useAppealAlertBanner,

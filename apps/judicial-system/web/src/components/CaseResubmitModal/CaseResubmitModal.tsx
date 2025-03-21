@@ -2,8 +2,10 @@ import { FC, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { Modal } from '..'
 import { strings } from './CaseResubmitModal.strings'

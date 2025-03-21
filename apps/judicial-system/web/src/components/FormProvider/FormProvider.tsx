@@ -12,12 +12,12 @@ import { useRouter } from 'next/router'
 
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
+  Case,
   CaseOrigin,
   CaseState,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseQuery, useCaseLazyQuery } from './case.generated'
