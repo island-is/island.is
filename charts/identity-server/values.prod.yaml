@@ -115,7 +115,7 @@ identity-server:
     LOG_LEVEL: 'info'
     MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.island.is'
     NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'true'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
