@@ -5,7 +5,7 @@ import { EducationPaths } from './paths'
 export const educationNavigation: PortalNavigationItem = {
   name: m.education,
   description: m.educationDescription,
-  searchTags: [s.educationDegree],
+  searchTags: [s.educationDegree, s.educationTest],
   path: EducationPaths.EducationRoot,
   icon: {
     icon: 'school',

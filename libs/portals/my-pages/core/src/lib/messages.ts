@@ -1974,6 +1974,10 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:education-degree',
     defaultMessage: 'Gráða',
   },
+  educationTest: {
+    id: 'sp.search.tags:education-test',
+    defaultMessage: 'Próf',
+  },
   airDiscountFlight: {
     id: 'sp.search.tags:air-discount-flight',
     defaultMessage: 'Flug',

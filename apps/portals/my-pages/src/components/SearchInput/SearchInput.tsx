@@ -26,12 +26,14 @@ const options: IFuseOptions<ModuleSet> = {
 
   //ignoreLocation: true,
   keys: [
-    { name: 'title', weight: 2 },
-    { name: 'content', weight: 0.5 },
-    { name: 'keywords', weight: 1 },
+    { name: 'title', weight: 10 },
+    { name: 'description', weight: 0.5 },
+    { name: 'intro', weight: 0.5 },
+    { name: 'keywords', weight: 5 },
   ],
-  threshold: 0.3,
+  threshold: 0.2,
   shouldSort: true,
+  sortFn: (a, b) => a.score + b.score,
 }
 
 //Only load leaves into navigation results
