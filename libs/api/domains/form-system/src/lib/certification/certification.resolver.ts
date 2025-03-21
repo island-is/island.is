@@ -18,7 +18,7 @@ import { FormCertificationTypeDto } from '../../models/certification.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class CertificationsResolver {
-  constructor(private readonly certificationsService: CertificationsService) { }
+  constructor(private readonly certificationsService: CertificationsService) {}
 
   @Mutation(() => FormCertificationTypeDto, {
     name: 'createFormSystemCertification',

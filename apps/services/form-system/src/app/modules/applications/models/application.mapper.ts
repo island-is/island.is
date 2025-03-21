@@ -7,7 +7,6 @@ import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
-import { ListItem } from '../../listItems/models/listItem.model'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 
 @Injectable()
