@@ -1,10 +1,9 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { OccupationalLicensesPaths } from './paths'
-import { olMessage as om } from './messages'
 
 export const occupationalLicensesNavigation: PortalNavigationItem = {
-  name: om.occupationalLicense,
+  name: m.occupationalLicenses,
   path: OccupationalLicensesPaths.OccupationalLicensesRoot,
   icon: {
     icon: 'receipt',
@@ -12,7 +11,7 @@ export const occupationalLicensesNavigation: PortalNavigationItem = {
   description: m.occupationalLicensesNavIntro,
   children: [
     {
-      name: om.myLicenses,
+      name: m.myOccupationalLicenses,
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
     },
     {

@@ -1,8 +1,8 @@
 import { lazy } from 'react'
 import { PortalModule } from '@island.is/portals/core'
 import { OccupationalLicensesPaths } from './lib/paths'
-import { olMessage as ol } from './lib/messages'
 import { ApiScope } from '@island.is/auth/scopes'
+import { m } from '@island.is/portals/my-pages/core'
 
 const EducationalDetailScreen = lazy(() =>
   import('./screens/v1/EducationalDetail/EducationalDetail'),
@@ -21,32 +21,32 @@ const OccupationalLicensesOverviewScreen = lazy(() =>
 )
 
 export const occupationalLicensesModule: PortalModule = {
-  name: ol.occupationalLicense,
+  name: m.occupationalLicenses,
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
-      name: ol.myLicenses,
+      name: m.myOccupationalLicenses,
       path: OccupationalLicensesPaths.OccupationalLicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
       element: <OccupationalLicensesOverviewScreen />,
     },
     {
-      name: ol.singleLicense,
+      name: m.singleLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
       element: <OccupationalLicensesDetailScreen />,
     },
     {
-      name: ol.singleHealthLicense,
+      name: m.singleHealthLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
       element: <HealthDirectorateDetailScreen />,
     },
     {
-      name: ol.singleEducationLicense,
+      name: m.singleEducationLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
