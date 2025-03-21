@@ -60,7 +60,7 @@ const Completed: FC = () => {
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
-  const sentToPublicProsecutor = workingCase.eventLogs?.some(
+  const isSentToPublicProsecutor = workingCase.eventLogs?.some(
     (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
   )
 
@@ -179,7 +179,7 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!sentToPublicProsecutor && isRulingOrFine && (
+        {!isSentToPublicProsecutor && isRulingOrFine && (
           <Box marginBottom={isRuling ? 5 : 10} component="section">
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
@@ -231,7 +231,7 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.NOT_APPLICABLE
                       }
-                      disabled={sentToPublicProsecutor}
+                      disabled={isSentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -258,7 +258,7 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.REQUIRED
                       }
-                      disabled={sentToPublicProsecutor}
+                      disabled={isSentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -282,7 +282,7 @@ const Completed: FC = () => {
                       defendant.serviceRequirement ===
                       ServiceRequirement.NOT_REQUIRED
                     }
-                    disabled={sentToPublicProsecutor}
+                    disabled={isSentToPublicProsecutor}
                     onChange={() => {
                       setAndSendDefendantToServer(
                         {
@@ -332,7 +332,10 @@ const Completed: FC = () => {
                           marginBottom={2}
                           required
                         />
-                        <VerdictAppealDecisionChoice defendant={defendant} />
+                        <VerdictAppealDecisionChoice
+                          defendant={defendant}
+                          disabled={isSentToPublicProsecutor}
+                        />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -345,7 +348,7 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          hideNextButton={!isRulingOrFine || sentToPublicProsecutor}
+          hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
           onNextButtonClick={handleNextButtonClick}
