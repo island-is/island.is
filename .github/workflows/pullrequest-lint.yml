@@ -11,6 +11,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  AWS_REGION: eu-west-1
+
 jobs:
   lint:
     name: Lint PR title
