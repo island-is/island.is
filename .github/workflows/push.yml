@@ -236,7 +236,7 @@ jobs:
           set -euo pipefail
           CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
           echo "CHUNKS: '$CHUNKS'"
-          if [[ "$CHUNKS" != "[]" || "$CHUNKS" != "" ]]; then
+          if [[ "$CHUNKS" != "[]" && "$CHUNKS" != "" ]]; then
             # NOTE: validate the jq command to trigger failure
             echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
             IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
