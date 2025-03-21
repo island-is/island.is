@@ -26,6 +26,7 @@ import {
   Case,
   CaseOrigin,
   Defendant as TDefendant,
+  Gender,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -117,6 +118,13 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+
+  // Use the gender of the single defendant if there is only one,
+  // otherwise default to male
+  const gender =
+    workingCase.defendants && workingCase.defendants.length === 1
+      ? workingCase.defendants[0].gender ?? Gender.MALE
+      : Gender.MALE
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -306,12 +314,13 @@ const Defendant = () => {
             indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
 
-          const incidentDescription = getIncidentDescription({
-            indictmentCount: updatedIndictmentCount,
+          const incidentDescription = getIncidentDescription(
+            updatedIndictmentCount,
+            gender,
             crimeScene,
             formatMessage,
-            subtypesRecord: subtypes,
-          })
+            subtypes,
+          )
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
