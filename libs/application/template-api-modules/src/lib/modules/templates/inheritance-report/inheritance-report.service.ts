@@ -15,14 +15,16 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
-import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
+import {
+  inheritanceReportSchema,
+  messages,
+} from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-import { messages } from '@island.is/application/templates/inheritance-report'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -134,11 +136,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoPrivateTransferFiles.map(async (file) => {
-            const filename = (
-              application.attachments as {
-                [key: string]: string
-              }
-            )[file.key]
+            const filename = (application.attachments as {
+              [key: string]: string
+            })[file.key]
             const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
@@ -153,11 +153,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoFilesOtherDocuments.map(async (file) => {
-            const filename = (
-              application.attachments as {
-                [key: string]: string
-              }
-            )[file.key]
+            const filename = (application.attachments as {
+              [key: string]: string
+            })[file.key]
             const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
