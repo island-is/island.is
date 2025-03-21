@@ -15,11 +15,16 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
-import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
+import {
+  inheritanceReportSchema,
+  messages,
+} from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { S3Service } from '@island.is/nest/aws'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -81,6 +86,17 @@ export class InheritanceReportService extends BaseTemplateApiService {
         })
       }),
     )
+
+    if (!inheritanceReportInfos.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            messages.errorDataProviderEstateValidationNothingFoundSummary,
+        },
+        400,
+      )
+    }
 
     return {
       success: true,
