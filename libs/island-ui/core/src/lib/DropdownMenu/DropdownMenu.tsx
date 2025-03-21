@@ -44,6 +44,8 @@ export interface DropdownMenuProps {
   menuClassName?: string
   fixed?: boolean
   openOnHover?: boolean
+  loading?: boolean
+  disabled?: boolean
 }
 
 export const DropdownMenu = ({
@@ -52,6 +54,8 @@ export const DropdownMenu = ({
   title,
   icon,
   iconType,
+  loading,
+  disabled,
   disclosure,
   menuClassName,
   fixed = false,
@@ -96,6 +100,8 @@ export const DropdownMenu = ({
           variant="utility"
           icon={icon}
           iconType={iconType}
+          loading={loading}
+          disabled={disabled}
           {...menu}
           {...hoverProps}
         >

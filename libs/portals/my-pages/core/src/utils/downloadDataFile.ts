@@ -1,11 +1,13 @@
 import CSVStringify from 'csv-stringify'
 import XLSX from 'xlsx'
 import { sanitizeSheetName } from './utils'
+import format from 'date-fns/format'
+import { formatDateWithTime } from './dateUtils'
 
 export const downloadFile = async (
   name: string,
   header: string[],
-  data: Array<Array<string | number>>,
+  data: Array<Array<unknown>>,
   type: 'csv' | 'xlsx',
 ) => {
   const getFile = (name: string, output: string | undefined) => {
@@ -24,16 +26,16 @@ export const downloadFile = async (
 
   if (type === 'csv') {
     const csvData = [header, ...data]
-    const filename = `${name}, ${new Date().toISOString().split('T')[0]}.csv`
+    const filename = sanitizeSheetName(
+      `${name}_${format(new Date(), 'dd.MM.yyyy_HH:mm')}.csv`,
+      true,
+    )
     CSVStringify(csvData, (err, output) => {
       getFile(filename, output)
     })
   } else {
     const sheetData = [header, ...data]
-    const dateString = new Date().toISOString().split('T')[0]
-    const fileName = sanitizeSheetName(
-      `${name.replace(/\./g, '')} - ${dateString}`,
-    )
+    const fileName = `${name}_${format(new Date(), 'dd.MM.yyyy_HH:mm')}.xlsx`
     const sheetName = sanitizeSheetName(name)
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)

@@ -9,6 +9,13 @@ export interface Props {
   vehicles: Array<VehicleProps>
 }
 
+export interface TableData {
+  bilnumer: unknown[]
+  'seinasta skraning': unknown[]
+  'seinasta skrada stada': unknown[]
+  kilometrastada: unknown[]
+}
+
 export interface VehicleType extends VehicleProps {
   mileageUploadedFromFile?: number
   isCurrentlyEditing?: boolean
