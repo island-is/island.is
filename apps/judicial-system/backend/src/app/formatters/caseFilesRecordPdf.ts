@@ -221,10 +221,7 @@ export const createCaseFilesRecord = async (
         marginTop: 1,
       })
 
-      const nameChunks =
-        pageReference.name.length > 40
-          ? pageReference.name.match(/.{1,40}(?=\s|$)/g)
-          : [pageReference.name]
+      const nameChunks = pageReference.name.match(/.{1,40}(?=\s|$)/g)
 
       for (const chunk of nameChunks ?? []) {
         pdfDocument.addText(chunk, textFontSize, {
