@@ -170,9 +170,7 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
-    if (!isAuthenticated && router.pathname !== '/') {
-      router.push(`/api/auth/login?redirectRoute=${window.location.pathname}`)
-    } else if (
+    if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&
       (state === 'fetch' || state === 'refresh')
