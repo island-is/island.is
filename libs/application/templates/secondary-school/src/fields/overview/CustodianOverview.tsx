@@ -9,7 +9,8 @@ import {
   formatKennitala,
   formatPhoneNumber,
   Routes,
-  States,
+  checkIsEditable,
+  checkUseAnswersCopy,
 } from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
 import { getValueViaPath } from '@island.is/application/core'
@@ -20,10 +21,13 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
       application.answers,
-      'custodians',
+      copyPrefix + 'custodians',
     ) || []
 
   const custodiansExternalData = custodiansAnswers.filter(
@@ -32,12 +36,12 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
-  >(application.answers, 'mainOtherContact')
+  >(application.answers, copyPrefix + 'mainOtherContact')
 
   const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       application.answers,
-      'otherContacts',
+      copyPrefix + 'otherContacts',
     ) || []
   ).filter((x) => !!x.person.nationalId)
 
@@ -63,6 +67,8 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
 
   const totalCount = custodiansExternalData.length + contacts.length
 
+  const isEditable = checkIsEditable(application.state)
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.CUSTODIAN)}
@@ -72,7 +78,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
           ? overview.custodian.subtitle
           : overview.otherContact.subtitle,
       )}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
         {!!custodiansExternalData.length && (

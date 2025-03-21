@@ -9,7 +9,6 @@ import { getChargeItems } from '../../utils'
 
 export const LicensePlateRenewalForm: Form = buildForm({
   id: 'LicensePlateRenewalFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

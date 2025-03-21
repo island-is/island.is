@@ -31,10 +31,10 @@ import {
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case'
+import { Case } from '../case/models/case.model'
+import { DateLog } from '../case/models/dateLog.model'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
-import { Subpoena, SubpoenaService } from '../subpoena'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -51,6 +51,9 @@ export enum PoliceDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
+  RVMV = 'RVMV', // Viðbótargögn verjanda
+  RVVS = 'RVVS', // Viðbótargögn sækjanda
+  RVFK = 'RVFK', // Fyrirkall
 }
 
 export interface PoliceDocument {
@@ -155,8 +158,6 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
-    @Inject(forwardRef(() => SubpoenaService))
-    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -613,24 +614,24 @@ export class PoliceService {
   }
 
   async createSubpoena(
-    workingCase: Case,
+    theCase: Case,
     defendant: Defendant,
     subpoena: string,
     indictment: string,
     user: User,
+    civilClaims: string[],
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
-      workingCase
+      theCase
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
     const normalizedNationalId =
       normalizeAndFormatNationalId(defendantNationalId)[0]
 
-    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
-    const arraignmentInfo = dateLogs?.find(
-      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
-    )
+    const documentName = `Fyrirkall í máli ${theCase.courtCaseNumber}`
+    const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
+
     try {
       const res = await this.fetchPoliceCaseApi(
         `${this.xRoadPath}/CreateSubpoena`,
@@ -645,7 +646,7 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentsBase64: [subpoena, indictment],
+            documentsBase64: [subpoena, indictment, ...civilClaims],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
@@ -655,7 +656,7 @@ export class PoliceService {
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
             fileTypeCode: 'BRTNG',
-            rvgCaseId: workingCase.id,
+            rvgCaseId: theCase.id,
           }),
         } as RequestInit,
       )
@@ -667,14 +668,14 @@ export class PoliceService {
 
       throw await res.text()
     } catch (error) {
-      this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
+      this.logger.error(`Failed create subpoena for case ${theCase.id}`, {
         error,
       })
 
       this.eventService.postErrorEvent(
         'Failed to create subpoena',
         {
-          caseId: workingCase.id,
+          caseId: theCase.id,
           defendantId: defendant?.id,
           actor,
         },
@@ -686,13 +687,11 @@ export class PoliceService {
   }
 
   async revokeSubpoena(
-    workingCase: Case,
-    subpoena: Subpoena,
+    theCase: Case,
+    subpoenaId: string,
     user: User,
   ): Promise<boolean> {
     const { name: actor } = user
-
-    const subpoenaId = subpoena.subpoenaId
 
     try {
       const res = await this.fetchPoliceCaseApi(
@@ -715,7 +714,7 @@ export class PoliceService {
       throw await res.text()
     } catch (error) {
       this.logger.error(
-        `Failed revoke subpoena with id ${subpoenaId} for case ${workingCase.id} from police`,
+        `Failed revoke subpoena with id ${subpoenaId} for case ${theCase.id} from police`,
         {
           error,
         },
@@ -724,7 +723,7 @@ export class PoliceService {
       this.eventService.postErrorEvent(
         'Failed to revoke subpoena from police',
         {
-          caseId: workingCase.id,
+          caseId: theCase.id,
           subpoenaId,
           actor,
         },

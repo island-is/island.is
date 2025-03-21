@@ -23,6 +23,12 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in draft',
   },
+  actionCardEdit: {
+    id: 'ss.application:actionCardEdit',
+    defaultMessage: 'Í vinnslu (áður innsend)',
+    description:
+      'Description of application state/status when the application is in edit',
+  },
   actionCardSubmitted: {
     id: 'ss.application:actionCardSubmitted',
     defaultMessage: 'Innsend',
@@ -53,6 +59,12 @@ export const application = defineMessages({
     description:
       'Meta name of application state when the application is in draft',
   },
+  stateMetaNameEdit: {
+    id: 'ss.application:stateMetaNameEdit',
+    defaultMessage: 'Edit',
+    description:
+      'Meta name of application state when the application is in edit',
+  },
   stateMetaNameSubmitted: {
     id: 'ss.application:stateMetaNameSubmitted',
     defaultMessage: 'Submitted',
@@ -76,8 +88,13 @@ export const application = defineMessages({
 export const historyMessages = defineMessages({
   edited: {
     id: 'ss.application:historyMessages.edited',
-    defaultMessage: 'Umsókn dregin tilbaka (breyting)',
+    defaultMessage: 'Umsókn færð tilbaka í vinnslu',
     description: 'History message application edited',
+  },
+  changesAborted: {
+    id: 'ss.application:historyMessages.changesAborted',
+    defaultMessage: 'Hætt við breytingar',
+    description: 'History message application changes aborted',
   },
   reviewFinished: {
     id: 'ss.application:historyMessages.reviewFinished',

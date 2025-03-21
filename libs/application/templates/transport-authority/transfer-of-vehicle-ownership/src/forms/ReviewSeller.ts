@@ -9,7 +9,6 @@ import { Logo } from '../assets/Logo'
 
 export const ReviewSellerForm: Form = buildForm({
   id: 'ReviewSellerForm',
-  title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [
@@ -35,7 +34,6 @@ export const ReviewSellerForm: Form = buildForm({
         buildCustomField({
           component: 'Conclusion',
           id: 'conslusion',
-          title: '',
           description: '',
         }),
       ],

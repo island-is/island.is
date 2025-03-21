@@ -9,19 +9,19 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.age.summary',
-      defaultMessage: '18 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmarki er ekki náð',
       description: '',
     },
   }),
   citizenship: defineMessages({
     title: {
       id: 'sls.application:error.citizenship.title',
-      defaultMessage: 'Ekki með íslenkst ríkisfang',
+      defaultMessage: 'Ekki með íslenskt ríkisfang',
       description: '',
     },
     summary: {
       id: 'sls.application:error.citizenship.summary',
-      defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
+      defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),
@@ -82,7 +82,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'sls.application:error.signer.summary#markdown',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
+      defaultMessage: 'Hægt er að draga meðmæli til baka inni á Mínum Síðum.',
       description: '',
     },
   }),

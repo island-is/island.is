@@ -9,7 +9,6 @@ import { getChargeItems } from '../../utils'
 
 export const OrderVehicleRegistrationCertificateForm: Form = buildForm({
   id: 'OrderVehicleRegistrationCertificateFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

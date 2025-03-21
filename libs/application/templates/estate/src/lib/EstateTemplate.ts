@@ -27,6 +27,7 @@ import {
   getApplicationFeatureFlags,
   EstateFeatureFlags,
 } from './getApplicationFeatureFlags'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
@@ -40,6 +41,8 @@ const EstateTemplate: ApplicationTemplate<
     answers.selectedEstate
       ? m.prerequisitesTitle.defaultMessage + ' - ' + answers.selectedEstate
       : m.prerequisitesTitle.defaultMessage,
+
+  codeOwner: CodeOwners.Juni,
   institution: m.institution,
   dataSchema: estateSchema,
   translationNamespaces: [configuration.translation],

@@ -19,6 +19,13 @@ export const signatures = {
       description: 'Title of the signatures section',
     },
   }),
+  errors: defineMessages({
+    lastSignature: {
+      id: 'ojoi.application:signatures.errors.lastSignature',
+      defaultMessage: 'Ekki tókst að sækja síðustu undirritun',
+      description: 'Error message for missing last signature',
+    },
+  }),
   headings: defineMessages({
     signedBy: {
       id: 'ojoi.application:signatures.headings.signedBy',

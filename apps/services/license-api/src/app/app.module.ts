@@ -9,6 +9,7 @@ import {
   DrivingDigitalLicenseClientConfig,
   HuntingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
+
 import { LoggingModule } from '@island.is/logging'
 
 import { AuditModule } from '@island.is/nest/audit'

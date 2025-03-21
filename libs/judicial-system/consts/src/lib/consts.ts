@@ -32,6 +32,10 @@ export const InvestigationCaseTypes = [
     label: '',
     options: [
       {
+        label: 'Brottvísun af heimili',
+        value: CaseType.EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Geðrannsókn',
         value: CaseType.PSYCHIATRIC_EXAMINATION,
       },
@@ -60,16 +64,20 @@ export const InvestigationCaseTypes = [
         value: CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
       },
       {
-        label: 'Brottvísun af heimili',
-        value: CaseType.EXPULSION_FROM_HOME,
-      },
-      {
         label: 'Rannsókn á rafrænum gögnum',
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
       {
         label: 'Rof á reynslulausn',
         value: CaseType.PAROLE_REVOCATION,
+      },
+      {
+        label: 'Skýrslutaka brotaþola yngri en 18 ára',
+        value: CaseType.STATEMENT_FROM_MINOR,
+      },
+      {
+        label: 'Skýrslutaka fyrir dómi',
+        value: CaseType.STATEMENT_IN_COURT,
       },
       {
         label: 'Upplýsingar um vefnotkun',
@@ -187,9 +195,9 @@ export const STATEMENT_ROUTE = '/greinargerd'
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
 export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
@@ -229,9 +237,9 @@ export const prosecutorIndictmentRoutes = [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
+  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
   INDICTMENTS_INDICTMENT_ROUTE,
-  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]
 

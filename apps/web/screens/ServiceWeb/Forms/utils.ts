@@ -1,62 +1,14 @@
 import { Organization, SupportCategory } from '@island.is/web/graphql/schema'
 
 export enum SjukratryggingarCategories {
-  // Ferðakostnaður
-  FERDAKOSTNADUR = '5IetjgJbs6lgS5umDC6k17',
-
-  // Heilbrigðisstarfsfólk
-  HEILBRIGDISSTARFSFOLK = '1gYJuVaNKXXi5FXAFrEsCt',
-
-  // Heilbrigðisþjónusta
-  HEILBRIGDISTHJONUSTA = '5Q5c7YkbkHB1SFRTede9xK',
-
-  // Hjálpartæki og næring
-  HJALPARTAEKI_OG_NAERING = '5FHpqHHcLFxUdhvQS64DZJ',
-
-  // Lyf og lyfjakostnaður
-  LYF_OG_LYFJAKOSTNADUR = '1CcMQO8dHqkayO1IZu29P5',
-
-  // Réttindi milli landa
-  RETTINDI_MILLI_LANDA = '47vHdWS9R5VsTXHg5DMeS1',
-
-  // Sjúkradagpeningar
-  SJUKRADAGPENINGAR = 'njVZaaPHKlxconopmbPCf',
-
-  // Slys og sjúklingatrygging
-  SLYS_OG_SJUKLINGATRYGGING = '6o9o2bgfY6hYc4K77nyN4v',
-
-  // Tannlækningar
-  TANNLAEKNINGAR = '5MvO1XYR3iGlYDOg3kgsHD',
-
-  // Vefgáttir
-  VEFGATTIR = '34ELo2Zt3A6ynYdgZx72m',
-
-  // Þjálfun
-  THJALFUN = '2SvNHpvfhViaUTLDMQt0ZI',
-
-  // Önnur þjónusta Sjúkratrygginga
-  ONNUR_THJONUSTA_SJUKRATRYGGINGA = 'vVBHhkPz8AF9BEzLJsoZo',
-
-  // Hjálpartæki
-  HJALPARTAEKI = 'hjalpartaeki',
-
-  // Næring
-  NAERING = 'naering',
-
-  // Slysatrygging
-  SLYSATRYGGING = 'slysatrygging',
-
-  // Sjúklingatrygging
-  SJUKLINGATRYGGING = 'sjuklingatrygging',
-
-  // Hjúkrunarheimili
-  HJUKRUNARHEIMILI = 'hjukrunarheimili',
-
-  // Túlkaþjónusta
-  TULKATHJONUSTA = 'tulkathjonusta',
-
-  // Evrópska sjúkratryggingakortið
-  EVROPSKA_SJUKRATRYGGINGAKORTID = 'evropska_sjukratryggingakortid',
+  SJUKRADAGPENINGAR = 'sjukradagpeningar',
+  SLYSAMAL_SJUKLINGATRYGGING = 'slysamal-sjuklingatrygging',
+  HJALPARTAEKI_NAERING = 'hjalpartaeki-naering',
+  HEILBRIGDISTHJONUSTA = 'heilbrigdisthjonusta',
+  LYFJAMAL = 'lyfjamal',
+  SAMNINGAR_INNKAUP = 'samningar-innkaup',
+  ALTHJODAMAL = 'althjodamal',
+  ONNUR_THJONUSTA = 'onnur-thjonusta',
 }
 
 export enum DirectorateOfImmigrationCategories {
@@ -124,93 +76,108 @@ export const filterSupportCategories = (
     slug === 'icelandic-health-insurance' ||
     slug === 'iceland-health'
   ) {
-    return supportCategories
-      ?.filter(
-        (c) =>
-          c?.id !== SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING &&
-          c?.id !== SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING,
-      )
-      .concat([
-        {
-          id: SjukratryggingarCategories.HJALPARTAEKI,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.HJALPARTAEKI,
-          title:
-            namespace?.['sjukratryggingarAssistiveDevices'] ||
-            (locale === 'is' ? 'Hjálpartæki' : 'Assistive devices'),
-        },
-        {
-          id: SjukratryggingarCategories.NAERING,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.NAERING,
-          title:
-            namespace?.['sjukratryggingarNutrition'] ||
-            (locale === 'is' ? 'Næring' : 'Nutrition'),
-        },
-        {
-          id: SjukratryggingarCategories.SLYSATRYGGING,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.SLYSATRYGGING,
-          title:
-            namespace?.['sjukratryggingarAccidentInsurance'] ||
-            (locale === 'is' ? 'Slysatrygging' : 'Accident insurance'),
-        },
-        {
-          id: SjukratryggingarCategories.SJUKLINGATRYGGING,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.SJUKLINGATRYGGING,
-          title:
-            namespace?.['sjukratryggingarPatientInsurance'] ||
-            (locale === 'is' ? 'Sjúklingatrygging' : 'Patient insurance'),
-        },
-        {
-          id: SjukratryggingarCategories.HJUKRUNARHEIMILI,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.HJUKRUNARHEIMILI,
-          title:
-            namespace?.['sjukratryggingarNursingHome'] ||
-            (locale === 'is' ? 'Hjúkrunarheimili' : 'Nursing home'),
-        },
-        {
-          id: SjukratryggingarCategories.TULKATHJONUSTA,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.TULKATHJONUSTA,
-          title:
-            namespace?.['sjukratryggingarInterpretationServices'] ||
-            (locale === 'is' ? 'Túlkaþjónusta' : 'Interpretation services'),
-        },
-        {
-          id: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
-          importance: 0,
-          __typename: 'SupportCategory',
-          description: '',
-          organization: organization,
-          slug: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
-          title:
-            namespace?.['sjukratryggingarEuropeanHealthInsuranceCard'] ||
-            (locale === 'is'
-              ? 'Evrópska sjúkratryggingakortið'
-              : 'The European Health Insurance Card'),
-        },
-      ])
+    return [
+      {
+        id: SjukratryggingarCategories.SJUKRADAGPENINGAR,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: SjukratryggingarCategories.SJUKRADAGPENINGAR,
+        title:
+          namespace?.['icelandHealthSjukradagpeningar'] ||
+          (locale === 'is' ? 'Sjúkradagpeningar' : 'Cash sickness benefits'),
+      },
+      {
+        id: SjukratryggingarCategories.SLYSAMAL_SJUKLINGATRYGGING,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: SjukratryggingarCategories.SLYSAMAL_SJUKLINGATRYGGING,
+        title:
+          namespace?.['icelandHealthSlysamalSjuklingatrygging'] ||
+          (locale === 'is'
+            ? 'Slysamál - sjúklingatrygging'
+            : 'Accident and patient insurance'),
+      },
+      {
+        id: SjukratryggingarCategories.HJALPARTAEKI_NAERING,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: SjukratryggingarCategories.HJALPARTAEKI_NAERING,
+        title:
+          namespace?.['icelandHealthHjalpartaekiNaering'] ||
+          (locale === 'is'
+            ? 'Hjálpartæki - næring'
+            : 'Assistive devices and nutrition'),
+      },
+      {
+        id: SjukratryggingarCategories.HEILBRIGDISTHJONUSTA,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description:
+          namespace?.['icelandHealthHeilbrigdisthjonustaDescription'] ||
+          (locale === 'is'
+            ? 'Þjálfun, lýtalækningar, innlend tannmál, ferðakostnaður, hjúkrunarheimili, heilsugæsla, greiðsluþátttökukerfi, leguskrá, heilbrigðisstarfsfólk og ljósmæður'
+            : ''),
+        organization: organization,
+        slug: SjukratryggingarCategories.HEILBRIGDISTHJONUSTA,
+        title:
+          namespace?.['icelandHealthHeilbrigdisthjonusta'] ||
+          (locale === 'is' ? 'Heilbrigðisþjónusta' : 'Health services'),
+      },
+      {
+        id: SjukratryggingarCategories.LYFJAMAL,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: SjukratryggingarCategories.LYFJAMAL,
+        title:
+          namespace?.['icelandHealthLyfjamal'] ||
+          (locale === 'is' ? 'Lyfjamál' : 'Pharmaceutical matters'),
+      },
+      {
+        id: SjukratryggingarCategories.SAMNINGAR_INNKAUP,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: SjukratryggingarCategories.SAMNINGAR_INNKAUP,
+        title:
+          namespace?.['icelandHealthSamningarInnkaup'] ||
+          (locale === 'is' ? 'Samningar - innkaup' : 'Contracts - procurement'),
+      },
+      {
+        id: SjukratryggingarCategories.ALTHJODAMAL,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description:
+          namespace?.['icelandHealthAlthjodamalDescription'] ||
+          (locale === 'is'
+            ? 'Til dæmis erlendur lækniskostnaður, evrópska sjúkratryggingakortið, erlendur tannlæknakostnaður'
+            : ''),
+        organization: organization,
+        slug: SjukratryggingarCategories.ALTHJODAMAL,
+        title:
+          namespace?.['icelandHealthAlthjodamal'] ||
+          (locale === 'is' ? 'Alþjóðamál' : 'International matters'),
+      },
+      {
+        id: SjukratryggingarCategories.ONNUR_THJONUSTA,
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: SjukratryggingarCategories.ONNUR_THJONUSTA,
+        title:
+          namespace?.['icelandHealthOnnurThjonusta'] ||
+          (locale === 'is' ? 'Önnur þjónusta' : 'Other services'),
+      },
+    ]
   }
 
   if (slug === 'utlendingastofnun' || slug === 'directorate-of-immigration') {

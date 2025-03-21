@@ -23,6 +23,8 @@ import {
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -32,6 +34,7 @@ import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
   description: 'Front-end language selected',
 })
 @Controller()
+@CodeOwner(CodeOwners.NordaApplications)
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 

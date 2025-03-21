@@ -31,7 +31,6 @@ export const custodianSubSection = buildSubSection({
         // Custodians
         buildFieldsRepeaterField({
           id: 'custodians',
-          title: '',
           titleVariant: 'h5',
           condition: (_, externalData) => checkHasAnyCustodians(externalData),
           formTitleNumbering: 'suffix',
@@ -77,6 +76,12 @@ export const custodianSubSection = buildSubSection({
 
         // Main other contact
         buildHiddenInput({
+          id: 'mainOtherContact.applicantNationalId',
+          defaultValue: (application: Application) => {
+            return application.applicant
+          },
+        }),
+        buildHiddenInput({
           id: 'mainOtherContact.required',
           defaultValue: (application: Application) => {
             return !checkHasAnyCustodians(application.externalData)
@@ -84,7 +89,6 @@ export const custodianSubSection = buildSubSection({
         }),
         buildNationalIdWithNameField({
           id: 'mainOtherContact.person',
-          title: '',
           required: true,
           showPhoneField: true,
           showEmailField: true,

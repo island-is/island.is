@@ -3,7 +3,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './TreeSlider.css'
 import { Controller } from 'react-hook-form'
 import { theme } from '@island.is/island-ui/theme'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useLocale } from '@island.is/localization'
 
 import { treeSliderConfig } from '../../lib/constants'

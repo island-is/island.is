@@ -5,9 +5,11 @@ export type SystemMetadata<DataType> = DataType & {
 export enum CustomPageUniqueIdentifier {
   PensionCalculator = 'PensionCalculator',
   OfficialJournalOfIceland = 'OfficialJournalOfIceland',
+  OfficialJournalOfIcelandHelp = 'OfficialJournalOfIcelandHelp',
   Vacancies = 'Vacancies',
   Grants = 'Grants',
   DirectorateOfLabourMyPages = 'DirectorateOfLabourMyPages',
+  Verdicts = 'Verdicts',
 }
 
 export interface StatisticSourceValue {

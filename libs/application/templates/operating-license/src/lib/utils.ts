@@ -1,11 +1,6 @@
-import {
-  APPLICATION_TYPES,
-  Operation,
-  OPERATION_CATEGORY,
-  YES,
-} from './constants'
+import { APPLICATION_TYPES, Operation, OPERATION_CATEGORY } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { getValueViaPath } from '@island.is/application/core'
+import { EMAIL_REGEX, getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
@@ -61,13 +56,11 @@ export const get24HFormatTime = (value: string) => {
 }
 
 const vskNrRegex = /([0-9]){6}/
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-export const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 export const isValidVskNr = (value: string) => vskNrRegex.test(value)
 export const isValidTime = (value: string) => timeRegex.test(value)
 export const isValidPhoneNumber = (phoneNumber: string) => {

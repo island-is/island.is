@@ -106,6 +106,7 @@ const labels: Record<string, string> = {
   nafn_fyrirtaekis: 'Nafn fyrirtækis',
   starfsstod: 'Starfsstöð',
   oska_eftir_vernd_uppljostrara: 'Óska eftir vernd uppljóstrara',
+  kennitala_thess_sem_malid_vardar: 'Kennitala þess sem málið varðar',
 }
 
 // these should be skipped in the message itself
@@ -461,42 +462,49 @@ export const StandardForm = ({
           </>
         )
         break
-      case SjukratryggingarCategories.FERDAKOSTNADUR:
-      case SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK:
-      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
-      case SjukratryggingarCategories.RETTINDI_MILLI_LANDA:
       case SjukratryggingarCategories.SJUKRADAGPENINGAR:
-      case SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING:
-      case SjukratryggingarCategories.SJUKLINGATRYGGING:
-      case SjukratryggingarCategories.SLYSATRYGGING:
-      case SjukratryggingarCategories.TANNLAEKNINGAR:
-      case SjukratryggingarCategories.VEFGATTIR:
-      case SjukratryggingarCategories.THJALFUN:
-      case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
-      case SjukratryggingarCategories.HJUKRUNARHEIMILI:
-      case SjukratryggingarCategories.TULKATHJONUSTA:
-      case SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID:
+      case SjukratryggingarCategories.LYFJAMAL:
+      case SjukratryggingarCategories.SAMNINGAR_INNKAUP:
+      case SjukratryggingarCategories.ALTHJODAMAL:
+      case SjukratryggingarCategories.ONNUR_THJONUSTA:
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput
-              name="kennitala"
+              name="kennitala_thess_sem_malid_vardar"
               format="######-####"
-              label={fn('kennitala', 'label', 'Kennitala')}
+              label={fn(
+                'kennitala_thess_sem_malid_vardar',
+                'label',
+                'Kennitala þess sem málið varðar',
+              )}
+              requiredMessage={fn(
+                'kennitala_thess_sem_malid_vardar',
+                'requiredMessage',
+                'Kennitölu vantar',
+              )}
             />
           </GridColumn>
         )
         break
-      case SjukratryggingarCategories.HJALPARTAEKI:
-      case SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING:
-      case SjukratryggingarCategories.NAERING:
-      case SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR:
+      case SjukratryggingarCategories.SLYSAMAL_SJUKLINGATRYGGING:
+      case SjukratryggingarCategories.HJALPARTAEKI_NAERING:
+      case SjukratryggingarCategories.HEILBRIGDISTHJONUSTA:
         fields = (
           <>
             <GridColumn paddingBottom={3}>
               <BasicInput
-                name="kennitala"
+                name="kennitala_thess_sem_malid_vardar"
                 format="######-####"
-                label={fn('kennitala', 'label', 'Kennitala')}
+                label={fn(
+                  'kennitala_thess_sem_malid_vardar',
+                  'label',
+                  'Kennitala þess sem málið varðar',
+                )}
+                requiredMessage={fn(
+                  'kennitala_thess_sem_malid_vardar',
+                  'requiredMessage',
+                  'Kennitölu vantar',
+                )}
               />
             </GridColumn>
             <GridColumn span="12/12" paddingBottom={3}>

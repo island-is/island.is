@@ -14,7 +14,6 @@ import { Logo } from '../../assets/Logo'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
@@ -46,7 +45,6 @@ export const Confirmation: Form = buildForm({
     buildCustomField({
       component: 'CustomFormConclusionSectionField',
       id: 'custom.conclusionSection',
-      title: '',
       description: '',
     }),
   ],

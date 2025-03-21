@@ -20,7 +20,7 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     if (!user) {
       throw new InternalServerErrorException('Missing user')

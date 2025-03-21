@@ -18,6 +18,7 @@ import { z } from 'zod'
 import { m } from './messages'
 import { NoDebtCertificateApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CodeOwners } from '@island.is/shared/constants'
 
 const NoDebtCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -30,6 +31,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.NO_DEBT_CERTIFICATE,
   name: m.name,
+  codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.NoDebtCertificate.translation,

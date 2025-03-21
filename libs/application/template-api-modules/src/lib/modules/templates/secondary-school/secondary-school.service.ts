@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
@@ -140,6 +141,11 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
+    const nationalRegistryData = getValueViaPath<NationalRegistryIndividual>(
+      application.externalData,
+      'nationalRegistry.data',
+    )
+
     // Get values from answers
     const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
       application.answers,
@@ -162,6 +168,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
         id: application.id,
         nationalId: auth.nationalId,
         name: applicant?.name || '',
+        genderCode: nationalRegistryData?.genderCode,
         phone: applicant?.phoneNumber || '',
         email: applicant?.email || '',
         address: applicant?.address || '',
@@ -179,10 +186,13 @@ export class SecondarySchoolService extends BaseTemplateApiService {
                 application,
                 attachment,
               )
+              const contentType = this.getMimeType(
+                attachment.name.split('.').pop(),
+              )
               return {
                 fileName: attachment.name,
                 fileContent,
-                contentType: `application/${attachment.name.split('.').pop()}`,
+                contentType,
               }
             },
           ),
@@ -261,5 +271,27 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     } catch (error) {
       throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
+  }
+
+  private getMimeType(extension?: string): string {
+    const fileExtensionWhitelist = {
+      '.pdf': 'application/pdf',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.png': 'image/png',
+    }
+
+    const contentType =
+      extension &&
+      getValueViaPath<string>(
+        fileExtensionWhitelist,
+        `.${extension.toLowerCase()}`,
+      )
+
+    if (!contentType) {
+      throw new Error(`Invalid extension in attachment: ${extension}`)
+    }
+
+    return contentType
   }
 }

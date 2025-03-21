@@ -29,6 +29,7 @@ import {
 } from './utils'
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
+import { useApolloClient } from '@apollo/client/react'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -57,12 +58,39 @@ export const TableRepeaterFormField: FC<Props> = ({
     editButtonTooltipText = coreMessages.editFieldText,
     editField = false,
     maxRows,
+    onSubmitLoad,
+    loadErrorMessage,
   } = data
+
+  const apolloClient = useApolloClient()
+  const [loadError, setLoadError] = useState<boolean>(false)
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
     ...rawItems[key],
   }))
+
+  const load = async () => {
+    if (!onSubmitLoad) {
+      return
+    }
+
+    try {
+      setLoadError(false)
+      const submitResponse = await onSubmitLoad({
+        apolloClient,
+        application,
+        tableItems: values,
+      })
+
+      submitResponse.dictionaryOfItems.forEach((x) => {
+        methods.setValue(x.path, x.value)
+      })
+    } catch (e) {
+      console.error('e', e)
+      setLoadError(true)
+    }
+  }
 
   const { formatMessage, lang: locale } = useLocale()
   const methods = useFormContext()
@@ -71,6 +99,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     control: methods.control,
     name: data.id,
   })
+  const [isEditing, setIsEditing] = useState(false)
 
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
@@ -91,12 +120,17 @@ export const TableRepeaterFormField: FC<Props> = ({
 
     if (isValid) {
       setActiveIndex(-1)
+      load()
     }
+    setIsEditing(false)
   }
 
   const handleCancelItem = (index: number) => {
     setActiveIndex(-1)
-    remove(index)
+    if (!isEditing) {
+      remove(index)
+    }
+    setIsEditing(false)
   }
 
   const handleNewItem = () => {
@@ -113,9 +147,11 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const handleEditItem = (index: number) => {
     setActiveIndex(index)
+    setIsEditing(true)
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {
+    item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
     const formatted = formatFn ? formatFn(item[key]) : item[key]
     return typeof formatted === 'string'
@@ -216,7 +252,12 @@ export const TableRepeaterFormField: FC<Props> = ({
                       </Box>
                     </T.Data>
                     {tableRows.map((item, idx) => (
-                      <T.Data key={`${item}-${idx}`}>
+                      <T.Data
+                        key={`${item}-${idx}`}
+                        disabled={
+                          values[index].disabled === 'true' ? true : false
+                        }
+                      >
                         {formatTableValue(
                           item,
                           customMappedValues.length
@@ -283,9 +324,17 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
-        {error && typeof error === 'string' && fields.length === 0 && (
+        {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
+          </Box>
+        )}
+        {loadError && loadErrorMessage && (
+          <Box marginTop={3}>
+            <AlertMessage
+              type="error"
+              title={formatText(loadErrorMessage, application, formatMessage)}
+            />
           </Box>
         )}
       </Box>

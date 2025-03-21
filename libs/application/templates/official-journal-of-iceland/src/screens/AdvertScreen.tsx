@@ -5,7 +5,7 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { useState } from 'react'
 import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
-import { Signatures } from '../fields/Signatures'
+import { SignaturesField } from '../fields/Signatures'
 import { AdvertModal } from '../fields/AdvertModal'
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -28,7 +28,7 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
       }
     >
       <Advert {...props} />
-      <Signatures {...props} />
+      <SignaturesField {...props} />
       <AdvertModal
         applicationId={props.application.id}
         visible={modalVisible}

@@ -51,16 +51,6 @@ export const school = {
       defaultMessage: 'Ég óska eftir heimavist',
       description: 'Request dormitory checkbox label',
     },
-    schoolDuplicateError: {
-      id: 'ss.application:school.selection.schoolDuplicateError',
-      defaultMessage: 'Það má ekki velja sama skóla tvisvar',
-      description: 'School duplicate error',
-    },
-    programDuplicateError: {
-      id: 'ss.application:school.selection.programDuplicateError',
-      defaultMessage: 'Það má ekki velja sömu braut tvisvar í sama vali',
-      description: 'Program duplicate error',
-    },
     addButtonLabel: {
       id: 'ss.application:school.selection.addButtonLabel',
       defaultMessage: 'Bæta við vali á skóla',
@@ -70,6 +60,17 @@ export const school = {
       id: 'ss.application:school.selection.removeButtonLabel',
       defaultMessage: 'Fjarlægja vali á skóla',
       description: 'Selection remove button label',
+    },
+    specialNeedsProgramAlertTitle: {
+      id: 'ss.application:school.selection.specialNeedsProgramAlertTitle',
+      defaultMessage: 'Athugið',
+      description: 'If selected special needs program alert title',
+    },
+    specialNeedsProgramAlertDescription: {
+      id: 'ss.application:school.selection.specialNeedsProgramAlertDescription',
+      defaultMessage:
+        'Þú hefur valið {programNameList}. Starfsbrautir eru ætlaðar nemendum sem hafa stundað nám í sérdeildum grunnskóla eða notið mikillar sérkennslu á grunnskólastigi.',
+      description: 'If selected (single) special needs program alert message',
     },
   }),
   firstSelection: defineMessages({
@@ -92,11 +93,16 @@ export const school = {
       defaultMessage: 'Þriðja val',
       description: 'Third selection sub title',
     },
-    addDescription: {
-      id: 'ss.application:school.thirdSelection.addDescription',
+    addAlertTitle: {
+      id: 'ss.application:school.thirdSelection.addAlertTitle',
+      defaultMessage: 'Viltu bæta við öðrum skóla?',
+      description: 'Add third selection alert title',
+    },
+    addAlertDescription: {
+      id: 'ss.application:school.thirdSelection.addAlertDescription',
       defaultMessage:
         'Ákveðnir framhaldsskólar á Íslandi fá jafnan fleiri umsóknir en pláss leyfa. Til að auka líkur á að komast inn í skóla að þínu vali getur þú bætt inn þriðja skólanum. Mikilvægt er að kynna sér inntökuskilyrði hvers skóla vandlega. Fáir þú ekki inni í einhverjum þeirra skóla sem þú sækir um mun Miðstöð menntunar og skólaþjónustu útvega þér skólapláss.',
-      description: 'Add third selection description',
+      description: 'Add third selection alert description',
     },
   }),
 }

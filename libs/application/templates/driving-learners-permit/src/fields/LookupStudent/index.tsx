@@ -8,7 +8,7 @@ import {
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +22,7 @@ import {
 } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql'
 import { LOOKUP_STUDENT_QUERY } from '../../graphql'
-import { LearnersPermitFakeData, YES } from '../../lib/constants'
+import { LearnersPermitFakeData } from '../../lib/constants'
 import { MessageDescriptor } from 'react-intl'
 
 const prefix = 'studentMentorability'

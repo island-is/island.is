@@ -1,10 +1,21 @@
 import { conclusion } from '../../../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { checkIsFreshman } from '../../../utils'
 
 export const conclusionSection = buildFormConclusionSection({
   alertTitle: conclusion.general.alertTitle,
-  alertMessage: conclusion.general.alertMessageFreshman,
+  alertMessage: (application) => {
+    const isFreshman = checkIsFreshman(application.answers)
+    return isFreshman
+      ? conclusion.general.alertMessageFreshman
+      : conclusion.general.alertMessageGeneral
+  },
   expandableHeader: conclusion.general.accordionTitle,
   expandableIntro: '',
-  expandableDescription: conclusion.general.accordionTextFreshman,
+  expandableDescription: (application) => {
+    const isFreshman = checkIsFreshman(application.answers)
+    return isFreshman
+      ? conclusion.general.accordionTextFreshman
+      : conclusion.general.accordionTextGeneral
+  },
 })

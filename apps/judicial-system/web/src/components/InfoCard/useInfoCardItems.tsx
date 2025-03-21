@@ -95,8 +95,8 @@ const useInfoCardItems = () => {
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
-    title: formatMessage(strings.indictmentCreated),
-    values: [formatDate(workingCase.created, 'PP')],
+    title: formatMessage(strings.indictmentSentToCourt),
+    values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
   const prosecutor = (caseType?: CaseType | null): Item => ({

@@ -37,8 +37,8 @@ export const indictment = defineMessages({
       'Notaður sem sjálfgefinn texti í Inngangur textasvæði á ákæra skrefi í ákærum.',
   },
   indictmentIntroductionAutofillDefendant: {
-    id: 'judicial.system.core:indictments_indictment.indictment_introduction_defendant_name',
-    defaultMessage: '{defendantName}, kt. {defendantNationalId}',
+    id: 'judicial.system.core:indictments_indictment.indictment_introduction_defendant_name_v1',
+    defaultMessage: '{defendantName}, kt. {defendantNationalId},',
     description:
       'Notaður sem sjálfgefinn texti í Inngangur textasvæði á ákæra skrefi í ákærum.',
   },

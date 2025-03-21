@@ -84,7 +84,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getUserClientType(nationalId: string): Promise<ClientType | null> {
-    const select = '$select=star_nationalid, star_name, star_type'
+    const select = '$select=star_nationalid,star_name,star_type'
     const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
@@ -112,7 +112,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientIdByNationalId(nationalId: string): Promise<string | null> {
-    const select = '$select=star_nationalid, star_name, star_type'
+    const select = '$select=star_nationalid,star_name,star_type'
     const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`

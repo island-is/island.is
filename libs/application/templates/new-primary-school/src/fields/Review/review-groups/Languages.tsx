@@ -1,16 +1,23 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   DataValue,
   RadioValue,
   ReviewGroup,
 } from '@island.is/application/ui-components'
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getLanguageByCode } from '@island.is/shared/utils'
-import { LanguageEnvironmentOptions } from '../../../lib/constants'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getLanguageEnvironments,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
@@ -21,40 +28,88 @@ export const Languages = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const {
-    interpreter,
+    guardianRequiresInterpreter,
     languageEnvironment,
-    language1,
-    language2,
-    language3,
-    language4,
-    childLanguage,
+    selectedLanguages,
+    preferredLanguage,
     signLanguage,
   } = getApplicationAnswers(application.answers)
 
-  const selectedLanguageEnvironment = getLanguageEnvironments().find(
-    (env) => env.value === languageEnvironment,
-  )
+  const {
+    options: languageEnvironmentOptions,
+    loading,
+    error,
+  } = useFriggOptions(OptionsType.LANGUAGE_ENVIRONMENT)
 
   return (
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('languages')}
     >
-      <Stack space={2}>
-        <GridRow>
-          <GridColumn span="12/12">
-            <DataValue
-              label={formatMessage(
-                newPrimarySchoolMessages.overview.languageEnvironment,
-              )}
-              value={formatMessage(selectedLanguageEnvironment?.label || '')}
-            />
-          </GridColumn>
-        </GridRow>
-
-        {languageEnvironment === LanguageEnvironmentOptions.ONLY_ICELANDIC ? (
+      {loading ? (
+        <SkeletonLoader height={40} width="80%" borderRadius="large" />
+      ) : (
+        <Stack space={2}>
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span="12/12">
+              <DataValue
+                label={formatMessage(
+                  newPrimarySchoolMessages.overview.languageEnvironment,
+                )}
+                value={
+                  getSelectedOptionLabel(
+                    languageEnvironmentOptions,
+                    languageEnvironment,
+                  ) || ''
+                }
+                error={
+                  error
+                    ? formatMessage(coreErrorMessages.failedDataProvider)
+                    : undefined
+                }
+              />
+            </GridColumn>
+          </GridRow>
+          {languageEnvironment !==
+            LanguageEnvironmentOptions.ONLY_ICELANDIC && (
+            <>
+              <GridRow rowGap={2}>
+                {selectedLanguages?.map(
+                  ({ code }, index) =>
+                    code && (
+                      <GridColumn
+                        key={`${code}-${index}`}
+                        span={['12/12', '5/12', '5/12', '5/12']}
+                      >
+                        <DataValue
+                          label={formatMessage(
+                            newPrimarySchoolMessages.differentNeeds
+                              .languageSelectionTitle,
+                            { index: `${index + 1}` },
+                          )}
+                          value={getLanguageByCode(code)?.name}
+                        />
+                      </GridColumn>
+                    ),
+                )}
+              </GridRow>
+              {preferredLanguage && (
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.overview.preferredLanguage,
+                      )}
+                      value={getLanguageByCode(preferredLanguage)?.name}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+            </>
+          )}
+
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
               <RadioValue
                 label={formatMessage(
                   newPrimarySchoolMessages.differentNeeds.signLanguage,
@@ -62,93 +117,21 @@ export const Languages = ({
                 value={signLanguage}
               />
             </GridColumn>
-          </GridRow>
-        ) : (
-          <>
-            <GridRow>
-              <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds
-                      .languageSelectionTitle,
-                    { no: `${1}` },
-                  )}
-                  value={getLanguageByCode(language1)?.name}
-                />
-              </GridColumn>
-              {language2 && (
-                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds
-                        .languageSelectionTitle,
-                      { no: `${2}` },
-                    )}
-                    value={getLanguageByCode(language2)?.name}
-                  />
-                </GridColumn>
-              )}
-            </GridRow>
-            <GridRow>
-              {language3 && (
-                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds
-                        .languageSelectionTitle,
-                      { no: `${3}` },
-                    )}
-                    value={getLanguageByCode(language3)?.name}
-                  />
-                </GridColumn>
-              )}
-              {language4 && (
-                <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.differentNeeds
-                        .languageSelectionTitle,
-                      { no: `${4}` },
-                    )}
-                    value={getLanguageByCode(language4)?.name}
-                  />
-                </GridColumn>
-              )}
-            </GridRow>
-            {childLanguage && (
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.overview.childLanguage,
-                    )}
-                    value={getLanguageByCode(childLanguage)?.name}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
-            <GridRow>
-              <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
+
+            {languageEnvironment !==
+              LanguageEnvironmentOptions.ONLY_ICELANDIC && (
+              <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
                 <RadioValue
                   label={formatMessage(
                     newPrimarySchoolMessages.differentNeeds.interpreter,
                   )}
-                  value={interpreter}
+                  value={guardianRequiresInterpreter}
                 />
               </GridColumn>
-
-              <GridColumn span={['12/12', '6/12', '6/12', '6/12']}>
-                <RadioValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds.signLanguage,
-                  )}
-                  value={signLanguage}
-                />
-              </GridColumn>
-            </GridRow>
-          </>
-        )}
-      </Stack>
+            )}
+          </GridRow>
+        </Stack>
+      )}
     </ReviewGroup>
   )
 }

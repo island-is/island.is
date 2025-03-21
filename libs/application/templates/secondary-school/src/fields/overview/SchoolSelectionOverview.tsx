@@ -4,9 +4,14 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
-import { getTranslatedProgram, Routes, States } from '../../utils'
+import {
+  getTranslatedProgram,
+  Routes,
+  checkIsEditable,
+  checkUseAnswersCopy,
+} from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,
@@ -14,27 +19,32 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage, lang } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
     application.answers,
-    'selection',
+    copyPrefix + 'selection',
   )
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
   }
 
+  const isEditable = checkIsEditable(application.state)
+
   return (
     <ReviewGroup
       handleClick={() => onClick(Routes.SCHOOL)}
       editMessage={formatMessage(overview.general.editMessage)}
       title={formatMessage(overview.selection.subtitle)}
-      isEditable={application.state === States.DRAFT}
+      isEditable={isEditable}
     >
       <Box>
         <GridRow>
           {/* First selection */}
-          <GridColumn span={selection?.[1]?.include ? '1/2' : '1/1'}>
-            {selection?.[1]?.include && (
+          <GridColumn span={selection?.[1]?.school?.id ? '1/2' : '1/1'}>
+            {!!selection?.[1]?.school?.id && (
               <Text variant="h5">
                 {formatMessage(overview.selection.firstSubtitle)}
               </Text>
@@ -62,10 +72,16 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                 {selection?.[0]?.nordicLanguage?.name}
               </Text>
             )}
+            {!!selection?.[0]?.requestDormitory?.includes(YES) && (
+              <Text>
+                {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                {formatMessage(overview.selection.yesValue)}
+              </Text>
+            )}
           </GridColumn>
 
           {/* Second selection */}
-          {selection?.[1]?.include && (
+          {!!selection?.[1]?.school?.id && (
             <GridColumn span="1/2">
               <Text variant="h5">
                 {formatMessage(overview.selection.secondSubtitle)}
@@ -93,11 +109,17 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   {selection?.[1]?.nordicLanguage?.name}
                 </Text>
               )}
+              {!!selection?.[1]?.requestDormitory?.includes(YES) && (
+                <Text>
+                  {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                  {formatMessage(overview.selection.yesValue)}
+                </Text>
+              )}
             </GridColumn>
           )}
 
           {/* Third selection */}
-          {selection?.[2]?.include && (
+          {!!selection?.[2]?.school?.id && (
             <Box marginTop={2}>
               <GridColumn span="1/2">
                 <Text variant="h5">
@@ -124,6 +146,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
                   <Text>
                     {formatMessage(overview.selection.nordicLanguageLabel)}:{' '}
                     {selection?.[2]?.nordicLanguage?.name}
+                  </Text>
+                )}
+                {!!selection?.[2]?.requestDormitory?.includes(YES) && (
+                  <Text>
+                    {formatMessage(overview.selection.requestDormitoryLabel)}:{' '}
+                    {formatMessage(overview.selection.yesValue)}
                   </Text>
                 )}
               </GridColumn>

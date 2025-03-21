@@ -76,12 +76,20 @@ export enum GenericUserLicensePkPassStatus {
 export enum GenericUserLicenseMetaLinksType {
   External = 'External',
   Download = 'Download',
+  Copy = 'Copy',
 }
 
 export enum GenericUserLicenseValidity {
   Unknown = 'Unknown',
   Expired = 'Expired',
   Valid = 'Valid',
+}
+
+export enum ExpiryStatus {
+  EXPIRED,
+  EXPIRING,
+  ACTIVE,
+  UNKNOWN,
 }
 
 export enum GenericUserLicenseDataFieldTagType {

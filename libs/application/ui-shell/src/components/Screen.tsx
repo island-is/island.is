@@ -22,7 +22,6 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
-  FormText,
 } from '@island.is/application/types'
 import {
   Box,
@@ -54,8 +53,8 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
-import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -153,7 +152,16 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     reset,
   } = hookFormData
 
-  const submitField = useMemo(() => findSubmitField(screen), [screen])
+  const user = useUserInfo()
+
+  const submitField = useMemo(() => {
+    const foundSubmitField = findSubmitField(screen)
+    const submitFieldCondition =
+      typeof foundSubmitField?.condition === 'function'
+        ? foundSubmitField?.condition(formValue, externalData, user)
+        : true
+    return submitFieldCondition ? foundSubmitField : undefined
+  }, [formValue, externalData, screen, user])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
   const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
@@ -188,8 +196,27 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     setIsSubmitting(true)
     setBeforeSubmitError({})
 
+    let event: string | undefined
+    if (submitField !== undefined) {
+      const finalAnswers = { ...formValue, ...data }
+      if (submitField.placement === 'screen') {
+        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
+      } else {
+        if (submitField.actions.length === 1) {
+          const actionEvent = submitField.actions[0].event
+          event =
+            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
+        } else {
+          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
+          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
+        }
+      }
+    }
+
     if (typeof beforeSubmitCallback.current === 'function') {
-      const [canContinue, possibleError] = await beforeSubmitCallback.current()
+      const [canContinue, possibleError] = await beforeSubmitCallback.current(
+        event,
+      )
 
       if (!canContinue) {
         setIsSubmitting(false)
@@ -203,19 +230,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
-      let event: string
-      if (submitField.placement === 'screen') {
-        event = (finalAnswers[submitField.id] as string) ?? 'SUBMIT'
-      } else {
-        if (submitField.actions.length === 1) {
-          const actionEvent = submitField.actions[0].event
-          event =
-            typeof actionEvent === 'object' ? actionEvent.type : actionEvent
-        } else {
-          const nativeEvent = e?.nativeEvent as { submitter: { id: string } }
-          event = nativeEvent?.submitter?.id ?? 'SUBMIT'
-        }
-      }
 
       response = await submitApplication({
         variables: {
@@ -230,7 +244,11 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       if (response?.data) {
         addExternalData(response.data?.submitApplication.externalData)
 
-        if (submitField.refetchApplicationAfterSubmit) {
+        if (
+          submitField.refetchApplicationAfterSubmit === true ||
+          (typeof submitField.refetchApplicationAfterSubmit === 'function' &&
+            submitField.refetchApplicationAfterSubmit(event))
+        ) {
           refetch()
         }
       }

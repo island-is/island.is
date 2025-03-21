@@ -18,7 +18,7 @@ const imageName = 'services-auth-ids-api'
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -47,9 +47,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         prod: 'https://innskra.island.is/api',
       },
       USER_PROFILE_CLIENT_URL: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
         staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
+          'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       USER_PROFILE_CLIENT_SCOPE: json([UserProfileScope.read]),
@@ -138,8 +138,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       },
     })
     .replicaCount({
-      default: 2,
-      min: 2,
+      default: 6,
+      min: 6,
       max: 15,
     })
     .grantNamespaces('nginx-ingress-external', 'user-notification', 'datadog')

@@ -63,6 +63,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { FjarsyslaRikisinsFooter } from './Themes/FjarsyslaRikisinsTheme'
@@ -155,10 +156,7 @@ export const getThemeConfig = (
   const usingDefaultHeader: boolean =
     organizationNamespace['usingDefaultHeader'] ?? false
 
-  const footerVersion: LayoutProps['footerVersion'] =
-    theme === 'landing-page' || (organization?.footerItems ?? [])?.length > 0
-      ? 'organization'
-      : 'default'
+  const footerVersion: LayoutProps['footerVersion'] = 'organization'
 
   if (lightThemes.includes(theme ?? '') || usingDefaultHeader) {
     return { themeConfig: { footerVersion } }
@@ -515,6 +513,10 @@ export const OrganizationExternalLinks: React.FC<
               organizationPage.slug === 'icelandic-health-insurance' ||
               organizationPage.slug === 'iceland-health'
 
+            const buttonHasLockIcon =
+              isSjukratryggingar &&
+              (link.text.includes('Gagna') || link.text.includes('Data'))
+
             let variant = undefined
             if (
               isSjukratryggingar &&
@@ -535,7 +537,7 @@ export const OrganizationExternalLinks: React.FC<
                   // @ts-ignore make web strict
                   variant={variant}
                   unfocusable
-                  icon={isSjukratryggingar ? 'lockClosed' : 'open'}
+                  icon={buttonHasLockIcon ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
                 >
@@ -796,6 +798,20 @@ export const OrganizationFooter: React.FC<
         )
       }
       break
+    case 'stafraent-island':
+    case 'digital-iceland':
+      OrganizationFooterComponent = (
+        <GridContainer>
+          <DigitalIcelandFooter
+            illustrationSrc={n(
+              'digitalIcelandFooterIllustrationSrc',
+              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
+            )}
+            links={n('digitalIcelandFooterLinks', [])}
+          />
+        </GridContainer>
+      )
+      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break
@@ -1044,10 +1060,12 @@ export const OrganizationWrapper: React.FC<
           <meta name="robots" content="noindex, nofollow" />
         )}
       </HeadWithSocialSharing>
-      <OrganizationHeader
-        organizationPage={organizationPage}
-        isSubpage={isSubpage}
-      />
+      <Box>
+        <OrganizationHeader
+          organizationPage={organizationPage}
+          isSubpage={isSubpage}
+        />
+      </Box>
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
@@ -1293,7 +1311,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {!!mainContent && <Box className="rs_read">{children}</Box>}
       {!minimal && (
-        <Box className="rs_read">
+        <Box className="rs_read" marginTop="auto">
           <OrganizationFooter
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
