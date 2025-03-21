@@ -174,7 +174,6 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
               placeholder={placeholder}
               initialInputValue={initialInputValue}
               inputValue={inputValue}
-              isCompanySearch
               onInputValueChange={(query) => {
                 setValue(
                   id,
