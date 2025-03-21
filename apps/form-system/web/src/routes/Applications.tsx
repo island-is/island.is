@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { CREATE_APPLICATION } from "@island.is/application/graphql"
+import { CREATE_APPLICATION } from "@island.is/form-system/graphql"
 import { useMutation } from "@apollo/client"
 import { Button } from "@island.is/island-ui/core"
 
