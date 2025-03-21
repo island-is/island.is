@@ -51,7 +51,6 @@ async function prepareManifests(STAGE_NAME) {
   // Read all manifest files
   const _MANIFEST_PATHS = [
     'charts/islandis-services',
-    'charts/judicial-system-services',
     'charts/identity-server-services',
   ]
   const files = await glob(
