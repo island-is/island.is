@@ -165,19 +165,15 @@ const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
   ] = useState(false)
   const [partner, setPartner] = useState<AccessControlType>()
 
-  // const error = recyclingPartnerError || accessControlsError
-  // const loading = recyclingPartnerLoading || accessControlsLoading
-  // const isData = !!recyclingPartnerData && !!accessControlsData
   const isData = !!accessControlsData
 
-  const accessControls =
+  let accessControls =
     accessControlsData?.skilavottordAccessControlsByRecyclingPartner || []
 
-  // const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
-  // const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-  //   label: partner.companyName,
-  //   value: partner.companyId,
-  // }))
+  // Remove the users with municipality role
+  accessControls = accessControls.filter(
+    (accessCtrl) => accessCtrl.role !== AccessControlRole.municipality,
+  )
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
