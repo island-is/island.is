@@ -226,11 +226,12 @@ jobs:
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
-      - name: NX format:write
-        if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        run: |
-          ./scripts/ci/20_check-formatting.sh "write"
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+
+      # - name: NX format:write
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   run: |
+      #     ./scripts/ci/20_check-formatting.sh "write"
+      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
     needs:
@@ -246,34 +247,17 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        # Needed for doing git commit in git-check-dirty script
-        with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - name: checkout
+        uses: actions/checkout@v4
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
-          enable-cache: 'node_modules'
-      - name: Lintfix
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        run: |
-          set -euo pipefail
-          echo "Running lint --fix for affected projects: ${AFFECTED_PROJECTS}"
-          ./infra/scripts/ci/git-check-dirty.sh \
-            -p "/" \
-            -a "nx run-many --target lint --fix --parallel ${MAX_JOBS} --projects=${AFFECTED_PROJECTS//[[\]]}" \
-            -o "dirtybot" \
-            -r || {
-              echo "Error: Lintfix failed. Check the logs above for details." >&2
-              exit 1
-            }
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
