@@ -70,4 +70,9 @@ export class CreateFileInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly userGeneratedFilename?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly fileRepresentative?: string
 }

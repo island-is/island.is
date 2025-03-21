@@ -7,7 +7,10 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { DefendantEventType } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  DefendantEventType,
+} from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../defendant'
 import { EventLog } from '../../event-log'
@@ -30,6 +33,55 @@ export const transformDefendants = (defendants?: Defendant[]) => {
   }))
 }
 
+const transformCaseRepresentatives = (theCase: Case) => {
+  const { prosecutor, civilClaimants } = theCase
+  const prosecutorRepresentativeProps =
+    prosecutor?.name && prosecutor?.nationalId
+      ? {
+          name: prosecutor.name,
+          nationalId: prosecutor.nationalId,
+          caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
+        }
+      : undefined
+
+  const getDefenderRepresentativeProps = (theCase: Case) => {
+    const { defenderName, defenderNationalId } = theCase
+    if (!(defenderName && defenderNationalId)) return undefined
+
+    return {
+      name: defenderName,
+      nationalId: defenderNationalId,
+      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+    }
+  }
+
+  const civilClaimantSpokespersons = civilClaimants?.map((civilClaimant) => {
+    const { spokespersonName, spokespersonNationalId, spokespersonIsLawyer } =
+      civilClaimant
+    if (!(spokespersonName && spokespersonNationalId)) return undefined
+
+    return {
+      name: spokespersonName,
+      nationalId: spokespersonNationalId,
+      caseFileCategory: spokespersonIsLawyer
+        ? CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE
+        : CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+    }
+  })
+
+  const defendants = theCase.defendants?.map((defendant) => ({
+    name: defendant.name,
+    nationalId: defendant.nationalId,
+    caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+  }))
+  return [
+    prosecutorRepresentativeProps,
+    getDefenderRepresentativeProps(theCase),
+    ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
+    ...(defendants ? defendants : []),
+  ].filter((representative) => !!representative)
+}
+
 const transformCase = (theCase: Case) => {
   return {
     ...theCase.toJSON(),
@@ -39,6 +91,7 @@ const transformCase = (theCase: Case) => {
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
     caseSentToCourtDate: EventLog.caseSentToCourtEvent(theCase.eventLogs)
       ?.created,
+    caseRepresentatives: transformCaseRepresentatives(theCase),
   }
 }
 
