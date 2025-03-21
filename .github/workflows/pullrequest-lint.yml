@@ -44,16 +44,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-
       - name: Get changed files
         id: changed-files
         run: |
           CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | tr '\n' ',' | sed 's/,$//')
           echo "CHANGED_FILES=${CHANGED_FILES}" >> "$GITHUB_ENV"
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Run lint on changed files
         if: ${{ env.CHANGED_FILES != '' }}
