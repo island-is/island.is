@@ -11,17 +11,17 @@ import {
   Text,
   Input,
 } from '@island.is/island-ui/core'
-import { Answers } from '../../types'
 import { m } from '../../lib/messages'
 import * as styles from '../styles.css'
 import { useLocale } from '@island.is/localization'
 import { Field, Props } from './utils'
+import { ErrorValue } from '../../types'
 
 const stocksValueKeys = ['rateOfExchange', 'faceValue']
 const bankAccountsValueKeys = ['balance', 'exchangeRateOrInterest']
 
 export const TextFieldsRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers> & Props>
+  React.PropsWithChildren<FieldBaseProps & Props>
 > = ({ field, errors }) => {
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
@@ -209,8 +209,10 @@ export const TextFieldsRepeater: FC<
                       readOnly={field.readOnly}
                       type={field.type}
                       error={
-                        !!errors && errors[id] && (errors[id] as any)[index]
-                          ? (errors[id] as any)[index][field.id]
+                        !!errors &&
+                        errors[id] &&
+                        (errors[id] as ErrorValue)[index]
+                          ? (errors[id] as ErrorValue)[index][field.id]
                           : undefined
                       }
                       onChange={() => {

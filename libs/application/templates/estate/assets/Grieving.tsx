@@ -1,6 +1,4 @@
-import React from 'react'
-
-const Grieving: React.FC<React.PropsWithChildren<unknown>> = () => (
+const Grieving = () => (
   <svg
     viewBox="0 0 595 251"
     fill="none"

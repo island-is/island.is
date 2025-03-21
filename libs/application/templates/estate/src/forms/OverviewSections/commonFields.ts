@@ -30,7 +30,6 @@ export const commonOverviewFields = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateMembersCards',
       component: 'Cards',
       doesNotRequireAnswer: true,

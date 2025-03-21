@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useState, useCallback, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
-import { Answers } from '../../types'
 import * as styles from '../styles.css'
 import { getErrorViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { valueToNumber } from '../../lib/utils'
-import DoubleColumnRow from '../../components/DoubleColumnRow'
+import DoubleColumnRow from '../DoubleColumnRow'
 
 type OtherAssetsRepeaterProps = {
   field: {
@@ -23,15 +21,13 @@ type OtherAssetsRepeaterProps = {
 }
 
 export const OtherAssetsRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers> & OtherAssetsRepeaterProps>
-> = ({ application, field, errors }) => {
+  React.PropsWithChildren<FieldBaseProps & OtherAssetsRepeaterProps>
+> = ({ field, errors }) => {
   const { id, props } = field
 
-  const { fields, append, remove } = useFieldArray<any>({
+  const { fields, append, remove } = useFieldArray({
     name: id,
   })
-
-  console.log(fields)
 
   const { getValues } = useFormContext()
   const { formatMessage } = useLocale()

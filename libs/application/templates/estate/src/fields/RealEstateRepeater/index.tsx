@@ -9,7 +9,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, AssetFormField } from '../../types'
+import { AssetFormField, ErrorValue } from '../../types'
 
 import { m } from '../../lib/messages'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
@@ -17,9 +17,9 @@ import { InputController } from '@island.is/shared/form-fields'
 import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const RealEstateRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors, setBeforeSubmitCallback }) => {
-  const error = (errors as any)?.estate?.assets
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, field, errors }) => {
+  const error = (errors as ErrorValue)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({

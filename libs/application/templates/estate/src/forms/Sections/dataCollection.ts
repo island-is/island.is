@@ -24,17 +24,14 @@ export const dataCollection = buildSection({
         buildDataProviderItem({
           provider: EstateApi,
           title: m.deceasedInfoProviderTitle,
-          subTitle: (application) =>
-            application.answers.selectedEstate ===
-            EstateTypes.estateWithoutAssets
+          subTitle: ({ answers }) =>
+            answers.selectedEstate === EstateTypes.estateWithoutAssets
               ? /* EIGNALAUST DÁNARBU */
                 m.providerSubtitleEstateWithoutAssets
-              : application.answers.selectedEstate ===
-                EstateTypes.officialDivision
+              : answers.selectedEstate === EstateTypes.officialDivision
               ? /* OPINBER SKIPTI */
                 m.providerSubtitleOfficialDivision
-              : application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate
+              : answers.selectedEstate === EstateTypes.permitForUndividedEstate
               ? /* SETA Í ÓSKIPTU BÚI */
                 m.providerSubtitleUndividedEstate
               : /* EINKASKIPTI */
@@ -43,17 +40,14 @@ export const dataCollection = buildSection({
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
           title: m.personalInfoProviderTitle,
-          subTitle: (application) =>
-            application.answers.selectedEstate ===
-            EstateTypes.estateWithoutAssets
+          subTitle: ({ answers }) =>
+            answers.selectedEstate === EstateTypes.estateWithoutAssets
               ? /* EIGNALAUST DÁNARBU */
                 m.personalInfoProviderSubtitleEstateWithoutAssets
-              : application.answers.selectedEstate ===
-                EstateTypes.officialDivision
+              : answers.selectedEstate === EstateTypes.officialDivision
               ? /* OPINBER SKIPTI */
                 m.personalInfoProviderSubtitleOfficialDivision
-              : application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate
+              : answers.selectedEstate === EstateTypes.permitForUndividedEstate
               ? /* SETA Í ÓSKIPTU BÚI */
                 m.personalInfoProviderSubtitleUndividedEstate
               : /* EINKASKIPTI */
@@ -62,17 +56,14 @@ export const dataCollection = buildSection({
         buildDataProviderItem({
           provider: UserProfileApi,
           title: m.settingsInfoProviderTitle,
-          subTitle: (application) =>
-            application.answers.selectedEstate ===
-            EstateTypes.estateWithoutAssets
+          subTitle: ({ answers }) =>
+            answers.selectedEstate === EstateTypes.estateWithoutAssets
               ? /* EIGNALAUST DÁNARBU */
                 m.settingsInfoProviderSubtitleEstateWithoutAssets
-              : application.answers.selectedEstate ===
-                EstateTypes.officialDivision
+              : answers.selectedEstate === EstateTypes.officialDivision
               ? /* OPINBER SKIPTI */
                 m.settingsInfoProviderSubtitleOfficialDivision
-              : application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate
+              : answers.selectedEstate === EstateTypes.permitForUndividedEstate
               ? /* SETA Í ÓSKIPTU BÚI */
                 m.settingsInfoProviderSubtitleUndividedEstate
               : /* EINKASKIPTI */
