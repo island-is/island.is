@@ -20,13 +20,15 @@ export const disabled = style({
   opacity: 0.5,
 })
 
-export const fileNameContainer = style({
-  marginRight: theme.spacing[2],
-  wordBreak: 'break-all',
-
+export const fileNameContainerWithChildren = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       flexBasis: '70%',
     },
   },
+})
+
+export const fileNameContainer = style({
+  marginRight: theme.spacing[2],
+  wordBreak: 'break-all',
 })
