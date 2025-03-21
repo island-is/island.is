@@ -9,7 +9,7 @@ import Signees from './Signees'
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { id } = useParams() as { id: string }
+  const { id } = useParams<{id: string}>()
   const { listInfo, loadingList } = useGetSignatureList(id || '')
 
   return (
