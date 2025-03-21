@@ -3,7 +3,6 @@ import {
   IsEnum,
   IsOptional,
   IsString,
-  IsUUID,
   MaxLength,
 } from 'class-validator'
 
@@ -40,11 +39,6 @@ export class UpdateUserDto {
   @IsEnum(UserRole)
   @ApiPropertyOptional({ enum: UserRole })
   readonly role?: UserRole
-
-  @IsOptional()
-  @IsUUID()
-  @ApiPropertyOptional({ type: String })
-  readonly institutionId?: string
 
   @IsOptional()
   @IsBoolean()

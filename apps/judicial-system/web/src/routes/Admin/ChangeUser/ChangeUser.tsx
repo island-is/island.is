@@ -52,7 +52,6 @@ export const ChangeUser = () => {
             id: user.id,
             name: user.name,
             role: user.role,
-            institutionId: user.institution.id,
             title: user.title,
             mobileNumber: user.mobileNumber,
             email: user.email,
