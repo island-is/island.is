@@ -33,3 +33,38 @@ jobs:
             revert
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  lint-changed-files:
+    name: Lint Changed Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+
+      - name: Setup yarn
+        run: corepack enable
+
+      - name: Check node version
+        run: |
+          set -euo pipefail
+          node -v
+          yarn --version
+          ls -l "$(which node)"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          echo "CHANGED_FILES=$(git diff --name-only origin/main...HEAD | grep -E '\\.(js|ts|tsx)$' || git diff --name-only | grep -E '\\.(js|ts|tsx)$')" >> $GITHUB_ENV
+
+      - name: Run lint on changed files
+        if: env.CHANGED_FILES != ''
+        run: npx nx run web:lint --lintFilePatterns=$CHANGED_FILES --cache
+
