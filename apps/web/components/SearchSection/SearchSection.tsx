@@ -15,7 +15,6 @@ import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
 import { FeaturedLinks, SearchInput } from '@island.is/web/components'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './SearchSection.css'
 
@@ -24,7 +23,7 @@ const DefaultIllustration = dynamic(() => import('./Illustration'), {
 })
 
 type SearchSectionProps = {
-  page: GetFrontpageQuery['getFrontpage']
+  page?: GetFrontpageQuery['getFrontpage']
   headingId: string
   activeLocale: Locale
   quickContentLabel: string
@@ -41,31 +40,16 @@ export const SearchSection = ({
 }: SearchSectionProps) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
-  const { linkResolver } = useLinkResolver()
 
   const {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     featured,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     heading,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     image,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     imageAlternativeText,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     imageMobile,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     videos,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
     videosMobile,
-  } = page
+  } = page ?? {}
 
   useEffect(() => {
     const shouldBeMobile = width < theme.breakpoints.md
@@ -104,7 +88,7 @@ export const SearchSection = ({
                   dataTestId="search-box"
                   colored
                 />
-                <FeaturedLinks links={featured} />
+                <FeaturedLinks links={featured ?? []} />
               </Stack>
             </Box>
           </GridColumn>
@@ -126,7 +110,7 @@ export const SearchSection = ({
                 {videos?.length ? (
                   <Video
                     name="desktop"
-                    title={imageAlternativeText}
+                    title={imageAlternativeText ?? ''}
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore make web strict
                     sources={videos.map(({ url, contentType }) => {
@@ -138,14 +122,14 @@ export const SearchSection = ({
                     fallback={
                       <ImageOrDefault
                         url={image?.url}
-                        imageAlternativeText={imageAlternativeText}
+                        imageAlternativeText={imageAlternativeText ?? ''}
                       />
                     }
                   />
                 ) : (
                   <ImageOrDefault
                     url={image?.url}
-                    imageAlternativeText={imageAlternativeText}
+                    imageAlternativeText={imageAlternativeText ?? ''}
                   />
                 )}
               </Box>
@@ -166,7 +150,7 @@ export const SearchSection = ({
           {videosMobile?.length ? (
             <Video
               name="mobile"
-              title={imageAlternativeText}
+              title={imageAlternativeText ?? ''}
               dataTestId="home-banner"
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
@@ -179,7 +163,7 @@ export const SearchSection = ({
               fallback={
                 <ImageOrDefault
                   url={imageMobile?.url}
-                  imageAlternativeText={imageAlternativeText}
+                  imageAlternativeText={imageAlternativeText ?? ''}
                   isMobile={isMobile}
                 />
               }
@@ -187,7 +171,7 @@ export const SearchSection = ({
           ) : (
             <ImageOrDefault
               url={imageMobile?.url}
-              imageAlternativeText={imageAlternativeText}
+              imageAlternativeText={imageAlternativeText ?? ''}
               isMobile={isMobile}
             />
           )}
