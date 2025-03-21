@@ -100,7 +100,6 @@ export const serviceSetup = (services: {
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
         prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
-
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
@@ -151,7 +150,7 @@ export const serviceSetup = (services: {
       AUTH_DELEGATION_API_URL: {
         dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
         staging:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+          'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL: {
@@ -161,8 +160,8 @@ export const serviceSetup = (services: {
       },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://financial-aid-backend',
-        staging: 'http://web-financial-aid-backend',
-        prod: 'http://web-financial-aid-backend',
+        staging: 'http://financial-aid-backend',
+        prod: 'http://financial-aid-backend',
       },
       FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
         dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
@@ -259,8 +258,12 @@ export const serviceSetup = (services: {
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
+      RANNIS_GRANTS_URL: {
+        dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+      },
     })
-
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',

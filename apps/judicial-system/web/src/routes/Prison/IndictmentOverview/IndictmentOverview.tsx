@@ -15,8 +15,10 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
+import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -58,14 +60,20 @@ const IndictmentOverview = () => {
   const sentToPrisonAdminFiles = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
   )
-
   const criminalRecordUpdateFile = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
 
+  const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const isCompletedWithRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const displaySentToPrisonAdminFiles =
+    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    isNonEmptyArray(sentToPrisonAdminFiles)
+
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
-
   const hasRuling = workingCase.caseFiles?.some(
     (file) => file.category === CaseFileCategory.RULING,
   )
@@ -142,15 +150,28 @@ const IndictmentOverview = () => {
             }
           />
         </Box>
-        {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+        {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(strings.sentToPrisonAdminFileTitle)}
             </Text>
-            <RenderFiles
-              onOpenFile={onOpen}
-              caseFiles={sentToPrisonAdminFiles}
-            />
+            {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+              <RenderFiles
+                onOpenFile={onOpen}
+                caseFiles={sentToPrisonAdminFiles}
+              />
+            )}
+            {isCompletedWithRuling && sentToPrisonAdminDate && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Dómur til fullnustu ${formatDate(
+                  sentToPrisonAdminDate,
+                )}.pdf`}
+                pdfType="rulingSentToPrisonAdmin"
+                elementId={'Dómur til fullnustu'}
+                renderAs="row"
+              />
+            )}
           </Box>
         )}
         <Box marginBottom={10}>

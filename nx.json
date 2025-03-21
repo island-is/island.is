@@ -162,6 +162,11 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "forceRebuild": [
+      {
+        "runtime": "node .github/actions/force-build.mjs"
+      }
+    ],
     "nodeVersion": [
       {
         "runtime": "node --version"
@@ -186,6 +191,7 @@
     ],
     "production": [
       "default",
+      "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",
