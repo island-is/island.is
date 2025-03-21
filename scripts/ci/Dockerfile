@@ -47,6 +47,7 @@ FROM src AS builder
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
+ARG NX_CLOUD_ACCESS_TOKEN
 ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
@@ -58,11 +59,10 @@ ENV CI=true \
   NX_MAX_PARALLEL=${NX_MAX_PARALLEL} \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
   NX_VERBOSE_LOGGING=true \
+  NX_CLOUD_ACCESS_TOKEN=${NX_CLOUD_ACCESS_TOKEN} \
   APP=${APP}
 
-# Build with Nx Cloud caching. If credentials are missing or invalid, build will run without caching
-RUN --mount=type=secret,id=nx_cloud_access_token \
-  NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
+RUN yarn run build ${APP} --prod
 
 # ------------------------------------------------
 # Minimal node base for outputs
