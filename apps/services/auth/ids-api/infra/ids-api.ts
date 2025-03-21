@@ -49,7 +49,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       USER_PROFILE_CLIENT_URL: {
         dev: 'https://service-portal-api.internal.dev01.devland.is',
         staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
+          'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       USER_PROFILE_CLIENT_SCOPE: json([UserProfileScope.read]),
