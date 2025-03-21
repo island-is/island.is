@@ -3,12 +3,14 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
+  buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildSubSection,
   buildTextField,
@@ -47,6 +49,7 @@ import {
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
   UPLOAD_ACCEPT,
 } from '../shared/constants'
@@ -151,6 +154,38 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               defaultValue: '',
+            }),
+            buildDividerField({marginTop: 2}),
+            buildSelectField({
+              id: 'complainedForInformation.gender',
+              title: information.aboutTheComplainer.gender,
+              options: [
+                {
+                  label: 'Kona/Kvenkyns',
+                  value: GenderAnswerOptions.FEMALE,
+                },
+                {
+                  label: 'Karl/Karlkyns',
+                  value: GenderAnswerOptions.MAlE,
+                },
+                {
+                  label: 'Kvár/Kynsegin',
+                  value: GenderAnswerOptions.NONBINARY,
+                },
+                {
+                  label: 'Annað',
+                  value: GenderAnswerOptions.OTHER,
+                },
+                {
+                  label: 'Vil ekki svara',
+                  value: GenderAnswerOptions.DECLINED,
+                },
+              ],
+            }),
+            buildAlertMessageField({
+              id: 'complainedForInformation.genderJustification',
+              message: information.aboutTheComplainer.genderJustification,
+              alertType: 'info',
             }),
             buildDescriptionField({
               id: 'complainedForInformation.titleField',
