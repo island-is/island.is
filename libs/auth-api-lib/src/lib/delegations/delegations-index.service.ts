@@ -38,6 +38,7 @@ import { getXBirthday } from './utils/getXBirthday'
 import { isUnderXAge } from './utils/isUnderXAge'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { AuditMessage } from '../../../../nest/audit/src/lib/audit.types'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -326,7 +327,7 @@ export class DelegationsIndexService {
   }
 
   /* Index incoming general mandate delegations */
-  async indexGeneralMandateDelegations(nationalId: string, auth: Auth) {
+  async indexGeneralMandateDelegations(nationalId: string, auth?: Auth) {
     const delegations = await this.getGeneralMandateDelegation(nationalId, true)
     await this.saveToIndex(nationalId, delegations, auth)
   }
@@ -449,7 +450,7 @@ export class DelegationsIndexService {
     delegations: DelegationIndexInfo[],
     // Some entrypoints to indexing do not have a user auth object or have a 3rd party user
     // so we take the auth separately from the subject nationalId
-    auth: Auth,
+    auth?: Auth,
   ) {
     const types = Array.from(new Set(delegations.map((d) => d.type)))
 
@@ -506,7 +507,7 @@ export class DelegationsIndexService {
     // saveToIndex is used by multiple entry points, when indexing so this
     // is the common place to audit updates in the index.
     this.auditService.audit({
-      auth,
+      ...(auth ? { auth } : { system: true }),
       action: 'save-to-index',
       namespace: '@island.is/auth/delegation-index',
       alsoLog: true,
