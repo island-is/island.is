@@ -177,21 +177,6 @@ const useInfoCardItems = () => {
     ],
   }
 
-  const offense: Item = {
-    id: 'offense-item',
-    title: formatMessage(strings.offense),
-    values: [
-      <>
-        {readableIndictmentSubtypes(
-          workingCase.policeCaseNumbers,
-          workingCase.indictmentSubtypes,
-        ).map((subtype) => (
-          <Text key={subtype}>{capitalize(subtype)}</Text>
-        ))}
-      </>,
-    ],
-  }
-
   const requestedCourtDate: Item = {
     id: 'requested-court-date-item',
     title: formatMessage(requestCourtDate.heading),
@@ -392,7 +377,6 @@ const useInfoCardItems = () => {
     judge,
     caseType,
     registrar,
-    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
