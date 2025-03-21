@@ -43,7 +43,7 @@ export const Prerequisites: Form = buildForm({
               image: DigitalServices,
               imageWidth: 'auto',
               imagePosition: 'center',
-              marginTop: 'none',
+              marginTop: 'gutter',
             }),
           ],
         }),
@@ -77,24 +77,16 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: ParliamentaryCollectionApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: ParliamentaryIdentityApi,
-              title: '',
-              subTitle: '',
             }),
             // Todo: Add back once needed
             /*buildDataProviderItem({
               provider: CandidateApi,
-              title: '',
-              subTitle: '',
             }),*/
             buildDataProviderItem({
               provider: IsDelegatedToCompanyApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),

@@ -1,13 +1,11 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { MessageDescriptor } from 'react-intl'
-import { YesOrNoEnum } from '@island.is/application/core'
-
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+import { YesOrNoEnum, EMAIL_REGEX } from '@island.is/application/core'
+import { TitlePrefix } from './utils'
 
 const isValidEmail = (value?: string) =>
-  value ? emailRegex.test(value) : false
+  value ? EMAIL_REGEX.test(value) : false
 
 export const additionSchema = z.array(
   z
@@ -96,6 +94,7 @@ const miscSchema = z
     selectedTemplate: z.string().optional(),
     asDocument: z.boolean().optional(),
     asRoman: z.boolean().optional(),
+    titlePrefix: z.nativeEnum(TitlePrefix).optional(),
   })
   .partial()
 

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { EMAIL_REGEX } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -24,9 +25,7 @@ const adjustToNextWorkday = (date: Date): Date => {
   return date
 }
 
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-export const isValidEmail = (value: string): boolean => emailRegex.test(value)
+export const isValidEmail = (value: string): boolean => EMAIL_REGEX.test(value)
 
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z

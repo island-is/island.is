@@ -1,17 +1,7 @@
 name: Monorepo pipeline - build and deploy
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'release/**'
-      - 'pre-release/**'
-    paths-ignore:
-      - '**/*.md'
-    tags:
-      - docker-build-*
   workflow_dispatch:
-  create:
   pull_request:
     types:
       - opened
@@ -25,7 +15,7 @@ defaults:
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
   group: push-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -35,6 +25,7 @@ env:
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_TASKS_RUNNER: ci
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
@@ -49,9 +40,11 @@ env:
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+  YARN_ENABLE_HARDENED_MODE: '0'
+
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -189,6 +182,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -218,7 +213,7 @@ jobs:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
 
       - name: Set AFFECTED_ALL env
-        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' || env.BRANCH == 'main' }}
+        if: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' }}
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
@@ -350,6 +345,10 @@ jobs:
             docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -384,7 +383,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -406,6 +405,10 @@ jobs:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Docker build image
         working-directory: infra
