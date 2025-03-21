@@ -71,26 +71,24 @@ const FormFooter: FC<Props> = ({
       data-testid="formFooter"
       className={cn(styles.button)}
     >
-      <Box>
-        {!hidePreviousButton && (
-          <Box className={styles.button}>
-            <Button
-              variant="ghost"
-              disabled={previousIsDisabled}
-              onClick={() => {
-                router.push(previousUrl ?? '')
-              }}
-              icon={isMobile ? 'arrowBack' : undefined}
-              circle={isMobile}
-              aria-label={previousButtonText || formatMessage(core.back)}
-              data-testid="previousButton"
-              fluid
-            >
-              {!isMobile && (previousButtonText || formatMessage(core.back))}
-            </Button>
-          </Box>
-        )}
-      </Box>
+      {!hidePreviousButton && (
+        <Box className={styles.button}>
+          <Button
+            variant="ghost"
+            disabled={previousIsDisabled}
+            onClick={() => {
+              router.push(previousUrl ?? '')
+            }}
+            icon={isMobile ? 'arrowBack' : undefined}
+            circle={isMobile}
+            aria-label={previousButtonText || formatMessage(core.back)}
+            data-testid="previousButton"
+            fluid
+          >
+            {!isMobile && (previousButtonText || formatMessage(core.back))}
+          </Button>
+        </Box>
+      )}
       {!hideActionButton && actionButtonText && (
         <Box className={cn(styles.button, styles.actionButton)}>
           <Button

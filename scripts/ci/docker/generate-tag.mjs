@@ -21,6 +21,7 @@ const tagName = getTagname()
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
 core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release');
+core.setOutput('DEPLOY_JUDICIAL', targetBranch === 'main');
 core.setOutput('GIT_BRANCH', targetBranch)
 core.setOutput('GIT_SHA', sha)
 console.info(`Artifact name: ${artifactName}`)
@@ -52,7 +53,8 @@ function getTagname() {
             return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
-            return `release_${dateString}_${randomTag}`
+            const version = targetBranch.replace('release/', '');
+            return `release_${version}_${randomTag}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }

@@ -51,17 +51,20 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     super(ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY)
   }
 
-  private async getAttachment(application: Application): Promise<string> {
+  private async getAttachmentAsBase64(
+    application: Application,
+  ): Promise<string> {
     const attachments = getValueViaPath<Array<AttachmentData>>(
       application.answers,
       'attachments.file',
     )
 
-    if (!attachments || attachments.length === 0) {
-      throw new Error('No attachments found in application')
+    if (!attachments) {
+      throw new Error('No attachments found')
     }
 
     const attachmentKey = attachments[0]?.key
+
     const fileName = (
       application.attachments as {
         [key: string]: string
@@ -69,7 +72,9 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     )[attachmentKey]
 
     if (!fileName) {
-      throw new Error('Attachment file name not found')
+      throw new Error(
+        `Attachment filename not found in application on attachment key: ${attachmentKey}`,
+      )
     }
 
     try {
@@ -77,10 +82,14 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
         fileName,
         'base64',
       )
-      return fileContent || ''
+
+      if (!fileContent) {
+        throw new Error(`File content not found for: ${fileName}`)
+      }
+
+      return fileContent
     } catch (error) {
-      this.logger.error('Error retrieving attachment from S3', error)
-      throw new Error('Failed to retrieve attachment from S3')
+      throw new Error(`Failed to retrieve attachment: ${error.message}`)
     }
   }
 
@@ -95,16 +104,17 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
+
     if (!actor) {
       throw new Error('Enginn umboðsmaður fannst')
     }
 
-    const values = this.prepareValues(application)
-    const year = this.getOperatingYear(application)
-    const fileName = await this.getAttachment(application)
     const client = { nationalId }
     const contacts = this.prepareContacts(application, actor)
     const digitalSignee = this.prepareDigitalSignee(application)
+    const year = this.getOperatingYear(application)
+    const values = this.prepareValues(application)
+    const fileName = await this.getAttachmentAsBase64(application)
 
     try {
       const result =

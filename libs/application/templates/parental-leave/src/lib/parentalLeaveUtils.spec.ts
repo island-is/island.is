@@ -1226,6 +1226,7 @@ describe('getApplicationExternalData', () => {
       dataProvider: {
         children: 'Mock child',
       },
+      VMSTOtherParent: {},
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',
