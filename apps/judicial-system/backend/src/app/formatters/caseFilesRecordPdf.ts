@@ -226,8 +226,8 @@ export const createCaseFilesRecord = async (
           ? pageReference.name.match(/.{1,40}(?=\s|$)/g)
           : [pageReference.name]
 
-      for (const chunck of nameChunks ?? []) {
-        pdfDocument.addText(chunck, textFontSize, {
+      for (const chunk of nameChunks ?? []) {
+        pdfDocument.addText(chunk, textFontSize, {
           newLine: true,
           pageLink: pageReference.pageLink,
           position: { x: pageReferenceIndent },
