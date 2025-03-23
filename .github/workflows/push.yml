@@ -254,8 +254,8 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-test
-    container: gcr.io/kaniko-project/executor:debug # the kaniko image
+    runs-on: arc-shared
+    container: gcr.io/kaniko-project/executor:debug
     permissions:
       contents: read
     timeout-minutes: 45
