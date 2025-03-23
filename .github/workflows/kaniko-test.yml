@@ -12,29 +12,31 @@ jobs:
   build:
     runs-on: arc-shared
     container:
-      image: gcr.io/kaniko-project/executor:v1.23.2-debug # the kaniko image
+      image: gcr.io/kaniko-project/executor:v1.20.0-debug
     permissions:
       contents: read
       packages: write
-      actions: write
-      attestations: write
-      id-token: write
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Build and push container test
+      - name: Build and Push Image to GHCR with kaniko
         run: |
-          set -x
-          AUTH=$(echo -n ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} | base64)
-          echo "{\"auths\": {\"ghcr.io\": {\"auth\": \"${AUTH}\"}}}" > /kaniko/.docker/config.json
+          cat <<EOF > /kaniko/.docker/config.json
+          {
+            "auths": {
+              "ghcr.io": {
+                "auth": "$(echo -n "$GIT_USERNAME:$GIT_PASSWORD" | base64 -w0)"
+              }
+            }
+          }
+          EOF
 
-          cat "${{ github.workspace }}/hack/Dockerfile"
-
-          /kaniko/executor \
-            --dockerfile="./hack/Dockerfile" \
+          /kaniko/executor --dockerfile="./hack/Dockerfile" \
             --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
-            --destination="ghcr.io/island-is/island.is/kaniko-build:test"
-
-        env: # authenticate to ACR via Azure Service Principal
+            --destination="$GH_REGISTRY/$IMAGE_NAME:$(echo ${GITHUB_SHA} | head  -c 7)" \
+            ${{ env.KANIKO_CACHE_ARGS }} \
+            --push-retry 5
+        env:
           GIT_USERNAME: ${{ github.actor }}
           GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GH_REGISTRY: 'ghcr.io'
+          IMAGE_NAME: '${{ github.repository }}/nginx'
