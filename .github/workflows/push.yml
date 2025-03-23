@@ -249,7 +249,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-shared
+    runs-on: arc-docker
     container: gcr.io/kaniko-project/executor:debug
     permissions:
       contents: read
