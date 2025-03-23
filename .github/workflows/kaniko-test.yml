@@ -30,6 +30,8 @@ jobs:
           export GIT_USERNAME="kaniko-bot"
           export GIT_PASSWORD="${{ secrets.GITHUB_TOKEN }}"
 
+          cat "${{ github.workspace }}/hack/Dockerfile"
+
           /kaniko/executor \
             --dockerfile="${{ github.workspace }}/hack/Dockerfile" \
             --context="${{ github.workspace }}/." \
