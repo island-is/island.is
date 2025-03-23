@@ -18,20 +18,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Prepare Dockerfile
-        id: prepare-dockerfile
-        run: |
-          mkdir -p ./images
-          cat > ./images/kaniko-build-test.Dockerfile << 'EOF'
-          FROM cgr.dev/chainguard/wolfi-base:latest
-          RUN apk add --no-cache \
-            git \
-            jq \
-            wget
-          CMD ["echo", "hello world"]
-          EOF
-          echo "Dockerfile created at ./images/kaniko-build-test.Dockerfile"
-          cat ./images/kaniko-build-test.Dockerfile
       - name: Build and push container test
         run: |
           # Write config file, change to your destination registry
@@ -41,7 +27,7 @@ jobs:
           export GIT_USERNAME="kaniko-bot"
           export GIT_PASSWORD="${{ secrets.GITHUB_TOKEN }}" # works for GHEC or GHES container registry
 
-          /kaniko/executor --dockerfile="./images/kaniko-build-test.Dockerfile" \
+          /kaniko/executor --dockerfile="./hack/Dockerfile" \
             --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
             --destination="ghcr.io/island-is/island.is/kaniko-build:test" \
             --push-retry 5 \
