@@ -11,6 +11,7 @@ concurrency:
 jobs:
   build-kaniko:
     runs-on: arc-shared
+    container: gcr.io/kaniko-project/executor:debug
     permissions:
       contents: read
       packages: write
