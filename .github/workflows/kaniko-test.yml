@@ -21,6 +21,7 @@ jobs:
       id-token: write
 
     steps:
+      - uses: actions/checkout@v4
       - name: Build and push container test
         run: |
           set -x
