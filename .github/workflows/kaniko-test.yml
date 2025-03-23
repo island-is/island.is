@@ -16,6 +16,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+      actions: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Build and push container test
