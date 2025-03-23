@@ -1,0 +1,45 @@
+name: 🧪 Kaniko build with dynamic Dockerfile
+
+on:
+  pull_request:
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: push-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  build-kaniko:
+    runs-on: arc-shared
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare Dockerfile
+        id: prepare-dockerfile
+        run: |
+          mkdir -p ./images
+          cat > ./images/kaniko-build-test.Dockerfile << 'EOF'
+          FROM cgr.dev/chainguard/wolfi-base:latest
+          RUN apk add --no-cache \
+            git \
+            jq \
+            wget
+          CMD ["echo", "hello world"]
+          EOF
+          echo "Dockerfile created at ./images/kaniko-build-test.Dockerfile"
+          cat ./images/kaniko-build-test.Dockerfile
+
+      - name: Build with Kaniko
+        uses: docker://gcr.io/kaniko-project/executor:debug
+        with:
+          args: >
+            --dockerfile="./images/kaniko-build-test.Dockerfile"
+            --context="${{ github.workspace }}"
+            --destination="821090935708.dkr.ecr.eu-west-1.amazonaws.com/levy-test:latest"
+            --no-push
+            --image-name-with-digest-file=/workspace/image-digest.txt
