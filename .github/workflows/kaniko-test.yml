@@ -13,6 +13,7 @@ jobs:
     runs-on: arc-shared
     container:
       image: gcr.io/kaniko-project/executor:debug
+      options: --entrypoint=/busybox/sh
     permissions:
       contents: read
       packages: write
@@ -28,10 +29,9 @@ jobs:
           echo "{\"auths\": {\"ghcr.io\": {\"auth\": \"${AUTH}\"}}}" > /kaniko/.docker/config.json
 
           export GIT_USERNAME="kaniko-bot"
-          export GIT_PASSWORD="${{ secrets.GITHUB_TOKEN }}" # works for GHEC or GHES container registry
+          export GIT_PASSWORD="${{ secrets.GITHUB_TOKEN }}"
 
-          /kaniko/executor --dockerfile="./hack/Dockerfile" \
-            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-            --destination="ghcr.io/island-is/island.is/kaniko-build:test" \
-            --push-retry 5 \
-            --image-name-with-digest-file /workspace/image-digest.txt
+          /kaniko/executor \
+            --dockerfile="${{ github.workspace }}/hack/Dockerfile" \
+            --context="${{ github.workspace }}/." \
+            --destination="ghcr.io/island-is/island.is/kaniko-build:test"
