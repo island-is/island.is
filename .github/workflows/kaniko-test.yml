@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: arc-shared
     container:
-      image: gcr.io/kaniko-project/executor:v1.20.0
+      image: gcr.io/kaniko-project/executor:v1.20.0-debug # the kaniko image
     permissions:
       contents: read
       packages: write
