@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: arc-shared
     container:
-      image: gcr.io/kaniko-project/executor:debug
+      image: gcr.io/kaniko-project/executor:v1.20.0-debug # the kaniko image
     permissions:
       contents: read
       packages: write
@@ -23,16 +23,17 @@ jobs:
     steps:
       - name: Build and push container test
         run: |
-          # Write config file, change to your destination registry
+          set -x
           AUTH=$(echo -n ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} | base64)
           echo "{\"auths\": {\"ghcr.io\": {\"auth\": \"${AUTH}\"}}}" > /kaniko/.docker/config.json
-
-          export GIT_USERNAME="kaniko-bot"
-          export GIT_PASSWORD="${{ secrets.GITHUB_TOKEN }}"
 
           cat "${{ github.workspace }}/hack/Dockerfile"
 
           /kaniko/executor \
-            --dockerfile="${{ github.workspace }}/hack/Dockerfile" \
-            --context="${{ github.workspace }}/." \
+            --dockerfile="./hack/Dockerfile" \
+            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
             --destination="ghcr.io/island-is/island.is/kaniko-build:test"
+
+        env: # authenticate to ACR via Azure Service Principal
+          GIT_USERNAME: ${{ github.actor }}
+          GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
