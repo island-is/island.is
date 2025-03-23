@@ -4,35 +4,22 @@ on:
   pull_request:
 
 concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
   group: kaniko-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
 
 jobs:
-  build-kaniko:
+  build:
     runs-on: arc-shared
     container:
       image: gcr.io/kaniko-project/executor:debug
-
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
       - name: Prepare Dockerfile
+        id: prepare-dockerfile
         run: |
           mkdir -p ./images
           cat > ./images/kaniko-build-test.Dockerfile << 'EOF'
@@ -45,13 +32,17 @@ jobs:
           EOF
           echo "Dockerfile created at ./images/kaniko-build-test.Dockerfile"
           cat ./images/kaniko-build-test.Dockerfile
-
-      - name: Build with Kaniko
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      - name: Build and push container test
         run: |
-          /kaniko/executor \
-            --dockerfile="./images/kaniko-build-test.Dockerfile" \
-            --context="${{ github.workspace }}" \
-            --destination="${ECR_REGISTRY}/docker-cache:levy-test" \
-            --image-name-with-digest-file=/workspace/image-digest.txt
+          # Write config file, change to your destination registry
+          AUTH=$(echo -n ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} | base64)
+          echo "{\"auths\": {\"ghcr.io\": {\"auth\": \"${AUTH}\"}}}" > /kaniko/.docker/config.json
+
+          export GIT_USERNAME="kaniko-bot"
+          export GIT_PASSWORD="${{ secrets.GITHUB_TOKEN }}" # works for GHEC or GHES container registry
+
+          /kaniko/executor --dockerfile="./images/kaniko-build-test.Dockerfile" \
+            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
+            --destination="ghcr.io/island-is/island.is/kaniko-build:test" \
+            --push-retry 5 \
+            --image-name-with-digest-file /workspace/image-digest.txt
