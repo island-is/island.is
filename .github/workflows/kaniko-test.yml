@@ -3,6 +3,9 @@ name: 🧪 Kaniko build with dynamic Dockerfile
 on:
   pull_request:
 
+env:
+  KANIKO_CACHE_ARGS: '--cache=true --cache-copy-layers=true --cache-ttl=24h'
+
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
   group: kaniko-${{ github.head_ref || github.run_id }}
