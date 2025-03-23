@@ -13,7 +13,6 @@ jobs:
     runs-on: arc-shared
     container:
       image: gcr.io/kaniko-project/executor:debug
-      options: --entrypoint=/busybox/sh
     permissions:
       contents: read
       packages: write
