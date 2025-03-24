@@ -7,6 +7,7 @@ import { actionCardSubsection } from './actionCardSubsection'
 import { keyValueSubsection } from './keyValueSubsection'
 import { alertMessageSubsection } from './alertMessageSubsection'
 import { copyLinkSubsection } from './copyLinkSubsection'
+import { informationCardSubSection } from './informationCardSubSection'
 export const noInputFieldsSection = buildSection({
   id: 'noInputFieldsSection',
   title: 'Fields without inputs',
@@ -19,5 +20,6 @@ export const noInputFieldsSection = buildSection({
     accordionSubsection,
     actionCardSubsection,
     keyValueSubsection,
+    informationCardSubSection,
   ],
 })
