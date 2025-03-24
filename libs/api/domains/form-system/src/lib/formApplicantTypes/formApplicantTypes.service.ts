@@ -2,7 +2,6 @@ import { Inject, Injectable } from "@nestjs/common"
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import { FormApplicantTypesApi, FormApplicantTypesControllerCreateRequest, FormApplicantTypesControllerDeleteRequest, FormApplicantTypesControllerUpdateRequest } from '@island.is/clients/form-system'
 import { FormApplicantTypeDeleteInput, FormApplicantTypeCreateInput, FormApplicantTypeUpdateInput } from "../../dto/formApplicantType.input"
 import { FormApplicantType } from "../../models/formApplicantTypes.model"

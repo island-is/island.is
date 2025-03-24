@@ -71,7 +71,7 @@ export class ApplicationsService {
     auth: User,
     input: UpdateApplicationDependenciesInput
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
+    await this.applicationsApiWithAuth(auth)
       .applicationsControllerUpdate(
         input as ApplicationsControllerUpdateRequest
       )
@@ -81,7 +81,7 @@ export class ApplicationsService {
     auth: User,
     input: GetApplicationInput
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
+    await this.applicationsApiWithAuth(auth)
       .applicationsControllerSubmit(
         input as ApplicationsControllerSubmitRequest
       )
@@ -91,7 +91,7 @@ export class ApplicationsService {
     auth: User,
     input: SubmitScreenInput
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
+    await this.applicationsApiWithAuth(auth)
       .applicationsControllerSubmitScreen(
         input as ApplicationsControllerSubmitScreenRequest
       )

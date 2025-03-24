@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   SectionsApi,
   SectionsControllerCreateRequest,
@@ -64,7 +63,7 @@ export class SectionsService {
     auth: User,
     input: UpdateSectionsDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.sectionsApiWithAuth(auth)
+    await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdateDisplayOrder(
         input as SectionsControllerUpdateDisplayOrderRequest,
       )

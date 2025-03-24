@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   ScreensApi,
   ScreensControllerCreateRequest,

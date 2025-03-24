@@ -20,7 +20,7 @@ export const Applications = () => {
       }
     }
   })
-  console.log(slug)
+
   const createApplication = async () => {
     const app = await createApplicationMutation({
       variables: {
