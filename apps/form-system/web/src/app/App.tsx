@@ -1,16 +1,15 @@
 import { ApolloProvider } from '@apollo/client'
-
 import { client } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 import { defaultLanguage } from '@island.is/shared/constants'
-
 import { applicationSystemScopes } from '@island.is/auth/scopes'
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { BASE_PATH } from '../lib/routes'
 import { isMockMode } from '../mocks'
 import { Router } from '../components/Router/Router'
-import { environment } from '../environments'
+import environment from '../environments/environment'
+
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
