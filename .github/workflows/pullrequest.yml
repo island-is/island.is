@@ -50,6 +50,7 @@ jobs:
 
   dedupe:
     uses: ./.github/workflows/dedupe.yml
+    secrets: inherit
 
   tests:
     needs:
