@@ -77,6 +77,11 @@ function readAndWriteTsConfig(name) {
 }
 
 function readAndWriteTemplateApiModuleIndex(nameSplit, name, isNested) {
+  if (!name) {
+    console.error('Template name is required')
+    return
+  }
+
   const templateApiModuleDir = path.join(
     __dirname,
     '..',
@@ -90,70 +95,75 @@ function readAndWriteTemplateApiModuleIndex(nameSplit, name, isNested) {
     'templates',
   )
 
-  fs.readFile(
-    path.join(templateApiModuleDir, 'index.ts'),
-    'utf8',
-    (err, data) => {
-      if (err) {
-        console.error('Error reading the file:', err)
-        return
-      }
+  try {
+    fs.readFile(
+      path.join(templateApiModuleDir, 'index.ts'),
+      'utf8',
+      (err, data) => {
+        if (err) {
+          console.error('Error reading the file:', err)
+          return
+        }
 
-      try {
-        const moduleName = `${toPascalCase(
-          isNested ? nameSplit[1] : name,
-        )}Module`
-        const serviceName = `${toPascalCase(
-          isNested ? nameSplit[1] : name,
-        )}Service`
+        try {
+          const moduleName = `${toPascalCase(
+            isNested ? nameSplit[1] : name,
+          )}Module`
+          const serviceName = `${toPascalCase(
+            isNested ? nameSplit[1] : name,
+          )}Service`
 
-        // Construct new import lines
-        const newImports = `
+          // Construct new import lines
+          const newImports = `
 import { ${moduleName} } from './${path.join(
-          name,
-          `${isNested ? nameSplit[1] : name}.module`,
-        )}'
+            name,
+            `${isNested ? nameSplit[1] : name}.module`,
+          )}'
 import { ${serviceName} } from './${path.join(
-          name,
-          `${isNested ? nameSplit[1] : name}.service`,
-        )}'
+            name,
+            `${isNested ? nameSplit[1] : name}.service`,
+          )}'
 `
 
-        // Add module and service to the exports
-        const updatedData = data
-          .replace(
-            /(export const modules = \[)([^\]]*)\]/,
-            `$1$2  ${moduleName},
+          // Add module and service to the exports
+          const updatedData = data
+            .replace(
+              /(export const modules = \[)([^\]]*)\]/,
+              `$1$2  ${moduleName},
             ]`,
-          )
-          .replace(
-            /(export const services = \[)([^\]]*)\]/,
-            `$1$2  ${serviceName},
+            )
+            .replace(
+              /(export const services = \[)([^\]]*)\]/,
+              `$1$2  ${serviceName},
             ]`,
+            )
+
+          // Insert the new imports at the top
+          const finalData = newImports + updatedData
+
+          // Write the updated content back to the file
+          fs.writeFile(
+            path.join(templateApiModuleDir, 'index.ts'),
+            finalData,
+            'utf8',
+            (err) => {
+              if (err) {
+                console.error('Error writing file:', err)
+                return
+              }
+              console.log('File updated successfully!')
+            },
           )
-
-        // Insert the new imports at the top
-        const finalData = newImports + updatedData
-
-        // Write the updated content back to the file
-        fs.writeFile(
-          path.join(templateApiModuleDir, 'index.ts'),
-          finalData,
-          'utf8',
-          (err) => {
-            if (err) {
-              console.error('Error writing file:', err)
-              return
-            }
-            console.log('File updated successfully!')
-          },
-        )
-      } catch (error) {
-        console.error('Error updating template api module index:', error)
-        return
-      }
-    },
-  )
+        } catch (error) {
+          console.error('Error updating template api module index:', error)
+          return
+        }
+      },
+    )
+  } catch (error) {
+    console.error('Error reading and writing template api module index:', error)
+    return
+  }
 }
 
 module.exports = {
