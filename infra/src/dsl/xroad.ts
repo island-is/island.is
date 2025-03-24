@@ -240,6 +240,16 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const SeminarsVer = new XroadConf({
+  env: {
+    XROAD_SEMINARS_VER_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid',
+      staging: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+    },
+  },
+})
+
 export const WorkAccidents = new XroadConf({
   env: {
     XROAD_WORK_ACCIDENT_PATH: {
@@ -898,7 +908,7 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal-application',
     },
   },
 })

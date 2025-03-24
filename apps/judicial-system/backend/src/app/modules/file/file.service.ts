@@ -459,6 +459,14 @@ export class FileService {
 
     await this.verifyCaseFile(file, theCase)
 
+    if (file.size === 0) {
+      this.logger.warn(
+        `Ignoring upload for empty file ${file.id} of case ${theCase.id}`,
+      )
+
+      return { success: true }
+    }
+
     this.throttle = this.throttleUpload(file, theCase, user)
 
     await this.throttle
