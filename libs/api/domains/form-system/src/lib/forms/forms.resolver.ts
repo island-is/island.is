@@ -28,11 +28,11 @@ import { UpdateFormResponse } from '@island.is/form-system/dto'
 import { Form, FormResponse } from '../../models/form.model'
 import type { ShortTitle } from '@island.is/cms'
 import {
-  OrganizationTitleByNationalIdDataLoader,
+  type OrganizationTitleByNationalIdDataLoader,
   OrganizationTitleByNationalIdLoader,
 } from '@island.is/cms'
 import {
-  OrganizationTitleEnByNationalIdDataLoader,
+  type OrganizationTitleEnByNationalIdDataLoader,
   OrganizationTitleEnByNationalIdLoader,
 } from '@island.is/cms'
 
