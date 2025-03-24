@@ -13,17 +13,20 @@ jobs:
     env:
       KANIKO_CACHE_ARGS: '--cache=true --cache-copy-layers=true --cache-ttl=24h'
     runs-on: arc-shared
-    # Let the container hooks handle the container creation
-    # The hooks will create a container with the image you specify
     container:
-      image: gcr.io/kaniko-project/executor:v1.20.0-debug
+      image: gcr.io/kaniko-project/executor:v1.23.2-debug
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Setup environment
+        run: |
+          # Create the os-release file that Kaniko needs
+          mkdir -p /etc
+          echo "NAME=Ubuntu" > /etc/os-release
+          echo "VERSION_ID=22.04" >> /etc/os-release
+          echo "ID=ubuntu" >> /etc/os-release
 
       - name: Build and Push Image to GHCR with kaniko
         run: |
