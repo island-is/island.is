@@ -141,7 +141,7 @@ export const SearchInput = ({ white, colored }: Props) => {
                   title: b,
                 }))}
               />
-              <Text>{result.item.description}</Text>
+              <Text marginTop={1}>{result.item.description}</Text>
             </LinkResolver>
           )
         },
