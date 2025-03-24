@@ -5,6 +5,9 @@ export const item = style({
   display: 'block',
   background: theme.color.blue100,
   padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
+  ':hover': {
+    background: theme.color.white,
+  },
 })
 
 export const active = style({
