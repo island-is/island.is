@@ -52,16 +52,12 @@ export const serviceSetup = (services: {
               'rewrite /$ https://beta.dev01.devland.is/loftbru; rewrite /en$ https://beta.dev01.devland.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
           staging: {
-            ...extraAnnotations,
-            'nginx.ingress.kubernetes.io/configuration-snippet':
-              'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;',
+            ...extraAnnotations
           },
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            'nginx.ingress.kubernetes.io/configuration-snippet':
-              'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;',
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false'
           },
         },
         paths: ['/'],

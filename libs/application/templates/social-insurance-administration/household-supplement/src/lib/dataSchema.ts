@@ -1,6 +1,5 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { HouseholdSupplementHousing } from './constants'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
 import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -54,10 +53,6 @@ export const dataSchema = z.object({
       }),
   }),
   householdSupplement: z.object({
-    housing: z.enum([
-      HouseholdSupplementHousing.HOUSEOWNER,
-      HouseholdSupplementHousing.RENTER,
-    ]),
     children: z.enum([YES, NO]),
   }),
   period: z
