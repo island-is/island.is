@@ -10,7 +10,7 @@ on:
 jobs:
     mq:
         if: github.event.created
-        runs-on: arch-runners
+        runs-on: arc-runners
         steps:
         - run: |
             export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
