@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { readAndWriteFile } = require('./utils')
+const { readAndWriteFile, readAndWriteTsConfig } = require('./utils')
 
 const templateName = process.argv[2]
 
@@ -145,3 +145,5 @@ readAndWriteFile(
   'src/utils/getOverviewItems.ts.txt',
   'src/utils/getOverviewItems.ts',
 )
+
+readAndWriteTsConfig(templateName)

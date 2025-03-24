@@ -47,4 +47,33 @@ function readAndWriteFile(
   })
 }
 
-module.exports = { readAndWriteFile }
+function readAndWriteTsConfig(name) {
+  fs.readFile(
+    path.join(__dirname, '..', '..', 'tsconfig.base.json'),
+    'utf8',
+    (err, data) => {
+      if (err) {
+        console.error('Error reading the file:', err)
+        return
+      }
+
+      try {
+        const config = JSON.parse(data)
+
+        config.compilerOptions.paths[
+          `@island.is/application/templates/${name}`
+        ] = [`libs/application/template/${name}/src/index.ts`]
+
+        fs.writeFileSync(
+          path.join(__dirname, '..', '..', 'tsconfig.base.json'),
+          JSON.stringify(config, null, 2),
+        )
+      } catch (error) {
+        console.error('Error parsing tsconfig.base.json:', error)
+        return
+      }
+    },
+  )
+}
+
+module.exports = { readAndWriteFile, readAndWriteTsConfig }

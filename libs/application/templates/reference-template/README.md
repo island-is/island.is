@@ -12,10 +12,9 @@ There are multiple requirements needed for a new template to be usable by the ap
 4. Add an application type to `libs/application/types/src/lib/ApplicationTypes.ts`
 5. Make sure the new application type matches in the constructor of the service in `libs/application/template-api-modules/src/lib/modules/templates/<new-application>/<new-application>.service.ts` and in `libs/application/templates/<new-application>/src/lib/template.ts`
 6. Add to `libs/application/types/src/lib/institutionMapper.ts`
-7. Add the index.ts of the new application to `/tsconfig.base.json`
-8. Add the application type to `libs/application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
-9. Run `yarn codegen`
-10. View your new application at `/umsoknir/<slug-from-application-types>`
+7. Add the application type to `libs/application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
+8. Run `yarn codegen`
+9. View your new application at `/umsoknir/<slug-from-application-types>`
 
 Note: It also works to create nested applications by running:
 
