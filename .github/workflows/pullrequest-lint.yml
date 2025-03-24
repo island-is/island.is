@@ -9,7 +9,7 @@ on:
 
 defaults:
   run:
-    shell: bash
+    shell: bash -euo pipefail {0}
 
 env:
   AWS_REGION: eu-west-1
@@ -39,7 +39,7 @@ jobs:
 
   lint-changed-files:
     name: Lint Changed Files
-    runs-on: ubuntu-latest
+    runs-on: arc-runners
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
         id: changed-files
         run: |
           CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | tr '\n' ',' | sed 's/,$//')
-          echo "CHANGED_FILES=${CHANGED_FILES}" >> "$GITHUB_ENV"
+          echo "CHANGED_FILES=${CHANGED_FILES}" | tee -a "$GITHUB_ENV"
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
