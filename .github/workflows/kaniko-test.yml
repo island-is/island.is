@@ -3,9 +3,6 @@ name: 🧪 Kaniko build with dynamic Dockerfile
 on:
   pull_request:
 
-env:
-  KANIKO_CACHE_ARGS: '--cache=true --cache-copy-layers=true --cache-ttl=24h'
-
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
   group: kaniko-${{ github.head_ref || github.run_id }}
@@ -13,7 +10,11 @@ concurrency:
 
 jobs:
   build:
+    env:
+      KANIKO_CACHE_ARGS: '--cache=true --cache-copy-layers=true --cache-ttl=24h'
     runs-on: arc-shared
+    # Let the container hooks handle the container creation
+    # The hooks will create a container with the image you specify
     container:
       image: gcr.io/kaniko-project/executor:v1.20.0-debug
     permissions:
@@ -21,6 +22,9 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Build and Push Image to GHCR with kaniko
         run: |
           cat <<EOF > /kaniko/.docker/config.json
@@ -33,13 +37,13 @@ jobs:
           }
           EOF
 
-          /kaniko/executor --dockerfile="./hack/Dockerfile" \
-            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
-            --destination="$GH_REGISTRY/$IMAGE_NAME:$(echo ${GITHUB_SHA} | head  -c 7)" \
-            ${{ env.KANIKO_CACHE_ARGS }} \
+          /kaniko/executor --dockerfile="./hack/Dockerfile" \\
+            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \\
+            --destination="$GH_REGISTRY/$IMAGE_NAME:$(echo ${GITHUB_SHA} | head  -c 7)" \\
+            ${{ env.KANIKO_CACHE_ARGS }} \\
             --push-retry 5
         env:
           GIT_USERNAME: ${{ github.actor }}
           GIT_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           GH_REGISTRY: 'ghcr.io'
-          IMAGE_NAME: '${{ github.repository }}/nginx'
+          IMAGE_NAME: '${{ github.repository }}/kaniko-build'
