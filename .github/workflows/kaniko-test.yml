@@ -20,13 +20,13 @@ jobs:
       packages: write
 
     steps:
-      - name: Setup environment
-        run: |
-          # Create the os-release file that Kaniko needs
-          mkdir -p /etc
-          echo "NAME=Ubuntu" > /etc/os-release
-          echo "VERSION_ID=22.04" >> /etc/os-release
-          echo "ID=ubuntu" >> /etc/os-release
+      # - name: Setup environment
+      #   run: |
+      #     # Create the os-release file that Kaniko needs
+      #     mkdir -p /etc
+      #     echo "NAME=Ubuntu" > /etc/os-release
+      #     echo "VERSION_ID=22.04" >> /etc/os-release
+      #     echo "ID=ubuntu" >> /etc/os-release
 
       - name: Build and Push Image to GHCR with kaniko
         run: |
@@ -40,10 +40,10 @@ jobs:
           }
           EOF
 
-          /kaniko/executor --dockerfile="./hack/Dockerfile" \\
-            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \\
-            --destination="$GH_REGISTRY/$IMAGE_NAME:$(echo ${GITHUB_SHA} | head  -c 7)" \\
-            ${{ env.KANIKO_CACHE_ARGS }} \\
+          /kaniko/executor --dockerfile="./hack/Dockerfile" \
+            --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}"  \
+            --destination="$GH_REGISTRY/$IMAGE_NAME:$(echo ${GITHUB_SHA} | head  -c 7)" \
+            ${{ env.KANIKO_CACHE_ARGS }} \
             --push-retry 5
         env:
           GIT_USERNAME: ${{ github.actor }}
