@@ -162,7 +162,7 @@ describe('ConfirmIdentityController', () => {
     })
   })
 
-  it('GET identity-confirmation for expired 1 should return 200 with an expired object', async () => {
+  it('deleteExpiredIdentityConfirmations should delete 1 identity confirmations since mock db contains 1 that has been expired for a while', async () => {
     // Act
     const deleted =
       await identityConfirmationService.deleteExpiredIdentityConfirmations()
@@ -170,7 +170,7 @@ describe('ConfirmIdentityController', () => {
     expect(deleted).toBe(1)
   })
 
-  it('GET identity-confirmation for expired 1 should return 200 with an expired object', async () => {
+  it('GET request for expired identity confirmation should return 200 with isExpired flag set to true', async () => {
     // Act
     const response = await server.get(
       `/confirm-identity/${identityConfirmations.expired.id}`,
@@ -225,11 +225,11 @@ describe('ConfirmIdentityController', () => {
     // Db assertion
     const ic = await identityConfirmationModel.findOne({
       where: {
-        id: identityConfirmations.valid1.id,
+        id: identityConfirmations.valid2.id,
       },
     })
 
     expect(ic).not.toBeNull()
-    expect(ic?.id).toBe(identityConfirmations.valid1.id)
+    expect(ic?.id).toBe(identityConfirmations.valid2.id)
   })
 })
