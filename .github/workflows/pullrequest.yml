@@ -76,6 +76,8 @@ jobs:
       - name: Tag job with affected projects
         run: |
           yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
       - name: Run unit tests
         uses: ./.github/actions/unit-test
@@ -173,6 +175,8 @@ jobs:
       - name: Tag job with affected projects
         run: |
           yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -276,6 +280,8 @@ jobs:
       - name: Tag job with affected projects
         run: |
           yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -308,6 +314,8 @@ jobs:
       - name: Tag job with affected projects
         run: |
           yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
