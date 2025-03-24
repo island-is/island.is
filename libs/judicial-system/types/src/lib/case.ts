@@ -161,6 +161,7 @@ export enum IndictmentCaseTransition {
   DELETE = CaseTransition.DELETE,
   DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
   RECEIVE = CaseTransition.RECEIVE,
+  REOPEN = CaseTransition.REOPEN,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
   SUBMIT = CaseTransition.SUBMIT,
 }
