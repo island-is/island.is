@@ -249,6 +249,7 @@ jobs:
           ./scripts/ci/10_prepare-docker-deps.sh
 
   docker-build:
+    name: Docker build
     needs:
       - pre-checks
       - prepare
@@ -379,6 +380,7 @@ jobs:
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
   helm-docker-build:
+    name: Generate feature-values
     needs:
       - prepare
       - pre-checks
@@ -435,6 +437,7 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   deploy:
+    name: Trigger deployment
     runs-on: arc-runners
     if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
 

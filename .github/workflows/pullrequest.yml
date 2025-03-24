@@ -49,6 +49,7 @@ jobs:
       main_branch: ${{ github.base_ref }}
 
   tests:
+    name: Test projects
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
@@ -135,6 +136,7 @@ jobs:
           echo "All projects ($projects) have tests."
 
   e2e:
+    name: E2E
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
@@ -167,6 +169,7 @@ jobs:
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
   linting-workspace:
+    name: Lint workspace
     needs:
       - prepare
     runs-on: arc-runners
@@ -187,6 +190,7 @@ jobs:
         run: ./scripts/ci/20_lint-workspace.sh
 
   run-shellcheck:
+    name: ShellCheck
     needs:
       - prepare
     runs-on: ubuntu-latest
@@ -202,6 +206,7 @@ jobs:
             */node_modules/*
 
   formatting:
+    name: Format code
     needs:
       - prepare
     runs-on: arc-runners
@@ -234,6 +239,7 @@ jobs:
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
   linting:
+    name: Lint projects
     needs:
       - prepare
     runs-on: arc-runners
@@ -262,6 +268,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
+    name: Build projects
     needs:
       - prepare
     runs-on: arc-runners
