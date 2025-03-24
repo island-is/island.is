@@ -203,6 +203,9 @@
       "@island.is/api/domains/secondary-school": [
         "libs/api/domains/secondary-school/src/index.ts"
       ],
+      "@island.is/api/domains/seminars-ver": [
+        "libs/api/domains/seminars-ver/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -305,6 +308,9 @@
       ],
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/seminars": [
+        "libs/application/templates/aosh/seminars/src/index.ts"
       ],
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
@@ -785,6 +791,9 @@
       ],
       "@island.is/clients/secondary-school": [
         "libs/clients/secondary-school/src/index.ts"
+      ],
+      "@island.is/clients/seminars-ver": [
+        "libs/clients/seminars-ver/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [

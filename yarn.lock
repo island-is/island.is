@@ -30741,10 +30741,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csv-parse@npm:4.16.0":
-  version: 4.16.0
-  resolution: "csv-parse@npm:4.16.0"
-  checksum: 10/b81ba934c2bf59b8a6ec5e2a4b84c9b2398ff9aec4a39a878cb39d5e6afaf4c89bcf95c4569dbbf6b8ad39ed559e1e49ea4c6dd0c1d21bd2b3923f5bacdc4431
+"csv-parse@npm:5.6.0":
+  version: 5.6.0
+  resolution: "csv-parse@npm:5.6.0"
+  checksum: 10/4c82e11f50ae0ccbac2aed716ef2502d0468bf96552083561db789fc0258ee4bb0a30106fcfb2684f153cb4042f0413e0eac3645d5466874803b7ccdeba67ac8
   languageName: node
   linkType: hard
 
@@ -39726,7 +39726,7 @@ __metadata:
     crypto-browserify: "npm:3.12.0"
     crypto-js: "npm:4.2.0"
     csstype: "npm:2.6.13"
-    csv-parse: "npm:4.16.0"
+    csv-parse: "npm:5.6.0"
     csv-stringify: "npm:5.6.5"
     cypress: "npm:13.9.0"
     cypress-file-upload: "npm:5.0.8"

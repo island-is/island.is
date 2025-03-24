@@ -46,6 +46,7 @@ export const AdvancedSettings = ({
   const { client, actionData } = useClient()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const [isSsoSettingsEnabled, setSsoSettingsEnabled] = useState(false)
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     const checkSsoSettingsEnabled = async () => {
@@ -54,6 +55,7 @@ export const AdvancedSettings = ({
         false,
       )
       setSsoSettingsEnabled(ssoSettingsEnabled)
+      setIsReady(true)
     }
 
     checkSsoSettingsEnabled()
@@ -78,7 +80,7 @@ export const AdvancedSettings = ({
   const { formatErrorMessage } = useErrorFormatMessage()
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
-  return (
+  return isReady && (
     <FormCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
@@ -241,7 +243,7 @@ export const AdvancedSettings = ({
               defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
               checked={inputValues.sso === AuthAdminClientSso.enabled}
               name="sso"
-              value="true"
+              value={inputValues.sso}
               onChange={(e) => {
                 setInputValues({
                   ...inputValues,
