@@ -163,6 +163,10 @@ export const routesTemplate = {
     is: '/s/[slug]',
     en: '/en/o/[slug]',
   },
+  organizationparentsubpagechild: {
+    is: '/s/[slug]/[subSlug]/[childSlug]',
+    en: '/en/o/[slug]/[subSlug]/[childSlug]',
+  },
   grantsplaza: {
     is: '/styrkjatorg',
     en: '/en/grants-plaza',
