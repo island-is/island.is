@@ -76,7 +76,7 @@ function readAndWriteTsConfig(name) {
   )
 }
 
-function readAndWriteTemplateApiModuleIndex(nameSpilt, name, isNested) {
+function readAndWriteTemplateApiModuleIndex(nameSplit, name, isNested) {
   const templateApiModuleDir = path.join(
     __dirname,
     '..',
@@ -101,21 +101,21 @@ function readAndWriteTemplateApiModuleIndex(nameSpilt, name, isNested) {
 
       try {
         const moduleName = `${toPascalCase(
-          isNested ? nameSpilt[1] : name,
+          isNested ? nameSplit[1] : name,
         )}Module`
         const serviceName = `${toPascalCase(
-          isNested ? nameSpilt[1] : name,
+          isNested ? nameSplit[1] : name,
         )}Service`
 
         // Construct new import lines
         const newImports = `
 import { ${moduleName} } from './${path.join(
           name,
-          `${isNested ? nameSpilt[1] : name}.module`,
+          `${isNested ? nameSplit[1] : name}.module`,
         )}'
 import { ${serviceName} } from './${path.join(
           name,
-          `${isNested ? nameSpilt[1] : name}.service`,
+          `${isNested ? nameSplit[1] : name}.service`,
         )}'
 `
 
