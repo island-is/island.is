@@ -351,6 +351,10 @@ jobs:
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
+      - name: Tag job with affected projects
+        run: |
+          yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+
       - name: Building Docker images
         continue-on-error: true
         id: dockerbuild

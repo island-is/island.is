@@ -72,6 +72,11 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+
+      - name: Tag job with affected projects
+        run: |
+          yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
@@ -164,6 +169,10 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+
+      - name: Tag job with affected projects
+        run: |
+          yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
@@ -264,6 +273,10 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
+      - name: Tag job with affected projects
+        run: |
+          yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
+
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
@@ -291,6 +304,10 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+
+      - name: Tag job with affected projects
+        run: |
+          yarn datadog-ci tag --level job --tags "ci.job.projects: ${AFFECTED_PROJECTS}"
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
