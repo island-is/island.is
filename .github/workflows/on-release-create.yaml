@@ -9,7 +9,6 @@ on:
 
 jobs:
     mq:
-        if: github.event.created
         runs-on: arc-runners
         steps:
         - run: |
