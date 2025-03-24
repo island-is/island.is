@@ -144,9 +144,9 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             filteredOptions.map((item, index) => (
               <Item
                 index={index}
-                highlightedIndex={highlightedIndex}
+                highlightedIndex={highlightedIndex ?? 0}
                 isActive={highlightedIndex === index}
-                colored={colored}
+                colored={!!colored}
                 size={size}
                 item={item}
                 {...getItemProps({
@@ -158,14 +158,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               />
             ))
 
-          const onKeyDown = (event: {
-            key: string
-            nativeEvent: { preventDownshiftDefault: boolean }
-          }) => {
+          const onKeyDown = (event: { key: string }) => {
             if (event.key === 'Enter') {
-              // Prevent Downshift's default 'Enter' behavior.
-              event.nativeEvent.preventDownshiftDefault = true
-
               const selectedOption =
                 highlightedIndex !== null ? options[highlightedIndex] : null
 
@@ -195,7 +189,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               )}
               inputProps={{
                 ...getInputProps({
-                  value: inputValue,
+                  value: inputValue ?? '',
                   onFocus,
                   onBlur,
                   ref,
