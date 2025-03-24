@@ -9,7 +9,7 @@ air-discount-scheme-api:
   enabled: true
   env:
     AUTH_AUDIENCE: 'loftbru.island.is'
-    BACKEND_URL: 'http://web-air-discount-scheme-backend'
+    BACKEND_URL: 'http://air-discount-scheme-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -189,7 +189,7 @@ air-discount-scheme-backend:
 air-discount-scheme-web:
   enabled: true
   env:
-    API_URL: 'http://web-air-discount-scheme-api'
+    API_URL: 'http://air-discount-scheme-api'
     ENVIRONMENT: 'prod'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
     LOG_LEVEL: 'info'
@@ -223,7 +223,6 @@ air-discount-scheme-web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -263,11 +262,11 @@ api:
     - 'node'
   enabled: true
   env:
-    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
+    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
     APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
-    APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    APPLICATION_SYSTEM_API_URL: 'http://application-system-api.application-system.svc.cluster.local'
     AUTH_ADMIN_API_PATH: 'https://innskra.island.is/backend'
     AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend","staging":"https://identity-server.staging01.devland.is/backend","production":"https://innskra.island.is/backend"}'
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
@@ -280,7 +279,7 @@ api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
-    ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://star-re.crm4.dynamics.com/api/data/v9.1'
@@ -289,31 +288,32 @@ api:
     FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
-    FORM_SYSTEM_API_BASE_PATH: 'http://web-services-form-system-api.services-form-system-api.svc.cluster.local'
+    FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '5f42f942-d8d6-40bf-a186-5a9e12619d9f'
-    ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
+    ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
-    MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
+    MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
-    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
+    RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
+    REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'island@island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+    SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
+    SESSIONS_API_URL: 'http://services-sessions.services-sessions.svc.cluster.local'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
-    UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
+    USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
@@ -378,6 +378,7 @@ api:
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt'
+    XROAD_SEMINARS_VER_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
     XROAD_SHIP_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
@@ -588,7 +589,7 @@ application-system-api:
     DB_USER: 'application_system_api'
     EHIC_XROAD_PROVIDER_ID: 'IS/GOV/4804080550/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
-    ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-prod-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://star-re.crm4.dynamics.com/api/data/v9.1'
@@ -598,7 +599,7 @@ application-system-api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
-    GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
+    GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
@@ -614,13 +615,13 @@ application-system-api:
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Production'
-    RECYCLING_FUND_GQL_BASE_PATH: 'http://web-skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
+    RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
+    SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
+    UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
     XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS/GOV/5605882089/UA-Protected/kvortun-v1'
@@ -666,6 +667,7 @@ application-system-api:
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt'
+    XROAD_SEMINARS_VER_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
@@ -846,7 +848,7 @@ application-system-api-worker:
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
@@ -992,10 +994,64 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+cms-importer-worker:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
+  namespace: 'cms-importer'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '0 15,0 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 consultation-portal:
   enabled: true
   env:
-    API_URL: 'http://web-api.islandis.svc.cluster.local'
+    API_URL: 'http://api.islandis.svc.cluster.local'
     BACKEND_DL_URL: 'https://samradapi.island.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     CODE_OWNER: 'Advania'
@@ -1197,7 +1253,7 @@ download-service:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
-    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
+    REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -1674,6 +1730,7 @@ namespaces:
     - 'regulations-admin'
     - 'user-notification'
     - 'license-api'
+    - 'cms-importer'
     - 'services-sessions'
     - 'services-university-gateway'
     - 'contentful-apps'
@@ -2186,7 +2243,7 @@ services-bff-portals-admin:
     BFF_LOGOUT_REDIRECT_URI: 'https://island.is'
     BFF_NAME: 'stjornbord'
     BFF_PAR_SUPPORT_ENABLED: 'false'
-    BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local/api/graphql'
+    BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     CODE_OWNER: 'core'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
     IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
@@ -2275,7 +2332,7 @@ services-bff-portals-my-pages:
     BFF_LOGOUT_REDIRECT_URI: 'https://island.is'
     BFF_NAME: 'minarsidur'
     BFF_PAR_SUPPORT_ENABLED: 'false'
-    BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local/api/graphql'
+    BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
     IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -2870,7 +2927,7 @@ services-university-gateway-worker:
 skilavottord-web:
   enabled: true
   env:
-    API_URL: 'http://web-skilavottord-ws'
+    API_URL: 'http://skilavottord-ws'
     ENVIRONMENT: 'prod'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -3067,7 +3124,7 @@ user-notification:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -3279,7 +3336,7 @@ user-notification-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -3369,7 +3426,7 @@ user-notification-worker:
 web:
   enabled: true
   env:
-    API_URL: 'http://web-api'
+    API_URL: 'http://api'
     CODE_OWNER: 'stefna'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'

@@ -1,6 +1,7 @@
 import { ExternalData } from '@island.is/application/types'
 import { LanguageEnvironmentOptions } from './constants'
 import {
+  getMunicipalityCodeBySchoolUnitId,
   hasOtherGuardian,
   showPreferredLanguageFields,
 } from './newPrimarySchoolUtils'
@@ -108,5 +109,17 @@ describe('showPreferredLanguageFields', () => {
       },
     }
     expect(showPreferredLanguageFields(answers)).toBe(true)
+  })
+
+  describe('getMunicipalityCodeBySchoolUnitId', () => {
+    it('should return the correct municipality code for a given school unitId', () => {
+      const schoolId = 'G-2297-A'
+      expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
+    })
+
+    it('should return undefined for an unknown school unit id', () => {
+      const schoolId = 'unknown-school-id'
+      expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
+    })
   })
 })

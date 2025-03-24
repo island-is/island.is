@@ -79,6 +79,7 @@ export enum ApplicationTypes {
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
   PRACTICAL_EXAM = 'PracticalExam',
+  SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
@@ -427,6 +428,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PRACTICAL_EXAM]: {
     slug: 'verklegt-prof',
     translation: ['aosh.pe.application'],
+  [ApplicationTypes.SEMINAR_REGISTRATION]: {
+    slug: 'vinnueftirlitid-namskeid',
+    translation: ['aosh.sem.application'],
   },
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     slug: 'kennslurettindi-a-vinnuvel',

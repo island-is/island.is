@@ -192,10 +192,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     childInformationSubTitle: {
       id: 'nps.application:prerequisites.child.information.subtitle',
-      defaultMessage:
-        'Upplýsingar frá núverandi skóla barns. Upplýsingar um barn og ólíkar þarfir þess.',
-      description:
-        "Information from the child's current school. Information about the child and their different needs.",
+      defaultMessage: 'Upplýsingar um barn og ólíkar þarfir þess.',
+      description: 'Information about the child and their different needs.',
     },
     checkboxProvider: {
       id: 'nps.application:prerequisites.checkbox.provider',
