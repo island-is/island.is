@@ -249,10 +249,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-docker
-    container: gcr.io/kaniko-project/executor:debug
-    permissions:
-      contents: read
+    runs-on: arc-shared
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
