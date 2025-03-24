@@ -44,7 +44,7 @@ const Greeting = () => {
             <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
               {formatMessage(m.greetingIntro)}
             </Text>
-            <Box marginTop={3} component="form" action="/query">
+            <Box marginTop={3}>
               <SearchInput colored />
             </Box>
           </Box>
