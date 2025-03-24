@@ -1,14 +1,13 @@
 name: Scanflags
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'scanflag-fix'
+  schedule:
+    - cron: '0 5 * * *'
 
 defaults:
   run:
     shell: bash
+    
 concurrency:
   group: scanflag-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
