@@ -127,6 +127,7 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
     description: '',
   },
+  // Data collection - external data providers
   dataCollectionTitle: {
     id: 'ir.application:dataCollectionTitle',
     defaultMessage: 'Gagnaöflun',
