@@ -158,7 +158,7 @@ export const AccessControlModal: FC<
           }
         }) ?? []),
         {
-          label: 'Aðrir',
+          label: t.modal.inputs.recyclingCompanyOther,
           value: '-1',
           options: otherRecyclingCompanies,
         },
