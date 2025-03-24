@@ -1,6 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const { readAndWriteFile } = require('./utils')
+const {
+  readAndWriteFile,
+  readAndWriteTemplateApiModuleIndex,
+} = require('./utils')
 
 const templateApiModuleName = process.argv[2]
 
@@ -57,3 +60,5 @@ readAndWriteFile(
   'template.service.txt',
   `${isNested ? nameSplit[1] : templateApiModuleName}.service.ts`,
 )
+
+readAndWriteTemplateApiModuleIndex(templateApiModuleName)
