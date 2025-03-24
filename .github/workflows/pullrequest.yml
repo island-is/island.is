@@ -244,6 +244,8 @@ jobs:
           # Need full repo for Nx to find the commits at NX_* below
           fetch-depth: 0
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Get changed files
