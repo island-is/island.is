@@ -339,6 +339,8 @@ export class PaymentFlowService {
         body: JSON.stringify(updateBody),
       })
 
+      //Trigger deployment
+
       console.log('=========================================')
       console.log('paymentflowupdate')
       console.log('updateBody', JSON.stringify(updateBody, null, 2))
