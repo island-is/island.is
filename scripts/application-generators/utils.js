@@ -62,7 +62,7 @@ function readAndWriteTsConfig(name) {
 
         config.compilerOptions.paths[
           `@island.is/application/templates/${name}`
-        ] = [`libs/application/template/${name}/src/index.ts`]
+        ] = [`libs/application/templates/${name}/src/index.ts`]
 
         fs.writeFileSync(
           path.join(__dirname, '..', '..', 'tsconfig.base.json'),
