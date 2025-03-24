@@ -40,6 +40,7 @@ import {
 } from './models/v2/pdfRenderer.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
+import { COURT_CASE_DOC_CATEGORY } from './helpers/constants'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -62,7 +63,7 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
-    const isCourtCase = input.category === 'Dómsmál'
+    const isCourtCase = input.category === COURT_CASE_DOC_CATEGORY
     try {
       const data = await this.auditService.auditPromise(
         {
