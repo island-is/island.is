@@ -61,4 +61,4 @@ readAndWriteFile(
   `${isNested ? nameSplit[1] : templateApiModuleName}.service.ts`,
 )
 
-readAndWriteTemplateApiModuleIndex(templateApiModuleName)
+readAndWriteTemplateApiModuleIndex(nameSplit, templateApiModuleName, isNested)
