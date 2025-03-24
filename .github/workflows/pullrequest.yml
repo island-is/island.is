@@ -48,6 +48,9 @@ jobs:
     with:
       main_branch: ${{ github.base_ref }}
 
+  dedupe:
+    uses: ./.github/workflows/dedupe.yml
+
   tests:
     needs:
       - prepare
