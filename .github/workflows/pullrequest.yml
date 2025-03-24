@@ -261,7 +261,7 @@ jobs:
 
       - name: Run lintfix on changed files
         if: ${{ env.CHANGED_FILES != '' }}
-        run: yarn nx affected -t lint --fix --lintFilePatterns="${CHANGED_FILES}" --verbose
+        run: yarn nx affected -t lint --base=origin/$GITHUB_BASE_REF --fix --lintFilePatterns="${CHANGED_FILES}" --verbose
 
       - name: Commit changed files
         run: |
