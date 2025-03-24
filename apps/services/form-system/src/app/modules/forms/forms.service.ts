@@ -323,7 +323,7 @@ export class FormsService {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found`)
+      throw new NotFoundException(`Form with id '${id}' not found.`)
     }
 
     form.destroy()
