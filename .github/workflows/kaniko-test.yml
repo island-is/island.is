@@ -14,7 +14,7 @@ jobs:
       KANIKO_CACHE_ARGS: '--cache=true --cache-copy-layers=true --cache-ttl=24h'
     runs-on: arc-shared
     container:
-      image: gcr.io/kaniko-project/executor:v1.23.2-debug
+      image: gcr.io/kaniko-project/executor:v1.20.0-debug
     permissions:
       contents: read
       packages: write
