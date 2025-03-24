@@ -15,10 +15,7 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
-import {
-  inheritanceReportSchema,
-  messages,
-} from '@island.is/application/templates/inheritance-report'
+import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
@@ -92,7 +89,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
         {
           title: coreErrorMessages.failedDataProviderSubmit,
           summary:
-            messages.errorDataProviderEstateValidationNothingFoundSummary,
+            coreErrorMessages.errorDataProviderEstateValidationNothingFoundSummary,
         },
         400,
       )
