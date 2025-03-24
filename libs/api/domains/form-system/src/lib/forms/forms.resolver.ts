@@ -26,14 +26,12 @@ import {
 } from '../../dto/form.input'
 import { UpdateFormResponse } from '@island.is/form-system/dto'
 import { Form, FormResponse } from '../../models/form.model'
-import type { ShortTitle } from '@island.is/cms'
 import {
   type OrganizationTitleByNationalIdDataLoader,
   OrganizationTitleByNationalIdLoader,
-} from '@island.is/cms'
-import {
   type OrganizationTitleEnByNationalIdDataLoader,
   OrganizationTitleEnByNationalIdLoader,
+  ShortTitle,
 } from '@island.is/cms'
 
 @Resolver(() => Form)
