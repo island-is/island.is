@@ -146,11 +146,17 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const [partner, setPartner] = useState<AccessControlType>()
 
   const error =
-    recyclingPartnerError || accessControlsError || recyclingPartnerByIdError
+    recyclingPartnerError ||
+    accessControlsError ||
+    recyclingPartnerByIdError ||
+    userMunicipalityError
+
   const loading =
     recyclingPartnerLoading ||
     accessControlsLoading ||
-    recyclingPartnerByIdLoading
+    recyclingPartnerByIdLoading ||
+    userMunicipalityLoading
+
   const isData =
     !!recyclingPartnerData || !!recyclingPartnerByIdData || !!accessControlsData
 
@@ -178,6 +184,8 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     recyclingPartnerData?.skilavottordAllRecyclingPartners ||
     recyclingPartnerByIdData?.skilavottordRecyclingPartners ||
     []
+
+  // Get recycling partners
   const recyclingPartners = filterInternalPartners(partners)
     .filter((partner) => {
       return !partner.isMunicipality
@@ -189,6 +197,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
 
+  // Get municipalities
   const municipalities = filterInternalPartners(partners)
     .filter((partner) => {
       return partner.isMunicipality
@@ -252,6 +261,13 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const handleUpdateAccessControlCloseModal = () => setPartner(undefined)
 
   const handleCreateAccessControl = async (input: CreateAccessControlInput) => {
+    if (
+      input.role === AccessControlRole.recyclingFund ||
+      input.role === AccessControlRole.developer
+    ) {
+      input.partnerId = ''
+    }
+
     const { errors } = await createSkilavottordAccessControl({
       variables: { input },
     })
@@ -261,6 +277,13 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleUpdateAccessControl = async (input: UpdateAccessControlInput) => {
+    if (
+      input.role === AccessControlRole.recyclingFund ||
+      input.role === AccessControlRole.developer
+    ) {
+      input.partnerId = ''
+    }
+
     const { errors } = await updateSkilavottordAccessControl({
       variables: { input },
     })

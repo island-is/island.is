@@ -76,6 +76,12 @@ export const AccessControlModal: FC<
     if (user?.role === Role.municipality) {
       setShowCompaniesSelection(!isCurrentPartnerMunicipality)
       setShowMunicipalitiesSelection(false) // User with municipality role shall not be able to select other municipality
+    } else if (
+      currentPartner?.role === AccessControlRole.recyclingFund ||
+      currentPartner?.role === AccessControlRole.developer
+    ) {
+      setShowCompaniesSelection(false)
+      setShowMunicipalitiesSelection(false)
     } else {
       setShowCompaniesSelection(!isCurrentPartnerMunicipality)
       setShowMunicipalitiesSelection(isCurrentPartnerMunicipality)
@@ -98,6 +104,12 @@ export const AccessControlModal: FC<
       if (e && e.value === Role.municipality) {
         setShowCompaniesSelection(false)
         setShowMunicipalitiesSelection(true)
+      } else if (
+        e &&
+        (e.value === Role.recyclingFund || e.value === Role.developer)
+      ) {
+        setShowMunicipalitiesSelection(false)
+        setShowCompaniesSelection(false)
       } else {
         setShowMunicipalitiesSelection(false)
         setShowCompaniesSelection(true)
