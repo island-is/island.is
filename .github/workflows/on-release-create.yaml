@@ -18,6 +18,6 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/workflow-b.yml/dispatches \
-            -d '{"ref":"${{ env. GIT_BRANCH }}"}'
+            -d "{\"ref\":\"$GIT_BRANCH\"}"
 
     
