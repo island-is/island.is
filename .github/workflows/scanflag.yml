@@ -19,7 +19,6 @@ env:
 
 jobs:
   scanflags:
-    if: github.ref == 'ref/heads/main'
     runs-on: arc-runners
     steps:
       - name: Checkout
