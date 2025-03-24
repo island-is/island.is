@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

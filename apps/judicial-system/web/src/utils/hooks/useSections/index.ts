@@ -20,6 +20,7 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
+  Case,
   CaseAppealState,
   CaseState,
   CaseType,
@@ -28,7 +29,6 @@ import {
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../utils'
