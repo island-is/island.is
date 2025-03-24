@@ -267,6 +267,14 @@ jobs:
         if: ${{ env.CHANGED_FILES != '' }}
         run: yarn nx affected -t lint --fix --lintFilePatterns="${CHANGED_FILES}" --verbose
 
+      - name: Commit changed files
+        run: |
+          if git diff; then exit 0; fi
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit -am "chore: Lintfix dirty files"
+          git push
+
   linting:
     needs:
       - prepare
