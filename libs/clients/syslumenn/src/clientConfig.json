@@ -2401,6 +2401,41 @@
         ]
       }
     },
+    "/api/v1/AfgreidaSakavottord": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AfgreidaSakavottord_Post",
+        "requestBody": {
+          "x-name": "payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyslSkeyti"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Skilabod"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/AlmennFyrirspurn/{audkenni}/{eining}/{adgerd}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -3078,30 +3113,10 @@
         ]
       }
     },
-    "/api/KannaSakavottord/{audkenni}/{kennitala}": {
+    "/api/KannaSakavottord": {
       "get": {
         "tags": ["Syslumenn"],
         "operationId": "KannaSakavottord_Get",
-        "parameters": [
-          {
-            "name": "audkenni",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 1
-          },
-          {
-            "name": "kennitala",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
-          }
-        ],
         "responses": {
           "200": {
             "description": ""

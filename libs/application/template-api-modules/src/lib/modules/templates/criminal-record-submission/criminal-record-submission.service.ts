@@ -53,7 +53,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     const uploadDataId = 'Sakavottord2.1'
 
     return await this.syslumennService
-      .uploadDataWithAuth(
+      .uploadSakavottord(
         auth,
         persons,
         undefined,
@@ -83,6 +83,6 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
         400,
       )
     }
-    return await this.syslumennService.checkCriminalRecord(auth.nationalId)
+    return await this.syslumennService.checkCriminalRecord(auth)
   }
 }

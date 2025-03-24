@@ -95,36 +95,31 @@ export class SyslumennService {
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {}
 
-  private getSyslumennApiAndConfig() {
-    return {
-      api: new SyslumennApi(
-        new Configuration({
-          fetchApi: createEnhancedFetch({
-            name: 'clients-syslumenn',
-            organizationSlug: 'syslumenn',
-            ...this.clientConfig.fetch,
-          }),
-          basePath: this.clientConfig.url,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        }),
-      ),
-      config: {
-        notandi: this.clientConfig.username,
-        lykilord: this.clientConfig.password,
-      },
-    }
-  }
-
   // returns an api with the accessToken from Syslumenn in the 'authorization' header
   private async createApi() {
-    const { api, config } = this.getSyslumennApiAndConfig()
+    const api = new SyslumennApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
+          ...this.clientConfig.fetch,
+        }),
+        basePath: this.clientConfig.url,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }),
+    )
+
+    const config = {
+      notandi: this.clientConfig.username,
+      lykilord: this.clientConfig.password,
+    }
+
     const { audkenni, accessToken } = await api.innskraningPost({
       apiNotandi: config,
     })
-
     if (audkenni && accessToken) {
       return {
         id: audkenni,
@@ -137,42 +132,31 @@ export class SyslumennService {
     }
   }
 
-  // returns an api with user authentication in the 'authorization' header, and the accessToken from Syslumenn is added to 'access-token' header
+  // returns an api with islandis authentication token in the 'authorization' header
   private async createApiWithAuth(auth: Auth) {
-    const { api, config } = this.getSyslumennApiAndConfig()
-    const { audkenni, accessToken } = await api.innskraningPost({
-      apiNotandi: config,
-    })
-
-    if (audkenni && accessToken) {
-      const apiWithAuth = new SyslumennApi(
-        new Configuration({
-          fetchApi: createEnhancedFetch({
-            name: 'clients-syslumenn',
-            organizationSlug: 'syslumenn',
-            autoAuth: {
-              mode: 'tokenExchange',
-              issuer: this.idsClientConfig.issuer,
-              clientId: this.idsClientConfig.clientId,
-              clientSecret: this.idsClientConfig.clientSecret,
-              scope: [],
-            },
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'access-token': accessToken,
+    const apiWithAuth = new SyslumennApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
+          autoAuth: {
+            mode: 'tokenExchange',
+            issuer: this.idsClientConfig.issuer,
+            clientId: this.idsClientConfig.clientId,
+            clientSecret: this.idsClientConfig.clientSecret,
+            scope: [],
           },
-          basePath: this.clientConfig.url,
         }),
-      )
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        basePath: this.clientConfig.url,
+      }),
+    )
 
-      return {
-        id: audkenni,
-        api: apiWithAuth.withMiddleware(new AuthMiddleware(auth)),
-      }
-    } else {
-      throw new Error('Syslumenn client configuration and login went wrong')
+    return {
+      api: apiWithAuth.withMiddleware(new AuthMiddleware(auth)),
     }
   }
 
@@ -339,47 +323,6 @@ export class SyslumennService {
   ): Promise<DataUploadResponse> {
     const { id, api } = await this.createApi()
 
-    return await this.doUploadData(
-      id,
-      api,
-      persons,
-      attachments,
-      extraData,
-      uploadDataName,
-      uploadDataId,
-    )
-  }
-
-  async uploadDataWithAuth(
-    auth: Auth,
-    persons: Person[],
-    attachments: Attachment[] | undefined,
-    extraData: { [key: string]: string },
-    uploadDataName: string,
-    uploadDataId?: string,
-  ): Promise<DataUploadResponse> {
-    const { id, api } = await this.createApiWithAuth(auth)
-
-    return await this.doUploadData(
-      id,
-      api,
-      persons,
-      attachments,
-      extraData,
-      uploadDataName,
-      uploadDataId,
-    )
-  }
-
-  private async doUploadData(
-    id: string,
-    api: SyslumennApi,
-    persons: Person[],
-    attachments: Attachment[] | undefined,
-    extraData: { [key: string]: string },
-    uploadDataName: string,
-    uploadDataId?: string,
-  ): Promise<DataUploadResponse> {
     const payload = constructUploadDataObject(
       id,
       persons,
@@ -762,13 +705,40 @@ export class SyslumennService {
       )
   }
 
-  //TODOx þarf að nota auth hér líka?
-  async checkCriminalRecord(nationalId: string) {
-    const { id, api } = await this.createApi()
-    return await api.kannaSakavottordGet({
-      audkenni: id,
-      kennitala: nationalId,
+  async checkCriminalRecord(auth: Auth) {
+    const { api } = await this.createApiWithAuth(auth)
+    return await api.kannaSakavottordGet()
+  }
+
+  async uploadSakavottord(
+    auth: Auth,
+    persons: Person[],
+    attachments: Attachment[] | undefined,
+    extraData: { [key: string]: string },
+    uploadDataName: string,
+    uploadDataId?: string,
+  ): Promise<DataUploadResponse> {
+    const { api } = await this.createApiWithAuth(auth)
+
+    const payload = constructUploadDataObject(
+      '',
+      persons,
+      attachments,
+      extraData,
+      uploadDataName,
+      uploadDataId,
+    )
+
+    const response = await api.afgreidaSakavottordPost(payload).catch((e) => {
+      throw new Error(`Syslumenn-client: AfgreidaSakavottord failed ${e.type}`)
     })
+
+    const success = response.skilabod === UPLOAD_DATA_SUCCESS
+    if (!success) {
+      throw new Error(`POST AfgreidaSakavottord was not successful`)
+    }
+
+    return mapDataUploadResponse(response)
   }
 
   async checkIfDelegationExists(
