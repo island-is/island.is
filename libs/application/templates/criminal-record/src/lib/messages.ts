@@ -31,18 +31,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
-  userProfileInformationTitle: {
-    id: 'cr.application:userprofile.title',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
-    description: 'Your user profile information',
-  },
-  userProfileInformationSubTitle: {
-    id: 'cr.application:userprofile.subTitle',
-    defaultMessage:
-      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-    description:
-      'In order to apply for this application we need your email and phone number',
-  },
   actionCardDraft: {
     id: 'cr.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
@@ -135,10 +123,15 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um sakavottorð hefur verið staðfest',
     description: '',
   },
-  successDescription: {
-    id: 'cr.application:successDescription',
-    defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
-    description: '',
+  successAlertMessageDescription: {
+    id: 'cr.application:successAlertMessageDescription',
+    defaultMessage: 'Þú getur nú nálgast umsóknina þína í',
+    description: 'Description for success alert message',
+  },
+  successAlertMessageLinkText: {
+    id: 'cr.application:successAlertMessageLinkText',
+    defaultMessage: 'stafrænu pósthólfi á Ísland.is',
+    description: 'Link text for digital inbox on Ísland.is',
   },
   vertificationDescription: {
     id: 'cr.application:vertificationDescription',
@@ -156,11 +149,6 @@ export const m = defineMessages({
     defaultMessage: 'island.is/sannreyna',
     description:
       'The title for the link to further information about the verification',
-  },
-  criminalRecordInboxText: {
-    id: 'cr.application:criminalRecordInboxText',
-    defaultMessage: 'Þú getur fundið sakavottorðið í pósthólfinu þínu',
-    description: 'You can also find the criminal record in your inbox',
   },
   downloadCriminalRecord: {
     id: 'cr.application:downloadCriminalRecord',
