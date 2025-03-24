@@ -48,6 +48,38 @@ jobs:
     with:
       main_branch: ${{ github.base_ref }}
 
+  lint-changed-files:
+    name: Lint Changed Files
+    runs-on: arc-runners
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs
+        if: ${{ inputs.run_merge_queue == false }}
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | tr '\n' ',' | sed 's/,$//')
+          echo "CHANGED_FILES=${CHANGED_FILES}" | tee -a "$GITHUB_ENV"
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Run lint on changed files
+        if: ${{ env.CHANGED_FILES != '' }}
+        run: yarn nx affected -t lint --lintFilePatterns="${CHANGED_FILES}" --verbose
+
   tests:
     needs:
       - prepare
