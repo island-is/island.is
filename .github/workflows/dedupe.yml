@@ -6,7 +6,10 @@ on:
       write:
         default: false
         type: boolean
-        description: 'Update the PR with changes'
+        description: Update the PR with deduplications
+      token:
+        type: string
+        description: Auth token to use for git actions
 
 defaults:
   run:
@@ -53,7 +56,7 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          token: ${{ inputs.token || secrets.DIRTY_FIX_BOT_TOKEN || github.token }}
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup yarn
