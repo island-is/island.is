@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client'
 
 export const CREATE_ORGANIZATION_PERMISSION = gql`
-  mutation FormSystemCreateOrganizationPermission(
+  mutation CreateFormSystemOrganizationPermission(
     $input: FormSystemUpdateOrganizationPermissionInput!
   ) {
-    formSystemCreateOrganizationPermission(input: $input) {
+    createFormSystemOrganizationPermission(input: $input) {
       permission
     }
   }

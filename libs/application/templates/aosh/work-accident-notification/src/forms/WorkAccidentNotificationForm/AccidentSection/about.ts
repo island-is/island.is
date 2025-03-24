@@ -105,7 +105,7 @@ export const aboutSection = buildSubSection({
           placeholder: accident.about.exactLocationPlaceholder,
           maxLength: 100,
           minLength: 1,
-          required: true
+          required: true,
         }),
         buildDescriptionField({
           id: 'accident.describe.descriptionHeading',
@@ -134,7 +134,7 @@ export const aboutSection = buildSubSection({
           rows: 7,
           maxLength: 498,
           required: true,
-          showMaxLength: true
+          showMaxLength: true,
         }),
         buildTextField({
           id: 'accident.wentWrong',
@@ -144,8 +144,7 @@ export const aboutSection = buildSubSection({
           rows: 7,
           maxLength: 498,
           required: true,
-          showMaxLength: true
-
+          showMaxLength: true,
         }),
         buildTextField({
           id: 'accident.how',
@@ -155,8 +154,7 @@ export const aboutSection = buildSubSection({
           rows: 7,
           maxLength: 498,
           required: true,
-          showMaxLength: true
-
+          showMaxLength: true,
         }),
         buildDescriptionField({
           id: 'accident.describe.locationOfAccidentHeading',

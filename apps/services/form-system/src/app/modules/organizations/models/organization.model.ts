@@ -46,17 +46,8 @@ export class Organization extends Model<Organization> {
   @HasMany(() => Form)
   forms?: Form[]
 
-  // @HasMany(() => OrganizationFieldType)
-  // organizationFieldTypes?: OrganizationFieldType[]
-
   @HasMany(() => OrganizationPermission)
   organizationPermissions?: OrganizationPermission[]
-
-  // @HasMany(() => OrganizationCertificationType)
-  // organizationCertificationTypes?: OrganizationCertificationType[]
-
-  // @HasMany(() => OrganizationListType)
-  // organizationListTypes?: OrganizationListType[]
 
   @HasMany(() => OrganizationUrl)
   organizationUrls?: OrganizationUrl[]

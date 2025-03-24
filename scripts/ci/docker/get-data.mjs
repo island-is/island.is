@@ -3,12 +3,10 @@ import fs, { readFileSync } from 'node:fs'
 import jsyaml from 'js-yaml'
 import core from '@actions/core'
 import github from '@actions/github'
-import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs';
+import { MAIN_BRANCHES, RELEASE_BRANCHES } from './const.mjs'
 import { glob } from 'glob'
 
-
-const SHOULD_DEPLOY_JUDICIAL = process.env["SHOULD_DEPLOY_JUDICIAL"] === 'true';
-
+const SHOULD_DEPLOY_JUDICIAL = process.env['SHOULD_DEPLOY_JUDICIAL'] === 'true'
 
 const context = github.context
 const branch = getBranch()
@@ -22,32 +20,31 @@ const judicialDev = []
 const judicialProd = []
 const _KEY_JUDICIAL_PROD = 'MQ_JUDICIAL_PROD'
 
-
 if (!SHOULD_DEPLOY_JUDICIAL) {
   if (typeOfDeployment.dev) {
-    await prepareManifests('dev');
+    await prepareManifests('dev')
   }
 
   if (typeOfDeployment.staging) {
-    await prepareManifests('staging');
+    await prepareManifests('staging')
   }
 
   if (typeOfDeployment.prod) {
-    await prepareManifests('prod');
+    await prepareManifests('prod')
   }
 }
 if (SHOULD_DEPLOY_JUDICIAL) {
-  await prepareManifests('dev');
-  await prepareManifests('staging');
-  await prepareManifests('prod');
+  await prepareManifests('dev')
+  await prepareManifests('staging')
+  await prepareManifests('prod')
 }
 
 const _BOOTSTRAP_CHARTS = 'charts/bootstrap'
 
 if (changedFiles.length > 0) {
-  const bootstrapChart = await glob(`${_BOOTSTRAP_CHARTS}/**/values.*.yaml`);
+  const bootstrapChart = await glob(`${_BOOTSTRAP_CHARTS}/**/values.*.yaml`)
   for (const file of bootstrapChart) {
-    changedFiles.push(file);
+    changedFiles.push(file)
   }
   console.log(`Changed files is ${changedFiles.join(',')}`)
   core.setOutput(_KEY_HAS_OUTPUT, 'true')
@@ -56,7 +53,6 @@ if (changedFiles.length > 0) {
     core.setOutput(_KEY_JUDICIAL_DEV, judicialDev.join(','))
     core.setOutput(_KEY_JUDICIAL_PROD, judicialProd.join(','))
   }
-
 } else {
   console.log('No files changed')
   core.setOutput(_KEY_HAS_OUTPUT, 'false')
@@ -66,15 +62,15 @@ async function prepareManifests(STAGE_NAME) {
   const IMAGE_OBJECT = {}
 
   // Read all manifest files
-  const _MANIFEST_PATHS = !SHOULD_DEPLOY_JUDICIAL ? [
-    'charts/islandis-services',
-    'charts/identity-server-services',
-  ] : ['charts/judicial-system-services']
-  const manifestPath = _MANIFEST_PATHS.length > 1 ? `{${_MANIFEST_PATHS.join(',')}}` : _MANIFEST_PATHS[0];
-  const files = await glob(
-    `${manifestPath}/**/values.${STAGE_NAME}.yaml`,
-  )
-  console.log(files);
+  const _MANIFEST_PATHS = !SHOULD_DEPLOY_JUDICIAL
+    ? ['charts/islandis-services', 'charts/identity-server-services']
+    : ['charts/judicial-system-services']
+  const manifestPath =
+    _MANIFEST_PATHS.length > 1
+      ? `{${_MANIFEST_PATHS.join(',')}}`
+      : _MANIFEST_PATHS[0]
+  const files = await glob(`${manifestPath}/**/values.${STAGE_NAME}.yaml`)
+  console.log(files)
   for (const file of files) {
     const textContent = readFileSync(file, 'utf8')
     const yamlContent = await jsyaml.load(textContent)
@@ -100,7 +96,6 @@ async function prepareManifests(STAGE_NAME) {
   await parseData(IMAGE_OBJECT)
 }
 
-
 async function parseData(IMAGE_OBJECT) {
   const fileName = `/tmp/data.json`
   if (!fs.existsSync(fileName)) {
@@ -123,7 +118,7 @@ async function parseData(IMAGE_OBJECT) {
           if (filePath.endsWith('.dev.yaml')) {
             judicialDev.push(filePath)
           } else {
-            judicialProd.push(filePath);
+            judicialProd.push(filePath)
           }
         }
         console.info(`Updated ${filePath}`)

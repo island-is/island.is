@@ -24,11 +24,11 @@ export const Permission = ({
   const [addPermission] = useMutation(CREATE_ORGANIZATION_PERMISSION, {
     onCompleted: (newPermissionData) => {
       if (
-        newPermissionData?.formSystemCreateOrganizationPermission?.permission
+        newPermissionData?.createFormSystemOrganizationPermission?.permission
       ) {
         setSelectedPermissionsState((prevPermissions) => [
           ...prevPermissions,
-          newPermissionData.formSystemCreateOrganizationPermission?.permission,
+          newPermissionData.createFormSystemOrganizationPermission?.permission,
         ])
       }
     },

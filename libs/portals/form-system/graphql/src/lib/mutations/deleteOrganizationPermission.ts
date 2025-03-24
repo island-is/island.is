@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
 
 export const DELETE_ORGANIZATION_PERMISSION = gql`
-  mutation FormSystemDeleteOrganizationPermission(
+  mutation DeleteFormSystemOrganizationPermission(
     $input: FormSystemUpdateOrganizationPermissionInput!
   ) {
-    formSystemDeleteOrganizationPermission(input: $input)
+    deleteFormSystemOrganizationPermission(input: $input)
   }
 `

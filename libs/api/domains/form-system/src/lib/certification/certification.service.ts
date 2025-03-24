@@ -7,7 +7,6 @@ import {
   FormCertificationTypesApi,
   FormCertificationTypesControllerCreateRequest,
   FormCertificationTypesControllerDeleteRequest,
-  OrganizationPermissionsApi,
 } from '@island.is/clients/form-system'
 import {
   CreateCertificationInput,
@@ -20,7 +19,6 @@ export class CertificationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private certificationsApi: FormCertificationTypesApi,
-    private organizationPermissionsApi: OrganizationPermissionsApi,
   ) {}
 
   // eslint-disable-next-line
@@ -36,12 +34,6 @@ export class CertificationsService {
 
   private certificationsApiWithAuth(auth: User) {
     return this.certificationsApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private organizationPermissionsApiWithAuth(auth: User) {
-    return this.organizationPermissionsApi.withMiddleware(
-      new AuthMiddleware(auth),
-    )
   }
 
   async createCertification(

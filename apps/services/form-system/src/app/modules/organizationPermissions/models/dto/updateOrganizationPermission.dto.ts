@@ -11,9 +11,4 @@ export class UpdateOrganizationPermissionDto {
   @IsString()
   @ApiProperty()
   permission!: string
-
-  // @IsNotEmpty()
-  // @IsString()
-  // @ApiProperty()
-  // type!: string
 }
