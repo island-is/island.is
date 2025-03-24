@@ -169,11 +169,18 @@ export const ParticipantSchema = z.object({
   disabled: z.string().optional(),
 })
 
+const PersonalValidationSchema = z
+  .object({
+    canRegister: z.boolean(),
+    registerMany: z.boolean(),
+  })
+  .refine((v) => v.canRegister || v.registerMany)
+
 export const SeminarAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: UserInformationSchema,
   paymentArrangement: PaymentArrangementSchema,
-  personalValidation: z.boolean().refine((v) => v),
+  personalValidation: PersonalValidationSchema,
   participantList: z.array(ParticipantSchema).refine(
     (pList) => {
       const hasDisabled = pList.filter((x) => x.disabled === 'true')
