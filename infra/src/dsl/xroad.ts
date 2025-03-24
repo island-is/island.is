@@ -888,7 +888,7 @@ export const OfficialJournalOfIceland = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal',
     },
   },
 })
