@@ -63,6 +63,7 @@ import { emailModuleConfig } from '@island.is/email-service'
 import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 @Module({
@@ -126,6 +127,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         sharedModuleConfig,
         UserNotificationClientConfig,
         NationalRegistryV3ClientConfig,
+        SeminarsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiClientConfig,
       ],

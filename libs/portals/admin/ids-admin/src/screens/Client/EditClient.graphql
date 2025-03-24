@@ -23,6 +23,7 @@ mutation UpdateClient($input: AuthAdminPatchClientInput!) {
     singleSession
     accessTokenLifetime
     allowOfflineAccess
+    sso
     customClaims {
       type
       value
