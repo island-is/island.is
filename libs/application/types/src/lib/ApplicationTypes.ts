@@ -428,6 +428,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PRACTICAL_EXAM]: {
     slug: 'verklegt-prof',
     translation: ['aosh.pe.application'],
+  },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
     translation: ['aosh.sem.application'],
