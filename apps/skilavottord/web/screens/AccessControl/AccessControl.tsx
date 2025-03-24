@@ -200,9 +200,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
 
-  console.log('recyclingPartners', recyclingPartners)
-  console.log('municipalities', municipalities)
-
+  // Add current user muncipality as recycling partner
   if (hasMunicipalityRole(user?.role)) {
     if (userMunicipalityData) {
       const userMunicipality =
@@ -380,6 +378,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
                               } else {
                                 getAllRecyclingPartner()
                               }
+                              getUserMunicipality()
                               setPartner(item)
                             },
                           },

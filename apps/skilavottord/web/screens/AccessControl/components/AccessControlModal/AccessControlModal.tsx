@@ -70,17 +70,17 @@ export const AccessControlModal: FC<
   const [showMunicipalities, setShowMunicipalitiesSelection] = useState(false)
 
   useEffect(() => {
-    if (
-      currentPartner &&
-      currentPartner.role === AccessControlRole.municipality
-    ) {
-      setShowCompaniesSelection(false)
-      setShowMunicipalitiesSelection(true)
+    const isCurrentPartnerMunicipality =
+      currentPartner?.role === AccessControlRole.municipality
+
+    if (user?.role === Role.municipality) {
+      setShowCompaniesSelection(!isCurrentPartnerMunicipality)
+      setShowMunicipalitiesSelection(false) // User with municipality role shall not be able to select other municipality
     } else {
-      setShowCompaniesSelection(true)
-      setShowMunicipalitiesSelection(false)
+      setShowCompaniesSelection(!isCurrentPartnerMunicipality)
+      setShowMunicipalitiesSelection(isCurrentPartnerMunicipality)
     }
-  }, [currentPartner])
+  }, [currentPartner, user])
 
   const handleRoleOnChange = (e: Option) => {
     // If the user selects municipality we don't need to select a recycling partner since muncipality can't be a recycling partner worker
@@ -122,8 +122,6 @@ export const AccessControlModal: FC<
           value: partner.value,
         }))
 
-      console.log('municipalities', municipalities)
-
       // Build the select options
       return [
         // Map municipalities and their recycling companies
@@ -140,14 +138,13 @@ export const AccessControlModal: FC<
             value: municipality.value,
             options: [
               {
-                label: `${municipality.label}`,
+                label: municipality.label,
                 value: municipality.value,
               },
               ...relatedRecyclingCompanies,
             ],
           }
         }) ?? []),
-        // Add "Other" category
         {
           label: 'Aðrir',
           value: '-1',
