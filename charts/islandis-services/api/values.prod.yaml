@@ -66,7 +66,7 @@ env:
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
-  PAYMENTS_API_URL: 'http://web-services-payments.services-payments.svc.cluster.local'
+  PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
   REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
   SEND_FROM_EMAIL: 'island@island.is'
