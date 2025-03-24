@@ -29,7 +29,6 @@ export const AssetsRepeater: FC<
     name: id,
   })
   const { control, clearErrors } = useFormContext()
-
   const estateData = getEstateDataFromApplication(application)
 
   useEffect(() => {

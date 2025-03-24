@@ -8,7 +8,7 @@ import {
   PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import * as kennitala from 'kennitala'
+import * as nationalId from 'kennitala'
 import {
   Box,
   GridColumn,
@@ -58,7 +58,6 @@ export const AdditionalEstateMember = ({
 
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
-
   const selectedEstate = application.answers.selectedEstate
 
   const foreignCitizenship = useWatch({
@@ -79,10 +78,10 @@ export const AdditionalEstateMember = ({
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
           ?.years
-      : kennitala.info(currentEstateMember.nationalId)?.age
+      : nationalId.info(currentEstateMember.nationalId)?.age
 
   const hideContactInfo =
-    kennitala.isPerson(currentEstateMember.nationalId) &&
+    nationalId.isPerson(currentEstateMember.nationalId) &&
     memberAge !== undefined &&
     memberAge < 18
 
