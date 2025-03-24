@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCustomField,
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
@@ -105,12 +104,12 @@ export const personalInformationSection = buildSection({
           },
           options: [
             {
-              value: RegisterNumber.many,
-              label: personalMessages.labels.isApplyinForOthersRadioYes,
-            },
-            {
               value: RegisterNumber.one,
               label: personalMessages.labels.isApplyinForOthersRadioNo,
+            },
+            {
+              value: RegisterNumber.many,
+              label: personalMessages.labels.isApplyinForOthersRadioYes,
             },
           ],
         }),
