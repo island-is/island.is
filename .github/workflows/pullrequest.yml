@@ -246,12 +246,6 @@ jobs:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Derive appropriate SHAs
-        if: ${{ inputs.run_merge_queue == false }}
-        uses: nrwl/nx-set-shas@v4
-        with:
-          main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
-
       - name: Get changed files
         id: changed-files
         run: |
