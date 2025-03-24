@@ -1,6 +1,7 @@
 name: Validate code in the merge queue (post merge)
 
 on:
+  workflow_dispatch: {}
   merge_group:
 
 defaults:
@@ -101,6 +102,7 @@ jobs:
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
+          exit 1
       - name: load-deps
         uses: ./.github/actions/load-deps
       - name: Docker login to ECR repo
