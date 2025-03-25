@@ -6,12 +6,13 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
 import { legalGazetteDataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
-import { LEGAL_GAZETTE_STATES } from './constants'
+import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
 import { m } from './messages'
 
 type ReferenceTemplateEvent =
@@ -43,9 +44,9 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
   dataSchema: legalGazetteDataSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
-    initial: LEGAL_GAZETTE_STATES.PREREQUISITES,
+    initial: LegalGazetteStates.PREREQUISITES,
     states: {
-      [LEGAL_GAZETTE_STATES.PREREQUISITES]: {
+      [LegalGazetteStates.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
           progress: 0,
@@ -55,6 +56,12 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
+          onEntry: defineTemplateApi({
+            action: LegalGazetteAPIActions.getUserLegalEntities,
+            shouldPersistToExternalData: true,
+            externalDataId: 'legalEntities',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -73,11 +80,11 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: LEGAL_GAZETTE_STATES.DRAFT,
+            target: LegalGazetteStates.DRAFT,
           },
         },
       },
-      [LEGAL_GAZETTE_STATES.DRAFT]: {
+      [LegalGazetteStates.DRAFT]: {
         meta: {
           name: 'Uppsetning',
           progress: 0.5,

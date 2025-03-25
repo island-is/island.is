@@ -62,22 +62,32 @@ export const m = {
         description: 'Villa sem kemur upp ef notandi samþykkir ekki skilyrði',
       },
     }),
-    institution: defineMessages({
+    legalEntity: defineMessages({
       sectionTitle: {
-        id: 'lg.application:requirements.institution.section.title',
+        id: 'lg.application:requirements.legalEntity.section.title',
         defaultMessage: 'Lögaðilar',
         description: 'Heiti kafla Lögaðilar',
       },
       formTitle: {
-        id: 'lg.application:requirements.institution.form.title',
+        id: 'lg.application:requirements.legalEntity.form.title',
         defaultMessage: 'Veldu lögaðila',
         description: 'Titill á skjá Stofnun',
       },
       formIntro: {
-        id: 'lg.application:requirements.institution.form.intro',
+        id: 'lg.application:requirements.legalEntity.form.intro',
         defaultMessage:
           'Þú hefur aðgang að fleiri en einum lögaðila, veldu þann sem þú vilt senda auglýsingu fyrir.',
         description: 'Inngangur á skjá Stofnun',
+      },
+      selectTitle: {
+        id: 'lg.application:requirements.legalEntity.select.title',
+        defaultMessage: 'Veldu lögaðila',
+        description: 'Titill á dropdown á skjá Stofnun',
+      },
+      selectError: {
+        id: 'lg.application:requirements.legalEntity.select.error',
+        defaultMessage: 'Þú verður að velja lögaðila til að halda áfram',
+        description: 'Villa sem kemur upp ef notandi velur ekki lögaðila',
       },
     }),
   },

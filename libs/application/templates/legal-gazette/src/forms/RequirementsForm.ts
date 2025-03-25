@@ -7,8 +7,15 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   YesOrNoEnum,
+  buildSelectField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  Option,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const RequirementsForm: Form = buildForm({
@@ -60,13 +67,30 @@ export const RequirementsForm: Form = buildForm({
       ],
     }),
     buildSection({
-      title: m.requirements.institution.sectionTitle,
+      title: m.requirements.legalEntity.sectionTitle,
       children: [
         buildMultiField({
-          title: m.requirements.institution.formTitle,
+          title: m.requirements.legalEntity.formTitle,
           children: [
+            buildDescriptionField({
+              id: 'legalEntity_description',
+              description: m.requirements.legalEntity.formIntro,
+            }),
+            buildSelectField({
+              id: 'advert.legalEntity',
+              title: m.requirements.legalEntity.selectTitle,
+              width: 'half',
+              options(application) {
+                const legalEntities = getValueViaPath<Option[]>(
+                  application.externalData,
+                  'legalEntities.data',
+                )
+
+                return legalEntities ?? []
+              },
+            }),
             buildSubmitField({
-              id: 'toinstitution',
+              id: 'toDraft',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

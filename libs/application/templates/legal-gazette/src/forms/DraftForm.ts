@@ -14,11 +14,11 @@ export const DraftForm: Form = buildForm({
   children: [
     buildSection({
       id: 'draft_section',
-      title: m.requirements.institution.sectionTitle,
+      title: m.requirements.legalEntity.sectionTitle,
       children: [
         buildDescriptionField({
           id: 'draft_title',
-          title: m.requirements.institution.formTitle,
+          title: m.requirements.legalEntity.formTitle,
         }),
       ],
     }),
