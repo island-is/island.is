@@ -89,7 +89,7 @@ export let Envs: EnvironmentConfigs = {
     featuresOn: [FeatureNames.drivingLicense],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
-    releaseName: 'web',
+    releaseName: '',
     redisHost: JSON.stringify([
       'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
     ]),
@@ -120,7 +120,7 @@ export let Envs: EnvironmentConfigs = {
     featuresOn: [FeatureNames.drivingLicense],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
-    releaseName: 'web',
+    releaseName: '',
     redisHost: JSON.stringify([
       'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
     ]),

@@ -5,6 +5,7 @@ import { renderHook } from '@testing-library/react'
 
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseOrigin,
@@ -14,7 +15,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import useSections from './index'
 
