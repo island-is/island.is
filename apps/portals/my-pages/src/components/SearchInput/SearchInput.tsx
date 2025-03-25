@@ -1,5 +1,6 @@
 import {
   AsyncSearch,
+  AsyncSearchInput,
   AsyncSearchOption,
   Breadcrumbs,
   Text,
@@ -14,6 +15,7 @@ import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
 import { MessageDescriptor } from 'react-intl'
+import { useCombobox } from 'downshift'
 
 interface ModuleSet {
   title: string
@@ -107,6 +109,8 @@ export const SearchInput = ({ white, colored }: Props) => {
   const { formatMessage } = useLocale()
   const [query, setQuery] = useState<string>()
 
+  const [hasFocus, setHasFocus] = useState<boolean>(false)
+
   const data = useMemo(() => {
     return getNavigationItems(MAIN_NAVIGATION, [], formatMessage)
   }, [formatMessage])
@@ -151,6 +155,14 @@ export const SearchInput = ({ white, colored }: Props) => {
     return []
   }, [fuse, query])
 
+  const { getMenuProps, getItemProps, getInputProps } = useCombobox({
+    items: searchResults,
+    itemToString: (item: AsyncSearchOption | null) => (item ? item.label : ''),
+  })
+
+  return <AsyncSearchInput hasFocus={hasFocus}></AsyncSearchInput>
+
+  /*
   return (
     <AsyncSearch
       ref={ref}
@@ -170,5 +182,5 @@ export const SearchInput = ({ white, colored }: Props) => {
         }
       }}
     />
-  )
+    ) */
 }
