@@ -1,6 +1,7 @@
 name: Validate code in the merge queue (post merge)
 
 on:
+  workflow_dispatch: {}
   merge_group:
 
 defaults:
@@ -48,7 +49,8 @@ jobs:
     secrets: inherit
     with:
       run_merge_queue: true
-      main_branch: ${{ github.event.merge_group.base_ref  }}
+      force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
+      main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
     needs:
       - pre-checks
   docker-build:
