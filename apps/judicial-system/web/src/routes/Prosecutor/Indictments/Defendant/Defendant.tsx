@@ -9,7 +9,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
@@ -27,6 +26,7 @@ import {
   CaseOrigin,
   Defendant as TDefendant,
   Gender,
+  IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'

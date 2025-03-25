@@ -1,5 +1,7 @@
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentCountOffense,
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'

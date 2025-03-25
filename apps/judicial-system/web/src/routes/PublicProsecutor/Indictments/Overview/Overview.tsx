@@ -5,10 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, Button, Option, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
-import {
-  CaseIndictmentRulingDecision,
-  IndictmentCaseReviewDecision,
-} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -28,7 +24,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
+  CaseIndictmentRulingDecision,
   Defendant,
+  IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {

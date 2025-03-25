@@ -16,7 +16,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   hasTrafficViolationSubtype,
-  IndictmentSubtype,
   isTrafficViolationCase,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
@@ -30,6 +29,7 @@ import {
   Gender,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
+  IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'

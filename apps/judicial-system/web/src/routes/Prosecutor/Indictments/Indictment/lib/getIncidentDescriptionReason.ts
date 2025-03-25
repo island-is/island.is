@@ -1,12 +1,11 @@
 import { IntlShape } from 'react-intl'
 
+import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 import {
   Gender,
   IndictmentCountOffense,
-  Substance,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   indictmentCount as cStrings,
