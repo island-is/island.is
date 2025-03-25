@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { IntlShape, MessageDescriptor, useIntl } from 'react-intl'
 
 import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
@@ -10,7 +10,8 @@ import {
   Subpoena,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useGetLawyer, useSubpoena } from '../../utils/hooks'
+import { useSubpoena } from '../../utils/hooks'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import { strings } from './ServiceAnnouncement.strings'
 
 const mapServiceStatusTitle = (
@@ -93,20 +94,35 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { subpoena: localSubpoena, defendantName } = props
+  const [lawyer, setLawyer] = useState<Lawyer>()
 
   const { subpoena, subpoenaLoading } = useSubpoena(localSubpoena)
 
   const { formatMessage } = useIntl()
 
-  const lawyer = useGetLawyer(
-    subpoena?.defenderNationalId,
-    subpoena?.serviceStatus === ServiceStatus.DEFENDER,
-  )
+  const { lawyers } = useContext(LawyerRegistryContext)
 
   const title = mapServiceStatusTitle(subpoena?.serviceStatus)
   const messages = subpoena
     ? mapServiceStatusMessages(subpoena, formatMessage, lawyer)
     : []
+
+  useEffect(() => {
+    if (
+      !subpoena?.defenderNationalId ||
+      subpoena?.serviceStatus !== ServiceStatus.DEFENDER ||
+      !lawyers ||
+      lawyers.length === 0
+    ) {
+      return
+    }
+
+    setLawyer(
+      lawyers.find(
+        (lawyer) => lawyer.nationalId === subpoena.defenderNationalId,
+      ),
+    )
+  }, [lawyers, subpoena?.defenderNationalId, subpoena?.serviceStatus])
 
   return subpoenaLoading ? (
     <Box display="flex" justifyContent="center" paddingY={5}>
