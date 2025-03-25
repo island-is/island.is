@@ -24,11 +24,11 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
+  Case,
   CaseFileCategory,
   NotificationType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useS3Upload,
@@ -42,7 +42,7 @@ import {
 import { strings } from './AddFiles.strings'
 
 const getUserProps = (user: User | undefined) => {
-  const getCaseInfoNode = (workingCase: TempCase) => (
+  const getCaseInfoNode = (workingCase: Case) => (
     <ProsecutorCaseInfo workingCase={workingCase} />
   )
   if (isDefenceUser(user)) {
@@ -55,7 +55,7 @@ const getUserProps = (user: User | undefined) => {
   } else if (isDistrictCourtUser(user)) {
     return {
       previousRoute: constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
-      getCaseInfoNode: (workingCase: TempCase) => (
+      getCaseInfoNode: (workingCase: Case) => (
         <CourtCaseInfo workingCase={workingCase} />
       ),
       hasFileRepresentativeSelection: true,
