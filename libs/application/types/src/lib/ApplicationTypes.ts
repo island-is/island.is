@@ -55,6 +55,7 @@ export enum ApplicationTypes {
   PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
   PARLIAMENTARY_LIST_SIGNING = 'ParliamentaryListSigning',
   MUNICIPAL_LIST_CREATION = 'MunicipalListCreation',
+  MUNICIPAL_LIST_SIGNING = 'MunicipalListSigning',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -77,11 +78,13 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
   EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
-  EXAMPLE_FIELDS = 'ExampleFields',
+  EXAMPLE_INPUTS = 'ExampleInputs',
+  EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
 }
 
 export const ApplicationConfigurations = {
@@ -97,9 +100,13 @@ export const ApplicationConfigurations = {
     slug: 'example-state-transfers',
     translation: 'ets.application',
   },
-  [ApplicationTypes.EXAMPLE_FIELDS]: {
-    slug: 'example-fields',
+  [ApplicationTypes.EXAMPLE_INPUTS]: {
+    slug: 'example-inputs',
     translation: 'ef.application',
+  },
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
+    slug: 'example-no-inputs',
+    translation: 'eni.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
@@ -321,6 +328,10 @@ export const ApplicationConfigurations = {
     slug: 'sveitarstjornar-medmaelasofnun',
     translation: 'mlc.application',
   },
+  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: {
+    slug: 'maela-med-sveitarstjornarframbodi',
+    translation: 'mls.application',
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: ['doi.cs.application', 'uiForms.application'],
@@ -412,6 +423,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
+  },
+  [ApplicationTypes.SEMINAR_REGISTRATION]: {
+    slug: 'vinnueftirlitid-namskeid',
+    translation: ['aosh.sem.application'],
   },
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     slug: 'kennslurettindi-a-vinnuvel',

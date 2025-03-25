@@ -2,6 +2,7 @@ import faker from 'faker'
 
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
+  Case,
   CaseAppealState,
   CaseFile,
   CaseFileCategory,
@@ -15,7 +16,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 
@@ -79,7 +79,7 @@ export const mockJudgeQuery = [
     },
     result: {
       data: {
-        currentUser: mockJudge,
+        currentUser: { user: mockJudge },
       },
     },
   },
@@ -92,7 +92,7 @@ export const mockCourtOfAppealsJudgeQuery = [
     },
     result: {
       data: {
-        currentUser: mockCourtOfAppealsUser,
+        currentUser: { user: mockCourtOfAppealsUser },
       },
     },
   },
@@ -105,7 +105,7 @@ export const mockPrisonUserQuery = [
     },
     result: {
       data: {
-        currentUser: mockPrisonUser,
+        currentUser: { user: mockPrisonUser },
       },
     },
   },
@@ -118,7 +118,7 @@ export const mockProsecutorQuery = [
     },
     result: {
       data: {
-        currentUser: mockProsecutor,
+        currentUser: { user: mockProsecutor },
       },
     },
   },

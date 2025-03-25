@@ -12,7 +12,6 @@ export {
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
   formatDefenderCourtDateEmailNotification,
-  formatDefenderRevokedEmailNotification,
   formatPrisonAdministrationRulingNotification,
   formatPrisonCourtDateEmailNotification,
   formatPrisonRevokedEmailNotification,
@@ -37,3 +36,4 @@ export { createIndictment } from './indictmentPdf'
 export { createConfirmedPdf } from './confirmedPdf'
 export { createSubpoena } from './subpoenaPdf'
 export { createServiceCertificate } from './serviceCertificatePdf'
+export { createRulingSentToPrisonAdminPdf } from './rulingSentToPrisonAdminPdf'

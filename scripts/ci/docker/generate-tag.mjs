@@ -20,13 +20,15 @@ const tagName = getTagname()
 
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
+core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release');
+core.setOutput('DEPLOY_JUDICIAL', targetBranch === 'main');
 core.setOutput('GIT_BRANCH', targetBranch)
 core.setOutput('GIT_SHA', sha)
 console.info(`Artifact name: ${artifactName}`)
 console.info(`Docker tag: ${tagName}`)
 console.info(`Git branch: ${targetBranch}`)
 console.info(`Git SHA: ${sha}`)
-
+console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
 function shouldRun() {
     if (eventName === 'merge_group') {
@@ -51,7 +53,8 @@ function getTagname() {
             return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
-            return `release_${dateString}_${randomTag}`
+            const version = targetBranch.replace('release/', '');
+            return `release_${version}_${randomTag}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }
@@ -119,3 +122,4 @@ function createRandomString(length) {
     }
     return result
 }
+

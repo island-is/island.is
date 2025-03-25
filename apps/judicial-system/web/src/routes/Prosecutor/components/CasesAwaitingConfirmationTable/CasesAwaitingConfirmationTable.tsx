@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -60,6 +60,8 @@ const CasesAwaitingConfirmationTable: FC<
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortBy: 'policeCaseNumbers',
+                  sortFn: 'number',
                 },
                 {
                   title: capitalize(

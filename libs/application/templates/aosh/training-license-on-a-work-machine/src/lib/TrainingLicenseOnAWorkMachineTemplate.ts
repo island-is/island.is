@@ -173,6 +173,9 @@ const template: ApplicationTemplate<
         meta: {
           name: applicationMessage.name.defaultMessage,
           status: FormModes.DRAFT,
+          onEntry: defineTemplateApi({
+            action: ApiActions.initReview,
+          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
