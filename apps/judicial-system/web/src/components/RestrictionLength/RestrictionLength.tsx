@@ -8,10 +8,10 @@ import {
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import BlueBox from '../BlueBox/BlueBox'
 import DateTime from '../DateTime/DateTime'
