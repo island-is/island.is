@@ -168,12 +168,20 @@ const AddFiles: FC = () => {
       // Some files were added successfully so we send a notification
       sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
     }
+
+    setVisibleModal(undefined)
+
+    if (uploadResult === 'ALL_SUCCEEDED') {
+      router.push(previousRoute)
+    }
   }, [
     handleUpload,
     sendNotification,
     updateUploadFile,
     uploadFiles,
     workingCase.id,
+    router,
+    previousRoute,
   ])
 
   const CaseInfo = getCaseInfoNode(workingCase)
@@ -252,7 +260,6 @@ const AddFiles: FC = () => {
           onSecondaryButtonClick={() => setVisibleModal(undefined)}
           onPrimaryButtonClick={async () => {
             await handleNextButtonClick()
-            router.push(previousRoute)
           }}
         />
       )}
