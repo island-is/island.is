@@ -131,12 +131,17 @@ export class DocumentResolverV2 {
       namespace: '@island.is/api/document-v2',
       action: 'confirmModal',
       resources: input.id,
-      meta: { confirmed: input.confirmed, isCourtCase: true },
+      meta: {
+        confirmed: input.confirmed,
+        isCourtCase: true,
+        actions: input.actions,
+      },
     })
     this.logger.info('confirming urgent document modal', {
       category: LOG_CATEGORY,
       id: input.id,
       confirmed: input.confirmed,
+      actions: input.actions,
       isCourtCase: true,
     })
     return { id: input.id, confirmed: input.confirmed }

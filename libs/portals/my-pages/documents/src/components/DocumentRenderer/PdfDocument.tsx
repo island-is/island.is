@@ -7,7 +7,7 @@ import { ActiveDocumentType2 } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentRenderer.css'
-import { usePdfRendererLazyQuery } from './PdfRenderer.generated'
+import { usePdfRendererLazyQuery } from '../../queries/PdfRenderer.generated'
 
 type PdfDocumentProps = {
   document: ActiveDocumentType2
