@@ -139,8 +139,9 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Ekki skráð'
   }
 }
+
 export const getRoleTitleFromCaseFileCategory = (
-  category?: CaseFileCategory,
+  category?: CaseFileCategory | null,
 ) => {
   switch (category) {
     case CaseFileCategory.PROSECUTOR_CASE_FILE:

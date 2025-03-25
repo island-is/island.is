@@ -93,7 +93,7 @@ const CaseFileTable: FC<Props> = ({
                 <Text variant="small">
                   {formatMessage(strings.submittedBy, {
                     title: getRoleTitleFromCaseFileCategory(
-                      file.category || undefined,
+                      file.category ?? null,
                     ),
                     initials: getInitials(
                       file.fileRepresentative ?? file.submittedBy,
