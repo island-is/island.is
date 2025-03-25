@@ -31,10 +31,6 @@ export class UpdateUserInput {
   readonly role!: UserRole
 
   @Allow()
-  @Field(() => ID)
-  readonly institutionId!: string
-
-  @Allow()
   @Field(() => Boolean)
   readonly active!: boolean
 
