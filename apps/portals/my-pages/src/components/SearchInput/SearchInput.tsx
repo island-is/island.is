@@ -8,12 +8,13 @@ import { useMemo, useRef, useState } from 'react'
 import Fuse, { IFuseOptions } from 'fuse.js'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { PortalNavigationItem } from '@island.is/portals/core'
+import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
 import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
 import { MessageDescriptor } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 
 interface ModuleSet {
   title: string
@@ -107,6 +108,8 @@ export const SearchInput = ({ white, colored }: Props) => {
   const { formatMessage } = useLocale()
   const [query, setQuery] = useState<string>()
 
+  const navigate = useNavigate()
+
   const data = useMemo(() => {
     return getNavigationItems(MAIN_NAVIGATION, [], formatMessage)
   }, [formatMessage])
@@ -160,11 +163,12 @@ export const SearchInput = ({ white, colored }: Props) => {
       white={white}
       options={searchResults ?? []}
       inputValue={query}
-      closeMenuOnSubmit
+      openMenuOnFocus
+      onSubmit={(_, option) => {
+        const uri = option?.value
+        uri && navigate(uri)
+      }}
       onInputValueChange={(value) => {
-        if (!value && query) {
-          setQuery(undefined)
-        }
         if (value && value !== query) {
           setQuery(value)
         }
