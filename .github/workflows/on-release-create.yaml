@@ -1,10 +1,13 @@
 name: Release created
 
+
 on:
-  pull_request:
-  
+  push:
+    branches:
+      - 'releases/**'
 jobs:
     mq:
+        if: github.event.created
         runs-on: arc-runners
         steps:
         - run: |
