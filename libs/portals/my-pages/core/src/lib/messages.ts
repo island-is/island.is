@@ -858,6 +858,18 @@ export const m = defineMessages({
     id: 'service.portal:search-by-national-id',
     defaultMessage: 'Leita eftir kennitölu',
   },
+  resultFound: {
+    id: 'service.portal:search-result-found',
+    defaultMessage: '{arg} styrkur fannst',
+  },
+  resultsFound: {
+    id: 'service.portal:search-results-found',
+    defaultMessage: '{arg} styrkir fundust',
+  },
+  noResultsFound: {
+    id: 'service.portal:search-no-results-found',
+    defaultMessage: 'Engir styrkir fundust',
+  },
   actions: {
     id: 'service.portal:actions',
     defaultMessage: 'Aðgerðir',

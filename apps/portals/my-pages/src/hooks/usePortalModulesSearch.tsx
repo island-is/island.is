@@ -12,6 +12,8 @@ interface ModuleSet {
   intro?: string
   keywords?: Array<string>
   uri: string
+
+  icon?: PortalNavigationItem['icon']
 }
 
 const options: IFuseOptions<ModuleSet> = {
@@ -82,6 +84,7 @@ const getNavigationItems = (
       keywords: data.searchTags
         ? data.searchTags.map((st) => formatMessage(st))
         : undefined,
+      icon: data.icon,
     })
   }
 

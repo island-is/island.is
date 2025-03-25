@@ -2,10 +2,14 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  CategoryCard,
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Input,
+  Link,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -41,6 +45,20 @@ const Search = () => {
     return []
   }, [search, query])
 
+  const hitsMessage = useMemo(() => {
+    if (!searchResults.length) {
+      return
+    }
+    if (searchResults.length === 1) {
+      return formatMessage(m.resultFound, {
+        arg: <strong>{searchResults.length}</strong>,
+      })
+    }
+    return formatMessage(m.resultsFound, {
+      arg: <strong>{searchResults.length}</strong>,
+    })
+  }, [formatMessage, searchResults])
+
   return (
     <GridContainer>
       <GridRow>
@@ -51,10 +69,9 @@ const Search = () => {
             <Input
               ref={ref}
               name="search-input"
-              placeholder="Leita"
+              placeholder={formatMessage(m.searchLabel)}
               backgroundColor="blue"
               aria-label="Search input"
-              onClick={() => console.log('click')}
               onKeyDown={(e) => {
                 if (e.code === 'Enter' && ref.current?.value) {
                   setQuery(ref.current.value)
@@ -71,9 +88,33 @@ const Search = () => {
       </GridRow>
       <GridRow marginTop={4}>
         <GridColumn offset="2/12" span="8/12">
-          <Box display="flex" justifyContent="spaceBetween">
-            <Text>{`${searchResults.length} leitarniðurstöður fundust`}</Text>
-          </Box>
+          <Text marginBottom={2}>{hitsMessage}</Text>
+          <Stack space={3}>
+            {searchResults?.map((s) => {
+              return (
+                <CategoryCard
+                  autoStack
+                  hyphenate
+                  truncateHeading
+                  component={Link}
+                  href={`${ServicePortalPaths.Base}${s.item.uri}`}
+                  icon={
+                    s.item.icon ? (
+                      <Icon
+                        icon={s.item.icon.icon}
+                        type="outline"
+                        color="blue400"
+                      />
+                    ) : undefined
+                  }
+                  heading={formatMessage(s.item.title)}
+                  text={
+                    s.item.description ? formatMessage(s.item.description) : ''
+                  }
+                />
+              )
+            })}
+          </Stack>
         </GridColumn>
       </GridRow>
     </GridContainer>

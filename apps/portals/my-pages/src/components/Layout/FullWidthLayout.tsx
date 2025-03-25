@@ -65,8 +65,6 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     DocumentsScope.main,
   )
 
-  console.log(isSearch)
-
   return (
     <Box
       as="main"
