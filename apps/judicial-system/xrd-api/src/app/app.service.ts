@@ -18,11 +18,11 @@ import {
 import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
 
+import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { Case } from './models/case.model'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
-import { CreateCaseDto } from './app.dto'
-import { Case } from './app.model'
 
 @Injectable()
 export class AppService {

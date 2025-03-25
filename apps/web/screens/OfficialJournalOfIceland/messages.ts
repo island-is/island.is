@@ -6,6 +6,10 @@ export const m = {
       id: 'web.ojoi.breadcrumb.frontpage',
       defaultMessage: 'Ísland.is',
     },
+    help: {
+      id: 'web.ojoi.breadcrumb.help',
+      defaultMessage: 'Leiðbeiningar',
+    },
   }),
   general: defineMessages({
     seeMore: {
@@ -361,6 +365,12 @@ export const m = {
       id: 'web.ojoi:rss.departmentC',
       defaultMessage:
         'Í C-deild Stjórnartíðinda skal birta samninga við önnur ríki, svo og auglýsingar varðandi gildi þeirra, sbr. 1. mgr. 4. gr. laga nr. 15/2005.',
+    },
+  }),
+  help: defineMessages({
+    title: {
+      id: 'web.ojoi:help.title',
+      defaultMessage: 'Leiðbeiningar fyrir Stjórnartíðindi',
     },
   }),
 }

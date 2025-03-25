@@ -222,8 +222,6 @@ query Case($input: CaseQueryInput!) {
         offense
         substances
       }
-      deprecatedOffenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments

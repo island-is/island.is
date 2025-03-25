@@ -21,6 +21,7 @@ const tagName = getTagname()
 core.setOutput('ARTIFACT_NAME', artifactName)
 core.setOutput('DOCKER_TAG', tagName)
 core.setOutput('HELM_VALUES_BRANCH', typeOfDeployment.dev ? 'main' : 'release');
+core.setOutput('DEPLOY_JUDICIAL', targetBranch === 'main');
 core.setOutput('GIT_BRANCH', targetBranch)
 core.setOutput('GIT_SHA', sha)
 console.info(`Artifact name: ${artifactName}`)
@@ -30,7 +31,7 @@ console.info(`Git SHA: ${sha}`)
 console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
 function shouldRun() {
-    if (eventName === 'merge_group') {
+    if (eventName === 'merge_group' || eventName === 'workflow_dispatch') {
         if (MAIN_BRANCHES.includes(targetBranch)) {
             return true;
         }
@@ -46,13 +47,14 @@ function getTagname() {
         throw new Error(`Unsupported event: ${eventName}`)
         // return `pr-${context.payload.pull_request.number}-${randomTag}`;
     }
-    if (eventName === 'merge_group') {
+    if (eventName === 'merge_group' || eventName === 'workflow_dispatch') {
         const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '')
         if (typeOfDeployment.dev) {
             return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
-            return `release_${dateString}_${randomTag}`
+            const version = targetBranch.replace('release/', '');
+            return `release_${version}_${randomTag}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }
@@ -72,6 +74,16 @@ function getArtifactname() {
         }
         if (typeOfDeployment.prod) {
             return `release-${context.payload.merge_group.head_sha}`
+        }
+        throw new Error(`Unable to determine artifact name for merge_group event`)
+    }
+
+    if (eventName === 'workflow_dispatch') {
+        if (typeOfDeployment.dev) {
+            return `main-${context.sha}`
+        }
+        if (typeOfDeployment.prod) {
+            return `release-${context.sha}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }
@@ -101,10 +113,13 @@ function getTypeOfDeployment() {
 
 function getTargetBranch() {
     if (eventName === 'pull_request' && context.payload?.pull_request?.base.ref) {
-        return context.payload.pull_request.base.ref
+        return context.payload.pull_request.base.ref.replace('refs/heads/', '')
     }
     if (eventName === 'merge_group') {
         return context.payload.merge_group.base_ref.replace('refs/heads/', '')
+    }
+    if (eventName === 'workflow_dispatch') {
+        return context.ref.replace('refs/heads/', '')
     }
 
     throw new Error(

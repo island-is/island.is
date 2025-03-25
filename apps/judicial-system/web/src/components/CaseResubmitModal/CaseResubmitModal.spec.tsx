@@ -1,7 +1,9 @@
 import { createIntl } from 'react-intl'
 
-import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
 

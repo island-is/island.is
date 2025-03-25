@@ -146,7 +146,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const jurisdictionId = Number(getValueViaPath(answers, 'delivery.jurisdiction'))
+    const jurisdictionId = Number(
+      getValueViaPath(answers, 'delivery.jurisdiction'),
+    )
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
     const deliveryMethod = getValueViaPath(answers, 'delivery.deliveryMethod')
@@ -177,7 +179,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
+          jurisdictionId: jurisdictionId
+            ? jurisdictionId
+            : setJurisdictionToKopavogur,
           ...(deliveryMethod
             ? {
                 pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
@@ -188,7 +192,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       )
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
+        jurisdictionId: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
         sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
@@ -205,7 +211,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization.replace('Bearer ', ''),
         {
-          jurisdictionId: jurisdictionId ? jurisdictionId : setJurisdictionToKopavogur,
+          jurisdictionId: jurisdictionId
+            ? jurisdictionId
+            : setJurisdictionToKopavogur,
           sendLicenseInMail: deliveryMethod === Pickup.POST ? true : false,
           needsToPresentHealthCertificate: needsHealthCert,
           needsToPresentQualityPhoto: needsQualityPhoto,
