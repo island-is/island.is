@@ -60,6 +60,8 @@ const CasesAwaitingConfirmationTable: FC<
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortBy: 'policeCaseNumbers',
+                  sortFn: 'number',
                 },
                 {
                   title: capitalize(
