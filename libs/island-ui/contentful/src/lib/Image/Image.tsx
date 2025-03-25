@@ -1,62 +1,61 @@
-import React, { FC, useState, useEffect, useRef } from 'react'
-import cn from 'classnames'
+import { useEffect, useRef, useState } from 'react'
 import * as styles from './Image.css'
-import { useMountedState } from 'react-use'
 
 export interface ImageProps {
   url: string
   title?: string
-  thumbnail: string
-  // NB: width and height is used for calculating ratio of the image - the
-  // element rendered will take up all available horizontal space
   width: number
   height: number
 }
 
-const useImageLoader = (url: string): boolean => {
-  const isMounted = useMountedState()
-  const [loaded, setLoaded] = useState(false)
+export const Image = ({ url, title, width, height }: ImageProps) => {
+  const imgRef = useRef<HTMLImageElement | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
 
+  // Detect when image enters the viewport
   useEffect(() => {
-    const img = new window.Image(100)
-    img.onload = img.onerror = () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      if (isMounted) {
-        setLoaded(true)
-      }
-    }
-    img.src = url
-  }, [url])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.2 },
+    )
 
-  return loaded
-}
+    if (imgRef.current) observer.observe(imgRef.current)
 
-export const Image: FC<React.PropsWithChildren<ImageProps>> = ({
-  url,
-  title,
-  thumbnail = url + '?w=50',
-  width,
-  height,
-}) => {
-  const imageLoaded = useImageLoader(url)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div
-      className={styles.container}
-      style={{ paddingTop: (height / width) * 100 + '%' }}
+      className={styles.imageContainer}
+      style={{
+        aspectRatio: `${width} / ${height}`,
+      }}
     >
       <img
-        src={thumbnail}
-        alt=""
-        className={cn(styles.image, styles.thumbnail, {
-          [styles.hide]: imageLoaded,
-        })}
-      />
-      <img
-        src={url}
-        alt={title}
-        className={cn(styles.image, { [styles.show]: imageLoaded })}
+        ref={imgRef}
+        src={isVisible ? `${url}?w=1000&fm=webp&q=75` : ''}
+        srcSet={
+          isVisible
+            ? `
+          ${url}?w=500&fm=webp&q=75 500w,
+          ${url}?w=800&fm=webp&q=75 800w,
+          ${url}?w=1000&fm=webp&q=75 1000w
+        `
+            : ''
+        }
+        sizes="(max-width: 500px) 500px,
+               (max-width: 800px) 800px,
+               1000px"
+        alt={title || ''}
+        onLoad={() => setImageLoaded(true)}
+        loading="lazy"
+        className={`${styles.image} ${imageLoaded ? styles.loaded : ''}`}
       />
     </div>
   )

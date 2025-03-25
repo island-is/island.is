@@ -1,31 +1,29 @@
 import { style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
 
-export const container = style({
-  position: 'relative',
+export const imageContainer = style({
+  width: '100%',
+  height: 'auto',
   overflow: 'hidden',
+  backgroundColor: 'transparent',
+  position: 'relative',
+  aspectRatio: 'var(--aspect-ratio)',
 })
 
 export const image = style({
-  position: 'absolute',
-  top: 0,
-  left: 0,
   width: '100%',
   height: '100%',
+  objectFit: 'cover',
   opacity: 0,
-  transition: 'opacity .5s',
+  filter: 'blur(10px)',
+  transition: 'opacity 0.5s ease-in-out, filter 0.5s ease-in-out',
 })
 
-export const thumbnail = style({
+export const loading = style({
   opacity: 1,
-  filter: 'blur(20px)',
-  transform: 'scale(1.05)',
+  filter: 'blur(10px)',
 })
 
-export const show = style({
+export const loaded = style({
   opacity: 1,
-})
-
-export const hide = style({
-  opacity: 0,
+  filter: 'blur(0)',
 })
