@@ -49,7 +49,7 @@ jobs:
     secrets: inherit
     with:
       run_merge_queue: true
-      force_all_to_be_affected: true
+      force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
     needs:
       - pre-checks
@@ -103,7 +103,6 @@ jobs:
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
-          exit 1
       - name: load-deps
         uses: ./.github/actions/load-deps
       - name: Docker login to ECR repo
