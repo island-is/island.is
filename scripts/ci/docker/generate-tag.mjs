@@ -69,12 +69,22 @@ function getArtifactname() {
         throw new Error(`Unsupported event: ${eventName}`)
         // return `pr-${context.payload.pull_request.number}`;
     }
-    if (eventName === 'merge_group' || eventName === 'workflow_dispatch') {
+    if (eventName === 'merge_group') {
         if (typeOfDeployment.dev) {
             return `main-${context.payload.merge_group.head_sha}`
         }
         if (typeOfDeployment.prod) {
             return `release-${context.payload.merge_group.head_sha}`
+        }
+        throw new Error(`Unable to determine artifact name for merge_group event`)
+    }
+
+    if (eventName === 'workflow_dispatch') {
+        if (typeOfDeployment.dev) {
+            return `main-${context.sha}`
+        }
+        if (typeOfDeployment.prod) {
+            return `release-${context.sha}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }
