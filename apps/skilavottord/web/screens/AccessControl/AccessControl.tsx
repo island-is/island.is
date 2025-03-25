@@ -51,6 +51,7 @@ import {
 } from '@island.is/skilavottord-web/graphql/queries'
 import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies/RecyclingCompanies'
 import * as styles from './AccessControl.css'
+import { u } from '@island.is/skilavottord-web/i18n/locales/translation'
 
 const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
@@ -248,12 +249,13 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleCreateAccessControlOpenModal = () => {
     if (hasMunicipalityRole(user?.role)) {
+      if (user.partnerId) {
+        getUserMunicipality()
+      }
       getAllRecyclingPartnersByMunicipality()
     } else {
       getAllRecyclingPartner()
     }
-
-    getUserMunicipality()
 
     setIsCreateAccessControlModalVisible(true)
   }
@@ -398,10 +400,14 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
                             onClick: () => {
                               if (hasMunicipalityRole(user?.role)) {
                                 getAllRecyclingPartnersByMunicipality()
+
+                                if (user.partnerId) {
+                                  getUserMunicipality()
+                                }
                               } else {
                                 getAllRecyclingPartner()
                               }
-                              getUserMunicipality()
+
                               setPartner(item)
                             },
                           },
