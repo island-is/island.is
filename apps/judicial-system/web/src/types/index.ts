@@ -17,10 +17,12 @@ export enum LoginErrorCodes {
 
 export type directionType = 'ascending' | 'descending'
 export type sortableTableColumn = keyof CaseListEntry
+export type sortableFn = 'number'
 
 export interface SortConfig {
   column: sortableTableColumn
   direction: directionType
+  sortFn?: sortableFn
 }
 
 interface NationalRegistryPerson {

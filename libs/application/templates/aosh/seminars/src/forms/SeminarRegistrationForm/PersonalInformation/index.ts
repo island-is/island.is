@@ -1,7 +1,7 @@
 import {
   buildAlertMessageField,
-  buildCustomField,
   buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -114,22 +114,21 @@ export const personalInformationSection = buildSection({
           ],
         }),
         buildHiddenInput({
-          id: 'personalValidation',
+          id: 'personalValidation.canRegister',
           defaultValue: (application: Application) => {
-            const registerMany = getValueViaPath<RegisterNumber>(
-              application.answers,
-              'applicant.registerManyQuestion',
-              RegisterNumber.one,
-            )
-
             const canRegister = getValueViaPath<boolean>(
               application.externalData,
               'individualValidity.data.mayTakeCourse',
               true,
             )
 
-            return canRegister || registerMany === RegisterNumber.many
+            return canRegister
           },
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'personalValidation.registerMany',
+          watchValue: 'applicant.registerManyQuestion',
+          valueModifier: (value: unknown) => value === RegisterNumber.many,
         }),
         buildAlertMessageField({
           id: 'applicant.personalValidationAlert',
@@ -146,7 +145,6 @@ export const personalInformationSection = buildSection({
             const registerMany = getValueViaPath<RegisterNumber>(
               answers,
               'applicant.registerManyQuestion',
-              RegisterNumber.one,
             )
             const canRegister = getValueViaPath<boolean>(
               externalData,

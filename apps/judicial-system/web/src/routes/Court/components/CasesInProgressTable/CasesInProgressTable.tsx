@@ -107,7 +107,11 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
           {cases.length > 0 ? (
             <Table
               thead={[
-                { title: formatMessage(tables.caseNumber) },
+                {
+                  title: formatMessage(tables.caseNumber),
+                  sortBy: 'courtCaseNumber',
+                  sortFn: 'number',
+                },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),

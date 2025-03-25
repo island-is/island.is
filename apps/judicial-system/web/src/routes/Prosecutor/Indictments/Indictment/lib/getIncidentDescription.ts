@@ -4,14 +4,12 @@ import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
+import { CrimeScene } from '@island.is/judicial-system/types'
 import {
-  CrimeScene,
   Gender,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
-import {
   IndictmentCount,
   IndictmentCountOffense,
+  IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
