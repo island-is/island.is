@@ -8,6 +8,7 @@ import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSecti
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
 import { useMeasure } from 'react-use'
 import {
+  SearchPaths,
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
@@ -35,9 +36,10 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
   const isFullwidth = activeModule?.layout === 'full'
 
-  const isDashboard = Object.values(ServicePortalPaths).find((route) =>
-    matchPath(route, pathname),
-  )
+  const disableSearch = [
+    ...Object.values(ServicePortalPaths),
+    ...Object.values(SearchPaths),
+  ].find((route) => matchPath(route, pathname))
 
   return (
     <div>
@@ -48,7 +50,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       )}
       <Header
         position={height && globalBanners.length > 0 ? height : 0}
-        includeSearchInHeader={!isDashboard}
+        includeSearchInHeader={!disableSearch}
       />
 
       {!isFullwidth && activeParent && (

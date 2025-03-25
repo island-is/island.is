@@ -846,6 +846,10 @@ export const m = defineMessages({
     id: 'service.portal:search-label',
     defaultMessage: 'Leit',
   },
+  searchOnMyPages: {
+    id: 'service.portal:search-on-my-pages',
+    defaultMessage: 'Leit á mínum síðum',
+  },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
