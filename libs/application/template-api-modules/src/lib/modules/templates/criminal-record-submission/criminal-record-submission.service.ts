@@ -34,6 +34,13 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       }
     }
 
+    console.log('============================================')
+    console.log(
+      'criminalRecord submitApplication',
+      JSON.stringify(application, null, 2),
+    )
+    console.log('============================================')
+
     const isPayment: { fulfilled: boolean } | undefined =
       await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
@@ -42,6 +49,13 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
+
+    console.log('============================================')
+    console.log(
+      'criminalRecord submitApplication isPayment',
+      JSON.stringify(isPayment, null, 2),
+    )
+    console.log('============================================')
 
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
@@ -58,7 +72,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     const uploadDataName = 'Umsókn um sakavottorð frá Ísland.is'
     const uploadDataId = 'Sakavottord2.1'
 
-    return await this.syslumennService
+    const result = await this.syslumennService
       .uploadData(persons, undefined, {}, uploadDataName, uploadDataId)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
@@ -67,6 +81,14 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
         )
         return undefined
       })
+
+    console.log('============================================')
+    console.log(
+      'criminalRecord submitApplication result',
+      JSON.stringify(result, null, 2),
+    )
+    console.log('============================================')
+    return result
   }
 
   async validateCriminalRecord({ auth }: TemplateApiModuleActionProps) {
