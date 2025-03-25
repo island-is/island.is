@@ -1,8 +1,6 @@
 import React from 'react'
 
-import {
-  AuthAdminClientEnvironment,
-} from '@island.is/api/schema'
+import { AuthAdminClientEnvironment } from '@island.is/api/schema'
 import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -72,7 +70,7 @@ export const AdvancedSettings = ({
         'supportTokenExchange',
         'accessTokenLifetime',
         'customClaims',
-        'sso'
+        'sso',
       ])}
     >
       <Stack space={3}>

@@ -58,6 +58,8 @@ export const UserForm: FC<Props> = ({
     useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
+  const isNewUser = user.id.length === 0
+
   const setName = useCallback(
     (name: string) => {
       if (name !== user.name) {
@@ -158,7 +160,7 @@ export const UserForm: FC<Props> = ({
                 setNationalIdErrorMessage,
               )
             }
-            readOnly={user.id.length > 0 ? true : false}
+            readOnly={!isNewUser}
           >
             <Input
               data-testid="nationalId"
@@ -211,6 +213,7 @@ export const UserForm: FC<Props> = ({
                 institution: (selectedOption as ExtendedOption).institution,
               })
             }
+            isDisabled={!isNewUser}
             required
           />
         </Box>
