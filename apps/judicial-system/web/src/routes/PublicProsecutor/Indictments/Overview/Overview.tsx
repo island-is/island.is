@@ -173,7 +173,10 @@ export const Overview = () => {
                     <Box marginBottom={2}>
                       <Text variant="eyebrow">{defendant.name}</Text>
                     </Box>
-                    <VerdictAppealDecisionChoice defendant={defendant} />
+                    <VerdictAppealDecisionChoice
+                      defendant={defendant}
+                      disabled={!!defendant.isSentToPrisonAdmin}
+                    />
                   </BlueBox>
                 </Box>
               )}
