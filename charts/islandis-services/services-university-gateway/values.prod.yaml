@@ -23,6 +23,8 @@ command:
   - 'node'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/university-gateway'
+  AUDIT_SERVICE_NAME: 'services-university-gateway'
   CODE_OWNER: 'origo'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_university_gateway'

@@ -280,6 +280,8 @@ api:
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
     APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     APPLICATION_SYSTEM_API_URL: 'http://application-system-api.application-system.svc.cluster.local'
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/api'
+    AUDIT_SERVICE_NAME: 'api'
     AUTH_ADMIN_API_PATH: 'https://identity-server.dev01.devland.is/backend'
     AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is'
@@ -846,6 +848,8 @@ application-system-api-worker:
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     APPLICATION_SYSTEM_BULL_PREFIX: 'application_system_api_bull_module'
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/applications'
+    AUDIT_SERVICE_NAME: 'application-system-api'
     CLIENT_LOCATION_ORIGIN: 'https://beta.dev01.devland.is/umsoknir'
     CODE_OWNER: 'norda-applications'
     DB_HOST: 'postgres-applications.internal'
@@ -1256,6 +1260,8 @@ contentful-entry-tagger-service:
 download-service:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/download'
+    AUDIT_SERVICE_NAME: 'download-service'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -1362,6 +1368,8 @@ endorsement-system-api:
     - 'node'
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/services-endorsements-api'
+    AUDIT_SERVICE_NAME: 'services-endorsements-api'
     CODE_OWNER: 'juni'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
@@ -1606,6 +1614,8 @@ global:
 icelandic-names-registry-backend:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/icelandic-names-registry'
+    AUDIT_SERVICE_NAME: 'icelandic-names-registry-backend'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -1753,6 +1763,8 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/license-api'
+    AUDIT_SERVICE_NAME: 'license-api'
     CODE_OWNER: 'hugsmidjan'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -1942,6 +1954,8 @@ portals-admin:
 regulations-admin-backend:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/services/regulations-admin-backend'
+    AUDIT_SERVICE_NAME: 'regulations-admin-backend'
     CODE_OWNER: 'hugsmidjan'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
@@ -2238,6 +2252,8 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/user-profile'
+    AUDIT_SERVICE_NAME: 'services-user-profile'
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is'
     AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     CODE_OWNER: 'aranja'
@@ -2538,6 +2554,8 @@ services-bff-portals-my-pages:
 services-documents:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/documents'
+    AUDIT_SERVICE_NAME: 'services-documents'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -2616,6 +2634,8 @@ services-documents:
 services-form-system-api:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/form-system'
+    AUDIT_SERVICE_NAME: 'services-form-system-api'
     CODE_OWNER: 'Advania'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_form_system_api'
@@ -2717,6 +2737,8 @@ services-form-system-api:
 services-sessions:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/sessions'
+    AUDIT_SERVICE_NAME: 'services-sessions'
     CODE_OWNER: 'aranja'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
@@ -2947,6 +2969,8 @@ services-university-gateway:
     - 'node'
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/university-gateway'
+    AUDIT_SERVICE_NAME: 'services-university-gateway'
     CODE_OWNER: 'origo'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_university_gateway'

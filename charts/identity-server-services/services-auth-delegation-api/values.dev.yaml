@@ -19,6 +19,8 @@ global:
 name: 'services-auth-delegation-api'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/auth/delegation-api'
+  AUDIT_SERVICE_NAME: 'services-auth-delegation-api'
   CODE_OWNER: 'aranja'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'

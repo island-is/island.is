@@ -19,6 +19,8 @@ global:
 name: 'services-auth-personal-representative'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/personal-representative'
+  AUDIT_SERVICE_NAME: 'services-personal-representative'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
   DB_HOST: 'postgres-ids.internal'

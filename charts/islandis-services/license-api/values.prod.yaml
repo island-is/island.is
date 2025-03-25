@@ -19,6 +19,8 @@ global:
 name: 'license-api'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/license-api'
+  AUDIT_SERVICE_NAME: 'license-api'
   CODE_OWNER: 'hugsmidjan'
   HUNTING_LICENSE_PASS_TEMPLATE_ID: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
