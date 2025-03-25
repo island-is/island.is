@@ -57,21 +57,6 @@ export const householdSupplementFormMessage: MessageDir = {
         'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
       description: 'english translation',
     },
-    householdSupplementHousing: {
-      id: 'hs.application:info.household.supplement.housing',
-      defaultMessage: 'Hvar býrð þú?',
-      description: 'Where do you live?',
-    },
-    householdSupplementHousingOwner: {
-      id: 'hs.application:info.household.supplement.housing.owner',
-      defaultMessage: 'í eigin húsnæði',
-      description: 'english translation',
-    },
-    householdSupplementHousingRenter: {
-      id: 'hs.application:info.household.supplement.housing.renter',
-      defaultMessage: 'í leiguhúsnæði',
-      description: 'in a rented place',
-    },
     householdSupplementChildrenBetween18And25: {
       id: 'hs.application:info.household.supplement.children.betweem18And25',
       defaultMessage:
@@ -98,20 +83,10 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    leaseAgreementTitle: {
-      id: 'hs.application:fileUppload.lease.agreement.title',
-      defaultMessage: 'Fylgiskjöl leigusamningur',
-      description: 'Household supplement rental agreement',
-    },
     schoolConfirmationTitle: {
       id: 'hs.application:fileUppload.school.confirmation.title',
       defaultMessage: 'Fylgiskjöl skólavottorð',
       description: "Household supplement young person's school attendance",
-    },
-    leaseAgreement: {
-      id: 'hs.application:fileUppload.lease.agreement',
-      defaultMessage: 'Hér þarft þú að skila undirritaðum leigusamningi.',
-      description: 'Here you must upload the signed rental agreement.',
     },
     schoolConfirmation: {
       id: 'hs.application:fileUppload.school.confirmation',
