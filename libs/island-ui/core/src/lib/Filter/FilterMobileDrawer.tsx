@@ -111,9 +111,8 @@ export const FilterMobileDrawer = ({
                     variant="text"
                     onClick={onFilterClear}
                   >
-                    {labelClearAll ?? lang === 'is'
-                      ? 'Hreinsa allt'
-                      : 'Clear all'}
+                    {labelClearAll ??
+                      (lang === 'is' ? 'Hreinsa allt' : 'Clear all')}
                   </Button>
                 </Box>
                 <Box flexGrow={1} overflow="auto">
