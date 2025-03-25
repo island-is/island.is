@@ -233,6 +233,7 @@ jobs:
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
+          commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
       - name: Update judicial system
         id: judicial-system
         if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' }}
@@ -248,6 +249,7 @@ jobs:
           files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
           branch: main
 
       - name: Update helm-values repository with judicial system PROD
@@ -257,6 +259,7 @@ jobs:
           files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
           branch: release
 
       - name: Upload artifact
