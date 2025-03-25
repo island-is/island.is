@@ -105,10 +105,7 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box
-          component="section"
-          marginBottom={workingCase.hasCivilClaims ? 5 : 10}
-        >
+        <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
           />
@@ -129,31 +126,6 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={10}>
-            <SectionHeading
-              title={formatMessage(strings.caseFiles.civilClaimSection)}
-            />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
-              )}
-              accept={Object.values(fileExtensionWhitelist)}
-              header={formatMessage(strings.caseFiles.inputFieldLabel)}
-              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-              onChange={(files) =>
-                handleUpload(
-                  addUploadFiles(files, {
-                    category: CaseFileCategory.CIVIL_CLAIM,
-                  }),
-                  updateUploadFile,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
-        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

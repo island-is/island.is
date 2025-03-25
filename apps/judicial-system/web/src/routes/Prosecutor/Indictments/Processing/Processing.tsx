@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Checkbox,
+  InputFileUpload,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
@@ -29,6 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
+  CaseFileCategory,
   CaseState,
   CaseTransition,
   CivilClaimant,
@@ -42,12 +44,15 @@ import {
   useDefendants,
   useNationalRegistry,
   useOnceOn,
+  useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 
 interface UpdateCivilClaimant
   extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
@@ -74,6 +79,16 @@ const Processing: FC = () => {
     deleteCivilClaimant,
     setAndSendCivilClaimantToServer,
   } = useCivilClaimants()
+  const {
+    uploadFiles,
+    allFilesDoneOrError,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
+  )
   const router = useRouter()
 
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
@@ -118,7 +133,10 @@ const Processing: FC = () => {
     civilClaimantNationalIdUpdate?.nationalId,
   )
 
-  const stepIsValid = isProcessingStepValidIndictments(workingCase)
+  const stepIsValid = isProcessingStepValidIndictments(
+    workingCase,
+    allFilesDoneOrError,
+  )
 
   const handleSetAndSendDefendantToServer = (update: UpdateDefendant) => {
     setAndSendDefendantToServer(
@@ -667,6 +685,27 @@ const Processing: FC = () => {
                     </>
                   )}
                 </BlueBox>
+                <Box component="section" marginBottom={10}>
+                  <SectionHeading title="Bótakröfur" />
+                  <InputFileUpload
+                    fileList={uploadFiles.filter(
+                      (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+                    )}
+                    accept={Object.values(fileExtensionWhitelist)}
+                    header="Dragðu gögn hingað til að hlaða upp"
+                    buttonLabel="Velja gögn til að hlaða upp"
+                    onChange={(files) =>
+                      handleUpload(
+                        addUploadFiles(files, {
+                          category: CaseFileCategory.CIVIL_CLAIM,
+                        }),
+                        updateUploadFile,
+                      )
+                    }
+                    onRemove={(file) => handleRemove(file, removeUploadFile)}
+                    onRetry={(file) => handleRetry(file, updateUploadFile)}
+                  />
+                </Box>
               </Box>
             ))}
             <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
