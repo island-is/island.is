@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -35,12 +35,12 @@ import {
   PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
   CaseType,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,

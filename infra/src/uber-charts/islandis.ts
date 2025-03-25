@@ -23,6 +23,7 @@ import { serviceSetup as consultationPortalSetup } from '../../../apps/consultat
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
+import { workerSetup as cmsImporterSetup } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
@@ -35,8 +36,6 @@ import { serviceSetup as storybookSetup } from '../../../libs/island-ui/storyboo
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
-
-import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 
 import {
   userNotificationCleanUpWorkerSetup,
@@ -68,6 +67,7 @@ import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
+import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -108,6 +108,8 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+const formSystemApi = formSystemApiSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -120,6 +122,7 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
+  formSystemService: formSystemApi,
 })
 
 const adminPortal = adminPortalSetup()
@@ -137,6 +140,7 @@ const consultationPortal = consultationPortalSetup({ api })
 const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
+const cmsImporter = cmsImporterSetup()
 
 const storybook = storybookSetup({})
 
@@ -146,11 +150,9 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService =
-  userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
 
 const unicornApp = unicornAppSetup()
-const formSystemApi = formSystemApiSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -184,6 +186,7 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     licenseApi,
+    cmsImporter,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -222,6 +225,7 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     licenseApi,
+    cmsImporter,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -260,8 +264,8 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
+    cmsImporter,
     licenseApi,
-    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -271,6 +275,7 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     bffServicePortalService,
     unicornApp,
+    formSystemApi
   ],
 }
 

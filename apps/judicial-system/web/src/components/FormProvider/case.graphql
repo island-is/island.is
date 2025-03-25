@@ -30,6 +30,7 @@ query Case($input: CaseQueryInput!) {
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDecision
       verdictAppealDate
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -221,8 +222,6 @@ query Case($input: CaseQueryInput!) {
         offense
         substances
       }
-      deprecatedOffenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments

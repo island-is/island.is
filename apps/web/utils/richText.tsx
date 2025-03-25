@@ -34,6 +34,7 @@ import {
   EmailSignup,
   Form,
   GenericListWrapper,
+  IntroLinkImageSlice,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -70,6 +71,7 @@ import {
   GenericList as GenericListSchema,
   GetTeamMembersInputOrderBy,
   GrantCardsList as GrantCardsListSchema,
+  IntroLinkImage,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OrganizationParentSubpageList,
@@ -321,6 +323,9 @@ const defaultRenderComponent = {
   ),
   OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
     <OrganizationParentSubpageListSlice slice={slice} />
+  ),
+  IntroLinkImage: (slice: IntroLinkImage) => (
+    <IntroLinkImageSlice slice={slice} />
   ),
 }
 

@@ -20,7 +20,7 @@ import {
   DateTime,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
+import { IndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
@@ -57,7 +57,7 @@ interface Props {
     subtypes?: Record<string, IndictmentSubtype[]>,
   ) => void
   policeCaseNumberImmutable: boolean
-  indictmentCount?: TempIndictmentCount
+  indictmentCount?: IndictmentCount
 }
 
 export const PoliceCaseInfo: FC<Props> = ({
@@ -220,9 +220,11 @@ export const PoliceCaseInfo: FC<Props> = ({
             }
 
             const subtypes = [...subtypesArray, indictmentSubtype]
-
             updatePoliceCase(index, { subtypes })
 
+            // initialise the indictment count(s) subtype only
+            // when a single subtype has been selected. If there are more
+            // its up to the user to initialise
             if (subtypes.length === 1) {
               updateIndictmentCount(
                 policeCaseNumbers[index],
@@ -263,8 +265,7 @@ export const PoliceCaseInfo: FC<Props> = ({
                     policeCaseNumbers[index],
                     crimeScene || {},
                     {
-                      [policeCaseNumbers[index]]:
-                        remainingSubtypes.length === 1 ? remainingSubtypes : [],
+                      [policeCaseNumbers[index]]: remainingSubtypes,
                     },
                   )
                 }}

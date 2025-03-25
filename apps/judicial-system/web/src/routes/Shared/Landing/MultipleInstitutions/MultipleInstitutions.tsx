@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-import { useRouter } from 'next/router'
 
 import { Box, Select, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -9,12 +8,11 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { api } from '@island.is/judicial-system-web/src/services'
 
 import * as styles from './MultipleInstitutions.css'
 
 const Login = () => {
-  const router = useRouter()
-
   const [userId, setUserId] = useState<string>()
 
   const { eligibleUsers } = useContext(UserContext)
@@ -48,7 +46,7 @@ const Login = () => {
           nextButtonIcon="arrowForward"
           nextButtonText="Halda áfram"
           nextIsDisabled={!userId}
-          onNextButtonClick={() => router.push(`/api/auth/activate/${userId}`)}
+          onNextButtonClick={() => userId && api.activate(userId)}
         />
       </FormContentContainer>
     </>

@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
@@ -10,11 +10,9 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -28,13 +26,13 @@ import {
 import {
   CaseOrigin,
   Defendant,
+  IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
   Maybe,
   Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -282,8 +280,12 @@ const Indictment = () => {
   )
 
   const initialize = useCallback(() => {
-    if (workingCase.indictmentCounts?.length === 0) {
+    const indictmentCounts = workingCase.indictmentCounts || []
+    if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
+    } else {
+      // in case indictment subtypes have been modified in earlier step
+      setDriversLicenseSuspensionRequest(indictmentCounts)
     }
 
     setAndSendCaseToServer(
@@ -309,6 +311,7 @@ const Indictment = () => {
     formatMessage,
     setWorkingCase,
     handleCreateIndictmentCount,
+    setDriversLicenseSuspensionRequest,
   ])
 
   useOnceOn(isCaseUpToDate, initialize)

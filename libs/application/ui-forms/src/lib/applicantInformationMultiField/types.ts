@@ -45,4 +45,5 @@ export type applicantInformationProps = {
   emailDisabled?: boolean
   applicantInformationDescription?: FormText
   readOnly?: boolean
+  readOnlyEmailAndPhone?: boolean
 }

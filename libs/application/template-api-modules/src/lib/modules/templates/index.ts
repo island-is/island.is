@@ -146,6 +146,12 @@ import { ParliamentaryListCreationModule } from './signature-collection/parliame
 import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
+import { SeminarsTemplateService } from './aosh/seminars/seminars.service'
+import { SeminarsTemplateModule } from './aosh/seminars/seminars.module'
+import { MunicipalListCreationModule } from './signature-collection/municipal-list-creation/municipal-list-creation.module'
+import { MunicipalListCreationService } from './signature-collection/municipal-list-creation/municipal-list-creation.service'
+import { MunicipalListSigningModule } from './signature-collection/municipal-list-signing/municipal-list-signing.module'
+import { MunicipalListSigningService } from './signature-collection/municipal-list-signing/municipal-list-signing.service'
 import { SecondarySchoolModule } from './secondary-school/secondary-school.module'
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
@@ -224,8 +230,11 @@ export const modules = [
   WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
+  MunicipalListCreationModule,
+  MunicipalListSigningModule,
   ParentalLeaveModule,
   SocialInsuranceAdministrationModule,
+  SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
 ]
@@ -304,6 +313,9 @@ export const services = [
   WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
+  SeminarsTemplateService,
+  MunicipalListCreationService,
+  MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
 ]

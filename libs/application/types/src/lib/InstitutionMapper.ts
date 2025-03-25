@@ -304,6 +304,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.THJODSKRA,
     contentfulId: InstitutionContentfulIds.THJODSKRA,
   },
+  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+    contentfulId: InstitutionContentfulIds.THJODSKRA,
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     nationalId: InstitutionNationalIds.UTLENDINGASTOFNUN,
     slug: InstitutionTypes.UTLENDINGASTOFNUN,
@@ -410,6 +415,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.SEMINAR_REGISTRATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,

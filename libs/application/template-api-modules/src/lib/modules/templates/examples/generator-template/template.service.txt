@@ -1,0 +1,34 @@
+import { Injectable } from '@nestjs/common'
+import { SharedTemplateApiService } from '--IS-NESTED--../../shared'
+import { ApplicationTypes } from '@island.is/application/types'
+import { NotificationsService } from '--IS-NESTED--../../../notification/notifications.service'
+import { BaseTemplateApiService } from '--IS-NESTED--../../base-template-api.service'
+
+@Injectable()
+export class --PASCAL-CASE-TEMPLATE--Service extends BaseTemplateApiService {
+  constructor(
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly notificationsService: NotificationsService,
+  ) {
+    super(ApplicationTypes.--SCREAMING-SNAKE-CASE-TEMPLATE--)
+  }
+  // TODO: Implement functions as needed
+
+  async createApplication() {
+    // TODO: Implement this
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    return {
+      id: 1337,
+    }
+  }
+
+  async completeApplication() {
+    // TODO: Implement this
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    return {
+      id: 1337,
+    }
+  }
+}
