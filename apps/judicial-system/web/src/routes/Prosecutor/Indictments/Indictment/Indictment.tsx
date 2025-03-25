@@ -237,7 +237,10 @@ const Indictment = () => {
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
-            ? { ...returnedIndictmentCount, offenses: updatedOffenses }
+            ? {
+                ...returnedIndictmentCount,
+                offenses: updatedOffenses ?? count.offenses,
+              }
             : count,
         ),
       )

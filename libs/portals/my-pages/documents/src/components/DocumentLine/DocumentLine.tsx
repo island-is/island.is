@@ -17,7 +17,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom'
-import { useDocumentListV3 } from '../../hooks/useDocumentListV3'
+import { useDocumentList } from '../../hooks/useDocumentList'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
@@ -27,7 +27,7 @@ import {
   useGetDocumentInboxLineV3LazyQuery,
 } from '../../screens/Overview/Overview.generated'
 import { messages } from '../../utils/messages'
-import { FavAndStashV3 } from '../FavAndStash/FavAndStashV3'
+import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
@@ -43,7 +43,7 @@ interface Props {
   bookmarked?: boolean
 }
 
-export const DocumentLineV3: FC<Props> = ({
+export const DocumentLine: FC<Props> = ({
   documentLine,
   img,
   setSelectLine,
@@ -75,7 +75,7 @@ export const DocumentLineV3: FC<Props> = ({
     bookmarkSuccess,
   } = useMailAction()
 
-  const { fetchObject, refetch } = useDocumentListV3()
+  const { fetchObject, refetch } = useDocumentList()
 
   const {
     setActiveDocument,
@@ -360,7 +360,7 @@ export const DocumentLineV3: FC<Props> = ({
                 !postLoading &&
                 !fileLoading &&
                 !asFrame && (
-                  <FavAndStashV3
+                  <FavAndStash
                     bookmarked={isBookmarked}
                     onFav={
                       isBookmarked || hasFocusOrHover
@@ -411,4 +411,4 @@ export const DocumentLineV3: FC<Props> = ({
   )
 }
 
-export default DocumentLineV3
+export default DocumentLine

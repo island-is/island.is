@@ -138,6 +138,9 @@ function getBranch() {
   if (context.eventName === 'merge_group') {
     return context.payload.merge_group.base_ref.replace('refs/heads/', '')
   }
+  if (context.eventName === 'workflow_dispatch') {
+    return context.ref.replace('refs/heads/', '');
+  }
   throw new Error(`Unsupported event: ${context.eventName}`)
 }
 
