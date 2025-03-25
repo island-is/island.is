@@ -15,10 +15,15 @@ export class CreateCaseDto {
   @ApiProperty()
   readonly policeCaseNumber!: string
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly prosecutorNationalId!: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorsOfficeNationalId?: string
 
   @IsNotEmpty()
   @IsString()

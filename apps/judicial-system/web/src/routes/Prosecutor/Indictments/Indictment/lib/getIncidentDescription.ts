@@ -6,11 +6,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
 import {
+  IndictmentCount,
   IndictmentCountOffense,
   Maybe,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
@@ -39,7 +39,7 @@ export const getIncidentDescription = ({
   crimeScene,
   subtypesRecord,
 }: {
-  indictmentCount: TempIndictmentCount
+  indictmentCount: IndictmentCount
   formatMessage: IntlShape['formatMessage']
   crimeScene?: CrimeScene
   subtypesRecord?: Record<string, IndictmentSubtype[]>
@@ -79,7 +79,7 @@ export const getIncidentDescription = ({
     const hasOnlyOtherOffense =
       offenses?.length === 1 &&
       offenses[0].offense === IndictmentCountOffense.OTHER
-    
+
     if (hasOnlyOtherOffense) {
       return formatMessage(strings.incidentDescriptionShortAutofill, {
         incidentDate,

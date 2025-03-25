@@ -210,10 +210,10 @@ export const titles = {
           'Notaður sem titill fyrir verjenda skjá hjá dómstólum í ákærum',
       },
       conclusion: {
-        id: 'judicial.system.core:titles.court.indictments.conclusion',
-        defaultMessage: 'Niðurstaða - Réttarvörslugátt',
+        id: 'judicial.system.core:titles.court.indictments.conclusion_v1',
+        defaultMessage: 'Staða og lyktir - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Niðurstaða úrskurðar skjá hjá dómstólum í ákærum',
+          'Notaður sem titill fyrir Staða og lyktir úrskurðar skjá hjá dómstólum í ákærum',
       },
       completed: {
         id: 'judicial.system.core:titles.court.indictments.completed',
