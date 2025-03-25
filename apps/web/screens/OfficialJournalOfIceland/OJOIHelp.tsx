@@ -56,7 +56,7 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
         },
       ]}
     >
-      <Box>{webRichText((customPageData?.content ?? []) as SliceType[])}</Box>
+      <Box>{webRichText(customPageData?.content as SliceType[])}</Box>
     </OJOIWrapper>
   )
 }
@@ -92,7 +92,7 @@ OJOIHelp.getProps = async ({ apolloClient, locale }) => {
 
 export default withMainLayout(
   withCustomPageWrapper(
-    CustomPageUniqueIdentifier.OfficialJournalOfIceland,
+    CustomPageUniqueIdentifier.OfficialJournalOfIcelandHelp,
     OJOIHelp,
   ),
 )
