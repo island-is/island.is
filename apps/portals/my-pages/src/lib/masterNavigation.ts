@@ -33,6 +33,9 @@ export const rootNavigationItem: PortalNavigationItem = {
   },
 }
 
+//dummy
+const k = 8
+
 export const MAIN_NAVIGATION: PortalNavigationItem = {
   ...rootNavigationItem,
   children: [

@@ -53,6 +53,7 @@ export interface AsyncSearchProps {
   size?: AsyncSearchSizes
   loading?: boolean
   closeMenuOnSubmit?: boolean
+  openMenuOnFocus?: boolean
   required?: boolean
   errorMessage?: string
   hasError?: boolean
@@ -83,6 +84,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       white,
       required,
       closeMenuOnSubmit,
+      openMenuOnFocus,
       onChange,
       onSubmit,
       onInputValueChange,
@@ -127,6 +129,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             getItemProps,
             getLabelProps,
             getMenuProps,
+            openMenu,
             getToggleButtonProps,
             closeMenu,
             isOpen,
@@ -196,7 +199,12 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               inputProps={{
                 ...getInputProps({
                   value: inputValue,
-                  onFocus,
+                  onFocus: () => {
+                    onFocus()
+                    if (openMenuOnFocus) {
+                      openMenu()
+                    }
+                  },
                   onBlur,
                   ref,
                   spellCheck: true,

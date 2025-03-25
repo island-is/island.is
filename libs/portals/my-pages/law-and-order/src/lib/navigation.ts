@@ -1,10 +1,17 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { LawAndOrderPaths } from './paths'
 
 export const lawAndOrderNavigation: PortalNavigationItem = {
   name: m.lawAndOrder,
   description: m.lawAndOrderDashboard,
+  intro: m.lawAndOrderDescription,
+  searchTags: [
+    s.lawAndOrderVerdict,
+    s.lawAndOrderLaw,
+    s.lawAndOrderCase,
+    s.lawAndOrderOrder,
+  ],
   path: LawAndOrderPaths.Root,
   icon: {
     icon: 'gavel',
@@ -12,10 +19,12 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.overview,
+      searchHide: true,
       path: LawAndOrderPaths.Overview,
     },
     {
       name: m.myCourtCases,
+      description: m.myCourtCasesIntro,
       path: LawAndOrderPaths.CourtCases,
       children: [
         {
