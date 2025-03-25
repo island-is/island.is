@@ -325,7 +325,7 @@ jobs:
       - name: Check build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
       - name: Check post-build success
-        run: '[[ ${{ needs.post-docker-build.result }} != "failure" && ${{ needs.post-docker-build.result }} != "abandoned" && ${{ needs.post-docker-build.result }} != "cancelled"]] || exit 1'
+        run: '[[ ${{ needs.post-docker-build.result }} != "failure" && ${{ needs.post-docker-build.result }} != "abandoned" && ${{ needs.post-docker-build.result }} != "cancelled" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
