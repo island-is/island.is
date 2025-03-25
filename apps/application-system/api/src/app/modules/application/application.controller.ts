@@ -331,17 +331,21 @@ export class ApplicationController {
   }
 
   private withApplicationInfo = <R, TArgs extends unknown[]>(
-    template : ApplicationTemplate<ApplicationContext, ApplicationStateSchema<EventObject>, EventObject>, 
-    application: Application, 
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+    application: Application,
     callback: (...args: TArgs) => R,
     ...args: TArgs
   ): R => {
     const context = {
       templateId: template.type,
-      applicationId: application.id
+      applicationId: application.id,
     }
     return withCodeOwner(template.codeOwner, () =>
-      withLoggingContext(context, callback, ...args)
+      withLoggingContext(context, callback, ...args),
     )
   }
 
