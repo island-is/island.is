@@ -90,5 +90,44 @@ export const m = {
         description: 'Villa sem kemur upp ef notandi velur ekki lögaðila',
       },
     }),
+    advertType: defineMessages({
+      sectionTitle: {
+        id: 'lg.application:requirements.advertType.section.title',
+        defaultMessage: 'Tegund auglýsingar',
+        description: 'Heiti kafla Auglýsingar',
+      },
+      formTitle: {
+        id: 'lg.application:requirements.advertType.form.title',
+        defaultMessage: 'Ný auglýsing',
+        description: 'Titill á skjá Auglýsingar',
+      },
+      formIntro: {
+        id: 'lg.application:requirements.advertType.form.intro',
+        defaultMessage:
+          'Veldu tegund auglýsingar sem þú vilt skrá. Fyrir sumar tegundir eru í boði innsláttarform til að auðvelda skráningu. Þú getur einnig sótt texta áður skráðrar auglýsingar af sömu tegund og notað sem grunn að nýrri.',
+        description: 'Inngangur á skjá Auglýsingar',
+      },
+      selectTitle: {
+        id: 'lg.application:requirements.advertType.select.title',
+        defaultMessage: 'Tegund',
+        description: 'Titill á dropdown á skjá Auglýsingar',
+      },
+      selectPlaceholder: {
+        id: 'lg.application:requirements.advertType.select.placeholder',
+        defaultMessage: 'Veldu tegund',
+        description: 'Placeholder á dropdown á skjá Auglýsingar',
+      },
+      selectError: {
+        id: 'lg.application:requirements.advertType.select.error',
+        defaultMessage:
+          'Þú verður að velja tegund auglýsingar til að halda áfram',
+        description: 'Villa sem kemur upp ef notandi velur ekki tegund',
+      },
+      lastSelected: {
+        id: 'lg.application:requirements.advertType.lastSelected',
+        defaultMessage: 'Síðast valið',
+        description: 'Titill á síðast valinni tegund á skjá Auglýsingar',
+      },
+    }),
   },
 }

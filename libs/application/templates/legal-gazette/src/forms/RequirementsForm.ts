@@ -77,16 +77,43 @@ export const RequirementsForm: Form = buildForm({
               description: m.requirements.legalEntity.formIntro,
             }),
             buildSelectField({
-              id: 'advert.legalEntity',
+              id: 'legalEntity.nationalId',
               title: m.requirements.legalEntity.selectTitle,
               width: 'half',
               options(application) {
                 const legalEntities = getValueViaPath<Option[]>(
                   application.externalData,
-                  'legalEntities.data',
+                  'legalEntityOptions.data',
                 )
 
                 return legalEntities ?? []
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: m.requirements.advertType.sectionTitle,
+      children: [
+        buildMultiField({
+          title: m.requirements.advertType.formTitle,
+          children: [
+            buildDescriptionField({
+              id: 'advertType_description',
+              description: m.requirements.advertType.formIntro,
+            }),
+            buildSelectField({
+              id: 'applicationType.id',
+              title: m.requirements.advertType.selectTitle,
+              width: 'half',
+              options(application) {
+                const advertTypeOptions = getValueViaPath<Option[]>(
+                  application.externalData,
+                  'advertTypeOptions.data',
+                )
+
+                return advertTypeOptions ?? []
               },
             }),
             buildSubmitField({

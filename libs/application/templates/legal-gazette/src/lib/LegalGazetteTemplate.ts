@@ -14,6 +14,7 @@ import { legalGazetteDataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
 import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
 import { m } from './messages'
+import { pruneAfterDays } from '@island.is/application/core'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -51,17 +52,21 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           name: 'Skilyrði',
           progress: 0,
           status: 'draft',
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onEntry: defineTemplateApi({
-            action: LegalGazetteAPIActions.getUserLegalEntities,
-            shouldPersistToExternalData: true,
-            externalDataId: 'legalEntities',
-            throwOnError: true,
-          }),
+          lifecycle: pruneAfterDays(7),
+          onEntry: [
+            defineTemplateApi({
+              action: LegalGazetteAPIActions.getUserLegalEntities,
+              shouldPersistToExternalData: true,
+              externalDataId: 'legalEntityOptions',
+              throwOnError: true,
+            }),
+            defineTemplateApi({
+              action: LegalGazetteAPIActions.getAdvertTypes,
+              shouldPersistToExternalData: true,
+              externalDataId: 'advertTypeOptions',
+              throwOnError: true,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -89,11 +94,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           name: 'Uppsetning',
           progress: 0.5,
           status: 'draft',
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfterDays(90),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -14,12 +14,20 @@ export const legalGazetteDataSchema = z.object({
         },
       ),
   }),
-  advert: z.object({
-    legalEntity: z
+  legalEntity: z.object({
+    nationalId: z
       .string()
       .nullable()
       .refine((value) => value && value.length > 0, {
         params: m.requirements.legalEntity.selectError,
+      }),
+  }),
+  applicationType: z.object({
+    id: z
+      .string()
+      .nullable()
+      .refine((value) => value && value.length > 0, {
+        params: m.requirements.advertType.selectError,
       }),
   }),
 })
